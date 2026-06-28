@@ -1,0 +1,238 @@
+EP.UI = (function() {
+    var currentEffect = null;
+    var toastTimer = null;
+
+    function init() {
+        buildEffectsLibrary();
+        bindAspectSelector();
+        bindOverlayControls();
+        bindEffectsSearch();
+    }
+
+    function buildEffectsLibrary() {
+        var container = document.getElementById('effects-categories');
+        container.innerHTML = '';
+        var categories = EP.Registry.getCategories();
+
+        categories.forEach(function(cat, ci) {
+            var effects = EP.Registry.getByCategory(cat.id);
+            if (effects.length === 0) return;
+
+            var catDiv = document.createElement('div');
+            catDiv.className = 'effect-category';
+
+            var header = document.createElement('div');
+            header.className = 'category-header' + (ci === 0 ? ' open' : '');
+            header.innerHTML = '<span class="arrow">▶</span><span class="cat-name">' + cat.icon + ' ' + cat.name + '</span><span class="cat-count">' + effects.length + '</span>';
+            header.addEventListener('click', function() { this.classList.toggle('open'); });
+            catDiv.appendChild(header);
+
+            var effectsList = document.createElement('div');
+            effectsList.className = 'category-effects';
+
+            effects.forEach(function(eff) {
+                var card = document.createElement('div');
+                card.className = 'effect-card';
+                card.dataset.effectId = eff.id;
+                card.innerHTML = '<div class="effect-icon">' + eff.meta.icon + '</div><div class="effect-info"><div class="effect-name">' + eff.meta.name + '</div><div class="effect-desc">' + eff.meta.description + '</div></div>';
+                card.addEventListener('click', function() { selectEffect(eff.id); });
+                effectsList.appendChild(card);
+            });
+
+            catDiv.appendChild(effectsList);
+            container.appendChild(catDiv);
+        });
+    }
+
+    function selectEffect(id) {
+        var effect = EP.Registry.get(id);
+        if (!effect) return;
+
+        document.querySelectorAll('.effect-card').forEach(function(c) { c.classList.remove('active'); });
+        var card = document.querySelector('[data-effect-id="' + id + '"]');
+        if (card) {
+            card.classList.add('active');
+            var header = card.closest('.effect-category').querySelector('.category-header');
+            if (!header.classList.contains('open')) header.classList.add('open');
+        }
+
+        if (currentEffect) currentEffect.dispose();
+        currentEffect = effect;
+
+        if (effect.settings.background) EP.Core.setBackground(effect.settings.background);
+
+        var mediaList = EP.Media.getAll();
+        var group = effect.rebuild(mediaList);
+        EP.Core.setDisplayGroup(group);
+        buildControlsPanel(effect);
+        EP.Core.render();
+        toast(effect.meta.name + ' activado');
+    }
+
+    function buildControlsPanel(effect) {
+        var container = document.getElementById('effect-controls');
+        var title = document.getElementById('effect-controls-title');
+        container.innerHTML = '';
+        title.textContent = effect.meta.name.toUpperCase();
+
+        effect.controlsDef.forEach(function(ctrl) {
+            var row = document.createElement('div');
+            row.className = 'control-row';
+
+            var label = document.createElement('label');
+            label.textContent = ctrl.label;
+            row.appendChild(label);
+
+            if (ctrl.type === 'range') {
+                var input = document.createElement('input');
+                input.type = 'range';
+                input.min = ctrl.min;
+                input.max = ctrl.max;
+                input.step = ctrl.step || 1;
+                input.value = effect.settings[ctrl.key];
+                var val = document.createElement('span');
+                val.className = 'val';
+                val.textContent = effect.settings[ctrl.key] + (ctrl.unit || '');
+                input.addEventListener('input', function() {
+                    var v = parseFloat(this.value);
+                    effect.setSetting(ctrl.key, v);
+                    val.textContent = v + (ctrl.unit || '');
+                    rebuildCurrent();
+                });
+                row.appendChild(input);
+                row.appendChild(val);
+            } else if (ctrl.type === 'color') {
+                var colorInput = document.createElement('input');
+                colorInput.type = 'color';
+                colorInput.value = effect.settings[ctrl.key];
+                colorInput.addEventListener('input', function() {
+                    effect.setSetting(ctrl.key, this.value);
+                    if (ctrl.key === 'background') EP.Core.setBackground(this.value);
+                });
+                row.appendChild(colorInput);
+            } else if (ctrl.type === 'select') {
+                var select = document.createElement('select');
+                ctrl.options.forEach(function(opt) {
+                    var option = document.createElement('option');
+                    option.value = opt.v;
+                    option.textContent = opt.l;
+                    if (opt.v === effect.settings[ctrl.key]) option.selected = true;
+                    select.appendChild(option);
+                });
+                select.addEventListener('change', function() {
+                    effect.setSetting(ctrl.key, this.value);
+                    rebuildCurrent();
+                });
+                row.appendChild(select);
+            } else if (ctrl.type === 'easing') {
+                var easingRow = document.createElement('div');
+                easingRow.className = 'easing-row';
+                ctrl.options.forEach(function(name) {
+                    var btn = document.createElement('button');
+                    btn.className = 'easing-btn' + (name === effect.settings[ctrl.key] ? ' active' : '');
+                    btn.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                    btn.addEventListener('click', function() {
+                        easingRow.querySelectorAll('.easing-btn').forEach(function(b) { b.classList.remove('active'); });
+                        this.classList.add('active');
+                        effect.setSetting(ctrl.key, name);
+                    });
+                    easingRow.appendChild(btn);
+                });
+                row.appendChild(easingRow);
+            } else if (ctrl.type === 'aspect') {
+                var aspectRow = document.createElement('div');
+                aspectRow.className = 'aspect-row';
+                ctrl.options.forEach(function(ratio) {
+                    var btn = document.createElement('button');
+                    btn.className = 'aspect-ctrl-btn' + (ratio === effect.settings[ctrl.key] ? ' active' : '');
+                    btn.textContent = ratio;
+                    btn.addEventListener('click', function() {
+                        aspectRow.querySelectorAll('.aspect-ctrl-btn').forEach(function(b) { b.classList.remove('active'); });
+                        this.classList.add('active');
+                        effect.setSetting(ctrl.key, ratio);
+                        rebuildCurrent();
+                    });
+                    aspectRow.appendChild(btn);
+                });
+                row.appendChild(aspectRow);
+            }
+
+            container.appendChild(row);
+        });
+    }
+
+    function rebuildCurrent() {
+        if (!currentEffect) return;
+        var mediaList = EP.Media.getAll();
+        var group = currentEffect.rebuild(mediaList);
+        EP.Core.setDisplayGroup(group);
+        EP.Core.render();
+    }
+
+    function bindAspectSelector() {
+        var aspectMap = { '16:9': 16 / 9, '4:3': 4 / 3, '1:1': 1, '4:5': 4 / 5, '9:16': 9 / 16 };
+        document.querySelectorAll('.aspect-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.aspect-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var ratio = this.dataset.aspect;
+                EP.Core.setAspectRatio(aspectMap[ratio] || 16 / 9);
+                toast('Aspect ratio: ' + ratio);
+            });
+        });
+    }
+
+    function bindOverlayControls() {
+        var checkbox = document.getElementById('overlay-enabled');
+        var controls = document.getElementById('overlay-controls');
+        if (checkbox) {
+            checkbox.addEventListener('change', function() {
+                controls.style.display = this.checked ? 'block' : 'none';
+            });
+        }
+        var fontsize = document.getElementById('overlay-fontsize');
+        var fontsizeVal = document.getElementById('overlay-fontsize-val');
+        if (fontsize) {
+            fontsize.addEventListener('input', function() {
+                fontsizeVal.textContent = this.value + 'px';
+            });
+        }
+        var logoBtn = document.getElementById('upload-logo-btn');
+        var logoInput = document.getElementById('logo-file-input');
+        if (logoBtn) logoBtn.addEventListener('click', function() { logoInput.click(); });
+    }
+
+    function bindEffectsSearch() {
+        var search = document.getElementById('effects-search');
+        if (!search) return;
+        search.addEventListener('input', function() {
+            var q = this.value.trim().toLowerCase();
+            document.querySelectorAll('.effect-card').forEach(function(card) {
+                var name = card.querySelector('.effect-name').textContent.toLowerCase();
+                var desc = card.querySelector('.effect-desc').textContent.toLowerCase();
+                card.style.display = (q === '' || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1) ? '' : 'none';
+            });
+            if (q !== '') {
+                document.querySelectorAll('.category-header').forEach(function(h) { h.classList.add('open'); });
+            }
+        });
+    }
+
+    function toast(msg) {
+        var el = document.getElementById('toast');
+        el.textContent = msg;
+        el.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2000);
+    }
+
+    function getCurrentEffect() { return currentEffect; }
+
+    return {
+        init: init,
+        selectEffect: selectEffect,
+        toast: toast,
+        getCurrentEffect: getCurrentEffect,
+        rebuildCurrent: rebuildCurrent
+    };
+})();

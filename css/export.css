@@ -1,0 +1,64 @@
+/* Export modal */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+    z-index: 500; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 32px; max-width: 460px; width: 92%;
+    position: relative;
+}
+.modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.modal-subtitle { font-size: 12px; color: var(--text-dim); margin-bottom: 20px; font-family: var(--mono); }
+.modal-close {
+    position: absolute; top: 14px; right: 18px; background: none; border: none;
+    color: var(--text-dim); font-size: 22px; cursor: pointer; transition: color 0.2s;
+}
+.modal-close:hover { color: var(--text); }
+
+.export-options { display: flex; flex-direction: column; gap: 10px; }
+.export-option {
+    display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.2s;
+}
+.export-option:hover { background: rgba(255,255,255,0.06); border-color: var(--border-hover); transform: translateY(-1px); }
+.exp-icon {
+    font-size: 24px; width: 40px; height: 40px; display: flex;
+    align-items: center; justify-content: center; background: rgba(255,255,255,0.05);
+    border-radius: 10px; flex-shrink: 0;
+}
+.exp-label { font-weight: 600; font-size: 14px; }
+.exp-desc { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+#export-config-area {
+    margin-top: 16px;
+}
+#export-config-area .config-panel {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; display: none;
+}
+#export-config-area .config-panel.open { display: block; }
+#export-config-area label {
+    display: block; font-size: 11px; color: var(--text-dim);
+    margin-bottom: 4px; font-family: var(--mono);
+}
+#export-config-area .val-hint { font-size: 10px; color: var(--accent); float: right; }
+#export-config-area select, #export-config-area input[type="range"] { width: 100%; margin-bottom: 10px; }
+
+.export-go {
+    width: 100%; padding: 10px; border: none; border-radius: 8px;
+    background: var(--accent); color: #fff; font-weight: 700; font-size: 13px;
+    cursor: pointer; font-family: var(--font); transition: filter 0.2s;
+}
+.export-go:hover { filter: brightness(1.15); }
+.export-go:disabled { background: #333; color: #666; cursor: wait; }
+
+.export-progress { margin-top: 10px; display: none; }
+.export-progress.active { display: block; }
+.export-progress .bar { width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.export-progress .fill { height: 100%; background: var(--accent); border-radius: 3px; width: 0%; transition: width 0.15s; }
+.export-progress .status { font-size: 10px; color: var(--text-dim); margin-top: 4px; font-family: var(--mono); }
