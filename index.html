@@ -73,6 +73,14 @@
                 <span class="val" id="loop-duration-val">12s</span>
             </div>
         </div>
+        <div class="panel-section">
+            <h3>VELOCIDAD</h3>
+            <div class="control-row">
+                <label>Speed</label>
+                <input type="range" id="speed-multiplier" min="0.1" max="3" value="1" step="0.1">
+                <span class="val" id="speed-val">1.0x</span>
+            </div>
+        </div>
         <div class="panel-section" id="effect-controls-container">
             <h3 id="effect-controls-title">AJUSTES</h3>
             <div id="effect-controls"></div>
@@ -169,11 +177,14 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" crossorigin="anonymous"></script>
 
     <!-- App modules -->
     <script src="js/core.js"></script>
+    <script src="js/easing.js"></script>
     <script src="js/timeline.js"></script>
     <script src="js/media-manager.js"></script>
+    <script src="js/overlay.js"></script>
     <script src="js/effects/base.js"></script>
     <script src="js/effects/registry.js"></script>
     <!-- Effects: 3D & Perspective -->

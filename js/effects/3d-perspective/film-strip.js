@@ -34,7 +34,8 @@
         var gap = this.settings.gap / 100 * 2;
         var curve = this.settings.curve3d / 100;
         var ar = getAspectMultiplier(this.settings.cardRatio);
-        var geo = new THREE.PlaneGeometry(cardScale * ar.w, cardScale * ar.h);
+        var cr = this.settings.cornerRadius / 100 * cardScale * 0.5;
+        var geo = EP.RoundedPlaneGeometry(cardScale * ar.w, cardScale * ar.h, cr);
         var totalWidth = count * (cardScale * ar.w + gap);
 
         for (var i = 0; i < count; i++) {

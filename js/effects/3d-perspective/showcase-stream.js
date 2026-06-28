@@ -24,7 +24,8 @@
         var radius = this.settings.radius;
         var tiltDeg = this.settings.tilt;
         var cardScale = this.settings.cardSize / 100 * 3;
-        var geo = new THREE.PlaneGeometry(cardScale, cardScale * 1.2);
+        var cr = this.settings.cornerRadius / 100 * cardScale * 0.5;
+        var geo = EP.RoundedPlaneGeometry(cardScale, cardScale * 1.2, cr);
 
         for (var i = 0; i < count; i++) {
             var angle = (i / count) * Math.PI * 2;

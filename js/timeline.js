@@ -2,6 +2,7 @@ EP.Timeline = (function() {
     var playing = false;
     var currentTime = 0;
     var loopDuration = 12;
+    var speed = 1;
     var lastFrameTime = 0;
     var animFrameId = null;
     var onTickCallback = null;
@@ -36,6 +37,15 @@ EP.Timeline = (function() {
             });
         }
         timeTotal.textContent = loopDuration.toFixed(1) + 's';
+
+        var speedSlider = document.getElementById('speed-multiplier');
+        var speedVal = document.getElementById('speed-val');
+        if (speedSlider) {
+            speedSlider.addEventListener('input', function() {
+                speed = parseFloat(this.value);
+                speedVal.textContent = speed.toFixed(1) + 'x';
+            });
+        }
     }
 
     function toggle() {
@@ -67,12 +77,13 @@ EP.Timeline = (function() {
         lastFrameTime = now;
 
         if (!scrubbing) {
-            currentTime += dt;
+            currentTime += dt * speed;
             if (currentTime >= loopDuration) currentTime -= loopDuration;
+            if (currentTime < 0) currentTime += loopDuration;
         }
 
         updateUI();
-        if (onTickCallback) onTickCallback(currentTime, dt, loopDuration);
+        if (onTickCallback) onTickCallback(currentTime, dt * speed, loopDuration);
         EP.Core.render();
     }
 
@@ -121,6 +132,7 @@ EP.Timeline = (function() {
         setTime: setTime,
         get playing() { return playing; },
         get currentTime() { return currentTime; },
-        get loopDuration() { return loopDuration; }
+        get loopDuration() { return loopDuration; },
+        get speed() { return speed; }
     };
 })();

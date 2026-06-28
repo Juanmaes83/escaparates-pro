@@ -5,7 +5,6 @@ EP.UI = (function() {
     function init() {
         buildEffectsLibrary();
         bindAspectSelector();
-        bindOverlayControls();
         bindEffectsSearch();
     }
 
@@ -180,26 +179,6 @@ EP.UI = (function() {
                 toast('Aspect ratio: ' + ratio);
             });
         });
-    }
-
-    function bindOverlayControls() {
-        var checkbox = document.getElementById('overlay-enabled');
-        var controls = document.getElementById('overlay-controls');
-        if (checkbox) {
-            checkbox.addEventListener('change', function() {
-                controls.style.display = this.checked ? 'block' : 'none';
-            });
-        }
-        var fontsize = document.getElementById('overlay-fontsize');
-        var fontsizeVal = document.getElementById('overlay-fontsize-val');
-        if (fontsize) {
-            fontsize.addEventListener('input', function() {
-                fontsizeVal.textContent = this.value + 'px';
-            });
-        }
-        var logoBtn = document.getElementById('upload-logo-btn');
-        var logoInput = document.getElementById('logo-file-input');
-        if (logoBtn) logoBtn.addEventListener('click', function() { logoInput.click(); });
     }
 
     function bindEffectsSearch() {

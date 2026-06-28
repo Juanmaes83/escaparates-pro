@@ -5,6 +5,7 @@
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
         try { EP.Media.init(); } catch(e) { console.error('Media.init failed:', e); }
         try { EP.UI.init(); } catch(e) { console.error('UI.init failed:', e); }
+        try { EP.Overlay.init(); } catch(e) { console.error('Overlay.init failed:', e); }
         try { EP.Export.init(); } catch(e) { console.error('Export.init failed:', e); }
 
         EP.Media.onChange(function() {
@@ -13,7 +14,13 @@
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {
             var effect = EP.UI.getCurrentEffect();
-            if (effect) effect.update(time, dt, loopDuration);
+            if (effect) {
+                var easingName = effect.settings.easing || 'linear';
+                var easeFn = EP.Easing.get(easingName);
+                var t = time / loopDuration;
+                var easedTime = easeFn(t % 1) * loopDuration;
+                effect.update(easedTime, dt, loopDuration);
+            }
         });
 
         setTimeout(function() {

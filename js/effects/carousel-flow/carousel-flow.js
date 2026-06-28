@@ -22,7 +22,8 @@
         var ratioMap = { '1:1': 1, '4:3': 1.33, '3:4': 0.75, '16:9': 1.78 };
         var ar = ratioMap[this.settings.cardRatio] || 1;
         var w = cardScale * ar;
-        var geo = new THREE.PlaneGeometry(w, cardScale);
+        var cr = this.settings.cornerRadius / 100 * cardScale * 0.5;
+        var geo = EP.RoundedPlaneGeometry(w, cardScale, cr);
 
         for (var i = 0; i < count; i++) {
             var mat = EP.Media.createMaterial(mediaList[i]);

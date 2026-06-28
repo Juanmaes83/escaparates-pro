@@ -2,7 +2,7 @@ var EP = window.EP || {};
 window.EP = EP;
 
 EP.Core = (function() {
-    var scene, camera, renderer, composer, bloomPass, vignettePass;
+    var scene, camera, renderer, composer, bloomPass, vignettePass, controls;
     var displayGroup = null;
     var container;
     var aspectRatio = 16 / 9;
@@ -37,6 +37,16 @@ EP.Core = (function() {
         var dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
         dirLight.position.set(1, 1, 1);
         scene.add(dirLight);
+
+        if (typeof THREE.OrbitControls === 'function') {
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            controls.minDistance = 3;
+            controls.maxDistance = 40;
+        }
 
         if (typeof THREE.EffectComposer === 'function') {
             composer = new THREE.EffectComposer(renderer);
@@ -115,6 +125,7 @@ EP.Core = (function() {
     }
 
     function render() {
+        if (controls) controls.update();
         if (composer) composer.render();
         else if (renderer && scene && camera) renderer.render(scene, camera);
     }
