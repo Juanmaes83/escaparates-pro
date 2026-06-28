@@ -24,6 +24,10 @@ EP.Overlay = (function() {
             if (el) el.addEventListener('change', refresh);
         });
 
+        document.getElementById('upload-logo-btn').addEventListener('click', function() {
+            document.getElementById('logo-file-input').click();
+        });
+
         document.getElementById('logo-file-input').addEventListener('change', function(e) {
             if (!e.target.files.length) return;
             var reader = new FileReader();
