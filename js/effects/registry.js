@@ -6,7 +6,10 @@ EP.Registry = (function() {
         { id: 'grid', name: 'Grid', icon: '⊞' },
         { id: 'stack-scatter', name: 'Stack & Scatter', icon: '🃏' },
         { id: 'spotlight-focus', name: 'Spotlight & Focus', icon: '🔦' },
-        { id: 'reveal-wipe', name: 'Reveal & Wipe', icon: '✨' }
+        { id: 'reveal-wipe', name: 'Reveal & Wipe', icon: '✨' },
+        { id: 'glassmorphism', name: 'Glassmorphism', icon: '💎' },
+        { id: 'parallax', name: 'Parallax', icon: '🏔️' },
+        { id: 'motion', name: 'Motion', icon: '☁️' }
     ];
 
     function register(effect) {
