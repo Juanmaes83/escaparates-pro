@@ -17,10 +17,20 @@ EP.Overlay = (function() {
             refresh();
         });
 
-        var fields = ['overlay-headline', 'overlay-cta', 'overlay-color', 'overlay-fontsize', 'overlay-logo-pos'];
+        var fields = ['overlay-headline', 'overlay-cta', 'overlay-color', 'overlay-fontsize', 'overlay-logo-pos', 'overlay-logo-size'];
         fields.forEach(function(id) {
             var el = document.getElementById(id);
-            if (el) el.addEventListener('input', refresh);
+            if (el) el.addEventListener('input', function() {
+                if (id === 'overlay-fontsize') {
+                    var v = document.getElementById('overlay-fontsize-val');
+                    if (v) v.textContent = el.value + 'px';
+                }
+                if (id === 'overlay-logo-size') {
+                    var v = document.getElementById('overlay-logo-size-val');
+                    if (v) v.textContent = el.value + 'px';
+                }
+                refresh();
+            });
             if (el) el.addEventListener('change', refresh);
         });
 
@@ -53,6 +63,7 @@ EP.Overlay = (function() {
         var color = document.getElementById('overlay-color').value;
         var fontSize = document.getElementById('overlay-fontsize').value;
         var logoPos = document.getElementById('overlay-logo-pos').value;
+        var logoSize = parseInt(document.getElementById('overlay-logo-size').value) || 120;
 
         var html = '';
 
@@ -64,7 +75,8 @@ EP.Overlay = (function() {
                 case 'bottom-left': posStyle = 'bottom:16px;left:16px;'; break;
                 case 'bottom-right': posStyle = 'bottom:16px;right:16px;'; break;
             }
-            html += '<img src="' + logoImg.src + '" style="position:absolute;' + posStyle + 'max-width:120px;max-height:60px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));">';
+            var logoH = Math.round(logoSize * 0.5);
+            html += '<img src="' + logoImg.src + '" style="position:absolute;' + posStyle + 'max-width:' + logoSize + 'px;max-height:' + logoH + 'px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));">';
         }
 
         if (headline) {
@@ -104,7 +116,8 @@ EP.Overlay = (function() {
         ctx.save();
 
         if (logoImg) {
-            var lw = Math.min(120 * scale * 2, logoImg.width);
+            var logoSizeVal = parseInt(document.getElementById('overlay-logo-size').value) || 120;
+            var lw = Math.min(logoSizeVal * scale * 2, logoImg.width);
             var lh = lw * (logoImg.height / logoImg.width);
             var lx = 16 * scale, ly = 16 * scale;
             if (logoPos === 'top-right') lx = w - lw - 16 * scale;
