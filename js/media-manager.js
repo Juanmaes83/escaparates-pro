@@ -1,5 +1,5 @@
 EP.Media = (function() {
-    var slots = [null, null, null, null, null, null];
+    var slots = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
     var slotsContainer;
     var fileInput;
     var activeSlotIndex = -1;
@@ -10,7 +10,10 @@ EP.Media = (function() {
         'https://images.unsplash.com/photo-1731848356615-90cba9fdc862?w=600&q=80',
         'https://images.unsplash.com/photo-1688388040015-c3985c83a12d?w=600&q=80',
         'https://images.unsplash.com/photo-1726591383648-5b5cbe1da1a2?w=600&q=80',
-        'https://images.unsplash.com/photo-1651745314014-a9432659af40?w=600&q=80'
+        'https://images.unsplash.com/photo-1651745314014-a9432659af40?w=600&q=80',
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80'
     ];
 
     function init() {
@@ -51,7 +54,7 @@ EP.Media = (function() {
     function renderSlots() {
         if (!slotsContainer) return;
         slotsContainer.innerHTML = '';
-        for (var i = 0; i < 6; i++) {
+        for (var i = 0; i < 15; i++) {
             var div = document.createElement('div');
             div.className = 'media-slot' + (slots[i] ? ' filled' : '');
             div.dataset.index = i;
@@ -105,7 +108,7 @@ EP.Media = (function() {
         var files = Array.from(e.target.files);
         files.forEach(function(file, fi) {
             var targetIdx = activeSlotIndex + fi;
-            if (targetIdx >= 6) return;
+            if (targetIdx >= 15) return;
             loadFileToSlot(file, targetIdx);
         });
         fileInput.value = '';
