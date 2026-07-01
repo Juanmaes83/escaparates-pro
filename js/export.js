@@ -11,6 +11,7 @@ EP.Export = (function() {
         document.getElementById('exp-video').addEventListener('click', function() { showConfig('video'); });
         document.getElementById('exp-gif').addEventListener('click', function() { showConfig('gif'); });
         document.getElementById('exp-widget').addEventListener('click', function() { showConfig('widget'); });
+        document.getElementById('exp-js').addEventListener('click', function() { showConfig('script'); });
     }
 
     function open() { modal.classList.add('open'); }
@@ -58,6 +59,12 @@ EP.Export = (function() {
                 '<div class="export-progress" id="prog-widget"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
             area.appendChild(panel);
             document.getElementById('go-widget').addEventListener('click', exportWidget);
+        } else if (type === 'script') {
+            panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Genera un archivo JS embebible. El script crea un iframe autonomo con el escaparate activo para pegarlo en webs de clientes.</p>' +
+                '<button class="export-go" id="go-script">Generar JS embebible</button>' +
+                '<div class="export-progress" id="prog-script"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
+            area.appendChild(panel);
+            document.getElementById('go-script').addEventListener('click', exportScript);
         }
     }
 
@@ -501,18 +508,26 @@ EP.Export = (function() {
     // ── Widget HTML Export ──
 
     function exportWidget() {
+        exportStandalone('html');
+    }
+
+    function exportScript() {
+        exportStandalone('script');
+    }
+
+    function exportStandalone(kind) {
         var effect = EP.UI.getCurrentEffect();
         if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
 
-        var prog = document.getElementById('prog-widget');
-        if (prog) { prog.classList.add('active'); prog.querySelector('.status').textContent = 'Generando widget...'; }
+        var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
+        if (prog) { prog.classList.add('active'); prog.querySelector('.status').textContent = kind === 'script' ? 'Generando script...' : 'Generando widget...'; }
 
         var mediaList = EP.Media.getAll();
         var mediaDataUrls = [];
         var pending = mediaList.length;
 
         if (pending === 0) {
-            buildAndDownloadWidget(effect, []);
+            buildAndDownloadStandalone(effect, [], kind);
             return;
         }
 
@@ -526,16 +541,41 @@ EP.Export = (function() {
                 ctx.drawImage(img, 0, 0, c.width, c.height);
                 try { mediaDataUrls[i] = c.toDataURL('image/jpeg', 0.8); } catch(e) { mediaDataUrls[i] = ''; }
                 pending--;
-                if (pending === 0) buildAndDownloadWidget(effect, mediaDataUrls);
+                if (pending === 0) buildAndDownloadStandalone(effect, mediaDataUrls, kind);
             } else {
                 mediaDataUrls[i] = '';
                 pending--;
-                if (pending === 0) buildAndDownloadWidget(effect, mediaDataUrls);
+                if (pending === 0) buildAndDownloadStandalone(effect, mediaDataUrls, kind);
             }
         });
     }
 
-    function buildAndDownloadWidget(effect, mediaUrls) {
+    function buildAndDownloadStandalone(effect, mediaUrls, kind) {
+        var html = buildStandaloneHTML(effect, mediaUrls);
+        var content = html;
+        var filename = 'escaparate-widget.html';
+        var type = 'text/html';
+
+        if (kind === 'script') {
+            content = buildEmbeddableScript(html);
+            filename = 'escaparate-widget.js';
+            type = 'text/javascript';
+        }
+
+        var blob = new Blob([content], { type: type });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
+        if (prog) prog.classList.remove('active');
+        EP.UI.toast(kind === 'script' ? 'Script JS descargado' : 'Widget HTML descargado');
+        close();
+    }
+
+    function buildStandaloneHTML(effect, mediaUrls) {
         var settings = JSON.stringify(effect.settings);
         var bg = effect.settings.background || '#101014';
         var effectId = effect.id;
@@ -569,17 +609,27 @@ EP.Export = (function() {
             buildWidgetPlayerCode() +
             '<\/script></body></html>';
 
-        var blob = new Blob([html], { type: 'text/html' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = 'escaparate-widget.html';
-        a.click();
-        URL.revokeObjectURL(url);
+        return html;
+    }
 
-        var prog = document.getElementById('prog-widget');
-        if (prog) prog.classList.remove('active');
-        EP.UI.toast('Widget HTML descargado');
-        close();
+    function buildEmbeddableScript(html) {
+        return [
+            '(function(){',
+            '  var script = document.currentScript;',
+            '  var frame = document.createElement("iframe");',
+            '  frame.title = "Escaparate Pro";',
+            '  frame.loading = "lazy";',
+            '  frame.style.width = "100%";',
+            '  frame.style.aspectRatio = "16 / 9";',
+            '  frame.style.border = "0";',
+            '  frame.style.display = "block";',
+            '  frame.style.overflow = "hidden";',
+            '  frame.allow = "autoplay; fullscreen";',
+            '  frame.srcdoc = ' + JSON.stringify(html) + ';',
+            '  if (script && script.parentNode) script.parentNode.insertBefore(frame, script);',
+            '  else document.body.appendChild(frame);',
+            '})();'
+        ].join('\n');
     }
 
     function buildWidgetPlayerCode() {
