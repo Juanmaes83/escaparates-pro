@@ -123,6 +123,16 @@ EP.UI = (function() {
                     rebuildCurrent();
                 });
                 row.appendChild(select);
+            } else if (ctrl.type === 'text') {
+                var textInput = document.createElement('input');
+                textInput.type = 'text';
+                textInput.value = effect.settings[ctrl.key] || '';
+                textInput.maxLength = ctrl.maxLength || 80;
+                textInput.addEventListener('input', function() {
+                    effect.setSetting(ctrl.key, this.value);
+                    rebuildCurrent();
+                });
+                row.appendChild(textInput);
             } else if (ctrl.type === 'easing') {
                 var easingRow = document.createElement('div');
                 easingRow.className = 'easing-row';
