@@ -5,6 +5,9 @@
         icon: '🎠',
         description: 'Carrusel cilindrico 3D — las imagenes envuelven un cilindro giratorio tipo marquee Perspective'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cylinderRadius', type: 'range', min: 20, max: 100, default: 60, label: 'Radius', unit: '%' },
         { key: 'cylinderHeight', type: 'range', min: 20, max: 100, default: 60, label: 'Height', unit: '%' },
         { key: 'rotSpeed', type: 'range', min: 10, max: 100, default: 40, label: 'Rotation Speed', unit: '%' },

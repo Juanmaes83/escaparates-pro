@@ -5,8 +5,11 @@
         icon: 'V3',
         description: 'Video o imagen proyectado en geometria 3D con rotacion y bloom opcional'
     }, [
-        { key: 'objectSize', type: 'range', min: 55, max: 155, default: 104, step: 1, label: 'Object Size', unit: '%' },
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'motion', type: 'range', min: 0, max: 220, default: 58, step: 1, label: 'Rotation', unit: '%' },
+        { key: 'objectSize', type: 'range', min: 55, max: 155, default: 104, step: 1, label: 'Object Size', unit: '%' },
         { key: 'exposure', type: 'range', min: 25, max: 120, default: 72, step: 1, label: 'Texture Exposure', unit: '%' },
         { key: 'repeatX', type: 'range', min: 1, max: 8, default: 3, step: 0.1, label: 'Repeat X' },
         { key: 'geometry', type: 'select', options: [{ v: 'cylinder', l: 'Cylinder' }, { v: 'sphere', l: 'Sphere' }, { v: 'box', l: 'Box' }, { v: 'torus', l: 'Torus' }, { v: 'plane', l: 'Plane' }], default: 'cylinder', label: 'Geometry' },

@@ -5,6 +5,9 @@
         icon: '♾️',
         description: 'Galeria circular infinita con scroll automatico — las imagenes pasan en bucle continuo con profundidad y escala dinamica'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'columns', type: 'range', min: 1, max: 3, default: 2, step: 1, label: 'Columns' },
         { key: 'scrollSpeed', type: 'range', min: 10, max: 100, default: 40, label: 'Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 30, max: 100, default: 60, label: 'Card Size', unit: '%' },

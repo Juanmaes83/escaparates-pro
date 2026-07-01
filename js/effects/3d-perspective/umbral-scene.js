@@ -5,6 +5,9 @@
         icon: '🌌',
         description: 'Escena 3D envolvente tipo UMBRAL — las imagenes flotan como texturas de objetos 3D en un espacio cinematografico'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'objectCount', type: 'range', min: 3, max: 12, default: 6, step: 1, label: 'Objects' },
         { key: 'spread', type: 'range', min: 20, max: 100, default: 60, label: 'Spread', unit: '%' },
         { key: 'rotSpeed', type: 'range', min: 10, max: 100, default: 35, label: 'Rotation', unit: '%' },

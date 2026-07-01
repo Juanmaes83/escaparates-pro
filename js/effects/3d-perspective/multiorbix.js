@@ -5,6 +5,9 @@
         icon: '🪐',
         description: 'Galeria multi-orbital 3D — tres anillos concentricos de imagenes girando en direcciones opuestas con profundidad cinematografica'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'ringCount', type: 'range', min: 2, max: 4, default: 3, step: 1, label: 'Rings' },
         { key: 'cardsPerRing', type: 'range', min: 6, max: 20, default: 12, step: 1, label: 'Cards/Ring' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 35, label: 'Speed', unit: '%' },

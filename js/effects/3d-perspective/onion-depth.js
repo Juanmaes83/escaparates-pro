@@ -5,6 +5,9 @@
         icon: '🧅',
         description: 'Capas con profundidad tipo cebolla — las imagenes se apilan con separacion 3D y se revelan una a una como pelar capas'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'layerGap', type: 'range', min: 10, max: 100, default: 50, label: 'Layer Gap', unit: '%' },
         { key: 'peelSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Peel Speed', unit: '%' },
         { key: 'scaleDecay', type: 'range', min: 0, max: 100, default: 40, label: 'Scale Decay', unit: '%' },

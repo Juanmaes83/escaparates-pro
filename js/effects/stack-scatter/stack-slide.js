@@ -5,6 +5,9 @@
         icon: '📚',
         description: 'Tarjetas se apilan con aterrizaje elastico'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 25, max: 55, default: 40, label: 'Card Size', unit: '%' },
         { key: 'easing', type: 'easing', options: ['elastic', 'bounce', 'overshoot', 'smooth'], default: 'elastic', label: 'Easing' },
         { key: 'background', type: 'color', default: '#101014', label: 'Background' }

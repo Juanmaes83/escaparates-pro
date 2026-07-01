@@ -5,6 +5,10 @@
         icon: '🎞️',
         description: 'Banda horizontal curvada en 3D'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'select', options: [{ v: 'continuous', l: 'Continuous' }, { v: 'stop-at-center', l: 'Stop at center' }], default: 'continuous', label: 'Motion' },
         { key: 'cardSize', type: 'range', min: 15, max: 50, default: 32, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 6, max: 40, default: 18, step: 1, label: 'Cards' },
         { key: 'gap', type: 'range', min: 0, max: 10, default: 2.5, step: 0.5, label: 'Gap', unit: '%' },
@@ -12,7 +16,6 @@
         { key: 'cornerRadius', type: 'range', min: 0, max: 30, default: 5, label: 'Corner Radius', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot', 'bounce', 'elastic', 'linear'], default: 'smooth', label: 'Easing' },
         { key: 'cardRatio', type: 'aspect', options: ['1:1', '4:3', '3:4', '16:9', '9:16'], default: '1:1', label: 'Card Ratio' },
-        { key: 'motion', type: 'select', options: [{ v: 'continuous', l: 'Continuous' }, { v: 'stop-at-center', l: 'Stop at center' }], default: 'continuous', label: 'Motion' },
         { key: 'background', type: 'color', default: '#101014', label: 'Background' }
     ]);
 

@@ -5,6 +5,9 @@
         icon: '💧',
         description: 'Deformacion liquida con ondas radiales y transicion fluida entre imagenes'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 40, max: 90, default: 72, label: 'Card Size', unit: '%' },
         { key: 'waveStrength', type: 'range', min: 10, max: 100, default: 60, label: 'Wave Force', unit: '%' },
         { key: 'waveFreq', type: 'range', min: 2, max: 20, default: 8, step: 1, label: 'Wave Freq' },

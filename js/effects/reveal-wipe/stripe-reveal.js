@@ -5,6 +5,9 @@
         icon: '▥',
         description: 'Imagen que se reensambla desde franjas'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 40, max: 80, default: 65, label: 'Card Size', unit: '%' },
         { key: 'stripes', type: 'range', min: 3, max: 12, default: 6, step: 1, label: 'Stripes' },
         { key: 'easing', type: 'easing', options: ['overshoot', 'smooth', 'snappy', 'elastic'], default: 'overshoot', label: 'Easing' },

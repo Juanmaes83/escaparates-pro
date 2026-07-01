@@ -5,6 +5,9 @@
         icon: '🌪️',
         description: 'Imagenes girando en espiral descendente tipo tornado con profundidad'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 15, max: 45, default: 28, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 6, max: 20, default: 12, step: 1, label: 'Cards' },
         { key: 'spiralTight', type: 'range', min: 10, max: 100, default: 50, label: 'Spiral Tight', unit: '%' },

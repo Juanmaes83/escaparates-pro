@@ -5,17 +5,19 @@
         icon: '💎',
         description: 'Grid isometrico 3D — las imagenes se muestran como cards en perspectiva isometrica con animacion de entrada'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cols', type: 'range', min: 2, max: 6, default: 3, step: 1, label: 'Columns' },
         { key: 'rows', type: 'range', min: 2, max: 5, default: 3, step: 1, label: 'Rows' },
-        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
-        { key: 'motion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Motion' },
-        { key: 'motionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Motion Speed', unit: '%' },
         { key: 'tiltAngle', type: 'range', min: 10, max: 60, default: 35, label: 'Tilt Angle' },
         { key: 'cardGap', type: 'range', min: 10, max: 100, default: 50, label: 'Gap', unit: '%' },
         { key: 'elevation', type: 'range', min: 0, max: 100, default: 40, label: 'Elevation', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#0e0e1a', label: 'Background' }
     ]);
+    effect._handlesOutputSize = true;
+    effect._handlesMotionControls = true;
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -95,8 +97,8 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var motionOn = this.settings.motion !== 'off';
-        var speed = motionOn ? this.settings.motionSpeed / 100 : 0;
+        var motionOn = this.settings.playbackMotion !== 'off';
+        var speed = motionOn ? this.settings.playbackMotionSpeed / 100 : 0;
         var t = (time * speed) / loopDuration;
         var outputScale = this.settings.outputSize / 100;
 

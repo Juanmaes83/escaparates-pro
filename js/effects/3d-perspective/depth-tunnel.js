@@ -5,6 +5,9 @@
         icon: '🕳️',
         description: 'Tunel inmersivo donde las imagenes forman las paredes con profundidad infinita tipo Interstellar'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'tunnelRadius', type: 'range', min: 2, max: 6, default: 3.5, step: 0.5, label: 'Radius' },
         { key: 'tunnelLength', type: 'range', min: 20, max: 80, default: 50, label: 'Length' },
         { key: 'panelCount', type: 'range', min: 4, max: 10, default: 6, step: 1, label: 'Sides' },

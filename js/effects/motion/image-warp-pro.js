@@ -5,10 +5,13 @@
         icon: 'IW',
         description: 'Ondas direccionales sobre imagen o video con exportacion limpia y color natural'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 50, step: 1, label: 'Motion', unit: '%' },
         { key: 'cardSize', type: 'range', min: 55, max: 150, default: 112, step: 1, label: 'Image Size', unit: '%' },
         { key: 'amplitude', type: 'range', min: 0, max: 60, default: 8, step: 1, label: 'Amplitude', unit: '%' },
         { key: 'frequency', type: 'range', min: 2, max: 80, default: 18, step: 1, label: 'Frequency' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 50, step: 1, label: 'Motion', unit: '%' },
         { key: 'safeZone', type: 'range', min: 0, max: 100, default: 40, step: 1, label: 'Safe Zone', unit: '%' },
         { key: 'waveAngle', type: 'range', min: -180, max: 180, default: 122, step: 1, label: 'Wave Angle', unit: 'deg' },
         { key: 'maskAngle', type: 'range', min: -180, max: 180, default: -54, step: 1, label: 'Mask Angle', unit: 'deg' },

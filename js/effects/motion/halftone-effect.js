@@ -5,6 +5,9 @@
         icon: '🔘',
         description: 'Efecto halftone/dither retro — las imagenes se convierten en patrones de puntos animados tipo impresion offset'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'dotSize', type: 'range', min: 3, max: 20, default: 8, step: 1, label: 'Dot Size' },
         { key: 'contrast', type: 'range', min: 10, max: 100, default: 60, label: 'Contrast', unit: '%' },
         { key: 'colorMode', type: 'range', min: 1, max: 3, default: 1, step: 1, label: 'Color (1=BW, 2=CMYK, 3=RGB)' },

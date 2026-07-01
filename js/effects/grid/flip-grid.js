@@ -5,6 +5,9 @@
         icon: '🔄',
         description: 'Efecto flip entre dos sets con onda/ripple'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 20, max: 50, default: 30, label: 'Card Size', unit: '%' },
         { key: 'cols', type: 'range', min: 2, max: 5, default: 3, step: 1, label: 'Columns' },
         { key: 'rows', type: 'range', min: 2, max: 4, default: 2, step: 1, label: 'Rows' },

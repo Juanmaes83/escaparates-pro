@@ -5,6 +5,9 @@
         icon: '🚇',
         description: 'Tunel cuadrado 3D con imagenes desplazandose por las paredes internas — efecto marquee inmersivo'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'scrollSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Scroll Speed', unit: '%' },
         { key: 'tunnelDepth', type: 'range', min: 20, max: 100, default: 60, label: 'Tunnel Depth', unit: '%' },
         { key: 'wallSize', type: 'range', min: 20, max: 100, default: 70, label: 'Wall Size', unit: '%' },

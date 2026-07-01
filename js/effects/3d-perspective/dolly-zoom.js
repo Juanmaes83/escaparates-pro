@@ -5,6 +5,9 @@
         icon: '🎬',
         description: 'Efecto Vertigo de Hitchcock con distorsion de perspectiva'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 25, max: 55, default: 38, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 4, max: 16, default: 8, step: 1, label: 'Cards' },
         { key: 'fovRange', type: 'range', min: 20, max: 100, default: 60, label: 'FOV Range', unit: '%' },

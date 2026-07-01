@@ -5,6 +5,9 @@
         icon: 'IC',
         description: 'Galeria circular 3D inspirada en scroll infinito, adaptada a timeline y media slots'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'items', type: 'range', min: 6, max: 30, default: 18, step: 1, label: 'Items' },
         { key: 'radius', type: 'range', min: 180, max: 620, default: 360, step: 1, label: 'Radius', unit: '%' },
         { key: 'cardSize', type: 'range', min: 45, max: 140, default: 82, step: 1, label: 'Card Size', unit: '%' },

@@ -5,6 +5,9 @@
         icon: '🎭',
         description: 'Cortinas de teatro que se abren revelando cada imagen con fisica de tela'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 40, max: 90, default: 70, label: 'Card Size', unit: '%' },
         { key: 'curtainColor', type: 'color', default: '#8b0000', label: 'Curtain Color' },
         { key: 'folds', type: 'range', min: 3, max: 12, default: 6, step: 1, label: 'Folds' },

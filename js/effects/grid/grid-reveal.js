@@ -5,6 +5,9 @@
         icon: '⊞',
         description: 'Mosaico 2x2 que se ensambla y se dispersa'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 25, max: 60, default: 42, label: 'Card Size', unit: '%' },
         { key: 'gap', type: 'range', min: 0, max: 10, default: 3, step: 0.5, label: 'Gap', unit: '%' },
         { key: 'easing', type: 'easing', options: ['overshoot', 'bounce', 'elastic', 'smooth'], default: 'overshoot', label: 'Easing' },

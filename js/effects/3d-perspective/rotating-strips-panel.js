@@ -5,6 +5,9 @@
         icon: 'RS',
         description: 'Imagen dividida en tiras giratorias con volumen 3D y controles de tamano'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'width', type: 'range', min: 55, max: 160, default: 112, step: 1, label: 'Width', unit: '%' },
         { key: 'height', type: 'range', min: 45, max: 140, default: 92, step: 1, label: 'Height', unit: '%' },
         { key: 'strips', type: 'range', min: 8, max: 48, default: 24, step: 1, label: 'Strips' },

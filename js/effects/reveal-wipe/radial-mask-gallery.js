@@ -5,6 +5,9 @@
         icon: 'RM',
         description: 'Transicion por puntos radiales inspirada en Galeria con Mascara RadiaL'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'dotSize', type: 'range', min: 8, max: 48, default: 22, step: 1, label: 'Dot Grid' },
         { key: 'speed', type: 'range', min: 20, max: 220, default: 90, step: 1, label: 'Speed', unit: '%' },
         { key: 'feather', type: 'range', min: 1, max: 40, default: 10, step: 1, label: 'Feather', unit: '%' },

@@ -5,6 +5,9 @@
         icon: '📦',
         description: 'Cubo 3D mejorado con 6 caras de imagenes — rotacion dinamica multi-eje con HUD informativo y transiciones'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cubeSize', type: 'range', min: 30, max: 100, default: 65, label: 'Cube Size', unit: '%' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 30, label: 'Rotation Speed', unit: '%' },
         { key: 'autoSwitch', type: 'range', min: 10, max: 100, default: 50, label: 'Face Switch Rate', unit: '%' },

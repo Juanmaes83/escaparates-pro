@@ -5,6 +5,9 @@
         icon: '🎡',
         description: 'Rueda con anticipacion y rebote fisico'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 20, max: 55, default: 38, label: 'Card Size', unit: '%' },
         { key: 'radius', type: 'range', min: 2, max: 7, default: 4, step: 0.5, label: 'Radius' },
         { key: 'easing', type: 'easing', options: ['bounce', 'overshoot', 'elastic', 'smooth'], default: 'bounce', label: 'Easing' },

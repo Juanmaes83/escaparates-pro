@@ -5,6 +5,9 @@
         icon: '✨',
         description: 'Campo de estrellas infinito — las imagenes flotan entre particulas estelares como en un viaje por el espacio'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'starCount', type: 'range', min: 50, max: 500, default: 200, step: 10, label: 'Stars' },
         { key: 'travelSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Speed', unit: '%' },
         { key: 'imageSize', type: 'range', min: 20, max: 100, default: 50, label: 'Image Size', unit: '%' },

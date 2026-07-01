@@ -5,6 +5,9 @@
         icon: '🌍',
         description: 'Globo 3D con imagenes distribuidas esfericamente — rotacion continua con densidad alta tipo planeta de fotos'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardCount', type: 'range', min: 20, max: 80, default: 40, step: 1, label: 'Photos' },
         { key: 'radius', type: 'range', min: 30, max: 100, default: 60, label: 'Globe Radius', unit: '%' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 25, label: 'Rotation Speed', unit: '%' },

@@ -5,6 +5,9 @@
         icon: '❄️',
         description: 'Efecto atmosferico de nieve y viento 3D sobre las imagenes — particulas cayendo con turbulencia configurable'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'particleCount', type: 'range', min: 100, max: 2000, default: 800, step: 50, label: 'Snowflakes' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 40, label: 'Fall Speed', unit: '%' },
         { key: 'windStrength', type: 'range', min: 0, max: 100, default: 35, label: 'Wind', unit: '%' },

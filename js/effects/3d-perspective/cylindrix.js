@@ -5,6 +5,9 @@
         icon: '🎞️',
         description: 'Cinta infinita cilindrica — las imagenes se deforman sobre un cilindro virtual con scroll continuo tipo pelicula'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'radius', type: 'range', min: 20, max: 100, default: 50, label: 'Cylinder Radius', unit: '%' },
         { key: 'cardCount', type: 'range', min: 4, max: 16, default: 8, step: 1, label: 'Cards' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 35, label: 'Speed', unit: '%' },

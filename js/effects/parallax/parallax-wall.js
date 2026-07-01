@@ -5,6 +5,9 @@
         icon: '🧱',
         description: 'Muro parallax de 5 capas — las imagenes flotan a distintas profundidades con movimiento cinematografico tipo galeria infinita'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'layerCount', type: 'range', min: 2, max: 5, default: 4, step: 1, label: 'Layers' },
         { key: 'depthSpread', type: 'range', min: 10, max: 100, default: 50, label: 'Depth Spread', unit: '%' },
         { key: 'scrollSpeed', type: 'range', min: 10, max: 100, default: 40, label: 'Scroll Speed', unit: '%' },

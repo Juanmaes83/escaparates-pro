@@ -5,6 +5,9 @@
         icon: 'TJ',
         description: 'Viaje por tubo curvo con textura rayada, adaptado del proyecto del TXT'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'radius', type: 'range', min: 30, max: 120, default: 62, step: 1, label: 'Tube Radius', unit: '%' },
         { key: 'stripe', type: 'range', min: 4, max: 48, default: 18, step: 1, label: 'Stripes' },
         { key: 'speed', type: 'range', min: 10, max: 180, default: 60, step: 1, label: 'Speed', unit: '%' },

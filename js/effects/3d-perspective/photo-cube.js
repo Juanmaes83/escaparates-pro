@@ -5,6 +5,9 @@
         icon: '🎲',
         description: 'Cubo 3D con 6 caras de fotos, reflexion y sombra'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cubeSize', type: 'range', min: 20, max: 60, default: 38, label: 'Cube Size', unit: '%' },
         { key: 'rotSpeedX', type: 'range', min: 0, max: 100, default: 30, label: 'Rot X', unit: '%' },
         { key: 'rotSpeedY', type: 'range', min: 0, max: 100, default: 60, label: 'Rot Y', unit: '%' },

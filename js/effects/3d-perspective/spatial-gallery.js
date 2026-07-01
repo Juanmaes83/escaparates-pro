@@ -5,6 +5,9 @@
         icon: '🪟',
         description: 'Galeria espacial tipo Samsung Spatial — imagenes flotando con parallax 3D real'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 20, max: 50, default: 32, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 5, max: 15, default: 9, step: 1, label: 'Cards' },
         { key: 'depthSpread', type: 'range', min: 2, max: 12, default: 6, step: 0.5, label: 'Depth' },

@@ -5,6 +5,9 @@
         icon: '🏠',
         description: 'Habitacion 3D con imagenes en paredes, suelo y techo'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'roomSize', type: 'range', min: 3, max: 10, default: 5, step: 0.5, label: 'Room Size' },
         { key: 'roomHeight', type: 'range', min: 2, max: 6, default: 3, step: 0.5, label: 'Room Height' },
         { key: 'rotSpeed', type: 'range', min: 10, max: 100, default: 40, label: 'Rot Speed', unit: '%' },

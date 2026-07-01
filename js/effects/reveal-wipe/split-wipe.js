@@ -5,15 +5,17 @@
         icon: '🚪',
         description: 'Paneles que se abren como puertas revelando la siguiente imagen'
     }, [
-        { key: 'panels', type: 'range', min: 2, max: 6, default: 2, step: 1, label: 'Panels' },
         { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
-        { key: 'motion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Motion' },
-        { key: 'motionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Motion Speed', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'panels', type: 'range', min: 2, max: 6, default: 2, step: 1, label: 'Panels' },
         { key: 'transitionSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Transition', unit: '%' },
         { key: 'cornerRadius', type: 'range', min: 0, max: 20, default: 4, label: 'Corner Radius', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot'], default: 'snappy', label: 'Easing' },
         { key: 'background', type: 'color', default: '#080810', label: 'Background' }
     ]);
+    effect._handlesOutputSize = true;
+    effect._handlesMotionControls = true;
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -60,8 +62,8 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var motionOn = this.settings.motion !== 'off';
-        var motionSpeed = motionOn ? this.settings.motionSpeed / 100 : 0;
+        var motionOn = this.settings.playbackMotion !== 'off';
+        var motionSpeed = motionOn ? this.settings.playbackMotionSpeed / 100 : 0;
         var t = motionOn ? (time * motionSpeed) / loopDuration : 0.5;
         t = t % 1;
         var count = this.group.children.length;

@@ -5,6 +5,9 @@
         icon: '🪟',
         description: 'Vidriera procedural 3D — las imagenes se fragmentan en piezas de cristal con luz y reflejos'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'fragments', type: 'range', min: 8, max: 60, default: 24, step: 1, label: 'Fragments' },
         { key: 'gapSize', type: 'range', min: 0, max: 30, default: 8, label: 'Lead Width', unit: '%' },
         { key: 'depth', type: 'range', min: 0, max: 100, default: 30, label: '3D Depth', unit: '%' },

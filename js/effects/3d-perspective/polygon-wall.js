@@ -5,6 +5,9 @@
         icon: '🔷',
         description: 'Muro de poligonos 3D con texturas de imagen — pared geometrica animada con profundidad'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'polyCount', type: 'range', min: 6, max: 40, default: 18, step: 1, label: 'Polygons' },
         { key: 'polySize', type: 'range', min: 10, max: 100, default: 50, label: 'Size', unit: '%' },
         { key: 'wallSpread', type: 'range', min: 20, max: 100, default: 60, label: 'Spread', unit: '%' },

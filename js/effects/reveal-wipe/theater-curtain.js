@@ -5,6 +5,9 @@
         icon: '🎭',
         description: 'Cortina de teatro roja que se abre revelando las imagenes — intro cinematografica tipo pelicula'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'curtainColor', type: 'color', default: '#8b0000', label: 'Curtain Color' },
         { key: 'foldCount', type: 'range', min: 3, max: 20, default: 10, label: 'Folds' },
         { key: 'revealSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Reveal Speed', unit: '%' },

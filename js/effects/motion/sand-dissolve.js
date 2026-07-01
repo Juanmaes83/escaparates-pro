@@ -5,6 +5,9 @@
         icon: '⏳',
         description: 'La imagen se desintegra en granos de arena que caen con gravedad — efecto disolucion tipo reloj de arena'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'gridSize', type: 'range', min: 8, max: 30, default: 16, step: 1, label: 'Grain Grid' },
         { key: 'fallSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Fall Speed', unit: '%' },
         { key: 'scatter', type: 'range', min: 0, max: 100, default: 40, label: 'Scatter', unit: '%' },

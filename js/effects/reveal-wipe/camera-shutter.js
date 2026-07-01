@@ -5,6 +5,9 @@
         icon: '📷',
         description: 'Obturador de camara — aspas poligonales se abren y cierran revelando cada imagen como una foto profesional'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'bladeCount', type: 'range', min: 4, max: 12, default: 8, step: 1, label: 'Blades' },
         { key: 'openSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Open Speed', unit: '%' },
         { key: 'bladeColor', type: 'color', default: '#1a1a1a', label: 'Blade Color' },

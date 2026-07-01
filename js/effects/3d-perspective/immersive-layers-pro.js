@@ -5,6 +5,9 @@
         icon: 'IL',
         description: 'Tunel de capas inmersivas con profundidad, estela opcional y particulas suaves'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'layerSize', type: 'range', min: 70, max: 160, default: 118, step: 1, label: 'Layer Size', unit: '%' },
         { key: 'layers', type: 'range', min: 4, max: 18, default: 9, step: 1, label: 'Layers' },
         { key: 'speed', type: 'range', min: 0, max: 220, default: 80, step: 1, label: 'Depth Speed', unit: '%' },

@@ -61,6 +61,10 @@ EP.EffectBase.prototype.setSetting = function(key, value) {
 EP.EffectBase.prototype.rebuild = function(mediaList) {
     this.dispose();
     this.group = this.build(mediaList);
+    if (this.group && this.settings.outputSize !== undefined && !this._handlesOutputSize) {
+        var outputScale = Math.max(0.1, this.settings.outputSize / 100);
+        this.group.scale.setScalar(outputScale);
+    }
     return this.group;
 };
 

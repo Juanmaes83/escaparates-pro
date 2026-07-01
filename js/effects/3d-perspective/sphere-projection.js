@@ -5,6 +5,9 @@
         icon: '🌐',
         description: 'Grid esferico infinito — las imagenes se distribuyen en una esfera proyectada con scroll automatico tipo globo interactivo'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'gridCols', type: 'range', min: 3, max: 8, default: 5, step: 1, label: 'Columns' },
         { key: 'gridRows', type: 'range', min: 2, max: 6, default: 3, step: 1, label: 'Rows' },
         { key: 'sphereRadius', type: 'range', min: 20, max: 100, default: 60, label: 'Radius', unit: '%' },

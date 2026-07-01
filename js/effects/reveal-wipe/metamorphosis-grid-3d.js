@@ -5,6 +5,9 @@
         icon: 'MG',
         description: 'Cuadricula 3D que cae y revela una segunda imagen'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'rows', type: 'range', min: 8, max: 32, default: 18, step: 1, label: 'Rows' },
         { key: 'cols', type: 'range', min: 8, max: 36, default: 22, step: 1, label: 'Columns' },
         { key: 'gap', type: 'range', min: 0, max: 12, default: 3, step: 1, label: 'Gap', unit: '%' },

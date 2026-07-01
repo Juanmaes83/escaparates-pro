@@ -5,11 +5,14 @@
         icon: 'DA',
         description: 'Dither, halftone y ASCII visual para video o imagen con color natural por defecto'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 42, step: 1, label: 'Motion', unit: '%' },
         { key: 'cardSize', type: 'range', min: 55, max: 145, default: 112, step: 1, label: 'Canvas Size', unit: '%' },
         { key: 'cellSize', type: 'range', min: 6, max: 42, default: 16, step: 1, label: 'Cell Size' },
         { key: 'gap', type: 'range', min: 0, max: 16, default: 2, step: 0.5, label: 'Gap' },
         { key: 'contrast', type: 'range', min: 50, max: 170, default: 100, step: 1, label: 'Contrast', unit: '%' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 42, step: 1, label: 'Motion', unit: '%' },
         { key: 'shape', type: 'select', options: [{ v: 'circle', l: 'Circle' }, { v: 'square', l: 'Square' }, { v: 'diamond', l: 'Diamond' }, { v: 'line', l: 'Line' }], default: 'circle', label: 'Shape' },
         { key: 'background', type: 'color', default: '#050505', label: 'Background' }
     ]);

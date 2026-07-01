@@ -5,10 +5,13 @@
         icon: 'GS',
         description: 'Refraccion tipo cristal sobre imagen o video, sin oscurecer por defecto'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 38, step: 1, label: 'Motion', unit: '%' },
         { key: 'cardSize', type: 'range', min: 60, max: 150, default: 112, step: 1, label: 'Image Size', unit: '%' },
         { key: 'frequency', type: 'range', min: 2, max: 42, default: 9, step: 0.5, label: 'Frequency' },
         { key: 'distortion', type: 'range', min: 0, max: 40, default: 7, step: 1, label: 'Distortion', unit: '%' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 38, step: 1, label: 'Motion', unit: '%' },
         { key: 'lineGlow', type: 'range', min: 0, max: 100, default: 8, step: 1, label: 'Edge Glow', unit: '%' },
         { key: 'angle', type: 'range', min: -180, max: 180, default: 136, step: 1, label: 'Angle', unit: 'deg' },
         { key: 'lighting', type: 'select', options: [{ v: 'natural', l: 'Natural' }, { v: 'prism', l: 'Prism optional' }], default: 'natural', label: 'Lighting' },

@@ -5,6 +5,9 @@
         icon: '💎',
         description: 'Cubo de cristal 3D con foto interior — refraccion, transparencia y rotacion multi-eje'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'shape', type: 'select', options: ['Cube', 'Sphere', 'Cylinder', 'Octahedron', 'Torus'], default: 'Cube', label: 'Shape' },
         { key: 'glassOpacity', type: 'range', min: 10, max: 90, default: 35, label: 'Glass Opacity', unit: '%' },
         { key: 'photoScale', type: 'range', min: 50, max: 150, default: 100, label: 'Photo Scale', unit: '%' },

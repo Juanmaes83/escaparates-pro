@@ -5,6 +5,9 @@
         icon: '🗼',
         description: 'Tira vertical curvada en 3D'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 20, max: 60, default: 35, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 6, max: 40, default: 16, step: 1, label: 'Cards' },
         { key: 'height', type: 'range', min: 4, max: 16, default: 10, step: 0.5, label: 'Height' },

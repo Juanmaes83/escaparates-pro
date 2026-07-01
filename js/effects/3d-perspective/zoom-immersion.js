@@ -5,6 +5,9 @@
         icon: '🔍',
         description: 'Zoom cinematografico que te sumerge de una imagen a la siguiente — efecto inmersivo de profundidad infinita'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'zoomDepth', type: 'range', min: 10, max: 100, default: 60, label: 'Zoom Depth', unit: '%' },
         { key: 'spiralAmount', type: 'range', min: 0, max: 100, default: 20, label: 'Spiral', unit: '%' },
         { key: 'fadeOverlap', type: 'range', min: 10, max: 80, default: 40, label: 'Fade Overlap', unit: '%' },

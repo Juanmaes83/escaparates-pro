@@ -5,6 +5,9 @@
         icon: '🔮',
         description: 'Grid infinito con distorsion concava tipo ojo de pez — efecto lente sobre mosaico de imagenes'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 30, max: 80, default: 50, label: 'Card Size', unit: '%' },
         { key: 'cols', type: 'range', min: 3, max: 10, default: 6, step: 1, label: 'Columns' },
         { key: 'rows', type: 'range', min: 2, max: 8, default: 4, step: 1, label: 'Rows' },

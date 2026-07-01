@@ -5,6 +5,9 @@
         icon: '🌀',
         description: 'Imagenes orbitando un punto gravitatorio con colapso y explosion'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 15, max: 45, default: 28, label: 'Card Size', unit: '%' },
         { key: 'orbitRadius', type: 'range', min: 2, max: 8, default: 4.5, step: 0.5, label: 'Orbit Radius' },
         { key: 'gravityPull', type: 'range', min: 10, max: 100, default: 60, label: 'Gravity', unit: '%' },

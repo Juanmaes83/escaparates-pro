@@ -5,6 +5,9 @@
         icon: '✨',
         description: 'Filtros SVG animados sobre imagenes — turbulencia, desplazamiento y efectos de distorsion organica'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'filterType', type: 'select', options: ['Turbulence', 'Ripple', 'Smoke', 'Glitch', 'Morph'], default: 'Turbulence', label: 'Filter Type' },
         { key: 'intensity', type: 'range', min: 5, max: 100, default: 40, label: 'Intensity', unit: '%' },
         { key: 'frequency', type: 'range', min: 1, max: 20, default: 5, label: 'Frequency' },

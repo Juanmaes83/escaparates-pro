@@ -5,6 +5,9 @@
         icon: '🌀',
         description: 'Portal circular que succiona la camara hacia la siguiente imagen tipo Doctor Strange'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 40, max: 90, default: 70, label: 'Card Size', unit: '%' },
         { key: 'portalRings', type: 'range', min: 3, max: 10, default: 5, step: 1, label: 'Rings' },
         { key: 'portalSpeed', type: 'range', min: 10, max: 100, default: 60, label: 'Speed', unit: '%' },

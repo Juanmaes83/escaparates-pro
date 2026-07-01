@@ -5,6 +5,9 @@
         icon: 'BK',
         description: 'Libro 3D con paginas multimedia y hojeo fluido'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'pages', type: 'range', min: 3, max: 9, default: 7, step: 1, label: 'Pages' },
         { key: 'progress', type: 'range', min: 0, max: 100, default: 50, step: 1, label: 'Page Turn', unit: '%' },
         { key: 'auto', type: 'select', options: [{ v: 'on', l: 'Auto' }, { v: 'off', l: 'Manual' }], default: 'on', label: 'Motion' },

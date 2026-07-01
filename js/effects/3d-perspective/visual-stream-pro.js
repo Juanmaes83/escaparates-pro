@@ -5,6 +5,9 @@
         icon: 'VS',
         description: 'Doble corriente 3D de tarjetas con logo central, escala amplia y ritmo controlado'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 35, max: 130, default: 82, step: 1, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 24, max: 160, default: 72, step: 2, label: 'Cards' },
         { key: 'speed', type: 'range', min: 0, max: 200, default: 70, step: 1, label: 'Motion', unit: '%' },

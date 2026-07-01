@@ -5,9 +5,12 @@
         icon: 'LC',
         description: 'Cilindro texturizado con logos y lineas en movimiento del proyecto del TXT'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 220, default: 80, step: 1, label: 'Motion', unit: '%' },
         { key: 'logoText', type: 'text', default: 'ESCAPARATES PRO', label: 'Logo Text' },
         { key: 'size', type: 'range', min: 55, max: 160, default: 105, step: 1, label: 'Size', unit: '%' },
-        { key: 'motion', type: 'range', min: 0, max: 220, default: 80, step: 1, label: 'Motion', unit: '%' },
         { key: 'density', type: 'range', min: 10, max: 80, default: 34, step: 1, label: 'Lines' },
         { key: 'accent', type: 'color', default: '#ffffff', label: 'Accent' },
         { key: 'background', type: 'color', default: '#050505', label: 'Background' }

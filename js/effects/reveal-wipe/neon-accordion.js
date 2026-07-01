@@ -5,6 +5,9 @@
         icon: '🎆',
         description: 'Galeria acordeon cinematica con paneles expandibles, bordes neon y modo ambiente'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'panelCount', type: 'range', min: 3, max: 9, default: 5, step: 1, label: 'Panels' },
         { key: 'expandRatio', type: 'range', min: 30, max: 80, default: 55, label: 'Expand Ratio', unit: '%' },
         { key: 'neonIntensity', type: 'range', min: 0, max: 100, default: 60, label: 'Neon Glow', unit: '%' },

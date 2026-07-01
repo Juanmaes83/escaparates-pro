@@ -5,6 +5,9 @@
         icon: '✨',
         description: 'Flujo de particulas-foto en arco 3D — miles de sprites de imagenes fluyendo con GPU instancing'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'count', type: 'range', min: 500, max: 8000, default: 3000, step: 100, label: 'Particles' },
         { key: 'particleSize', type: 'range', min: 10, max: 100, default: 50, label: 'Size', unit: '%' },
         { key: 'flowSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Flow Speed', unit: '%' },

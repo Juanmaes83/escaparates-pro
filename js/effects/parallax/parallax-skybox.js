@@ -5,6 +5,9 @@
         icon: '🌄',
         description: 'Parallax 3D automatico tipo skybox — las imagenes cobran profundidad con movimiento de camara cinematografico sin scroll'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'depthAmount', type: 'range', min: 5, max: 100, default: 50, label: 'Depth', unit: '%' },
         { key: 'cameraRange', type: 'range', min: 10, max: 100, default: 40, label: 'Camera Range', unit: '%' },
         { key: 'zoomPulse', type: 'range', min: 0, max: 100, default: 30, label: 'Zoom Pulse', unit: '%' },

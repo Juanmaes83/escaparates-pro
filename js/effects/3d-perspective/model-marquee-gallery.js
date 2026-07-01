@@ -5,12 +5,15 @@
         icon: 'MG',
         description: 'Galeria 3D con geometria editable y textura de texto en marquesina'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 55, step: 1, label: 'Motion', unit: '%' },
         { key: 'text', type: 'text', default: 'GALLERY', label: 'Text', maxLength: 40 },
         { key: 'model', type: 'select', options: [{ v: 'torus', l: 'Torus' }, { v: 'sphere', l: 'Sphere' }, { v: 'box', l: 'Box' }, { v: 'cylinder', l: 'Cylinder' }, { v: 'knot', l: 'Knot' }, { v: 'crystal', l: 'Crystal' }], default: 'torus', label: 'Model' },
         { key: 'modelSize', type: 'range', min: 55, max: 160, default: 112, step: 1, label: 'Model Size', unit: '%' },
         { key: 'repeatX', type: 'range', min: 1, max: 14, default: 3, step: 1, label: 'Repeat X' },
         { key: 'repeatY', type: 'range', min: 1, max: 14, default: 6, step: 1, label: 'Repeat Y' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 55, step: 1, label: 'Motion', unit: '%' },
         { key: 'textColor', type: 'color', default: '#ffffff', label: 'Text Color' },
         { key: 'background', type: 'color', default: '#0f0f1a', label: 'Background' }
     ]);

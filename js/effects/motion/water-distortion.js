@@ -5,6 +5,9 @@
         icon: '🌊',
         description: 'Distorsion liquida tipo agua sobre imagenes — ondas, reflejos y efecto sumergido con shader GLSL'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'waveFreq', type: 'range', min: 1, max: 20, default: 7, label: 'Wave Frequency' },
         { key: 'waveAmp', type: 'range', min: 1, max: 50, default: 15, label: 'Wave Amplitude', unit: '%' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 50, label: 'Speed', unit: '%' },

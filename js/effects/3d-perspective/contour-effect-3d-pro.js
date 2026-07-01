@@ -5,11 +5,14 @@
         icon: 'CE',
         description: 'Retrato o producto reconstruido con lineas 3D, brillo natural y rotacion controlada'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 46, step: 1, label: 'Motion', unit: '%' },
         { key: 'cardSize', type: 'range', min: 55, max: 150, default: 108, step: 1, label: 'Effect Size', unit: '%' },
         { key: 'lines', type: 'range', min: 40, max: 360, default: 180, step: 5, label: 'Lines' },
         { key: 'resolution', type: 'range', min: 30, max: 260, default: 120, step: 5, label: 'Resolution' },
         { key: 'depth', type: 'range', min: 0, max: 160, default: 64, step: 1, label: 'Depth', unit: '%' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 46, step: 1, label: 'Motion', unit: '%' },
         { key: 'colorBoost', type: 'range', min: 70, max: 180, default: 100, step: 1, label: 'Color Boost', unit: '%' },
         { key: 'background', type: 'color', default: '#0a0a0a', label: 'Background' }
     ]);

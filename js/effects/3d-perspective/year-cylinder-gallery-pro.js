@@ -5,6 +5,9 @@
         icon: 'YC',
         description: 'Cilindro de anos y galeria cilndrica con textura canvas, imagenes y videos'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'years', type: 'text', default: '2025,2024,2023,2022', label: 'Years' },
         { key: 'radius', type: 'range', min: 60, max: 190, default: 105, step: 1, label: 'Radius', unit: '%' },
         { key: 'height', type: 'range', min: 50, max: 180, default: 120, step: 1, label: 'Height', unit: '%' },

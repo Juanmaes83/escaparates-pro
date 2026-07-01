@@ -5,6 +5,9 @@
         icon: '🔥',
         description: 'La imagen se quema revelando la siguiente — efecto fuego con borde incandescente y cenizas'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'burnSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Burn Speed', unit: '%' },
         { key: 'burnDirection', type: 'range', min: 1, max: 4, default: 1, step: 1, label: 'Direction (1=bottom, 2=top, 3=left, 4=center)' },
         { key: 'edgeGlow', type: 'range', min: 0, max: 100, default: 70, label: 'Edge Glow', unit: '%' },

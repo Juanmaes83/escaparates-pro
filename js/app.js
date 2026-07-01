@@ -19,6 +19,16 @@
                 var easeFn = EP.Easing.get(easingName);
                 var t = time / loopDuration;
                 var easedTime = easeFn(t % 1) * loopDuration;
+                if (effect.settings.playbackMotion !== undefined && effect.settings.playbackMotionSpeed !== undefined && !effect._handlesMotionControls) {
+                    if (effect.settings.playbackMotion === 'off') {
+                        easedTime = loopDuration * 0.5;
+                        dt = 0;
+                    } else {
+                        var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);
+                        easedTime = (easedTime * motionSpeed) % loopDuration;
+                        dt *= motionSpeed;
+                    }
+                }
                 effect.update(easedTime, dt, loopDuration);
             }
         });

@@ -5,6 +5,9 @@
         icon: '🕳️',
         description: 'Tunel infinito de imagenes con zoom hipnotico'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 30, max: 80, default: 55, label: 'Card Size', unit: '%' },
         { key: 'depth', type: 'range', min: 5, max: 20, default: 12, step: 1, label: 'Depth' },
         { key: 'spacing', type: 'range', min: 1, max: 5, default: 2.5, step: 0.5, label: 'Spacing' },

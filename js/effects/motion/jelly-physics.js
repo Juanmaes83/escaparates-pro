@@ -5,6 +5,9 @@
         icon: '🫠',
         description: 'Tarjetas con fisica de gelatina — squish, bounce y deformacion elastica viral'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 25, max: 60, default: 42, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 3, max: 12, default: 6, step: 1, label: 'Cards' },
         { key: 'squishForce', type: 'range', min: 10, max: 100, default: 70, label: 'Squish Force', unit: '%' },

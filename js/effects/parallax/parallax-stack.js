@@ -5,6 +5,9 @@
         icon: '📚',
         description: 'Stack de tarjetas en abanico con parallax interno 2.5D'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 25, max: 55, default: 40, label: 'Card Size', unit: '%' },
         { key: 'fanAngle', type: 'range', min: 5, max: 45, default: 20, label: 'Fan Angle', unit: '°' },
         { key: 'parallaxInner', type: 'range', min: 10, max: 100, default: 60, label: 'Inner Parallax', unit: '%' },

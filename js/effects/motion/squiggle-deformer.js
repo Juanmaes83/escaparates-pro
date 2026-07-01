@@ -5,6 +5,9 @@
         icon: '〰️',
         description: 'Deformacion ondulante tipo squiggle sobre imagenes — ondas sinusoidales animadas con ruido'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'amplitude', type: 'range', min: 1, max: 50, default: 12, label: 'Amplitude', unit: 'px' },
         { key: 'frequency', type: 'range', min: 1, max: 30, default: 8, label: 'Frequency' },
         { key: 'noise', type: 'range', min: 0, max: 100, default: 20, label: 'Noise', unit: '%' },

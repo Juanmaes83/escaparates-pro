@@ -5,6 +5,9 @@
         icon: '💎',
         description: 'Tarjetas con efecto vidrio esmerilado y bordes luminosos'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 20, max: 55, default: 36, label: 'Card Size', unit: '%' },
         { key: 'count', type: 'range', min: 4, max: 20, default: 8, step: 1, label: 'Cards' },
         { key: 'radius', type: 'range', min: 2, max: 7, default: 4, step: 0.1, label: 'Radius' },

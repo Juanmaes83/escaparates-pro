@@ -5,6 +5,9 @@
         icon: '🏴',
         description: 'Lona ondulante con viento — las imagenes se muestran como tela 3D meciendose con efecto cloth simulation'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'windForce', type: 'range', min: 5, max: 100, default: 40, label: 'Wind Force', unit: '%' },
         { key: 'waveSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Wave Speed', unit: '%' },
         { key: 'gravity', type: 'range', min: 0, max: 100, default: 30, label: 'Gravity Sag', unit: '%' },

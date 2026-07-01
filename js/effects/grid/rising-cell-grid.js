@@ -5,6 +5,9 @@
         icon: 'CG',
         description: 'Reticula 3D de celdas animadas basada en el proyecto PUG/SCSS del TXT'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'rows', type: 'range', min: 8, max: 35, default: 22, step: 1, label: 'Rows' },
         { key: 'cols', type: 'range', min: 8, max: 35, default: 22, step: 1, label: 'Columns' },
         { key: 'height', type: 'range', min: 10, max: 180, default: 78, step: 1, label: 'Height', unit: '%' },

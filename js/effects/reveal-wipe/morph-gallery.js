@@ -5,6 +5,9 @@
         icon: '🔄',
         description: 'Transicion morph suave entre imagenes — cada foto se deforma y fluye hacia la siguiente con distorsion organica'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'morphSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Morph Speed', unit: '%' },
         { key: 'distortion', type: 'range', min: 10, max: 100, default: 50, label: 'Distortion', unit: '%' },
         { key: 'waveCount', type: 'range', min: 1, max: 8, default: 3, step: 1, label: 'Waves' },

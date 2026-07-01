@@ -5,6 +5,9 @@
         icon: 'PM',
         description: 'Panel 3D dividido en tiras que se pliegan como el proyecto Peel-me'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'width', type: 'range', min: 55, max: 180, default: 118, step: 1, label: 'Width', unit: '%' },
         { key: 'height', type: 'range', min: 35, max: 130, default: 72, step: 1, label: 'Height', unit: '%' },
         { key: 'strips', type: 'range', min: 8, max: 56, default: 26, step: 1, label: 'Strips' },

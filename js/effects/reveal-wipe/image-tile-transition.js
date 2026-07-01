@@ -5,9 +5,12 @@
         icon: 'IT',
         description: 'Transicion 3D por mosaico de imagenes inspirada en navegacion con rueda'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 20, max: 220, default: 100, step: 1, label: 'Motion', unit: '%' },
         { key: 'tileSize', type: 'range', min: 6, max: 28, default: 12, step: 1, label: 'Tile Size' },
         { key: 'depth', type: 'range', min: 20, max: 220, default: 90, step: 1, label: 'Depth', unit: '%' },
-        { key: 'motion', type: 'range', min: 20, max: 220, default: 100, step: 1, label: 'Motion', unit: '%' },
         { key: 'exposure', type: 'range', min: 20, max: 90, default: 48, step: 1, label: 'Exposure', unit: '%' },
         { key: 'tilt', type: 'range', min: 0, max: 100, default: 35, step: 1, label: 'Mouse Tilt', unit: '%' },
         { key: 'background', type: 'color', default: '#000000', label: 'Background' }

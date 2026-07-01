@@ -5,11 +5,14 @@
         icon: 'VF',
         description: 'Video o imagen sobre formas 3D con textura sin costuras y bloom opcional'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 220, default: 62, step: 1, label: 'Spin', unit: '%' },
         { key: 'shape', type: 'select', options: [{ v: 'chamfer', l: 'Chamfer Cylinder' }, { v: 'sphere', l: 'Sphere' }, { v: 'torus', l: 'Torus' }, { v: 'cone', l: 'Cone' }, { v: 'box', l: 'Box' }, { v: 'knot', l: 'Knot' }], default: 'chamfer', label: 'Shape' },
         { key: 'objectSize', type: 'range', min: 55, max: 165, default: 112, step: 1, label: 'Object Size', unit: '%' },
         { key: 'repeatX', type: 'range', min: 1, max: 8, default: 5, step: 0.1, label: 'Repeat X' },
         { key: 'repeatY', type: 'range', min: 1, max: 6, default: 1, step: 0.1, label: 'Repeat Y' },
-        { key: 'motion', type: 'range', min: 0, max: 220, default: 62, step: 1, label: 'Spin', unit: '%' },
         { key: 'opacity', type: 'range', min: 20, max: 100, default: 96, step: 1, label: 'Opacity', unit: '%' },
         { key: 'lighting', type: 'select', options: [{ v: 'natural', l: 'Natural' }, { v: 'bloom', l: 'Bloom optional' }], default: 'natural', label: 'Lighting' },
         { key: 'background', type: 'color', default: '#0a0a0a', label: 'Background' }

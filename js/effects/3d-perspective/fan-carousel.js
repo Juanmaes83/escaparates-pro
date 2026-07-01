@@ -5,6 +5,9 @@
         icon: '🪭',
         description: 'Carousel tipo abanico — las imagenes se despliegan y pliegan como un abanico con transiciones fluidas'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardCount', type: 'range', min: 5, max: 20, default: 10, step: 1, label: 'Cards' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 25, label: 'Fan Speed', unit: '%' },
         { key: 'fanSpread', type: 'range', min: 20, max: 100, default: 60, label: 'Fan Spread', unit: '%' },

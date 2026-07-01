@@ -5,9 +5,12 @@
         icon: 'PG',
         description: 'Imagen principal con borde de particulas, color natural por defecto y gamma opcional'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
+        { key: 'motion', type: 'range', min: 0, max: 200, default: 65, step: 1, label: 'Motion', unit: '%' },
         { key: 'cardSize', type: 'range', min: 45, max: 145, default: 96, step: 1, label: 'Image Size', unit: '%' },
         { key: 'particles', type: 'range', min: 200, max: 2400, default: 900, step: 50, label: 'Particles' },
-        { key: 'motion', type: 'range', min: 0, max: 200, default: 65, step: 1, label: 'Motion', unit: '%' },
         { key: 'exposure', type: 'range', min: 10, max: 90, default: 50, step: 1, label: 'Exposure', unit: '%' },
         { key: 'brightness', type: 'range', min: 50, max: 160, default: 100, step: 1, label: 'Brightness', unit: '%' },
         { key: 'gamma', type: 'range', min: 50, max: 180, default: 100, step: 1, label: 'Gamma', unit: '%' },
