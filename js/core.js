@@ -8,11 +8,11 @@ EP.Core = (function() {
     var aspectRatio = 16 / 9;
     var settings = {
         backgroundColor: '#101014',
-        bloomEnabled: true,
+        bloomEnabled: false,
         bloomStrength: 0.6,
         bloomRadius: 0.3,
         bloomThreshold: 0.7,
-        vignetteEnabled: true
+        vignetteEnabled: false
     };
 
     function init() {
@@ -105,6 +105,16 @@ EP.Core = (function() {
         if (scene) scene.background = new THREE.Color(color);
     }
 
+    function setPostProcessing(opts) {
+        opts = opts || {};
+        if (typeof opts.bloomEnabled === 'boolean') settings.bloomEnabled = opts.bloomEnabled;
+        if (typeof opts.vignetteEnabled === 'boolean') settings.vignetteEnabled = opts.vignetteEnabled;
+        if (typeof opts.bloomStrength === 'number') settings.bloomStrength = opts.bloomStrength;
+        if (typeof opts.bloomRadius === 'number') settings.bloomRadius = opts.bloomRadius;
+        if (typeof opts.bloomThreshold === 'number') settings.bloomThreshold = opts.bloomThreshold;
+        rebuildComposer();
+    }
+
     function setDisplayGroup(group) {
         if (displayGroup) {
             scene.remove(displayGroup);
@@ -140,6 +150,7 @@ EP.Core = (function() {
         render: render,
         setDisplayGroup: setDisplayGroup,
         setBackground: setBackground,
+        setPostProcessing: setPostProcessing,
         setAspectRatio: setAspectRatio,
         rebuildComposer: rebuildComposer,
         get scene() { return scene; },
