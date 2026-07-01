@@ -7,6 +7,9 @@
     }, [
         { key: 'cols', type: 'range', min: 2, max: 6, default: 3, step: 1, label: 'Columns' },
         { key: 'rows', type: 'range', min: 2, max: 5, default: 3, step: 1, label: 'Rows' },
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'motion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Motion' },
+        { key: 'motionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Motion Speed', unit: '%' },
         { key: 'tiltAngle', type: 'range', min: 10, max: 60, default: 35, label: 'Tilt Angle' },
         { key: 'cardGap', type: 'range', min: 10, max: 100, default: 50, label: 'Gap', unit: '%' },
         { key: 'elevation', type: 'range', min: 0, max: 100, default: 40, label: 'Elevation', unit: '%' },
@@ -21,10 +24,12 @@
         var rows = this.settings.rows;
         var gap = 0.1 + 0.3 * this.settings.cardGap / 100;
         var elevation = this.settings.elevation / 100;
+        var outputScale = this.settings.outputSize / 100;
         var total = cols * rows;
 
-        var cardW = 1.6;
-        var cardH = 1.2;
+        var cardW = 1.6 * outputScale;
+        var cardH = 1.2 * outputScale;
+        gap *= Math.max(1, outputScale * 0.55);
 
         for (var i = 0; i < total; i++) {
             var mi = i % mediaList.length;
@@ -90,7 +95,10 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var t = time / loopDuration;
+        var motionOn = this.settings.motion !== 'off';
+        var speed = motionOn ? this.settings.motionSpeed / 100 : 0;
+        var t = (time * speed) / loopDuration;
+        var outputScale = this.settings.outputSize / 100;
 
         for (var i = 0; i < this.group.children.length; i++) {
             var mesh = this.group.children[i];
@@ -99,20 +107,21 @@
             var d = mesh.userData;
             if (mesh.material.map) mesh.material.map.needsUpdate = true;
 
-            var wave = Math.sin(time * 0.8 + d.stagger * 3) * 0.15;
+            var wave = Math.sin(time * 0.8 * speed + d.stagger * 3) * 0.15 * outputScale;
             mesh.position.z = wave;
 
-            var pulse = Math.sin(time * 0.5 + d.cardIndex * 0.7) * 0.03;
+            var pulse = Math.sin(time * 0.5 * speed + d.cardIndex * 0.7) * 0.03 * speed;
             var s = 1.0 + pulse;
             mesh.scale.set(s, s, 1);
         }
 
         var camSwayX = Math.sin(t * Math.PI * 2) * 0.8;
         var camSwayY = Math.cos(t * Math.PI * 2 * 0.7) * 0.4;
+        var cameraZ = 8 + Math.max(0, outputScale - 1) * 1.8;
         EP.Core.camera.position.set(
             camSwayX,
             3 + camSwayY,
-            8
+            cameraZ
         );
         EP.Core.camera.lookAt(0, -0.5, 0);
     };

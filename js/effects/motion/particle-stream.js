@@ -6,6 +6,9 @@
         description: 'Particulas que fluyen y se ensamblan formando cada imagen — efecto stream cinematografico de construccion y deconstruccion'
     }, [
         { key: 'particleCount', type: 'range', min: 200, max: 2000, default: 800, step: 50, label: 'Particles' },
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'motion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Motion' },
+        { key: 'motionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Motion Speed', unit: '%' },
         { key: 'assembleSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Assemble Speed', unit: '%' },
         { key: 'scatter', type: 'range', min: 20, max: 100, default: 60, label: 'Scatter Range', unit: '%' },
         { key: 'holdTime', type: 'range', min: 10, max: 60, default: 30, label: 'Hold Time', unit: '%' },
@@ -18,9 +21,10 @@
         var group = new THREE.Group();
         var pCount = this.settings.particleCount;
         var scatter = this.settings.scatter / 100;
+        var outputScale = this.settings.outputSize / 100;
 
-        var imgW = 6;
-        var imgH = 4.5;
+        var imgW = 6 * outputScale;
+        var imgH = 4.5 * outputScale;
 
         var geo = new THREE.BufferGeometry();
         var positions = new Float32Array(pCount * 3);
@@ -55,7 +59,7 @@
         geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
         var mat = new THREE.PointsMaterial({
-            size: 0.04,
+            size: 0.04 * Math.sqrt(outputScale),
             vertexColors: true,
             transparent: true,
             opacity: 0.9,
@@ -98,7 +102,11 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var t = time / loopDuration;
+        var motionOn = this.settings.motion !== 'off';
+        var motionSpeed = motionOn ? this.settings.motionSpeed / 100 : 0;
+        var t = motionOn ? (time * motionSpeed) / loopDuration : 0.5;
+        t = t % 1;
+        var outputScale = this.settings.outputSize / 100;
         var count = this._imageCount;
         if (count === 0) return;
         var holdTime = this.settings.holdTime / 100;
@@ -152,9 +160,9 @@
         }
 
         EP.Core.camera.position.set(
-            Math.sin(time * 0.2) * 0.5,
-            Math.cos(time * 0.15) * 0.3,
-            8
+            Math.sin(time * 0.2 * motionSpeed) * 0.5,
+            Math.cos(time * 0.15 * motionSpeed) * 0.3,
+            8 + Math.max(0, outputScale - 1) * 1.6
         );
         EP.Core.camera.lookAt(0, 0, 0);
     };

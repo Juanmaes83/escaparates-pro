@@ -6,6 +6,9 @@
         description: 'Paneles que se abren como puertas revelando la siguiente imagen'
     }, [
         { key: 'panels', type: 'range', min: 2, max: 6, default: 2, step: 1, label: 'Panels' },
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'motion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Motion' },
+        { key: 'motionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Motion Speed', unit: '%' },
         { key: 'transitionSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Transition', unit: '%' },
         { key: 'cornerRadius', type: 'range', min: 0, max: 20, default: 4, label: 'Corner Radius', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot'], default: 'snappy', label: 'Easing' },
@@ -15,7 +18,8 @@
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
         var group = new THREE.Group();
-        var w = 7, h = 5;
+        var outputScale = this.settings.outputSize / 100;
+        var w = 7 * outputScale, h = 5 * outputScale;
         var panels = this.settings.panels;
         var cr = this.settings.cornerRadius / 100 * h * 0.3;
 
@@ -41,6 +45,7 @@
                     panelIndex: p,
                     totalPanels: panels,
                     baseX: offsetX,
+                    openDistance: 4 * outputScale,
                     direction: p % 2 === 0 ? -1 : 1
                 };
                 imgGroup.add(mesh);
@@ -55,7 +60,10 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var t = time / loopDuration;
+        var motionOn = this.settings.motion !== 'off';
+        var motionSpeed = motionOn ? this.settings.motionSpeed / 100 : 0;
+        var t = motionOn ? (time * motionSpeed) / loopDuration : 0.5;
+        t = t % 1;
         var count = this.group.children.length;
         var segDur = 1 / count;
         var transSpeed = this.settings.transitionSpeed / 100;
@@ -75,9 +83,10 @@
                     var exitT = t >= hideStart ? Math.max(0, Math.min(1, (t - hideStart) / transDur)) : 0;
                     var openAmount = (1 - enterT) + exitT;
                     openAmount = Math.max(0, Math.min(1, openAmount));
-                    panel.position.x = d.baseX + d.direction * openAmount * 4;
+                    panel.position.x = d.baseX + d.direction * openAmount * d.openDistance;
                     panel.rotation.y = d.direction * openAmount * Math.PI * 0.3;
                     panel.material.opacity = 1 - openAmount * 0.5;
+                    EP.Media.updateMaterial(panel.material);
                 });
             } else {
                 imgGroup.visible = false;
