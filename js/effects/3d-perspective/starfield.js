@@ -49,7 +49,7 @@
             var tex = null;
             var aspect = 1;
             if (mediaList[img].element) {
-                tex = new THREE.Texture(mediaList[img].element);
+                tex = EP.Media.createTexture(mediaList[img]);
                 tex.needsUpdate = true;
                 tex.minFilter = THREE.LinearFilter;
                 var ew = mediaList[img].element.videoWidth || mediaList[img].element.naturalWidth || 1;

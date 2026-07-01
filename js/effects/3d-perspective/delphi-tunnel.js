@@ -74,7 +74,7 @@
                     var mi = imgIdx % mediaList.length; imgIdx++;
                     var tex = null;
                     if (mediaList[mi].element) {
-                        tex = new THREE.Texture(mediaList[mi].element);
+                        tex = EP.Media.createTexture(mediaList[mi]);
                         tex.needsUpdate = true;
                         tex.minFilter = THREE.LinearFilter;
                     }
@@ -93,7 +93,7 @@
                     var mi2 = imgIdx % mediaList.length; imgIdx++;
                     var tex2 = null;
                     if (mediaList[mi2].element) {
-                        tex2 = new THREE.Texture(mediaList[mi2].element);
+                        tex2 = EP.Media.createTexture(mediaList[mi2]);
                         tex2.needsUpdate = true;
                         tex2.minFilter = THREE.LinearFilter;
                     }
@@ -112,7 +112,7 @@
                     var mi3 = imgIdx % mediaList.length; imgIdx++;
                     var tex3 = null;
                     if (mediaList[mi3].element) {
-                        tex3 = new THREE.Texture(mediaList[mi3].element);
+                        tex3 = EP.Media.createTexture(mediaList[mi3]);
                         tex3.needsUpdate = true;
                         tex3.minFilter = THREE.LinearFilter;
                     }
@@ -128,7 +128,7 @@
                     var mi4 = imgIdx % mediaList.length; imgIdx++;
                     var tex4 = null;
                     if (mediaList[mi4].element) {
-                        tex4 = new THREE.Texture(mediaList[mi4].element);
+                        tex4 = EP.Media.createTexture(mediaList[mi4]);
                         tex4.needsUpdate = true;
                         tex4.minFilter = THREE.LinearFilter;
                     }

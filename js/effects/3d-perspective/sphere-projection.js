@@ -27,7 +27,7 @@
             var imgIdx = i % mediaList.length;
             var tex = null;
             if (mediaList[imgIdx].element) {
-                tex = new THREE.Texture(mediaList[imgIdx].element);
+                tex = EP.Media.createTexture(mediaList[imgIdx]);
                 tex.needsUpdate = true;
                 tex.minFilter = THREE.LinearFilter;
             }

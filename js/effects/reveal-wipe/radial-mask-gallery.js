@@ -13,7 +13,7 @@
     ]);
 
     function textureFrom(media) {
-        var tex = media.type === 'video' ? new THREE.VideoTexture(media.element) : new THREE.Texture(media.element);
+        var tex = EP.Media.createTexture(media);
         tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;
         tex.needsUpdate = true;

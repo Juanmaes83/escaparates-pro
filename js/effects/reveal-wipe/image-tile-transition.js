@@ -20,8 +20,8 @@
         var rows = Math.max(3, Math.floor(cols * 9 / 16));
         var totalW = 7.2, totalH = 4.05;
         var tw = totalW / cols, th = totalH / rows;
-        var texA = mediaList[0].type === 'video' ? new THREE.VideoTexture(mediaList[0].element) : new THREE.Texture(mediaList[0].element);
-        var texB = mediaList[Math.min(1, mediaList.length - 1)].type === 'video' ? new THREE.VideoTexture(mediaList[Math.min(1, mediaList.length - 1)].element) : new THREE.Texture(mediaList[Math.min(1, mediaList.length - 1)].element);
+        var texA = EP.Media.createTexture(mediaList[0]);
+        var texB = EP.Media.createTexture(mediaList[Math.min(1, mediaList.length - 1)]);
         texA.needsUpdate = true; texB.needsUpdate = true;
         for (var y = 0; y < rows; y++) {
             for (var x = 0; x < cols; x++) {

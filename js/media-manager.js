@@ -160,22 +160,57 @@ EP.Media = (function() {
         onChangeCallback = fn;
     }
 
-    function createMaterial(mediaObj) {
-        if (mediaObj.type === 'video') {
-            var tex = new THREE.VideoTexture(mediaObj.element);
-            tex.minFilter = THREE.LinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-            return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.92 });
-        }
-        var tex = new THREE.Texture(mediaObj.element);
+    function createTexture(mediaObj, options) {
+        options = options || {};
+        if (!mediaObj || !mediaObj.element) return null;
+        var tex = mediaObj.type === 'video' ? new THREE.VideoTexture(mediaObj.element) : new THREE.Texture(mediaObj.element);
+        tex.minFilter = options.minFilter || THREE.LinearFilter;
+        tex.magFilter = options.magFilter || THREE.LinearFilter;
+        if (options.wrapS) tex.wrapS = options.wrapS;
+        if (options.wrapT) tex.wrapT = options.wrapT;
+        if (options.repeat) tex.repeat.set(options.repeat.x || options.repeat[0] || 1, options.repeat.y || options.repeat[1] || 1);
+        if (tex.isVideoTexture) tex.generateMipmaps = false;
         tex.needsUpdate = true;
-        return new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.92 });
+        return tex;
+    }
+
+    function updateTexture(tex) {
+        if (tex && tex.isVideoTexture) tex.needsUpdate = true;
+    }
+
+    function updateMaterial(material) {
+        if (!material) return;
+        if (Array.isArray(material)) {
+            material.forEach(updateMaterial);
+            return;
+        }
+        updateTexture(material.map);
+        if (material.uniforms) {
+            Object.keys(material.uniforms).forEach(function(key) {
+                var value = material.uniforms[key] && material.uniforms[key].value;
+                if (value && value.isTexture) updateTexture(value);
+            });
+        }
+    }
+
+    function createMaterial(mediaObj, options) {
+        options = options || {};
+        var tex = createTexture(mediaObj, options);
+        return new THREE.MeshBasicMaterial({
+            map: tex,
+            side: options.side || THREE.DoubleSide,
+            transparent: options.transparent !== false,
+            opacity: options.opacity === undefined ? 0.92 : options.opacity
+        });
     }
 
     return {
         init: init,
         getAll: getAll,
         onChange: onChange,
+        createTexture: createTexture,
+        updateTexture: updateTexture,
+        updateMaterial: updateMaterial,
         createMaterial: createMaterial,
         get slots() { return slots; }
     };

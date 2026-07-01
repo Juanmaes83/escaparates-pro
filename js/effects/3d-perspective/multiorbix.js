@@ -42,7 +42,7 @@
                 imgIdx++;
                 var tex = null;
                 if (mediaList[mi].element) {
-                    tex = new THREE.Texture(mediaList[mi].element);
+                    tex = EP.Media.createTexture(mediaList[mi]);
                     tex.needsUpdate = true;
                     tex.minFilter = THREE.LinearFilter;
                 }

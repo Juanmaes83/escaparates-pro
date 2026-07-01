@@ -520,10 +520,13 @@ EP.Export = (function() {
         if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
 
         var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
-        if (prog) { prog.classList.add('active'); prog.querySelector('.status').textContent = kind === 'script' ? 'Generando script...' : 'Generando widget...'; }
+        if (prog) {
+            prog.classList.add('active');
+            prog.querySelector('.status').textContent = kind === 'script' ? 'Preparando script real...' : 'Preparando widget real...';
+        }
 
         var mediaList = EP.Media.getAll();
-        var mediaDataUrls = [];
+        var mediaItems = [];
         var pending = mediaList.length;
 
         if (pending === 0) {
@@ -532,26 +535,63 @@ EP.Export = (function() {
         }
 
         mediaList.forEach(function(m, i) {
-            if (m.type === 'image') {
-                var c = document.createElement('canvas');
-                var img = m.element;
-                c.width = Math.min(img.naturalWidth || img.width, 600);
-                c.height = Math.min(img.naturalHeight || img.height, 600);
-                var ctx = c.getContext('2d');
-                ctx.drawImage(img, 0, 0, c.width, c.height);
-                try { mediaDataUrls[i] = c.toDataURL('image/jpeg', 0.8); } catch(e) { mediaDataUrls[i] = ''; }
+            serializeMedia(m, function(item) {
+                mediaItems[i] = item;
                 pending--;
-                if (pending === 0) buildAndDownloadStandalone(effect, mediaDataUrls, kind);
-            } else {
-                mediaDataUrls[i] = '';
-                pending--;
-                if (pending === 0) buildAndDownloadStandalone(effect, mediaDataUrls, kind);
-            }
+                if (prog) prog.querySelector('.status').textContent = 'Medios preparados: ' + (mediaList.length - pending) + '/' + mediaList.length;
+                if (pending === 0) buildAndDownloadStandalone(effect, mediaItems.filter(Boolean), kind);
+            });
         });
     }
 
-    function buildAndDownloadStandalone(effect, mediaUrls, kind) {
-        var html = buildStandaloneHTML(effect, mediaUrls);
+    function serializeMedia(media, done) {
+        if (!media || !media.element) {
+            done(null);
+            return;
+        }
+        if (media.type === 'video') {
+            if (media.url && media.url.indexOf('data:') === 0) {
+                done({ type: 'video', src: media.url, name: media.name || 'video' });
+                return;
+            }
+            fetch(media.url).then(function(response) {
+                return response.blob();
+            }).then(function(blob) {
+                readBlobAsDataURL(blob, function(src) {
+                    done({ type: 'video', src: src || media.url || '', name: media.name || 'video' });
+                });
+            }).catch(function() {
+                done({ type: 'video', src: media.url || '', name: media.name || 'video' });
+            });
+            return;
+        }
+
+        var canvas = document.createElement('canvas');
+        var img = media.element;
+        var srcW = img.naturalWidth || img.videoWidth || img.width || 600;
+        var srcH = img.naturalHeight || img.videoHeight || img.height || 600;
+        var maxSide = 1200;
+        var scale = Math.min(1, maxSide / Math.max(srcW, srcH));
+        canvas.width = Math.max(1, Math.round(srcW * scale));
+        canvas.height = Math.max(1, Math.round(srcH * scale));
+        var ctx = canvas.getContext('2d');
+        try {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            done({ type: 'image', src: canvas.toDataURL('image/jpeg', 0.86), name: media.name || 'image' });
+        } catch(e) {
+            done({ type: 'image', src: media.url || img.src || '', name: media.name || 'image' });
+        }
+    }
+
+    function readBlobAsDataURL(blob, done) {
+        var reader = new FileReader();
+        reader.onload = function(e) { done(e.target.result); };
+        reader.onerror = function() { done(''); };
+        reader.readAsDataURL(blob);
+    }
+
+    function buildAndDownloadStandalone(effect, mediaItems, kind) {
+        var html = buildStandaloneHTML(effect, mediaItems);
         var content = html;
         var filename = 'escaparate-widget.html';
         var type = 'text/html';
@@ -575,10 +615,12 @@ EP.Export = (function() {
         close();
     }
 
-    function buildStandaloneHTML(effect, mediaUrls) {
+    function buildStandaloneHTML(effect, mediaItems) {
         var settings = JSON.stringify(effect.settings);
         var bg = effect.settings.background || '#101014';
         var effectId = effect.id;
+        var sourcePath = resolveEffectSourcePath(effect);
+        var repoBase = 'https://cdn.jsdelivr.net/gh/Juanmaes83/escaparates-pro@main/';
 
         var overlayHTML = '';
         if (EP.Overlay.isEnabled()) {
@@ -597,19 +639,51 @@ EP.Export = (function() {
             if (cta) overlayHTML += '<div style="position:absolute;bottom:12%;left:50%;transform:translateX(-50%);"><div style="display:inline-block;padding:10px 28px;background:' + color + ';color:#fff;border-radius:8px;font-size:' + Math.max(14, fontSize * 0.5) + 'px;font-weight:600;font-family:sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.4);">' + escapeHTML(cta) + '</div></div>';
         }
 
-        var mediaArrayJS = 'var MEDIA_URLS = ' + JSON.stringify(mediaUrls) + ';\n';
+        var mediaArrayJS = 'var MEDIA_ITEMS = ' + JSON.stringify(mediaItems) + ';\n';
 
         var html = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Escaparate</title>\n' +
-            '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:' + bg + '}#c{position:absolute;top:0;left:0;width:100%;height:100%}#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}</style></head>\n' +
-            '<body><div id="c"></div><div id="overlay">' + overlayHTML + '</div>\n' +
+            '<base href="' + repoBase + '">\n' +
+            '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:' + bg + '}#canvas-container{position:absolute;top:0;left:0;width:100%;height:100%}#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}.export-error{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:#101014;font:14px system-ui,sans-serif;padding:24px;text-align:center}</style></head>\n' +
+            '<body><div id="canvas-container"></div><div id="overlay">' + overlayHTML + '</div>\n' +
             '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/VignetteShader.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" crossorigin="anonymous"><\/script>\n' +
+            '<script src="js/core.js"><\/script>\n' +
+            '<script src="js/easing.js"><\/script>\n' +
+            '<script src="js/timeline.js"><\/script>\n' +
+            '<script src="js/media-manager.js"><\/script>\n' +
+            '<script src="js/effects/base.js"><\/script>\n' +
+            '<script src="js/effects/registry.js"><\/script>\n' +
+            (sourcePath ? '<script src="' + escapeAttr(sourcePath) + '"><\/script>\n' : '') +
             '<script>\n' + mediaArrayJS +
             'var SETTINGS = ' + settings + ';\n' +
             'var EFFECT_ID = "' + effectId + '";\n' +
-            buildWidgetPlayerCode() +
+            'var LOOP_DURATION = ' + JSON.stringify(EP.Timeline.loopDuration || 8) + ';\n' +
+            buildWidgetPlayerCode(!!sourcePath) +
             '<\/script></body></html>';
 
         return html;
+    }
+
+    function resolveEffectSourcePath(effect) {
+        var source = effect.sourcePath || '';
+        if (!source) {
+            var scripts = Array.from(document.querySelectorAll('script[src]'));
+            var match = scripts.find(function(script) {
+                return script.getAttribute('src').indexOf('/' + effect.id + '.js') !== -1 ||
+                    script.getAttribute('src').indexOf(effect.id + '.js') !== -1;
+            });
+            if (match) source = match.getAttribute('src');
+        }
+        var clean = source.match(/js\/effects\/.*?\.js(?:\?.*)?$/);
+        return clean ? clean[0].replace(/\?.*$/, '') : source;
     }
 
     function buildEmbeddableScript(html) {
@@ -632,67 +706,54 @@ EP.Export = (function() {
         ].join('\n');
     }
 
-    function buildWidgetPlayerCode() {
+    function buildWidgetPlayerCode(hasEffectSource) {
         return [
-            'var container = document.getElementById("c");',
-            'var scene = new THREE.Scene();',
-            'scene.background = new THREE.Color(SETTINGS.background || "#101014");',
-            'var camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);',
-            'camera.position.set(0, 0, 12);',
-            'var renderer = new THREE.WebGLRenderer({antialias:true});',
-            'renderer.setPixelRatio(Math.min(devicePixelRatio, 2));',
-            'renderer.setSize(innerWidth, innerHeight);',
-            'container.appendChild(renderer.domElement);',
-            'scene.add(new THREE.AmbientLight(0x404040, 1.5));',
-            'var dl = new THREE.DirectionalLight(0xffffff, 0.6);',
-            'dl.position.set(1,1,1); scene.add(dl);',
-            'window.addEventListener("resize", function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});',
-            '',
-            'var group = new THREE.Group();',
-            'scene.add(group);',
-            '',
-            'var loaded = 0, textures = [];',
-            'MEDIA_URLS.forEach(function(url, i) {',
-            '  if (!url) { textures[i] = null; loaded++; return; }',
-            '  var img = new Image(); img.crossOrigin = "anonymous";',
-            '  img.onload = function() {',
-            '    var t = new THREE.Texture(img); t.needsUpdate = true;',
-            '    textures[i] = t; loaded++;',
-            '    if (loaded === MEDIA_URLS.length) buildEffect();',
-            '  };',
-            '  img.onerror = function() { textures[i] = null; loaded++; if (loaded === MEDIA_URLS.length) buildEffect(); };',
-            '  img.src = url;',
-            '});',
-            'if (MEDIA_URLS.length === 0) buildEffect();',
-            '',
-            'function makeMat(tex) {',
-            '  return new THREE.MeshBasicMaterial({map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.92});',
+            'function showError(message){',
+            '  document.body.insertAdjacentHTML("beforeend", "<div class=\\"export-error\\">" + message + "</div>");',
             '}',
-            '',
-            'function buildEffect() {',
-            '  var mats = textures.filter(function(t){return t;}).map(makeMat);',
-            '  if (mats.length === 0) return;',
-            '  var cs = (SETTINGS.cardSize||32)/100*3;',
-            '  var count = SETTINGS.count || mats.length;',
-            '  var radius = SETTINGS.radius || 4.5;',
-            '  var geo = new THREE.PlaneGeometry(cs, cs*1.2);',
-            '  for (var i = 0; i < count; i++) {',
-            '    var angle = (i/count)*Math.PI*2;',
-            '    var mesh = new THREE.Mesh(geo, mats[i % mats.length]);',
-            '    mesh.position.set(Math.cos(angle)*radius, 0, Math.sin(angle)*radius);',
-            '    mesh.lookAt(0,0,0);',
-            '    group.add(mesh);',
+            'function loadMedia(item){',
+            '  return new Promise(function(resolve){',
+            '    if (!item || !item.src) { resolve(null); return; }',
+            '    if (item.type === "video") {',
+            '      var video = document.createElement("video");',
+            '      video.src = item.src;',
+            '      video.muted = true;',
+            '      video.loop = true;',
+            '      video.playsInline = true;',
+            '      video.preload = "auto";',
+            '      video.onloadeddata = function(){ video.play().catch(function(){}); resolve({ type: "video", element: video, url: item.src, name: item.name || "video" }); };',
+            '      video.onerror = function(){ resolve(null); };',
+            '      video.load();',
+            '      return;',
+            '    }',
+            '    var img = new Image();',
+            '    img.crossOrigin = "anonymous";',
+            '    img.onload = function(){ resolve({ type: "image", element: img, url: item.src, name: item.name || "image" }); };',
+            '    img.onerror = function(){ resolve(null); };',
+            '    img.src = item.src;',
+            '  });',
+            '}',
+            'if (!' + JSON.stringify(hasEffectSource) + ') showError("No se pudo resolver el archivo real del efecto para este export.");',
+            'else Promise.all(MEDIA_ITEMS.map(loadMedia)).then(function(items){',
+            '  var mediaList = items.filter(Boolean);',
+            '  EP.Core.init();',
+            '  EP.Core.setBackground(SETTINGS.background || "' + (EP.Core.settings.backgroundColor || '#101014') + '");',
+            '  var effect = EP.Registry.get(EFFECT_ID);',
+            '  if (!effect) { showError("No se pudo cargar el efecto: " + EFFECT_ID); return; }',
+            '  Object.keys(SETTINGS).forEach(function(key){ effect.setSetting(key, SETTINGS[key]); });',
+            '  var group = effect.build(mediaList);',
+            '  EP.Core.setDisplayGroup(group);',
+            '  var last = performance.now() / 1000;',
+            '  function frame(nowMs){',
+            '    var now = nowMs / 1000;',
+            '    var dt = now - last;',
+            '    last = now;',
+            '    effect.update(now % LOOP_DURATION, dt, LOOP_DURATION);',
+            '    EP.Core.render();',
+            '    requestAnimationFrame(frame);',
             '  }',
-            '}',
-            '',
-            'var clock = new THREE.Clock();',
-            'var loopDur = ' + EP.Timeline.loopDuration + ';',
-            '(function animate() {',
-            '  requestAnimationFrame(animate);',
-            '  var t = (clock.getElapsedTime() % loopDur) / loopDur;',
-            '  group.rotation.y = t * Math.PI * 2;',
-            '  renderer.render(scene, camera);',
-            '})();'
+            '  requestAnimationFrame(frame);',
+            '});'
         ].join('\n');
     }
 
@@ -700,6 +761,10 @@ EP.Export = (function() {
         var d = document.createElement('div');
         d.appendChild(document.createTextNode(s));
         return d.innerHTML;
+    }
+
+    function escapeAttr(s) {
+        return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
 
     return {

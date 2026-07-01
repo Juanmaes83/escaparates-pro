@@ -17,7 +17,7 @@
     effect.build = function(mediaList) {
         var group = new THREE.Group();
         if (!mediaList || mediaList.length === 0) return group;
-        var tex = mediaList[0].type === 'video' ? new THREE.VideoTexture(mediaList[0].element) : new THREE.Texture(mediaList[0].element);
+        var tex = mediaList[0].type === 'video' ? EP.Media.createTexture(mediaList[0]) : EP.Media.createTexture(mediaList[0]);
         tex.needsUpdate = true;
         tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;

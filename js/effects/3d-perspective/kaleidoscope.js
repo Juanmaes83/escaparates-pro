@@ -34,7 +34,7 @@
                 var mi = imgIdx % mediaList.length; imgIdx++;
                 var tex = null;
                 if (mediaList[mi].element) {
-                    tex = new THREE.Texture(mediaList[mi].element);
+                    tex = EP.Media.createTexture(mediaList[mi]);
                     tex.needsUpdate = true;
                     tex.minFilter = THREE.LinearFilter;
                 }
@@ -64,7 +64,7 @@
         var centerMi = imgIdx % mediaList.length;
         var centerTex = null;
         if (mediaList[centerMi].element) {
-            centerTex = new THREE.Texture(mediaList[centerMi].element);
+            centerTex = EP.Media.createTexture(mediaList[centerMi]);
             centerTex.needsUpdate = true;
             centerTex.minFilter = THREE.LinearFilter;
         }

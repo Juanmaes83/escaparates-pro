@@ -29,7 +29,7 @@
         for (var i = 0; i < total; i++) {
             var tex = null;
             if (mediaList[i % mediaList.length].element) {
-                tex = new THREE.Texture(mediaList[i % mediaList.length].element);
+                tex = EP.Media.createTexture(mediaList[i % mediaList.length]);
                 tex.needsUpdate = true;
                 tex.minFilter = THREE.LinearFilter;
             }

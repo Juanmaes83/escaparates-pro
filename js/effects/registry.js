@@ -13,6 +13,9 @@ EP.Registry = (function() {
     ];
 
     function register(effect) {
+        if (typeof document !== 'undefined' && document.currentScript && !effect.sourcePath) {
+            effect.sourcePath = document.currentScript.getAttribute('src') || document.currentScript.src || '';
+        }
         effects[effect.id] = effect;
     }
 

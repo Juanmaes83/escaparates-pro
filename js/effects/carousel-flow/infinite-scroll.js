@@ -34,7 +34,7 @@
             for (var i = 0; i < totalPerCol; i++) {
                 var tex = null;
                 if (mediaList[i].element) {
-                    tex = new THREE.Texture(mediaList[i].element);
+                    tex = EP.Media.createTexture(mediaList[i]);
                     tex.needsUpdate = true;
                     tex.minFilter = THREE.LinearFilter;
                 }

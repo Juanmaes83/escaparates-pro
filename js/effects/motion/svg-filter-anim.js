@@ -112,7 +112,7 @@
         for (var img = 0; img < mediaList.length; img++) {
             var tex = null;
             if (mediaList[img].element) {
-                tex = new THREE.Texture(mediaList[img].element);
+                tex = EP.Media.createTexture(mediaList[img]);
                 tex.needsUpdate = true;
                 tex.minFilter = THREE.LinearFilter;
                 tex.magFilter = THREE.LinearFilter;

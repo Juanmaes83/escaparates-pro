@@ -19,7 +19,7 @@
         var group = new THREE.Group();
         if (!mediaList || mediaList.length === 0) return group;
         var media = mediaList[0];
-        var tex = media.type === 'video' ? new THREE.VideoTexture(media.element) : new THREE.Texture(media.element);
+        var tex = EP.Media.createTexture(media);
         tex.needsUpdate = true;
         tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;

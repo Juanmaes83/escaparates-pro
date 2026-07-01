@@ -14,7 +14,7 @@
     ]);
 
     function materialFor(media) {
-        var t = media.type === 'video' ? new THREE.VideoTexture(media.element) : new THREE.Texture(media.element);
+        var t = EP.Media.createTexture(media);
         t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.needsUpdate = true;
         return new THREE.MeshBasicMaterial({ map: t, side: THREE.DoubleSide, transparent: true, opacity: 0.98 });
     }
