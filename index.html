@@ -105,6 +105,46 @@
                 <span class="val" id="loop-duration-val">12s</span>
             </div>
         </div>
+        <div class="panel-section" id="audio-panel">
+            <h3>AUDIO</h3>
+            <div class="control-row">
+                <label>Modo</label>
+                <select id="audio-mode">
+                    <option value="off">Sin audio</option>
+                    <option value="play">Acompaña</option>
+                    <option value="energy">Reactivo</option>
+                    <option value="bpm">BPM Sync</option>
+                </select>
+            </div>
+            <div id="audio-content" style="display:none;">
+                <div class="audio-upload-row">
+                    <button id="audio-upload-btn" class="small-btn">Subir música...</button>
+                    <span id="audio-filename" class="audio-filename">Sin archivo</span>
+                </div>
+                <input type="file" id="audio-file-input" accept="audio/*" style="display:none;">
+                <div class="control-row">
+                    <label>Volumen</label>
+                    <input type="range" id="audio-volume" min="0" max="100" value="70">
+                    <span class="val" id="audio-volume-val">70%</span>
+                </div>
+                <div id="audio-energy-info" style="display:none;">
+                    <div class="audio-meter-row">
+                        <label>Energía</label>
+                        <div class="audio-energy-bar">
+                            <div class="audio-energy-fill" id="audio-energy-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="audio-bpm-info" style="display:none;">
+                    <div class="control-row">
+                        <label>BPM detec.</label>
+                        <span class="val" id="audio-bpm-display">--</span>
+                        <input type="number" id="audio-bpm-manual" placeholder="Manual" min="40" max="220" title="BPM manual">
+                    </div>
+                    <button id="audio-sync-loop" class="small-btn" title="Ajusta el loop a 4 tiempos del BPM">Sync loop a 4 beats</button>
+                </div>
+            </div>
+        </div>
         <div class="panel-section">
             <h3>VELOCIDAD</h3>
             <div class="control-row">
@@ -239,6 +279,7 @@
     <script src="js/timeline.js"></script>
     <script src="js/media-manager.js"></script>
     <script src="js/overlay.js"></script>
+    <script src="js/audio.js"></script>
     <script src="js/effects/base.js"></script>
     <script src="js/control-schema.js"></script>
     <script src="js/effects/registry.js"></script>

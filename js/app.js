@@ -7,6 +7,7 @@
         try { EP.Media.init(); } catch(e) { console.error('Media.init failed:', e); }
         try { EP.UI.init(); } catch(e) { console.error('UI.init failed:', e); }
         try { EP.Overlay.init(); } catch(e) { console.error('Overlay.init failed:', e); }
+        try { if (EP.Audio) EP.Audio.init(); } catch(e) { console.error('Audio.init failed:', e); }
         try { EP.Export.init(); } catch(e) { console.error('Export.init failed:', e); }
 
         EP.Media.onChange(function() {
@@ -16,7 +17,9 @@
         EP.Timeline.onTick(function(time, dt, loopDuration) {
             var effect = EP.UI.getCurrentEffect();
             if (effect) {
-                EP.RenderPipeline.updateEffect(effect, time, dt, loopDuration);
+                if (EP.Audio && EP.Audio.isActive()) EP.Audio.analyzeFrame();
+                var audioMult = EP.Audio ? EP.Audio.getEnergyMultiplier() : 1;
+                EP.RenderPipeline.updateEffect(effect, time, dt * audioMult, loopDuration);
             }
         });
 

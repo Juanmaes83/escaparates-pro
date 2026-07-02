@@ -169,3 +169,35 @@ button:disabled {
 }
 .aspect-ctrl-btn:hover { border-color: var(--border-hover); }
 .aspect-ctrl-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* Audio panel */
+.audio-upload-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.audio-filename {
+    font-size: 10px; color: var(--text-dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 140px; flex: 1;
+}
+.audio-meter-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.audio-meter-row label {
+    font-size: 11px; color: var(--text-dim); min-width: 52px; flex-shrink: 0;
+}
+.audio-energy-bar {
+    flex: 1; height: 6px; background: var(--surface-2);
+    border-radius: 3px; overflow: hidden;
+}
+.audio-energy-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 3px; transition: width 0.05s linear;
+}
+#audio-bpm-manual {
+    width: 52px; padding: 3px 5px; font-size: 11px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text);
+}
+#audio-sync-loop { margin-top: 4px; width: 100%; }
+#audio-panel select { flex: 1; }
