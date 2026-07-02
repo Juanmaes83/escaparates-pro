@@ -10,7 +10,8 @@ EP.Registry = (function() {
         { id: 'reveal-wipe', name: 'Reveal & Wipe', icon: '✨' },
         { id: 'glassmorphism', name: 'Glassmorphism', icon: '💎' },
         { id: 'parallax', name: 'Parallax', icon: '🏔️' },
-        { id: 'motion', name: 'Motion', icon: '☁️' }
+        { id: 'motion', name: 'Motion', icon: '☁️' },
+        { id: 'text', name: 'Text FX', icon: '✍️' }
     ];
 
     function normalizeControls(effect) {
