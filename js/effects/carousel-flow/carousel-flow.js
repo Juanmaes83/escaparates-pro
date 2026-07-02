@@ -14,7 +14,9 @@
         { key: 'stagger', type: 'range', min: 0, max: 2, default: 0, step: 0.05, label: 'Stagger', unit: 's' },
         { key: 'focusScale', type: 'range', min: 80, max: 150, default: 100, label: 'Focus Scale', unit: '%' },
         { key: 'dimAmount', type: 'range', min: 0, max: 100, default: 0, label: 'Dim Periféricos', unit: '%' },
-        { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot', 'linear'], default: 'smooth', label: 'Easing' },
+        { key: 'tiltMode', type: 'select', options: [{ v: 'off', l: 'Off' }, { v: 'fan', l: 'Fan' }, { v: 'alternate', l: 'Alternate' }, { v: 'uniform', l: 'Uniform' }], default: 'off', label: 'Tilt Mode' },
+        { key: 'tiltAmount', type: 'range', min: 0, max: 45, default: 15, label: 'Tilt Amount', unit: '°' },
+        { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'organic', 'aggressive', 'robotic', 'overshoot'], default: 'smooth', label: 'Easing' },
         { key: 'cardRatio', type: 'aspect', options: ['1:1', '4:3', '3:4', '16:9'], default: '4:3', label: 'Card Ratio' },
         { key: 'background', type: 'color', default: '#101014', label: 'Background' }
     ]);
@@ -48,6 +50,8 @@
         var staggerSec = this.settings.stagger || 0;
         var dimAmount = (this.settings.dimAmount || 0) / 100;
         var focusMult = (this.settings.focusScale || 100) / 100;
+        var tiltMode = this.settings.tiltMode || 'off';
+        var tiltAmt = (this.settings.tiltAmount || 15) * Math.PI / 180;
 
         this.group.children.forEach(function(child) {
             var i = child.userData.index;
@@ -61,7 +65,7 @@
             var dist = Math.abs(x) / (totalW / 2);
             var isFocus = dist < 0.5;
 
-            // Stagger: rolling Y-wave — each card bobs at a different phase (domino effect)
+            // Stagger: rolling Y-wave
             if (staggerSec > 0) {
                 var phaseOffset = (i / total) * Math.PI * 2 * staggerSec * 2;
                 child.position.y = Math.sin(time * Math.PI * 2 / loopDuration + phaseOffset) *
@@ -70,13 +74,24 @@
                 child.position.y = 0;
             }
 
-            // Z depth — focused card pops forward
+            // Z depth
             child.position.z = isFocus ? 0.3 : -dist * 2;
 
-            // Focus Scale — center card expands
+            // Tilt modes
+            var tiltZ = 0;
+            if (tiltMode === 'fan') {
+                tiltZ = (x / (totalW / 2)) * tiltAmt * -1;
+            } else if (tiltMode === 'alternate') {
+                tiltZ = (i % 2 === 0 ? 1 : -1) * tiltAmt * 0.6;
+            } else if (tiltMode === 'uniform') {
+                tiltZ = tiltAmt * 0.5;
+            }
+            child.rotation.z = tiltZ;
+
+            // Focus Scale
             child.scale.setScalar(isFocus ? focusMult : Math.max(0.2, 1 - dist * 0.3));
 
-            // Dim Amount — peripheral cards darken
+            // Dim Amount
             if (isFocus) {
                 child.material.opacity = 1;
             } else {

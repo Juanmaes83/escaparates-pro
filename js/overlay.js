@@ -47,6 +47,38 @@ EP.Overlay = (function() {
             refresh();
         });
 
+        // Text Layer Depth control
+        var depthSel = document.getElementById('overlay-depth');
+        var opacitySlider = document.getElementById('overlay-text-opacity');
+        var opacityVal = document.getElementById('overlay-text-opacity-val');
+        if (depthSel) {
+            depthSel.addEventListener('change', function() { applyDepth(); });
+        }
+        if (opacitySlider) {
+            opacitySlider.addEventListener('input', function() {
+                if (opacityVal) opacityVal.textContent = opacitySlider.value + '%';
+                applyDepth();
+            });
+        }
+        function applyDepth() {
+            if (!overlayDiv) return;
+            var depth = depthSel ? depthSel.value : 'front';
+            var opacity = opacitySlider ? opacitySlider.value / 100 : 1;
+            if (depth === 'front') {
+                overlayDiv.style.zIndex = '10';
+                overlayDiv.style.opacity = opacity;
+                overlayDiv.style.mixBlendMode = 'normal';
+            } else if (depth === 'middle') {
+                overlayDiv.style.zIndex = '5';
+                overlayDiv.style.opacity = opacity * 0.85;
+                overlayDiv.style.mixBlendMode = 'screen';
+            } else if (depth === 'back') {
+                overlayDiv.style.zIndex = '2';
+                overlayDiv.style.opacity = opacity * 0.6;
+                overlayDiv.style.mixBlendMode = 'multiply';
+            }
+        }
+
         var fields = [
             'overlay-headline', 'overlay-subtitle', 'overlay-cta',
             'overlay-color', 'overlay-subtitle-color', 'overlay-cta-color',

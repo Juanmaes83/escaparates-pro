@@ -230,11 +230,20 @@ EP.UI = (function() {
                 row.appendChild(textInput);
             } else if (ctrl.type === 'easing') {
                 var easingRow = document.createElement('div');
-                easingRow.className = 'easing-row';
+                easingRow.className = 'easing-row easing-grid';
                 ctrl.options.forEach(function(name) {
                     var btn = document.createElement('button');
-                    btn.className = 'easing-btn' + (name === effect.settings[ctrl.key] ? ' active' : '');
-                    btn.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                    btn.className = 'easing-btn easing-curve-btn' + (name === effect.settings[ctrl.key] ? ' active' : '');
+                    // SVG curve thumbnail
+                    var W = 44, H = 28;
+                    var path = EP.Easing.toPath(name, W, H);
+                    var label = (EP.Easing.LABELS && EP.Easing.LABELS[name]) || (name.charAt(0).toUpperCase() + name.slice(1));
+                    btn.innerHTML =
+                        '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" class="easing-svg">' +
+                        '<path d="' + path + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+                        '</svg>' +
+                        '<span class="easing-label">' + label + '</span>';
+                    btn.title = label;
                     btn.addEventListener('click', function() {
                         easingRow.querySelectorAll('.easing-btn').forEach(function(b) { b.classList.remove('active'); });
                         this.classList.add('active');

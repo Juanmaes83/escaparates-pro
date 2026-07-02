@@ -310,6 +310,20 @@
                         <option value="bottom-right" selected>Abajo der</option>
                     </select>
                 </div>
+                <!-- Text Layer Depth -->
+                <div class="control-row">
+                    <label>Capa de texto</label>
+                    <select id="overlay-depth">
+                        <option value="front" selected>Front — Encima</option>
+                        <option value="middle">Middle — Integrado</option>
+                        <option value="back">Back — Detrás</option>
+                    </select>
+                </div>
+                <div class="control-row" id="overlay-opacity-row">
+                    <label>Opacidad texto</label>
+                    <input type="range" id="overlay-text-opacity" min="10" max="100" value="100">
+                    <span class="val" id="overlay-text-opacity-val">100%</span>
+                </div>
             </div>
         </div>
     </aside>

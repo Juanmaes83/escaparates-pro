@@ -150,11 +150,22 @@ button:disabled {
 .easing-row {
     display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
 }
+.easing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 8px;
+}
 .easing-btn {
     background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim);
     padding: 3px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;
     font-family: var(--font); transition: all 0.2s;
 }
+.easing-curve-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 5px 4px 4px; border-radius: 6px;
+}
+.easing-svg { display: block; opacity: 0.7; transition: opacity 0.15s; }
+.easing-curve-btn:hover .easing-svg { opacity: 1; }
+.easing-curve-btn.active .easing-svg { opacity: 1; }
+.easing-label { font-size: 9px; line-height: 1; font-family: var(--font); }
 .easing-btn:hover { border-color: var(--border-hover); color: var(--text); }
 .easing-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
