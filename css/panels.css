@@ -49,6 +49,36 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* ─── Visual Pipeline (Look / Tone) ───────────────────────────── */
+.vp-toggles-row {
+    display: flex; gap: 6px; margin-bottom: 8px;
+}
+.vp-toggle-btn {
+    flex: 1; background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text-dim); padding: 5px 4px; border-radius: 5px;
+    font-size: 10px; font-weight: 600; cursor: pointer; font-family: var(--font);
+    transition: all 0.18s; letter-spacing: 0.3px;
+}
+.vp-toggle-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.vp-toggle-btn.vp-active {
+    background: var(--accent-dim); border-color: var(--accent);
+    color: var(--accent);
+}
+.vp-actions-row {
+    display: flex; gap: 6px; margin-top: 4px;
+}
+.vp-action-btn {
+    flex: 1; background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text-dim); padding: 6px 4px; border-radius: 5px;
+    font-size: 10px; font-weight: 600; cursor: pointer; font-family: var(--font);
+    transition: all 0.18s;
+}
+.vp-action-btn:hover { border-color: var(--border-hover); color: var(--text); }
+.vp-action-btn.vp-active {
+    background: rgba(100,255,150,0.12); border-color: rgba(100,255,150,0.45);
+    color: #64ff96;
+}
+
 #plan-panel select {
     width: 100%;
     margin-bottom: 8px;

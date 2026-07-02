@@ -181,6 +181,43 @@
                 <span class="val" id="speed-val">1.0x</span>
             </div>
         </div>
+        <div class="panel-section" id="visual-pipeline-panel">
+            <h3>LOOK / TONE</h3>
+            <div class="control-row">
+                <label>Brillo</label>
+                <input type="range" id="vp-brightness" min="0" max="200" value="100" step="1">
+                <span class="val" id="vp-brightness-val">100%</span>
+            </div>
+            <div class="control-row">
+                <label>Contraste</label>
+                <input type="range" id="vp-contrast" min="0" max="200" value="100" step="1">
+                <span class="val" id="vp-contrast-val">100%</span>
+            </div>
+            <div class="control-row">
+                <label>Saturación</label>
+                <input type="range" id="vp-saturation" min="0" max="200" value="100" step="1">
+                <span class="val" id="vp-saturation-val">100%</span>
+            </div>
+            <div class="control-row">
+                <label>Tono</label>
+                <input type="range" id="vp-hue" min="-180" max="180" value="0" step="1">
+                <span class="val" id="vp-hue-val">0°</span>
+            </div>
+            <div class="vp-toggles-row">
+                <button id="vp-grayscale" class="vp-toggle-btn">B/N</button>
+                <button id="vp-sepia" class="vp-toggle-btn">Sepia</button>
+                <button id="vp-glow" class="vp-toggle-btn">✦ Glow</button>
+            </div>
+            <div class="control-row" id="vp-glow-strength-row" style="display:none;">
+                <label>Intensidad</label>
+                <input type="range" id="vp-glow-strength" min="1" max="20" value="6" step="1">
+                <span class="val" id="vp-glow-strength-val">0.6</span>
+            </div>
+            <div class="vp-actions-row">
+                <button id="vp-compare" class="vp-action-btn">👁 Compare</button>
+                <button id="vp-reset" class="vp-action-btn">↺ Reset</button>
+            </div>
+        </div>
         <div class="panel-section" id="effect-controls-container">
             <h3 id="effect-controls-title">AJUSTES</h3>
             <div id="effect-controls"></div>
@@ -618,6 +655,7 @@
     <!-- PROXIMITY family -->
     <script src="js/effects/proximity/proximity-bloom.js"></script>
     <!-- UI + Export -->
+    <script src="js/visual-pipeline.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/export.js"></script>
     <script src="js/demo-assets.js"></script>

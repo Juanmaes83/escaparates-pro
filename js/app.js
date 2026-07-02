@@ -10,6 +10,8 @@
         try { if (EP.Audio) EP.Audio.init(); } catch(e) { console.error('Audio.init failed:', e); }
         try { EP.Export.init(); } catch(e) { console.error('Export.init failed:', e); }
         try { if (EP.DemoAssets) EP.DemoAssets.init(); } catch(e) { console.error('DemoAssets.init failed:', e); }
+        try { if (EP.TimelineVisual) EP.TimelineVisual.init(); } catch(e) { console.error('TimelineVisual.init failed:', e); }
+        try { if (EP.VisualPipeline) EP.VisualPipeline.init(); } catch(e) { console.error('VisualPipeline.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
