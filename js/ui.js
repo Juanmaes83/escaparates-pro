@@ -85,6 +85,7 @@ EP.UI = (function() {
         currentEffect = effect;
 
         EP.Core.resetGlobalState({ clearDisplay: true });
+        if (EP.PerformancePath && typeof EP.PerformancePath.resetBases === 'function') EP.PerformancePath.resetBases();
         if (EP.Timeline && typeof EP.Timeline.resetTemporal === 'function') EP.Timeline.resetTemporal();
         if (effect.settings.background) EP.Core.setBackground(effect.settings.background);
 
@@ -298,6 +299,7 @@ EP.UI = (function() {
     function rebuildCurrent() {
         if (!currentEffect) return;
         EP.Core.resetGlobalState();
+        if (EP.PerformancePath && typeof EP.PerformancePath.resetBases === 'function') EP.PerformancePath.resetBases();
         if (currentEffect.settings.background) EP.Core.setBackground(currentEffect.settings.background);
         var mediaList = EP.Media.getAll();
         var group = typeof currentEffect.reconstruct === 'function' ? currentEffect.reconstruct(mediaList) : currentEffect.rebuild(mediaList);

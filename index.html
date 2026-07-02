@@ -246,6 +246,30 @@
                 </div>
             </div>
         </div>
+        <div class="panel-section" id="performance-path-panel">
+            <h3>RECORRIDO GRABADO</h3>
+            <div class="control-row">
+                <label>Activar</label>
+                <input type="checkbox" id="path-enabled">
+            </div>
+            <div class="control-row">
+                <label>Aplicar a</label>
+                <select id="path-target">
+                    <option value="group" selected>Efecto</option>
+                    <option value="camera">Camara</option>
+                </select>
+            </div>
+            <div class="control-row">
+                <label>Intensidad</label>
+                <input type="range" id="path-strength" min="0" max="220" value="100" step="5">
+                <span class="val" id="path-strength-val">100%</span>
+            </div>
+            <div class="control-row">
+                <button id="path-capture" class="small-btn">Puntear recorrido</button>
+                <button id="path-clear" class="small-btn">Borrar</button>
+                <span class="val" id="path-count">0 puntos</span>
+            </div>
+        </div>
         <div class="panel-section" id="effect-controls-container">
             <h3 id="effect-controls-title">AJUSTES</h3>
             <div id="effect-controls"></div>
@@ -501,6 +525,7 @@
     <script src="js/plan-gate.js"></script>
     <script src="js/core.js"></script>
     <script src="js/easing.js"></script>
+    <script src="js/performance-path.js"></script>
     <script src="js/render-pipeline.js"></script>
     <script src="js/output-presets.js"></script>
     <script src="js/timeline.js"></script>
@@ -720,6 +745,26 @@
     <script src="js/effects/flicker/glitch-rgb.js"></script>
     <script src="js/effects/text/circular-timer.js"></script>
     <script src="js/effects/text/neon-pulse-glow.js"></script>
+    <!-- Shader Premium family -->
+    <script src="js/effects/shader-premium/particulate-shatter-pro.js"></script>
+    <script src="js/effects/shader-premium/video-dither-glyph-pro.js"></script>
+    <script src="js/effects/shader-premium/infinity-zoom-pro.js"></script>
+    <script src="js/effects/shader-premium/infinity-machine-pro.js"></script>
+    <script src="js/effects/shader-premium/fiesta-truchets-pro.js"></script>
+    <script src="js/effects/shader-premium/deco-tile-pro.js"></script>
+    <script src="js/effects/shader-premium/reflective-city-pro.js"></script>
+    <script src="js/effects/shader-premium/quadtree-eyes-pro.js"></script>
+    <script src="js/effects/shader-premium/shader-doodle-gradient-pro.js"></script>
+    <script src="js/effects/shader-premium/mutating-field-pro.js"></script>
+    <script src="js/effects/shader-premium/everything-is-fine-pro.js"></script>
+    <script src="js/effects/shader-premium/infinity-truchets-pro.js"></script>
+    <script src="js/effects/shader-premium/infinite-falling-pro.js"></script>
+    <script src="js/effects/shader-premium/candy-stacker-pro.js"></script>
+    <script src="js/effects/shader-premium/shader-clock-pro.js"></script>
+    <script src="js/effects/shader-premium/crystal-computers-pro.js"></script>
+    <script src="js/effects/shader-premium/glass-wooden-pegs-pro.js"></script>
+    <script src="js/effects/shader-premium/zen-hexagon-tiles-pro.js"></script>
+    <script src="js/effects/shader-premium/shader-ghosts-pro.js"></script>
     <!-- UI + Export -->
     <script src="js/visual-pipeline.js"></script>
     <script src="js/pipeline-pro.js"></script>

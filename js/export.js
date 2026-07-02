@@ -969,6 +969,7 @@ EP.Export = (function() {
         var effectId = effect.id;
         var sourcePath = resolveEffectSourcePath(effect);
         var repoBase = getVersionedRepoBase();
+        var performancePath = EP.PerformancePath && EP.PerformancePath.getExportState ? EP.PerformancePath.getExportState() : { enabled: false, target: 'group', strength: 100, points: [] };
 
         var overlayHTML = '';
         if (EP.Overlay.isEnabled()) {
@@ -1009,6 +1010,7 @@ EP.Export = (function() {
                 'var ESCAPARATES_EXPORT = ' + JSON.stringify(metadata) + ';\n' +
                 mediaArrayJS +
                 'var SETTINGS = ' + settings + ';\n' +
+                'var PERFORMANCE_PATH = ' + JSON.stringify(performancePath) + ';\n' +
                 'var EFFECT_ID = "' + effectId + '";\n' +
                 'var LOOP_DURATION = ' + JSON.stringify(EP.Timeline.loopDuration || 8) + ';\n' +
                 'var OUTPUT_PRESET = ' + JSON.stringify(outputPreset) + ';\n' +
@@ -1056,6 +1058,7 @@ EP.Export = (function() {
             'js/device-profile.js',
             'js/core.js',
             'js/easing.js',
+            'js/performance-path.js',
             'js/render-pipeline.js',
             'js/timeline.js',
             'js/media-manager.js',
@@ -1156,6 +1159,7 @@ EP.Export = (function() {
             '  Object.keys(SETTINGS).forEach(function(key){ effect.setSetting(key, SETTINGS[key]); });',
             '  var group = effect.rebuild(mediaList);',
             '  EP.Core.setDisplayGroup(group);',
+            '  if (EP.PerformancePath && EP.PerformancePath.importState) EP.PerformancePath.importState(PERFORMANCE_PATH);',
             '  var last = performance.now() / 1000;',
             '  function frame(nowMs){',
             '    var now = nowMs / 1000;',

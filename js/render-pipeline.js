@@ -32,6 +32,9 @@ EP.RenderPipeline = (function() {
         var frame = resolveFrame(effect, time, dt, loopDuration);
         try {
             effect.update(frame.time, frame.dt, frame.loopDuration);
+            if (EP.PerformancePath && typeof EP.PerformancePath.apply === 'function') {
+                EP.PerformancePath.apply(effect, frame.time, frame.dt, frame.loopDuration);
+            }
             return true;
         } catch (err) {
             effect.lastError = err;
