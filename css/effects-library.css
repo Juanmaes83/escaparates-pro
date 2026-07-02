@@ -1,6 +1,6 @@
 /* Effects library panel */
 #effects-categories {
-    flex: 1; overflow-y: auto; padding: 8px 0;
+    flex: 1; overflow-y: auto; padding: 8px 0; min-height: 0;
 }
 
 .effect-category {
@@ -59,6 +59,56 @@
     font-size: 10px; color: var(--text-dim); margin-top: 1px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* Tag filter section */
+#tag-filters {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+}
+#tag-chips-row {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    padding: 6px 10px 4px;
+    max-height: 120px; overflow-y: auto;
+}
+.tag-group-sep {
+    width: 100%; font-size: 8px; font-weight: 700; letter-spacing: 1px;
+    color: rgba(255,255,255,0.2); padding: 4px 0 1px;
+    pointer-events: none;
+}
+.tag-chip {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 7px; border-radius: 20px; cursor: pointer;
+    background: var(--surface-2); border: 1px solid var(--border);
+    font-size: 10px; color: var(--text-dim); transition: all 0.15s;
+    white-space: nowrap;
+}
+.tag-chip:hover { border-color: var(--border-hover); color: var(--text); }
+.tag-chip.active {
+    background: var(--accent-dim); border-color: rgba(79,140,255,0.5);
+    color: var(--accent);
+}
+.tc-icon { font-size: 10px; line-height: 1; }
+.tc-label { font-weight: 500; }
+.tc-count {
+    font-family: var(--mono); font-size: 9px;
+    color: rgba(255,255,255,0.25); margin-left: 1px;
+}
+.tag-chip.active .tc-count { color: rgba(79,140,255,0.6); }
+
+#tag-active-bar {
+    display: none; align-items: center; justify-content: space-between;
+    padding: 3px 10px; background: var(--accent-dim);
+    border-top: 1px solid rgba(79,140,255,0.2);
+}
+#tag-active-count {
+    font-size: 10px; color: var(--accent); font-family: var(--mono);
+}
+#tag-clear-btn {
+    background: none; border: none; color: var(--accent); font-size: 10px;
+    cursor: pointer; padding: 2px 4px; opacity: 0.8;
+}
+#tag-clear-btn:hover { opacity: 1; }
 
 /* Search wrapper and clear button */
 .search-wrap {

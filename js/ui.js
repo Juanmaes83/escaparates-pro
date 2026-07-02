@@ -1,9 +1,11 @@
 EP.UI = (function() {
     var currentEffect = null;
     var toastTimer = null;
+    var activeTags = [];
 
     function init() {
         buildEffectsLibrary();
+        buildTagFilters();
         bindOutputPreset();
         bindAspectSelector();
         bindEffectsSearch();
@@ -254,6 +256,97 @@ EP.UI = (function() {
         });
     }
 
+    function buildTagFilters() {
+        var row = document.getElementById('tag-chips-row');
+        var activeBar = document.getElementById('tag-active-bar');
+        var countEl = document.getElementById('tag-active-count');
+        var clearBtn = document.getElementById('tag-clear-btn');
+        if (!row || !EP.Tags) return;
+
+        var counts = EP.Registry.getTagCounts();
+        var defs = EP.Tags.getDefs();
+        var lastGroup = null;
+
+        defs.forEach(function(def) {
+            if (!(counts[def.id] > 0)) return;
+
+            if (def.group !== lastGroup) {
+                var sep = document.createElement('span');
+                sep.className = 'tag-group-sep';
+                sep.textContent = def.group.toUpperCase();
+                row.appendChild(sep);
+                lastGroup = def.group;
+            }
+
+            var chip = document.createElement('button');
+            chip.className = 'tag-chip';
+            chip.dataset.tagId = def.id;
+            chip.title = counts[def.id] + ' efectos';
+            chip.innerHTML = '<span class="tc-icon">' + def.icon + '</span><span class="tc-label">' + def.label + '</span><span class="tc-count">' + counts[def.id] + '</span>';
+
+            chip.addEventListener('click', function() {
+                var idx = activeTags.indexOf(def.id);
+                if (idx === -1) {
+                    activeTags.push(def.id);
+                    chip.classList.add('active');
+                } else {
+                    activeTags.splice(idx, 1);
+                    chip.classList.remove('active');
+                }
+                applyTagFilter();
+                document.getElementById('effects-search').dispatchEvent(new Event('input'));
+            });
+
+            row.appendChild(chip);
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                activeTags = [];
+                row.querySelectorAll('.tag-chip').forEach(function(c) { c.classList.remove('active'); });
+                applyTagFilter();
+                document.getElementById('effects-search').dispatchEvent(new Event('input'));
+            });
+        }
+    }
+
+    function applyTagFilter() {
+        var activeBar = document.getElementById('tag-active-bar');
+        var countEl = document.getElementById('tag-active-count');
+
+        if (activeTags.length === 0) {
+            // Show all cards
+            document.querySelectorAll('.effect-card').forEach(function(c) { c.dataset.tagHidden = ''; });
+            document.querySelectorAll('.effect-category').forEach(function(c) { c.dataset.tagHidden = ''; });
+            if (activeBar) activeBar.style.display = 'none';
+            return;
+        }
+
+        var matchingIds = {};
+        EP.Registry.getByTags(activeTags).forEach(function(e) { matchingIds[e.id] = true; });
+        var total = 0;
+
+        document.querySelectorAll('.effect-category').forEach(function(catDiv) {
+            var visibleInCat = 0;
+            catDiv.querySelectorAll('.effect-card').forEach(function(card) {
+                var id = card.dataset.effectId;
+                if (matchingIds[id]) {
+                    card.dataset.tagHidden = '';
+                    visibleInCat++;
+                } else {
+                    card.dataset.tagHidden = 'true';
+                }
+            });
+            catDiv.dataset.tagHidden = visibleInCat === 0 ? 'true' : '';
+            total += visibleInCat;
+        });
+
+        if (activeBar) {
+            activeBar.style.display = 'flex';
+            if (countEl) countEl.textContent = total + ' efectos';
+        }
+    }
+
     function normalizeText(str) {
         return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     }
@@ -272,20 +365,28 @@ EP.UI = (function() {
             if (clearBtn) clearBtn.style.display = q ? '' : 'none';
 
             document.querySelectorAll('.effect-category').forEach(function(catDiv) {
+                var catTagHidden = catDiv.dataset.tagHidden === 'true';
+                if (catTagHidden && !q) {
+                    catDiv.style.display = 'none';
+                    return;
+                }
+
                 var catNameEl = catDiv.querySelector('.cat-name');
                 var catName = catNameEl ? normalizeText(catNameEl.textContent) : '';
                 var catMatchesQuery = q && catName.indexOf(q) !== -1;
                 var visibleInCat = 0;
 
                 catDiv.querySelectorAll('.effect-card').forEach(function(card) {
+                    var tagHidden = card.dataset.tagHidden === 'true';
                     var name = normalizeText(card.querySelector('.effect-name').textContent);
                     var desc = normalizeText(card.querySelector('.effect-desc').textContent);
-                    var match = !q || catMatchesQuery || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
-                    card.style.display = match ? '' : 'none';
-                    if (match) visibleInCat++;
+                    var textMatch = !q || catMatchesQuery || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
+                    var show = textMatch && !tagHidden;
+                    card.style.display = show ? '' : 'none';
+                    if (show) visibleInCat++;
                 });
 
-                var catVisible = !q || visibleInCat > 0;
+                var catVisible = visibleInCat > 0;
                 catDiv.style.display = catVisible ? '' : 'none';
                 if (q && visibleInCat > 0) {
                     catDiv.querySelector('.category-header').classList.add('open');

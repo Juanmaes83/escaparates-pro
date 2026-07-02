@@ -135,6 +135,7 @@ EP.Registry = (function() {
             effect.controlsDef = EP.ControlSchema.normalizeControls(effect.controlsDef);
             effect.settings = EP.ControlSchema.validateSettings(effect, effect.settings);
         }
+        if (EP.Tags) EP.Tags.autoTag(effect);
         effects[effect.id] = effect;
     }
 
@@ -162,6 +163,27 @@ EP.Registry = (function() {
         return categories;
     }
 
+    function getByTags(tagIds) {
+        if (!tagIds || tagIds.length === 0) return Object.values ? Object.values(effects) : Object.keys(effects).map(function(k) { return effects[k]; });
+        var result = [];
+        for (var id in effects) {
+            var e = effects[id];
+            var eTags = (e.meta && e.meta.tags) || [];
+            var match = tagIds.some(function(tid) { return eTags.indexOf(tid) !== -1; });
+            if (match) result.push(e);
+        }
+        return result;
+    }
+
+    function getTagCounts() {
+        var counts = {};
+        for (var id in effects) {
+            var tags = (effects[id].meta && effects[id].meta.tags) || [];
+            tags.forEach(function(t) { counts[t] = (counts[t] || 0) + 1; });
+        }
+        return counts;
+    }
+
     function search(query) {
         query = query.toLowerCase();
         var result = [];
@@ -182,6 +204,8 @@ EP.Registry = (function() {
         getDuplicateIds: getDuplicateIds,
         getByCategory: getByCategory,
         getCategories: getCategories,
+        getByTags: getByTags,
+        getTagCounts: getTagCounts,
         search: search
     };
 })();
