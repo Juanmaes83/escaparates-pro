@@ -35,21 +35,39 @@ EP.Overlay = (function() {
         });
 
         document.getElementById('upload-logo-btn').addEventListener('click', function() {
+            if (EP.PlanGate && !EP.PlanGate.can('upload-logo')) {
+                EP.UI.toast(EP.PlanGate.reason('upload-logo'));
+                return;
+            }
             document.getElementById('logo-file-input').click();
         });
 
         document.getElementById('logo-file-input').addEventListener('change', function(e) {
             if (!e.target.files.length) return;
+            var file = e.target.files[0];
+            if (EP.PlanGate && !EP.PlanGate.can('upload-logo')) {
+                EP.UI.toast(EP.PlanGate.reason('upload-logo'));
+                e.target.value = '';
+                return;
+            }
             var reader = new FileReader();
             reader.onload = function(ev) {
                 logoImg = new Image();
                 logoImg.onload = function() {
+                    if (EP.PlanGate) {
+                        var verdict = EP.PlanGate.validateFile(file, { width: logoImg.naturalWidth || logoImg.width, height: logoImg.naturalHeight || logoImg.height }, 'logo');
+                        if (!verdict.ok) {
+                            logoImg = null;
+                            EP.UI.toast(verdict.errors[0]);
+                            return;
+                        }
+                    }
                     document.getElementById('upload-logo-btn').textContent = 'Logo cargado';
                     refresh();
                 };
                 logoImg.src = ev.target.result;
             };
-            reader.readAsDataURL(e.target.files[0]);
+            reader.readAsDataURL(file);
             e.target.value = '';
         });
     }

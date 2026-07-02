@@ -28,18 +28,26 @@ EP.Export = (function() {
         if (type === 'video') {
             panel.innerHTML = '<label>Duracion <span class="val-hint" id="vid-dur-val">8s</span></label>' +
                 '<input type="range" id="vid-dur" min="3" max="30" value="8" step="1">' +
-                '<label>Resolucion</label>' +
-                '<select id="vid-res"><option value="480">480p</option><option value="720" selected>720p</option><option value="1080">1080p</option></select>' +
+                '<label>Resolucion final</label>' +
+                '<select id="vid-res"><option value="preset" selected>Preset exacto actual</option><option value="preview">Tamano de preview</option></select>' +
+                '<label>FPS</label>' +
+                '<select id="vid-fps"><option value="24">24 FPS</option><option value="30" selected>30 FPS</option><option value="60">60 FPS</option></select>' +
                 '<label>Formato</label>' +
                 '<select id="vid-fmt"><option value="webm">WebM</option><option value="mp4">MP4</option></select>' +
+                '<div class="export-preflight" id="video-preflight"></div>' +
                 '<button class="export-go" id="go-video">Exportar Video</button>' +
                 '<div class="export-progress" id="prog-video"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
 
             area.appendChild(panel);
             document.getElementById('vid-dur').addEventListener('input', function() {
                 document.getElementById('vid-dur-val').textContent = this.value + 's';
+                updateVideoPreflight();
             });
+            document.getElementById('vid-fmt').addEventListener('change', updateVideoPreflight);
+            document.getElementById('vid-fps').addEventListener('change', updateVideoPreflight);
+            document.getElementById('vid-res').addEventListener('change', updateVideoPreflight);
             document.getElementById('go-video').addEventListener('click', exportVideo);
+            updateVideoPreflight();
         } else if (type === 'gif') {
             panel.innerHTML = '<label>Duracion <span class="val-hint" id="gif-dur-val">4s</span></label>' +
                 '<input type="range" id="gif-dur" min="2" max="10" value="4" step="0.5">' +
@@ -57,18 +65,21 @@ EP.Export = (function() {
             document.getElementById('go-gif').addEventListener('click', exportGIF);
         } else if (type === 'widget') {
             panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Genera un HTML autonomo con el efecto activo, la animacion y las imagenes embebidas. Sin controles de edicion.</p>' +
+                buildStandaloneModeControls() +
                 '<button class="export-go" id="go-widget">Generar Widget HTML</button>' +
                 '<div class="export-progress" id="prog-widget"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
             area.appendChild(panel);
             document.getElementById('go-widget').addEventListener('click', exportWidget);
         } else if (type === 'script') {
             panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Genera un archivo JS embebible. El script crea un iframe autonomo con el escaparate activo para pegarlo en webs de clientes.</p>' +
+                buildStandaloneModeControls() +
                 '<button class="export-go" id="go-script">Generar JS embebible</button>' +
                 '<div class="export-progress" id="prog-script"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
             area.appendChild(panel);
             document.getElementById('go-script').addEventListener('click', exportScript);
         } else if (type === 'publish') {
             panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Publica una URL local temporal con el viewer final cerrado. Sirve para revisar el resultado sin paneles antes de subirlo a hosting.</p>' +
+                buildStandaloneModeControls() +
                 '<button class="export-go" id="go-publish">Publicar resultado local</button>' +
                 '<div class="export-progress" id="prog-publish"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>' +
                 '<div id="publish-result" class="final-output-result"></div>';
@@ -76,6 +87,7 @@ EP.Export = (function() {
             document.getElementById('go-publish').addEventListener('click', publishResult);
         } else if (type === 'copy') {
             panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Genera un iframe final para copiar en una web. El embed contiene solo el resultado, nunca el editor.</p>' +
+                buildStandaloneModeControls() +
                 '<button class="export-go" id="go-copy">Generar embed final</button>' +
                 '<div class="export-progress" id="prog-copy"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>' +
                 '<textarea id="copy-embed-result" class="final-output-code" readonly placeholder="El embed final aparecera aqui..."></textarea>';
@@ -84,27 +96,46 @@ EP.Export = (function() {
         }
     }
 
+    function buildStandaloneModeControls() {
+        return '<label>Modo HTML final</label>' +
+            '<select id="standalone-mode">' +
+            '<option value="cdn" selected>Ligero - CDN versionado</option>' +
+            '<option value="offline">Autocontenido - offline</option>' +
+            '</select>' +
+            '<label>Version CDN/tag</label>' +
+            '<input type="text" id="cdn-version" value="local-preview" autocomplete="off">';
+    }
+
+    function getStandaloneMode() {
+        var el = document.getElementById('standalone-mode');
+        return el ? el.value : 'cdn';
+    }
+
     function exportVideo() {
         var btn = document.getElementById('go-video');
         var prog = document.getElementById('prog-video');
+        var preflight = buildExportPreflight('video');
+        renderPreflight('video-preflight', preflight);
+        if (!preflight.ok) {
+            EP.UI.toast(preflight.errors[0] || 'Export bloqueado por preflight');
+            return;
+        }
         btn.disabled = true;
         prog.classList.add('active');
 
         var canvas = EP.Core.renderer.domElement;
         var duration = parseInt(document.getElementById('vid-dur').value) * 1000;
-        var mimeType = document.getElementById('vid-fmt').value === 'mp4' ? 'video/mp4' : 'video/webm';
-        var ext = document.getElementById('vid-fmt').value === 'mp4' ? 'mp4' : 'webm';
-
-        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+        var mimeType = preflight.mimeType;
+        var ext = preflight.extension;
+        var fps = preflight.fps;
 
         var exportCanvas = document.createElement('canvas');
-        var res = parseInt(document.getElementById('vid-res').value);
-        var videoSize = getExportDimensions(res);
+        var videoSize = getVideoExportDimensions();
         exportCanvas.width = videoSize.width;
         exportCanvas.height = videoSize.height;
         var ectx = exportCanvas.getContext('2d');
 
-        var stream = exportCanvas.captureStream(30);
+        var stream = exportCanvas.captureStream(fps);
         var recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 5000000 });
         var chunks = [];
 
@@ -118,7 +149,7 @@ EP.Export = (function() {
             URL.revokeObjectURL(url);
             btn.disabled = false;
             prog.classList.remove('active');
-            EP.UI.toast('Video exportado correctamente');
+            EP.UI.toast('Video exportado: ' + videoSize.width + 'x' + videoSize.height + ' @ ' + fps + ' FPS');
         };
 
         recorder.start();
@@ -181,7 +212,7 @@ EP.Export = (function() {
             var t = (i / totalFrames) * loopDur;
             if (effect) {
                 var frame = resolveExportFrame(effect, t, 0, loopDur);
-                effect.update(frame.time, frame.dt, loopDur);
+                effect.update(frame.time, frame.dt, frame.loopDuration || loopDur);
             }
             EP.Core.render();
             tmpCtx.drawImage(canvas, 0, 0, w, h);
@@ -537,6 +568,90 @@ EP.Export = (function() {
         exportStandalone('script');
     }
 
+    function updateVideoPreflight() {
+        renderPreflight('video-preflight', buildExportPreflight('video'));
+    }
+
+    function buildExportPreflight(kind) {
+        var effect = EP.UI.getCurrentEffect();
+        var mediaList = EP.Media.getAll();
+        var preset = getCurrentOutputPreset();
+        var dims = kind === 'video' ? getVideoExportDimensions() : getPresetExportDimensions();
+        var profile = EP.DeviceProfile ? EP.DeviceProfile.get() : { type: 'desktop', lowPower: false, webgl: true };
+        var errors = [];
+        var warnings = [];
+        var format = kind === 'video' && document.getElementById('vid-fmt') ? document.getElementById('vid-fmt').value : 'html';
+        var fps = kind === 'video' && document.getElementById('vid-fps') ? parseInt(document.getElementById('vid-fps').value, 10) : 30;
+        var mimeType = format === 'mp4' ? 'video/mp4' : 'video/webm';
+        var extension = format === 'mp4' ? 'mp4' : 'webm';
+
+        if (!effect) errors.push('Selecciona un efecto antes de exportar.');
+        if (EP.PlanGate) {
+            if (kind === 'publish' && !EP.PlanGate.can('publish')) errors.push(EP.PlanGate.reason('publish'));
+            else if (!EP.PlanGate.can('export')) errors.push(EP.PlanGate.reason('export'));
+        }
+        if (!profile.webgl) errors.push('WebGL no esta disponible en este navegador.');
+        if (effect && effect.capabilities && effect.capabilities.exportSafe === false) errors.push('Este efecto no esta marcado como export-safe.');
+        if (effect && effect.capabilities && mediaList.length < (effect.capabilities.minMedia || 0)) {
+            errors.push('Faltan medios: este efecto necesita al menos ' + effect.capabilities.minMedia + '.');
+        }
+        var hasMediaRecorder = typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function';
+        if (!hasMediaRecorder && kind === 'video') errors.push('Este navegador no soporta MediaRecorder.');
+
+        if (kind === 'video' && hasMediaRecorder) {
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                if (format === 'mp4') {
+                    errors.push('MP4 no esta soportado por este navegador. Elige WebM; no se descargara un WebM con extension MP4.');
+                } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+                    mimeType = 'video/webm;codecs=vp9';
+                    extension = 'webm';
+                    warnings.push('Usando WebM VP9 compatible.');
+                } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                    mimeType = 'video/webm';
+                    extension = 'webm';
+                    warnings.push('Usando WebM basico compatible.');
+                } else {
+                    errors.push('No hay un formato de video compatible para MediaRecorder.');
+                }
+            }
+
+            if (fps === 60 && (profile.type !== 'desktop' || profile.lowPower)) {
+                fps = 30;
+                warnings.push('60 FPS bajado a 30 FPS por perfil movil/baja potencia.');
+            }
+
+            var seconds = document.getElementById('vid-dur') ? parseInt(document.getElementById('vid-dur').value, 10) : 8;
+            var rawMB = dims.width * dims.height * 4 * Math.max(1, fps) * Math.max(1, seconds) / (1024 * 1024);
+            if (rawMB > 1800) warnings.push('Export pesado estimado: ' + Math.round(rawMB) + ' MB brutos de frames.');
+            if (profile.type !== 'desktop' && dims.width * dims.height > 2073600) warnings.push('Export movil en alta resolucion: puede tardar o agotar memoria.');
+        }
+
+        return {
+            ok: errors.length === 0,
+            errors: errors,
+            warnings: warnings,
+            preset: preset,
+            dimensions: dims,
+            fps: fps,
+            mimeType: mimeType,
+            extension: extension,
+            profile: profile
+        };
+    }
+
+    function renderPreflight(id, result) {
+        var el = document.getElementById(id);
+        if (!el || !result) return;
+        var rows = [];
+        rows.push('Formato final: ' + result.dimensions.width + 'x' + result.dimensions.height);
+        if (result.fps) rows.push('FPS: ' + result.fps);
+        if (result.mimeType) rows.push('Codec: ' + result.mimeType);
+        rows = rows.concat(result.warnings.map(function(w) { return 'Aviso: ' + w; }));
+        rows = rows.concat(result.errors.map(function(e) { return 'Bloqueo: ' + e; }));
+        el.className = 'export-preflight ' + (result.ok ? 'ok' : 'error');
+        el.innerHTML = rows.map(function(row) { return '<div>' + escapeHTML(row) + '</div>'; }).join('');
+    }
+
     function publishResult() {
         buildStandaloneForAction('publish');
     }
@@ -548,6 +663,8 @@ EP.Export = (function() {
     function exportStandalone(kind) {
         var effect = EP.UI.getCurrentEffect();
         if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
+        var preflight = buildExportPreflight(kind === 'script' ? 'script' : 'html');
+        if (!preflight.ok) { EP.UI.toast(preflight.errors[0] || 'Export bloqueado por preflight'); return; }
 
         var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
         if (prog) {
@@ -577,6 +694,8 @@ EP.Export = (function() {
     function buildStandaloneForAction(action) {
         var effect = EP.UI.getCurrentEffect();
         if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
+        var preflight = buildExportPreflight(action === 'publish' ? 'publish' : 'copy');
+        if (!preflight.ok) { EP.UI.toast(preflight.errors[0] || 'Salida bloqueada por preflight'); return; }
 
         var prog = document.getElementById(action === 'copy' ? 'prog-copy' : 'prog-publish');
         if (prog) {
@@ -608,35 +727,36 @@ EP.Export = (function() {
     }
 
     function finalizeStandaloneAction(effect, mediaItems, action) {
-        var html = buildStandaloneHTML(effect, mediaItems);
         var prog = document.getElementById(action === 'copy' ? 'prog-copy' : 'prog-publish');
+        buildStandaloneHTMLAsync(effect, mediaItems, getStandaloneMode(), function(html) {
 
-        if (action === 'publish') {
-            var blob = new Blob([html], { type: 'text/html' });
-            var url = URL.createObjectURL(blob);
-            var out = document.getElementById('publish-result');
-            if (out) {
-                out.innerHTML = '<label>URL final local</label><input type="text" readonly value="' + escapeAttr(url) + '">' +
-                    '<a class="export-link" href="' + escapeAttr(url) + '" target="_blank" rel="noopener">Abrir resultado publicado</a>';
+            if (action === 'publish') {
+                var blob = new Blob([html], { type: 'text/html' });
+                var url = URL.createObjectURL(blob);
+                var out = document.getElementById('publish-result');
+                if (out) {
+                    out.innerHTML = '<label>URL final local</label><input type="text" readonly value="' + escapeAttr(url) + '">' +
+                        '<a class="export-link" href="' + escapeAttr(url) + '" target="_blank" rel="noopener">Abrir resultado publicado</a>';
+                }
+                EP.UI.toast('URL local final generada');
+            } else if (action === 'copy') {
+                var embed = buildIframeEmbed(html);
+                var textarea = document.getElementById('copy-embed-result');
+                if (textarea) {
+                    textarea.value = embed;
+                    textarea.focus();
+                    textarea.select();
+                }
+                tryCopyText(embed);
+                EP.UI.toast('Embed final generado');
             }
-            EP.UI.toast('URL local final generada');
-        } else if (action === 'copy') {
-            var embed = buildIframeEmbed(html);
-            var textarea = document.getElementById('copy-embed-result');
-            if (textarea) {
-                textarea.value = embed;
-                textarea.focus();
-                textarea.select();
-            }
-            tryCopyText(embed);
-            EP.UI.toast('Embed final generado');
-        }
 
-        if (prog) {
-            prog.querySelector('.fill').style.width = '100%';
-            prog.querySelector('.status').textContent = 'Resultado final listo';
-            setTimeout(function() { prog.classList.remove('active'); }, 800);
-        }
+            if (prog) {
+                prog.querySelector('.fill').style.width = '100%';
+                prog.querySelector('.status').textContent = 'Resultado final listo';
+                setTimeout(function() { prog.classList.remove('active'); }, 800);
+            }
+        });
     }
 
     function serializeMedia(media, done) {
@@ -686,37 +806,38 @@ EP.Export = (function() {
     }
 
     function buildAndDownloadStandalone(effect, mediaItems, kind) {
-        var html = buildStandaloneHTML(effect, mediaItems);
-        var content = html;
-        var filename = 'escaparate-widget.html';
-        var type = 'text/html';
+        buildStandaloneHTMLAsync(effect, mediaItems, getStandaloneMode(), function(html) {
+            var content = html;
+            var filename = 'escaparate-widget.html';
+            var type = 'text/html';
 
-        if (kind === 'script') {
-            content = buildEmbeddableScript(html);
-            filename = 'escaparate-widget.js';
-            type = 'text/javascript';
-        }
+            if (kind === 'script') {
+                content = buildEmbeddableScript(html);
+                filename = 'escaparate-widget.js';
+                type = 'text/javascript';
+            }
 
-        var blob = new Blob([content], { type: type });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
+            var blob = new Blob([content], { type: type });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url; a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
 
-        var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
-        if (prog) prog.classList.remove('active');
-        EP.UI.toast(kind === 'script' ? 'Script JS descargado' : 'Widget HTML descargado');
-        close();
+            var prog = document.getElementById(kind === 'script' ? 'prog-script' : 'prog-widget');
+            if (prog) prog.classList.remove('active');
+            EP.UI.toast(kind === 'script' ? 'Script JS descargado' : 'Widget HTML descargado');
+            close();
+        });
     }
 
-    function buildStandaloneHTML(effect, mediaItems) {
+    function buildStandaloneHTMLAsync(effect, mediaItems, mode, done) {
         var outputPreset = getCurrentOutputPreset();
         var settings = JSON.stringify(effect.settings);
         var bg = effect.settings.background || '#101014';
         var effectId = effect.id;
         var sourcePath = resolveEffectSourcePath(effect);
-        var repoBase = 'https://cdn.jsdelivr.net/gh/Juanmaes83/escaparates-pro@master/';
+        var repoBase = getVersionedRepoBase();
 
         var overlayHTML = '';
         if (EP.Overlay.isEnabled()) {
@@ -735,38 +856,35 @@ EP.Export = (function() {
             if (cta) overlayHTML += '<div style="position:absolute;bottom:12%;left:50%;transform:translateX(-50%);"><div style="display:inline-block;padding:10px 28px;background:' + color + ';color:#fff;border-radius:8px;font-size:' + Math.max(14, fontSize * 0.5) + 'px;font-weight:600;font-family:sans-serif;box-shadow:0 4px 20px rgba(0,0,0,0.4);">' + escapeHTML(cta) + '</div></div>';
         }
 
-        var mediaArrayJS = 'var MEDIA_ITEMS = ' + JSON.stringify(mediaItems) + ';\n';
-
-        var html = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Escaparate</title>\n' +
-            '<base href="' + repoBase + '">\n' +
-            '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:' + bg + '}#canvas-container{position:absolute;top:0;left:0;width:100%;height:100%}#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}.export-error{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:#101014;font:14px system-ui,sans-serif;padding:24px;text-align:center}</style></head>\n' +
-            '<body data-escaparates-viewer="final"><div id="canvas-container"></div><div id="overlay">' + overlayHTML + '</div>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/VignetteShader.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" crossorigin="anonymous"><\/script>\n' +
-            '<script src="js/core.js"><\/script>\n' +
-            '<script src="js/easing.js"><\/script>\n' +
-            '<script src="js/timeline.js"><\/script>\n' +
-            '<script src="js/media-manager.js"><\/script>\n' +
-            '<script src="js/effects/base.js"><\/script>\n' +
-            '<script src="js/effects/registry.js"><\/script>\n' +
-            (sourcePath ? '<script src="' + escapeAttr(sourcePath) + '"><\/script>\n' : '') +
-            '<script>\n' + mediaArrayJS +
-            'var SETTINGS = ' + settings + ';\n' +
-            'var EFFECT_ID = "' + effectId + '";\n' +
-            'var LOOP_DURATION = ' + JSON.stringify(EP.Timeline.loopDuration || 8) + ';\n' +
-            'var OUTPUT_PRESET = ' + JSON.stringify(outputPreset) + ';\n' +
-            buildWidgetPlayerCode(!!sourcePath) +
-            '<\/script></body></html>';
-
-        return html;
+        buildViewerScriptsHTML(sourcePath, mode, repoBase, function(scriptsHTML, scriptMode) {
+            var metadata = {
+                generatedAt: new Date().toISOString(),
+                mode: scriptMode,
+                effectId: effectId,
+                effectName: effect.meta && effect.meta.name,
+                sourcePath: sourcePath,
+                outputPreset: outputPreset,
+                versionBase: repoBase,
+                settings: effect.settings
+            };
+            var mediaArrayJS = 'var MEDIA_ITEMS = ' + JSON.stringify(mediaItems) + ';\n';
+            var html = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Escaparate</title>\n' +
+                (scriptMode === 'cdn' ? '<base href="' + repoBase + '">\n' : '') +
+                '<meta name="escaparates-export" content="' + escapeAttr(JSON.stringify({ mode: scriptMode, effectId: effectId, generatedAt: metadata.generatedAt })) + '">\n' +
+                '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:' + bg + '}#canvas-container{position:absolute;top:0;left:0;width:100%;height:100%}#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}.export-error{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:#101014;font:14px system-ui,sans-serif;padding:24px;text-align:center}</style></head>\n' +
+                '<body data-escaparates-viewer="final"><div id="canvas-container"></div><div id="overlay">' + overlayHTML + '</div>\n' +
+                scriptsHTML +
+                '<script>\n' +
+                'var ESCAPARATES_EXPORT = ' + JSON.stringify(metadata) + ';\n' +
+                mediaArrayJS +
+                'var SETTINGS = ' + settings + ';\n' +
+                'var EFFECT_ID = "' + effectId + '";\n' +
+                'var LOOP_DURATION = ' + JSON.stringify(EP.Timeline.loopDuration || 8) + ';\n' +
+                'var OUTPUT_PRESET = ' + JSON.stringify(outputPreset) + ';\n' +
+                buildWidgetPlayerCode(!!sourcePath) +
+                '<\/script></body></html>';
+            done(html);
+        });
     }
 
     function resolveEffectSourcePath(effect) {
@@ -781,6 +899,72 @@ EP.Export = (function() {
         }
         var clean = source.match(/js\/effects\/.*?\.js(?:\?.*)?$/);
         return clean ? clean[0].replace(/\?.*$/, '') : source;
+    }
+
+    function getVersionedRepoBase() {
+        var input = document.getElementById('cdn-version');
+        var version = (input && input.value || window.EP_EXPORT_CDN_VERSION || '').trim();
+        if (!version) {
+            version = 'local-preview';
+        }
+        return 'https://cdn.jsdelivr.net/gh/Juanmaes83/escaparates-pro@' + encodeURIComponent(version) + '/';
+    }
+
+    function getViewerScriptSources(sourcePath) {
+        var libs = [
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/VignetteShader.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
+            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js',
+            'js/device-profile.js',
+            'js/core.js',
+            'js/easing.js',
+            'js/render-pipeline.js',
+            'js/timeline.js',
+            'js/media-manager.js',
+            'js/effects/base.js',
+            'js/control-schema.js',
+            'js/effects/registry.js'
+        ];
+        if (sourcePath) libs.push(sourcePath);
+        return libs;
+    }
+
+    function buildViewerScriptsHTML(sourcePath, mode, repoBase, done) {
+        var sources = getViewerScriptSources(sourcePath);
+        if (mode !== 'offline') {
+            done(sources.map(function(src) {
+                var finalSrc = /^https?:\/\//.test(src) ? src : src;
+                return '<script src="' + escapeAttr(finalSrc) + '" crossorigin="anonymous"><\/script>\n';
+            }).join(''), 'cdn');
+            return;
+        }
+
+        var pending = sources.length;
+        var scripts = new Array(sources.length);
+        sources.forEach(function(src, i) {
+            fetch(src, { cache: 'force-cache' }).then(function(response) {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.text();
+            }).then(function(text) {
+                scripts[i] = '<script data-inlined-from="' + escapeAttr(src) + '">\n' + text.replace(/<\/script/gi, '<\\/script') + '\n<\/script>\n';
+                finish();
+            }).catch(function(err) {
+                scripts[i] = '<script>document.body.insertAdjacentHTML("beforeend","<div class=\\"export-error\\">No se pudo incrustar script offline: ' + escapeJS(src) + '<br>' + escapeJS(err.message || err) + '</div>");<\/script>\n';
+                finish();
+            });
+        });
+
+        function finish() {
+            pending--;
+            if (pending === 0) done(scripts.join(''), 'offline');
+        }
     }
 
     function buildEmbeddableScript(html) {
@@ -846,24 +1030,7 @@ EP.Export = (function() {
             '    var now = nowMs / 1000;',
             '    var dt = now - last;',
             '    last = now;',
-            '    var frameTime = now % LOOP_DURATION;',
-            '    var frameDt = dt;',
-            '    if (effect.settings.playbackMotion !== undefined && effect.settings.playbackMotionSpeed !== undefined && !effect._handlesMotionControls) {',
-            '      if (effect.settings.playbackMotion === "off") {',
-            '        frameTime = LOOP_DURATION * 0.5;',
-            '        frameDt = 0;',
-            '      } else {',
-            '        var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);',
-            '        frameTime = (frameTime * motionSpeed) % LOOP_DURATION;',
-            '        frameDt *= motionSpeed;',
-            '        if (effect.settings.motionDirection === "right-left" || effect.settings.motionDirection === "bottom-top" || effect.settings.motionDirection === "radial-in") {',
-            '          frameTime = (LOOP_DURATION - frameTime) % LOOP_DURATION;',
-            '          frameDt *= -1;',
-            '        }',
-            '      }',
-            '    }',
-            '    effect.update(frameTime, frameDt, LOOP_DURATION);',
-            '    EP.Core.render();',
+            '    EP.RenderPipeline.renderFrame(effect, now, dt, LOOP_DURATION);',
             '    requestAnimationFrame(frame);',
             '  }',
             '  requestAnimationFrame(frame);',
@@ -880,8 +1047,28 @@ EP.Export = (function() {
         return { id: 'web-hero-16-9', label: 'Hero 16:9', ratio: 16 / 9, embedRatio: '16 / 9', exportWidth: 1920, exportHeight: 1080, loop: false };
     }
 
+    function getPresetExportDimensions() {
+        var preset = getCurrentOutputPreset();
+        return {
+            width: Math.max(1, Math.round(preset.exportWidth || 1920)),
+            height: Math.max(1, Math.round(preset.exportHeight || 1080))
+        };
+    }
+
+    function getVideoExportDimensions() {
+        var mode = document.getElementById('vid-res') ? document.getElementById('vid-res').value : 'preset';
+        if (mode === 'preview' && EP.Core && EP.Core.renderer) {
+            return {
+                width: EP.Core.renderer.domElement.width,
+                height: EP.Core.renderer.domElement.height
+            };
+        }
+        return getPresetExportDimensions();
+    }
+
     function getExportDimensions(shortSide) {
         var preset = getCurrentOutputPreset();
+        if (!shortSide) return getPresetExportDimensions();
         var ratio = preset.ratio || 16 / 9;
         var width;
         var height;
@@ -901,33 +1088,16 @@ EP.Export = (function() {
         var effect = EP.UI.getCurrentEffect();
         if (!effect || effect.settings.recordDefaultMotion !== 'off') return;
         var loopDuration = EP.Timeline.loopDuration || 8;
-        effect.update(loopDuration * 0.5, 0, loopDuration);
+        EP.RenderPipeline.updateEffect(effect, loopDuration * 0.5, 0, loopDuration);
         EP.Core.render();
     }
 
     function resolveExportFrame(effect, time, dt, loopDuration) {
-        var frameTime = time;
-        var frameDt = dt;
-        var easingName = effect.settings.easing || 'linear';
-        var easeFn = EP.Easing && EP.Easing.get ? EP.Easing.get(easingName) : function(v) { return v; };
-        frameTime = easeFn((time / loopDuration) % 1) * loopDuration;
-
         if (effect.settings.recordDefaultMotion === 'off' || effect.settings.playbackMotion === 'off') {
-            return { time: loopDuration * 0.5, dt: 0 };
+            return { time: loopDuration * 0.5, dt: 0, loopDuration: loopDuration };
         }
 
-        if (effect.settings.playbackMotionSpeed !== undefined) {
-            var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);
-            frameTime = (frameTime * motionSpeed) % loopDuration;
-            frameDt *= motionSpeed;
-        }
-
-        if (effect.settings.motionDirection === 'right-left' || effect.settings.motionDirection === 'bottom-top' || effect.settings.motionDirection === 'radial-in') {
-            frameTime = (loopDuration - frameTime) % loopDuration;
-            frameDt *= -1;
-        }
-
-        return { time: frameTime, dt: frameDt };
+        return EP.RenderPipeline.resolveFrame(effect, time, dt, loopDuration);
     }
 
     function tryCopyText(text) {
@@ -943,6 +1113,10 @@ EP.Export = (function() {
 
     function escapeAttr(s) {
         return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    }
+
+    function escapeJS(s) {
+        return String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/'/g, "\\'").replace(/\n/g, ' ');
     }
 
     return {

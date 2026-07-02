@@ -78,8 +78,7 @@ EP.Timeline = (function() {
 
         if (!scrubbing) {
             currentTime += dt * speed;
-            if (currentTime >= loopDuration) currentTime -= loopDuration;
-            if (currentTime < 0) currentTime += loopDuration;
+            currentTime = normalizeTime(currentTime);
         }
 
         updateUI();
@@ -119,7 +118,19 @@ EP.Timeline = (function() {
     }
 
     function setTime(t) {
-        currentTime = t;
+        currentTime = normalizeTime(t);
+        updateUI();
+    }
+
+    function normalizeTime(t) {
+        if (!isFinite(t)) return 0;
+        var duration = Math.max(0.1, loopDuration || 12);
+        return ((t % duration) + duration) % duration;
+    }
+
+    function resetTemporal() {
+        currentTime = 0;
+        lastFrameTime = performance.now();
         updateUI();
     }
 
@@ -130,6 +141,7 @@ EP.Timeline = (function() {
         toggle: toggle,
         onTick: onTick,
         setTime: setTime,
+        resetTemporal: resetTemporal,
         get playing() { return playing; },
         get currentTime() { return currentTime; },
         get loopDuration() { return loopDuration; },

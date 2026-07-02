@@ -56,13 +56,18 @@ EP.UI = (function() {
             if (!header.classList.contains('open')) header.classList.add('open');
         }
 
-        if (currentEffect) currentEffect.dispose();
+        if (currentEffect) {
+            if (typeof currentEffect.exit === 'function') currentEffect.exit();
+            else currentEffect.dispose();
+        }
         currentEffect = effect;
 
+        EP.Core.resetGlobalState({ clearDisplay: true });
+        if (EP.Timeline && typeof EP.Timeline.resetTemporal === 'function') EP.Timeline.resetTemporal();
         if (effect.settings.background) EP.Core.setBackground(effect.settings.background);
 
         var mediaList = EP.Media.getAll();
-        var group = effect.rebuild(mediaList);
+        var group = typeof effect.enter === 'function' ? effect.enter(mediaList) : effect.rebuild(mediaList);
         EP.Core.setDisplayGroup(group);
         buildControlsPanel(effect);
         EP.Core.render();
@@ -95,8 +100,9 @@ EP.UI = (function() {
                 val.textContent = effect.settings[ctrl.key] + (ctrl.unit || '');
                 input.addEventListener('input', function() {
                     var v = parseFloat(this.value);
-                    effect.setSetting(ctrl.key, v);
-                    val.textContent = v + (ctrl.unit || '');
+                    var clean = effect.setSetting(ctrl.key, v);
+                    this.value = clean;
+                    val.textContent = clean + (ctrl.unit || '');
                     rebuildCurrent();
                 });
                 row.appendChild(input);
@@ -106,8 +112,9 @@ EP.UI = (function() {
                 colorInput.type = 'color';
                 colorInput.value = effect.settings[ctrl.key];
                 colorInput.addEventListener('input', function() {
-                    effect.setSetting(ctrl.key, this.value);
-                    if (ctrl.key === 'background') EP.Core.setBackground(this.value);
+                    var clean = effect.setSetting(ctrl.key, this.value);
+                    this.value = clean;
+                    if (ctrl.key === 'background') EP.Core.setBackground(clean);
                 });
                 row.appendChild(colorInput);
             } else if (ctrl.type === 'select') {
@@ -120,7 +127,7 @@ EP.UI = (function() {
                     select.appendChild(option);
                 });
                 select.addEventListener('change', function() {
-                    effect.setSetting(ctrl.key, this.value);
+                    this.value = effect.setSetting(ctrl.key, this.value);
                     rebuildCurrent();
                 });
                 row.appendChild(select);
@@ -130,7 +137,7 @@ EP.UI = (function() {
                 textInput.value = effect.settings[ctrl.key] || '';
                 textInput.maxLength = ctrl.maxLength || 80;
                 textInput.addEventListener('input', function() {
-                    effect.setSetting(ctrl.key, this.value);
+                    this.value = effect.setSetting(ctrl.key, this.value);
                     rebuildCurrent();
                 });
                 row.appendChild(textInput);
@@ -173,8 +180,10 @@ EP.UI = (function() {
 
     function rebuildCurrent() {
         if (!currentEffect) return;
+        EP.Core.resetGlobalState();
+        if (currentEffect.settings.background) EP.Core.setBackground(currentEffect.settings.background);
         var mediaList = EP.Media.getAll();
-        var group = currentEffect.rebuild(mediaList);
+        var group = typeof currentEffect.reconstruct === 'function' ? currentEffect.reconstruct(mediaList) : currentEffect.rebuild(mediaList);
         EP.Core.setDisplayGroup(group);
         EP.Core.render();
     }

@@ -6,6 +6,21 @@ EP.Core = (function() {
     var displayGroup = null;
     var container;
     var aspectRatio = 16 / 9;
+    var defaultCameraState = {
+        position: { x: 0, y: 0, z: 12 },
+        target: { x: 0, y: 0, z: 0 },
+        fov: 45,
+        near: 0.1,
+        far: 100
+    };
+    var defaultSettings = {
+        backgroundColor: '#101014',
+        bloomEnabled: false,
+        bloomStrength: 0.6,
+        bloomRadius: 0.3,
+        bloomThreshold: 0.7,
+        vignetteEnabled: false
+    };
     var settings = {
         backgroundColor: '#101014',
         bloomEnabled: false,
@@ -30,7 +45,8 @@ EP.Core = (function() {
             powerPreference: 'high-performance',
             preserveDrawingBuffer: true
         });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        var profile = EP.DeviceProfile ? EP.DeviceProfile.get() : null;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, profile ? profile.pixelRatioCap : 2));
         container.appendChild(renderer.domElement);
 
         scene.add(new THREE.AmbientLight(0x404040, 1.5));
@@ -115,12 +131,49 @@ EP.Core = (function() {
 
     function setPostProcessing(opts) {
         opts = opts || {};
+        var profile = EP.DeviceProfile ? EP.DeviceProfile.get() : null;
+        if (profile && profile.lowPower) {
+            opts.bloomEnabled = false;
+            opts.vignetteEnabled = false;
+        }
         if (typeof opts.bloomEnabled === 'boolean') settings.bloomEnabled = opts.bloomEnabled;
         if (typeof opts.vignetteEnabled === 'boolean') settings.vignetteEnabled = opts.vignetteEnabled;
         if (typeof opts.bloomStrength === 'number') settings.bloomStrength = opts.bloomStrength;
         if (typeof opts.bloomRadius === 'number') settings.bloomRadius = opts.bloomRadius;
         if (typeof opts.bloomThreshold === 'number') settings.bloomThreshold = opts.bloomThreshold;
         rebuildComposer();
+    }
+
+    function resetCamera() {
+        if (!camera) return;
+        camera.position.set(defaultCameraState.position.x, defaultCameraState.position.y, defaultCameraState.position.z);
+        camera.fov = defaultCameraState.fov;
+        camera.near = defaultCameraState.near;
+        camera.far = defaultCameraState.far;
+        camera.lookAt(defaultCameraState.target.x, defaultCameraState.target.y, defaultCameraState.target.z);
+        camera.updateProjectionMatrix();
+        if (controls) {
+            if (controls.target) controls.target.set(defaultCameraState.target.x, defaultCameraState.target.y, defaultCameraState.target.z);
+            if (typeof controls.reset === 'function') controls.reset();
+            if (typeof controls.update === 'function') controls.update();
+        }
+    }
+
+    function resetPostProcessing() {
+        settings.bloomEnabled = defaultSettings.bloomEnabled;
+        settings.bloomStrength = defaultSettings.bloomStrength;
+        settings.bloomRadius = defaultSettings.bloomRadius;
+        settings.bloomThreshold = defaultSettings.bloomThreshold;
+        settings.vignetteEnabled = defaultSettings.vignetteEnabled;
+        rebuildComposer();
+    }
+
+    function resetGlobalState(opts) {
+        opts = opts || {};
+        resetCamera();
+        resetPostProcessing();
+        if (opts.background !== false) setBackground(defaultSettings.backgroundColor);
+        if (opts.clearDisplay) setDisplayGroup(null);
     }
 
     function setDisplayGroup(group) {
@@ -147,8 +200,20 @@ EP.Core = (function() {
 
     function render() {
         if (controls) controls.update();
-        if (composer) composer.render();
-        else if (renderer && scene && camera) renderer.render(scene, camera);
+        try {
+            if (composer) composer.render();
+            else if (renderer && scene && camera) renderer.render(scene, camera);
+        } catch (err) {
+            console.warn('Core render failed; falling back to direct renderer:', err);
+            resetPostProcessing();
+            if (renderer && scene && camera) {
+                try {
+                    renderer.render(scene, camera);
+                } catch (directErr) {
+                    console.warn('Direct renderer failed:', directErr);
+                }
+            }
+        }
     }
 
     function setAspectRatio(ratio) {
@@ -162,11 +227,15 @@ EP.Core = (function() {
         setDisplayGroup: setDisplayGroup,
         setBackground: setBackground,
         setPostProcessing: setPostProcessing,
+        resetGlobalState: resetGlobalState,
+        resetCamera: resetCamera,
+        resetPostProcessing: resetPostProcessing,
         setAspectRatio: setAspectRatio,
         rebuildComposer: rebuildComposer,
         get scene() { return scene; },
         get camera() { return camera; },
         get renderer() { return renderer; },
+        get controls() { return controls; },
         get displayGroup() { return displayGroup; },
         get settings() { return settings; },
         updateSize: updateSize

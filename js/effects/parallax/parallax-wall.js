@@ -1,5 +1,5 @@
 (function() {
-    var effect = new EP.EffectBase('parallax-wall', {
+    var effect = new EP.EffectBase('parallax-wall-parallax', {
         name: 'Parallax Wall',
         category: 'parallax',
         icon: '🧱',

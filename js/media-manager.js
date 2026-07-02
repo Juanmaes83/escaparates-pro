@@ -29,8 +29,9 @@ EP.Media = (function() {
             var img = new Image();
             img.crossOrigin = 'anonymous';
             img.onload = function() {
-                slots[i] = { type: 'image', element: img, url: url, name: 'Unsplash ' + (i + 1) };
+                slots[i] = { type: 'image', element: img, url: url, name: 'Unsplash ' + (i + 1), source: 'demo' };
                 renderSlots();
+                syncPlanAssetCount();
                 if (onChangeCallback) onChangeCallback(getAll());
             };
             img.onerror = function() {
@@ -43,8 +44,9 @@ EP.Media = (function() {
                 ctx.fillStyle = '#fff'; ctx.font = 'bold 24px sans-serif';
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
                 ctx.fillText(String(i + 1), 140, 140);
-                slots[i] = { type: 'image', element: canvas, url: '', name: 'Fallback ' + (i + 1) };
+                slots[i] = { type: 'image', element: canvas, url: '', name: 'Fallback ' + (i + 1), source: 'demo' };
                 renderSlots();
+                syncPlanAssetCount();
                 if (onChangeCallback) onChangeCallback(getAll());
             };
             img.src = url;
@@ -87,6 +89,10 @@ EP.Media = (function() {
                 div.appendChild(label);
             }
             div.addEventListener('click', function() {
+                if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
+                    EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+                    return;
+                }
                 activeSlotIndex = parseInt(this.dataset.index);
                 fileInput.click();
             });
@@ -106,6 +112,11 @@ EP.Media = (function() {
 
     function handleFileSelect(e) {
         var files = Array.from(e.target.files);
+        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
+            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+            fileInput.value = '';
+            return;
+        }
         files.forEach(function(file, fi) {
             var targetIdx = activeSlotIndex + fi;
             if (targetIdx >= 15) return;
@@ -115,16 +126,31 @@ EP.Media = (function() {
     }
 
     function loadFileToSlot(file, idx) {
+        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
+            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+            return;
+        }
         if (file.type.startsWith('video/')) {
             var url = URL.createObjectURL(file);
             var video = document.createElement('video');
             video.src = url; video.loop = true; video.muted = true;
             video.playsInline = true; video.preload = 'auto';
             video.addEventListener('loadeddata', function() {
-                slots[idx] = { type: 'video', element: video, url: url, name: file.name };
+                var verdict = validateFileWithPlan(file, { width: video.videoWidth, height: video.videoHeight, duration: video.duration }, 'asset');
+                if (!verdict.ok) {
+                    URL.revokeObjectURL(url);
+                    EP.UI.toast(verdict.errors[0]);
+                    return;
+                }
+                slots[idx] = { type: 'video', element: video, url: url, name: file.name, source: 'user', size: file.size, width: video.videoWidth, height: video.videoHeight, duration: video.duration };
                 renderSlots();
+                syncPlanAssetCount();
                 if (onChangeCallback) onChangeCallback(getAll());
                 EP.UI.toast('Video cargado en slot ' + (idx + 1));
+            });
+            video.addEventListener('error', function() {
+                URL.revokeObjectURL(url);
+                EP.UI.toast('Video no compatible o codec no reproducible.');
             });
             video.play().catch(function() {});
         } else {
@@ -132,8 +158,14 @@ EP.Media = (function() {
             reader.onload = function(ev) {
                 var img = new Image();
                 img.onload = function() {
-                    slots[idx] = { type: 'image', element: img, url: ev.target.result, name: file.name };
+                    var verdict = validateFileWithPlan(file, { width: img.naturalWidth || img.width, height: img.naturalHeight || img.height }, 'asset');
+                    if (!verdict.ok) {
+                        EP.UI.toast(verdict.errors[0]);
+                        return;
+                    }
+                    slots[idx] = { type: 'image', element: img, url: ev.target.result, name: file.name, source: 'user', size: file.size, width: img.naturalWidth || img.width, height: img.naturalHeight || img.height };
                     renderSlots();
+                    syncPlanAssetCount();
                     if (onChangeCallback) onChangeCallback(getAll());
                     EP.UI.toast('Imagen cargada en slot ' + (idx + 1));
                 };
@@ -149,7 +181,19 @@ EP.Media = (function() {
         }
         slots[idx] = null;
         renderSlots();
+        syncPlanAssetCount();
         if (onChangeCallback) onChangeCallback(getAll());
+    }
+
+    function syncPlanAssetCount() {
+        if (!EP.PlanGate) return;
+        var count = slots.filter(function(slot) { return slot && slot.source === 'user'; }).length;
+        EP.PlanGate.setUserAssetCount(count);
+    }
+
+    function validateFileWithPlan(file, metadata, kind) {
+        if (!EP.PlanGate) return { ok: true, errors: [], warnings: [] };
+        return EP.PlanGate.validateFile(file, metadata, kind);
     }
 
     function getAll() {
@@ -163,7 +207,9 @@ EP.Media = (function() {
     function createTexture(mediaObj, options) {
         options = options || {};
         if (!mediaObj || !mediaObj.element) return null;
-        var tex = mediaObj.type === 'video' ? new THREE.VideoTexture(mediaObj.element) : new THREE.Texture(mediaObj.element);
+        var sourceElement = mediaObj.element;
+        if (mediaObj.type !== 'video') sourceElement = getPreviewImageElement(mediaObj.element);
+        var tex = mediaObj.type === 'video' ? new THREE.VideoTexture(sourceElement) : new THREE.Texture(sourceElement);
         tex.minFilter = options.minFilter || THREE.LinearFilter;
         tex.magFilter = options.magFilter || THREE.LinearFilter;
         if (options.wrapS) tex.wrapS = options.wrapS;
@@ -172,6 +218,27 @@ EP.Media = (function() {
         if (tex.isVideoTexture) tex.generateMipmaps = false;
         tex.needsUpdate = true;
         return tex;
+    }
+
+    function getPreviewImageElement(element) {
+        if (!EP.DeviceProfile || !element) return element;
+        var profile = EP.DeviceProfile.get();
+        if (profile.type === 'desktop') return element;
+        var srcW = element.naturalWidth || element.width || 0;
+        var srcH = element.naturalHeight || element.height || 0;
+        var maxSide = profile.previewTextureMax || 1536;
+        if (!srcW || !srcH || Math.max(srcW, srcH) <= maxSide) return element;
+
+        var key = '_epPreviewCanvas' + maxSide;
+        if (element[key]) return element[key];
+        var scale = maxSide / Math.max(srcW, srcH);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(srcW * scale));
+        canvas.height = Math.max(1, Math.round(srcH * scale));
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(element, 0, 0, canvas.width, canvas.height);
+        element[key] = canvas;
+        return canvas;
     }
 
     function updateTexture(tex) {
@@ -212,6 +279,7 @@ EP.Media = (function() {
         updateTexture: updateTexture,
         updateMaterial: updateMaterial,
         createMaterial: createMaterial,
+        syncPlanAssetCount: syncPlanAssetCount,
         get slots() { return slots; }
     };
 })();
