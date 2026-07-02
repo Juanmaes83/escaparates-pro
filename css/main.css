@@ -121,6 +121,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
     font-family: var(--font);
 }
 .top-action:hover { filter: brightness(1.15); }
+.top-action-ghost { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); }
+.top-action-ghost:hover { filter: none; background: rgba(255,255,255,0.08); color: var(--text); border-color: var(--border-hover); }
 
 /* Bottom timeline */
 #timeline-bar {

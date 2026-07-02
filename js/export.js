@@ -15,6 +15,9 @@ EP.Export = (function() {
         document.getElementById('exp-publish').addEventListener('click', function() { showConfig('publish'); });
         document.getElementById('exp-copy').addEventListener('click', function() { showConfig('copy'); });
         document.getElementById('exp-png').addEventListener('click', function() { showConfig('png'); });
+
+        var btnFrame = document.getElementById('btn-capture-frame');
+        if (btnFrame) btnFrame.addEventListener('click', captureFrame);
     }
 
     function open() { modal.classList.add('open'); }
@@ -30,7 +33,7 @@ EP.Export = (function() {
             panel.innerHTML = '<label>Duracion <span class="val-hint" id="vid-dur-val">8s</span></label>' +
                 '<input type="range" id="vid-dur" min="3" max="30" value="8" step="1">' +
                 '<label>Resolucion final</label>' +
-                '<select id="vid-res"><option value="preset" selected>Preset exacto actual</option><option value="preview">Tamano de preview</option></select>' +
+                '<select id="vid-res"><option value="preset" selected>Preset exacto actual</option><option value="preview">Tamano de preview</option><option value="2k">2K (2560×1440)</option><option value="4k">4K (3840×2160)</option></select>' +
                 '<label>FPS</label>' +
                 '<select id="vid-fps"><option value="15">15 FPS</option><option value="24">24 FPS</option><option value="30" selected>30 FPS</option><option value="60">60 FPS</option></select>' +
                 '<label>Formato</label>' +
@@ -1191,7 +1194,46 @@ EP.Export = (function() {
                 height: EP.Core.renderer.domElement.height
             };
         }
+        if (mode === '2k' || mode === '4k') {
+            var base = getPresetExportDimensions();
+            var longSide = mode === '2k' ? 2560 : 3840;
+            var scale = (base.width >= base.height) ? longSide / base.width : longSide / base.height;
+            return { width: Math.round(base.width * scale), height: Math.round(base.height * scale) };
+        }
         return getPresetExportDimensions();
+    }
+
+    function captureFrame() {
+        if (!EP.Core || !EP.Core.renderer) { EP.UI.toast('Renderer no disponible'); return; }
+        var renderer = EP.Core.renderer;
+        var canvas = renderer.domElement;
+        var origW = canvas.width;
+        var origH = canvas.height;
+        var aspect = origH > 0 ? origW / origH : 16 / 9;
+        var targetW = 1920;
+        var targetH = Math.round(targetW / aspect);
+        try {
+            renderer.setSize(targetW, targetH, false);
+            var eff = EP.UI.getCurrentEffect();
+            if (eff && EP.Timeline) {
+                EP.RenderPipeline.updateEffect(eff, EP.Timeline.currentTime, 0, EP.Timeline.loopDuration);
+                EP.Core.render();
+            }
+            var dataURL = canvas.toDataURL('image/png');
+            var a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'escaparate-frame-' + Date.now() + '.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            EP.UI.toast('📸 Frame HD descargado (1920×' + targetH + ')');
+        } catch (e) {
+            console.warn('captureFrame:', e);
+            EP.UI.toast('Error al capturar frame');
+        } finally {
+            renderer.setSize(origW, origH, false);
+            EP.Core.render();
+        }
     }
 
     function getExportDimensions(shortSide) {
