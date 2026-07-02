@@ -57,6 +57,7 @@
             </div>
         </div>
         <div class="top-right">
+            <button id="btn-copy-code" class="top-action" title="Copiar configuración del efecto como código">&lt;/&gt; Código</button>
             <button id="btn-export" class="top-action" title="Exportar pieza">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Exportar
@@ -164,23 +165,109 @@
                 <input type="checkbox" id="overlay-enabled">
             </div>
             <div id="overlay-controls" style="display:none;">
+                <!-- Fuente y animación -->
                 <div class="control-row">
-                    <label>Headline</label>
-                    <input type="text" id="overlay-headline" placeholder="Titulo...">
+                    <label>Fuente</label>
+                    <select id="overlay-font">
+                        <option value="'Inter Tight',sans-serif">Inter (moderna)</option>
+                        <option value="Georgia,serif">Georgia (elegante)</option>
+                        <option value="'Share Tech Mono',monospace">Mono (técnica)</option>
+                        <option value="Impact,sans-serif">Impact (impacto)</option>
+                        <option value="'Times New Roman',serif">Times (clásica)</option>
+                    </select>
                 </div>
+                <div class="control-row">
+                    <label>Animación</label>
+                    <select id="overlay-anim">
+                        <option value="none">Sin animación</option>
+                        <option value="fade">Fade in</option>
+                        <option value="slide-up">Slide up</option>
+                        <option value="slide-down">Slide down</option>
+                    </select>
+                </div>
+                <!-- Titular -->
+                <div class="control-row">
+                    <label>Titular</label>
+                    <input type="text" id="overlay-headline" placeholder="Titulo principal...">
+                </div>
+                <div class="pos-grid-wrap">
+                    <label>Pos. titular</label>
+                    <div class="pos-grid" id="pos-grid-headline" data-target="overlay-headline-pos">
+                        <button class="pgb" data-pos="top-left" title="Arriba izq">↖</button>
+                        <button class="pgb" data-pos="top-center" title="Arriba centro">↑</button>
+                        <button class="pgb" data-pos="top-right" title="Arriba der">↗</button>
+                        <button class="pgb" data-pos="middle-left" title="Medio izq">←</button>
+                        <button class="pgb active" data-pos="center" title="Centro">⬜</button>
+                        <button class="pgb" data-pos="middle-right" title="Medio der">→</button>
+                        <button class="pgb" data-pos="bottom-left" title="Abajo izq">↙</button>
+                        <button class="pgb" data-pos="bottom-center" title="Abajo centro">↓</button>
+                        <button class="pgb" data-pos="bottom-right" title="Abajo der">↘</button>
+                    </div>
+                </div>
+                <input type="hidden" id="overlay-headline-pos" value="center">
+                <div class="control-row">
+                    <label>Tam. titular</label>
+                    <input type="range" id="overlay-fontsize" min="12" max="80" value="28">
+                    <span class="val" id="overlay-fontsize-val">28px</span>
+                </div>
+                <div class="control-row">
+                    <label>Color titular</label>
+                    <input type="color" id="overlay-color" value="#ffffff">
+                </div>
+                <!-- Subtítulo -->
+                <div class="control-row">
+                    <label>Subtítulo</label>
+                    <input type="text" id="overlay-subtitle" placeholder="Subtitulo...">
+                </div>
+                <div class="pos-grid-wrap">
+                    <label>Pos. subtít.</label>
+                    <div class="pos-grid" id="pos-grid-subtitle" data-target="overlay-subtitle-pos">
+                        <button class="pgb" data-pos="top-left">↖</button>
+                        <button class="pgb" data-pos="top-center">↑</button>
+                        <button class="pgb" data-pos="top-right">↗</button>
+                        <button class="pgb" data-pos="middle-left">←</button>
+                        <button class="pgb" data-pos="center">⬜</button>
+                        <button class="pgb" data-pos="middle-right">→</button>
+                        <button class="pgb" data-pos="bottom-left">↙</button>
+                        <button class="pgb active" data-pos="bottom-center">↓</button>
+                        <button class="pgb" data-pos="bottom-right">↘</button>
+                    </div>
+                </div>
+                <input type="hidden" id="overlay-subtitle-pos" value="bottom-center">
+                <div class="control-row">
+                    <label>Tam. subtít.</label>
+                    <input type="range" id="overlay-subtitlesize" min="10" max="50" value="18">
+                    <span class="val" id="overlay-subtitlesize-val">18px</span>
+                </div>
+                <div class="control-row">
+                    <label>Color subtít.</label>
+                    <input type="color" id="overlay-subtitle-color" value="#cccccc">
+                </div>
+                <!-- CTA -->
                 <div class="control-row">
                     <label>CTA</label>
                     <input type="text" id="overlay-cta" placeholder="Llamada a accion...">
                 </div>
-                <div class="control-row">
-                    <label>Color texto</label>
-                    <input type="color" id="overlay-color" value="#ffffff">
+                <div class="pos-grid-wrap">
+                    <label>Pos. CTA</label>
+                    <div class="pos-grid" id="pos-grid-cta" data-target="overlay-cta-pos">
+                        <button class="pgb" data-pos="top-left">↖</button>
+                        <button class="pgb" data-pos="top-center">↑</button>
+                        <button class="pgb" data-pos="top-right">↗</button>
+                        <button class="pgb" data-pos="middle-left">←</button>
+                        <button class="pgb" data-pos="center">⬜</button>
+                        <button class="pgb" data-pos="middle-right">→</button>
+                        <button class="pgb" data-pos="bottom-left">↙</button>
+                        <button class="pgb active" data-pos="bottom-center">↓</button>
+                        <button class="pgb" data-pos="bottom-right">↘</button>
+                    </div>
                 </div>
+                <input type="hidden" id="overlay-cta-pos" value="bottom-center">
                 <div class="control-row">
-                    <label>Tamano</label>
-                    <input type="range" id="overlay-fontsize" min="12" max="80" value="28">
-                    <span class="val" id="overlay-fontsize-val">28px</span>
+                    <label>Color CTA</label>
+                    <input type="color" id="overlay-cta-color" value="#ffffff">
                 </div>
+                <!-- Logo -->
                 <div class="control-row">
                     <label>Logo</label>
                     <button id="upload-logo-btn" class="small-btn">Subir logo</button>
@@ -203,6 +290,16 @@
             </div>
         </div>
     </aside>
+
+    <!-- Code copy popover -->
+    <div id="code-popover">
+        <h4>Configuración del efecto</h4>
+        <pre id="code-snippet"></pre>
+        <div class="pop-actions">
+            <button id="btn-copy-snippet" class="top-action">Copiar al portapapeles</button>
+            <button id="btn-close-popover" class="top-action">Cerrar</button>
+        </div>
+    </div>
 
     <!-- Bottom timeline -->
     <footer id="timeline-bar">

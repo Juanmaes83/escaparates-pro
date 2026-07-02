@@ -7,6 +7,7 @@ EP.UI = (function() {
         bindOutputPreset();
         bindAspectSelector();
         bindEffectsSearch();
+        bindCopyCode();
     }
 
     function buildEffectsLibrary() {
@@ -318,6 +319,67 @@ EP.UI = (function() {
                 search.focus();
             });
         }
+    }
+
+    function bindCopyCode() {
+        var btn = document.getElementById('btn-copy-code');
+        var popover = document.getElementById('code-popover');
+        var snippet = document.getElementById('code-snippet');
+        var copyBtn = document.getElementById('btn-copy-snippet');
+        var closeBtn = document.getElementById('btn-close-popover');
+        if (!btn || !popover) return;
+
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (popover.classList.contains('open')) {
+                popover.classList.remove('open');
+                return;
+            }
+            var effect = currentEffect;
+            if (!effect) { toast('Selecciona un efecto primero'); return; }
+
+            var config = {
+                effect: effect.id,
+                name: effect.meta.name,
+                category: effect.meta.category,
+                settings: JSON.parse(JSON.stringify(effect.settings || {})),
+                loopDuration: EP.Timeline ? EP.Timeline.loopDuration : 12,
+                background: effect.settings.background || '#101014'
+            };
+
+            var code = JSON.stringify(config, null, 2);
+            snippet.textContent = code;
+            popover.classList.add('open');
+        });
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                var text = snippet.textContent;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function() {
+                        toast('Código copiado al portapapeles');
+                        popover.classList.remove('open');
+                    });
+                } else {
+                    var ta = document.createElement('textarea');
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    toast('Código copiado al portapapeles');
+                    popover.classList.remove('open');
+                }
+            });
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', function() { popover.classList.remove('open'); });
+
+        document.addEventListener('click', function(e) {
+            if (popover.classList.contains('open') && !popover.contains(e.target) && e.target !== btn) {
+                popover.classList.remove('open');
+            }
+        });
     }
 
     function toast(msg) {

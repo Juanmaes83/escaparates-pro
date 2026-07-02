@@ -47,6 +47,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
     max-height: 100%;
 }
 
+/* Text overlay entry animations */
+@keyframes ep-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes ep-slide-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ep-slide-down {
+    from { opacity: 0; transform: translateY(-24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Effect transition overlay */
 #effect-loading-overlay {
     position: absolute;
