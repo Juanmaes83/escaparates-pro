@@ -59,3 +59,44 @@
     font-size: 10px; color: var(--text-dim); margin-top: 1px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* Search wrapper and clear button */
+.search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.search-wrap #effects-search {
+    width: 100%;
+    padding-right: 28px;
+}
+.search-clear {
+    position: absolute;
+    right: 6px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 2px;
+    display: none;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+}
+.search-clear:hover { opacity: 1; color: var(--text); }
+
+/* Search empty state */
+#search-empty-state {
+    display: none;
+    padding: 28px 16px;
+    text-align: center;
+}
+#search-empty-state .sem-icon { font-size: 1.6rem; margin-bottom: 8px; }
+#search-empty-state .sem-msg {
+    font-size: 11px; color: var(--text-dim); line-height: 1.5;
+}
+#search-empty-state .sem-hint {
+    margin-top: 8px; font-size: 10px; color: rgba(255,255,255,0.2);
+    line-height: 1.5;
+}

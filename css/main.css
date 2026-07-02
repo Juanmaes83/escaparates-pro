@@ -47,6 +47,29 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
     max-height: 100%;
 }
 
+/* Effect transition overlay */
+#effect-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 16, 0.88);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(3px);
+}
+#effect-loading-overlay.active { opacity: 1; }
+.elo-icon { font-size: 2.6rem; line-height: 1; margin-bottom: 12px; }
+.elo-name {
+    font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.9);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9);
+}
+
 /* Top bar */
 #top-bar {
     position: fixed; top: 0; left: 0; right: 0; height: var(--top-h);

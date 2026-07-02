@@ -12,6 +12,11 @@ EP.UI = (function() {
     function buildEffectsLibrary() {
         var container = document.getElementById('effects-categories');
         container.innerHTML = '';
+        // Empty state appended AFTER categories so it lives inside the scrollable container
+        var emptyDiv = document.createElement('div');
+        emptyDiv.id = 'search-empty-state';
+        emptyDiv.style.display = 'none';
+        // will be appended after categories loop
         var categories = EP.Registry.getCategories();
 
         categories.forEach(function(cat, ci) {
@@ -42,11 +47,23 @@ EP.UI = (function() {
             catDiv.appendChild(effectsList);
             container.appendChild(catDiv);
         });
+
+        container.appendChild(emptyDiv);
     }
 
     function selectEffect(id) {
         var effect = EP.Registry.get(id);
         if (!effect) return;
+
+        // Show transition overlay while the effect builds
+        var overlay = document.getElementById('effect-loading-overlay');
+        if (overlay) {
+            var iconEl = overlay.querySelector('.elo-icon');
+            var nameEl = overlay.querySelector('.elo-name');
+            if (iconEl) iconEl.textContent = effect.meta.icon || '✨';
+            if (nameEl) nameEl.textContent = effect.meta.name;
+            overlay.classList.add('active');
+        }
 
         document.querySelectorAll('.effect-card').forEach(function(c) { c.classList.remove('active'); });
         var card = document.querySelector('[data-effect-id="' + id + '"]');
@@ -54,6 +71,7 @@ EP.UI = (function() {
             card.classList.add('active');
             var header = card.closest('.effect-category').querySelector('.category-header');
             if (!header.classList.contains('open')) header.classList.add('open');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         if (currentEffect) {
@@ -71,6 +89,12 @@ EP.UI = (function() {
         EP.Core.setDisplayGroup(group);
         buildControlsPanel(effect);
         EP.Core.render();
+
+        // Fade out overlay once the effect is rendered
+        if (overlay) {
+            setTimeout(function() { overlay.classList.remove('active'); }, 550);
+        }
+
         toast(effect.meta.name + ' activado');
     }
 
@@ -229,20 +253,71 @@ EP.UI = (function() {
         });
     }
 
+    function normalizeText(str) {
+        return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
     function bindEffectsSearch() {
         var search = document.getElementById('effects-search');
+        var clearBtn = document.getElementById('effects-search-clear');
+        var emptyState = document.getElementById('search-empty-state');
         if (!search) return;
-        search.addEventListener('input', function() {
-            var q = this.value.trim().toLowerCase();
-            document.querySelectorAll('.effect-card').forEach(function(card) {
-                var name = card.querySelector('.effect-name').textContent.toLowerCase();
-                var desc = card.querySelector('.effect-desc').textContent.toLowerCase();
-                card.style.display = (q === '' || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1) ? '' : 'none';
+
+        function applyFilter() {
+            var raw = search.value.trim();
+            var q = normalizeText(raw);
+            var totalVisible = 0;
+
+            if (clearBtn) clearBtn.style.display = q ? '' : 'none';
+
+            document.querySelectorAll('.effect-category').forEach(function(catDiv) {
+                var catNameEl = catDiv.querySelector('.cat-name');
+                var catName = catNameEl ? normalizeText(catNameEl.textContent) : '';
+                var catMatchesQuery = q && catName.indexOf(q) !== -1;
+                var visibleInCat = 0;
+
+                catDiv.querySelectorAll('.effect-card').forEach(function(card) {
+                    var name = normalizeText(card.querySelector('.effect-name').textContent);
+                    var desc = normalizeText(card.querySelector('.effect-desc').textContent);
+                    var match = !q || catMatchesQuery || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
+                    card.style.display = match ? '' : 'none';
+                    if (match) visibleInCat++;
+                });
+
+                var catVisible = !q || visibleInCat > 0;
+                catDiv.style.display = catVisible ? '' : 'none';
+                if (q && visibleInCat > 0) {
+                    catDiv.querySelector('.category-header').classList.add('open');
+                }
+                totalVisible += visibleInCat;
             });
-            if (q !== '') {
-                document.querySelectorAll('.category-header').forEach(function(h) { h.classList.add('open'); });
+
+            if (emptyState) {
+                var show = q !== '' && totalVisible === 0;
+                emptyState.style.display = show ? 'block' : 'none';
+                if (show) {
+                    emptyState.innerHTML = '<div class="sem-icon">🔍</div><div class="sem-msg">Sin resultados para &ldquo;<strong>' + raw + '</strong>&rdquo;</div><div class="sem-hint">Prueba en inglés o revisa la ortografía</div>';
+                }
+            }
+        }
+
+        search.addEventListener('input', applyFilter);
+
+        search.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                applyFilter();
+                this.blur();
             }
         });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                search.value = '';
+                applyFilter();
+                search.focus();
+            });
+        }
     }
 
     function toast(msg) {

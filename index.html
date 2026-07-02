@@ -12,7 +12,12 @@
 </head>
 <body>
     <!-- Canvas container -->
-    <div id="canvas-container"></div>
+    <div id="canvas-container">
+        <div id="effect-loading-overlay">
+            <div class="elo-icon"></div>
+            <div class="elo-name"></div>
+        </div>
+    </div>
 
     <!-- Top bar -->
     <header id="top-bar">
@@ -63,7 +68,10 @@
     <aside id="effects-panel">
         <div class="panel-header">
             <h2>Efectos</h2>
-            <input type="text" id="effects-search" placeholder="Buscar efecto..." autocomplete="off">
+            <div class="search-wrap">
+                <input type="text" id="effects-search" placeholder="Buscar efecto..." autocomplete="off">
+                <button id="effects-search-clear" class="search-clear" title="Limpiar">×</button>
+            </div>
         </div>
         <div id="effects-categories"></div>
     </aside>
