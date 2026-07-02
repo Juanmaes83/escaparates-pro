@@ -11,7 +11,12 @@ EP.Registry = (function() {
         { id: 'glassmorphism', name: 'Glassmorphism', icon: '💎' },
         { id: 'parallax', name: 'Parallax', icon: '🏔️' },
         { id: 'motion', name: 'Motion', icon: '☁️' },
-        { id: 'text', name: 'Text FX', icon: '✍️' }
+        { id: 'text', name: 'Text FX', icon: '✍️' },
+        { id: 'gravity', name: 'Gravity', icon: '🍎' },
+        { id: 'field', name: 'Field', icon: '🧲' },
+        { id: 'flicker', name: 'Flicker', icon: '📺' },
+        { id: 'orbit', name: 'Orbit', icon: '🪐' },
+        { id: 'proximity', name: 'Proximity', icon: '🎯' }
     ];
 
     function normalizeControls(effect) {
