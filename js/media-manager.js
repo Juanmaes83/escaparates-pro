@@ -271,10 +271,26 @@ EP.Media = (function() {
         });
     }
 
+    function loadFromUrl(url, name, targetIdx) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+            var idx = (targetIdx !== undefined) ? targetIdx : slots.indexOf(null);
+            if (idx < 0 || idx >= 15) idx = 0;
+            slots[idx] = { type: 'image', element: img, url: url, name: name || 'Demo', source: 'demo' };
+            renderSlots();
+            syncPlanAssetCount();
+            if (onChangeCallback) onChangeCallback(getAll());
+            EP.UI.toast('Cargado en slot ' + (idx + 1));
+        };
+        img.src = url;
+    }
+
     return {
         init: init,
         getAll: getAll,
         onChange: onChange,
+        loadFromUrl: loadFromUrl,
         createTexture: createTexture,
         updateTexture: updateTexture,
         updateMaterial: updateMaterial,

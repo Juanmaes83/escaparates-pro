@@ -9,6 +9,7 @@
         try { EP.Overlay.init(); } catch(e) { console.error('Overlay.init failed:', e); }
         try { if (EP.Audio) EP.Audio.init(); } catch(e) { console.error('Audio.init failed:', e); }
         try { EP.Export.init(); } catch(e) { console.error('Export.init failed:', e); }
+        try { if (EP.DemoAssets) EP.DemoAssets.init(); } catch(e) { console.error('DemoAssets.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();

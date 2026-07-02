@@ -117,7 +117,10 @@
             <div id="plan-status"></div>
         </div>
         <div class="panel-section">
-            <h3>MEDIA — 15 SLOTS</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <h3 style="margin-bottom:0;">MEDIA — 15 SLOTS</h3>
+                <button id="btn-demo-assets">🖼️ Assets demo</button>
+            </div>
             <div id="media-slots"></div>
             <input type="file" id="slot-file-input" accept="image/*,video/*" multiple style="display:none;">
         </div>
@@ -599,6 +602,7 @@
     <!-- UI + Export -->
     <script src="js/ui.js"></script>
     <script src="js/export.js"></script>
+    <script src="js/demo-assets.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
