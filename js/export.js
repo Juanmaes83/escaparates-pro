@@ -1113,7 +1113,7 @@ EP.Export = (function() {
             '  frame.style.border = "0";',
             '  frame.style.display = "block";',
             '  frame.style.overflow = "hidden";',
-            '  frame.allow = "autoplay; fullscreen";',
+            '  frame.allow = "camera; autoplay; fullscreen";',
             '  frame.srcdoc = ' + JSON.stringify(html) + ';',
             '  if (script && script.parentNode) script.parentNode.insertBefore(frame, script);',
             '  else document.body.appendChild(frame);',
@@ -1174,7 +1174,7 @@ EP.Export = (function() {
     }
 
     function buildIframeEmbed(html) {
-        return '<iframe title="Escaparate Pro" loading="lazy" style="width:100%;aspect-ratio:' + getCurrentOutputPreset().embedRatio.replace(/\s/g, '') + ';border:0;display:block;overflow:hidden;" allow="autoplay; fullscreen" srcdoc="' + escapeAttr(html) + '"></iframe>';
+        return '<iframe title="Escaparate Pro" loading="lazy" style="width:100%;aspect-ratio:' + getCurrentOutputPreset().embedRatio.replace(/\s/g, '') + ';border:0;display:block;overflow:hidden;" allow="camera; autoplay; fullscreen" srcdoc="' + escapeAttr(html) + '"></iframe>';
     }
 
     function getCurrentOutputPreset() {

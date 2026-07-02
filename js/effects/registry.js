@@ -2,6 +2,7 @@ EP.Registry = (function() {
     var effects = {};
     var duplicateIds = [];
     var categories = [
+        { id: 'camera-fx-premium', name: 'Camera FX Premium', icon: 'CAM' },
         { id: 'shader-premium', name: 'Shaders Premium', icon: 'SP' },
         { id: '3d-perspective', name: '3D & Perspective', icon: '🎲' },
         { id: 'carousel-flow', name: 'Carousel & Flow', icon: '🎠' },

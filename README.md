@@ -552,6 +552,87 @@ Antes de entregar una pieza a cliente, comprobar:
 - Los navegadores pueden limitar autoplay de video con sonido; los videos embebidos deben funcionar mejor en mute/loop.
 - Las piezas con muchos videos o particulas pueden exigir mas GPU.
 - Algunas salidas deben revisarse manualmente en el dispositivo final, especialmente pantallas verticales y escaparates fisicos.
+- Los efectos con webcam, como Webcam Dither Glyph PRO, requieren HTTPS o localhost y permiso explicito del navegador. El embed final ya incluye `allow="camera; autoplay; fullscreen"`.
+
+## Actualizacion 2026-07-02
+
+Esta sesion consolida varias tandas de efectos y deja notas tecnicas para futuras revisiones con Claude u otros agentes.
+
+### Tanda Anterior: 19 Shaders Premium
+
+Efectos ya subidos en la tanda anterior de shaders premium:
+
+- Particulate Shatter PRO.
+- Video Dither Glyph PRO.
+- Infinity Zoom PRO.
+- Infinity Machine PRO.
+- Fiesta Truchets PRO.
+- Deco Tile PRO.
+- Reflective City PRO.
+- Quadtree Eyes PRO.
+- Shader Doodle Gradient PRO.
+- Mutating Field PRO.
+- Everything Is Fine PRO.
+- Infinity Truchets PRO.
+- Infinite Falling PRO.
+- Candy Stacker PRO.
+- Shader Clock PRO.
+- Crystal Computers PRO.
+- Glass Wooden Pegs PRO.
+- Zen Hexagon Tiles PRO.
+- Shader Ghosts PRO.
+
+Notas para Claude:
+
+- Esta familia debe conservar imagen o video del usuario como fuente cuando el efecto lo permita.
+- No oscurecer medios por defecto. Bloom, tintes, gamma, vignette o dramatizacion deben ser opcionales.
+- Crystal Computers PRO y Candy Stacker PRO deben tratar imagen/video como contenido personalizable, no como textura fija decorativa.
+- Mutating Field PRO debe evolucionar hacia deformacion o profundidad basada en la imagen cuando se trabaje una siguiente fase.
+
+### Tanda Fase C: 9 Efectos Adicionales
+
+Efectos incorporados desde gists ligeros:
+
+- Mechanical Impact Cards PRO.
+- Swaying Gallery.
+- Reverse Columns.
+- Confetti 3D.
+- Split Compare.
+- Cinematic Zoom.
+- Glitch RGB.
+- Circular Timer.
+- Neon Pulse Glow.
+
+Notas para Claude:
+
+- Estos efectos deben seguir el mismo contrato de salida final: exportar viewer cerrado, no editor.
+- Si se amplian, mantener controles comunes de tamano, velocidad, direccion y timing.
+- No reemplazar ni eliminar efectos existentes; las nuevas variantes deben sumarse.
+
+### Tanda Actual: 2 Nuevos Efectos PRO
+
+Efectos nuevos preparados en local y subidos en esta actualizacion:
+
+- Space Flame Orb PRO: shader premium de orbe/llama espacial, pensado para fondos premium, hero visuales y composiciones inmersivas.
+- Creative Studio V2 PRO: impregnacion animada sobre imagen o video. Incluye lluvia Matrix con letras/numeros/binario/simbolos/frases personalizadas, proporcion aurea viva, contadores dinamicos, lineas/nodos y simbolos tipo Kafka.
+
+Tambien se incorpora una nueva familia:
+
+- Camera FX Premium.
+
+Y un efecto especial dentro de ella:
+
+- Webcam Dither Glyph PRO: efecto WebGL de webcam o media convertida en glifos dither, con estilos Glitch, Hash, Hearts y ASCII. Soporta modo media subida, webcam directa y webcam con fallback a media.
+
+Notas para Claude:
+
+- Creative Studio V2 PRO no es un compositor generico. Su objetivo es impregnar capas animadas sobre la imagen o video del usuario.
+- En Creative Studio V2 PRO los controles clave son `Element Size`, `Element Count`, `Density` y `Frases / Letras`.
+- `Frases / Letras` debe alimentar la lluvia de caracteres y los simbolos cuando el usuario quiera texto propio.
+- `Element Size` debe hacer visibles los elementos grandes sin depender solo de densidad.
+- `Element Count` decide cuantos elementos se generan; `Density` refina la sensacion de abundancia.
+- Webcam Dither Glyph PRO requiere permiso de camara. Si el permiso falla, debe caer a media subida o fallback visual sin romper el editor.
+- Los exports HTML/JS con webcam necesitan iframe con permiso `camera; autoplay; fullscreen`.
 
 ## Desarrollo Local
 
@@ -586,6 +667,8 @@ js/
   effects/
     base.js
     registry.js
+    camera-fx-premium/
+    shader-premium/
     3d-perspective/
     carousel-flow/
     grid/
