@@ -9,6 +9,7 @@
         { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
         { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'panels', type: 'range', min: 2, max: 6, default: 2, step: 1, label: 'Panels' },
+        { key: 'direction', type: 'select', options: [{ v: 'horizontal', l: 'Horizontal' }, { v: 'vertical', l: 'Vertical' }, { v: 'diagonal', l: 'Diagonal' }], default: 'horizontal', label: 'Dirección' },
         { key: 'transitionSpeed', type: 'range', min: 10, max: 100, default: 50, label: 'Transition', unit: '%' },
         { key: 'cornerRadius', type: 'range', min: 0, max: 20, default: 4, label: 'Corner Radius', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot'], default: 'snappy', label: 'Easing' },
@@ -28,6 +29,7 @@
         for (var img = 0; img < mediaList.length; img++) {
             var imgGroup = new THREE.Group();
             var panelW = w / panels;
+            var panelH = h / panels;
             for (var p = 0; p < panels; p++) {
                 var geo = EP.RoundedPlaneGeometry(panelW - 0.02, h, cr);
                 var mat = EP.Media.createMaterial(mediaList[img]);
@@ -47,8 +49,11 @@
                     panelIndex: p,
                     totalPanels: panels,
                     baseX: offsetX,
-                    openDistance: 4 * outputScale,
-                    direction: p % 2 === 0 ? -1 : 1
+                    baseY: 0,
+                    openDistanceH: 4 * outputScale,
+                    openDistanceV: 3 * outputScale,
+                    directionH: p % 2 === 0 ? -1 : 1,
+                    directionV: p % 2 === 0 ? 1 : -1
                 };
                 imgGroup.add(mesh);
             }
@@ -70,6 +75,7 @@
         var segDur = 1 / count;
         var transSpeed = this.settings.transitionSpeed / 100;
         var transDur = segDur * transSpeed * 0.5;
+        var dir = this.settings.direction || 'horizontal';
 
         this.group.children.forEach(function(imgGroup, idx) {
             var segStart = idx * segDur;
@@ -85,8 +91,28 @@
                     var exitT = t >= hideStart ? Math.max(0, Math.min(1, (t - hideStart) / transDur)) : 0;
                     var openAmount = (1 - enterT) + exitT;
                     openAmount = Math.max(0, Math.min(1, openAmount));
-                    panel.position.x = d.baseX + d.direction * openAmount * d.openDistance;
-                    panel.rotation.y = d.direction * openAmount * Math.PI * 0.3;
+
+                    if (dir === 'horizontal') {
+                        // Original: panels open left/right like doors
+                        panel.position.x = d.baseX + d.directionH * openAmount * d.openDistanceH;
+                        panel.position.y = d.baseY;
+                        panel.rotation.y = d.directionH * openAmount * Math.PI * 0.3;
+                        panel.rotation.x = 0;
+                    } else if (dir === 'vertical') {
+                        // Panels open up/down as horizontal strips
+                        panel.position.x = d.baseX;
+                        panel.position.y = d.baseY + d.directionV * openAmount * d.openDistanceV;
+                        panel.rotation.x = d.directionV * openAmount * Math.PI * 0.25;
+                        panel.rotation.y = 0;
+                    } else if (dir === 'diagonal') {
+                        // Diagonal: odd panels slide up-left, even slide down-right
+                        var diagDir = d.panelIndex % 2 === 0 ? 1 : -1;
+                        panel.position.x = d.baseX + diagDir * openAmount * d.openDistanceH * 0.7;
+                        panel.position.y = d.baseY + diagDir * openAmount * d.openDistanceV * 0.7;
+                        panel.rotation.y = diagDir * openAmount * Math.PI * 0.2;
+                        panel.rotation.x = diagDir * openAmount * Math.PI * 0.15;
+                    }
+
                     panel.material.opacity = 1 - openAmount * 0.5;
                     EP.Media.updateMaterial(panel.material);
                 });
