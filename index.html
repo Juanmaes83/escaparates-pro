@@ -217,6 +217,34 @@
                 <button id="vp-compare" class="vp-action-btn">👁 Compare</button>
                 <button id="vp-reset" class="vp-action-btn">↺ Reset</button>
             </div>
+            <!-- FILTROS PRO -->
+            <div class="vp-pro-section">
+                <div class="vp-pro-label">Color Grade</div>
+                <div class="vp-grade-row">
+                    <button class="vp-grade-btn" data-grade="neutral">Neutral</button>
+                    <button class="vp-grade-btn" data-grade="warm">Warm</button>
+                    <button class="vp-grade-btn" data-grade="cool">Cool</button>
+                    <button class="vp-grade-btn" data-grade="cinema">Cinema</button>
+                    <button class="vp-grade-btn" data-grade="fade">Fade</button>
+                    <button class="vp-grade-btn" data-grade="moody">Moody</button>
+                </div>
+                <div class="vp-pro-label">Filtros PRO</div>
+                <div class="control-row">
+                    <label>Viñeta</label>
+                    <input type="range" id="vp-vignette" min="0" max="100" value="0" step="1">
+                    <span class="val" id="vp-vignette-val">0%</span>
+                </div>
+                <div class="control-row">
+                    <label>Film Grain</label>
+                    <input type="range" id="vp-grain" min="0" max="100" value="0" step="1">
+                    <span class="val" id="vp-grain-val">0%</span>
+                </div>
+                <div class="control-row">
+                    <label>Chroma</label>
+                    <input type="range" id="vp-chroma" min="0" max="20" value="0" step="1">
+                    <span class="val" id="vp-chroma-val">0px</span>
+                </div>
+            </div>
         </div>
         <div class="panel-section" id="effect-controls-container">
             <h3 id="effect-controls-title">AJUSTES</h3>
@@ -675,6 +703,7 @@
     <script src="js/effects/text/split-word-reveal.js"></script>
     <!-- UI + Export -->
     <script src="js/visual-pipeline.js"></script>
+    <script src="js/pipeline-pro.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/export.js"></script>
     <script src="js/demo-assets.js"></script>
