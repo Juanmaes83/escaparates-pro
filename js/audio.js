@@ -318,6 +318,28 @@ EP.Audio = (function() {
     function getMode() { return mode; }
     function getDetectedBpm() { return detectedBpm; }
 
+    function createExportStream() {
+        if (!ensureContext() || !gainNode) return null;
+        if (!audioEl || audioEl.readyState < 2) return null;
+        try {
+            var dest = audioCtx.createMediaStreamDestination();
+            gainNode.connect(dest);
+            // Restart audio so it syncs with recording start
+            audioEl.currentTime = 0;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            var promise = audioEl.play();
+            if (promise && typeof promise.catch === 'function') promise.catch(function() {});
+            return dest.stream;
+        } catch (e) {
+            console.warn('EP.Audio createExportStream:', e);
+            return null;
+        }
+    }
+
+    function hasAudio() {
+        return !!audioEl && audioEl.readyState >= 2 && mode !== 'off';
+    }
+
     return {
         init: init,
         load: load,
@@ -327,6 +349,8 @@ EP.Audio = (function() {
         setVolume: setVolume,
         analyzeFrame: analyzeFrame,
         isActive: isActive,
+        hasAudio: hasAudio,
+        createExportStream: createExportStream,
         getEnergyMultiplier: getEnergyMultiplier,
         getExportData: getExportData,
         getMode: getMode,

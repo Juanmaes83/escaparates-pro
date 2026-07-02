@@ -36,6 +36,7 @@ EP.Export = (function() {
                 '<label>Formato</label>' +
                 '<select id="vid-fmt"><option value="webm">WebM</option><option value="mp4">MP4</option></select>' +
                 '<div class="export-preflight" id="video-preflight"></div>' +
+                '<div id="audio-export-status"></div>' +
                 '<button class="export-go" id="go-video">Exportar Video</button>' +
                 '<div class="export-progress" id="prog-video"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
 
@@ -247,7 +248,14 @@ EP.Export = (function() {
         exportCanvas.height = videoSize.height;
         var ectx = exportCanvas.getContext('2d');
 
-        var stream = exportCanvas.captureStream(fps);
+        var videoStream = exportCanvas.captureStream(fps);
+        var audioStream = (EP.Audio && EP.Audio.hasAudio()) ? EP.Audio.createExportStream() : null;
+        var stream;
+        if (audioStream && audioStream.getAudioTracks().length > 0) {
+            stream = new MediaStream(videoStream.getVideoTracks().concat(audioStream.getAudioTracks()));
+        } else {
+            stream = videoStream;
+        }
         var recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 5000000 });
         var chunks = [];
 
@@ -261,7 +269,8 @@ EP.Export = (function() {
             URL.revokeObjectURL(url);
             btn.disabled = false;
             prog.classList.remove('active');
-            EP.UI.toast('Video exportado: ' + videoSize.width + 'x' + videoSize.height + ' @ ' + fps + ' FPS');
+            var audioMsg = audioStream ? ' + audio' : '';
+            EP.UI.toast('Video exportado: ' + videoSize.width + 'x' + videoSize.height + ' @ ' + fps + ' FPS' + audioMsg);
         };
 
         recorder.start();
@@ -682,6 +691,13 @@ EP.Export = (function() {
 
     function updateVideoPreflight() {
         renderPreflight('video-preflight', buildExportPreflight('video'));
+        var audioEl = document.getElementById('audio-export-status');
+        if (audioEl) {
+            var hasAudio = EP.Audio && EP.Audio.hasAudio();
+            audioEl.innerHTML = hasAudio
+                ? '<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:11px;color:#86efac;"><span>🎵</span><span>Audio incluido en el export (se sincronizará desde el inicio)</span></div>'
+                : '<div style="font-size:10px;color:var(--text-dim);margin-bottom:10px;">Sin audio — carga música en el panel Audio para incluirla en el MP4</div>';
+        }
     }
 
     function buildExportPreflight(kind) {
