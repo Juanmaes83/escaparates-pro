@@ -94,6 +94,33 @@ EP.Tags = (function() {
             tags['story'] = true;
             tags['post'] = true;
         }
+        if (category === 'gravity') {
+            tags['reel'] = true;
+            tags['story'] = true;
+            tags['hero'] = true;
+            tags['video'] = true;
+        }
+        if (category === 'field') {
+            tags['hero'] = true;
+            tags['reel'] = true;
+            tags['digital-signage'] = true;
+            tags['premium'] = true;
+        }
+        if (category === 'flicker') {
+            tags['reel'] = true;
+            tags['story'] = true;
+            tags['video'] = true;
+        }
+        if (category === 'orbit') {
+            tags['hero'] = true;
+            tags['digital-signage'] = true;
+            tags['premium'] = true;
+        }
+        if (category === 'proximity') {
+            tags['landing'] = true;
+            tags['post'] = true;
+            tags['reel'] = true;
+        }
 
         // --- Por keywords ---
         if (/gallery|galeria|showcase/.test(text)) {

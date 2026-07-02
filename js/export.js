@@ -31,7 +31,7 @@ EP.Export = (function() {
                 '<label>Resolucion final</label>' +
                 '<select id="vid-res"><option value="preset" selected>Preset exacto actual</option><option value="preview">Tamano de preview</option></select>' +
                 '<label>FPS</label>' +
-                '<select id="vid-fps"><option value="24">24 FPS</option><option value="30" selected>30 FPS</option><option value="60">60 FPS</option></select>' +
+                '<select id="vid-fps"><option value="15">15 FPS</option><option value="24">24 FPS</option><option value="30" selected>30 FPS</option><option value="60">60 FPS</option></select>' +
                 '<label>Formato</label>' +
                 '<select id="vid-fmt"><option value="webm">WebM</option><option value="mp4">MP4</option></select>' +
                 '<div class="export-preflight" id="video-preflight"></div>' +

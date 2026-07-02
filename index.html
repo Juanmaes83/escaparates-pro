@@ -17,6 +17,13 @@
             <div class="elo-icon"></div>
             <div class="elo-name"></div>
         </div>
+        <!-- Safe Zone overlay -->
+        <div id="safe-zone-overlay" style="display:none;">
+            <div class="sz-outer"></div>
+            <div class="sz-inner"></div>
+            <div class="sz-label sz-label-outer">Área total</div>
+            <div class="sz-label sz-label-inner">Zona segura</div>
+        </div>
     </div>
 
     <!-- Top bar -->
@@ -57,6 +64,7 @@
             </div>
         </div>
         <div class="top-right">
+            <button id="btn-safe-zone" class="top-action" title="Mostrar/ocultar zona segura RRSS">⬜ Safe Zone</button>
             <button id="btn-copy-code" class="top-action" title="Copiar configuración del efecto como código">&lt;/&gt; Código</button>
             <button id="btn-export" class="top-action" title="Exportar pieza">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -548,6 +556,17 @@
     <script src="js/effects/motion/halftone-effect.js"></script>
     <script src="js/effects/motion/particle-stream.js"></script>
     <script src="js/effects/motion/media-blinds-pro.js"></script>
+    <!-- GRAVITY family -->
+    <script src="js/effects/gravity/pendulum-swing.js"></script>
+    <!-- FIELD family -->
+    <script src="js/effects/field/magnetic-poles.js"></script>
+    <!-- FLICKER family -->
+    <script src="js/effects/flicker/film-noir.js"></script>
+    <script src="js/effects/flicker/glitch-storm.js"></script>
+    <!-- ORBIT family -->
+    <script src="js/effects/orbit/planetary-rings.js"></script>
+    <!-- PROXIMITY family -->
+    <script src="js/effects/proximity/proximity-bloom.js"></script>
     <!-- UI + Export -->
     <script src="js/ui.js"></script>
     <script src="js/export.js"></script>

@@ -198,3 +198,29 @@ input[type="color"] {
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
 input[type="color"]::-webkit-color-swatch { border: none; border-radius: 2px; }
 input[type="checkbox"] { accent-color: var(--accent); }
+
+/* Safe Zone overlay */
+#safe-zone-overlay {
+    position: absolute; inset: 0; pointer-events: none; z-index: 20;
+}
+.sz-outer {
+    position: absolute; inset: 0;
+    border: 2px dashed rgba(255,255,100,0.5);
+    box-sizing: border-box;
+}
+.sz-inner {
+    position: absolute;
+    top: 10%; bottom: 10%; left: 10%; right: 10%;
+    border: 2px solid rgba(100,255,150,0.7);
+    box-sizing: border-box;
+}
+.sz-label {
+    position: absolute; font-size: 9px; font-family: var(--mono);
+    letter-spacing: 0.5px; padding: 2px 5px;
+    background: rgba(0,0,0,0.6); border-radius: 3px;
+}
+.sz-label-outer { top: 4px; left: 4px; color: rgba(255,255,100,0.8); }
+.sz-label-inner { top: calc(10% + 4px); left: calc(10% + 4px); color: rgba(100,255,150,0.9); }
+
+#btn-safe-zone { font-size: 10px; }
+#btn-safe-zone.active { background: rgba(100,255,150,0.15); border-color: rgba(100,255,150,0.4); color: #64ff96; }

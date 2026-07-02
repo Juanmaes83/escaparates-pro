@@ -32,6 +32,17 @@
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (e.code === 'Space') { e.preventDefault(); EP.Timeline.toggle(); }
         });
+
+        // Safe Zone toggle
+        var btnSZ = document.getElementById('btn-safe-zone');
+        var szOverlay = document.getElementById('safe-zone-overlay');
+        if (btnSZ && szOverlay) {
+            btnSZ.addEventListener('click', function() {
+                var active = szOverlay.style.display !== 'none';
+                szOverlay.style.display = active ? 'none' : 'block';
+                btnSZ.classList.toggle('active', !active);
+            });
+        }
     }
 
     if (document.readyState === 'loading') {
