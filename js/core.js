@@ -136,8 +136,11 @@ EP.Core = (function() {
         group.traverse(function(child) {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
-                if (child.material.map) child.material.map.dispose();
-                child.material.dispose();
+                var mats = Array.isArray(child.material) ? child.material : [child.material];
+                for (var m = 0; m < mats.length; m++) {
+                    if (mats[m].map && typeof mats[m].map.dispose === 'function') mats[m].map.dispose();
+                    mats[m].dispose();
+                }
             }
         });
     }
