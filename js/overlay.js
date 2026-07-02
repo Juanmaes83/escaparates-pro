@@ -47,6 +47,46 @@ EP.Overlay = (function() {
             refresh();
         });
 
+        // Custom font upload
+        var uploadFontBtn = document.getElementById('upload-font-btn');
+        var fontFileInput = document.getElementById('font-file-input');
+        if (uploadFontBtn && fontFileInput) {
+            uploadFontBtn.addEventListener('click', function() { fontFileInput.click(); });
+            fontFileInput.addEventListener('change', function() {
+                var file = this.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var fontName = 'EP_Custom_' + file.name.replace(/\.[^.]+$/, '').replace(/\s+/g, '_');
+                    var face = new FontFace(fontName, e.target.result);
+                    face.load().then(function(loadedFace) {
+                        document.fonts.add(loadedFace);
+                        // Add to font dropdown
+                        var fontSel = document.getElementById('overlay-font');
+                        if (fontSel) {
+                            // Remove previous custom option if any
+                            var prev = fontSel.querySelector('option[data-custom]');
+                            if (prev) fontSel.removeChild(prev);
+                            var opt = document.createElement('option');
+                            opt.value = fontName + ',sans-serif';
+                            opt.textContent = '✓ ' + file.name.replace(/\.[^.]+$/, '') + ' (custom)';
+                            opt.setAttribute('data-custom', '1');
+                            opt.selected = true;
+                            fontSel.appendChild(opt);
+                        }
+                        var label = document.getElementById('font-loaded-label');
+                        if (label) label.textContent = '✓ ' + file.name;
+                        var row = document.getElementById('custom-font-name');
+                        if (row) row.style.display = 'flex';
+                        refresh();
+                    }).catch(function() {
+                        alert('No se pudo cargar la fuente. Verifica que el archivo sea válido (.ttf, .woff, .woff2).');
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
         // Text Layer Depth control
         var depthSel = document.getElementById('overlay-depth');
         var opacitySlider = document.getElementById('overlay-text-opacity');

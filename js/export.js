@@ -14,6 +14,7 @@ EP.Export = (function() {
         document.getElementById('exp-js').addEventListener('click', function() { showConfig('script'); });
         document.getElementById('exp-publish').addEventListener('click', function() { showConfig('publish'); });
         document.getElementById('exp-copy').addEventListener('click', function() { showConfig('copy'); });
+        document.getElementById('exp-png').addEventListener('click', function() { showConfig('png'); });
     }
 
     function open() { modal.classList.add('open'); }
@@ -93,7 +94,118 @@ EP.Export = (function() {
                 '<textarea id="copy-embed-result" class="final-output-code" readonly placeholder="El embed final aparecera aqui..."></textarea>';
             area.appendChild(panel);
             document.getElementById('go-copy').addEventListener('click', copyEmbed);
+        } else if (type === 'png') {
+            panel.innerHTML =
+                '<label>Duracion <span class="val-hint" id="png-dur-val">8s</span></label>' +
+                '<input type="range" id="png-dur" min="1" max="30" value="8" step="1">' +
+                '<label>FPS</label>' +
+                '<select id="png-fps"><option value="15">15 FPS (~120 frames)</option><option value="24" selected>24 FPS (~192 frames)</option><option value="30">30 FPS (~240 frames)</option></select>' +
+                '<label>Formato</label>' +
+                '<select id="png-fmt"><option value="png" selected>PNG (sin perdida)</option><option value="jpeg">JPEG (menor tamano)</option></select>' +
+                '<div class="export-preflight" id="png-preflight" style="margin:8px 0;font-size:10px;color:var(--text-dim);"></div>' +
+                '<button class="export-go" id="go-png">Exportar PNG Sequence</button>' +
+                '<div class="export-progress" id="prog-png"><div class="bar"><div class="fill" id="png-fill"></div></div><div class="status" id="png-status">Preparando frames...</div></div>';
+            area.appendChild(panel);
+            document.getElementById('png-dur').addEventListener('input', function() {
+                document.getElementById('png-dur-val').textContent = this.value + 's';
+                updatePngPreflight();
+            });
+            document.getElementById('png-fps').addEventListener('change', updatePngPreflight);
+            document.getElementById('go-png').addEventListener('click', exportPngSequence);
+            updatePngPreflight();
         }
+    }
+
+    function updatePngPreflight() {
+        var dur = parseInt(document.getElementById('png-dur').value) || 8;
+        var fps = parseInt(document.getElementById('png-fps').value) || 24;
+        var frames = dur * fps;
+        var el = document.getElementById('png-preflight');
+        if (el) el.textContent = frames + ' frames estimados — ZIP descargable';
+    }
+
+    function exportPngSequence() {
+        var dur = parseInt(document.getElementById('png-dur').value) || 8;
+        var fps = parseInt(document.getElementById('png-fps').value) || 24;
+        var fmt = document.getElementById('png-fmt').value || 'png';
+        var mimeType = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+        var ext = fmt === 'jpeg' ? '.jpg' : '.png';
+        var frames = dur * fps;
+        var fill = document.getElementById('png-fill');
+        var status = document.getElementById('png-status');
+        var prog = document.getElementById('prog-png');
+        if (prog) prog.style.display = 'block';
+
+        var renderer = EP.Core && EP.Core.renderer;
+        if (!renderer) {
+            if (status) status.textContent = 'Error: renderer no disponible';
+            return;
+        }
+
+        var canvas = renderer.domElement;
+        var zip = typeof JSZip !== 'undefined' ? new JSZip() : null;
+        var imgFolder = zip ? zip.folder('frames') : null;
+        var downloads = [];
+        var frameIdx = 0;
+        var loopDur = EP.Timeline ? EP.Timeline.loopDuration : 12;
+        var effect = EP.UI ? EP.UI.getCurrentEffect() : null;
+
+        // Pause timeline during export
+        var wasPlaying = EP.Timeline && EP.Timeline.isPlaying && EP.Timeline.isPlaying();
+        if (EP.Timeline && EP.Timeline.pause) EP.Timeline.pause();
+
+        function captureFrame() {
+            if (frameIdx >= frames) {
+                // Done — bundle ZIP or show message
+                if (zip) {
+                    status.textContent = 'Comprimiendo ZIP...';
+                    zip.generateAsync({ type: 'blob' }).then(function(blob) {
+                        var a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = 'frames_' + fps + 'fps.zip';
+                        a.click();
+                        status.textContent = '✅ ' + frames + ' frames descargados';
+                        if (wasPlaying && EP.Timeline && EP.Timeline.play) EP.Timeline.play();
+                    });
+                } else {
+                    status.textContent = '✅ ' + frames + ' frames descargados';
+                    if (wasPlaying && EP.Timeline && EP.Timeline.play) EP.Timeline.play();
+                }
+                return;
+            }
+
+            // Advance timeline to this frame's time
+            var t = (frameIdx / frames) * dur;
+            if (EP.Timeline && EP.Timeline.seekTo) EP.Timeline.seekTo(t);
+            if (effect) {
+                EP.RenderPipeline.updateEffect(effect, t % loopDur, 1/fps, loopDur);
+                EP.Core.renderer.render(EP.Core.scene, EP.Core.camera);
+            }
+
+            // Capture
+            var dataUrl = canvas.toDataURL(mimeType, 0.92);
+            var b64 = dataUrl.split(',')[1];
+            var name = 'frame_' + String(frameIdx).padStart(5, '0') + ext;
+
+            if (imgFolder) {
+                imgFolder.file(name, b64, { base64: true });
+            } else {
+                // No JSZip — download individually (limited to first 10 for UX)
+                if (frameIdx < 10) {
+                    var a = document.createElement('a');
+                    a.href = dataUrl; a.download = name; a.click();
+                }
+            }
+
+            frameIdx++;
+            if (fill) fill.style.width = (frameIdx / frames * 100).toFixed(1) + '%';
+            if (status) status.textContent = 'Frame ' + frameIdx + ' / ' + frames;
+
+            // Use requestAnimationFrame to avoid blocking UI
+            setTimeout(captureFrame, 0);
+        }
+
+        captureFrame();
     }
 
     function buildStandaloneModeControls() {

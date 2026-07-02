@@ -310,6 +310,16 @@
                         <option value="bottom-right" selected>Abajo der</option>
                     </select>
                 </div>
+                <!-- Custom font upload -->
+                <div class="control-row">
+                    <label>Fuente custom</label>
+                    <button id="upload-font-btn" class="small-btn">Subir fuente</button>
+                    <input type="file" id="font-file-input" accept=".ttf,.woff,.woff2,.otf" style="display:none;">
+                </div>
+                <div id="custom-font-name" style="display:none;" class="control-row">
+                    <label></label>
+                    <span style="font-size:10px;color:var(--accent);" id="font-loaded-label">✓ Fuente cargada</span>
+                </div>
                 <!-- Text Layer Depth -->
                 <div class="control-row">
                     <label>Capa de texto</label>
@@ -383,6 +393,10 @@
                     <div class="exp-icon">&lt;/&gt;</div>
                     <div><div class="exp-label">Copiar embed</div><div class="exp-desc">Iframe final sin editor ni paneles</div></div>
                 </div>
+                <div class="export-option" id="exp-png">
+                    <div class="exp-icon">🖼️</div>
+                    <div><div class="exp-label">PNG Sequence</div><div class="exp-desc">Frames individuales para Premiere / CapCut</div></div>
+                </div>
             </div>
             <div id="export-config-area"></div>
         </div>
@@ -392,6 +406,7 @@
     <div id="toast" aria-live="polite"></div>
 
     <!-- Scripts: Three.js + postprocessing -->
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/VignetteShader.js" crossorigin="anonymous"></script>
