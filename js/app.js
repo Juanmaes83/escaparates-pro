@@ -12,6 +12,7 @@
         try { if (EP.DemoAssets) EP.DemoAssets.init(); } catch(e) { console.error('DemoAssets.init failed:', e); }
         try { if (EP.TimelineVisual) EP.TimelineVisual.init(); } catch(e) { console.error('TimelineVisual.init failed:', e); }
         try { if (EP.VisualPipeline) EP.VisualPipeline.init(); } catch(e) { console.error('VisualPipeline.init failed:', e); }
+        try { if (EP.CatalogUX) EP.CatalogUX.init(); } catch(e) { console.error('CatalogUX.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
