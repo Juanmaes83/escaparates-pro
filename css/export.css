@@ -62,3 +62,42 @@
 .export-progress .bar { width: 100%; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
 .export-progress .fill { height: 100%; background: var(--accent); border-radius: 3px; width: 0%; transition: width 0.15s; }
 .export-progress .status { font-size: 10px; color: var(--text-dim); margin-top: 4px; font-family: var(--mono); }
+
+.final-output-result {
+    margin-top: 12px;
+}
+.final-output-result input {
+    width: 100%;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+}
+.final-output-code {
+    width: 100%;
+    min-height: 112px;
+    resize: vertical;
+    margin-top: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.45;
+}
+.export-link {
+    display: block;
+    text-align: center;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    background: rgba(255,255,255,0.04);
+    font-weight: 600;
+}
+.export-link:hover {
+    border-color: var(--border-hover);
+    background: rgba(255,255,255,0.07);
+}

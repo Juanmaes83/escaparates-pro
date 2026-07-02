@@ -4,6 +4,7 @@ EP.UI = (function() {
 
     function init() {
         buildEffectsLibrary();
+        bindOutputPreset();
         bindAspectSelector();
         bindEffectsSearch();
     }
@@ -185,9 +186,37 @@ EP.UI = (function() {
                 document.querySelectorAll('.aspect-btn').forEach(function(b) { b.classList.remove('active'); });
                 this.classList.add('active');
                 var ratio = this.dataset.aspect;
-                EP.Core.setAspectRatio(aspectMap[ratio] || 16 / 9);
+                if (EP.OutputPresets) {
+                    var presetSelect = document.getElementById('output-preset');
+                    var presetId = EP.OutputPresets.fromAspect(ratio);
+                    if (presetSelect) presetSelect.value = presetId;
+                    EP.OutputPresets.apply(presetId);
+                } else {
+                    EP.Core.setAspectRatio(aspectMap[ratio] || 16 / 9);
+                }
                 toast('Aspect ratio: ' + ratio);
             });
+        });
+    }
+
+    function bindOutputPreset() {
+        var select = document.getElementById('output-preset');
+        if (!select || !EP.OutputPresets) return;
+
+        select.addEventListener('change', function() {
+            var preset = EP.OutputPresets.apply(this.value);
+            syncAspectButtons(preset);
+            toast('Formato: ' + preset.label);
+        });
+
+        syncAspectButtons(EP.OutputPresets.apply(select.value));
+    }
+
+    function syncAspectButtons(preset) {
+        if (!preset) return;
+        var aspect = preset.embedRatio.replace(/\s/g, '').replace('/', ':');
+        document.querySelectorAll('.aspect-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.dataset.aspect === aspect);
         });
     }
 

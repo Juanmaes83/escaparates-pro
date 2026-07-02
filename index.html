@@ -20,6 +20,19 @@
             <span class="logo">Escaparates <strong>Pro</strong></span>
         </div>
         <div class="top-center">
+            <select id="output-preset" title="Formato de salida final">
+                <option value="web-hero-16-9">Web - Hero 16:9</option>
+                <option value="web-hero-21-9">Web - Hero 21:9</option>
+                <option value="web-full-width">Web - Full-width</option>
+                <option value="web-section">Web - Seccion web</option>
+                <option value="social-9-16">RRSS - Story/Reel 9:16</option>
+                <option value="social-1-1">RRSS - Post 1:1</option>
+                <option value="social-4-5">RRSS - Post 4:5</option>
+                <option value="social-3-4">RRSS - Post 3:4</option>
+                <option value="screen-16-9">Pantallas - 16:9</option>
+                <option value="screen-vertical">Pantallas - Vertical</option>
+                <option value="screen-loop">Pantallas - Loop continuo</option>
+            </select>
             <div id="aspect-selector">
                 <button class="aspect-btn active" data-aspect="16:9" title="16:9">
                     <svg width="20" height="14" viewBox="0 0 20 14"><rect x="1" y="1" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
@@ -169,6 +182,14 @@
                     <div class="exp-icon">JS</div>
                     <div><div class="exp-label">Script embebible</div><div class="exp-desc">JS para insertar en web cliente</div></div>
                 </div>
+                <div class="export-option" id="exp-publish">
+                    <div class="exp-icon">URL</div>
+                    <div><div class="exp-label">Publicar resultado</div><div class="exp-desc">URL local del viewer final cerrado</div></div>
+                </div>
+                <div class="export-option" id="exp-copy">
+                    <div class="exp-icon">&lt;/&gt;</div>
+                    <div><div class="exp-label">Copiar embed</div><div class="exp-desc">Iframe final sin editor ni paneles</div></div>
+                </div>
             </div>
             <div id="export-config-area"></div>
         </div>
@@ -192,6 +213,7 @@
     <!-- App modules -->
     <script src="js/core.js"></script>
     <script src="js/easing.js"></script>
+    <script src="js/output-presets.js"></script>
     <script src="js/timeline.js"></script>
     <script src="js/media-manager.js"></script>
     <script src="js/overlay.js"></script>
@@ -264,6 +286,7 @@
     <script src="js/effects/carousel-flow/ring-carousel.js"></script>
     <script src="js/effects/carousel-flow/cylinder-carousel.js"></script>
     <script src="js/effects/carousel-flow/infinite-scroll.js"></script>
+    <script src="js/effects/carousel-flow/mechanical-impact-cards-pro.js"></script>
     <!-- Effects: Grid -->
     <script src="js/effects/grid/grid-reveal.js"></script>
     <script src="js/effects/grid/spotlight-zoom.js"></script>

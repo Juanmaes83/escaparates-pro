@@ -65,6 +65,9 @@ EP.EffectBase.prototype.rebuild = function(mediaList) {
         var outputScale = Math.max(0.1, this.settings.outputSize / 100);
         this.group.scale.setScalar(outputScale);
     }
+    if (this.settings.outputSize !== undefined) {
+        applyFamilyFraming(this.meta && this.meta.category, Math.max(0.1, this.settings.outputSize / 100));
+    }
     return this.group;
 };
 
@@ -75,3 +78,29 @@ EP.EffectBase.prototype.getExportSettings = function() {
         settings: Object.assign({}, this.settings)
     };
 };
+
+function applyFamilyFraming(category, outputScale) {
+    if (!EP.Core || !EP.Core.camera || outputScale <= 1) return;
+
+    var camera = EP.Core.camera;
+    var needsCameraRoom = category === '3d-perspective' ||
+        category === 'carousel-flow' ||
+        category === 'parallax' ||
+        category === 'motion' ||
+        category === 'glassmorphism';
+
+    if (!needsCameraRoom) {
+        camera.position.set(0, 0, 12);
+        camera.fov = 45;
+        camera.lookAt(0, 0, 0);
+        camera.updateProjectionMatrix();
+        return;
+    }
+
+    var safeScale = Math.min(outputScale, 8);
+    var cameraZ = 12 + Math.max(0, safeScale - 1) * 1.35;
+    camera.position.set(0, 0, cameraZ);
+    camera.fov = Math.min(62, 45 + Math.max(0, safeScale - 1) * 1.8);
+    camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+}

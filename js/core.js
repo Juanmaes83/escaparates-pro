@@ -64,12 +64,20 @@ EP.Core = (function() {
 
     function updateSize() {
         if (!container || !renderer) return;
-        var w = container.clientWidth;
-        var h = container.clientHeight;
-        if (w === 0 || h === 0) return;
+        var boundsW = container.clientWidth;
+        var boundsH = container.clientHeight;
+        if (boundsW === 0 || boundsH === 0) return;
+        var w = boundsW;
+        var h = Math.round(w / aspectRatio);
+        if (h > boundsH) {
+            h = boundsH;
+            w = Math.round(h * aspectRatio);
+        }
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(w, h);
+        renderer.setSize(w, h, false);
+        renderer.domElement.style.width = w + 'px';
+        renderer.domElement.style.height = h + 'px';
         if (composer) composer.setSize(w, h);
     }
 

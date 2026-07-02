@@ -12,6 +12,8 @@ EP.Export = (function() {
         document.getElementById('exp-gif').addEventListener('click', function() { showConfig('gif'); });
         document.getElementById('exp-widget').addEventListener('click', function() { showConfig('widget'); });
         document.getElementById('exp-js').addEventListener('click', function() { showConfig('script'); });
+        document.getElementById('exp-publish').addEventListener('click', function() { showConfig('publish'); });
+        document.getElementById('exp-copy').addEventListener('click', function() { showConfig('copy'); });
     }
 
     function open() { modal.classList.add('open'); }
@@ -65,6 +67,20 @@ EP.Export = (function() {
                 '<div class="export-progress" id="prog-script"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>';
             area.appendChild(panel);
             document.getElementById('go-script').addEventListener('click', exportScript);
+        } else if (type === 'publish') {
+            panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Publica una URL local temporal con el viewer final cerrado. Sirve para revisar el resultado sin paneles antes de subirlo a hosting.</p>' +
+                '<button class="export-go" id="go-publish">Publicar resultado local</button>' +
+                '<div class="export-progress" id="prog-publish"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>' +
+                '<div id="publish-result" class="final-output-result"></div>';
+            area.appendChild(panel);
+            document.getElementById('go-publish').addEventListener('click', publishResult);
+        } else if (type === 'copy') {
+            panel.innerHTML = '<p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Genera un iframe final para copiar en una web. El embed contiene solo el resultado, nunca el editor.</p>' +
+                '<button class="export-go" id="go-copy">Generar embed final</button>' +
+                '<div class="export-progress" id="prog-copy"><div class="bar"><div class="fill"></div></div><div class="status">Preparando...</div></div>' +
+                '<textarea id="copy-embed-result" class="final-output-code" readonly placeholder="El embed final aparecera aqui..."></textarea>';
+            area.appendChild(panel);
+            document.getElementById('go-copy').addEventListener('click', copyEmbed);
         }
     }
 
@@ -83,8 +99,9 @@ EP.Export = (function() {
 
         var exportCanvas = document.createElement('canvas');
         var res = parseInt(document.getElementById('vid-res').value);
-        exportCanvas.width = Math.round(res * (canvas.width / canvas.height));
-        exportCanvas.height = res;
+        var videoSize = getExportDimensions(res);
+        exportCanvas.width = videoSize.width;
+        exportCanvas.height = videoSize.height;
         var ectx = exportCanvas.getContext('2d');
 
         var stream = exportCanvas.captureStream(30);
@@ -115,6 +132,7 @@ EP.Export = (function() {
             fill.style.width = pct + '%';
             status.textContent = 'Grabando... ' + (elapsed / 1000).toFixed(1) + 's / ' + (duration / 1000) + 's';
 
+            renderStillIfRecordingDisabled();
             ectx.drawImage(canvas, 0, 0, exportCanvas.width, exportCanvas.height);
             EP.Overlay.drawOnCanvas(ectx, exportCanvas.width, exportCanvas.height);
 
@@ -147,8 +165,9 @@ EP.Export = (function() {
         var fps = 12;
         var totalFrames = Math.round(dur * fps);
         var delay = Math.round(1000 / fps);
-        var w = size;
-        var h = Math.round(size * canvas.height / canvas.width);
+        var gifSize = getExportDimensions(size);
+        var w = gifSize.width;
+        var h = gifSize.height;
 
         var tmpCanvas = document.createElement('canvas');
         tmpCanvas.width = w; tmpCanvas.height = h;
@@ -160,7 +179,10 @@ EP.Export = (function() {
 
         for (var i = 0; i < totalFrames; i++) {
             var t = (i / totalFrames) * loopDur;
-            if (effect) effect.update(t, 0, loopDur);
+            if (effect) {
+                var frame = resolveExportFrame(effect, t, 0, loopDur);
+                effect.update(frame.time, frame.dt, loopDur);
+            }
             EP.Core.render();
             tmpCtx.drawImage(canvas, 0, 0, w, h);
             EP.Overlay.drawOnCanvas(tmpCtx, w, h);
@@ -515,6 +537,14 @@ EP.Export = (function() {
         exportStandalone('script');
     }
 
+    function publishResult() {
+        buildStandaloneForAction('publish');
+    }
+
+    function copyEmbed() {
+        buildStandaloneForAction('copy');
+    }
+
     function exportStandalone(kind) {
         var effect = EP.UI.getCurrentEffect();
         if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
@@ -542,6 +572,71 @@ EP.Export = (function() {
                 if (pending === 0) buildAndDownloadStandalone(effect, mediaItems.filter(Boolean), kind);
             });
         });
+    }
+
+    function buildStandaloneForAction(action) {
+        var effect = EP.UI.getCurrentEffect();
+        if (!effect) { EP.UI.toast('Selecciona un efecto primero'); return; }
+
+        var prog = document.getElementById(action === 'copy' ? 'prog-copy' : 'prog-publish');
+        if (prog) {
+            prog.classList.add('active');
+            prog.querySelector('.fill').style.width = '0%';
+            prog.querySelector('.status').textContent = 'Preparando viewer final...';
+        }
+
+        var mediaList = EP.Media.getAll();
+        var mediaItems = [];
+        var pending = mediaList.length;
+
+        if (pending === 0) {
+            finalizeStandaloneAction(effect, [], action);
+            return;
+        }
+
+        mediaList.forEach(function(m, i) {
+            serializeMedia(m, function(item) {
+                mediaItems[i] = item;
+                pending--;
+                if (prog) {
+                    prog.querySelector('.fill').style.width = (((mediaList.length - pending) / mediaList.length) * 80) + '%';
+                    prog.querySelector('.status').textContent = 'Medios congelados: ' + (mediaList.length - pending) + '/' + mediaList.length;
+                }
+                if (pending === 0) finalizeStandaloneAction(effect, mediaItems.filter(Boolean), action);
+            });
+        });
+    }
+
+    function finalizeStandaloneAction(effect, mediaItems, action) {
+        var html = buildStandaloneHTML(effect, mediaItems);
+        var prog = document.getElementById(action === 'copy' ? 'prog-copy' : 'prog-publish');
+
+        if (action === 'publish') {
+            var blob = new Blob([html], { type: 'text/html' });
+            var url = URL.createObjectURL(blob);
+            var out = document.getElementById('publish-result');
+            if (out) {
+                out.innerHTML = '<label>URL final local</label><input type="text" readonly value="' + escapeAttr(url) + '">' +
+                    '<a class="export-link" href="' + escapeAttr(url) + '" target="_blank" rel="noopener">Abrir resultado publicado</a>';
+            }
+            EP.UI.toast('URL local final generada');
+        } else if (action === 'copy') {
+            var embed = buildIframeEmbed(html);
+            var textarea = document.getElementById('copy-embed-result');
+            if (textarea) {
+                textarea.value = embed;
+                textarea.focus();
+                textarea.select();
+            }
+            tryCopyText(embed);
+            EP.UI.toast('Embed final generado');
+        }
+
+        if (prog) {
+            prog.querySelector('.fill').style.width = '100%';
+            prog.querySelector('.status').textContent = 'Resultado final listo';
+            setTimeout(function() { prog.classList.remove('active'); }, 800);
+        }
     }
 
     function serializeMedia(media, done) {
@@ -616,11 +711,12 @@ EP.Export = (function() {
     }
 
     function buildStandaloneHTML(effect, mediaItems) {
+        var outputPreset = getCurrentOutputPreset();
         var settings = JSON.stringify(effect.settings);
         var bg = effect.settings.background || '#101014';
         var effectId = effect.id;
         var sourcePath = resolveEffectSourcePath(effect);
-        var repoBase = 'https://cdn.jsdelivr.net/gh/Juanmaes83/escaparates-pro@main/';
+        var repoBase = 'https://cdn.jsdelivr.net/gh/Juanmaes83/escaparates-pro@master/';
 
         var overlayHTML = '';
         if (EP.Overlay.isEnabled()) {
@@ -644,7 +740,7 @@ EP.Export = (function() {
         var html = '<!DOCTYPE html>\n<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Escaparate</title>\n' +
             '<base href="' + repoBase + '">\n' +
             '<style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:' + bg + '}#canvas-container{position:absolute;top:0;left:0;width:100%;height:100%}#overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}.export-error{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:#101014;font:14px system-ui,sans-serif;padding:24px;text-align:center}</style></head>\n' +
-            '<body><div id="canvas-container"></div><div id="overlay">' + overlayHTML + '</div>\n' +
+            '<body data-escaparates-viewer="final"><div id="canvas-container"></div><div id="overlay">' + overlayHTML + '</div>\n' +
             '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" crossorigin="anonymous"><\/script>\n' +
             '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js" crossorigin="anonymous"><\/script>\n' +
             '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/VignetteShader.js" crossorigin="anonymous"><\/script>\n' +
@@ -666,6 +762,7 @@ EP.Export = (function() {
             'var SETTINGS = ' + settings + ';\n' +
             'var EFFECT_ID = "' + effectId + '";\n' +
             'var LOOP_DURATION = ' + JSON.stringify(EP.Timeline.loopDuration || 8) + ';\n' +
+            'var OUTPUT_PRESET = ' + JSON.stringify(outputPreset) + ';\n' +
             buildWidgetPlayerCode(!!sourcePath) +
             '<\/script></body></html>';
 
@@ -694,7 +791,7 @@ EP.Export = (function() {
             '  frame.title = "Escaparate Pro";',
             '  frame.loading = "lazy";',
             '  frame.style.width = "100%";',
-            '  frame.style.aspectRatio = "16 / 9";',
+            '  frame.style.aspectRatio = ' + JSON.stringify(getCurrentOutputPreset().embedRatio) + ';',
             '  frame.style.border = "0";',
             '  frame.style.display = "block";',
             '  frame.style.overflow = "hidden";',
@@ -737,6 +834,7 @@ EP.Export = (function() {
             'else Promise.all(MEDIA_ITEMS.map(loadMedia)).then(function(items){',
             '  var mediaList = items.filter(Boolean);',
             '  EP.Core.init();',
+            '  if (OUTPUT_PRESET && OUTPUT_PRESET.ratio) EP.Core.setAspectRatio(OUTPUT_PRESET.ratio);',
             '  EP.Core.setBackground(SETTINGS.background || "' + (EP.Core.settings.backgroundColor || '#101014') + '");',
             '  var effect = EP.Registry.get(EFFECT_ID);',
             '  if (!effect) { showError("No se pudo cargar el efecto: " + EFFECT_ID); return; }',
@@ -758,6 +856,10 @@ EP.Export = (function() {
             '        var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);',
             '        frameTime = (frameTime * motionSpeed) % LOOP_DURATION;',
             '        frameDt *= motionSpeed;',
+            '        if (effect.settings.motionDirection === "right-left" || effect.settings.motionDirection === "bottom-top" || effect.settings.motionDirection === "radial-in") {',
+            '          frameTime = (LOOP_DURATION - frameTime) % LOOP_DURATION;',
+            '          frameDt *= -1;',
+            '        }',
             '      }',
             '    }',
             '    effect.update(frameTime, frameDt, LOOP_DURATION);',
@@ -767,6 +869,70 @@ EP.Export = (function() {
             '  requestAnimationFrame(frame);',
             '});'
         ].join('\n');
+    }
+
+    function buildIframeEmbed(html) {
+        return '<iframe title="Escaparate Pro" loading="lazy" style="width:100%;aspect-ratio:' + getCurrentOutputPreset().embedRatio.replace(/\s/g, '') + ';border:0;display:block;overflow:hidden;" allow="autoplay; fullscreen" srcdoc="' + escapeAttr(html) + '"></iframe>';
+    }
+
+    function getCurrentOutputPreset() {
+        if (EP.OutputPresets && EP.OutputPresets.getCurrent) return EP.OutputPresets.getCurrent();
+        return { id: 'web-hero-16-9', label: 'Hero 16:9', ratio: 16 / 9, embedRatio: '16 / 9', exportWidth: 1920, exportHeight: 1080, loop: false };
+    }
+
+    function getExportDimensions(shortSide) {
+        var preset = getCurrentOutputPreset();
+        var ratio = preset.ratio || 16 / 9;
+        var width;
+        var height;
+
+        if (ratio >= 1) {
+            height = shortSide;
+            width = Math.round(shortSide * ratio);
+        } else {
+            width = shortSide;
+            height = Math.round(shortSide / ratio);
+        }
+
+        return { width: width, height: height };
+    }
+
+    function renderStillIfRecordingDisabled() {
+        var effect = EP.UI.getCurrentEffect();
+        if (!effect || effect.settings.recordDefaultMotion !== 'off') return;
+        var loopDuration = EP.Timeline.loopDuration || 8;
+        effect.update(loopDuration * 0.5, 0, loopDuration);
+        EP.Core.render();
+    }
+
+    function resolveExportFrame(effect, time, dt, loopDuration) {
+        var frameTime = time;
+        var frameDt = dt;
+        var easingName = effect.settings.easing || 'linear';
+        var easeFn = EP.Easing && EP.Easing.get ? EP.Easing.get(easingName) : function(v) { return v; };
+        frameTime = easeFn((time / loopDuration) % 1) * loopDuration;
+
+        if (effect.settings.recordDefaultMotion === 'off' || effect.settings.playbackMotion === 'off') {
+            return { time: loopDuration * 0.5, dt: 0 };
+        }
+
+        if (effect.settings.playbackMotionSpeed !== undefined) {
+            var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);
+            frameTime = (frameTime * motionSpeed) % loopDuration;
+            frameDt *= motionSpeed;
+        }
+
+        if (effect.settings.motionDirection === 'right-left' || effect.settings.motionDirection === 'bottom-top' || effect.settings.motionDirection === 'radial-in') {
+            frameTime = (loopDuration - frameTime) % loopDuration;
+            frameDt *= -1;
+        }
+
+        return { time: frameTime, dt: frameDt };
+    }
+
+    function tryCopyText(text) {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+        navigator.clipboard.writeText(text).catch(function() {});
     }
 
     function escapeHTML(s) {

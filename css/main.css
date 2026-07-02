@@ -39,8 +39,12 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 }
 #canvas-container canvas {
     display: block;
-    width: 100% !important;
-    height: 100% !important;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
 }
 
 /* Top bar */
@@ -55,6 +59,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg);
 .logo strong { font-weight: 700; color: var(--text); }
 .top-center { display: flex; align-items: center; gap: 4px; }
 .top-right { display: flex; align-items: center; gap: 8px; }
+
+#output-preset {
+    width: 158px;
+    height: 28px;
+    padding: 4px 26px 4px 8px;
+    font-size: 11px;
+    background: var(--surface-2);
+}
 
 #aspect-selector { display: flex; gap: 2px; background: var(--surface-2); border-radius: 6px; padding: 2px; }
 .aspect-btn {

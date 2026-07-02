@@ -27,6 +27,10 @@
                         var motionSpeed = Math.max(0, effect.settings.playbackMotionSpeed / 100);
                         easedTime = (easedTime * motionSpeed) % loopDuration;
                         dt *= motionSpeed;
+                        if (isReverseDirection(effect.settings.motionDirection)) {
+                            easedTime = (loopDuration - easedTime) % loopDuration;
+                            dt *= -1;
+                        }
                     }
                 }
                 effect.update(easedTime, dt, loopDuration);
@@ -42,6 +46,10 @@
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             if (e.code === 'Space') { e.preventDefault(); EP.Timeline.toggle(); }
         });
+    }
+
+    function isReverseDirection(direction) {
+        return direction === 'right-left' || direction === 'bottom-top' || direction === 'radial-in';
     }
 
     if (document.readyState === 'loading') {

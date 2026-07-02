@@ -18,7 +18,9 @@
         var group = new THREE.Group();
         var count = mediaList.length;
         var cardScale = this.settings.cardSize / 100 * 7;
-        var geo = new THREE.PlaneGeometry(cardScale * 1.6, cardScale);
+        var canvasAspect = EP.Core && EP.Core.camera ? EP.Core.camera.aspect : 16 / 9;
+        var widthFactor = canvasAspect < 1 ? 1.05 : 1.6;
+        var geo = new THREE.PlaneGeometry(cardScale * widthFactor, cardScale);
 
         for (var i = 0; i < count; i++) {
             var mat = EP.Media.createMaterial(mediaList[i]);
@@ -35,13 +37,15 @@
         var t = time / loopDuration;
         var count = this.group.children.length;
         var perSlide = 1 / count;
+        var canvasAspect = EP.Core && EP.Core.camera ? EP.Core.camera.aspect : 16 / 9;
+        var travel = Math.min(12, Math.max(4.2, canvasAspect * 7));
 
         this.group.children.forEach(function(child) {
             var i = child.userData.index;
             var start = i * perSlide;
             var local = ((t - start) / perSlide + 1) % 1;
             var wipeProgress = local * 2 - 0.5;
-            child.position.x = Math.max(0, (1 - local * 1.5)) * 12;
+            child.position.x = Math.max(0, (1 - local * 1.5)) * travel;
             child.position.z = (count - i) * 0.01 + (i === Math.floor(t * count) % count ? 0.5 : 0);
             child.material.opacity = local < 0.1 ? local * 10 : (local > 0.9 ? (1 - local) * 10 : 1);
             child.visible = child.material.opacity > 0.01;

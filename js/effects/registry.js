@@ -12,7 +12,62 @@ EP.Registry = (function() {
         { id: 'motion', name: 'Motion', icon: '☁️' }
     ];
 
+    function normalizeControls(effect) {
+        if (!effect || !effect.controlsDef) return effect;
+
+        var hasMotionDirection = false;
+        var hasRecordDefaultMotion = false;
+
+        effect.controlsDef.forEach(function(ctrl) {
+            if (ctrl.key === 'playbackMotion') {
+                ctrl.label = 'Motion Enabled';
+            } else if (ctrl.key === 'playbackMotionSpeed') {
+                ctrl.label = 'Motion Speed';
+            } else if (ctrl.key === 'motionDirection') {
+                hasMotionDirection = true;
+            } else if (ctrl.key === 'recordDefaultMotion') {
+                hasRecordDefaultMotion = true;
+            }
+        });
+
+        if (!hasMotionDirection) {
+            effect.controlsDef.splice(Math.min(3, effect.controlsDef.length), 0, {
+                key: 'motionDirection',
+                type: 'select',
+                options: [
+                    { v: 'auto', l: 'Auto / Original' },
+                    { v: 'left-right', l: 'Izquierda a derecha' },
+                    { v: 'right-left', l: 'Derecha a izquierda' },
+                    { v: 'top-bottom', l: 'Arriba a abajo' },
+                    { v: 'bottom-top', l: 'Abajo a arriba' },
+                    { v: 'radial-in', l: 'Entrada radial' },
+                    { v: 'radial-out', l: 'Salida radial' }
+                ],
+                default: 'auto',
+                label: 'Motion Direction'
+            });
+            effect.settings.motionDirection = effect.settings.motionDirection || 'auto';
+        }
+
+        if (!hasRecordDefaultMotion) {
+            effect.controlsDef.splice(Math.min(4, effect.controlsDef.length), 0, {
+                key: 'recordDefaultMotion',
+                type: 'select',
+                options: [
+                    { v: 'on', l: 'Grabar movimiento' },
+                    { v: 'off', l: 'No grabar' }
+                ],
+                default: 'on',
+                label: 'Record Default Motion'
+            });
+            effect.settings.recordDefaultMotion = effect.settings.recordDefaultMotion || 'on';
+        }
+
+        return effect;
+    }
+
     function register(effect) {
+        normalizeControls(effect);
         if (typeof document !== 'undefined' && document.currentScript && !effect.sourcePath) {
             effect.sourcePath = document.currentScript.getAttribute('src') || document.currentScript.src || '';
         }
