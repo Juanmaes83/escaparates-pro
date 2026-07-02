@@ -11,6 +11,9 @@
         { key: 'cardSize', type: 'range', min: 20, max: 60, default: 40, label: 'Card Size', unit: '%' },
         { key: 'gap', type: 'range', min: 0, max: 10, default: 3, step: 0.5, label: 'Gap', unit: '%' },
         { key: 'cornerRadius', type: 'range', min: 0, max: 30, default: 8, label: 'Corner Radius', unit: '%' },
+        { key: 'stagger', type: 'range', min: 0, max: 2, default: 0, step: 0.05, label: 'Stagger', unit: 's' },
+        { key: 'focusScale', type: 'range', min: 80, max: 150, default: 100, label: 'Focus Scale', unit: '%' },
+        { key: 'dimAmount', type: 'range', min: 0, max: 100, default: 0, label: 'Dim Periféricos', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'snappy', 'overshoot', 'linear'], default: 'smooth', label: 'Easing' },
         { key: 'cardRatio', type: 'aspect', options: ['1:1', '4:3', '3:4', '16:9'], default: '4:3', label: 'Card Ratio' },
         { key: 'background', type: 'color', default: '#101014', label: 'Background' }
@@ -30,6 +33,7 @@
 
         for (var i = 0; i < count; i++) {
             var mat = EP.Media.createMaterial(mediaList[i]);
+            mat.transparent = true;
             var mesh = new THREE.Mesh(geo, mat);
             mesh.userData = { index: i, total: count, cardW: w + gap };
             group.add(mesh);
@@ -41,6 +45,10 @@
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
         var t = time / loopDuration;
+        var staggerSec = this.settings.stagger || 0;
+        var dimAmount = (this.settings.dimAmount || 0) / 100;
+        var focusMult = (this.settings.focusScale || 100) / 100;
+
         this.group.children.forEach(function(child) {
             var i = child.userData.index;
             var total = child.userData.total;
@@ -49,10 +57,34 @@
             var x = (i - t * total) * span;
             x = ((x % totalW) + totalW + totalW / 2) % totalW - totalW / 2;
             child.position.x = x;
+
             var dist = Math.abs(x) / (totalW / 2);
-            child.position.z = -dist * 2;
-            child.scale.setScalar(1 - dist * 0.3);
-            child.material.opacity = 1 - dist * 0.4;
+            var isFocus = dist < 0.5;
+
+            // Stagger: rolling Y-wave — each card bobs at a different phase (domino effect)
+            if (staggerSec > 0) {
+                var phaseOffset = (i / total) * Math.PI * 2 * staggerSec * 2;
+                child.position.y = Math.sin(time * Math.PI * 2 / loopDuration + phaseOffset) *
+                    Math.min(staggerSec, 1) * 0.5;
+            } else {
+                child.position.y = 0;
+            }
+
+            // Z depth — focused card pops forward
+            child.position.z = isFocus ? 0.3 : -dist * 2;
+
+            // Focus Scale — center card expands
+            child.scale.setScalar(isFocus ? focusMult : Math.max(0.2, 1 - dist * 0.3));
+
+            // Dim Amount — peripheral cards darken
+            if (isFocus) {
+                child.material.opacity = 1;
+            } else {
+                child.material.opacity = dimAmount > 0
+                    ? Math.max(0.05, 1 - dimAmount)
+                    : Math.max(0.1, 1 - dist * 0.4);
+            }
+            child.material.transparent = true;
         });
     };
 

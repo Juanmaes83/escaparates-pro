@@ -6,6 +6,7 @@ EP.UI = (function() {
     function init() {
         buildEffectsLibrary();
         buildTagFilters();
+        buildPresetsSection();
         bindOutputPreset();
         bindAspectSelector();
         bindEffectsSearch();
@@ -99,6 +100,65 @@ EP.UI = (function() {
         }
 
         toast(effect.meta.name + ' activado');
+    }
+
+    function buildPresetsSection() {
+        var section = document.getElementById('presets-section');
+        var list = document.getElementById('presets-list');
+        var countEl = document.getElementById('presets-count');
+        var header = document.getElementById('presets-header');
+        if (!section || !list || !EP.Presets) return;
+
+        var presets = EP.Presets.getAll();
+        list.innerHTML = '';
+
+        if (presets.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        section.style.display = '';
+        if (countEl) countEl.textContent = presets.length;
+
+        presets.forEach(function(preset) {
+            var card = document.createElement('div');
+            card.className = 'effect-card preset-card';
+            card.innerHTML =
+                '<div class="effect-icon">' + (preset.meta.icon || '🔖') + '</div>' +
+                '<div class="effect-info">' +
+                    '<div class="effect-name">' + preset.name + '</div>' +
+                    '<div class="effect-desc">' + (preset.meta.name || preset.effectId) + '</div>' +
+                '</div>' +
+                '<button class="preset-del-btn" title="Eliminar preset">×</button>';
+
+            card.addEventListener('click', function(e) {
+                if (e.target.classList.contains('preset-del-btn')) {
+                    EP.Presets.remove(preset.id);
+                    buildPresetsSection();
+                    toast('Preset eliminado');
+                    return;
+                }
+                var eff = EP.Registry.get(preset.effectId);
+                if (!eff) { toast('Efecto no disponible'); return; }
+                selectEffect(preset.effectId);
+                setTimeout(function() {
+                    Object.keys(preset.settings).forEach(function(k) {
+                        eff.setSetting(k, preset.settings[k]);
+                    });
+                    rebuildCurrent();
+                    buildControlsPanel(eff);
+                    toast('Preset: ' + preset.name);
+                }, 120);
+            });
+
+            list.appendChild(card);
+        });
+
+        if (header && !header._presetToggled) {
+            header._presetToggled = true;
+            header.classList.add('open');
+            header.addEventListener('click', function() { this.classList.toggle('open'); });
+        }
     }
 
     function buildControlsPanel(effect) {
@@ -203,6 +263,27 @@ EP.UI = (function() {
 
             container.appendChild(row);
         });
+
+        // Save Preset button
+        if (EP.Presets) {
+            var saveRow = document.createElement('div');
+            saveRow.className = 'preset-save-row';
+            var saveBtn = document.createElement('button');
+            saveBtn.className = 'save-preset-btn';
+            saveBtn.textContent = '🔖 Guardar como Preset';
+            saveBtn.addEventListener('click', function() {
+                var name = window.prompt('Nombre del preset:', effect.meta.name);
+                if (!name || !name.trim()) return;
+                EP.Presets.save(name.trim(), effect.id, effect.settings, {
+                    icon: effect.meta.icon,
+                    name: effect.meta.name
+                });
+                buildPresetsSection();
+                toast('✓ Preset guardado');
+            });
+            saveRow.appendChild(saveBtn);
+            container.appendChild(saveRow);
+        }
     }
 
     function rebuildCurrent() {

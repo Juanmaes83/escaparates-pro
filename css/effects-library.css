@@ -110,6 +110,38 @@
 }
 #tag-clear-btn:hover { opacity: 1; }
 
+/* Presets section */
+#presets-section {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    max-height: 190px;
+    overflow-y: auto;
+}
+#presets-list {
+    padding: 2px 8px 6px;
+}
+.preset-card {
+    position: relative;
+    padding-right: 28px;
+}
+.preset-del-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 4px;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+}
+.preset-card:hover .preset-del-btn { opacity: 0.6; }
+.preset-del-btn:hover { opacity: 1 !important; color: #ff6b6b; }
+
 /* Search wrapper and clear button */
 .search-wrap {
     position: relative;

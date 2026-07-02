@@ -13,6 +13,9 @@
         { key: 'tilt', type: 'range', min: 0, max: 45, default: 15, label: 'Tilt', unit: '°' },
         { key: 'cardGap', type: 'range', min: 0, max: 50, default: 10, label: 'Card Gap', unit: '%' },
         { key: 'roundness', type: 'range', min: 0, max: 50, default: 8, label: 'Roundness', unit: '%' },
+        { key: 'stagger', type: 'range', min: 0, max: 2, default: 0, step: 0.05, label: 'Stagger', unit: 's' },
+        { key: 'focusScale', type: 'range', min: 80, max: 150, default: 100, label: 'Focus Scale', unit: '%' },
+        { key: 'dimAmount', type: 'range', min: 0, max: 100, default: 0, label: 'Dim Periféricos', unit: '%' },
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#1a1a2e', label: 'Background' }
     ]);
@@ -37,6 +40,7 @@
             } else {
                 mat = new THREE.MeshBasicMaterial({ color: 0x444466, side: THREE.DoubleSide });
             }
+            mat.transparent = true;
 
             var mesh = new THREE.Mesh(geo, mat);
             var angle = (i / count) * Math.PI * 2;
@@ -61,19 +65,22 @@
         if (!this.group) return;
         var t = time / loopDuration;
         var rotSpeed = Math.PI * 2;
-        this.group.rotation.y = t * rotSpeed;
+        var groupAngle = t * rotSpeed;
+        this.group.rotation.y = groupAngle;
 
         var tiltRad = this.settings.tilt * Math.PI / 180;
         this.group.rotation.x = tiltRad;
 
         var radius = 4 * this.settings.ringRadius / 100;
-        var cardW = 2.5 * this.settings.cardSize / 100;
-        var cardH = cardW * 1.4;
         var count = this.group.children.length;
+        var staggerSec = this.settings.stagger || 0;
+        var dimAmount = (this.settings.dimAmount || 0) / 100;
+        var focusMult = (this.settings.focusScale || 100) / 100;
 
         for (var i = 0; i < count; i++) {
             var mesh = this.group.children[i];
             if (mesh.userData.imageIndex === undefined) continue;
+
             var angle = (i / count) * Math.PI * 2;
             mesh.position.set(
                 Math.sin(angle) * radius,
@@ -81,7 +88,38 @@
                 Math.cos(angle) * radius
             );
             mesh.rotation.y = angle + Math.PI;
-            mesh.scale.set(1, 1, 1);
+
+            // Which element faces the camera: world angle = angle - groupAngle
+            var worldAngle = angle - groupAngle;
+            var frontness = Math.cos(worldAngle); // 1 = front, -1 = back
+            var isFront = frontness > 0.5;
+
+            // Stagger: each card pulses in Y at a different phase (domino wave around the ring)
+            var baseScale = 1;
+            if (staggerSec > 0) {
+                var phaseOffset = (i / count) * Math.PI * 2 * staggerSec * 2;
+                var pulse = 1 + Math.sin(time * Math.PI * 2 / loopDuration + phaseOffset) *
+                    0.12 * Math.min(staggerSec, 1);
+                baseScale = pulse;
+                // Y bob
+                var yBob = Math.sin(time * Math.PI * 2 / loopDuration + phaseOffset) *
+                    Math.min(staggerSec, 1) * 0.25;
+                mesh.position.y = yBob;
+            }
+
+            // Focus Scale — front card pops
+            if (isFront) {
+                mesh.scale.setScalar(baseScale * focusMult);
+                if (mesh.material) { mesh.material.opacity = 1; }
+            } else {
+                mesh.scale.setScalar(baseScale);
+                if (mesh.material) {
+                    mesh.material.opacity = dimAmount > 0
+                        ? Math.max(0.05, 1 - dimAmount)
+                        : Math.max(0.15, (1 + frontness) / 2);
+                    mesh.material.transparent = true;
+                }
+            }
         }
 
         EP.Core.camera.position.set(0, 1, 6);
