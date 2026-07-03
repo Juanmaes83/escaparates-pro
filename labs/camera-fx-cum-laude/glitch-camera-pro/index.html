@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Glitch Camera PRO - Cum Laude</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage" id="stage">
+            <canvas id="display" width="512" height="512"></canvas>
+            <img id="rendered" alt="">
+            <div class="loading" id="loading"></div>
+            <div class="error" id="error"></div>
+            <div class="brand">Glitch Camera PRO</div>
+        </section>
+
+        <aside class="console">
+            <header>
+                <div class="mark">GC</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Glitch Camera PRO</h1>
+                </div>
+            </header>
+
+            <section class="block">
+                <h2>Fuente</h2>
+                <button id="start-camera" class="primary">Activar camara</button>
+                <button id="switch-camera">Cambiar camara</button>
+            </section>
+
+            <section class="block">
+                <h2>Glitch</h2>
+                <label>Intensidad
+                    <input id="glitch-level" type="range" min="0" max="100" value="50">
+                </label>
+                <label>Calidad JPEG
+                    <input id="jpeg-quality" type="range" min="25" max="95" value="72">
+                </label>
+                <label>Persistencia
+                    <input id="persistence" type="range" min="0" max="86" value="18">
+                </label>
+                <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+            </section>
+
+            <section class="block">
+                <h2>Grabacion</h2>
+                <button id="capture" class="capture">Mantener / Grabar GIF</button>
+                <div class="progress"><div id="progress"></div></div>
+                <div class="actions">
+                    <button id="discard">Descartar</button>
+                    <a id="save" download="glitch-camera-pro.gif">Descargar GIF</a>
+                </div>
+                <button id="download-png">Descargar PNG</button>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico</h2>
+                <pre id="debug">Esperando camara...</pre>
+            </section>
+        </aside>
+    </main>
+
+    <div class="worker" aria-hidden="true">
+        <video id="video" playsinline muted autoplay></video>
+        <canvas id="worker-canvas" width="512" height="512"></canvas>
+        <img id="worker-image" alt="">
+    </div>
+
+    <script src="./app.js?v=glitch-cum-laude-1"></script>
+</body>
+</html>
