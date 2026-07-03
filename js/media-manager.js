@@ -204,6 +204,16 @@ EP.Media = (function() {
         onChangeCallback = fn;
     }
 
+    function openSlot(idx) {
+        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
+            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+            return false;
+        }
+        activeSlotIndex = Math.max(0, Math.min(14, parseInt(idx, 10) || 0));
+        if (fileInput) fileInput.click();
+        return true;
+    }
+
     function createTexture(mediaObj, options) {
         options = options || {};
         if (!mediaObj || !mediaObj.element) return null;
@@ -291,6 +301,7 @@ EP.Media = (function() {
         getAll: getAll,
         onChange: onChange,
         loadFromUrl: loadFromUrl,
+        openSlot: openSlot,
         createTexture: createTexture,
         updateTexture: updateTexture,
         updateMaterial: updateMaterial,
