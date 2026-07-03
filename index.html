@@ -26,10 +26,19 @@
         </div>
     </div>
 
+    <!-- Scroll Sections stage: live GSAP preview, replaces canvas in Scroll Sections mode -->
+    <div id="scroll-sections-stage">
+        <iframe id="ss-preview-frame" title="Vista previa Scroll Section"></iframe>
+    </div>
+
     <!-- Top bar -->
     <header id="top-bar">
         <div class="top-left">
             <span class="logo">Escaparates <strong>Pro</strong></span>
+            <div id="app-mode-toggle" class="app-mode-toggle">
+                <button class="mode-btn active" data-mode="effects" id="mode-btn-effects" title="Efectos Three.js en canvas">🎬 Efectos</button>
+                <button class="mode-btn" data-mode="scroll-sections" id="mode-btn-scroll-sections" title="Secciones de scroll para web (GSAP)">📜 Scroll Sections</button>
+            </div>
         </div>
         <div class="top-center">
             <select id="output-preset" title="Formato de salida final">
@@ -83,22 +92,25 @@
                 <button id="effects-search-clear" class="search-clear" title="Limpiar">×</button>
             </div>
         </div>
-        <div id="tag-filters">
-            <div id="tag-chips-row"></div>
-            <div id="tag-active-bar">
-                <span id="tag-active-count"></span>
-                <button id="tag-clear-btn">✕ Limpiar</button>
+        <div id="effects-catalog-body">
+            <div id="tag-filters">
+                <div id="tag-chips-row"></div>
+                <div id="tag-active-bar">
+                    <span id="tag-active-count"></span>
+                    <button id="tag-clear-btn">✕ Limpiar</button>
+                </div>
             </div>
-        </div>
-        <div id="presets-section" style="display:none;">
-            <div id="presets-header" class="category-header">
-                <span class="arrow">▶</span>
-                <span class="cat-name">🔖 Mis Presets</span>
-                <span class="cat-count" id="presets-count">0</span>
+            <div id="presets-section" style="display:none;">
+                <div id="presets-header" class="category-header">
+                    <span class="arrow">▶</span>
+                    <span class="cat-name">🔖 Mis Presets</span>
+                    <span class="cat-count" id="presets-count">0</span>
+                </div>
+                <div id="presets-list" class="category-effects"></div>
             </div>
-            <div id="presets-list" class="category-effects"></div>
+            <div id="effects-categories"></div>
         </div>
-        <div id="effects-categories"></div>
+        <div id="scroll-sections-catalog" style="display:none;"></div>
     </aside>
 
     <!-- Right panel: Properties -->
@@ -117,6 +129,12 @@
             </select>
             <div id="plan-status"></div>
         </div>
+        <div class="panel-section" id="scroll-sections-props" style="display:none;">
+            <h3 id="ss-props-title">SCROLL SECTION — AJUSTES</h3>
+            <div id="ss-props-fields"></div>
+            <button id="ss-export-btn" class="top-action" style="width:100%;margin-top:10px;">⬇ Exportar archivo HTML</button>
+            <div id="ss-source-note" class="ss-source-note"></div>
+        </div>
         <div class="panel-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
                 <h3 style="margin-bottom:0;">MEDIA — 15 SLOTS</h3>
@@ -125,6 +143,7 @@
             <div id="media-slots"></div>
             <input type="file" id="slot-file-input" accept="image/*,video/*" multiple style="display:none;">
         </div>
+        <div id="effects-only-sections">
         <div class="panel-section">
             <h3>TIMING</h3>
             <div class="control-row">
@@ -429,6 +448,7 @@
                 </div>
             </div>
         </div>
+        </div><!-- /effects-only-sections -->
     </aside>
 
     <!-- Code copy popover -->
@@ -783,6 +803,21 @@
     <script src="js/effects/motion/hologram.js"></script>
     <script src="js/effects/motion/mirage.js"></script>
     <script src="js/effects/shader-premium/stamp-shader-pro.js"></script>
+    <!-- FASE F — Difícil (Three.js avanzado · GLSL · particle morph) -->
+    <script src="js/effects/motion/voxel-3d-pro.js"></script>
+    <script src="js/effects/motion/lego-cubes.js"></script>
+    <script src="js/effects/particle-morph/text-to-image.js"></script>
+    <script src="js/effects/particle-morph/image-to-3d-text.js"></script>
+    <script src="js/effects/particle-morph/image-to-text-2d.js"></script>
+    <script src="js/effects/text/text-pressure-3d.js"></script>
+    <!-- Scroll Sections — plantillas GSAP+Lenis para exportar como web section -->
+    <script src="js/scroll-sections.js"></script>
+    <script src="js/scroll-sections/elastic-grid-scroll.js"></script>
+    <script src="js/scroll-sections/rotating-onscroll.js"></script>
+    <script src="js/scroll-sections/scroll-text-motion.js"></script>
+    <script src="js/scroll-sections/draggable-grid.js"></script>
+    <script src="js/scroll-sections/connected-grid.js"></script>
+    <script src="js/scroll-sections-ui.js"></script>
     <!-- Shader Premium family -->
     <script src="js/effects/shader-premium/particulate-shatter-pro.js"></script>
     <script src="js/effects/shader-premium/video-dither-glyph-pro.js"></script>
