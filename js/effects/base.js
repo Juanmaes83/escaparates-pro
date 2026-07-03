@@ -76,8 +76,12 @@ EP.EffectBase.prototype.dispose = function() {
         this.group.traverse(function(child) {
             if (child.geometry) child.geometry.dispose();
             if (child.material) {
-                if (child.material.map) child.material.map.dispose();
-                child.material.dispose();
+                var materials = Array.isArray(child.material) ? child.material : [child.material];
+                materials.forEach(function(material) {
+                    if (!material) return;
+                    if (material.map && typeof material.map.dispose === 'function') material.map.dispose();
+                    if (typeof material.dispose === 'function') material.dispose();
+                });
             }
         });
         this.group = null;

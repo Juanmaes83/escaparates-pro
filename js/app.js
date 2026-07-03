@@ -19,6 +19,7 @@
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
+            if (EP.UI.refreshCurrentControls) EP.UI.refreshCurrentControls();
         });
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {

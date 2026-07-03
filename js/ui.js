@@ -229,6 +229,11 @@ EP.UI = (function() {
                     rebuildCurrent();
                 });
                 row.appendChild(textInput);
+            } else if (ctrl.type === 'slotGroups') {
+                row.className = 'control-row semantic-media-row';
+                row.removeChild(label);
+                var picker = buildSlotGroupsControl(effect, ctrl);
+                row.appendChild(picker);
             } else if (ctrl.type === 'easing') {
                 var easingRow = document.createElement('div');
                 easingRow.className = 'easing-row easing-grid';
@@ -293,6 +298,157 @@ EP.UI = (function() {
             });
             saveRow.appendChild(saveBtn);
             container.appendChild(saveRow);
+        }
+    }
+
+    function buildSlotGroupsControl(effect, ctrl) {
+        var wrap = document.createElement('div');
+        wrap.className = 'semantic-media-control';
+        wrap.style.cssText = 'width:100%;display:flex;flex-direction:column;gap:10px;';
+
+        var title = document.createElement('div');
+        title.style.cssText = 'font-size:10px;font-weight:700;color:var(--text);letter-spacing:.08em;text-transform:uppercase;';
+        title.textContent = ctrl.label || 'Medios del efecto';
+        wrap.appendChild(title);
+
+        var slots = (EP.Media && EP.Media.slots) ? EP.Media.slots : [];
+        var current = cloneSlotGroups(effect.settings[ctrl.key] || ctrl.default || {});
+        var groups = ctrl.groups || [];
+
+        groups.forEach(function(groupDef) {
+            if (current[groupDef.key] === undefined) {
+                current[groupDef.key] = groupDef.mode === 'single' ? null : [];
+            }
+            var block = document.createElement('div');
+            block.className = 'semantic-media-block';
+            block.style.cssText = 'border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:7px;';
+
+            var head = document.createElement('div');
+            head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px;';
+            var labelEl = document.createElement('strong');
+            labelEl.style.cssText = 'font-size:11px;color:#d9d9e3;';
+            labelEl.textContent = groupDef.label;
+            var clear = document.createElement('button');
+            clear.type = 'button';
+            clear.textContent = groupDef.mode === 'single' ? 'Quitar' : 'Limpiar';
+            clear.style.cssText = 'font-size:10px;padding:4px 7px;border-radius:6px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#bfc3d6;cursor:pointer;';
+            clear.addEventListener('click', function() {
+                current[groupDef.key] = groupDef.mode === 'single' ? null : [];
+                effect.setSetting(ctrl.key, cloneSlotGroups(current));
+                buildControlsPanel(effect);
+                rebuildCurrent();
+            });
+            head.appendChild(labelEl);
+            head.appendChild(clear);
+            block.appendChild(head);
+
+            var selected = document.createElement('div');
+            selected.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;min-height:22px;';
+            var selectedIndexes = groupDef.mode === 'single'
+                ? (current[groupDef.key] === null || current[groupDef.key] === undefined ? [] : [current[groupDef.key]])
+                : (Array.isArray(current[groupDef.key]) ? current[groupDef.key] : []);
+            if (selectedIndexes.length === 0) {
+                var empty = document.createElement('span');
+                empty.style.cssText = 'font-size:10px;color:#777;';
+                empty.textContent = 'Sin seleccion';
+                selected.appendChild(empty);
+            } else {
+                selectedIndexes.forEach(function(slotIndex, orderIndex) {
+                    var pill = document.createElement('span');
+                    pill.style.cssText = 'font-size:10px;padding:3px 6px;border-radius:999px;background:rgba(70,120,255,.18);color:#dce6ff;border:1px solid rgba(90,140,255,.32);';
+                    pill.textContent = (groupDef.mode === 'single' ? '' : (orderIndex + 1) + 'º ') + 'Slot ' + (slotIndex + 1);
+                    selected.appendChild(pill);
+                });
+            }
+            block.appendChild(selected);
+
+            var grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;';
+            for (var i = 0; i < 15; i++) {
+                grid.appendChild(createSlotButton(i, slots[i], groupDef, current, ctrl, effect));
+            }
+            block.appendChild(grid);
+            wrap.appendChild(block);
+        });
+
+        return wrap;
+    }
+
+    function createSlotButton(index, media, groupDef, current, ctrl, effect) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.title = 'Slot ' + (index + 1);
+        var active = groupDef.mode === 'single'
+            ? current[groupDef.key] === index
+            : (Array.isArray(current[groupDef.key]) && current[groupDef.key].indexOf(index) !== -1);
+        btn.style.cssText = [
+            'height:42px',
+            'border-radius:7px',
+            'border:1px solid ' + (active ? 'rgba(80,140,255,.95)' : 'rgba(255,255,255,.12)'),
+            'background:' + (active ? 'rgba(70,120,255,.22)' : 'rgba(255,255,255,.045)'),
+            'color:#fff',
+            'font-size:10px',
+            'cursor:pointer',
+            'overflow:hidden',
+            'position:relative',
+            'padding:0'
+        ].join(';');
+
+        if (media && media.element) {
+            var thumb = media.type === 'video' ? document.createElement('video') : document.createElement('img');
+            thumb.src = media.url || media.element.src || '';
+            if (media.type === 'video') {
+                thumb.muted = true;
+                thumb.loop = true;
+                thumb.playsInline = true;
+            }
+            thumb.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;opacity:.82;';
+            btn.appendChild(thumb);
+        } else {
+            var emptyLabel = document.createElement('span');
+            emptyLabel.style.cssText = 'display:flex;width:100%;height:100%;align-items:center;justify-content:center;text-align:center;font-size:9px;color:#8d93aa;line-height:1.1;padding:4px;';
+            emptyLabel.textContent = 'Subir';
+            btn.appendChild(emptyLabel);
+        }
+
+        var badge = document.createElement('span');
+        badge.style.cssText = 'position:absolute;left:3px;top:3px;background:rgba(0,0,0,.68);border-radius:4px;padding:1px 4px;font-size:9px;';
+        badge.textContent = String(index + 1);
+        btn.appendChild(badge);
+
+        if (active && groupDef.mode !== 'single') {
+            var order = current[groupDef.key].indexOf(index) + 1;
+            var orderBadge = document.createElement('span');
+            orderBadge.style.cssText = 'position:absolute;right:3px;bottom:3px;background:rgba(55,115,255,.92);border-radius:4px;padding:1px 4px;font-size:9px;';
+            orderBadge.textContent = order + 'º';
+            btn.appendChild(orderBadge);
+        }
+
+        btn.addEventListener('click', function() {
+            if (groupDef.mode === 'single') {
+                current[groupDef.key] = current[groupDef.key] === index ? null : index;
+            } else {
+                var list = Array.isArray(current[groupDef.key]) ? current[groupDef.key].slice() : [];
+                var pos = list.indexOf(index);
+                if (pos === -1) list.push(index);
+                else list.splice(pos, 1);
+                current[groupDef.key] = list;
+            }
+            effect.setSetting(ctrl.key, cloneSlotGroups(current));
+            if (!media && EP.Media && typeof EP.Media.openSlot === 'function') {
+                EP.Media.openSlot(index);
+            }
+            buildControlsPanel(effect);
+            rebuildCurrent();
+        });
+        return btn;
+    }
+
+    function cloneSlotGroups(value) {
+        try {
+            return JSON.parse(JSON.stringify(value || {}));
+        } catch (e) {
+            return {};
         }
     }
 
@@ -585,11 +741,16 @@ EP.UI = (function() {
 
     function getCurrentEffect() { return currentEffect; }
 
+    function refreshCurrentControls() {
+        if (currentEffect) buildControlsPanel(currentEffect);
+    }
+
     return {
         init: init,
         selectEffect: selectEffect,
         toast: toast,
         getCurrentEffect: getCurrentEffect,
-        rebuildCurrent: rebuildCurrent
+        rebuildCurrent: rebuildCurrent,
+        refreshCurrentControls: refreshCurrentControls
     };
 })();

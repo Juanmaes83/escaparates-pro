@@ -1,0 +1,227 @@
+:root {
+    color-scheme: dark;
+    --bg: #050609;
+    --panel: #11141d;
+    --panel-2: #1a1f2b;
+    --line: rgba(255,255,255,.12);
+    --text: #f6f8ff;
+    --muted: #9aa4ba;
+    --accent: #5b86ff;
+    --ok: #64d896;
+    --warn: #ffca66;
+    --bad: #ff5d75;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 40%, rgba(91,134,255,.14), transparent 38%),
+        linear-gradient(45deg, rgba(255,255,255,.03) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255,255,255,.03) 25%, transparent 25%),
+        #050609;
+    background-size: auto, 30px 30px, 30px 30px, auto;
+}
+
+#pixel-canvas {
+    width: min(calc(100vw - 360px), calc(100vh * 4 / 3));
+    max-width: 100%;
+    max-height: 100vh;
+    aspect-ratio: 4 / 3;
+    display: block;
+    background: #050609;
+    box-shadow: 0 34px 110px rgba(0,0,0,.5);
+}
+
+#source-video {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.empty-state {
+    position: absolute;
+    inset: auto;
+    display: grid;
+    gap: 8px;
+    text-align: center;
+    color: var(--text);
+    pointer-events: none;
+}
+
+.empty-state strong {
+    font-size: clamp(24px, 5vw, 54px);
+}
+
+.empty-state span {
+    color: var(--muted);
+}
+
+.empty-state.hidden { display: none; }
+
+.console {
+    height: 100vh;
+    overflow: auto;
+    border-left: 1px solid var(--line);
+    background: var(--panel);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+header {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: white;
+    font-weight: 900;
+}
+
+h1, h2, p { margin: 0; }
+
+header p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+h1 { font-size: 18px; }
+
+h2 {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #cbd5ee;
+}
+
+.block {
+    display: grid;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+button,
+.file {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 11px 12px;
+    font: inherit;
+    cursor: pointer;
+    text-align: center;
+}
+
+.primary {
+    background: var(--accent);
+    border-color: rgba(255,255,255,.25);
+    font-weight: 800;
+}
+
+.file input { display: none; }
+
+dl {
+    display: grid;
+    grid-template-columns: 108px minmax(0, 1fr);
+    gap: 8px;
+    margin: 0;
+    align-items: center;
+}
+
+dt {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+dd {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 34px minmax(42px, 1fr) 34px;
+    gap: 6px;
+    align-items: center;
+}
+
+.step {
+    min-width: 0;
+    padding: 7px 0;
+    border-radius: 6px;
+    font-weight: 800;
+}
+
+.value {
+    min-width: 0;
+    text-align: center;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.actions {
+    grid-template-columns: 1fr 1fr;
+}
+
+.debug {
+    border-bottom: 0;
+}
+
+pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font: 12px/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
+    color: var(--muted);
+    background: #090b10;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+@media (max-width: 900px) {
+    body { overflow: auto; }
+    .app {
+        grid-template-columns: 1fr;
+    }
+    .stage {
+        min-height: 58vh;
+    }
+    #pixel-canvas {
+        width: 100vw;
+        max-height: 58vh;
+    }
+    .console {
+        height: auto;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+}
