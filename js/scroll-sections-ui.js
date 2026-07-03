@@ -38,6 +38,12 @@ EP.ScrollSectionsUI = (function() {
         ],
         'canvas-slice-gallery': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'push-grid-items': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'hover-grid': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ]
     };
 
