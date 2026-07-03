@@ -45,7 +45,7 @@
         this._targetX = 512;
         var self = this;
         this._onMouseMove = function(e) {
-            var canvas = document.querySelector('canvas');
+            var canvas = (EP.Core && EP.Core.renderer) ? EP.Core.renderer.domElement : document.querySelector('canvas');
             if (!canvas) return;
             var rect = canvas.getBoundingClientRect();
             self._targetX = ((e.clientX - rect.left) / rect.width) * 1024;

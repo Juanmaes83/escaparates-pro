@@ -18,7 +18,8 @@
             { v: 'blocks', l: 'Bloques (█▓▒░ )' },
             { v: 'binary', l: 'Binario (01)' },
             { v: 'matrix', l: 'Matrix (カナ)' }
-        ], default: 'standard', label: 'Charset' }
+        ], default: 'standard', label: 'Charset' },
+        { key: 'canvasRes', type: 'select', options: [{ v: 'high', l: 'Alta (1024px)' }, { v: 'medium', l: 'Media (512px)' }, { v: 'low', l: 'Baja (256px) — GPU baja' }], default: 'medium', label: 'Resolución canvas' }
     ]);
 
     var CHARSETS = {
@@ -53,6 +54,12 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this._ctx) return;
+        var resMap = { high: 1024, medium: 512, low: 256 };
+        var targetW = resMap[this.settings.canvasRes] || 512;
+        var targetH = Math.round(targetW * 576 / 1024);
+        if (this._cvs.width !== targetW) {
+            this._cvs.width = targetW; this._cvs.height = targetH;
+        }
         var ctx = this._ctx; var W = this._cvs.width; var H = this._cvs.height;
         var cols = Math.round(this.settings.resolution);
         var fs = this.settings.fontSize;

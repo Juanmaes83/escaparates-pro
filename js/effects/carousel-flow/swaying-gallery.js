@@ -61,7 +61,7 @@
         }
     };
 
-    effect.dispose = function() { this._pivots = null; };
+    effect.dispose = function() { EP.EffectBase.prototype.dispose.call(this); this._pivots = null; };
 
     EP.Registry.register(effect);
 })();

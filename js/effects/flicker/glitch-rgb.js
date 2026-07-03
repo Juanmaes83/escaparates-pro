@@ -12,7 +12,8 @@
         { key: 'glitchRate', type: 'range', min: 1, max: 30, default: 8, step: 1, label: 'Frecuencia glitch' },
         { key: 'glitchIntensity', type: 'range', min: 10, max: 100, default: 60, step: 5, label: 'Intensidad', unit: '%' },
         { key: 'sliceCount', type: 'range', min: 1, max: 15, default: 5, step: 1, label: 'Tiras distorsión' },
-        { key: 'sliceShift', type: 'range', min: 0, max: 80, default: 25, step: 5, label: 'Desplaz. tiras', unit: 'px' }
+        { key: 'sliceShift', type: 'range', min: 0, max: 80, default: 25, step: 5, label: 'Desplaz. tiras', unit: 'px' },
+        { key: 'canvasRes', type: 'select', options: [{ v: 'full', l: 'Full (512px)' }, { v: 'medium', l: 'Media (320px)' }, { v: 'low', l: 'Baja (192px) — GPU baja' }], default: 'full', label: 'Resolución proceso' }
     ]);
 
     effect.build = function(mediaList) {
@@ -44,6 +45,13 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this._ctx) return;
+        var resMap = { full: 512, medium: 320, low: 192 };
+        var targetW = resMap[this.settings.canvasRes] || 512;
+        var targetH = Math.round(targetW * 288 / 512);
+        if (this._cvs.width !== targetW) {
+            this._cvs.width = targetW; this._cvs.height = targetH;
+            this._offCvs.width = targetW; this._offCvs.height = targetH;
+        }
         var ctx = this._ctx; var W = this._cvs.width; var H = this._cvs.height;
         var shift = this.settings.rgbShift;
         var rate = this.settings.glitchRate;

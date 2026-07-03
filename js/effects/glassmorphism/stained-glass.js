@@ -97,6 +97,7 @@
     };
 
     effect.dispose = function() {
+        EP.EffectBase.prototype.dispose.call(this);
         this._panels = null; this._lights = null;
     };
 

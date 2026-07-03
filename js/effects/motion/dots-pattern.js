@@ -19,7 +19,8 @@
             { v: 'wave', l: 'Onda horizontal' },
             { v: 'spiral', l: 'Espiral' },
             { v: 'grid', l: 'Grid pulsante' }
-        ], default: 'expand', label: 'Patrón' }
+        ], default: 'expand', label: 'Patrón' },
+        { key: 'showGlow', type: 'select', options: [{ v: 'on', l: 'Glow activo' }, { v: 'off', l: 'Glow desactivado (más rápido)' }], default: 'on', label: 'Glow' }
     ]);
 
     effect.build = function(mediaList) {
@@ -100,8 +101,10 @@
 
                 ctx.globalAlpha = alpha;
                 ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
-                ctx.shadowColor = 'rgb(' + r + ',' + g + ',' + b + ')';
-                ctx.shadowBlur = radius * 1.5 * p;
+                if (this.settings.showGlow === 'on') {
+                    ctx.shadowColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+                    ctx.shadowBlur = radius * 1.5 * p;
+                }
                 ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
             }
         }

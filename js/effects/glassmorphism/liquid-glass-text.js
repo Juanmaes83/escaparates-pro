@@ -71,11 +71,15 @@
         offCtx.textAlign = 'center'; offCtx.textBaseline = 'middle';
 
         // Base glass text — multiple layers
-        // Layer 1: blurred glow
-        if (blur > 0) offCtx.filter = 'blur(' + blur + 'px)';
+        // Layer 1: blurred glow (ctx.filter with shadowBlur fallback for Safari <15.4)
+        var hasFilter = typeof offCtx.filter !== 'undefined';
+        if (blur > 0) {
+            if (hasFilter) { offCtx.filter = 'blur(' + blur + 'px)'; }
+            else { offCtx.shadowBlur = blur * 3; offCtx.shadowColor = 'rgba(' + gr + ',' + gg + ',' + gb + ',0.6)'; }
+        }
         offCtx.fillStyle = 'rgba(' + gr + ',' + gg + ',' + gb + ',0.4)';
         offCtx.fillText(txt, W/2, H/2);
-        offCtx.filter = 'none';
+        if (hasFilter) { offCtx.filter = 'none'; } else { offCtx.shadowBlur = 0; }
 
         // Layer 2: white core
         offCtx.fillStyle = 'rgba(255,255,255,0.85)';

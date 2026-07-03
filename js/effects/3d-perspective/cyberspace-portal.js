@@ -28,11 +28,19 @@
         var bgC = parseInt((this.settings.bgColor||'#000408').replace('#',''),16);
         var radius = this.settings.tunnelRadius * 0.15;
 
-        // Background plane
-        group.add(new THREE.Mesh(
+        // Background plane in its own static group (not moved by camera animation)
+        var bgGroup = new THREE.Group();
+        bgGroup.add(new THREE.Mesh(
             new THREE.PlaneGeometry(8,4.5),
             new THREE.MeshBasicMaterial({color:bgC})
         ));
+        group.add(bgGroup);
+        this._bgGroup = bgGroup;
+
+        // Content group (moved independently by camera animation)
+        var contentGroup = new THREE.Group();
+        group.add(contentGroup);
+        this._contentGroup = contentGroup;
 
         // Catmull-Rom tunnel curve
         var curvePoints = [];
@@ -49,7 +57,7 @@
             color: tc, wireframe: true, transparent: true, opacity: 0.15
         });
         var tube = new THREE.Mesh(tubeGeo, tubeMat);
-        group.add(tube);
+        contentGroup.add(tube);
         this._tube = tube;
         this._curve = curve;
 
@@ -81,7 +89,7 @@
             depthWrite: false, sizeAttenuation: true
         });
         this._points = new THREE.Points(pGeo, pMat);
-        group.add(this._points);
+        contentGroup.add(this._points);
         this._positions = positions;
 
         // Portal ring at entrance
@@ -90,7 +98,7 @@
         var ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.y = Math.PI/2;
         ring.position.z = -0.2;
-        group.add(ring);
+        contentGroup.add(ring);
         this._ring = ring;
 
         // Glow ring
@@ -99,8 +107,19 @@
         var glow = new THREE.Mesh(glowGeo, glowMat);
         glow.rotation.y = Math.PI/2;
         glow.position.z = -0.2;
-        group.add(glow);
+        contentGroup.add(glow);
         this._glow = glow;
+
+        // Mouse tracking for particle speed modulation (M8)
+        this._mouseX = 0;
+        var self = this;
+        this._onMouseMove = function(e) {
+            var canvas = (EP.Core && EP.Core.renderer) ? EP.Core.renderer.domElement : document.querySelector('canvas');
+            if (!canvas) return;
+            var rect = canvas.getBoundingClientRect();
+            self._mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        };
+        window.addEventListener('mousemove', this._onMouseMove);
 
         this.group = group;
         return group;
@@ -112,10 +131,11 @@
         var radius = this.settings.tunnelRadius * 0.15;
         var gi = this.settings.glowIntensity / 100;
 
-        // Move particles along tube
+        // Move particles along tube — cursor right = faster, left = slower (M8)
+        var cursorBoost = 1 + (this._mouseX || 0) * 0.6;
         for (var i=0;i<this._particleData.length;i++) {
             var p = this._particleData[i];
-            p.t = (p.t + spd*p.speed*(dt||0.016)) % 1;
+            p.t = (p.t + spd*p.speed*(dt||0.016)*cursorBoost) % 1;
             var pt = this._curve.getPoint(p.t);
             this._positions[i*3]   = pt.x + Math.cos(p.angle + time*0.3)*p.pr;
             this._positions[i*3+1] = pt.y + Math.sin(p.angle + time*0.2)*p.pr;
@@ -136,15 +156,18 @@
             this._glow.material.opacity = 0.08*gi + Math.sin(time*2.5)*0.04*gi;
         }
 
-        // Move camera target along curve (move group)
+        // Move content group along curve — background stays static (M3)
         var camT = (time*spd*0.5) % 1;
         var camPt = this._curve.getPoint(Math.min(0.95, camT));
-        this.group.position.z = -camPt.z * 0.15;
+        if (this._contentGroup) this._contentGroup.position.z = -camPt.z * 0.15;
     };
 
     effect.dispose = function() {
+        if (this._onMouseMove) { window.removeEventListener('mousemove', this._onMouseMove); this._onMouseMove = null; }
+        EP.EffectBase.prototype.dispose.call(this);
         this._particleData=null; this._positions=null;
         this._tube=null; this._points=null; this._ring=null; this._glow=null;
+        this._contentGroup=null; this._bgGroup=null;
     };
 
     EP.Registry.register(effect);

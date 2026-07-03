@@ -13,7 +13,8 @@
         { key: 'starColor', type: 'color', default: '#ffcc00', label: 'Color estrella' },
         { key: 'starSize', type: 'range', min: 5, max: 50, default: 20, step: 5, label: 'Tamaño estrella', unit: '%' },
         { key: 'tiltAngle', type: 'range', min: 0, max: 60, default: 20, step: 5, label: 'Inclinación sistema', unit: '°' },
-        { key: 'bgColor', type: 'color', default: '#00010a', label: 'Color espacio' }
+        { key: 'bgColor', type: 'color', default: '#00010a', label: 'Color espacio' },
+        { key: 'saturnRings', type: 'select', options: [{ v: 'on', l: 'Sí — anillos en planetas' }, { v: 'off', l: 'No' }], default: 'off', label: 'Anillos planetarios' }
     ]);
 
     var PLANET_COLORS = [0x4488ff, 0xff6644, 0x88ffaa, 0xffcc44, 0xaa66ff, 0x44ffdd, 0xff4488, 0xccaa44];
@@ -93,6 +94,15 @@
             }
             var planet = new THREE.Mesh(geo, mat);
 
+            // Saturn-style ring on alternate planets (M7)
+            if (this.settings.saturnRings === 'on' && i % 2 === 0) {
+                var sRingGeo = new THREE.TorusGeometry(planetR * 1.9, planetR * 0.45, 4, 32);
+                var sRingMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+                var sRing = new THREE.Mesh(sRingGeo, sRingMat);
+                sRing.rotation.x = Math.PI / 3 + sr(i * 29) * 0.5;
+                planet.add(sRing);
+            }
+
             // Orbit ring
             var ringGeo = new THREE.TorusGeometry(orbitR, 0.005, 4, 64);
             var ringMat = new THREE.MeshBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.4 });
@@ -131,7 +141,7 @@
         }
     };
 
-    effect.dispose = function() { this._planets = null; this._sun = null; };
+    effect.dispose = function() { EP.EffectBase.prototype.dispose.call(this); this._planets = null; this._sun = null; };
 
     EP.Registry.register(effect);
 })();

@@ -71,7 +71,7 @@
         }
     };
 
-    effect.dispose = function() { this._pieces = null; };
+    effect.dispose = function() { EP.EffectBase.prototype.dispose.call(this); this._pieces = null; };
 
     EP.Registry.register(effect);
 })();

@@ -89,13 +89,17 @@
                 this._freqData[i] = this._rawData[rIdx] / 255;
             }
         } else {
-            // Procedural simulation: bass + mid + treble with time variation
+            // Musical demo simulation: kick beat + bass sustain + mid + treble
+            var bpm = 120;
+            var beat = (time * bpm / 60) % 1;
+            var kick = Math.exp(-beat * 12) * 0.9;
+            var snare = ((time * bpm / 60) % 2 > 1) ? Math.exp(-((time * bpm / 60) % 1) * 14) * 0.6 : 0;
             for (var i = 0; i < bands; i++) {
                 var t = i / bands;
-                var bass = Math.pow(Math.max(0, Math.sin(time * 2.1 + i * 0.3)), 2) * (1 - t * 0.7);
-                var mid = Math.abs(Math.sin(time * 3.7 + i * 0.7 + 1.2)) * 0.5 * (0.2 + t * 0.6);
-                var treble = Math.random() * 0.3 * t * Math.abs(Math.sin(time * 8 + i));
-                this._freqData[i] = Math.min(1, (bass + mid + treble) * sens);
+                var bassFreq = (kick + Math.pow(Math.max(0, Math.sin(time * 2.1 + i * 0.3)), 2) * 0.5) * (1 - t * 0.8);
+                var midFreq = (snare * 0.5 + Math.abs(Math.sin(time * 3.7 + i * 0.7 + 1.2)) * 0.4) * (0.1 + t * 0.7) * (1 - Math.max(0, t - 0.7));
+                var treble = Math.random() * 0.25 * t * Math.abs(Math.sin(time * 9 + i));
+                this._freqData[i] = Math.min(1, (bassFreq + midFreq + treble) * sens);
             }
         }
 

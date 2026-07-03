@@ -11,7 +11,7 @@
         { key: 'layers', type: 'range', min: 2, max: 6, default: 4, step: 1, label: 'Capas' },
         { key: 'depthScale', type: 'range', min: 10, max: 100, default: 40, step: 5, label: 'Profundidad paralaje', unit: '%' },
         { key: 'floatSpeed', type: 'range', min: 1, max: 20, default: 5, step: 1, label: 'Velocidad auto-float' },
-        { key: 'smoothing', type: 'range', min: 1, max: 20, default: 8, step: 1, label: 'Suavizado seguimiento' },
+        { key: 'smoothing', type: 'range', min: 5, max: 20, default: 8, step: 1, label: 'Suavizado seguimiento' },
         { key: 'zSpread', type: 'range', min: 1, max: 30, default: 10, step: 1, label: 'Separación Z' },
         { key: 'scaleByDepth', type: 'select', options: [{ v: 'on', l: 'Sí (óptico)' }, { v: 'off', l: 'No' }], default: 'on', label: 'Escala óptica' }
     ]);
@@ -42,7 +42,7 @@
         this._curX = 0; this._curY = 0;
         var self = this;
         this._onMouseMove = function(e) {
-            var canvas = document.querySelector('canvas');
+            var canvas = (EP.Core && EP.Core.renderer) ? EP.Core.renderer.domElement : document.querySelector('canvas');
             if (!canvas) return;
             var rect = canvas.getBoundingClientRect();
             self._mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;

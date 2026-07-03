@@ -14,7 +14,8 @@
         { key: 'pulseSpeed', type: 'range', min: 1, max: 20, default: 4, step: 1, label: 'Velocidad pulso' },
         { key: 'pulseMin', type: 'range', min: 0, max: 80, default: 25, step: 5, label: 'Brillo mínimo', unit: '%' },
         { key: 'fontSize', type: 'range', min: 20, max: 120, default: 68, step: 4, label: 'Tamaño fuente', unit: 'px' },
-        { key: 'glowRadius', type: 'range', min: 5, max: 100, default: 40, step: 5, label: 'Radio glow', unit: 'px' }
+        { key: 'glowRadius', type: 'range', min: 5, max: 100, default: 40, step: 5, label: 'Radio glow', unit: 'px' },
+        { key: 'overlayOpacity', type: 'range', min: 0, max: 100, default: 50, step: 5, label: 'Opacidad overlay oscuro', unit: '%' }
     ]);
 
     effect.build = function(mediaList) {
@@ -60,8 +61,8 @@
 
         ctx.clearRect(0, 0, W, H);
 
-        // Dark overlay
-        ctx.fillStyle = 'rgba(0,0,0,0.82)';
+        // Dark overlay (user-controlled opacity)
+        ctx.fillStyle = 'rgba(0,0,0,' + (this.settings.overlayOpacity / 100).toFixed(2) + ')';
         ctx.fillRect(0, 0, W, H);
 
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
