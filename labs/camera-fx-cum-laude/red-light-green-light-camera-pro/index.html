@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Red Light Green Light Camera PRO - Cum Laude</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="container" id="container">
+        <section class="game" id="game">
+            <div class="doll-stage" id="doll-stage">
+                <div class="fallback-doll" id="fallback-doll">
+                    <div class="fallback-head"></div>
+                    <div class="fallback-body"></div>
+                </div>
+            </div>
+            <canvas class="webcam" id="webcam" width="640" height="480"></canvas>
+            <canvas class="capture" id="capture" width="1280" height="720"></canvas>
+            <div class="phase" id="phase">RED LIGHT</div>
+            <div class="timer"><span id="time">01:00</span></div>
+            <div class="distance"><span id="distance">000</span> /<span>100</span></div>
+            <div class="movement"><span id="movement">00%</span></div>
+            <div class="debug" id="debug">Esperando inicio...</div>
+        </section>
+    </main>
+
+    <section class="ui howto is-visible" id="howto">
+        <div class="symbols" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h1>Red Light Green Light Camera PRO</h1>
+        <p>Tienes 60 segundos para llegar a 100 metros.</p>
+        <p>En verde, mueve la cabeza para avanzar. En rojo, quedate quieto: si el sensor llega a 100%, pierdes.</p>
+        <p class="note">Necesita camara y funciona mejor con buena luz frontal. En iOS Safari puede fallar igual que el original.</p>
+        <div class="actions">
+            <button class="cta primary" id="start" disabled>Loading...</button>
+            <button class="cta" id="download-intro">Download PNG</button>
+        </div>
+        <label class="range">Sensibilidad roja
+            <input id="sensitivity" type="range" min="80" max="260" value="180">
+        </label>
+    </section>
+
+    <section class="ui dead" id="dead">
+        <div class="symbols" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h1>You died!</h1>
+        <p>Te moviste demasiado durante la luz roja o se acabo el tiempo.</p>
+        <div class="actions">
+            <button class="cta primary replay">Replay</button>
+            <button class="cta download">Download PNG</button>
+        </div>
+    </section>
+
+    <section class="ui win" id="win">
+        <div class="symbols" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h1>You won!</h1>
+        <p>Has llegado al final sin moverte cuando miraban.</p>
+        <div class="actions">
+            <button class="cta primary replay">Replay</button>
+            <button class="cta download">Download PNG</button>
+        </div>
+    </section>
+
+    <video id="camera" playsinline muted autoplay></video>
+
+    <script src="./app.js?v=redlight-cum-laude-1"></script>
+</body>
+</html>
