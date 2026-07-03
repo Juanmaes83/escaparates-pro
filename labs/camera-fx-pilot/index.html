@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Escaparates Pro - Camera FX Pilot</title>
+    <title>Escaparates Pro - Camera FX Premium Lab</title>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -12,10 +12,11 @@
             <div class="topbar">
                 <div>
                     <div class="brand">Escaparates <strong>Pro</strong></div>
-                    <h1>Camera FX Pilot</h1>
+                    <h1>Camera FX Premium Lab</h1>
                 </div>
                 <div class="status" id="camera-status">Camara inactiva</div>
             </div>
+
             <div class="stage" id="stage">
                 <canvas id="fx-canvas"></canvas>
                 <div id="three-stage"></div>
@@ -32,7 +33,7 @@
                     <input id="file-input" type="file" accept="image/*,video/*">
                 </label>
                 <select id="camera-select" aria-label="Seleccionar camara"></select>
-                <div class="hint">Para movil: abre esta pagina en HTTPS y acepta el permiso de camara.</div>
+                <div class="hint">Usa HTTPS en movil. La camara, imagen o video alimentan los 3 efectos.</div>
             </div>
 
             <div class="section">
@@ -45,12 +46,36 @@
             </div>
 
             <div class="section">
-                <h2>Ajustes</h2>
-                <label>Intensidad <input id="intensity" type="range" min="0" max="100" value="68"></label>
-                <label>Densidad <input id="density" type="range" min="12" max="72" value="34"></label>
-                <label>Contraste <input id="contrast" type="range" min="20" max="220" value="120"></label>
-                <label>Velocidad <input id="speed" type="range" min="0" max="220" value="100"></label>
+                <h2>Ajustes comunes</h2>
                 <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+                <label>Brillo <input id="brightness" type="range" min="-100" max="100" value="0"></label>
+                <label>Contraste <input id="contrast" type="range" min="0" max="100" value="18"></label>
+                <label>Velocidad respuesta <input id="speed" type="range" min="0" max="100" value="62"></label>
+            </div>
+
+            <div class="section effect-settings" data-panel="pixel">
+                <h2>Pixelation PRO</h2>
+                <label>Ancho interno <input id="pixel-width" type="range" min="320" max="960" step="8" value="640"></label>
+                <label>Tamano pixel <input id="pixel-size" type="range" min="4" max="34" value="10"></label>
+                <label>Separacion pixel <input id="pixel-space" type="range" min="0" max="14" value="2"></label>
+                <label>Alpha pixel <input id="pixel-alpha" type="range" min="20" max="100" value="100"></label>
+                <label>Radio pixel <input id="pixel-radius" type="range" min="0" max="18" value="3"></label>
+            </div>
+
+            <div class="section effect-settings" data-panel="motion" hidden>
+                <h2>Motion Detection PRO</h2>
+                <label>Sensibilidad <input id="motion-sensitivity" type="range" min="10" max="220" value="92"></label>
+                <label>Persistencia <input id="motion-trail" type="range" min="0" max="94" value="38"></label>
+                <label>Umbral luz <input id="motion-threshold" type="range" min="0" max="80" value="10"></label>
+                <label>Mezcla fuente <input id="motion-source" type="range" min="0" max="70" value="18"></label>
+            </div>
+
+            <div class="section effect-settings" data-panel="dices" hidden>
+                <h2>Dices PRO</h2>
+                <label>Columnas <input id="dice-cols" type="range" min="18" max="60" value="34"></label>
+                <label>Tamano dado <input id="dice-size" type="range" min="50" max="150" value="92"></label>
+                <label>Profundidad <input id="dice-depth" type="range" min="0" max="180" value="70"></label>
+                <label>Framing <input id="dice-framing" type="range" min="60" max="150" value="100"></label>
             </div>
 
             <div class="section actions">
