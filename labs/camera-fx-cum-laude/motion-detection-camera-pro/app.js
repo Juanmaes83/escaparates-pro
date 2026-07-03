@@ -9,11 +9,12 @@
     var currentSource = null;
     var currentStream = null;
     var currentObjectUrl = '';
-    var frameIndex = 0;
-    var previousFrames = [];
+    var previousRawFrame = null;
     var paused = false;
     var pausedFrame = null;
     var frameCount = 0;
+    var waitingForSource = false;
+    var motionScore = 0;
     var lastError = '';
     var outputWidth = 640;
     var outputHeight = 480;
@@ -26,8 +27,9 @@
         sourceCanvas.height = outputHeight;
         finalCanvas.width = outputWidth;
         finalCanvas.height = outputHeight;
-        previousFrames = [];
+        previousRawFrame = null;
         pausedFrame = null;
+        drawNeutralFrame();
     }
 
     function revokeObjectUrl() {
@@ -45,8 +47,9 @@
     function setSource(source) {
         currentSource = source;
         empty.classList.toggle('hidden', !!source);
-        previousFrames = [];
+        previousRawFrame = null;
         frameCount = 0;
+        motionScore = 0;
         lastError = '';
     }
 
@@ -56,6 +59,7 @@
         var sourceHeight = currentSource.videoHeight || currentSource.naturalHeight || currentSource.height || 0;
         if (!sourceWidth || !sourceHeight) return false;
         sourceCtx.save();
+        sourceCtx.clearRect(0, 0, outputWidth, outputHeight);
         if (document.getElementById('mirror').checked) {
             sourceCtx.translate(outputWidth, 0);
             sourceCtx.scale(-1, 1);
@@ -65,29 +69,46 @@
         return true;
     }
 
+    function drawNeutralFrame() {
+        finalCtx.fillStyle = '#808080';
+        finalCtx.fillRect(0, 0, outputWidth, outputHeight);
+    }
+
+    function cloneImageData(frame) {
+        var copy = sourceCtx.createImageData(frame.width, frame.height);
+        copy.data.set(frame.data);
+        return copy;
+    }
+
     function renderMotion() {
         if (!currentSource && !pausedFrame) {
-            finalCtx.fillStyle = '#808080';
-            finalCtx.fillRect(0, 0, outputWidth, outputHeight);
+            drawNeutralFrame();
             updateDebug();
             return;
         }
         try {
             if (!paused) {
                 if (!drawSource()) {
+                    waitingForSource = true;
+                    drawNeutralFrame();
                     updateDebug();
                     return;
                 }
-                previousFrames[frameIndex] = sourceCtx.getImageData(0, 0, outputWidth, outputHeight);
-                frameIndex = frameIndex === 0 ? 1 : 0;
+                waitingForSource = false;
                 var currentFrame = sourceCtx.getImageData(0, 0, outputWidth, outputHeight);
-                var previous = previousFrames[frameIndex];
-                if (previous) {
-                    applyOriginalAlgorithm(currentFrame, previous);
-                    pausedFrame = currentFrame;
-                    finalCtx.putImageData(currentFrame, 0, 0);
+                if (!previousRawFrame) {
+                    previousRawFrame = cloneImageData(currentFrame);
+                    drawNeutralFrame();
                     frameCount++;
+                    updateDebug();
+                    return;
                 }
+                var outputFrame = sourceCtx.createImageData(outputWidth, outputHeight);
+                applyOriginalAlgorithm(outputFrame, currentFrame, previousRawFrame);
+                previousRawFrame = cloneImageData(currentFrame);
+                pausedFrame = outputFrame;
+                finalCtx.putImageData(outputFrame, 0, 0);
+                frameCount++;
             } else if (pausedFrame) {
                 finalCtx.putImageData(pausedFrame, 0, 0);
             }
@@ -97,16 +118,18 @@
         updateDebug();
     }
 
-    function applyOriginalAlgorithm(currentFrame, previousFrame) {
-        var data = currentFrame.data;
+    function applyOriginalAlgorithm(outputFrame, currentFrame, previousFrame) {
+        var data = outputFrame.data;
+        var current = currentFrame.data;
         var previous = previousFrame.data;
         var trail = Number(document.getElementById('trail').value) / 100;
+        var score = 0;
         for (var b = 0, length = data.length; b < length;) {
             // Original gist core:
             // output = 0.5 * (255 - current) + 0.5 * previous
-            var r = 0.5 * (255 - data[b]) + 0.5 * previous[b];
-            var g = 0.5 * (255 - data[b + 1]) + 0.5 * previous[b + 1];
-            var blue = 0.5 * (255 - data[b + 2]) + 0.5 * previous[b + 2];
+            var r = 0.5 * (255 - current[b]) + 0.5 * previous[b];
+            var g = 0.5 * (255 - current[b + 1]) + 0.5 * previous[b + 1];
+            var blue = 0.5 * (255 - current[b + 2]) + 0.5 * previous[b + 2];
             if (trail && pausedFrame) {
                 r = r * (1 - trail) + pausedFrame.data[b] * trail;
                 g = g * (1 - trail) + pausedFrame.data[b + 1] * trail;
@@ -116,8 +139,10 @@
             data[b + 1] = g;
             data[b + 2] = blue;
             data[b + 3] = 255;
+            score += Math.abs(r - 128) + Math.abs(g - 128) + Math.abs(blue - 128);
             b += 4;
         }
+        motionScore = Math.round(score / (data.length / 4) / 3);
     }
 
     function loop() {
@@ -142,6 +167,7 @@
             video.srcObject = stream;
             video.muted = true;
             video.playsInline = true;
+            await waitForVideoReady(video);
             await video.play();
             setSource(video);
         } catch (error) {
@@ -161,10 +187,13 @@
             video.loop = true;
             video.muted = true;
             video.playsInline = true;
+            waitingForSource = true;
+            video.onloadedmetadata = function() {
+                setSource(video);
+            };
             video.play().catch(function(error) {
                 lastError = error && error.message ? error.message : String(error);
             });
-            setSource(video);
             return;
         }
         var img = new Image();
@@ -177,6 +206,19 @@
         img.src = currentObjectUrl;
     }
 
+    function waitForVideoReady(targetVideo) {
+        return new Promise(function(resolve) {
+            if (targetVideo.videoWidth && targetVideo.videoHeight) {
+                resolve();
+                return;
+            }
+            targetVideo.onloadedmetadata = function() {
+                resolve();
+            };
+            setTimeout(resolve, 2500);
+        });
+    }
+
     function updateDebug() {
         var sourceWidth = currentSource ? (currentSource.videoWidth || currentSource.naturalWidth || 0) : 0;
         var sourceHeight = currentSource ? (currentSource.videoHeight || currentSource.naturalHeight || 0) : 0;
@@ -187,6 +229,8 @@
             'source size: ' + sourceWidth + 'x' + sourceHeight,
             'output: ' + finalCanvas.width + 'x' + finalCanvas.height,
             'frames rendered: ' + frameCount,
+            'waiting source dimensions: ' + waitingForSource,
+            'motion score: ' + motionScore,
             'camera track: ' + state,
             'paused: ' + paused,
             'algorithm: original neutral-gray frame difference',
@@ -218,7 +262,7 @@
         setResolution(this.value);
     });
     document.getElementById('mirror').addEventListener('change', function() {
-        previousFrames = [];
+        previousRawFrame = null;
     });
 
     setResolution(document.getElementById('resolution').value);
