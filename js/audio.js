@@ -318,6 +318,14 @@ EP.Audio = (function() {
     function getMode() { return mode; }
     function getDetectedBpm() { return detectedBpm; }
 
+    // Independent read path for effects that want raw frequency-band data
+    // (e.g. an audio visualizer), regardless of the current reactive mode.
+    function getFrequencyData() {
+        if (!analyser || !dataArray) return null;
+        analyser.getByteFrequencyData(dataArray);
+        return dataArray;
+    }
+
     function createExportStream() {
         if (!ensureContext() || !gainNode) return null;
         if (!audioEl || audioEl.readyState < 2) return null;
@@ -354,6 +362,7 @@ EP.Audio = (function() {
         getEnergyMultiplier: getEnergyMultiplier,
         getExportData: getExportData,
         getMode: getMode,
-        getDetectedBpm: getDetectedBpm
+        getDetectedBpm: getDetectedBpm,
+        getFrequencyData: getFrequencyData
     };
 })();

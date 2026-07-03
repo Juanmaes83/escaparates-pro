@@ -44,6 +44,18 @@ EP.ScrollSectionsUI = (function() {
         ],
         'hover-grid': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'gradient-3d-carousel': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'repeating-image-transition': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'dual-wave-text': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'words', type: 'wordlist', label: 'Palabras (una por línea)',
+              default: ['Diseño', 'Presencia', 'Impacto', 'Marca', 'Premium', 'Escaparate',
+                        'Detalle', 'Luz', 'Espacio', 'Forma', 'Textura', 'Enfoque'] }
         ]
     };
 
