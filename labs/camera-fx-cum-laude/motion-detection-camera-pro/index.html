@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Motion Detection Camera PRO - Cum Laude</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage">
+            <canvas id="canvas"></canvas>
+            <canvas id="canvasFinal"></canvas>
+            <video id="camStream" playsinline muted autoplay></video>
+            <div id="empty-state" class="empty-state">
+                <strong>Motion Detection Camera PRO</strong>
+                <span>Activa la camara o sube una imagen/video. El movimiento aparece sobre gris neutro.</span>
+            </div>
+        </section>
+
+        <aside class="console">
+            <header>
+                <div class="mark">MD</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Motion Detection Camera PRO</h1>
+                </div>
+            </header>
+
+            <section class="block">
+                <h2>Fuente</h2>
+                <button id="btn-camera" class="primary">Activar camara</button>
+                <label class="file">
+                    Subir imagen o video
+                    <input id="file-input" type="file" accept="image/*,video/*">
+                </label>
+                <button id="btn-stop">Detener camara</button>
+            </section>
+
+            <section class="block">
+                <h2>Salida</h2>
+                <label>Resolucion
+                    <select id="resolution">
+                        <option value="640x480">640 x 480 original</option>
+                        <option value="960x540">960 x 540 widescreen</option>
+                        <option value="720x720">720 x 720 square</option>
+                    </select>
+                </label>
+                <label>Persistencia visual
+                    <input id="trail" type="range" min="0" max="80" value="0">
+                </label>
+                <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+            </section>
+
+            <section class="block actions">
+                <button id="btn-pause">Pause</button>
+                <button id="btn-download">Download PNG</button>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico movil</h2>
+                <pre id="debug">Esperando fuente...</pre>
+            </section>
+
+            <section class="block source-note">
+                <h2>Fuente replicada</h2>
+                <p>El nucleo visual replica el gist original: <code>0.5 * (255 - current) + 0.5 * previous</code> por canal RGB.</p>
+            </section>
+        </aside>
+    </main>
+    <script src="./app.js"></script>
+</body>
+</html>
