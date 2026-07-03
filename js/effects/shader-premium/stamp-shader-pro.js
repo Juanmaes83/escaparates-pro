@@ -107,8 +107,8 @@
         var m0 = mediaList && mediaList[0];
         if (m0) {
             this._m0 = m0;
-            if (m0.texture && m0.texture.image) {
-                this._mediaTexture = m0.texture;
+            if (m0.element && EP.Media && EP.Media.createTexture) {
+                this._mediaTexture = EP.Media.createTexture(m0);
             }
         }
 
@@ -137,18 +137,17 @@
     effect.update = function(time, dt, loopDuration) {
         if (!this._uniforms) return;
         // Poll for texture if not yet available at build time
-        if (!this._mediaTexture && this._m0) {
-            var t = this._m0.texture;
-            if (t && t.image) {
+        if (!this._mediaTexture && this._m0 && this._m0.element && EP.Media && EP.Media.createTexture) {
+            var t = EP.Media.createTexture(this._m0);
+            if (t) {
                 this._mediaTexture = t;
                 this._uniforms.uMedia.value = t;
                 this._uniforms.uHasMedia.value = true;
             }
         }
         // Keep video texture updated every frame
-        if (this._mediaTexture && this._m0 && this._m0.element &&
-                this._m0.element.tagName === 'VIDEO' && this._m0.element.readyState >= 2) {
-            this._mediaTexture.needsUpdate = true;
+        if (this._mediaTexture && EP.Media && EP.Media.updateTexture) {
+            EP.Media.updateTexture(this._mediaTexture);
         }
         var u = this._uniforms;
         var thr = this.settings.threshold / 100;

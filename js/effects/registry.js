@@ -6,6 +6,7 @@ EP.Registry = (function() {
         { id: 'shader-premium', name: 'Shaders Premium', icon: 'SP' },
         { id: '3d-perspective', name: '3D & Perspective', icon: '🎲' },
         { id: 'particle-morph', name: 'Particle Morph', icon: '⚛️' },
+        { id: 'kinetic-images', name: 'Kinetic Images', icon: '🌀' },
         { id: 'carousel-flow', name: 'Carousel & Flow', icon: '🎠' },
         { id: 'grid', name: 'Grid', icon: '⊞' },
         { id: 'stack-scatter', name: 'Stack & Scatter', icon: '🃏' },

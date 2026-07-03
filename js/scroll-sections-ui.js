@@ -26,6 +26,18 @@ EP.ScrollSectionsUI = (function() {
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
             { key: 'captions', type: 'itemlist2', label: 'Leyendas — Título | Año (una por línea)',
               default: [] }
+        ],
+        'scroll-3d-grid': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'carousel-3d': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'make-way-grid': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'canvas-slice-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ]
     };
 
