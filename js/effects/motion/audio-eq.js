@@ -59,6 +59,7 @@
                     self._analyser = an;
                     self._rawData = new Uint8Array(an.frequencyBinCount);
                     self._stream = stream;
+                    self._ac = ac;
                 }).catch(function() {});
             } catch(e) {}
         }
@@ -75,7 +76,7 @@
         var c2 = this.settings.barColor2 || '#ff0055';
         var bgC = this.settings.bgColor || '#000000';
         var sens = this.settings.sensitivity * 0.1;
-        var sm = 1 - this.settings.smoothing * 0.04;
+        var sm = this.settings.smoothing * 0.04;
         var mirror = this.settings.mirrorMode === 'on';
         var r1=parseInt(c1.slice(1,3),16), g1=parseInt(c1.slice(3,5),16), b1=parseInt(c1.slice(5,7),16);
         var r2=parseInt(c2.slice(1,3),16), g2=parseInt(c2.slice(3,5),16), b2=parseInt(c2.slice(5,7),16);
@@ -153,6 +154,7 @@
             this._stream.getTracks().forEach(function(t){ t.stop(); });
             this._stream = null;
         }
+        if (this._ac) { try { this._ac.close(); } catch(e) {} this._ac = null; }
         this._analyser = null;
         if (this._tex) { this._tex.dispose(); this._tex = null; }
         this._cvs = null; this._ctx = null;

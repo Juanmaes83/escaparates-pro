@@ -44,7 +44,6 @@
         if (el1) { var b = document.createElement('canvas'); b.width=512; b.height=288; try{b.getContext('2d').drawImage(el1,0,0,512,288); this._imgB=b;}catch(e){} }
         if (!this._imgB && this._imgA) this._imgB = this._imgA;
 
-        this._cells = [];
         this._nextGlitch = 0;
         this.group = group;
         return group;

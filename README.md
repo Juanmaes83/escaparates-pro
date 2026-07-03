@@ -194,6 +194,7 @@ Efectos disponibles:
 - Card Totem.
 - Cinematic Dolly Zoom.
 - Contour Effect 3D Pro.
+- Cyberspace Portal. [FASE C]
 - Cylindrix Belt.
 - Data Tunnel.
 - Delphi Infinite Tunnel.
@@ -222,6 +223,7 @@ Efectos disponibles:
 - Orbix Ring.
 - Page Reveal 3D.
 - Parallax Wall.
+- Parametric Surface. [FASE C]
 - Peel Me Panel.
 - Photo Cube V2.
 - Pixel Forms 3D.
@@ -254,7 +256,9 @@ Efectos disponibles:
 - Infinite Scroll Gallery.
 - Mechanical Impact Cards PRO.
 - Photo Orbit.
+- Reverse Columns. [FASE C]
 - Ring Carousel 3D.
+- Swaying Gallery. [FASE C]
 - Ticker Loop.
 - Wheel Carousel.
 
@@ -313,25 +317,32 @@ Usar cuando la pieza debe contar una transformacion entre estados o mostrar ante
 Efectos disponibles:
 
 - 3D Image Tile Transition.
+- Blob Reveal.
 - Burn Transition.
 - Camera Shutter.
+- Chroma Grid. [FASE C]
 - Ciclo 3D Metamorfosis.
 - Ciclo 3D Metamorfosis PRO.
+- Cinematic Zoom. [FASE C]
 - Curtain Reveal.
 - Diagonal Wipe.
 - Double Dissolve.
 - Galeria con Mascara Radial.
 - Glitch Transition.
+- Ink Burst.
 - Liquid Displacement.
 - Liquid Morph.
 - Morph Gallery.
 - Neon Accordion.
 - Portal Transition.
 - Reveal Mosaic.
+- Split Compare. [FASE C]
 - Split Reveal.
 - Split Screen Wipe.
 - Stripe Reveal.
 - Theater Curtain.
+- Virtual Tour.
+- Zoom Blur Bokeh.
 
 ### Glassmorphism
 
@@ -346,7 +357,9 @@ Efectos disponibles:
 - Glass Showcase.
 - Glassmorphism Cards.
 - Holographic Card.
+- Liquid Glass Text. [FASE C]
 - Neon Glow Carousel.
+- Stained Glass. [FASE C]
 
 ### Parallax
 
@@ -359,25 +372,29 @@ Efectos disponibles:
 - Gallery Walk.
 - Parallax Card Stack.
 - Parallax Depth Layers.
+- Parallax Multicapa. [FASE C]
 - Parallax Scroll Story.
 - Parallax Skybox.
 - Parallax Wall.
 
 ### Motion
 
-Efectos de particulas, fisica, dither, deformacion, agua, arena, viento, ASCII y filtros animados.
+Efectos de particulas, fisica, dither, deformacion, agua, arena, viento, ASCII, EQ, hexagonos y filtros animados.
 
 Usar cuando se busca una pieza experimental, viral, organica, tecnologica o muy expresiva.
 
 Efectos disponibles:
 
+- Audio EQ Visualizer. [FASE C]
 - Before/After Stream.
 - Cloth Wind.
 - Dithering Filter.
+- Dots Pattern. [FASE C]
 - Floating Cloud.
 - Gravity Fall Cards.
 - Gravity Well.
 - Halftone Effect.
+- Hex Video Grid. [FASE C]
 - Image Warp Pro.
 - Jelly Physics.
 - Media Blinds PRO.
@@ -385,13 +402,132 @@ Efectos disponibles:
 - Particle Swarm Formation.
 - Particles Brightness Gamma.
 - Photo Particles Flow.
+- RGB Dancer. [FASE C]
 - Sand Dissolve.
 - Shattered Glass.
 - Spiral Vortex.
 - Squiggle Deformer.
 - SVG Filter Animation.
+- Video ASCII Art. [FASE C]
 - Video Dither ASCII Pro.
 - Water Distortion.
+
+### Text FX
+
+Efectos de texto con neón, glitch, tipografia cinetica, temporizadores circulares y orbitas de caracteres.
+
+Usar cuando el texto es el protagonista o se quiere combinar imagen con tipografia animada de alto impacto.
+
+Efectos disponibles:
+
+- Circular Timer. [FASE C]
+- Flip Title 3D.
+- Glitch Title.
+- Kinetic Text.
+- Neon Glow Text.
+- Neon Pulse Glow. [FASE C]
+- Polar Spiral Text. [FASE C]
+- Scramble Text.
+- Split Word Reveal.
+- Text Morph.
+- Type Writer.
+
+### Gravity
+
+Efectos de fisica gravitacional: confeti, pendulos, olas y objetos en gravedad cero.
+
+Efectos disponibles:
+
+- Confetti 3D. [FASE C]
+- Gravity Wave.
+- Pendulum Swing.
+- Wrecking Ball.
+- Zero Gravity. [FASE C]
+
+### Field
+
+Efectos de campo visual: arco electrico, campo magnetico y ruido en capas.
+
+Efectos disponibles:
+
+- Electric Arc.
+- Force Field.
+- Layered Noise. [FASE C]
+- Magnetic Poles.
+
+### Flicker
+
+Efectos de parpadeo, glitch de canal, VHS, cine noir y neon intermitente.
+
+Efectos disponibles:
+
+- Film Noir.
+- Glitch RGB. [FASE C]
+- Glitch Storm.
+- Neon Flicker.
+- Old TV.
+
+### Orbit
+
+Efectos de sistema solar, icosaedros con luces, anillos planetarios y satelites en orbita.
+
+Efectos disponibles:
+
+- Comet Trail.
+- Icosahedron Lights. [FASE C]
+- Planetary Rings.
+- Satellite Spin.
+- Solar System. [FASE C]
+
+### Proximity
+
+Efectos reactivos al cursor: bloom de proximidad, ripple tactil y spotlight seguidor.
+
+Efectos disponibles:
+
+- Proximity Bloom.
+- Ripple Touch.
+- Spotlight Follow.
+
+### Shader Premium
+
+Efectos basados en GLSL con mecanicas procedurales avanzadas.
+
+Usar para piezas de marca premium, fondo de hero de alto impacto o composiciones inmersivas sin media.
+
+Efectos disponibles:
+
+- Candy Stacker PRO.
+- Creative Studio V2 PRO.
+- Crystal Computers PRO.
+- Deco Tile PRO.
+- Everything Is Fine PRO.
+- Fiesta Truchets PRO.
+- Glass Wooden Pegs PRO.
+- Infinite Falling PRO.
+- Infinity Machine PRO.
+- Infinity Truchets PRO.
+- Infinity Zoom PRO.
+- Mutating Field PRO.
+- Particulate Shatter PRO.
+- Quadtree Eyes PRO.
+- Reflective City PRO.
+- Shader Clock PRO.
+- Shader Doodle Gradient PRO.
+- Shader Ghosts PRO.
+- Space Flame Orb PRO.
+- Video Dither Glyph PRO.
+- Zen Hexagon Tiles PRO.
+
+### Camera FX Premium
+
+Efectos que usan la webcam del dispositivo o media como fuente de captura en tiempo real.
+
+Los exports de esta familia requieren iframe con permiso `allow="camera; autoplay; fullscreen"`, ya incluido en el pipeline de exportacion.
+
+Efectos disponibles:
+
+- Webcam Dither Glyph PRO.
 
 ## Efectos Similares Y Como Elegir
 
@@ -403,11 +539,17 @@ Usar Ticker Loop cuando se quiera movimiento continuo tipo cinta publicitaria.
 
 Usar Mechanical Impact Cards PRO cuando se quiera un movimiento mas divertido, mecanico y con choque entre tarjetas.
 
+Usar Swaying Gallery cuando se quieran fotos colgantes con movimiento pendulo suave.
+
+Usar Reverse Columns para columnas con scroll alternado en direcciones opuestas.
+
 Usar Ring Carousel 3D o Cylinder Carousel cuando el cliente quiera profundidad y rotacion 3D.
 
 ### Tuneles Y Profundidad
 
 Usar Infinite Depth Tunnel, Delphi Infinite Tunnel o Digital Tokamak Tunnel cuando se quiera una experiencia inmersiva de entrada.
+
+Usar Cyberspace Portal cuando se quiera un tunel de particulas tipo codigo con estetica cyber.
 
 Usar Infinite Zoom Tunnel o Zoom Immersion cuando el efecto principal deba ser avanzar hacia dentro.
 
@@ -418,6 +560,8 @@ Usar Marquee Tunnel o Data Tunnel cuando se quiera un tono mas digital, tecnolog
 Usar Grid Reveal cuando se quiera algo simple y limpio.
 
 Usar Infinite Moodboard cuando haya muchas imagenes y se busque una sensacion infinita.
+
+Usar Hex Video Grid cuando se quiera una reticula hexagonal donde cada celda reacciona a la luminancia de la imagen.
 
 Usar Fashion Grid cuando se quiera una experiencia editorial con zoom y exploracion.
 
@@ -431,7 +575,21 @@ Usar Liquid Morph, Liquid Displacement o Morph Gallery para transiciones organic
 
 Usar Glitch Transition para una estetica digital.
 
+Usar Chroma Grid cuando se quieran triangulos con aberracion cromatica RGB por celda.
+
+Usar Split Compare para comparador antes/despues con divisor interactivo.
+
 Usar Camera Shutter o Theater Curtain para una entrada cinematica.
+
+Usar Cinematic Zoom para reveal tipo trailer con barras letterbox y zoom lento.
+
+### Texto Y Tipografia
+
+Usar Neon Glow Text o Neon Pulse Glow para texto neon. La diferencia es que Neon Flicker oscila como una lampara real; Neon Pulse Glow tiene un pulso sinusoidal suave y continuo.
+
+Usar Circular Timer para contar regresiva o progreso en formato arco circular.
+
+Usar Polar Spiral Text para letras orbitando en espiral logaritmica.
 
 ### Particulas Y Shaders
 
@@ -442,6 +600,28 @@ Usar Particle Dissolve, Sand Dissolve o Particle Swarm Formation cuando se quier
 Usar Image Warp Pro, Water Distortion o Squiggle Deformer cuando se quiera deformacion fluida.
 
 Usar Video Dither ASCII Pro o Dithering Filter cuando se quiera estetica retro, tecnica o experimental.
+
+Usar Video ASCII Art para conversion de imagen en arte ASCII en tiempo real con cuatro charsets.
+
+Usar RGB Dancer para separacion de canales RGB tipo aberracion cromatica dinamica.
+
+### Orbita Y Gravedad
+
+Usar Solar System para planetas texturizados con imagenes orbitando una estrella.
+
+Usar Icosahedron Lights para clusters de geometria 3D con PointLights adjuntas.
+
+Usar Zero Gravity para objetos flotando en espacio sin gravedad con fisica spring.
+
+Usar Confetti 3D para celebraciones con piezas de color cayendo en 3D.
+
+### Shader Premium Y Camera FX
+
+Usar Creative Studio V2 PRO para impregnar capas animadas tipo Matrix sobre imagen o video con texto personalizable.
+
+Usar Space Flame Orb PRO para fondo premium de orbe/llama espacial.
+
+Usar Webcam Dither Glyph PRO para convertir webcam o media en glifos dither con estilos Glitch, Hash, Hearts y ASCII.
 
 ## Medios Soportados
 
@@ -491,6 +671,8 @@ Genera un script que inserta un iframe final en la web del cliente.
 ### Copiar Embed
 
 Copia un iframe final listo para pegar en una pagina.
+
+El iframe incluye los permisos `allow="camera; autoplay; fullscreen"` para soportar efectos con webcam y autoplay de video.
 
 ### Publicar Resultado
 
@@ -553,86 +735,123 @@ Antes de entregar una pieza a cliente, comprobar:
 - Las piezas con muchos videos o particulas pueden exigir mas GPU.
 - Algunas salidas deben revisarse manualmente en el dispositivo final, especialmente pantallas verticales y escaparates fisicos.
 - Los efectos con webcam, como Webcam Dither Glyph PRO, requieren HTTPS o localhost y permiso explicito del navegador. El embed final ya incluye `allow="camera; autoplay; fullscreen"`.
+- Glitch RGB y Video ASCII Art hacen un loop de pixels por frame (O(W x H)); en dispositivos moviles con GPU limitada pueden bajar de 30fps. Reducir resolucion del canvas si se detecta caida de rendimiento.
+- ctx.filter (blur en Canvas2D) no esta soportado en Safari anterior a 15.4 ni en algunos WebViews. Liquid Glass Text cae a shadowBlur como alternativa visual.
 
-## Actualizacion 2026-07-02
+## Notas Tecnicas Para Claude
 
-Esta sesion consolida varias tandas de efectos y deja notas tecnicas para futuras revisiones con Claude u otros agentes.
+Estas notas son para el agente que continue el desarrollo. No son documentacion de producto.
 
-### Tanda Anterior: 19 Shaders Premium
+### Contratos de efecto
 
-Efectos ya subidos en la tanda anterior de shaders premium:
+Cada efecto ES un objeto `EP.EffectBase` con:
+- `build(mediaList)`: construye y devuelve un `THREE.Group`. Guarda referencias en `this._*`.
+- `update(time, dt, loopDuration)`: animacion por frame. `dt` = delta en segundos.
+- `dispose()`: limpia texturas, listeners y referencias. Llamar `.dispose()` en `THREE.Texture`, `THREE.BufferGeometry` y `THREE.Material` creados en `build`.
 
-- Particulate Shatter PRO.
-- Video Dither Glyph PRO.
-- Infinity Zoom PRO.
-- Infinity Machine PRO.
-- Fiesta Truchets PRO.
-- Deco Tile PRO.
-- Reflective City PRO.
-- Quadtree Eyes PRO.
-- Shader Doodle Gradient PRO.
-- Mutating Field PRO.
-- Everything Is Fine PRO.
-- Infinity Truchets PRO.
-- Infinite Falling PRO.
-- Candy Stacker PRO.
-- Shader Clock PRO.
-- Crystal Computers PRO.
-- Glass Wooden Pegs PRO.
-- Zen Hexagon Tiles PRO.
-- Shader Ghosts PRO.
+### Reglas criticas de arquitectura
 
-Notas para Claude:
+- ES5 estricto. No usar `let`, `const`, arrow functions, template literals ni spread.
+- Patron IIFE: `(function() { ... })();`
+- El cliente NUNCA recibe el editor. Solo el viewer final. No exponer paneles ni controles en la salida.
+- Modular: solo sumar efectos. Nunca eliminar ni modificar un efecto existente sin aprobacion explicita.
+- Mouse tracking: usar `document.querySelector('canvas')` es fragil si hay multiples canvas. Obtener referencia al renderer canvas cuando sea posible.
+- Texturas Canvas: siempre `this._tex.needsUpdate = true` al final de `update`.
+- Materiales con `transparent: true` creados despues de `EP.Media.createMaterial`: llamar `mat.needsUpdate = true` tras cambiar `transparent` o `opacity`.
 
-- Esta familia debe conservar imagen o video del usuario como fuente cuando el efecto lo permita.
-- No oscurecer medios por defecto. Bloom, tintes, gamma, vignette o dramatizacion deben ser opcionales.
-- Crystal Computers PRO y Candy Stacker PRO deben tratar imagen/video como contenido personalizable, no como textura fija decorativa.
-- Mutating Field PRO debe evolucionar hacia deformacion o profundidad basada en la imagen cuando se trabaje una siguiente fase.
+### Familias y categorias registradas
 
-### Tanda Fase C: 9 Efectos Adicionales
+Las 16 categorias registradas en `registry.js`:
+`3d-perspective`, `carousel-flow`, `grid`, `stack-scatter`, `spotlight-focus`,
+`reveal-wipe`, `glassmorphism`, `parallax`, `motion`, `text`, `gravity`, `field`,
+`flicker`, `orbit`, `proximity`, `camera-fx-premium`, `shader-premium`
 
-Efectos incorporados desde gists ligeros:
+### Shader Premium
 
-- Mechanical Impact Cards PRO.
-- Swaying Gallery.
-- Reverse Columns.
-- Confetti 3D.
-- Split Compare.
-- Cinematic Zoom.
-- Glitch RGB.
-- Circular Timer.
-- Neon Pulse Glow.
+- Familia con efectos GLSL. Mantener imagen o video del usuario como fuente cuando el efecto lo permita.
+- No oscurecer medios por defecto. Bloom, tintes y dramatizacion son opcionales.
+- Crystal Computers PRO y Candy Stacker PRO: imagen/video como contenido personalizable, no textura decorativa fija.
+- Mutating Field PRO: evolucionara hacia deformacion basada en imagen en fase futura.
 
-Notas para Claude:
+### Creative Studio V2 PRO
 
-- Estos efectos deben seguir el mismo contrato de salida final: exportar viewer cerrado, no editor.
-- Si se amplian, mantener controles comunes de tamano, velocidad, direccion y timing.
-- No reemplazar ni eliminar efectos existentes; las nuevas variantes deben sumarse.
+- No es un compositor generico. Impregna capas animadas sobre la imagen o video del usuario.
+- Controles clave: `Element Size`, `Element Count`, `Density`, `Frases / Letras`.
+- `Frases / Letras` alimenta lluvia de caracteres y simbolos personalizados.
+- `Element Size` hace visibles los elementos sin depender solo de densidad.
 
-### Tanda Actual: 2 Nuevos Efectos PRO
+### Webcam Dither Glyph PRO
 
-Efectos nuevos preparados en local y subidos en esta actualizacion:
+- Requiere permiso de camara. Si falla, debe caer a media subida o fallback visual sin romper el editor.
+- Exports HTML/JS con webcam necesitan iframe con `allow="camera; autoplay; fullscreen"`.
+- Ya integrado en `js/export.js`.
 
-- Space Flame Orb PRO: shader premium de orbe/llama espacial, pensado para fondos premium, hero visuales y composiciones inmersivas.
-- Creative Studio V2 PRO: impregnacion animada sobre imagen o video. Incluye lluvia Matrix con letras/numeros/binario/simbolos/frases personalizadas, proporcion aurea viva, contadores dinamicos, lineas/nodos y simbolos tipo Kafka.
+### Bugs conocidos pendientes (no corregidos aun)
 
-Tambien se incorpora una nueva familia:
+Los siguientes issues fueron identificados en auditoria 2026-07-03 y son warnings, no bloqueantes:
 
-- Camera FX Premium.
+1. `confetti-3d`, `stained-glass`, `swaying-gallery`: `dispose()` no libera `THREE.Geometry` ni `THREE.Material` de sus meshes. Leak de VRAM en sesiones largas.
+2. `neon-pulse-glow`: overlay negro fijo al 82% oscurece la imagen de fondo. Sin control de usuario para esa opacidad. Candidato a agregar slider `overlayOpacity`.
+3. `cyberspace-portal`: `this.group.position.z` desplaza tambien el plano de fondo solido. El fondo deberia ser un grupo separado no desplazado.
+4. `glitch-rgb` y `video-ascii`: bucle de pixels O(W x H) por frame. Candidatos a optimizacion de resolucion en dispositivos lentos.
+5. `parallax-multicapa`: smoothing=1 congela virtualmente la capa. Rango util real es 5-20.
+6. `dots-pattern`: `shadowBlur` por punto en cada frame. Costoso en grids grandes.
 
-Y un efecto especial dentro de ella:
+## Actualizacion 2026-07-03
 
-- Webcam Dither Glyph PRO: efecto WebGL de webcam o media convertida en glifos dither, con estilos Glitch, Hash, Hearts y ASCII. Soporta modo media subida, webcam directa y webcam con fallback a media.
+### Fase C completada: 24 efectos nuevos desde gists
 
-Notas para Claude:
+Efectos incorporados en tres niveles de dificultad:
 
-- Creative Studio V2 PRO no es un compositor generico. Su objetivo es impregnar capas animadas sobre la imagen o video del usuario.
-- En Creative Studio V2 PRO los controles clave son `Element Size`, `Element Count`, `Density` y `Frases / Letras`.
-- `Frases / Letras` debe alimentar la lluvia de caracteres y los simbolos cuando el usuario quiera texto propio.
-- `Element Size` debe hacer visibles los elementos grandes sin depender solo de densidad.
-- `Element Count` decide cuantos elementos se generan; `Density` refina la sensacion de abundancia.
-- Webcam Dither Glyph PRO requiere permiso de camara. Si el permiso falla, debe caer a media subida o fallback visual sin romper el editor.
-- Los exports HTML/JS con webcam necesitan iframe con permiso `camera; autoplay; fullscreen`.
+**FACIL (8 efectos):**
+- Swaying Gallery: fotos colgantes con pendulo.
+- Reverse Columns: columnas con scroll alternado.
+- Confetti 3D: confeti cayendo en 3D.
+- Split Compare: comparador antes/despues.
+- Cinematic Zoom: reveal cinematografico con letterbox.
+- Glitch RGB: aberracion de canal RGB.
+- Circular Timer: temporizador circular con arco Canvas2D.
+- Neon Pulse Glow: neon con pulso sinusoidal suave.
+
+**MEDIO (11 efectos):**
+- Video ASCII Art: imagen a ASCII en tiempo real.
+- Polar Spiral Text: tipografia en espiral logaritmica.
+- Layered Noise: ruido en capas apiladas.
+- Audio EQ Visualizer: espectro de audio con 32 bandas, modo demo + mic.
+- Stained Glass: vitral con paneles orbitantes y PointLights.
+- Parametric Surface: superficies 3D (toro, esfera, caracola, Klein).
+- Icosahedron Lights: clusters de icosaedros con luces adjuntas.
+- Parallax Multicapa: paralaje de profundidad Z por cursor.
+- RGB Dancer: triple capa con separacion de canal por cursor.
+- Solar System: sistema solar con planetas texturizados.
+- Dots Pattern: puntos con patrones expand/wave/spiral/grid.
+
+**DIFICIL (5 efectos):**
+- Chroma Grid: grid triangular con aberracion cromatica por celda.
+- Hex Video Grid: hexagonos reactivos a luminancia de imagen.
+- Zero Gravity: objetos flotando con fisica spring en espacio estelar.
+- Liquid Glass Text: texto con distorsion liquida y aberracion cromatica.
+- Cyberspace Portal: tunel CatmullRom con particulas de codigo y anillo pulsante.
+
+### Bugs corregidos en auditoria 2026-07-03
+
+- `circular-timer`: modo progreso mostraba segundos como porcentaje. Corregido a `Math.floor(phase * 100)`.
+- `audio-eq`: direccion del suavizado estaba invertida. Corregido: smoothing alto = mas suavidad.
+- `audio-eq`: AudioContext del microfono no se cerraba en dispose. Corregido: `this._ac.close()`.
+- `zero-gravity`: material de foto no llamaba `needsUpdate` tras cambiar `transparent`. Corregido.
+- `solar-system`: material huerfano sin dispose al reasignar a MeshPhongMaterial. Corregido.
+- `icosahedron-lights`: rotacion del satelite no era dt-independiente. Corregido.
+- `hex-video-grid`: canvas de muestreo se redimensionaba cada frame aunque el tamano no cambiara. Corregido con cache.
+- `chroma-grid`: array `_cells` declarado pero nunca usado. Eliminado.
+
+### Tanda anterior: Shaders Premium + Camera FX
+
+Efectos ya subidos:
+
+- 19 Shaders Premium (ver lista en seccion Shader Premium).
+- Space Flame Orb PRO.
+- Creative Studio V2 PRO.
+- Webcam Dither Glyph PRO (familia Camera FX Premium).
 
 ## Desarrollo Local
 
@@ -671,13 +890,19 @@ js/
     shader-premium/
     3d-perspective/
     carousel-flow/
-    grid/
-    stack-scatter/
-    spotlight-focus/
-    reveal-wipe/
+    field/
+    flicker/
     glassmorphism/
-    parallax/
+    gravity/
+    grid/
     motion/
+    orbit/
+    parallax/
+    proximity/
+    reveal-wipe/
+    spotlight-focus/
+    stack-scatter/
+    text/
 assets/
 outputs/
 ```

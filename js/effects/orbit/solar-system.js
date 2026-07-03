@@ -80,9 +80,12 @@
             var mat;
             if (ml.length > 0) {
                 geo = new THREE.SphereGeometry(planetR, 24, 16);
-                mat = EP.Media.createMaterial(ml[i % ml.length]);
-                if (mat.map) {
-                    mat = new THREE.MeshPhongMaterial({ map: mat.map, shininess: 40 });
+                var baseMat = EP.Media.createMaterial(ml[i % ml.length]);
+                if (baseMat.map) {
+                    mat = new THREE.MeshPhongMaterial({ map: baseMat.map, shininess: 40 });
+                    baseMat.dispose();
+                } else {
+                    mat = baseMat;
                 }
             } else {
                 geo = new THREE.SphereGeometry(planetR, 24, 16);

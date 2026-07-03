@@ -69,7 +69,9 @@
         // Sample image at reduced resolution
         var sampW = Math.round(W / hexBase * 1.5);
         var sampH = Math.round(H / hexBase * 1.5);
-        this._sampCvs.width = sampW; this._sampCvs.height = sampH;
+        if (this._sampCvs.width !== sampW || this._sampCvs.height !== sampH) {
+            this._sampCvs.width = sampW; this._sampCvs.height = sampH;
+        }
         var sc = this._sampCtx;
         sc.clearRect(0, 0, sampW, sampH);
 

@@ -55,7 +55,7 @@
 
         var phase = (time % dur) / dur;
         var progress = mode === 'countdown' ? 1 - phase : phase;
-        var remaining = mode === 'countdown' ? Math.ceil((1 - phase) * dur) : Math.floor(phase * dur);
+        var remaining = mode === 'countdown' ? Math.ceil((1 - phase) * dur) : Math.floor(phase * 100);
         var R = S * 0.38;
 
         ctx.clearRect(0, 0, S, S);

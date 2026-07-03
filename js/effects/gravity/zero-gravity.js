@@ -60,7 +60,7 @@
             if (usePhoto && !useMix) {
                 geo = new THREE.PlaneGeometry(sz, sz*0.7);
                 mat = EP.Media.createMaterial(ml[i%ml.length]);
-                mat.transparent = true; mat.opacity = 0.95;
+                mat.transparent = true; mat.opacity = 0.95; mat.needsUpdate = true;
             } else {
                 var geoType = (type==='box'||useMix) ? 'box' : 'icosa';
                 if (geoType==='box') {

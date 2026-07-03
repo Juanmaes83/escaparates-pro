@@ -99,7 +99,7 @@
             cl.pivot.position.y = Math.sin(a) * R * 0.65;
             cl.mesh.rotation.x = time * cl.selfSpeed * 0.5;
             cl.mesh.rotation.y = time * cl.selfSpeed;
-            cl.satAngle += 0.04 * cl.selfSpeed;
+            cl.satAngle += 0.04 * cl.selfSpeed * (dt || 0.016) * 60;
             cl.sat.position.x = Math.cos(cl.satAngle) * 0.6 * (this.settings.scale / 100);
             cl.sat.position.y = Math.sin(cl.satAngle) * 0.3 * (this.settings.scale / 100);
         }
