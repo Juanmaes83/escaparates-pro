@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Webcam Pixelation PRO - Cum Laude</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage">
+            <canvas id="pixel-canvas" aria-label="Resultado pixelado"></canvas>
+            <video id="source-video" playsinline muted autoplay></video>
+            <div id="empty-state" class="empty-state">
+                <strong>Webcam Pixelation PRO</strong>
+                <span>Activa la camara o sube una imagen/video para iniciar.</span>
+            </div>
+        </section>
+
+        <aside id="console" class="console">
+            <header>
+                <div class="mark">EP</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Webcam Pixelation PRO</h1>
+                </div>
+            </header>
+
+            <section class="block">
+                <h2>Fuente</h2>
+                <button id="btn-camera" class="primary">Activar camara</button>
+                <label class="file">
+                    Subir imagen o video
+                    <input id="file-input" type="file" accept="image/*,video/*">
+                </label>
+                <button id="btn-stop">Detener camara</button>
+            </section>
+
+            <section class="block">
+                <h2>Settings originales</h2>
+                <dl>
+                    <dt>Width</dt><dd data-setting="width:320,800,8"></dd>
+                    <dt>Brightness</dt><dd data-setting="brightness:-100,100,1"></dd>
+                    <dt>Contrast</dt><dd data-setting="contrast:0,100,1"></dd>
+                    <dt>Pixel size</dt><dd data-setting="size:4,24,1"></dd>
+                    <dt>Pixel spacing</dt><dd data-setting="space:0,10,1"></dd>
+                    <dt>Pixel alpha</dt><dd data-setting="alpha:0,100,1"></dd>
+                    <dt>Pixel radius</dt><dd data-setting="radius:0,8,1"></dd>
+                </dl>
+            </section>
+
+            <section class="block actions">
+                <button id="btn-pause">Pause</button>
+                <button id="btn-download">Download PNG</button>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico movil</h2>
+                <pre id="debug">Esperando fuente...</pre>
+            </section>
+        </aside>
+    </main>
+
+    <script src="./app.js"></script>
+</body>
+</html>
