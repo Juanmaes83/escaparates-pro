@@ -156,6 +156,9 @@ button, select {
     font: inherit;
 }
 .primary { background: linear-gradient(135deg, var(--red), var(--violet)); font-weight: 900; }
+.primary.is-loading { background: linear-gradient(135deg, #ff8a2a, var(--yellow)); color: #1b1000; }
+.primary.is-active { background: linear-gradient(135deg, #15c96f, var(--green)); color: #03140b; }
+.primary.is-error { background: linear-gradient(135deg, #9f1239, var(--red)); color: #fff; }
 .scenes { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .scene.active { outline: 2px solid var(--yellow); }
 label { display: grid; gap: 7px; color: var(--muted); font-size: 12px; }
