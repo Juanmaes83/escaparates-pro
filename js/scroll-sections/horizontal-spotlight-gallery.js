@@ -180,6 +180,7 @@
 '  });\n' +
 '})();\n' +
 '</script>\n' +
+'<script>\n' + EP.ScrollSections.curlyCursorScript('rgba(26,26,26,0.3)') + '</script>\n' +
 '</body>\n' +
 '</html>\n';
     }

@@ -139,6 +139,7 @@
 '  container.addEventListener("mouseleave", function() { cursor.classList.remove("hover"); });\n' +
 '})();\n' +
 '</script>\n' +
+'<script>\n' + EP.ScrollSections.curlyCursorScript('rgba(255,255,255,0.3)') + '</script>\n' +
 '</body>\n' +
 '</html>\n';
     }

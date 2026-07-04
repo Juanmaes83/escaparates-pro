@@ -159,6 +159,17 @@ EP.ScrollSectionsUI = (function() {
         'falling-text-drop': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
             { key: 'paragraph', type: 'text', label: 'Párrafo de marca', default: 'Cada espacio cuenta una historia. Convertimos visiones estáticas en experiencias vivas, con animaciones cuidadas y presentaciones que enamoran a primera vista. No solo buscamos que luzca bien — buscamos que se sienta inolvidable.' }
+        ],
+        'css-spotlight-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'hint', type: 'text', label: 'Texto de ayuda', default: 'Mueve el cursor para descubrir el espacio' }
+        ],
+        'truchet-pattern-hero': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'tagline', type: 'text', label: 'Eslogan', default: 'Diseño que se mueve contigo' }
+        ],
+        'product-card-slider': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ]
     };
 
