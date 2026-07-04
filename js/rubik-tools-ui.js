@@ -11,7 +11,12 @@
             name: 'Studio RUBIK SOTA Experiences',
             icon: '🎬',
             desc: 'Generador web propio con efectos y carga de video, música e imágenes desde local o URL (YouTube incluido).',
-            src: 'labs/rubik-sota-tools/studio-experiences/index.html'
+            // ?edit reveals the tool's own hidden "EDIT" badge (#ebdg), which
+            // toggles its internal editor panel (#rse) — both exist in the
+            // tool's original code but stay hidden without this query param.
+            // Passing it here (not touching the tool's files) is how its own
+            // demo URL (…/index.html?edit) already activated the panel.
+            src: 'labs/rubik-sota-tools/studio-experiences/?edit'
         },
         {
             id: 'particles-engine-v5',
