@@ -74,6 +74,14 @@ EP.ScrollSectionsUI = (function() {
         ],
         'blinds-scroll-reveal': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'vertical-marquee-showcase': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'pointer-scrub-title': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'words', type: 'wordlist', label: 'Líneas de título (una por línea)',
+              default: ['ESCAPARATE', 'PREMIUM', 'INTERIOR'] }
         ]
     };
 
