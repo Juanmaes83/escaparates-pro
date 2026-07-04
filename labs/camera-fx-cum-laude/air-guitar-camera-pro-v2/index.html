@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Air Guitar Camera PRO V2 - Escaparates Pro</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage">
+            <canvas id="canvas" width="1280" height="720"></canvas>
+            <canvas id="capture" width="1280" height="720"></canvas>
+            <video id="video" playsinline muted autoplay></video>
+
+            <div class="hud top">
+                <div class="campaign">
+                    <span id="campaign-label">Festival Brand Challenge</span>
+                    <strong>Rock the Stage</strong>
+                </div>
+                <div class="signal" id="signal"><b></b><span>READY</span></div>
+            </div>
+
+            <div class="hud bottom">
+                <div><strong id="score">0</strong><span>score</span></div>
+                <div><strong id="combo">x1</strong><span>combo</span></div>
+                <div><strong id="timer">30.0</strong><span>sec</span></div>
+                <div><strong id="riff-count">0</strong><span>notas</span></div>
+            </div>
+
+            <div class="modal" id="result" hidden>
+                <p>Tu concierto</p>
+                <h2 id="rank">Stage Ready</h2>
+                <strong id="final-score">0 puntos</strong>
+                <small>Reproduce, descarga tu riff o vuelve a intentarlo.</small>
+            </div>
+        </section>
+
+        <aside class="panel">
+            <header>
+                <div class="mark">AG</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Air Guitar Camera PRO V2</h1>
+                </div>
+            </header>
+
+            <section class="block mission">
+                <h2>Mision</h2>
+                <p>Conviertete en headliner de la marca. Toca durante 30 segundos, crea tu riff y llevate una pieza descargable.</p>
+                <button id="start" class="primary">Activar camara y empezar</button>
+                <button id="restart">Nuevo intento</button>
+            </section>
+
+            <section class="block">
+                <h2>Escenario 360</h2>
+                <div class="scenes">
+                    <button class="scene active" data-scene="stadium">Festival Stadium</button>
+                    <button class="scene" data-scene="club">Neon Club</button>
+                    <button class="scene" data-scene="launch">Brand Launch</button>
+                </div>
+                <label>Rotacion escenario
+                    <input id="pan" type="range" min="0" max="100" value="50">
+                </label>
+            </section>
+
+            <section class="block coach">
+                <h2>Coach en vivo</h2>
+                <div class="step" id="s-camera"><b>1</b><span>Camara pendiente</span></div>
+                <div class="step" id="s-hands"><b>2</b><span>Muestra dos manos</span></div>
+                <div class="step" id="s-neck"><b>3</b><span>Mano izquierda al mastil</span></div>
+                <div class="step" id="s-strum"><b>4</b><span>Rasguea en la zona verde</span></div>
+                <p id="coach">Pulsa activar. El juego empieza cuando se detecten dos manos.</p>
+            </section>
+
+            <section class="block">
+                <h2>Studio Mode</h2>
+                <button id="play-riff">Escuchar mi riff</button>
+                <button id="download-wav">Descargar audio WAV</button>
+                <button id="download-json">Descargar eventos</button>
+                <button id="download-poster">Descargar poster PNG</button>
+            </section>
+
+            <section class="block">
+                <h2>Sonido</h2>
+                <label>Estilo
+                    <select id="style">
+                        <option value="rock">Rock Festival</option>
+                        <option value="electro">Electro Stage</option>
+                        <option value="funk">Funk Groove</option>
+                    </select>
+                </label>
+                <label>Sensibilidad
+                    <input id="sensitivity" type="range" min="12" max="70" value="34">
+                </label>
+                <label>Volumen
+                    <input id="volume" type="range" min="0" max="100" value="75">
+                </label>
+                <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico</h2>
+                <pre id="debug">Esperando inicio...</pre>
+            </section>
+        </aside>
+    </main>
+
+    <script src="./app.js?v=v2-1"></script>
+</body>
+</html>
