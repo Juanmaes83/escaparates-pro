@@ -31,6 +31,14 @@
         <iframe id="ss-preview-frame" title="Vista previa Scroll Section"></iframe>
     </div>
 
+    <!-- RUBIK SOTA Tools stage: verbatim third-party tools, fully isolated in their own iframe -->
+    <div id="rubik-tools-stage">
+        <div id="rubik-tools-catalog"></div>
+        <div id="rubik-tools-frame-wrap">
+            <iframe id="rubik-tools-frame" title="RUBIK SOTA Tool"></iframe>
+        </div>
+    </div>
+
     <!-- Top bar -->
     <header id="top-bar">
         <div class="top-left">
@@ -38,6 +46,7 @@
             <div id="app-mode-toggle" class="app-mode-toggle">
                 <button class="mode-btn active" data-mode="effects" id="mode-btn-effects" title="Efectos Three.js en canvas">🎬 Efectos</button>
                 <button class="mode-btn" data-mode="scroll-sections" id="mode-btn-scroll-sections" title="Secciones de scroll para web (GSAP)">📜 Scroll Sections</button>
+                <button class="mode-btn" data-mode="rubik-tools" id="mode-btn-rubik-tools" title="Herramientas RUBIK SOTA (propias, aisladas)">🧬 RUBIK SOTA</button>
             </div>
         </div>
         <div class="top-center">
@@ -864,6 +873,7 @@
     <script src="js/scroll-sections/truchet-pattern-hero.js"></script>
     <script src="js/scroll-sections/product-card-slider.js"></script>
     <script src="js/scroll-sections-ui.js"></script>
+    <script src="js/rubik-tools-ui.js"></script>
     <!-- FASE G — Kinetic Images + grid -->
     <script src="js/effects/kinetic-images/paper-scroll.js"></script>
     <script src="js/effects/kinetic-images/spiral-ribbon.js"></script>

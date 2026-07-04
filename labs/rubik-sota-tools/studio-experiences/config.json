@@ -1,0 +1,63 @@
+{
+  "theme": {
+    "primaryColor": "#ff512f",
+    "secondaryColor": "#f09819",
+    "fontFamily": "'Quicksand', sans-serif",
+    "titleFont": "'Salsa', cursive",
+    "backgroundFilter": "brightness(90%)",
+    "animationDuration": "3s",
+    "sliderSpeed": 1000
+  },
+  "slider": {
+    "direction": "vertical",
+    "effect": "fade",
+    "speed": 1000,
+    "loop": true,
+    "mousewheel": true
+  },
+  "slides": [
+    {
+      "title": "Tu Negocio Aquí",
+      "description": "Describe aquí lo que hace especial a tu negocio. Este texto es completamente editable desde el panel de RUBIK SOTA Studio.",
+      "media": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80",
+        "position": "50% 40%"
+      }
+    },
+    {
+      "title": "Segunda Sección",
+      "description": "Cada diapositiva puede tener imagen o vídeo de fondo. El editor visual de RUBIK SOTA lo hace todo sin necesidad de código.",
+      "media": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=1920&q=80",
+        "position": "50% 50%"
+      }
+    },
+    {
+      "title": "Tercera Sección",
+      "description": "Añade tantas diapositivas como necesites. Cada una con su propio título, descripción e imagen de fondo.",
+      "media": {
+        "type": "image",
+        "url": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=80",
+        "position": "50% 60%"
+      }
+    }
+  ],
+  "footer": {
+    "features": [
+      { "icon": "fa-house", "label": "Servicio 1", "detail": "descripción" },
+      { "icon": "fa-headphones", "label": "Servicio 2", "detail": "descripción" },
+      { "icon": "fa-clock", "label": "Servicio 3", "detail": "descripción" }
+    ],
+    "button": {
+      "text": "Contactar",
+      "link": "https://wa.me/34629554870"
+    }
+  },
+  "logo": {
+    "image": "",
+    "link": "#",
+    "alt": "Logo"
+  }
+}

@@ -1,0 +1,2351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RUBIK SOTA — Particles Engine v5</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/math/MeshSurfaceSampler.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+<link rel="stylesheet" data-name="vs/editor/editor.main"
+  href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css"/>
+<style>
+:root {
+  --bg:        #000000;
+  --surface:   #0a0a0a;
+  --surface2:  #111111;
+  --surface3:  #1a1a1a;
+  --text:      #F0F0F0;
+  --muted:     #444444;
+  --muted2:    #777777;
+  --border:    #1c1c1c;
+  --border2:   #282828;
+  --gold:      #D4AF37;
+  --gold-dim:  #7a6520;
+  --gold-soft: rgba(212,175,55,0.08);
+  --gold-glow: rgba(212,175,55,0.3);
+  --red:       #e05050;
+  --green:     #50c878;
+  --font:      'JetBrains Mono','Fira Code',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;}
+
+/* ── TOPBAR ── */
+#topbar{height:40px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:20;}
+.logo{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;}
+.logo em{color:var(--gold);font-style:normal;}
+.vsep{width:1px;height:16px;background:var(--border2);}
+.ttag{font-size:9px;letter-spacing:3px;color:var(--muted2);text-transform:uppercase;}
+.spacer{flex:1;}
+.tstat{font-size:10px;color:var(--muted2);display:flex;align-items:center;gap:4px;}
+.tstat .v{color:var(--gold);font-weight:700;font-size:11px;}
+.mbadge{font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:700;background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-dim);transition:all .3s;}
+.mbadge.data{background:rgba(80,200,120,0.08);color:var(--green);border-color:rgba(80,200,120,0.3);}
+#btn-run{background:var(--gold);color:#000;border:none;padding:5px 16px;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:opacity .15s,transform .1s;}
+#btn-run:hover{opacity:.85;}#btn-run:active{transform:scale(.97);}#btn-run:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ── PANEL PROYECTOS ── */
+#panel-proj{padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.proj-search{
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-family:var(--font);font-size:11px;
+  padding:7px 10px;border-radius:2px;outline:none;width:100%;
+  transition:border-color .15s;
+}
+.proj-search::placeholder{color:var(--muted);}
+.proj-search:focus{border-color:var(--gold-dim);}
+.proj-list{display:flex;flex-direction:column;gap:5px;min-height:60px;}
+.proj-card{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:2px;padding:9px 10px;cursor:pointer;
+  transition:border-color .15s;position:relative;
+  display:flex;align-items:center;gap:8px;
+}
+.proj-card:hover{border-color:var(--gold-dim);}
+.proj-card .pc-icon{font-size:14px;flex-shrink:0;}
+.proj-card .pc-body{flex:1;min-width:0;}
+.proj-card .pc-name{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-card .pc-meta{font-size:9px;color:var(--muted2);margin-top:2px;}
+.proj-card .pc-del{
+  color:var(--muted);font-size:11px;padding:2px 5px;cursor:pointer;
+  border:none;background:none;opacity:0;transition:opacity .15s;flex-shrink:0;
+}
+.proj-card:hover .pc-del{opacity:1;}
+.proj-card .pc-del:hover{color:var(--red);}
+.proj-empty{font-size:9px;color:var(--muted);text-align:center;padding:20px 0;letter-spacing:1px;}
+
+.proj-actions{display:flex;gap:6px;}
+.proj-save-btn{
+  flex:1;background:var(--gold);color:#000;border:none;
+  padding:7px;font-family:var(--font);font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;
+  transition:opacity .15s;
+}
+.proj-save-btn:hover{opacity:.85;}
+.proj-save-btn.sec{
+  background:transparent;color:var(--muted2);
+  border:1px solid var(--border2);flex:0 0 auto;width:36px;
+}
+.proj-save-btn.sec:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+/* Share modal */
+#share-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);
+  display:none;align-items:center;justify-content:center;z-index:200;
+}
+#share-modal.on{display:flex;}
+.share-box{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:3px;padding:24px;width:480px;max-width:90vw;
+  display:flex;flex-direction:column;gap:14px;
+}
+.share-title{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+.share-url{
+  background:var(--surface2);border:1px solid var(--border2);
+  color:var(--muted2);font-family:var(--font);font-size:10px;
+  padding:9px 10px;border-radius:2px;word-break:break-all;
+  max-height:80px;overflow-y:auto;user-select:all;
+}
+.share-actions{display:flex;gap:8px;}
+.share-btn{
+  flex:1;padding:7px;font-family:var(--font);font-size:9px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;
+  border:1px solid var(--border2);background:transparent;color:var(--muted2);
+  transition:all .15s;
+}
+.share-btn.primary{background:var(--gold);color:#000;border-color:var(--gold);}
+.share-btn.primary:hover{opacity:.85;}
+.share-btn:hover{border-color:var(--gold-dim);color:var(--text);}
+.share-copied{font-size:9px;color:var(--green);text-align:center;height:12px;}
+
+/* API embed panel */
+.api-box{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:2px;padding:10px;font-size:10px;color:var(--muted2);
+  line-height:1.6;
+}
+.api-box pre{
+  font-family:var(--font);font-size:9px;color:var(--text);
+  background:var(--bg);padding:8px;border-radius:2px;
+  overflow-x:auto;margin-top:6px;border:1px solid var(--border);
+  white-space:pre-wrap;word-break:break-all;
+}
+.api-copy-btn{
+  margin-top:6px;width:100%;padding:6px;font-family:var(--font);font-size:9px;
+  font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;
+  border:1px solid var(--border2);background:transparent;color:var(--muted2);
+  border-radius:2px;transition:all .15s;
+}
+.api-copy-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+/* ── INTRO SCREEN ── */
+#intro{
+  position:fixed;inset:0;background:#000;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+#intro-logo{
+  font-size:clamp(28px,5vw,56px);font-weight:700;letter-spacing:8px;
+  text-transform:uppercase;color:#fff;margin-bottom:6px;
+  animation:fadeup .8s ease both;
+}
+#intro-logo em{color:var(--gold);font-style:normal;}
+#intro-sub{
+  font-size:clamp(9px,1.2vw,12px);letter-spacing:6px;text-transform:uppercase;
+  color:var(--muted2);animation:fadeup .8s .2s ease both;
+}
+#intro-line{
+  width:0;height:1px;background:var(--gold);margin:28px 0;
+  animation:expandline 1s .5s ease forwards;
+}
+#intro-hint{
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);
+  animation:fadeup .8s .9s ease both;
+}
+#intro-particles{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;
+}
+.ipt{
+  position:absolute;border-radius:50%;background:var(--gold);
+  animation:ipdrift linear infinite;
+}
+@keyframes ipdrift{
+  0%  {transform:translateY(100vh) scale(0);opacity:0;}
+  10% {opacity:.8;}
+  90% {opacity:.4;}
+  100%{transform:translateY(-10vh) scale(1);opacity:0;}
+}
+@keyframes fadeup{
+  from{opacity:0;transform:translateY(16px);}
+  to  {opacity:1;transform:translateY(0);}
+}
+@keyframes expandline{
+  to{width:200px;}
+}
+
+/* ── PALETA DE COLOR ── */
+.palette-wrap{
+  display:flex;flex-direction:column;gap:8px;
+  padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.pal-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--border);}
+.pal-row{display:flex;gap:6px;flex-wrap:wrap;}
+.pal-btn{
+  flex:1;min-width:60px;padding:6px 4px;text-align:center;
+  font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;
+  font-family:var(--font);border-radius:2px;cursor:pointer;
+  border:1px solid var(--border2);background:var(--surface2);color:var(--muted2);
+  transition:all .15s;
+}
+.pal-btn:hover{border-color:var(--gold-dim);color:var(--text);}
+.pal-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-soft);}
+#pal-anim-btn{
+  width:100%;padding:6px;text-align:center;font-size:8px;letter-spacing:2px;
+  text-transform:uppercase;font-weight:700;font-family:var(--font);
+  border:1px solid var(--border2);background:var(--surface2);color:var(--muted2);
+  cursor:pointer;border-radius:2px;transition:all .15s;
+}
+#pal-anim-btn.active{border-color:rgba(80,200,120,.5);color:var(--green);background:rgba(80,200,120,.06);}
+
+/* ── IMAGE PRESETS ── */
+.img-presets-wrap{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.img-presets-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+.img-presets-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.img-preset-card{
+  aspect-ratio:1;border-radius:2px;cursor:pointer;overflow:hidden;
+  border:1px solid var(--border2);transition:border-color .15s;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);
+}
+.img-preset-card:hover{border-color:var(--gold-dim);}
+.img-preset-card svg{width:70%;height:70%;}
+
+/* ── EXPORT BUTTONS ── */
+.xbtn{
+  background:transparent;color:var(--muted2);border:1px solid var(--border2);
+  padding:4px 11px;font-family:var(--font);font-size:9px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:2px;
+  transition:all .15s;white-space:nowrap;
+}
+.xbtn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.xbtn:disabled{opacity:.3;cursor:not-allowed;}
+.xbtn.rec{border-color:rgba(224,80,80,.5);color:var(--red);}
+.xbtn.rec.active{background:rgba(224,80,80,.12);border-color:var(--red);color:var(--red);
+  animation:recpulse 1.2s ease-in-out infinite;}
+@keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(224,80,80,.4);}50%{box-shadow:0 0 0 4px rgba(224,80,80,0);}}
+.xbtn.mp4{border-color:rgba(80,160,224,.4);color:#5ba0d0;}
+.xbtn.mp4:hover{border-color:#5ba0d0;color:#7ec8f0;}
+
+/* ── RECORDING STATUS ── */
+#rec-status{
+  position:absolute;top:14px;right:18px;
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--red);display:none;align-items:center;gap:6px;
+  pointer-events:none;z-index:10;
+}
+#rec-status.on{display:flex;}
+#rec-dot{width:6px;height:6px;border-radius:50%;background:var(--red);
+  animation:recpulse 1s ease-in-out infinite;}
+
+/* ── MP4 OVERLAY ── */
+#mp4-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);
+  display:none;align-items:center;justify-content:center;
+  flex-direction:column;gap:16px;z-index:200;
+}
+#mp4-overlay.on{display:flex;}
+#mp4-bar-wrap{width:320px;height:3px;background:var(--border2);border-radius:2px;}
+#mp4-bar{height:100%;width:0%;background:var(--gold);border-radius:2px;transition:width .2s;}
+#mp4-msg{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+#mp4-logo{font-size:13px;font-weight:700;letter-spacing:4px;color:var(--gold);}
+
+/* ── LAYOUT ── */
+#main{display:flex;height:calc(100vh - 40px);}
+
+/* ── CANVAS ── */
+#canvas-wrap{flex:1;position:relative;background:#000;overflow:hidden;}
+#canvas-wrap canvas{display:block;width:100%!important;height:100%!important;}
+#hud{position:absolute;top:16px;left:16px;pointer-events:none;z-index:5;}
+#hud-title{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;}
+#hud-desc{font-size:9px;color:var(--muted2);max-width:260px;line-height:1.5;}
+#hud-bot{position:absolute;bottom:16px;left:16px;font-size:9px;color:var(--muted);pointer-events:none;z-index:5;display:flex;gap:10px;}
+#hud-bot .hv{color:var(--gold);font-weight:700;}
+#drop-overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);border:2px dashed var(--gold);display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:100;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+#drop-overlay.on{display:flex;}
+
+/* ── SIDEBAR ── */
+#sidebar{width:420px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+#tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+.tab{flex:1;padding:10px 2px;text-align:center;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:var(--font);}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+#panels{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.panel{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+.panel.active{display:flex;}
+
+/* ── CÓDIGO PANEL ── */
+.edhdr{height:32px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--surface2);flex-shrink:0;}
+.edhdr .lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+.edhdr .hint{font-size:9px;color:var(--border2);}
+.edhdr .hint kbd{background:var(--border2);color:var(--muted2);padding:1px 5px;border-radius:2px;font-family:var(--font);}
+#monaco-wrap{flex:1;min-height:0;}
+#error-bar{border-top:1px solid rgba(224,80,80,.3);padding:8px 14px;font-size:10px;color:var(--red);display:none;flex-shrink:0;line-height:1.4;background:rgba(224,80,80,.05);}
+#error-bar.on{display:block;}
+
+/* ── PRESETS PANEL ── */
+#panel-presets{overflow-y:auto;padding:12px;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;}
+.pcard{background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:12px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden;}
+.pcard::before{content:'';position:absolute;inset:0;background:var(--gold-soft);opacity:0;transition:opacity .15s;}
+.pcard:hover{border-color:var(--gold-dim);}
+.pcard:hover::before{opacity:1;}
+.pcard.ap{border-color:var(--gold);}
+.picon{font-size:18px;margin-bottom:6px;display:block;}
+.pname{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+.pdesc{font-size:9px;color:var(--muted2);margin-top:2px;line-height:1.4;}
+.stitle{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:10px;}
+
+/* ── AI PANEL ── */
+#panel-ai{padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.ailbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+#ai-prompt{background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:var(--font);font-size:12px;padding:10px;border-radius:3px;resize:none;height:80px;outline:none;width:100%;transition:border-color .15s;line-height:1.5;}
+#ai-prompt::placeholder{color:var(--muted);}
+#ai-prompt:focus{border-color:var(--gold-dim);}
+#btn-gen{background:var(--gold);color:#000;border:none;width:100%;padding:8px;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:opacity .15s;}
+#btn-gen:hover{opacity:.85;}#btn-gen:disabled{opacity:.35;cursor:not-allowed;}
+#ai-st{font-size:10px;color:var(--muted2);text-align:center;min-height:16px;display:flex;align-items:center;justify-content:center;gap:5px;}
+#ai-st.ok{color:var(--green);}#ai-st.err{color:var(--red);}
+.spin{width:9px;height:9px;border:1px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:sp .6s linear infinite;display:none;}
+.spin.on{display:inline-block;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.aiex{display:flex;flex-direction:column;gap:5px;}
+.aiexbtn{background:var(--surface2);border:1px solid var(--border);padding:7px 10px;border-radius:3px;cursor:pointer;font-size:10px;color:var(--muted2);transition:border-color .15s,color .15s;text-align:left;font-family:var(--font);}
+.aiexbtn:hover{border-color:var(--gold-dim);color:var(--text);}
+
+/* ── SCANNER PANEL ── */
+#panel-scan{padding:12px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+#drop-zone{border:1px dashed var(--border2);border-radius:3px;padding:24px 14px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column;align-items:center;gap:6px;}
+#drop-zone:hover,#drop-zone.dg{border-color:var(--gold-dim);background:var(--gold-soft);}
+.dicon{font-size:24px;opacity:.35;}
+.dtxt{font-size:10px;color:var(--muted2);letter-spacing:1px;}
+.dtyp{font-size:9px;color:var(--muted);}
+#file-input{display:none;}
+
+/* Preview imagen */
+#img-preview-wrap{display:none;flex-direction:column;gap:6px;}
+#img-preview-wrap.on{display:flex;}
+#img-preview{width:100%;max-height:120px;object-fit:contain;border-radius:2px;border:1px solid var(--border2);background:#000;}
+.prev-label{font-size:9px;color:var(--muted);text-align:center;}
+
+#scan-prog{height:2px;background:var(--border);border-radius:1px;display:none;flex-shrink:0;}
+#scan-prog.on{display:block;}
+#scan-bar{height:100%;background:var(--gold);border-radius:1px;width:0%;transition:width .15s;}
+.scan-info{background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:10px;font-size:10px;color:var(--muted2);display:none;line-height:1.5;}
+.scan-info.on{display:block;}
+
+/* Sliders scanner */
+.sc-controls{display:flex;flex-direction:column;gap:10px;display:none;}
+.sc-controls.on{display:flex;}
+.scrow{display:flex;justify-content:space-between;align-items:center;}
+.sclbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);}
+.scval{font-size:11px;color:var(--gold);font-weight:700;min-width:36px;text-align:right;}
+
+#btn-clear{background:transparent;color:var(--muted2);border:1px solid var(--border2);width:100%;padding:7px;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:border-color .15s,color .15s;display:none;}
+#btn-clear.on{display:block;}
+#btn-clear:hover{border-color:var(--muted2);color:var(--text);}
+
+/* ── CONTROLES DINÁMICOS ── */
+#ctrl-wrap{border-top:1px solid var(--border);padding:10px 14px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;max-height:190px;flex-shrink:0;}
+.chdr{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding-bottom:7px;border-bottom:1px solid var(--border);}
+.cgrp{display:flex;flex-direction:column;gap:6px;}
+.crow{display:flex;justify-content:space-between;align-items:center;}
+.clbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);}
+.cval{font-size:11px;color:var(--gold);font-weight:700;min-width:46px;text-align:right;}
+.rsl{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--border2);border-radius:1px;outline:none;}
+.rsl::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--gold);cursor:pointer;transition:transform .1s,box-shadow .2s;}
+.rsl::-webkit-slider-thumb:hover{transform:scale(1.3);box-shadow:0 0 7px var(--gold-glow);}
+.rsl::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--gold);cursor:pointer;border:none;}
+#cempty{font-size:9px;color:var(--muted);text-align:center;padding:4px 0;}
+
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+#aux-canvas{display:none;}
+</style>
+</head>
+<body>
+
+<!-- ══ INTRO SCREEN ══════════════════════════════════════════ -->
+<div id="intro" onclick="closeIntro()">
+  <div id="intro-particles"></div>
+  <div id="intro-logo">RUBIK <em>SOTA</em></div>
+  <div id="intro-sub">Particles Engine · Silicon Valley 2025</div>
+  <div id="intro-line"></div>
+  <div id="intro-hint">TOCA PARA ENTRAR</div>
+</div>
+
+<div id="topbar">
+  <div class="logo">RUBIK <em>SOTA</em></div>
+  <div class="vsep"></div>
+  <div class="ttag">Particles Engine v5</div>
+  <div class="spacer"></div>
+  <span class="mbadge" id="mbadge">MATH</span>
+  <div class="vsep"></div>
+  <div class="tstat">PART <span class="v" id="st-count">20,000</span></div>
+  <div class="vsep"></div>
+  <div class="tstat">FPS <span class="v" id="st-fps">—</span></div>
+  <div class="vsep"></div>
+  <!-- EXPORT BUTTONS -->
+  <button class="xbtn" id="btn-png" title="Captura PNG del frame actual">⬇ PNG</button>
+  <button class="xbtn" id="btn-png4k" title="Render 4K y descarga PNG de alta resolución">⬇ 4K</button>
+  <button class="xbtn rec" id="btn-webm" title="Iniciar/Detener grabación WebM">⏺ REC</button>
+  <button class="xbtn mp4" id="btn-mp4" title="Convertir última grabación a MP4" disabled>⬇ MP4</button>
+  <div class="vsep"></div>
+  <button id="btn-run">▶ EJECUTAR</button>
+</div>
+
+
+
+<!-- MP4 conversion overlay -->
+<div id="mp4-overlay">
+  <div id="mp4-logo">RUBIK <span style="color:#fff">SOTA</span></div>
+  <div id="mp4-msg">CONVIRTIENDO A MP4...</div>
+  <div id="mp4-bar-wrap"><div id="mp4-bar"></div></div>
+  <div style="font-size:9px;color:var(--muted);letter-spacing:1px;">Procesando en el navegador · No cierres la ventana</div>
+</div>
+
+<div id="main">
+  <div id="canvas-wrap">
+    <!-- Recording indicator -->
+    <div id="rec-status"><div id="rec-dot"></div><span>GRABANDO</span><span id="rec-timer">0:00</span></div>
+    <div id="drop-overlay" class="">
+      <span style="font-size:28px">⬇</span>
+      <span>SOLTAR PARA ESCANEAR</span>
+    </div>
+    <div id="hud">
+      <div id="hud-title">—</div>
+      <div id="hud-desc">—</div>
+    </div>
+    <div id="hud-bot">
+      <span>FPS <span class="hv" id="fps-val">—</span></span>
+      <span>·</span>
+      <span><span class="hv" id="part-val">20,000</span> partículas</span>
+      <span>·</span>
+      <span style="color:var(--gold)" id="mode-lbl">MATH MODE</span>
+    </div>
+  </div>
+
+  <div id="sidebar">
+    <div id="tabs">
+      <button class="tab active" data-tab="code">// CÓDIGO</button>
+      <button class="tab" data-tab="presets">◈ PRESETS</button>
+      <button class="tab" data-tab="ai">✦ IA</button>
+      <button class="tab" data-tab="scan">⬆ SCANNER</button>
+      <button class="tab" data-tab="proj">⊡ PROYECTOS</button>
+    </div>
+
+    <div id="panels">
+
+      <!-- CÓDIGO -->
+      <div class="panel active" id="panel-code">
+        <div class="edhdr">
+          <span class="lbl">// función de partículas</span>
+          <span class="hint"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> ejecutar</span>
+        </div>
+        <div id="monaco-wrap"></div>
+        <div id="error-bar"></div>
+      </div>
+
+      <!-- PRESETS -->
+      <div class="panel" id="panel-presets">
+        <div class="pgrid" id="pgrid" style="margin-top:0;padding-top:0;"></div>
+      </div>
+
+      <!-- AI -->
+      <div class="panel" id="panel-ai">
+        <div class="stitle" style="margin-top:0">GENERACIÓN TEXT-TO-SHAPE</div>
+        <div><div class="ailbl" style="margin-bottom:6px">DESCRIBE LA FORMA</div>
+        <textarea id="ai-prompt" placeholder="Ej: Un huracán colapsando en un agujero negro..."></textarea></div>
+        <button id="btn-gen">✦ GENERAR CON CLAUDE</button>
+        <div id="ai-st"><span class="spin" id="ai-spin"></span><span id="ai-msg"></span></div>
+        <div><div class="ailbl" style="margin-bottom:6px">EJEMPLOS</div>
+        <div class="aiex" id="aiex"></div></div>
+      </div>
+
+      <!-- SCANNER -->
+      <div class="panel" id="panel-scan">
+        <div class="stitle" style="margin-top:0">ESCÁNER HD — IMAGEN Y MODELOS 3D</div>
+
+        <!-- Preview -->
+        <div id="img-preview-wrap">
+          <img id="img-preview" src="" alt="preview"/>
+          <div class="prev-label" id="prev-label">—</div>
+        </div>
+
+        <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <div class="dicon">📁</div>
+          <div class="dtxt">ARRASTRA O PULSA PARA SUBIR</div>
+          <div class="dtyp">.PNG · .JPG · .OBJ</div>
+        </div>
+        <input type="file" id="file-input" accept=".png,.jpg,.jpeg,.obj"/>
+
+        <div id="scan-prog"><div id="scan-bar"></div></div>
+        <div class="scan-info" id="scan-info"></div>
+
+        <!-- Sliders -->
+        <div class="sc-controls" id="sc-controls">
+          <div class="scrow"><span class="sclbl">TAMAÑO PARTÍCULA</span><span class="scval" id="v-psize">3.0</span>px</div>
+          <input type="range" class="rsl" id="sl-psize" min="1" max="8" value="3" step="0.5"/>
+          <div class="scrow"><span class="sclbl">PROFUNDIDAD Z</span><span class="scval" id="v-depth">30</span></div>
+          <input type="range" class="rsl" id="sl-depth" min="0" max="120" value="30" step="1"/>
+          <div class="scrow"><span class="sclbl">BORDES (Sobel)</span><span class="scval" id="v-edge">40</span>%</div>
+          <input type="range" class="rsl" id="sl-edge" min="0" max="100" value="40" step="1"/>
+          <div class="scrow"><span class="sclbl">MORPH SPEED</span><span class="scval" id="v-morph">5</span></div>
+          <input type="range" class="rsl" id="sl-morph" min="1" max="20" value="5" step="1"/>
+          <div class="scrow"><span class="sclbl">GLOW / HALO</span><span class="scval" id="v-glow">50</span>%</div>
+          <input type="range" class="rsl" id="sl-glow" min="0" max="100" value="50" step="1"/>
+          <div class="scrow"><span class="sclbl">DISPERSIÓN</span><span class="scval" id="v-scatter">0</span></div>
+          <input type="range" class="rsl" id="sl-scatter" min="0" max="15" value="0" step="0.5"/>
+        </div>
+
+
+        <!-- ── PALETA DE COLOR ────────────────────────────── -->
+        <div class="sc-controls on" id="pal-controls" style="display:none">
+          <div class="pal-title">PALETA DE COLOR</div>
+          <div class="pal-row" id="pal-row">
+            <button class="pal-btn active" data-pal="original">ORIG</button>
+            <button class="pal-btn" data-pal="mono">MONO</button>
+            <button class="pal-btn" data-pal="neon">NEON</button>
+            <button class="pal-btn" data-pal="gold">GOLD</button>
+            <button class="pal-btn" data-pal="duo">DUO</button>
+            <button class="pal-btn" data-pal="heat">HEAT</button>
+          </div>
+          <button id="pal-anim-btn">◎ ANIMACIÓN Z — OFF</button>
+        </div>
+
+        <!-- ── PRESETS DE IMAGEN ──────────────────────────── -->
+        <div class="img-presets-wrap" id="img-presets-wrap">
+          <div class="img-presets-title">CARGAR FORMA</div>
+          <div class="img-presets-grid" id="img-preset-grid"></div>
+        </div>
+
+        <button id="btn-clear">✕ VOLVER A MODO MATEMÁTICO</button>
+      </div>
+
+
+      <!-- PROYECTOS -->
+      <div class="panel" id="panel-proj">
+        <div class="stitle" style="margin-top:0">PROYECTOS GUARDADOS</div>
+
+        <!-- Buscar -->
+        <input class="proj-search" id="proj-search" type="text" placeholder="Buscar proyecto..."/>
+
+        <!-- Lista -->
+        <div class="proj-list" id="proj-list">
+          <div class="proj-empty" id="proj-empty">Sin proyectos guardados.<br/>Guarda tu primer proyecto abajo.</div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="proj-actions">
+          <button class="proj-save-btn" id="btn-save-proj">⊕ GUARDAR PROYECTO ACTUAL</button>
+          <button class="proj-save-btn sec" id="btn-share" title="Compartir vía URL">⬆</button>
+        </div>
+
+        <div class="stitle">INTEGRACIÓN API</div>
+        <div class="api-box">
+          Integra el motor de partículas en cualquier web de cliente con un iframe o script.
+          <pre id="api-embed-code">&lt;!-- RUBIK SOTA Particles Engine --&gt;
+&lt;iframe
+  src="CURRENT_URL"
+  width="100%" height="600"
+  frameborder="0"
+  allow="camera; microphone"&gt;
+&lt;/iframe&gt;</pre>
+          <button class="api-copy-btn" id="btn-copy-embed">⎘ COPIAR CÓDIGO EMBED</button>
+        </div>
+
+        <div class="stitle">COMPARTIR ESTADO</div>
+        <div class="api-box">
+          Genera un enlace que codifica el modo, código actual y parámetros del scanner para compartir exactamente lo que estás viendo.
+        </div>
+        <button class="proj-save-btn" style="background:transparent;border:1px solid var(--border2);color:var(--muted2);" id="btn-gen-share">⬡ GENERAR ENLACE COMPARTIBLE</button>
+
+      </div>
+
+    </div><!-- /panels -->
+
+    <div id="ctrl-wrap">
+      <div class="chdr">CONTROLES DINÁMICOS</div>
+      <div id="ctrl-list"></div>
+      <div id="cempty">Usa addControl("id","Label",min,max,val)</div>
+    </div>
+
+  </div><!-- /sidebar -->
+</div><!-- /main -->
+
+<!-- ══ SHARE MODAL ════════════════════════════════════════════ -->
+<div id="share-modal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="share-box">
+    <div class="share-title">⬡ ENLACE COMPARTIBLE</div>
+    <div style="font-size:9px;color:var(--muted2);letter-spacing:1px;">
+      Este enlace codifica el estado actual: modo, código y parámetros.
+      Quien lo abra verá exactamente lo mismo.
+    </div>
+    <div class="share-url" id="share-url-display">Generando...</div>
+    <div class="share-copied" id="share-copied"></div>
+    <div class="share-actions">
+      <button class="share-btn" onclick="document.getElementById('share-modal').classList.remove('on')">CERRAR</button>
+      <button class="share-btn primary" id="btn-copy-share">⎘ COPIAR ENLACE</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="aux-canvas"></canvas>
+
+<script>var require={paths:{vs:'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs'}};</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.nls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   RUBIK SOTA — PARTICLES ENGINE v4
+   Motor DUAL:
+   · MATH MODE → InstancedMesh 20K partículas (matemáticas, presets, IA)
+   · DATA MODE → THREE.Points  50K partículas (imagen HD, modelos 3D)
+   
+   Image Scanner HD:
+   · Full-res sin downscale
+   · Sobel edge detection
+   · Muestreo estratificado ponderado
+   · Tamaño de punto configurable (1-8px)
+   · Recompute en vivo con sliders
+═══════════════════════════════════════════════════════════════ */
+
+const MATH_COUNT = 20000;
+const DATA_COUNT = 100000;
+
+/* ── ESTADO GLOBAL ── */
+const G = {
+  mode:        'MATH',
+  compiledFn:  null,
+  error:       null,
+  controls:    {},
+  hudTitle:    '—',
+  hudDesc:     '—',
+
+  // DATA mode buffers — Float32Array para XYZ y RGB
+  targetPos:   new Float32Array(DATA_COUNT * 3),
+  currentPos:  new Float32Array(DATA_COUNT * 3),
+  targetCol:   new Float32Array(DATA_COUNT * 3),
+  currentCol:  new Float32Array(DATA_COUNT * 3),
+
+  // Parámetros scanner (sync con sliders)
+  ptSize:      3.0,
+  glowIntensity: 0.5,
+  scanDepth:   30,
+  edgeFrac:    0.40,
+  morphSpeed:  0.10,
+  palette:     'original', // original|mono|neon|gold|duo|heat
+  animZ:       false,      // animación Z respiración
+  animZTime:   0,          // tiempo acumulado para animZ
+  scanScatter: 0,
+
+  _cache:      null,   // cache imageData para recompute
+};
+
+/* ── SEGURIDAD ── */
+const FORBIDDEN = ['document','window','fetch','XMLHttpRequest','WebSocket',
+  'eval','Function(','import(','require(','process','__proto__','.prototype',
+  'globalThis','self','location','navigator','localStorage','sessionStorage',
+  'indexedDB','crypto','setTimeout','setInterval','alert(','confirm(','prompt('];
+function isSafe(c){ return !FORBIDDEN.some(p => c.includes(p)); }
+
+/* ── COMPILADOR ── */
+function compileCode(code) {
+  try {
+    if (!isSafe(code)) throw new Error('Patrón prohibido detectado.');
+    // eslint-disable-next-line no-new-func
+    G.compiledFn = new Function('i','count','target','color','time','THREE','addControl','setInfo','annotate', code);
+    G.error = null;
+    showError(null);
+  } catch(e) { G.compiledFn = null; G.error = e.message; showError(e.message); }
+}
+function showError(msg) {
+  const b = document.getElementById('error-bar');
+  if (msg) { b.textContent='⚠ '+msg; b.classList.add('on'); }
+  else      { b.textContent=''; b.classList.remove('on'); }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THREE.JS — MOTOR DUAL
+═══════════════════════════════════════════════════════════════ */
+let scene, camera, renderer, clock;
+
+// MATH motor
+let mathMesh, mathDummy, mathTarget, mathColor;
+
+// DATA motor
+let dataMesh, dataPosAttr, dataColAttr;
+let dataGeo, dataMat;
+
+function initThree() {
+  const wrap = document.getElementById('canvas-wrap');
+  scene  = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  camera = new THREE.PerspectiveCamera(60, wrap.clientWidth/wrap.clientHeight, 0.1, 10000);
+  camera.position.set(0, 0, 120);
+  renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  wrap.appendChild(renderer.domElement);
+  clock = new THREE.Clock();
+
+  /* ── MATH: InstancedMesh 20K ── */
+  const geoM = new THREE.PlaneGeometry(0.22, 0.22);
+  const matM = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, toneMapped: false });
+  mathMesh  = new THREE.InstancedMesh(geoM, matM, MATH_COUNT);
+  mathMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  mathMesh.visible = true;
+  scene.add(mathMesh);
+  mathDummy  = new THREE.Object3D();
+  mathTarget = new THREE.Vector3();
+  mathColor  = new THREE.Color();
+
+  /* ── DATA: THREE.Points 100K — motor reconstruido ── */
+  dataGeo = new THREE.BufferGeometry();
+
+  // Buffers Float32Array — zero copy, DynamicDrawUsage para GPU
+  const posArr = new Float32Array(DATA_COUNT * 3);
+  const colArr = new Float32Array(DATA_COUNT * 3).fill(1);
+  dataPosAttr = new THREE.BufferAttribute(posArr, 3);
+  dataColAttr = new THREE.BufferAttribute(colArr, 3);
+  dataPosAttr.setUsage(THREE.DynamicDrawUsage);
+  dataColAttr.setUsage(THREE.DynamicDrawUsage);
+
+  // CRÍTICO: atributo 'aColor' (NO 'color') para evitar
+  // conflicto con built-in de Three.js en ShaderMaterial
+  dataGeo.setAttribute('position', dataPosAttr);
+  dataGeo.setAttribute('aColor',   dataColAttr);
+
+  // ShaderMaterial: puntos circulares con glow suave
+  // Probado y verificado en Three.js r128
+  dataMat = new THREE.ShaderMaterial({
+    uniforms: {
+      uSize: { value: G.ptSize },
+      uGlow: { value: G.glowIntensity },
+    },
+    vertexShader: [
+      'attribute vec3 aColor;',      // nombre propio, sin conflicto
+      'varying   vec3 vColor;',
+      'uniform   float uSize;',
+      'void main(){',
+      '  vColor      = aColor;',
+      '  vec4 mvPos  = modelViewMatrix * vec4(position,1.0);',
+      '  gl_PointSize = uSize;',
+      '  gl_Position  = projectionMatrix * mvPos;',
+      '}'
+    ].join('\n'),
+    fragmentShader: [
+      'varying vec3  vColor;',
+      'uniform float uGlow;',
+      'void main(){',
+      '  vec2  uv   = gl_PointCoord - vec2(0.5);',
+      '  float dist = length(uv) * 2.0;',
+      '  if(dist > 1.0) discard;',
+      // glow: clamp seguro (nunca smoothstep(x,x,d) con x==x)
+      '  float edge  = clamp(1.0 - uGlow * 0.9, 0.05, 0.95);',
+      '  float alpha = 1.0 - smoothstep(edge, 1.0, dist);',
+      // Luminancia mínima 0.18 para que píxeles oscuros sean visibles
+      '  vec3  col   = max(vColor, vec3(0.18));',
+      '  gl_FragColor = vec4(col, alpha);',
+      '}'
+    ].join('\n'),
+    transparent:  true,
+    depthWrite:   false,
+    vertexColors: false,          // false: gestionamos color via aColor manual
+  });
+
+  dataMesh = new THREE.Points(dataGeo, dataMat);
+  dataMesh.visible = false;
+  scene.add(dataMesh);
+
+  initOrbit(wrap);
+  window.addEventListener('resize', () => {
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight);
+  });
+}
+
+/* ── ORBIT CONTROLS ── */
+function initOrbit(el) {
+  let drag=false, px=0, py=0;
+  const s={theta:0, phi:Math.PI/2, r:120};
+  function apply(){
+    const sp=Math.sin(s.phi);
+    camera.position.set(s.r*sp*Math.sin(s.theta), s.r*Math.cos(s.phi), s.r*sp*Math.cos(s.theta));
+    camera.lookAt(0,0,0);
+  }
+  el.addEventListener('mousedown', e=>{drag=true;px=e.clientX;py=e.clientY;});
+  window.addEventListener('mouseup',()=>{drag=false;});
+  window.addEventListener('mousemove', e=>{
+    if(!drag)return;
+    s.theta-=(e.clientX-px)*0.005;
+    s.phi=Math.max(0.05,Math.min(Math.PI-0.05,s.phi+(e.clientY-py)*0.005));
+    px=e.clientX;py=e.clientY;apply();
+  });
+  el.addEventListener('wheel', e=>{s.r=Math.max(20,Math.min(800,s.r+e.deltaY*0.15));apply();},{passive:true});
+  let ltd=0;
+  el.addEventListener('touchstart', e=>{
+    if(e.touches.length===1){drag=true;px=e.touches[0].clientX;py=e.touches[0].clientY;}
+    if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;ltd=Math.sqrt(dx*dx+dy*dy);}
+  });
+  el.addEventListener('touchend',()=>{drag=false;});
+  el.addEventListener('touchmove', e=>{
+    if(e.touches.length===1&&drag){s.theta-=(e.touches[0].clientX-px)*0.005;s.phi=Math.max(0.05,Math.min(Math.PI-0.05,s.phi+(e.touches[0].clientY-py)*0.005));px=e.touches[0].clientX;py=e.touches[0].clientY;apply();}
+    if(e.touches.length===2){const dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;const d=Math.sqrt(dx*dx+dy*dy);s.r=Math.max(20,Math.min(800,s.r-(d-ltd)*0.3));ltd=d;apply();}
+  },{passive:true});
+  apply();
+}
+
+/* ── RENDER LOOP ── */
+let _fc=0, _lt=0, _fps=0;
+function renderLoop() {
+  requestAnimationFrame(renderLoop);
+  const t = clock.getElapsedTime();
+  _fc++;
+  if(t-_lt>=0.5){_fps=Math.round(_fc/(t-_lt));_fc=0;_lt=t;
+    document.getElementById('st-fps').textContent=_fps;
+    document.getElementById('fps-val').textContent=_fps;}
+  if(G.mode==='MATH') renderMath(t);
+  else               renderData();
+  renderer.render(scene, camera);
+}
+
+/* ── MATH RENDER ── */
+function renderMath(time) {
+  if(!G.compiledFn) return;
+  const activeIds=[], pending={};
+  let _ht=G.hudTitle, _hd=G.hudDesc;
+  function addControl(id,label,min,max,init){
+    activeIds.push(id);
+    if(G.controls[id]===undefined){pending[id]={label,min,max,value:init};return init;}
+    return G.controls[id].value;
+  }
+  function setInfo(t,d){_ht=t;_hd=d||'';}
+  function annotate(){}
+  // try/catch FUERA del bucle
+  try {
+    for(let idx=0;idx<MATH_COUNT;idx++){
+      mathTarget.set(0,0,0); mathColor.setRGB(1,1,1);
+      G.compiledFn(idx,MATH_COUNT,mathTarget,mathColor,time,THREE,addControl,setInfo,annotate);
+      if(!Number.isFinite(mathTarget.x)||!Number.isFinite(mathTarget.y)||!Number.isFinite(mathTarget.z))
+        mathDummy.position.set(0,0,0);
+      else mathDummy.position.copy(mathTarget);
+      mathDummy.updateMatrix();
+      mathMesh.setMatrixAt(idx,mathDummy.matrix);
+      mathMesh.setColorAt(idx,mathColor);
+    }
+  } catch(e){ G.compiledFn=null; showError('Runtime: '+e.message); return; }
+  mathMesh.instanceMatrix.needsUpdate=true;
+  if(mathMesh.instanceColor) mathMesh.instanceColor.needsUpdate=true;
+  // Sync controles post-frame
+  if(Math.floor(time*2)!==Math.floor((time-1/60)*2)){
+    for(const id in pending){if(!G.controls[id])G.controls[id]=pending[id];}
+    for(const id in G.controls){if(!activeIds.includes(id))delete G.controls[id];}
+    renderCtrlUI();
+  }
+  if(_ht!==G.hudTitle||_hd!==G.hudDesc){
+    G.hudTitle=_ht;G.hudDesc=_hd;
+    document.getElementById('hud-title').textContent=_ht;
+    document.getElementById('hud-desc').textContent=_hd;
+  }
+}
+
+/* ── DATA RENDER (THREE.Points con lerp) ── */
+function renderData() {
+  const spd    = G.morphSpeed;
+  const scat   = G.scanScatter * 0.25;
+  const posArr = dataPosAttr.array;
+  // CRÍTICO: leer de dataColAttr.array (atributo 'aColor' en geometry)
+  const colArr = dataColAttr.array;
+
+  for(let idx=0;idx<DATA_COUNT;idx++){
+    const b=idx*3;
+
+    // ── Lerp posición hacia objetivo ──────────────────────────────────
+    const tx=G.targetPos[b],   ty=G.targetPos[b+1], tz=G.targetPos[b+2];
+    const cx=G.currentPos[b],  cy=G.currentPos[b+1],cz=G.currentPos[b+2];
+    G.currentPos[b]   = cx+(tx-cx)*spd;
+    G.currentPos[b+1] = cy+(ty-cy)*spd;
+    G.currentPos[b+2] = cz+(tz-cz)*spd;
+
+    posArr[b]   = G.currentPos[b]   + (Math.random()-0.5)*scat;
+    posArr[b+1] = G.currentPos[b+1] + (Math.random()-0.5)*scat;
+    posArr[b+2] = G.currentPos[b+2] + (Math.random()-0.5)*scat;
+
+    // ── Lerp color ─────────────────────────────────────────────────────
+    G.currentCol[b]   += (G.targetCol[b]   - G.currentCol[b])  *spd;
+    G.currentCol[b+1] += (G.targetCol[b+1] - G.currentCol[b+1])*spd;
+    G.currentCol[b+2] += (G.targetCol[b+2] - G.currentCol[b+2])*spd;
+
+    // ── Luminancia mínima ──────────────────────────────────────────
+    const r0 = G.currentCol[b],
+          g0 = G.currentCol[b+1],
+          b0 = G.currentCol[b+2];
+    const lumC = r0*0.299 + g0*0.587 + b0*0.114;
+    const boost = lumC < 0.15 ? (0.15 / Math.max(lumC, 0.001)) : 1.0;
+    let fr = Math.min(1, r0*boost),
+        fg = Math.min(1, g0*boost),
+        fb = Math.min(1, b0*boost);
+
+    // ── Paleta de color ────────────────────────────────────────────
+    switch(G.palette){
+      case 'mono':{
+        const lm=fr*0.299+fg*0.587+fb*0.114;
+        fr=fg=fb=Math.max(lm,0.18); break;
+      }
+      case 'neon':{
+        // Ciclo de color por posición → efecto arcoíris neón
+        const hn=(idx/DATA_COUNT+G.animZTime*0.04)%1;
+        const neonCol=new THREE.Color().setHSL(hn,1.0,0.55);
+        fr=neonCol.r; fg=neonCol.g; fb=neonCol.b; break;
+      }
+      case 'gold':{
+        const lg=fr*0.299+fg*0.587+fb*0.114;
+        fr=Math.min(1,lg*1.6*0.831); fg=Math.min(1,lg*1.6*0.686); fb=Math.min(1,lg*1.6*0.216); break;
+      }
+      case 'duo':{
+        // Duotono: azul oscuro → naranja dorado según luminancia
+        const ld=fr*0.299+fg*0.587+fb*0.114;
+        fr=Math.min(1,ld*2.0*0.831); fg=Math.min(1,ld*1.2*0.545); fb=Math.min(1,(1-ld)*0.6*0.686); break;
+      }
+      case 'heat':{
+        const lh=fr*0.299+fg*0.587+fb*0.114;
+        const hc=new THREE.Color().setHSL((1-lh)*0.66,1.0,Math.max(lh,0.18));
+        fr=hc.r; fg=hc.g; fb=hc.b; break;
+      }
+      // 'original': sin cambio
+    }
+
+    colArr[b]   = fr;
+    colArr[b+1] = fg;
+    colArr[b+2] = fb;
+  }
+
+  // ── Animación Z — respiración ──────────────────────────────────
+  if(G.animZ){
+    G.animZTime += 0.016; // ~60fps
+    const posA = dataPosAttr.array;
+    const amp  = 8.0;  // amplitud respiración
+    const freq = 0.4;  // frecuencia
+    for(let idx=0;idx<DATA_COUNT;idx++){
+      const b=idx*3;
+      // Onda suave por índice → efecto ondulante, no uniforme
+      const wave = Math.sin(G.animZTime*freq + idx*0.0003) * amp;
+      posA[b+2] = G.currentPos[b+2] + wave;
+    }
+  }
+
+  dataPosAttr.needsUpdate = true;
+  dataColAttr.needsUpdate  = true;
+}
+
+/* ── MODE SWITCH ── */
+function toMath() {
+  G.mode='MATH';
+  mathMesh.visible=true; dataMesh.visible=false;
+  document.getElementById('mbadge').textContent='MATH';
+  document.getElementById('mbadge').classList.remove('data');
+  document.getElementById('mode-lbl').textContent='MATH MODE';
+  document.getElementById('st-count').textContent='20,000';
+  document.getElementById('part-val').textContent='20,000';
+  document.getElementById('ctrl-wrap').style.display='';
+}
+function toData() {
+  G.mode='DATA';
+  mathMesh.visible=false; dataMesh.visible=true;
+  document.getElementById('mbadge').textContent='DATA';
+  document.getElementById('mbadge').classList.add('data');
+  document.getElementById('mode-lbl').textContent='DATA MODE · HD';
+  document.getElementById('st-count').textContent='100,000';
+  document.getElementById('part-val').textContent='100,000';
+  document.getElementById('ctrl-wrap').style.display='none';
+}
+function setHUD(t,d){
+  G.hudTitle=t;G.hudDesc=d;
+  document.getElementById('hud-title').textContent=t;
+  document.getElementById('hud-desc').textContent=d;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMAGE SCANNER HD
+   Fixes aplicados:
+   1. Full-res (cap 1400px) — sin downscale brutal
+   2. Sobel edge detection real
+   3. Muestreo estratificado ponderado (uniform + edge budget)
+   4. Buffers planos Float32Array/Int32Array — zero GC
+   5. Jitter calibrado (≤25% tamaño pixel)
+   6. Tamaño de punto configurable vía PointsMaterial.size
+═══════════════════════════════════════════════════════════════ */
+function scanImage(file) {
+  setProgress(0, true);
+  setScanInfo(`Cargando: <strong>${file.name}</strong>...`);
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // Preview en el panel
+      const pw = document.getElementById('img-preview-wrap');
+      const pi = document.getElementById('img-preview');
+      const pl = document.getElementById('prev-label');
+      pi.src = ev.target.result;
+      pl.textContent = `${img.width}×${img.height}px · ${file.name}`;
+      pw.classList.add('on');
+
+      const auxC = document.getElementById('aux-canvas');
+      // Full-res hasta 1400px — preserva bordes y detalles
+      const MAX = 1400;
+      const sf  = Math.min(MAX/img.width, MAX/img.height, 1);
+      auxC.width  = Math.round(img.width  * sf);
+      auxC.height = Math.round(img.height * sf);
+      const ctx = auxC.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0, auxC.width, auxC.height);
+
+      setProgress(20);
+      const idata = ctx.getImageData(0, 0, auxC.width, auxC.height);
+      G._cache = { type:'image', idata, w:auxC.width, h:auxC.height };
+
+      setProgress(50);
+      computeHD(idata, auxC.width, auxC.height);
+      setProgress(100);
+
+      const mp = ((auxC.width*auxC.height)/1e6).toFixed(2);
+      setScanInfo(`<strong>${file.name}</strong> · ${auxC.width}×${auxC.height}px · ${mp}Mpx → <strong style="color:var(--gold)">${DATA_COUNT.toLocaleString()} partículas HD</strong>`);
+      showScanControls(true);
+      toData();
+      setHUD('Image Scanner · HD', `${file.name} · ${DATA_COUNT.toLocaleString()} pts`);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function computeHD(imageData, w, h) {
+  const px  = imageData.data;  // Uint8ClampedArray lectura directa
+  const tot = w * h;
+
+  /* PASO 1: Luminancia — Float32Array plano, sin objetos */
+  const lum = new Float32Array(tot);
+  for(let i=0;i<tot;i++){
+    const a=px[i*4+3];
+    lum[i] = a<15 ? -1 : (px[i*4]*0.299 + px[i*4+1]*0.587 + px[i*4+2]*0.114) / 255;
+  }
+
+  /* PASO 2: Gradiente Sobel — bordes de silueta y detalle */
+  const grad = new Float32Array(tot);
+  for(let y=1;y<h-1;y++){
+    for(let x=1;x<w-1;x++){
+      const c=y*w+x;
+      if(lum[c]<0) continue;
+      const tl=lum[(y-1)*w+(x-1)], tc=lum[(y-1)*w+x], tr=lum[(y-1)*w+(x+1)];
+      const ml=lum[y*w+(x-1)],                         mr=lum[y*w+(x+1)];
+      const bl=lum[(y+1)*w+(x-1)], bc=lum[(y+1)*w+x], br=lum[(y+1)*w+(x+1)];
+      const gx=-tl-2*ml-bl+tr+2*mr+br;
+      const gy=-tl-2*tc-tr+bl+2*bc+br;
+      grad[c]=Math.sqrt(gx*gx+gy*gy);
+    }
+  }
+
+  /* PASO 3: Índices válidos — Int32Array sin objetos */
+  let vc=0;
+  for(let i=0;i<tot;i++){if(lum[i]>=0)vc++;}
+  if(vc===0){setScanInfo('Sin píxeles opacos en la imagen.');return;}
+  const vIdx=new Int32Array(vc);
+  let vi=0;
+  for(let i=0;i<tot;i++){if(lum[i]>=0)vIdx[vi++]=i;}
+
+  /* PASO 4: Muestreo estratificado dual (uniform + edge) */
+  const ef = Math.max(0,Math.min(1,G.edgeFrac));
+  const budU = Math.floor(DATA_COUNT*(1-ef));
+  const budE = DATA_COUNT-budU;
+  const chosen = new Int32Array(DATA_COUNT);
+  let cc=0;
+
+  // Uniform: stride con micro-jitter de índice
+  const strU=Math.max(1,Math.floor(vc/budU));
+  for(let k=0;k<budU&&cc<budU;k++){
+    const base=k*strU;
+    const ji=Math.floor(Math.random()*Math.min(strU,vc-base));
+    chosen[cc++]=vIdx[Math.min(base+ji,vc-1)];
+  }
+
+  // Edge: píxeles con gradiente alto
+  let maxG=0;
+  for(let k=0;k<vc;k++){const g=grad[vIdx[k]];if(g>maxG)maxG=g;}
+  const thresh=maxG*(1-ef*0.85);
+  let ec=0;
+  for(let k=0;k<vc;k++){if(grad[vIdx[k]]>=thresh)ec++;}
+  const strE=Math.max(1,Math.floor(ec/(budE+1)));
+  let es=0,seen=0;
+  for(let k=0;k<vc&&cc<DATA_COUNT;k++){
+    if(grad[vIdx[k]]>=thresh){
+      if(seen%strE===0)chosen[cc++]=vIdx[k];
+      seen++;
+    }
+  }
+  // Relleno si faltan
+  let fk=0;
+  while(cc<DATA_COUNT){chosen[cc++]=vIdx[fk%vc];fk++;}
+
+  /* PASO 5: Auto-detección de fondo + escritura de buffers */
+
+  // Analizar 4 esquinas para detectar tono de fondo
+  // Si fondo claro (>0.6) → invertir Z para que sujeto salga hacia el espectador
+  const corners = [0, w-1, (h-1)*w, (h-1)*w+(w-1)];
+  let sumLum=0, nc=0;
+  corners.forEach(ci=>{ if(lum[ci]>=0){sumLum+=lum[ci];nc++;} });
+  const bgIsLight = nc>0 && (sumLum/nc)>0.6;
+  const zSign = bgIsLight ? -1 : 1;
+
+  const halfW=w/2, halfH=h/2;
+  const scXY=130/Math.max(w,h);
+  const jMax=scXY*0.15; // jitter calibrado: ≤15% tamaño pixel
+
+  for(let idx=0;idx<DATA_COUNT;idx++){
+    const pi=chosen[idx];
+    const b3=idx*3;
+    const ix=pi%w, iy=Math.floor(pi/w);
+    const p4=pi*4;
+    const lumV=lum[pi];
+
+    // Z adaptativo: fondo detectado determina orientación
+    const zD = zSign * (0.5-lumV) * G.scanDepth;
+
+    G.targetPos[b3]   = (ix-halfW)*scXY + (Math.random()-0.5)*jMax;
+    G.targetPos[b3+1] = -(iy-halfH)*scXY + (Math.random()-0.5)*jMax;
+    G.targetPos[b3+2] = zD;
+
+    // Color original del pixel
+    G.targetCol[b3]   = px[p4]   / 255;
+    G.targetCol[b3+1] = px[p4+1] / 255;
+    G.targetCol[b3+2] = px[p4+2] / 255;
+  }
+
+  // ── FIX ENSAMBLAJE: init currentPos disperso calibrado ──────────────────
+  // Dispersión 15 unidades → con morphSpeed 0.10 ensambla en ~4 segundos (visual bonito)
+  // NO 60 unidades que tardaba 20s
+  for(let k=0;k<DATA_COUNT*3;k++){
+    G.currentPos[k] = G.targetPos[k] + (Math.random()-0.5)*15;
+    G.currentCol[k] = 0;  // negro → lerp al color real
+  }
+}
+
+function recompute(){
+  if(!G._cache)return;
+  const d=G._cache;
+  if(d.type==='image') computeHD(d.idata, d.w, d.h);
+}
+
+/* ── OBJ SCANNER ── */
+function scanOBJ(file) {
+  setProgress(0,true);
+  setScanInfo(`Cargando modelo: <strong>${file.name}</strong>...`);
+  G._cache=null;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    setProgress(40);
+    try{
+      const loader=new THREE.OBJLoader();
+      const group=loader.parse(ev.target.result);
+      let geo=null;
+      group.traverse(c=>{if(c.isMesh&&!geo)geo=c.geometry;});
+      if(!geo) throw new Error('Sin geometría en el OBJ.');
+      setProgress(70);
+      const tm=new THREE.Mesh(geo,new THREE.MeshBasicMaterial());
+      const sampler=new THREE.MeshSurfaceSampler(tm).build();
+      const sp=new THREE.Vector3();
+      geo.computeBoundingBox();
+      const bb=geo.boundingBox;
+      const cen=new THREE.Vector3(); bb.getCenter(cen);
+      const sz=new THREE.Vector3();  bb.getSize(sz);
+      const ns=80/(Math.max(sz.x,sz.y,sz.z)||1);
+      for(let idx=0;idx<DATA_COUNT;idx++){
+        sampler.sample(sp);
+        const b3=idx*3;
+        G.targetPos[b3]  =(sp.x-cen.x)*ns;
+        G.targetPos[b3+1]=(sp.y-cen.y)*ns;
+        G.targetPos[b3+2]=(sp.z-cen.z)*ns;
+        const tf=(sp.y-bb.min.y)/(sz.y||1);
+        mathColor.setHSL(0.55+tf*0.35,0.85,0.55);
+        G.targetCol[b3]  =mathColor.r;
+        G.targetCol[b3+1]=mathColor.g;
+        G.targetCol[b3+2]=mathColor.b;
+      }
+      setProgress(100);
+      setScanInfo(`<strong>${file.name}</strong> · ${DATA_COUNT.toLocaleString()} puntos en superficie`);
+      showScanControls(false);
+      toData();
+      setHUD('3D Scanner',file.name);
+    }catch(e){setScanInfo('Error OBJ: '+e.message);setProgress(0,false);}
+  };
+  reader.readAsText(file);
+}
+
+/* ── SCANNER UI HELPERS ── */
+function setProgress(pct,show){
+  const b=document.getElementById('scan-prog');
+  const i=document.getElementById('scan-bar');
+  if(show!==undefined) b.className=show?'on':'';
+  i.style.width=pct+'%';
+  if(pct>=100) setTimeout(()=>b.classList.remove('on'),700);
+}
+function setScanInfo(html){
+  const el=document.getElementById('scan-info');
+  el.innerHTML=html; el.classList.add('on');
+}
+function showScanControls(withDepth){
+  document.getElementById('sc-controls').classList.add('on');
+  document.getElementById('btn-clear').classList.add('on');
+  document.getElementById('btn-clear').style.display='block';
+  showPaletteControls(true);
+}
+
+/* ── INIT SCANNER ── */
+function initScanner(){
+  const dz=document.getElementById('drop-zone');
+  const fi=document.getElementById('file-input');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dg');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dg'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dg');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+  fi.addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
+  const cw=document.getElementById('canvas-wrap');
+  const ov=document.getElementById('drop-overlay');
+  cw.addEventListener('dragover',e=>{e.preventDefault();ov.classList.add('on');});
+  cw.addEventListener('dragleave',()=>ov.classList.remove('on'));
+  cw.addEventListener('drop',e=>{e.preventDefault();ov.classList.remove('on');if(e.dataTransfer.files[0]){handleFile(e.dataTransfer.files[0]);switchTab('scan');}});
+
+  // Sliders con recompute en vivo
+  function sl(id,valId,prop,divide,doRecompute){
+    document.getElementById(id).addEventListener('input',e=>{
+      const v=parseFloat(e.target.value);
+      G[prop]=divide?v/divide:v;
+      document.getElementById(valId).textContent=divide?v.toFixed(divide===100?0:1):v;
+      if(doRecompute&&G.mode==='DATA'&&G._cache) recompute();
+      if(prop==='ptSize'){ if(dataMat.uniforms) dataMat.uniforms.uSize.value=G.ptSize; else dataMat.size=G.ptSize; }
+    });
+  }
+  sl('sl-psize','v-psize','ptSize',false,false);
+  sl('sl-depth','v-depth','scanDepth',false,true);
+  sl('sl-edge','v-edge','edgeFrac',100,true);
+  sl('sl-morph','v-morph','morphSpeed',100,false);
+  // Slider GLOW: actualiza uniform uGlow del shader
+  document.getElementById('sl-glow').addEventListener('input', e => {
+    G.glowIntensity = parseFloat(e.target.value)/100;
+    document.getElementById('v-glow').textContent = e.target.value;
+    if(dataMat.uniforms) dataMat.uniforms.uGlow.value = G.glowIntensity;
+  });
+  sl('sl-scatter','v-scatter','scanScatter',false,false);
+
+  document.getElementById('btn-clear').addEventListener('click',()=>{
+    G._cache   = null;
+    G.animZ    = false;
+    G.animZTime= 0;
+    G.palette  = 'original';
+    toMath();
+    document.getElementById('scan-info').classList.remove('on');
+    document.getElementById('sc-controls').classList.remove('on');
+    document.getElementById('btn-clear').style.display='none';
+    document.getElementById('img-preview-wrap').classList.remove('on');
+    showPaletteControls(false);
+    // Reset UI paleta
+    document.querySelectorAll('.pal-btn').forEach(b=>b.classList.toggle('active',b.dataset.pal==='original'));
+    const ab=document.getElementById('pal-anim-btn');
+    ab.classList.remove('active');
+    ab.textContent='◎ ANIMACIÓN Z — OFF';
+    setProgress(0,false);
+    setHUD('—','—');
+  });
+}
+
+function handleFile(file){
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(['png','jpg','jpeg'].includes(ext)) scanImage(file);
+  else if(ext==='obj') scanOBJ(file);
+  else setScanInfo('Formato no soportado. Usa .PNG .JPG .OBJ');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRESETS
+═══════════════════════════════════════════════════════════════ */
+const PRESETS=[
+  {id:'fibonacci',icon:'🌀',name:'Fibonacci',desc:'Esfera distribución áurea',
+   code:`const scale=addControl("scale","Escala",10,120,55);
+const speed=addControl("speed","Velocidad",0.1,4,0.8);
+const t=time*speed,n=i/count;
+const phi=Math.acos(1.0-2.0*n);
+const theta=Math.PI*(1.0+Math.sqrt(5.0))*i;
+target.set(scale*Math.sin(phi)*Math.cos(theta+t*0.3),scale*Math.sin(phi)*Math.sin(theta+t*0.3),scale*Math.cos(phi));
+color.setHSL((n+t*0.05)%1.0,0.9,0.55);
+if(i===0)setInfo("Esfera Fibonacci","Distribución áurea sobre superficie esférica");`},
+  {id:'lorenz',icon:'🦋',name:'Lorenz',desc:'Atractor caótico clásico',
+   code:`const scale=addControl("scale","Escala",0.5,4,1.8);
+const speed=addControl("speed","Velocidad",0.01,0.2,0.06);
+const sigma=10,rho=28,beta=8/3,n=i/count;
+let lx=Math.sin(n*137.5)*10,ly=Math.cos(n*137.5)*10,lz=20+n*10;
+for(let s=0;s<80+Math.floor(n*120);s++){const dx=sigma*(ly-lx),dy=lx*(rho-lz)-ly,dz=lx*ly-beta*lz;lx+=dx*speed;ly+=dy*speed;lz+=dz*speed;}
+target.set(lx*scale,ly*scale,(lz-25)*scale);
+color.setHSL((n+time*0.03)%1.0,1.0,0.55);
+if(i===0)setInfo("Atractor de Lorenz","Sistema caótico. sigma=10 rho=28 beta=8/3");`},
+  {id:'torus',icon:'⭕',name:'Torus Knot',desc:'Nudo toroidal p=3 q=2',
+   code:`const scale=addControl("scale","Escala",10,120,48);
+const speed=addControl("speed","Velocidad",0.1,4,1.2);
+const chaos=addControl("chaos","Ruido",0,8,0.5);
+const t=time*speed,n=i/count,angle=n*Math.PI*2.0*150.0;
+const r1=scale*(1.5+0.5*Math.sin(2.0*angle+t));
+target.set(r1*Math.cos(3.0*angle)+Math.sin(t*2+n*10)*chaos,r1*Math.sin(3.0*angle)+Math.cos(t*2.5+n*12)*chaos,scale*Math.cos(2.0*angle+t)+Math.sin(t*1.5+n*8)*chaos);
+color.setHSL((n+t*0.08)%1.0,0.85,0.58);
+if(i===0)setInfo("Nudo Toroidal","p=3 q=2 con ruido cuántico");`},
+  {id:'dna',icon:'🧬',name:'ADN',desc:'Doble hélice animada',
+   code:`const scale=addControl("scale","Escala",10,80,40);
+const speed=addControl("speed","Velocidad",0.1,5,1.5);
+const t=time*speed,n=i/count,strand=i%2,frac=Math.floor(i/2)/(count/2);
+const h=(frac-0.5)*scale*3.5,angle=frac*Math.PI*14+t+strand*Math.PI;
+target.set(Math.cos(angle)*scale*0.2,h,Math.sin(angle)*scale*0.2);
+color.setHSL(strand===0?0.55+frac*0.1:0.05+frac*0.1,0.9,0.6);
+if(i===0)setInfo("Doble Hélice ADN","Dos cadenas diferenciadas por color");`},
+  {id:'galaxy',icon:'🌌',name:'Galaxia',desc:'Espiral barrada con brazos',
+   code:`const scale=addControl("scale","Escala",10,150,65);
+const speed=addControl("speed","Rotación",0.01,1,0.15);
+const arms=addControl("arms","Brazos",2,6,3);
+const t=time*speed,n=i/count,armIdx=Math.floor(n*arms),armFrac=(n*arms)-armIdx;
+const r=armFrac*scale,twist=armFrac*Math.PI*3,base=(armIdx/arms)*Math.PI*2,angle=base+twist+t;
+const spread=(1-armFrac)*8*(Math.random()-0.5);
+target.set(Math.cos(angle)*r+spread,(Math.random()-0.5)*(1-armFrac)*12,Math.sin(angle)*r+spread);
+color.setHSL(0.05+armFrac*0.35,0.8,0.4+armFrac*0.3);
+if(i===0)setInfo("Galaxia Espiral","Morfología barrada con "+Math.floor(arms)+" brazos");`},
+  {id:'fractal',icon:'🔷',name:'Fractal',desc:'Cubo de Menger iterado',
+   code:`const scale=addControl("scale","Escala",10,120,50);
+const speed=addControl("speed","Velocidad",0.05,2,0.4);
+const iters=addControl("iters","Iteraciones",1,5,3);
+const t=time*speed,n=i/count;
+let fx=(Math.sin(n*7.3)*0.5+0.5)*2-1,fy=(Math.sin(n*13.1+1)*0.5+0.5)*2-1,fz=(Math.sin(n*19.7+2)*0.5+0.5)*2-1;
+for(let k=0;k<Math.floor(iters);k++){fx=fx*3-Math.round(fx*3);fy=fy*3-Math.round(fy*3);fz=fz*3-Math.round(fz*3);}
+const rot=t*0.5,rx=fx*Math.cos(rot)-fz*Math.sin(rot),rz=fx*Math.sin(rot)+fz*Math.cos(rot);
+target.set(rx*scale,fy*scale,rz*scale);
+color.setHSL((n+t*0.04)%1.0,0.7,0.5);
+if(i===0)setInfo("Cubo Fractal","Aproximación iterativa a la esponja de Menger");`},
+];
+
+function initPresets(){
+  const grid=document.getElementById('pgrid');
+  PRESETS.forEach(p=>{
+    const c=document.createElement('div');
+    c.className='pcard'; c.dataset.id=p.id;
+    c.innerHTML=`<span class="picon">${p.icon}</span><div class="pname">${p.name}</div><div class="pdesc">${p.desc}</div>`;
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('.pcard').forEach(x=>x.classList.remove('ap'));
+      c.classList.add('ap');
+      if(monacoEditor) monacoEditor.setValue(p.code);
+      G.controls={};
+      toMath();
+      compileCode(p.code);
+      switchTab('code');
+    });
+    grid.appendChild(c);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AI — Claude Text-to-Shape
+═══════════════════════════════════════════════════════════════ */
+const AI_SYS=`Eres experto en matemáticas 3D y partículas Three.js.
+Genera ÚNICAMENTE código JavaScript para el cuerpo de una función que controla ${MATH_COUNT} partículas.
+REGLAS: Solo código JS, sin markdown ni backticks. Variables disponibles: i,count,target (THREE.Vector3→target.set(x,y,z)),color (THREE.Color→color.setHSL(h,s,l)),time,THREE,addControl(id,label,min,max,val),setInfo(title,desc). NUNCA: new THREE.Vector3(), arrays [], objetos {} en el bucle. NUNCA: document,window,eval,setTimeout. Declara todo con const/let. Usa addControl mínimo 2 veces. Llama setInfo cuando i===0.`;
+
+const AI_EX=['Un huracán colapsando en un agujero negro','Una ciudad futurista vista desde el espacio','Un corazón latiendo hecho de plasma','Proteínas plegándose en cadenas moleculares','Ondas cuánticas de interferencia'];
+
+function initAI(){
+  const ex=document.getElementById('aiex');
+  AI_EX.forEach(e=>{
+    const b=document.createElement('button');
+    b.className='aiexbtn';b.textContent=e;
+    b.addEventListener('click',()=>document.getElementById('ai-prompt').value=e);
+    ex.appendChild(b);
+  });
+  document.getElementById('btn-gen').addEventListener('click',generateAI);
+}
+
+async function generateAI(){
+  const prompt=document.getElementById('ai-prompt').value.trim();
+  if(!prompt)return;
+  const btn=document.getElementById('btn-gen');
+  const spin=document.getElementById('ai-spin');
+  const msg=document.getElementById('ai-msg');
+  const st=document.getElementById('ai-st');
+  btn.disabled=true; spin.classList.add('on');
+  msg.textContent='Generando con Claude...'; st.className='ai-st';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:AI_SYS,
+        messages:[{role:'user',content:`Crea partículas 3D para: "${prompt}"`}]})
+    });
+    if(!r.ok) throw new Error(`API ${r.status}`);
+    const data=await r.json();
+    const code=(data.content?.[0]?.text||'').trim().replace(/```javascript|```js|```/g,'').trim();
+    if(!code) throw new Error('Sin código en la respuesta.');
+    if(monacoEditor) monacoEditor.setValue(code);
+    G.controls={};
+    toMath();
+    compileCode(code);
+    switchTab('code');
+    spin.classList.remove('on');
+    msg.textContent='✓ Generado y ejecutado';
+    st.className='ai-st ok';
+  }catch(e){
+    spin.classList.remove('on');
+    msg.textContent='✗ '+e.message;
+    st.className='ai-st err';
+  }finally{btn.disabled=false;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTROLES DINÁMICOS UI
+═══════════════════════════════════════════════════════════════ */
+function renderCtrlUI(){
+  const list=document.getElementById('ctrl-list');
+  const empty=document.getElementById('cempty');
+  const ids=Object.keys(G.controls);
+  if(ids.length===0){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  const cur=Array.from(list.querySelectorAll('.cgrp')).map(el=>el.dataset.id);
+  const same=cur.length===ids.length&&ids.every((id,k)=>id===cur[k]);
+  if(!same){
+    list.innerHTML='';
+    ids.forEach(id=>{
+      const cfg=G.controls[id];
+      const step=Math.max(0.001,(cfg.max-cfg.min)/1000);
+      const div=document.createElement('div');
+      div.className='cgrp';div.dataset.id=id;
+      div.innerHTML=`<div class="crow"><span class="clbl">${cfg.label}</span><span class="cval" id="cv-${id}">${Number(cfg.value).toFixed(2)}</span></div>
+      <input type="range" class="rsl" id="cs-${id}" min="${cfg.min}" max="${cfg.max}" step="${step}" value="${cfg.value}"/>`;
+      list.appendChild(div);
+      document.getElementById('cs-'+id).addEventListener('input',ev=>{
+        const v=parseFloat(ev.target.value);
+        G.controls[id].value=v;
+        document.getElementById('cv-'+id).textContent=v.toFixed(2);
+      });
+    });
+  } else {
+    ids.forEach(id=>{const el=document.getElementById('cv-'+id);if(el)el.textContent=Number(G.controls[id].value).toFixed(2);});
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════════ */
+function initTabs(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>switchTab(t.dataset.tab));
+  });
+}
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MONACO EDITOR
+═══════════════════════════════════════════════════════════════ */
+let monacoEditor;
+const DEFAULT_CODE=`// RUBIK SOTA — Particles Engine v5
+// i, count, target.set(x,y,z), color.setHSL(h,s,l), time, THREE
+// addControl("id","Label",min,max,val) · setInfo("Title","Desc")
+
+const scale  = addControl("scale",  "Escala",       10, 120, 50);
+const speed  = addControl("speed",  "Velocidad",   0.1,   5, 1.0);
+const morph  = addControl("morph",  "Morphing",      0,   1, 0.5);
+const chaos  = addControl("chaos",  "Ruido",         0,   8, 0.8);
+
+const t=time*speed, n=i/count;
+const angle=n*Math.PI*2.0*150.0;
+const r1=scale*(1.5+0.5*Math.sin(2.0*angle+t));
+const x1=r1*Math.cos(3.0*angle), y1=r1*Math.sin(3.0*angle), z1=scale*Math.cos(2.0*angle+t);
+const phi=Math.acos(1.0-2.0*n), theta=Math.PI*(1.0+Math.sqrt(5.0))*i;
+const r2=scale*1.5;
+const x2=r2*Math.sin(phi)*Math.cos(theta+t), y2=r2*Math.sin(phi)*Math.sin(theta+t), z2=r2*Math.cos(phi);
+const nx=Math.sin(t*2+n*10)*chaos, ny=Math.cos(t*2.5+n*12)*chaos, nz=Math.sin(t*1.5+n*8)*chaos;
+target.set(x1*(1-morph)+x2*morph+nx, y1*(1-morph)+y2*morph+ny, z1*(1-morph)+z2*morph+nz);
+color.setHSL((n+t*0.1)%1.0, 0.9, 0.55);
+if(i===0) setInfo("Dimensional Morphing","Torus Knot → Fibonacci Sphere");`;
+
+function initMonaco(){
+  require(['vs/editor/editor.main'],function(monaco){
+    monaco.editor.defineTheme('rubik',{
+      base:'vs-dark',inherit:true,
+      rules:[
+        {token:'comment',foreground:'333333',fontStyle:'italic'},
+        {token:'keyword',foreground:'D4AF37'},
+        {token:'number', foreground:'7fb3c8'},
+        {token:'string', foreground:'6aab7e'},
+      ],
+      colors:{
+        'editor.background':'#080808',
+        'editor.foreground':'#F0F0F0',
+        'editor.lineHighlightBackground':'#111111',
+        'editor.selectionBackground':'#D4AF3720',
+        'editorCursor.foreground':'#D4AF37',
+        'editorLineNumber.foreground':'#252525',
+        'editorLineNumber.activeForeground':'#D4AF37',
+      }
+    });
+    monacoEditor=monaco.editor.create(document.getElementById('monaco-wrap'),{
+      value:DEFAULT_CODE,language:'javascript',theme:'rubik',
+      fontSize:12,fontFamily:"'JetBrains Mono','Fira Code',monospace",
+      fontLigatures:true,minimap:{enabled:false},wordWrap:'on',
+      scrollBeyondLastLine:false,padding:{top:10,bottom:10},
+      smoothScrolling:true,cursorBlinking:'phase',
+      renderLineHighlight:'gutter',glyphMargin:false,folding:false,
+      lineDecorationsWidth:3,
+    });
+    monacoEditor.addCommand(
+      monaco.KeyMod.CtrlCmd|monaco.KeyCode.Enter,
+      ()=>runCode()
+    );
+    compileCode(DEFAULT_CODE);
+  });
+}
+
+function runCode(){
+  if(!monacoEditor)return;
+  G.controls={};
+  renderCtrlUI();
+  toMath();
+  compileCode(monacoEditor.getValue());
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   FASE 3A — INTRO SCREEN
+═══════════════════════════════════════════════════════════════ */
+function initIntro() {
+  // Generar partículas decorativas flotantes
+  const container = document.getElementById('intro-particles');
+  for(let i=0;i<60;i++){
+    const dot = document.createElement('div');
+    dot.className = 'ipt';
+    const size = Math.random()*3+1;
+    dot.style.cssText = [
+      `width:${size}px`,
+      `height:${size}px`,
+      `left:${Math.random()*100}%`,
+      `animation-duration:${4+Math.random()*8}s`,
+      `animation-delay:${-Math.random()*8}s`,
+      `opacity:${0.3+Math.random()*0.5}`,
+    ].join(';');
+    container.appendChild(dot);
+  }
+}
+
+function closeIntro() {
+  const intro = document.getElementById('intro');
+  intro.style.transition = 'opacity .6s ease';
+  intro.style.opacity    = '0';
+  intro.style.pointerEvents = 'none';
+  setTimeout(() => intro.style.display = 'none', 650);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 3B — PALETA DE COLOR
+═══════════════════════════════════════════════════════════════ */
+function initPalette() {
+  // Botones de paleta
+  document.getElementById('pal-row').addEventListener('click', e => {
+    const btn = e.target.closest('[data-pal]');
+    if(!btn) return;
+    document.querySelectorAll('.pal-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    G.palette = btn.dataset.pal;
+  });
+
+  // Botón animación Z
+  const animBtn = document.getElementById('pal-anim-btn');
+  animBtn.addEventListener('click', () => {
+    G.animZ = !G.animZ;
+    animBtn.classList.toggle('active', G.animZ);
+    animBtn.textContent = G.animZ ? '◎ ANIMACIÓN Z — ON' : '◎ ANIMACIÓN Z — OFF';
+  });
+}
+
+function showPaletteControls(show) {
+  const el = document.getElementById('pal-controls');
+  el.style.display = show ? 'flex' : 'none';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 3C — IMAGE PRESETS (SVGs inline, demo sin uploads)
+   4 formas geométricas de alto impacto visual:
+   · Diamante · Estrella · Ondas · RS Logo
+═══════════════════════════════════════════════════════════════ */
+
+// Cada preset es un SVG blanco sobre negro → perfecto para el scanner
+const IMG_PRESETS = [
+  {
+    id: 'diamond',
+    label: '◈',
+    title: 'Diamante',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <rect fill="#000" width="400" height="400"/>
+      <polygon fill="#fff" points="200,20 380,160 200,380 20,160"/>
+      <polygon fill="none" stroke="#fff" stroke-width="2" points="200,20 380,160 200,380 20,160"/>
+      <line x1="20" y1="160" x2="380" y2="160" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+      <line x1="200" y1="20" x2="200" y2="380" stroke="#fff" stroke-width="1.5" opacity=".5"/>
+    </svg>`
+  },
+  {
+    id: 'star',
+    label: '✦',
+    title: 'Estrella',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <rect fill="#000" width="400" height="400"/>
+      <polygon fill="#fff" points="200,20 240,155 380,155 268,235 308,370 200,290 92,370 132,235 20,155 160,155"/>
+    </svg>`
+  },
+  {
+    id: 'waves',
+    label: '〜',
+    title: 'Ondas',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <rect fill="#000" width="400" height="400"/>
+      <g fill="none" stroke="#fff">
+        <path stroke-width="8"  d="M0,100 Q100,50 200,100 Q300,150 400,100"/>
+        <path stroke-width="7"  d="M0,150 Q100,100 200,150 Q300,200 400,150"/>
+        <path stroke-width="6"  d="M0,200 Q100,150 200,200 Q300,250 400,200"/>
+        <path stroke-width="5"  d="M0,250 Q100,200 200,250 Q300,300 400,250"/>
+        <path stroke-width="4"  d="M0,300 Q100,250 200,300 Q300,350 400,300"/>
+      </g>
+    </svg>`
+  },
+  {
+    id: 'rs',
+    label: 'RS',
+    title: 'RS · RUBIK',
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+      <rect fill="#000" width="400" height="400"/>
+      <text x="200" y="240" font-family="Arial Black,sans-serif" font-size="160"
+        font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="-4">RS</text>
+      <line x1="40" y1="280" x2="360" y2="280" stroke="#fff" stroke-width="4"/>
+      <text x="200" y="330" font-family="Arial,sans-serif" font-size="28"
+        fill="#fff" text-anchor="middle" letter-spacing="12">RUBIK SOTA</text>
+    </svg>`
+  },
+];
+
+function initImagePresets() {
+  const grid = document.getElementById('img-preset-grid');
+
+  IMG_PRESETS.forEach(preset => {
+    const card = document.createElement('div');
+    card.className = 'img-preset-card';
+    card.title     = preset.title;
+    card.innerHTML = preset.svg;
+
+    card.addEventListener('click', () => {
+      loadSVGPreset(preset);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function loadSVGPreset(preset) {
+  // Convertir SVG a ImageData via canvas auxiliar
+  const blob = new Blob([preset.svg], {type:'image/svg+xml'});
+  const url  = URL.createObjectURL(blob);
+  const img  = new Image();
+
+  setScanInfo(`Cargando preset: <strong>${preset.title}</strong>...`);
+  setProgress(20, true);
+
+  img.onload = () => {
+    const auxC = document.getElementById('aux-canvas');
+    auxC.width  = 600;
+    auxC.height = 600;
+    const ctx = auxC.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(img, 0, 0, 600, 600);
+    URL.revokeObjectURL(url);
+
+    setProgress(60);
+    const idata = ctx.getImageData(0, 0, 600, 600);
+    G._cache    = {type:'image', idata, w:600, h:600};
+
+    computeHD(idata, 600, 600);
+    setProgress(100);
+
+    setScanInfo(`<strong>${preset.title}</strong> · Preset SVG · <strong style="color:var(--gold)">${DATA_COUNT.toLocaleString()} partículas HD</strong>`);
+    showScanControls(true);
+    showPaletteControls(true);
+    toData();
+    setHUD('Image Preset · ' + preset.title, 'RUBIK SOTA Particles Engine v5');
+
+    // Mostrar preview SVG
+    const pw = document.getElementById('img-preview-wrap');
+    const pi = document.getElementById('img-preview');
+    const pl = document.getElementById('prev-label');
+    pi.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(preset.svg);
+    pl.textContent = preset.title + ' · SVG Preset';
+    pw.classList.add('on');
+
+    // Ir a tab scanner para ver controles
+    switchTab('scan');
+  };
+
+  img.onerror = () => {
+    setScanInfo('Error cargando preset SVG.');
+    setProgress(0, false);
+  };
+
+  img.src = url;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 2 — EXPORT ENGINE
+   · PNG    : frame actual del renderer WebGL
+   · PNG 4K : render offscreen 3840×2160 + descarga
+   · WebM   : MediaRecorder sobre canvas.captureStream(60)
+   · MP4    : ffmpeg.wasm CDN → convierte WebM a H.264 en navegador
+═══════════════════════════════════════════════════════════════ */
+
+/* ── ESTADO RECORDING ── */
+const REC = {
+  mediaRecorder: null,
+  chunks:        [],
+  webmBlob:      null,
+  isRecording:   false,
+  startTime:     0,
+  timerInterval: null,
+};
+
+/* ── HELPER: descarga de blob ── */
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a   = document.createElement('a');
+  a.href    = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+/* ── HELPER: timestamp para nombre de archivo ── */
+function ts() {
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}${String(d.getSeconds()).padStart(2,'0')}`;
+}
+
+/* ════════════════════════════════════════════════════════
+   EXPORT 1: PNG — frame actual del renderer
+════════════════════════════════════════════════════════ */
+function exportPNG() {
+  // preserveDrawingBuffer no está activo — forzamos un render extra
+  renderer.render(scene, camera);
+  const canvas = renderer.domElement;
+  canvas.toBlob(blob => {
+    downloadBlob(blob, `RUBIKSOTA_particles_${ts()}.png`);
+  }, 'image/png');
+}
+
+/* ════════════════════════════════════════════════════════
+   EXPORT 2: PNG 4K — render offscreen 3840×2160
+════════════════════════════════════════════════════════ */
+function exportPNG4K() {
+  const btn = document.getElementById('btn-png4k');
+  btn.disabled = true;
+  btn.textContent = '⏳ 4K...';
+
+  // Guardamos tamaño actual
+  const origW = renderer.domElement.width;
+  const origH = renderer.domElement.height;
+  const origPR = renderer.getPixelRatio();
+
+  // Render a 4K
+  const W4K = 3840, H4K = 2160;
+  renderer.setPixelRatio(1);
+  renderer.setSize(W4K, H4K, false);
+  camera.aspect = W4K / H4K;
+  camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+
+  renderer.domElement.toBlob(blob => {
+    downloadBlob(blob, `RUBIKSOTA_4K_${ts()}.png`);
+
+    // Restaurar tamaño original
+    const wrap = document.getElementById('canvas-wrap');
+    renderer.setPixelRatio(origPR);
+    renderer.setSize(wrap.clientWidth, wrap.clientHeight, false);
+    camera.aspect = wrap.clientWidth / wrap.clientHeight;
+    camera.updateProjectionMatrix();
+
+    btn.disabled = false;
+    btn.textContent = '⬇ 4K';
+  }, 'image/png');
+}
+
+/* ════════════════════════════════════════════════════════
+   EXPORT 3: WebM — MediaRecorder sobre canvas live
+════════════════════════════════════════════════════════ */
+function toggleRecording() {
+  if (REC.isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+}
+
+function startRecording() {
+  // Elegir mejor codec disponible en el navegador
+  const mimeTypes = [
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm',
+  ];
+  const mime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+  const stream = renderer.domElement.captureStream(60);
+  REC.chunks        = [];
+  REC.mediaRecorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8000000 });
+  REC.webmBlob      = null;
+
+  REC.mediaRecorder.ondataavailable = e => {
+    if (e.data && e.data.size > 0) REC.chunks.push(e.data);
+  };
+
+  REC.mediaRecorder.onstop = () => {
+    REC.webmBlob = new Blob(REC.chunks, { type: mime });
+    // Descargar WebM inmediatamente
+    downloadBlob(REC.webmBlob, `RUBIKSOTA_${ts()}.webm`);
+    // Activar botón MP4
+    const btnMp4 = document.getElementById('btn-mp4');
+    btnMp4.disabled = false;
+    btnMp4.textContent = '⬇ MP4';
+  };
+
+  REC.mediaRecorder.start(100); // chunk cada 100ms
+  REC.isRecording = true;
+  REC.startTime   = Date.now();
+
+  // UI: indicador recording
+  const btnWebm = document.getElementById('btn-webm');
+  btnWebm.classList.add('active');
+  btnWebm.textContent = '⏹ STOP';
+  document.getElementById('rec-status').classList.add('on');
+
+  // Timer display
+  REC.timerInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - REC.startTime) / 1000);
+    const m = Math.floor(s / 60);
+    document.getElementById('rec-timer').textContent = `${m}:${String(s % 60).padStart(2,'0')}`;
+    // Límite 90 segundos de seguridad
+    if (s >= 90) stopRecording();
+  }, 500);
+}
+
+function stopRecording() {
+  if (!REC.mediaRecorder || !REC.isRecording) return;
+  REC.mediaRecorder.stop();
+  REC.isRecording = false;
+  clearInterval(REC.timerInterval);
+
+  // UI: restaurar
+  const btnWebm = document.getElementById('btn-webm');
+  btnWebm.classList.remove('active');
+  btnWebm.textContent = '⏺ REC';
+  document.getElementById('rec-status').classList.remove('on');
+}
+
+/* ════════════════════════════════════════════════════════
+   EXPORT 4: MP4 vía ffmpeg.wasm
+   Carga ffmpeg.wasm desde CDN solo cuando se necesita (lazy load)
+   Convierte el WebM grabado a H.264 MP4 en el navegador
+════════════════════════════════════════════════════════ */
+let ffmpegInstance = null;
+
+async function exportMP4() {
+  if (!REC.webmBlob) {
+    alert('Graba un vídeo primero con ⏺ REC');
+    return;
+  }
+
+  const overlay = document.getElementById('mp4-overlay');
+  const bar     = document.getElementById('mp4-bar');
+  const msg     = document.getElementById('mp4-msg');
+
+  overlay.classList.add('on');
+  bar.style.width = '0%';
+  msg.textContent = 'CARGANDO FFMPEG...';
+
+  try {
+    // Lazy load ffmpeg.wasm — solo se descarga una vez (~2MB)
+    if (!ffmpegInstance) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
+        s.onload  = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    msg.textContent = 'INICIALIZANDO...';
+    bar.style.width = '10%';
+
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    if (!ffmpegInstance) {
+      ffmpegInstance = createFFmpeg({
+        log: false,
+        progress: ({ ratio }) => {
+          bar.style.width = Math.round(10 + ratio * 80) + '%';
+        },
+      });
+      await ffmpegInstance.load();
+    }
+
+    msg.textContent = 'CONVIRTIENDO A MP4 H.264...';
+    bar.style.width = '15%';
+
+    // Escribir WebM en el filesystem virtual de ffmpeg
+    ffmpegInstance.FS('writeFile', 'input.webm', await fetchFile(REC.webmBlob));
+
+    // Convertir: VP8/VP9 → H.264 + AAC (sin audio en nuestro caso)
+    await ffmpegInstance.run(
+      '-i', 'input.webm',
+      '-c:v', 'libx264',
+      '-preset', 'fast',
+      '-crf', '18',          // calidad alta (0=lossless, 51=peor)
+      '-pix_fmt', 'yuv420p', // compatible con todos los reproductores
+      '-an',                 // sin audio
+      'output.mp4'
+    );
+
+    bar.style.width = '95%';
+    msg.textContent = 'PREPARANDO DESCARGA...';
+
+    const mp4Data = ffmpegInstance.FS('readFile', 'output.mp4');
+    const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+    downloadBlob(mp4Blob, `RUBIKSOTA_${ts()}.mp4`);
+
+    // Limpiar filesystem virtual
+    ffmpegInstance.FS('unlink', 'input.webm');
+    ffmpegInstance.FS('unlink', 'output.mp4');
+
+    bar.style.width = '100%';
+    msg.textContent = '✓ MP4 DESCARGADO';
+    setTimeout(() => overlay.classList.remove('on'), 1500);
+
+  } catch(e) {
+    msg.textContent = '✗ ERROR: ' + e.message;
+    bar.style.width  = '100%';
+    bar.style.background = 'var(--red)';
+    setTimeout(() => {
+      overlay.classList.remove('on');
+      bar.style.background = 'var(--gold)';
+    }, 3000);
+  }
+}
+
+/* ── INIT EXPORT ── */
+function initExport() {
+  document.getElementById('btn-png').addEventListener('click',  exportPNG);
+  document.getElementById('btn-png4k').addEventListener('click', exportPNG4K);
+  document.getElementById('btn-webm').addEventListener('click', toggleRecording);
+  document.getElementById('btn-mp4').addEventListener('click',  exportMP4);
+
+  // Cerrar overlay mp4 con click
+  document.getElementById('mp4-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('mp4-overlay')) {
+      document.getElementById('mp4-overlay').classList.remove('on');
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 4A — PROYECTOS (localStorage)
+   Guarda: nombre, modo, código del editor, paleta, parámetros scanner
+   Restaura: todo el estado con un clic
+═══════════════════════════════════════════════════════════════ */
+const PROJ_KEY = 'rubiksota_projects_v1';
+
+function projLoad() {
+  try { return JSON.parse(localStorage.getItem(PROJ_KEY)) || []; }
+  catch(e) { return []; }
+}
+
+function projSave(projects) {
+  try { localStorage.setItem(PROJ_KEY, JSON.stringify(projects)); }
+  catch(e) { console.warn('localStorage lleno o bloqueado'); }
+}
+
+function projGetCurrentState() {
+  return {
+    id:        Date.now(),
+    name:      'Proyecto ' + new Date().toLocaleString('es-ES', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}),
+    mode:      G.mode,
+    code:      monacoEditor ? monacoEditor.getValue() : '',
+    palette:   G.palette,
+    animZ:     G.animZ,
+    ptSize:    G.ptSize,
+    scanDepth: G.scanDepth,
+    edgeFrac:  G.edgeFrac,
+    morphSpd:  G.morphSpeed,
+    glowInt:   G.glowIntensity,
+    scanScatter: G.scanScatter,
+    // Si hay imagen cargada, guardar una miniatura 40x40 del estado
+    presetSVG: G._cache ? null : null, // futura expansión
+    createdAt: Date.now(),
+  };
+}
+
+function projRestoreState(proj) {
+  // Restaurar código en Monaco
+  if(proj.code && monacoEditor) monacoEditor.setValue(proj.code);
+
+  // Restaurar parámetros
+  G.palette      = proj.palette     || 'original';
+  G.animZ        = proj.animZ       || false;
+  G.ptSize       = proj.ptSize      || 3;
+  G.scanDepth    = proj.scanDepth   || 30;
+  G.edgeFrac     = proj.edgeFrac    || 0.4;
+  G.morphSpeed   = proj.morphSpd    || 0.10;
+  G.glowIntensity= proj.glowInt     || 0.5;
+  G.scanScatter  = proj.scanScatter || 0;
+
+  // Restaurar sliders UI (si existen)
+  const sliders = {
+    'sl-psize':   [G.ptSize,       'v-psize'],
+    'sl-depth':   [G.scanDepth,    'v-depth'],
+    'sl-morph':   [G.morphSpeed*100,'v-morph'],
+    'sl-glow':    [G.glowIntensity*100,'v-glow'],
+    'sl-scatter': [G.scanScatter,  'v-scatter'],
+  };
+  for(const [id,[val,vid]] of Object.entries(sliders)){
+    const el=document.getElementById(id);
+    const vl=document.getElementById(vid);
+    if(el) el.value=val;
+    if(vl) vl.textContent=Math.round(val*10)/10;
+  }
+
+  // Actualizar uniforms shader
+  if(dataMat.uniforms){
+    dataMat.uniforms.uSize.value=G.ptSize;
+    dataMat.uniforms.uGlow.value=G.glowIntensity;
+  }
+
+  // Restaurar paleta UI
+  document.querySelectorAll('.pal-btn').forEach(b=>
+    b.classList.toggle('active', b.dataset.pal===G.palette));
+  const ab=document.getElementById('pal-anim-btn');
+  if(ab){ ab.classList.toggle('active',G.animZ); ab.textContent=G.animZ?'◎ ANIMACIÓN Z — ON':'◎ ANIMACIÓN Z — OFF'; }
+
+  // Modo
+  if(proj.mode==='MATH'){
+    toMath();
+    G.controls={};
+    compileCode(proj.code);
+  }
+
+  switchTab('code');
+  renderProjList();
+}
+
+function renderProjList() {
+  const projects = projLoad();
+  const list     = document.getElementById('proj-list');
+  const empty    = document.getElementById('proj-empty');
+  const filter   = (document.getElementById('proj-search')?.value||'').toLowerCase();
+
+  const filtered = projects.filter(p=>p.name.toLowerCase().includes(filter));
+
+  if(filtered.length===0){
+    list.innerHTML='';
+    empty.style.display='block';
+    empty.textContent = projects.length===0
+      ? 'Sin proyectos guardados. Guarda tu primer proyecto abajo.'
+      : 'Sin resultados para "'+filter+'"';
+    return;
+  }
+
+  empty.style.display='none';
+  list.innerHTML='';
+
+  // Más recientes primero
+  [...filtered].sort((a,b)=>b.createdAt-a.createdAt).forEach(proj=>{
+    const card=document.createElement('div');
+    card.className='proj-card';
+
+    const modeIcon = proj.mode==='DATA' ? '⬆' : (proj.palette!=='original'?'◈':'//');
+    const dateStr  = new Date(proj.createdAt).toLocaleString('es-ES',
+      {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+
+    card.innerHTML=`
+      <span class="pc-icon">${modeIcon}</span>
+      <div class="pc-body">
+        <div class="pc-name" title="${proj.name}">${proj.name}</div>
+        <div class="pc-meta">${dateStr} · ${proj.mode} · paleta ${proj.palette}</div>
+      </div>
+      <button class="pc-del" title="Eliminar" data-id="${proj.id}">✕</button>`;
+
+    // Click en card: restaurar
+    card.addEventListener('click', e=>{
+      if(e.target.classList.contains('pc-del')) return;
+      projRestoreState(proj);
+    });
+
+    // Click en X: eliminar
+    card.querySelector('.pc-del').addEventListener('click', e=>{
+      e.stopPropagation();
+      const updated=projLoad().filter(p=>p.id!==proj.id);
+      projSave(updated);
+      renderProjList();
+    });
+
+    list.appendChild(card);
+  });
+}
+
+function initProjects() {
+  // Guardar proyecto actual
+  document.getElementById('btn-save-proj').addEventListener('click', ()=>{
+    const state    = projGetCurrentState();
+    // Pedir nombre personalizado (inline, no alert)
+    const name = prompt('Nombre del proyecto:', state.name);
+    if(name===null) return; // cancelado
+    state.name = name.trim() || state.name;
+
+    const projects = projLoad();
+    projects.push(state);
+    projSave(projects);
+    renderProjList();
+
+    // Feedback visual
+    const btn=document.getElementById('btn-save-proj');
+    const orig=btn.textContent;
+    btn.textContent='✓ GUARDADO';
+    setTimeout(()=>btn.textContent=orig, 1500);
+  });
+
+  // Buscar
+  document.getElementById('proj-search').addEventListener('input', ()=>renderProjList());
+
+  // Botón share
+  document.getElementById('btn-share').addEventListener('click', ()=>openShareFromProj());
+
+  // Botón generar enlace compartible
+  document.getElementById('btn-gen-share').addEventListener('click', ()=>generateShareURL());
+
+  // Botón copiar embed
+  document.getElementById('btn-copy-embed').addEventListener('click', ()=>{
+    const code=document.getElementById('api-embed-code').textContent;
+    copyToClipboard(code, 'btn-copy-embed', 'COPIADO ✓');
+  });
+
+  // Botón copiar URL en modal
+  document.getElementById('btn-copy-share').addEventListener('click', ()=>{
+    const url=document.getElementById('share-url-display').textContent;
+    copyToClipboard(url, 'btn-copy-share', '✓ COPIADO');
+    document.getElementById('share-copied').textContent='¡Enlace copiado al portapapeles!';
+    setTimeout(()=>document.getElementById('share-copied').textContent='', 2500);
+  });
+
+  // Actualizar código embed con URL actual
+  updateEmbedCode();
+
+  // Renderizar lista inicial
+  renderProjList();
+
+  // Restaurar desde URL si hay estado codificado
+  restoreFromURL();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 4B — COMPARTIR URL CON ESTADO CODIFICADO
+   Codifica el estado completo en Base64 URL-safe → enlace compartible
+   Al abrir el enlace: restaura automáticamente el estado
+═══════════════════════════════════════════════════════════════ */
+function generateShareURL() {
+  const state = projGetCurrentState();
+
+  // Serializar y comprimir en Base64 URL-safe
+  const json    = JSON.stringify(state);
+  const b64     = btoa(encodeURIComponent(json)
+    .replace(/%([0-9A-F]{2})/g, (_,p)=>String.fromCharCode('0x'+p)));
+  const urlSafe = b64.replace(/[+]/g,'-').replace(/[/]/g,'_').replace(/=/g,'');
+
+  // Construir URL: misma página + ?s=<estado>
+  const url = window.location.href.split('?')[0] + '?s=' + urlSafe;
+
+  // Mostrar modal
+  document.getElementById('share-url-display').textContent = url;
+  document.getElementById('share-copied').textContent = '';
+  document.getElementById('share-modal').classList.add('on');
+}
+
+function openShareFromProj() {
+  generateShareURL();
+}
+
+function restoreFromURL() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const s      = params.get('s');
+    if (!s) return;
+
+    // Decodificar Base64 URL-safe → estado
+    const b64  = s.replace(/-/g,'+').replace(/_/g,'/');
+    const json = decodeURIComponent(
+      Array.from(atob(b64), c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join('')
+    );
+    const state = JSON.parse(json);
+
+    // Restaurar tras breve delay (esperar a que Monaco esté listo)
+    setTimeout(()=>{
+      projRestoreState(state);
+      // Notificar al usuario
+      const hud = document.getElementById('hud-desc');
+      if(hud){ hud.textContent='Estado restaurado desde URL compartida'; }
+      // Limpiar URL para que no se restaure en refresco
+      window.history.replaceState({}, '', window.location.pathname);
+    }, 1200);
+
+  } catch(e) {
+    console.warn('URL share: no se pudo restaurar estado', e.message);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FASE 4C — API EMBED PARA WEB DE CLIENTES
+   Genera el código de embed actualizado con la URL actual
+   Documentación inline del API de mensajes (postMessage)
+═══════════════════════════════════════════════════════════════ */
+function updateEmbedCode() {
+  const url   = window.location.href.split('?')[0];
+  const embed = [
+    '<!-- RUBIK SOTA Particles Engine -->',
+    '<!-- Embed via iframe — API completa via postMessage -->',
+    '<iframe',
+    '  id="rubik-engine"',
+    '  src="' + url + '"',
+    '  width="100%" height="600"',
+    '  frameborder="0">',
+    '</iframe>',
+    '',
+    '<script>',
+    '// Controlar el motor via postMessage',
+    'const engine = document.getElementById("rubik-engine");',
+    '',
+    '// Cargar preset matemático',
+    '// engine.contentWindow.postMessage({cmd:"preset",id:"lorenz"}, "*");',
+    '',
+    '// Ejecutar código personalizado',
+    '// engine.contentWindow.postMessage({cmd:"run",code:"target.set(..."}, "*");',
+    '',
+    '// Cambiar paleta',
+    '// engine.contentWindow.postMessage({cmd:"palette",value:"gold"}, "*");',
+    '',
+    '// Iniciar/parar grabación',
+    '// engine.contentWindow.postMessage({cmd:"record",action:"start"}, "*");',
+    '<\/script>',
+  ].join('\n');
+
+  const el=document.getElementById('api-embed-code');
+  if(el) el.textContent=embed;
+}
+
+// Escuchar postMessage para cuando estamos embebidos en iframe de cliente
+function initPostMessageAPI() {
+  window.addEventListener('message', e => {
+    try {
+      const msg = typeof e.data==='string' ? JSON.parse(e.data) : e.data;
+      if (!msg || !msg.cmd) return;
+
+      switch(msg.cmd){
+        case 'preset':
+          // Cargar preset por id
+          const preset=PRESETS.find(p=>p.id===msg.id);
+          if(preset && monacoEditor){
+            monacoEditor.setValue(preset.code);
+            G.controls={}; toMath(); compileCode(preset.code);
+          }
+          break;
+        case 'run':
+          // Ejecutar código arbitrario (el isSafe lo filtra)
+          if(msg.code && monacoEditor){
+            monacoEditor.setValue(msg.code);
+            G.controls={}; toMath(); compileCode(msg.code);
+          }
+          break;
+        case 'palette':
+          G.palette=msg.value||'original';
+          document.querySelectorAll('.pal-btn').forEach(b=>
+            b.classList.toggle('active',b.dataset.pal===G.palette));
+          break;
+        case 'record':
+          if(msg.action==='start') startRecording();
+          else if(msg.action==='stop') stopRecording();
+          break;
+        case 'screenshot':
+          exportPNG();
+          break;
+        case 'getState':
+          // Devolver estado actual al padre
+          const st=projGetCurrentState();
+          e.source?.postMessage({type:'state',data:st}, e.origin||'*');
+          break;
+      }
+    } catch(err){ /* ignorar mensajes mal formados */ }
+  });
+}
+
+/* ── HELPER: copiar al portapapeles ── */
+function copyToClipboard(text, btnId, successText) {
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById(btnId);
+    if(!btn) return;
+    const orig=btn.textContent;
+    btn.textContent=successText;
+    setTimeout(()=>btn.textContent=orig, 2000);
+  }).catch(()=>{
+    // Fallback para navegadores sin permisos
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const btn=document.getElementById(btnId);
+    if(btn){ const o=btn.textContent; btn.textContent=successText; setTimeout(()=>btn.textContent=o,2000); }
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  initThree();
+  renderLoop();
+  initMonaco();
+  initTabs();
+  initPresets();
+  initAI();
+  initScanner();
+  initExport();
+  initIntro();
+  initPalette();
+  initImagePresets();
+  initProjects();
+  initPostMessageAPI();
+  document.getElementById('btn-run').addEventListener('click',runCode);
+});
+</script>
+</body>
+</html>

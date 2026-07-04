@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RS·STUDIO — Brief de Proyecto</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* RS·ONBOARDING — RUBIK SOTA 629554870 */
+:root {
+  --pr: #FF512F; --se: #F09819;
+  --bg: #0a0a0a; --card: #111; --border: rgba(255,255,255,.1);
+  --text: #F0EDE8; --muted: rgba(255,255,255,.45);
+  --font: 'Segoe UI', system-ui, sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; }
+
+/* HEADER */
+.header {
+  background:linear-gradient(135deg, #0f0f14 0%, #1a1020 100%);
+  border-bottom:1px solid var(--border);
+  padding:20px 32px; display:flex; align-items:center;
+  justify-content:space-between; position:sticky; top:0; z-index:100;
+  backdrop-filter:blur(20px);
+}
+.header-brand { display:flex; align-items:center; gap:12px; }
+.header-logo {
+  width:36px; height:36px; border-radius:8px;
+  background:linear-gradient(45deg,var(--pr),var(--se));
+  display:flex; align-items:center; justify-content:center;
+  font-weight:900; font-size:14px; color:white;
+}
+.header-title { font-size:15px; font-weight:700; letter-spacing:.05em; }
+.header-sub { font-size:11px; color:var(--muted); margin-top:1px; }
+.header-contact { font-size:11px; color:var(--muted); text-align:right; }
+.header-contact strong { color:var(--pr); }
+
+/* PROGRESS */
+.progress-bar {
+  height:3px; background:rgba(255,255,255,.08);
+  position:sticky; top:73px; z-index:99;
+}
+.progress-fill {
+  height:100%; background:linear-gradient(90deg,var(--pr),var(--se));
+  transition:width .4s cubic-bezier(.16,1,.3,1); width:0%;
+}
+
+/* MAIN */
+.container { max-width:760px; margin:0 auto; padding:40px 24px 80px; }
+
+/* INTRO */
+.intro {
+  text-align:center; margin-bottom:48px; padding:40px 32px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:16px;
+}
+.intro-icon { font-size:36px; margin-bottom:16px; display:block; }
+.intro h1 { font-size:28px; font-weight:800; margin-bottom:8px; }
+.intro h1 span { color:var(--pr); }
+.intro p { color:var(--muted); line-height:1.7; font-size:14px; max-width:500px; margin:0 auto 20px; }
+.intro-time {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,81,47,.1); border:1px solid rgba(255,81,47,.25);
+  border-radius:100px; padding:6px 14px; font-size:12px; color:var(--pr); font-weight:600;
+}
+
+/* STEP */
+.step {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:24px; overflow:hidden;
+  transition:border-color .2s;
+}
+.step.active { border-color:var(--pr); }
+.step-header {
+  display:flex; align-items:center; gap:14px;
+  padding:18px 24px; cursor:pointer; user-select:none;
+  transition:background .2s;
+}
+.step-header:hover { background:rgba(255,255,255,.03); }
+.step-num {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px;
+  background:rgba(255,255,255,.08); color:var(--muted);
+  transition:all .3s;
+}
+.step.active .step-num, .step.done .step-num {
+  background:var(--pr); color:white;
+}
+.step.done .step-num::after { content:'✓'; }
+.step-title { font-size:15px; font-weight:700; flex:1; }
+.step-desc { font-size:11px; color:var(--muted); margin-top:2px; }
+.step-chevron { color:var(--muted); font-size:12px; transition:transform .3s; }
+.step.open .step-chevron { transform:rotate(180deg); }
+.step-body { display:none; padding:8px 24px 24px; border-top:1px solid rgba(255,255,255,.05); }
+.step.open .step-body { display:block; }
+
+/* FIELDS */
+.field { margin-bottom:18px; }
+.field label {
+  display:block; font-size:10px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); margin-bottom:6px;
+}
+.field label span { color:var(--pr); margin-left:4px; }
+.field input, .field textarea, .field select {
+  width:100%; background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1); border-radius:7px;
+  padding:10px 14px; font-size:13px; color:var(--text);
+  font-family:var(--font); outline:none; transition:border-color .2s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color:var(--pr); }
+.field textarea { min-height:80px; resize:vertical; }
+.field select { cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center;
+}
+.field-hint { font-size:11px; color:rgba(255,255,255,.3); margin-top:4px; line-height:1.5; }
+.field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:600px) { .field-row { grid-template-columns:1fr; } }
+
+/* COLOR PICKER */
+.color-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.color-swatch {
+  width:36px; height:36px; border-radius:8px; cursor:pointer;
+  border:2px solid transparent; transition:all .2s; position:relative;
+}
+.color-swatch:hover { transform:scale(1.1); }
+.color-swatch.selected { border-color:white; }
+.color-swatch.selected::after {
+  content:'✓'; position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:900; color:white;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.color-custom { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.color-custom input[type=color] { width:42px; height:36px; border-radius:8px; border:1px solid rgba(255,255,255,.15); cursor:pointer; background:none; padding:2px; }
+.color-custom span { font-size:11px; color:var(--muted); }
+
+/* FONT PICKER */
+.font-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:8px; }
+@media(max-width:500px) { .font-grid { grid-template-columns:1fr 1fr; } }
+.font-opt {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:8px; padding:12px 10px; cursor:pointer; text-align:center;
+  transition:all .2s;
+}
+.font-opt:hover { border-color:rgba(255,255,255,.2); }
+.font-opt.selected { border-color:var(--pr); background:rgba(255,81,47,.07); }
+.font-opt-name { font-size:16px; color:var(--text); margin-bottom:3px; }
+.font-opt-label { font-size:9px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+
+/* FEATURE TOGGLES */
+.feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+.feature-toggle {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+  border-radius:8px; padding:10px 12px; cursor:pointer; transition:all .2s;
+}
+.feature-toggle:hover { border-color:rgba(255,255,255,.2); }
+.feature-toggle input[type=checkbox] { display:none; }
+.feature-toggle-icon { font-size:16px; flex-shrink:0; }
+.feature-toggle-text { font-size:11px; font-weight:600; flex:1; }
+.feature-toggle-check {
+  width:18px; height:18px; border-radius:4px; border:1.5px solid rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s; flex-shrink:0; font-size:11px;
+}
+.feature-toggle.checked { border-color:var(--pr); background:rgba(255,81,47,.07); }
+.feature-toggle.checked .feature-toggle-check { background:var(--pr); border-color:var(--pr); color:white; }
+
+/* SLIDES BUILDER */
+.slide-builder { margin-top:8px; }
+.slide-item {
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+  border-radius:8px; padding:14px; margin-bottom:10px;
+}
+.slide-item-header {
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.slide-item-num {
+  width:24px; height:24px; border-radius:50%; background:var(--pr);
+  color:white; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.slide-item-title { font-size:12px; font-weight:700; flex:1; color:var(--pr); letter-spacing:.06em; text-transform:uppercase; }
+.btn-add-slide {
+  width:100%; padding:10px; border-radius:8px;
+  border:1.5px dashed rgba(255,81,47,.3); background:transparent;
+  color:var(--pr); font-size:12px; font-weight:700; cursor:pointer;
+  transition:all .2s; font-family:var(--font);
+}
+.btn-add-slide:hover { background:rgba(255,81,47,.07); border-color:var(--pr); }
+
+/* NAVIGATION */
+.nav-buttons { display:flex; justify-content:space-between; align-items:center; margin-top:32px; gap:12px; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:8px; font-size:13px; font-weight:700; letter-spacing:.04em; cursor:pointer; transition:all .2s; font-family:var(--font); border:none; }
+.btn-secondary { background:rgba(255,255,255,.07); color:var(--text); border:1px solid rgba(255,255,255,.12); }
+.btn-secondary:hover { background:rgba(255,255,255,.12); }
+.btn-primary { background:linear-gradient(45deg,var(--pr),var(--se)); color:white; }
+.btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+.btn-generate {
+  width:100%; padding:16px; border-radius:10px; font-size:15px;
+  font-weight:800; background:linear-gradient(45deg,var(--pr) 0%,var(--se) 51%,var(--pr) 100%);
+  background-size:200% auto; color:white; border:none; cursor:pointer;
+  transition:background-position .5s, transform .2s; font-family:var(--font);
+  letter-spacing:.04em;
+}
+.btn-generate:hover { background-position:right center; transform:translateY(-2px); }
+
+/* SUMMARY */
+#summary { display:none; }
+.summary-card {
+  background:var(--card); border:1px solid rgba(62,207,142,.3);
+  border-radius:12px; padding:24px; text-align:center;
+}
+.summary-icon { font-size:40px; margin-bottom:12px; display:block; }
+.summary-title { font-size:20px; font-weight:800; margin-bottom:8px; }
+.summary-sub { color:var(--muted); font-size:13px; line-height:1.6; margin-bottom:24px; }
+.summary-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.summary-data {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:8px; padding:14px; margin-bottom:16px; text-align:left;
+}
+.summary-row { display:flex; justify-content:space-between; padding:4px 0; font-size:12px; }
+.summary-row .key { color:var(--muted); }
+.summary-row .val { color:var(--text); font-weight:600; }
+
+/* EMAIL SHARE */
+.email-share {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:10px; padding:20px; margin-top:16px;
+}
+.email-share h3 { font-size:13px; font-weight:700; margin-bottom:12px; }
+.email-row { display:flex; gap:8px; }
+.email-row input { flex:1; }
+.btn-send-email {
+  padding:10px 16px; border-radius:7px; border:none; cursor:pointer;
+  background:var(--pr); color:white; font-weight:700; font-size:12px;
+  font-family:var(--font); transition:all .2s; white-space:nowrap;
+}
+.btn-send-email:hover { background:var(--se); }
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:rgba(16,16,22,.97); border:1px solid rgba(255,255,255,.1);
+  border-radius:8px; padding:10px 18px; font-size:13px; z-index:9999;
+  opacity:0; transition:all .3s; pointer-events:none; backdrop-filter:blur(12px);
+  white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+/* STEP INDICATORS */
+.steps-nav {
+  display:flex; gap:6px; margin-bottom:32px; overflow-x:auto;
+  padding-bottom:4px; scrollbar-width:none;
+}
+.steps-nav::-webkit-scrollbar { display:none; }
+.step-dot {
+  flex-shrink:0; height:4px; border-radius:100px;
+  background:rgba(255,255,255,.15); transition:all .3s; cursor:pointer;
+  min-width:32px;
+}
+.step-dot.active { background:var(--pr); min-width:48px; }
+.step-dot.done { background:rgba(255,81,47,.4); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Salsa&family=Syne:wght@700;800&family=Playfair+Display:wght@700&family=Bebas+Neue&family=Cormorant+Garamond:wght@600&family=Abril+Fatface&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">RS</div>
+    <div>
+      <div class="header-title">RS·STUDIO — Brief de Proyecto</div>
+      <div class="header-sub">RUBIK SOTA · Plataforma Web Premium</div>
+    </div>
+  </div>
+  <div class="header-contact">
+    <strong>629 554 870</strong><br>
+    Alicante, España
+  </div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro" id="intro-section">
+    <span class="intro-icon">🚀</span>
+    <h1>Cuéntanos tu <span>proyecto</span></h1>
+    <p>Rellena este formulario para que podamos crear tu web premium. No se necesitan conocimientos técnicos — solo cuéntanos tu negocio tal como eres.</p>
+    <div class="intro-time"><i class="fa-solid fa-clock"></i> 10-15 minutos</div>
+  </div>
+
+  <!-- STEPS NAV DOTS -->
+  <div class="steps-nav" id="steps-nav"></div>
+
+  <!-- FORM -->
+  <div id="form-section">
+
+    <!-- STEP 1: NEGOCIO -->
+    <div class="step open active" id="step-1" data-step="1">
+      <div class="step-header" onclick="toggleStep(1)">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Tu negocio</div>
+          <div class="step-desc">Información básica de la empresa</div>
+        </div>
+        <i class="fa-solid fa-chevron-down step-chevron"></i>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>Nombre del negocio <span>*</span></label>
+          <input type="text" id="f-name" placeholder="Restaurante El Puerto" oninput="updatePreview()">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Sector <span>*</span></label>
+            <select id="f-sector" onchange="updatePreview()">
+              <option value="">Selecciona...</option>
+              <option value="restaurante">Restaurante / Hostelería</option>
+              <option value="inmobiliaria">Inmobiliaria</option>
+              <option value="portfolio">Portfolio / Creativo</option>
+              <option value="moda">Moda / Tienda</option>
+              <option value="hotel">Hotel / Spa</option>
+              <option value="nautica">Náutica</option>
+              <option value="arquitectura">Arquitectura / Interiorismo</option>
+              <option value="eventos">Eventos / Bodas</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ciudad / Localización</label>
+            <input type="text" id="f-city" placeholder="Torrevieja, Alicante" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Describe tu negocio en 2 frases</label>
+          <textarea id="f-desc" placeholder="¿Qué haces? ¿Qué te hace diferente? ¿A quién te diriges?"></textarea>
+          <div class="field-hint">Esta descripción aparecerá en Google cuando alguien busque tu negocio.</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Teléfono WhatsApp</label>
+            <input type="tel" id="f-phone" placeholder="+34 629 554 870">
+            <div class="field-hint">Con prefijo país. Ej: 34629554870</div>
+          </div>
+          <div class="field">
+            <label>Web o Instagram actual</label>
+            <input type="text" id="f-web" placeholder="@sunegocio o sunegocio.com">
+          </div>
+        </div>
+        <div class="field">
+          <label>¿Tienes dominio propio?</label>
+          <input type="text" id="f-domain" placeholder="sunegocio.com (deja vacío si no tienes)">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: IDENTIDAD VISUAL -->
+    <div class="step" id="step-2" data-step="2">
+      <div class="step-header" onclick="toggleStep(2)">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Identidad visual</div>
+          <div class="step-desc">Colores y tipografía que representan tu marca</div>
+        </div>
+        <i class="fa-solid fa-chevron-down step-chevron"></i>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>Color principal de tu marca <span>*</span></label>
+          <div class="field-hint" style="margin-bottom:8px">Elige el que más se parece a tus colores corporativos</div>
+          <div class="color-grid" id="color-grid">
+            <div class="color-swatch selected" style="background:#FF512F" data-color="#FF512F" onclick="selectColor(this,'primary')" title="Naranja coral"></div>
+            <div class="color-swatch" style="background:#FF6B35" data-color="#FF6B35" onclick="selectColor(this,'primary')" title="Naranja"></div>
+            <div class="color-swatch" style="background:#E63946" data-color="#E63946" onclick="selectColor(this,'primary')" title="Rojo"></div>
+            <div class="color-swatch" style="background:#0077B6" data-color="#0077B6" onclick="selectColor(this,'primary')" title="Azul oceano"></div>
+            <div class="color-swatch" style="background:#023E8A" data-color="#023E8A" onclick="selectColor(this,'primary')" title="Azul marino"></div>
+            <div class="color-swatch" style="background:#4A7C6F" data-color="#4A7C6F" onclick="selectColor(this,'primary')" title="Verde spa"></div>
+            <div class="color-swatch" style="background:#2D6A4F" data-color="#2D6A4F" onclick="selectColor(this,'primary')" title="Verde bosque"></div>
+            <div class="color-swatch" style="background:#C9A96E" data-color="#C9A96E" onclick="selectColor(this,'primary')" title="Dorado"></div>
+            <div class="color-swatch" style="background:#6C63FF" data-color="#6C63FF" onclick="selectColor(this,'primary')" title="Violeta"></div>
+            <div class="color-swatch" style="background:#2C3E50" data-color="#2C3E50" onclick="selectColor(this,'primary')" title="Gris oscuro"></div>
+            <div class="color-swatch" style="background:#1A1A1A" data-color="#1A1A1A" onclick="selectColor(this,'primary')" title="Negro"></div>
+            <div class="color-swatch" style="background:#FFFFFF;border:1px solid rgba(255,255,255,.3)" data-color="#FFFFFF" onclick="selectColor(this,'primary')" title="Blanco"></div>
+          </div>
+          <div class="color-custom">
+            <input type="color" id="color-primary-custom" value="#FF512F" oninput="customColor(this,'primary')">
+            <span>O escoge tu color exacto</span>
+          </div>
+          <input type="hidden" id="f-color-primary" value="#FF512F">
+        </div>
+
+        <div class="field">
+          <label>Fuente para los títulos <span>*</span></label>
+          <div class="field-hint" style="margin-bottom:8px">¿Cuál representa mejor la personalidad de tu negocio?</div>
+          <div class="font-grid">
+            <div class="font-opt selected" data-font="Salsa" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Salsa',cursive">Salsa</div>
+              <div class="font-opt-label">Divertida</div>
+            </div>
+            <div class="font-opt" data-font="Syne" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Syne',sans-serif;font-weight:800">Syne</div>
+              <div class="font-opt-label">Moderna</div>
+            </div>
+            <div class="font-opt" data-font="Playfair Display" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Playfair Display',serif">Playfair</div>
+              <div class="font-opt-label">Elegante</div>
+            </div>
+            <div class="font-opt" data-font="Bebas Neue" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Bebas Neue',cursive;letter-spacing:.1em">Bebas</div>
+              <div class="font-opt-label">Impacto</div>
+            </div>
+            <div class="font-opt" data-font="Cormorant Garamond" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Cormorant Garamond',serif">Cormorant</div>
+              <div class="font-opt-label">Lujo</div>
+            </div>
+            <div class="font-opt" data-font="Abril Fatface" onclick="selectFont(this)">
+              <div class="font-opt-name" style="font-family:'Abril Fatface',cursive">Abril</div>
+              <div class="font-opt-label">Bold</div>
+            </div>
+          </div>
+          <input type="hidden" id="f-font" value="Salsa">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: CONTENIDO DE SLIDES -->
+    <div class="step" id="step-3" data-step="3">
+      <div class="step-header" onclick="toggleStep(3)">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Contenido de tu web</div>
+          <div class="step-desc">Los textos que aparecerán en cada pantalla</div>
+        </div>
+        <i class="fa-solid fa-chevron-down step-chevron"></i>
+      </div>
+      <div class="step-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+          Tu web está formada por pantallas que el visitante va deslizando. Cada una tiene un título grande y una descripción breve. Añade entre 3 y 6 pantallas.
+        </p>
+        <div class="slide-builder" id="slides-builder">
+          <!-- slides added dynamically -->
+        </div>
+        <button class="btn-add-slide" onclick="addSlideField()">
+          <i class="fa-solid fa-plus"></i> Añadir otra pantalla
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: CONTACTO Y SERVICIOS -->
+    <div class="step" id="step-4" data-step="4">
+      <div class="step-header" onclick="toggleStep(4)">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Contacto y servicios</div>
+          <div class="step-desc">Información que aparece en la barra inferior</div>
+        </div>
+        <i class="fa-solid fa-chevron-down step-chevron"></i>
+      </div>
+      <div class="step-body">
+        <div class="field">
+          <label>Texto del botón principal <span>*</span></label>
+          <input type="text" id="f-cta-text" placeholder="Reservar Mesa / Solicitar Info / Contactar" value="Contactar">
+        </div>
+        <div class="field">
+          <label>Enlace del botón</label>
+          <input type="text" id="f-cta-link" placeholder="https://wa.me/34629554870 o tu web">
+          <div class="field-hint">Si lo dejas vacío se usará el WhatsApp que indicaste antes.</div>
+        </div>
+        <div class="field">
+          <label>3 servicios o características clave</label>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <input class="field" style="margin:0" type="text" id="f-feat1" placeholder="Ej: Horario · 13h - 23h">
+            <input class="field" style="margin:0" type="text" id="f-feat2" placeholder="Ej: Ubicación · Primera línea de playa">
+            <input class="field" style="margin:0" type="text" id="f-feat3" placeholder="Ej: Reservas · Garantizadas">
+          </div>
+          <div class="field-hint">Formato: Nombre del dato · Valor. Ejemplos: Precio · Desde 150€/noche | Entrega · 24 horas</div>
+        </div>
+        <div class="field">
+          <label>URL de tu logo (o sube una imagen)</label>
+          <input type="text" id="f-logo" placeholder="https://... (deja vacío si no tienes)">
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: FUNCIONALIDADES -->
+    <div class="step" id="step-5" data-step="5">
+      <div class="step-header" onclick="toggleStep(5)">
+        <div class="step-num">5</div>
+        <div>
+          <div class="step-title">Funcionalidades</div>
+          <div class="step-desc">¿Qué quieres que haga tu web?</div>
+        </div>
+        <i class="fa-solid fa-chevron-down step-chevron"></i>
+      </div>
+      <div class="step-body">
+        <div class="feature-grid" id="feature-grid">
+          <div class="feature-toggle" onclick="toggleFeature(this,'whatsapp')">
+            <span class="feature-toggle-icon">💬</span>
+            <div>
+              <div class="feature-toggle-text">Botón WhatsApp flotante</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'multilang')">
+            <span class="feature-toggle-icon">🌐</span>
+            <div>
+              <div class="feature-toggle-text">Versión en inglés</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'urgency')">
+            <span class="feature-toggle-icon">⏳</span>
+            <div>
+              <div class="feature-toggle-text">Contador de oferta</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'catalog')">
+            <span class="feature-toggle-icon">🛍️</span>
+            <div>
+              <div class="feature-toggle-text">Catálogo / Carrito</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'map')">
+            <span class="feature-toggle-icon">📍</span>
+            <div>
+              <div class="feature-toggle-text">Mapa de ubicación</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'gallery')">
+            <span class="feature-toggle-icon">🖼️</span>
+            <div>
+              <div class="feature-toggle-text">Galería de fotos</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'form')">
+            <span class="feature-toggle-icon">📧</span>
+            <div>
+              <div class="feature-toggle-text">Formulario de contacto</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+          <div class="feature-toggle" onclick="toggleFeature(this,'music')">
+            <span class="feature-toggle-icon">🎵</span>
+            <div>
+              <div class="feature-toggle-text">Música ambiental</div>
+            </div>
+            <div class="feature-toggle-check"></div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+          <label>Efecto visual preferido</label>
+          <select id="f-transition">
+            <option value="circle">Circle — aparece desde el centro (clásico)</option>
+            <option value="fade">Fade — fundido suave (elegante)</option>
+            <option value="wipe">Wipe — barrido horizontal (moderno)</option>
+            <option value="zoom">Zoom — zoom out (impacto)</option>
+            <option value="curtain">Curtain — cortina desde arriba (teatral)</option>
+            <option value="split">Split — se abre por el centro (sorpresa)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>¿Algo más que quieras en tu web?</label>
+          <textarea id="f-notes" placeholder="Cuéntanos cualquier idea, referencia de web que te guste, o algo especial que necesites..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERATE BUTTON -->
+    <div id="generate-section">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px">Resumen de tu proyecto</h3>
+        <div id="mini-summary" style="font-size:12px;color:var(--muted);line-height:1.8"></div>
+      </div>
+      <button class="btn-generate" onclick="generateConfig()">
+        <i class="fa-solid fa-rocket"></i> Generar config.json — ¡Listo para RUBIK SOTA!
+      </button>
+    </div>
+
+  </div><!-- /form-section -->
+
+  <!-- SUMMARY (shown after generation) -->
+  <div id="summary">
+    <div class="summary-card">
+      <span class="summary-icon">✅</span>
+      <div class="summary-title">¡Brief completado!</div>
+      <div class="summary-sub">Tu config.json está listo. RUBIK SOTA lo recibirá y comenzará a construir tu web premium en 24-48h.</div>
+      <div class="summary-data" id="summary-data"></div>
+      <div class="summary-actions">
+        <button class="btn btn-primary" onclick="downloadConfig()">
+          <i class="fa-solid fa-download"></i> Descargar config.json
+        </button>
+        <button class="btn btn-secondary" onclick="copyConfigJSON()">
+          <i class="fa-solid fa-copy"></i> Copiar JSON
+        </button>
+      </div>
+    </div>
+
+    <div class="email-share">
+      <h3><i class="fa-solid fa-envelope" style="color:var(--pr);margin-right:6px"></i> Enviar brief por email a RUBIK SOTA</h3>
+      <div class="field-hint" style="margin-bottom:12px">Introduce tu email para que podamos mandarte confirmación:</div>
+      <div class="email-row">
+        <input type="email" id="client-email" placeholder="tu@email.com" class="field" style="margin:0">
+        <button class="btn-send-email" onclick="sendByEmail()">
+          <i class="fa-solid fa-paper-plane"></i> Enviar
+        </button>
+      </div>
+      <div class="field-hint" style="margin-top:8px">O copia el JSON y envíalo directamente a: <strong style="color:var(--pr)">info@rubiksota.com</strong></div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px">
+      <button class="btn btn-secondary" onclick="startOver()">
+        <i class="fa-solid fa-rotate-left"></i> Nuevo brief
+      </button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────
+let generatedConfig = null;
+let slideCount = 0;
+const features = {};
+let currentStep = 1;
+const TOTAL_STEPS = 5;
+
+// ── INIT ───────────────────────────────────────────
+function init() {
+  buildStepsNav();
+  // Add 3 default slides
+  addSlideField('Tu Negocio Aquí', 'Describe aquí lo que hace especial a tu negocio. Este texto es completamente editable.');
+  addSlideField('Nuestros Servicios', 'Calidad, experiencia y compromiso en cada proyecto.');
+  addSlideField('Contacta Con Nosotros', 'Estamos aquí para ayudarte. Llámanos o escríbenos cuando quieras.');
+  updateProgress();
+  updateMiniSummary();
+}
+
+function buildStepsNav() {
+  const nav = document.getElementById('steps-nav');
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot' + (i === 1 ? ' active' : '');
+    dot.id = 'dot-' + i;
+    dot.onclick = () => toggleStep(i);
+    nav.appendChild(dot);
+  }
+}
+
+// ── STEP MANAGEMENT ────────────────────────────────
+function toggleStep(n) {
+  document.querySelectorAll('.step').forEach(s => {
+    const sn = parseInt(s.dataset.step);
+    s.classList.remove('open');
+    if (sn < n) s.classList.add('done');
+    document.getElementById('dot-' + sn).classList.remove('active');
+    if (sn < n) document.getElementById('dot-' + sn).classList.add('done');
+  });
+  const target = document.getElementById('step-' + n);
+  if (target) {
+    target.classList.add('open', 'active');
+    document.getElementById('dot-' + n).classList.add('active');
+    currentStep = n;
+  }
+  updateProgress();
+  updateMiniSummary();
+}
+
+function updateProgress() {
+  const pct = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+}
+
+// ── COLOR PICKER ───────────────────────────────────
+function selectColor(el, type) {
+  el.parentElement.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('f-color-' + type).value = el.dataset.color;
+  document.getElementById('color-' + type + '-custom').value = el.dataset.color;
+}
+
+function customColor(input, type) {
+  const val = input.value;
+  document.getElementById('f-color-' + type).value = val;
+  document.querySelectorAll('#color-grid .color-swatch').forEach(s => s.classList.remove('selected'));
+}
+
+// ── FONT PICKER ────────────────────────────────────
+function selectFont(el) {
+  document.querySelectorAll('.font-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('f-font').value = el.dataset.font;
+}
+
+// ── FEATURE TOGGLES ────────────────────────────────
+function toggleFeature(el, key) {
+  el.classList.toggle('checked');
+  const checkEl = el.querySelector('.feature-toggle-check');
+  if (el.classList.contains('checked')) {
+    features[key] = true;
+    checkEl.innerHTML = '✓';
+  } else {
+    features[key] = false;
+    checkEl.innerHTML = '';
+  }
+}
+
+// ── SLIDES BUILDER ─────────────────────────────────
+function addSlideField(title, desc) {
+  slideCount++;
+  const i = slideCount;
+  const container = document.getElementById('slides-builder');
+  const div = document.createElement('div');
+  div.className = 'slide-item';
+  div.id = 'slide-' + i;
+  const roles = ['apertura','problema','solucion','testimonio','cta'];
+  const roleLabel = ['Apertura', 'El problema', 'Tu solución', 'Testimonio', 'Llamada a acción'];
+  div.innerHTML = `
+    <div class="slide-item-header">
+      <div class="slide-item-num">${i}</div>
+      <div class="slide-item-title">Pantalla ${i}</div>
+      ${i > 1 ? `<button onclick="removeSlide(${i})" style="background:none;border:none;color:rgba(255,80,80,.6);cursor:pointer;font-size:11px">× Eliminar</button>` : ''}
+    </div>
+    <div class="field">
+      <label>Título grande</label>
+      <input type="text" id="slide-title-${i}" placeholder="Ej: Nuestra Terraza" value="${title||''}">
+    </div>
+    <div class="field">
+      <label>Descripción breve (1-2 líneas)</label>
+      <textarea id="slide-desc-${i}" placeholder="Describe brevemente esta sección de la web...">${desc||''}</textarea>
+    </div>
+    <div class="field">
+      <label>Rol narrativo</label>
+      <select id="slide-role-${i}">
+        <option value="">Sin rol</option>
+        ${roles.map((r,j)=>`<option value="${r}">${roleLabel[j]}</option>`).join('')}
+      </select>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function removeSlide(i) {
+  const el = document.getElementById('slide-' + i);
+  if (el) el.remove();
+}
+
+// ── MINI SUMMARY ───────────────────────────────────
+function updateMiniSummary() {
+  const name = document.getElementById('f-name').value || '(sin nombre)';
+  const sector = document.getElementById('f-sector').value || '(sin sector)';
+  const city = document.getElementById('f-city').value || '';
+  const phone = document.getElementById('f-phone').value || '';
+  const featureList = Object.keys(features).filter(k=>features[k]).join(', ') || 'ninguna aún';
+  document.getElementById('mini-summary').innerHTML = `
+    <strong style="color:white">${name}</strong> · ${sector} ${city ? '· '+city : ''}<br>
+    WhatsApp: ${phone || 'por configurar'}<br>
+    Funcionalidades: ${featureList}
+  `;
+}
+
+function updatePreview() { updateMiniSummary(); }
+
+// ── GENERATE CONFIG ────────────────────────────────
+function generateConfig() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('Introduce el nombre del negocio'); toggleStep(1); return; }
+
+  const sector   = document.getElementById('f-sector').value;
+  const city     = document.getElementById('f-city').value.trim();
+  const desc     = document.getElementById('f-desc').value.trim();
+  const phone    = document.getElementById('f-phone').value.replace(/[\s\+\-]/g,'');
+  const domain   = document.getElementById('f-domain').value.trim();
+  const colorPr  = document.getElementById('f-color-primary').value;
+  const font     = document.getElementById('f-font').value;
+  const ctaTxt   = document.getElementById('f-cta-text').value.trim() || 'Contactar';
+  const ctaLink  = document.getElementById('f-cta-link').value.trim() || (phone ? 'https://wa.me/'+phone : '#');
+  const transition = document.getElementById('f-transition').value;
+  const notes    = document.getElementById('f-notes').value.trim();
+
+  // Build slides
+  const slides = [];
+  for (let i = 1; i <= slideCount; i++) {
+    const titleEl = document.getElementById('slide-title-' + i);
+    const descEl  = document.getElementById('slide-desc-' + i);
+    const roleEl  = document.getElementById('slide-role-' + i);
+    if (!titleEl) continue;
+    slides.push({
+      title: titleEl.value.trim() || 'Sección ' + i,
+      description: descEl ? descEl.value.trim() : '',
+      media: { type:'image', url:'', position:'50% 50%' },
+      role: roleEl ? roleEl.value : '',
+      wamsg: phone ? 'Hola, vi ' + name + ' y me interesa.' : '',
+    });
+  }
+
+  if (!slides.length) { showToast('Añade al menos una pantalla'); toggleStep(3); return; }
+
+  // Build footer features
+  const feats = [];
+  ['f-feat1','f-feat2','f-feat3'].forEach(id => {
+    const val = document.getElementById(id).value.trim();
+    if (val) {
+      const parts = val.split('·');
+      feats.push({ icon:'fa-star', label: (parts[0]||val).trim(), detail: (parts[1]||'').trim() });
+    }
+  });
+  if (!feats.length) feats.push({ icon:'fa-star', label: 'Servicio', detail: 'Premium' });
+
+  generatedConfig = {
+    _meta: { name, sector, city, notes, createdAt: new Date().toISOString().split('T')[0] },
+    theme: {
+      primaryColor: colorPr,
+      secondaryColor: '#F09819',
+      fontFamily: "'Quicksand',sans-serif",
+      titleFont: "'" + font + "', sans-serif",
+      backgroundFilter: 'brightness(85%)',
+      animationDuration: '3s',
+      sliderSpeed: 1000,
+    },
+    slider: { direction:'vertical', effect:'fade', speed:1000, loop:true, mousewheel:true, transition },
+    slides,
+    footer: { features: feats, button: { text: ctaTxt, link: ctaLink } },
+    logo: { image:'', link:'#', alt: name },
+    audio: { url:'', volume:40, label:'Música ambiental' },
+    overlay: { color1:'rgba(0,0,0,0)', color2:'rgba(0,0,0,0)' },
+    urgency: { enabled: !!features.urgency, label:'Oferta por tiempo limitado', date:'' },
+    effects: { parallax:15, kenburns:true, shader:'none', shaderIntensity:0.5 },
+    whatsapp: { enabled: !!features.whatsapp, number: phone, message:'Hola, vi ' + name + ' y me interesa.', tooltip:'Contactar por WhatsApp', delay:5 },
+    contact: { enabled: !!features.form, formspree:'', title:'Contacta con ' + name },
+    i18n: { enabled: !!features.multilang },
+    hotspots: {},
+    catalog: { currency:'€', waNumber: phone },
+    cloudinary: { name:'', preset:'', quality:'q_auto,f_auto' },
+    stripe: { cartUrl:'' },
+    seo: {
+      title: name + (city ? ' — ' + city : ''),
+      description: desc.substring(0, 160),
+      keywords: [name, sector, city].filter(Boolean).join(', '),
+      domain,
+      ogImage:'', favicon:'', gaId:'',
+    },
+  };
+
+  // Show summary
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('summary').style.display = 'block';
+  document.getElementById('progress').style.width = '100%';
+
+  const sd = document.getElementById('summary-data');
+  sd.innerHTML = `
+    <div class="summary-row"><span class="key">Negocio</span><span class="val">${name}</span></div>
+    <div class="summary-row"><span class="key">Sector</span><span class="val">${sector}</span></div>
+    <div class="summary-row"><span class="key">Pantallas</span><span class="val">${slides.length} slides</span></div>
+    <div class="summary-row"><span class="key">Color principal</span><span class="val"><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${colorPr};vertical-align:middle;margin-right:4px"></span>${colorPr}</span></div>
+    <div class="summary-row"><span class="key">Tipografía</span><span class="val">${font}</span></div>
+    <div class="summary-row"><span class="key">Dominio</span><span class="val">${domain||'Por asignar'}</span></div>
+    <div class="summary-row"><span class="key">WhatsApp</span><span class="val">${phone||'No indicado'}</span></div>
+    <div class="summary-row"><span class="key">Features</span><span class="val">${Object.keys(features).filter(k=>features[k]).length} activadas</span></div>
+  `;
+
+  window.scrollTo(0, 0);
+  showToast('¡Config.json generado con éxito!');
+}
+
+function downloadConfig() {
+  if (!generatedConfig) return;
+  const blob = new Blob([JSON.stringify(generatedConfig, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'config-' + (generatedConfig._meta.name.replace(/\s+/g,'-').toLowerCase() || 'proyecto') + '.json';
+  a.click();
+  showToast('config.json descargado');
+}
+
+function copyConfigJSON() {
+  if (!generatedConfig) return;
+  navigator.clipboard.writeText(JSON.stringify(generatedConfig, null, 2))
+    .then(() => showToast('JSON copiado al portapapeles'))
+    .catch(() => showToast('Error al copiar'));
+}
+
+function sendByEmail() {
+  const email = document.getElementById('client-email').value.trim();
+  if (!email) { showToast('Introduce tu email'); return; }
+  if (!generatedConfig) return;
+  const subject = encodeURIComponent('Brief Web — ' + (generatedConfig._meta.name || 'Proyecto'));
+  const body = encodeURIComponent(
+    'Hola RUBIK SOTA,\n\nAdjunto el brief de mi proyecto web.\n\n' +
+    'Negocio: ' + generatedConfig._meta.name + '\n' +
+    'Sector: ' + generatedConfig._meta.sector + '\n' +
+    'WhatsApp: ' + (generatedConfig.whatsapp.number || 'No indicado') + '\n\n' +
+    'Config.json generado — lo descargo y os lo envío.\n\n' +
+    'Un saludo.'
+  );
+  window.open('mailto:info@rubiksota.com?subject=' + subject + '&body=' + body, '_blank');
+  showToast('Abriendo tu cliente de email...');
+}
+
+function startOver() {
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  generatedConfig = null;
+  document.getElementById('progress').style.width = '0%';
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── START ──────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

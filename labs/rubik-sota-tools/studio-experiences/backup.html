@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RS·STUDIO — Backup de Proyectos</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root {
+  --pr:#FF512F; --se:#F09819; --bg:#0a0a0a; --card:#111;
+  --border:rgba(255,255,255,.1); --text:#F0EDE8; --muted:rgba(255,255,255,.45);
+  --font:'Segoe UI',system-ui,sans-serif; --green:#3ECF8E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+.header{background:rgba(8,8,12,.97);border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:34px;height:34px;border-radius:8px;background:linear-gradient(45deg,var(--pr),var(--se));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:white}
+.brand-name{font-size:14px;font-weight:700}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.container{max-width:900px;margin:0 auto;padding:32px 20px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-num{font-size:28px;font-weight:800;color:var(--pr);line-height:1}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+
+/* CLOUDINARY CONFIG */
+.config-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px}
+.config-card h2{font-size:14px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.config-card p{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.config-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:500px){.config-row{grid-template-columns:1fr}}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.field input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--text);font-family:var(--font);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--pr)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+.status-dot.ok{background:var(--green);box-shadow:0 0 8px rgba(62,207,142,.5)}
+
+/* ACTIONS BAR */
+.actions-bar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:all .2s;font-family:var(--font);border:none;text-transform:uppercase}
+.btn-pr{background:linear-gradient(45deg,var(--pr),var(--se));color:white}
+.btn-pr:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sec{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--text)}
+.btn-sec:hover{background:rgba(255,255,255,.12)}
+.btn-danger{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);color:#ff8080}
+.btn-danger:hover{background:rgba(255,80,80,.2)}
+.search-input{flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 14px;font-size:12px;color:var(--text);font-family:var(--font);outline:none}
+.search-input:focus{border-color:var(--pr)}
+
+/* BACKUP LIST */
+.backup-list{display:flex;flex-direction:column;gap:8px}
+.backup-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.backup-item:hover{border-color:rgba(255,81,47,.3)}
+.backup-icon{width:40px;height:40px;border-radius:8px;background:rgba(255,81,47,.1);border:1px solid rgba(255,81,47,.2);display:flex;align-items:center;justify-content:center;color:var(--pr);font-size:16px;flex-shrink:0}
+.backup-info{flex:1;min-width:0}
+.backup-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backup-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.backup-size{font-size:10px;color:var(--muted);font-family:monospace;white-space:nowrap}
+.backup-actions{display:flex;gap:6px;flex-shrink:0}
+.btn-icon{width:32px;height:32px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s}
+.btn-icon:hover{border-color:var(--pr);color:var(--pr)}
+.btn-icon.danger:hover{border-color:#ff6060;color:#ff6060}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;letter-spacing:.06em;text-transform:uppercase}
+.badge-cloud{background:rgba(62,207,142,.1);color:var(--green);border:1px solid rgba(62,207,142,.2)}
+.badge-local{background:rgba(255,81,47,.1);color:var(--pr);border:1px solid rgba(255,81,47,.2)}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-icon{font-size:40px;display:block;margin-bottom:12px;opacity:.3}
+
+/* DETAIL MODAL */
+#detail-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px}
+#detail-overlay.open{display:flex}
+.detail-modal{background:#0f0f14;border:1px solid rgba(255,255,255,.12);border-radius:14px;width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.7)}
+.detail-header{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.detail-header h3{font-size:15px;font-weight:700}
+.detail-close{background:rgba(255,255,255,.08);border:none;color:var(--text);width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.detail-body{flex:1;overflow-y:auto;padding:16px 20px}
+.detail-body::-webkit-scrollbar{width:3px}
+.detail-body::-webkit-scrollbar-thumb{background:#333}
+.detail-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;flex-shrink:0}
+.json-preview{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:12px;font-family:monospace;font-size:11px;color:var(--green);line-height:1.7;overflow-x:auto;max-height:300px;overflow-y:auto;white-space:pre}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.meta-item{background:rgba(255,255,255,.04);border-radius:6px;padding:8px 10px}
+.meta-key{font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.meta-val{font-size:12px;font-weight:600}
+
+/* IMPORT AREA */
+.import-area{border:1.5px dashed rgba(255,255,255,.12);border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-bottom:24px}
+.import-area:hover{border-color:var(--pr);background:rgba(255,81,47,.04)}
+.import-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.import-icon{font-size:24px;color:var(--muted);margin-bottom:8px;display:block}
+.import-text{font-size:12px;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(16,16,22,.97);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;font-size:12px;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;backdrop-filter:blur(12px);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-icon">RS</div>
+    <div>
+      <div class="brand-name">RS·STUDIO — Backup de Proyectos</div>
+      <div class="brand-sub">RUBIK SOTA · 629 554 870</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="status-dot" id="cloud-dot"></div>
+    <span style="font-size:11px;color:var(--muted)" id="cloud-status">Cloudinary no configurado</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- CLOUDINARY CONFIG -->
+  <div class="config-card" id="cloud-config">
+    <h2><i class="fa-solid fa-cloud" style="color:var(--pr)"></i> Configuración Cloudinary <div class="status-dot" id="cloud-dot2" style="margin-left:auto"></div></h2>
+    <p>Conecta tu cuenta de Cloudinary para guardar backups en la nube. Si no lo configuras, los backups se guardan solo en este navegador.</p>
+    <div class="config-row">
+      <div class="field"><label>Cloud Name</label><input type="text" id="cld-name" placeholder="dgbgriykc" oninput="saveCLDConfig()"></div>
+      <div class="field"><label>Upload Preset (unsigned)</label><input type="text" id="cld-preset" placeholder="rs_experiences_preset" oninput="saveCLDConfig()"></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted)"><i class="fa-solid fa-circle-info" style="color:var(--pr);margin-right:4px"></i> Los backups se guardan en la carpeta <code style="color:var(--green)">rs-backups/</code> de tu Cloudinary.</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Backups totales</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-clients">0</div><div class="stat-label">Clientes</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-cloud">0</div><div class="stat-label">En la nube</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-local">0</div><div class="stat-label">En local</div></div>
+  </div>
+
+  <!-- IMPORT -->
+  <div class="import-area" onclick="document.getElementById('import-file').click()">
+    <input type="file" id="import-file" accept=".json" onchange="importConfig(this)" style="display:none">
+    <span class="import-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+    <div class="import-text"><strong style="color:var(--text)">Arrastra o haz clic para importar un config.json</strong><br>Se guardará con fecha y nombre del cliente automáticamente</div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions-bar">
+    <input class="search-input" type="text" id="search" placeholder="Buscar por nombre de cliente..." oninput="renderList()">
+    <button class="btn btn-danger" onclick="clearAll()" style="font-size:10px">
+      <i class="fa-solid fa-trash"></i> Limpiar todo
+    </button>
+  </div>
+
+  <!-- LIST -->
+  <div class="backup-list" id="backup-list">
+    <div class="empty"><span class="empty-icon">📁</span>No hay backups guardados.<br>Importa un config.json para empezar.</div>
+  </div>
+
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal">
+    <div class="detail-header">
+      <h3 id="detail-title">Detalle del backup</h3>
+      <button class="detail-close" onclick="closeDetail()">×</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+    <div class="detail-footer">
+      <button class="btn btn-pr" onclick="downloadCurrent()"><i class="fa-solid fa-download"></i> Descargar</button>
+      <button class="btn btn-sec" onclick="loadInEditor()"><i class="fa-solid fa-pen"></i> Cargar en editor</button>
+      <button class="btn btn-danger" onclick="deleteCurrent()"><i class="fa-solid fa-trash"></i> Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────────
+let backups = [];
+let currentBackupId = null;
+const LS_KEY = 'rs_backups_v1';
+const CLD_KEY = 'rs_backup_cloudinary';
+
+// ── INIT ───────────────────────────────────────────
+function init() {
+  loadCLDConfig();
+  loadBackups();
+  renderList();
+  updateStats();
+}
+
+// ── CLOUDINARY ─────────────────────────────────────
+function saveCLDConfig() {
+  const cfg = {
+    name: document.getElementById('cld-name').value.trim(),
+    preset: document.getElementById('cld-preset').value.trim(),
+  };
+  localStorage.setItem(CLD_KEY, JSON.stringify(cfg));
+  updateCLDStatus();
+}
+
+function loadCLDConfig() {
+  try {
+    const cfg = JSON.parse(localStorage.getItem(CLD_KEY) || '{}');
+    if (cfg.name) document.getElementById('cld-name').value = cfg.name;
+    if (cfg.preset) document.getElementById('cld-preset').value = cfg.preset;
+  } catch(e){}
+  updateCLDStatus();
+}
+
+function getCLDConfig() {
+  try { return JSON.parse(localStorage.getItem(CLD_KEY) || '{}'); } catch(e){ return {}; }
+}
+
+function isCLDReady() {
+  const cfg = getCLDConfig();
+  return !!(cfg.name && cfg.preset);
+}
+
+function updateCLDStatus() {
+  const ready = isCLDReady();
+  ['cloud-dot','cloud-dot2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.toggle('ok', ready); }
+  });
+  const st = document.getElementById('cloud-status');
+  if (st) st.textContent = ready ? 'Cloudinary conectado' : 'Cloudinary no configurado';
+}
+
+async function uploadToCloudinary(jsonStr, filename) {
+  const cfg = getCLDConfig();
+  if (!isCLDReady()) return null;
+  const blob = new Blob([jsonStr], { type:'application/json' });
+  const formData = new FormData();
+  formData.append('file', blob, filename + '.json');
+  formData.append('upload_preset', cfg.preset);
+  formData.append('folder', 'rs-backups');
+  formData.append('resource_type', 'raw');
+  try {
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + cfg.name + '/raw/upload', { method:'POST', body:formData });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.secure_url;
+  } catch(e) { return null; }
+}
+
+// ── BACKUP STORAGE ─────────────────────────────────
+function loadBackups() {
+  try { backups = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch(e) { backups = []; }
+}
+
+function saveBackups() {
+  // Keep max 50 backups in localStorage
+  if (backups.length > 50) backups = backups.slice(-50);
+  localStorage.setItem(LS_KEY, JSON.stringify(backups));
+}
+
+// ── IMPORT CONFIG ──────────────────────────────────
+async function importConfig(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const json = JSON.parse(e.target.result);
+      await saveBackup(json, file.name, file.size, 'local');
+    } catch(err) {
+      showToast('Error: el archivo no es un JSON válido');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+async function saveBackup(json, filename, size, source) {
+  const name = (json._meta && json._meta.name) || filename.replace('.json','') || 'Sin nombre';
+  const sector = (json._meta && json._meta.sector) || '';
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const timeStr = now.toTimeString().split(' ')[0].substring(0,5);
+
+  const backup = {
+    id: 'bk-' + Date.now(),
+    name, sector,
+    filename: filename || (name.replace(/\s+/g,'-') + '-' + dateStr + '.json'),
+    date: dateStr, time: timeStr,
+    size: size || JSON.stringify(json).length,
+    source, // 'local' | 'cloud'
+    cloudUrl: null,
+    data: json,
+  };
+
+  // Try Cloudinary upload
+  if (isCLDReady()) {
+    showToast('Subiendo a Cloudinary...');
+    const jsonStr = JSON.stringify(json, null, 2);
+    const cloudUrl = await uploadToCloudinary(jsonStr, name.replace(/\s+/g,'-') + '-' + dateStr);
+    if (cloudUrl) {
+      backup.source = 'cloud';
+      backup.cloudUrl = cloudUrl;
+      showToast('✓ Backup guardado en Cloudinary');
+    } else {
+      showToast('Cloudinary falló — guardado en local');
+    }
+  } else {
+    showToast('✓ Backup guardado en local');
+  }
+
+  backups.unshift(backup);
+  saveBackups();
+  renderList();
+  updateStats();
+}
+
+// ── RENDER LIST ────────────────────────────────────
+function renderList() {
+  const list = document.getElementById('backup-list');
+  const search = document.getElementById('search').value.toLowerCase();
+  let filtered = backups.filter(b =>
+    b.name.toLowerCase().includes(search) ||
+    (b.sector && b.sector.toLowerCase().includes(search)) ||
+    b.date.includes(search)
+  );
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty"><span class="empty-icon">📁</span>' +
+      (search ? 'No hay resultados para "' + search + '"' : 'No hay backups guardados.<br>Importa un config.json para empezar.') +
+      '</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(b => {
+    const sizeKB = Math.round(b.size / 1024);
+    const slides = b.data && b.data.slides ? b.data.slides.length : '?';
+    return `
+      <div class="backup-item" onclick="openDetail('${b.id}')">
+        <div class="backup-icon"><i class="fa-solid fa-file-code"></i></div>
+        <div class="backup-info">
+          <div class="backup-name">${esc(b.name)}</div>
+          <div class="backup-meta">
+            ${b.sector ? b.sector + ' · ' : ''}${b.date} ${b.time} · ${slides} slides
+            <span class="badge ${b.source === 'cloud' ? 'badge-cloud' : 'badge-local'}" style="margin-left:6px">
+              <i class="fa-solid fa-${b.source === 'cloud' ? 'cloud' : 'hdd'}"></i> ${b.source === 'cloud' ? 'Cloudinary' : 'Local'}
+            </span>
+          </div>
+        </div>
+        <div class="backup-size">${sizeKB} KB</div>
+        <div class="backup-actions" onclick="event.stopPropagation()">
+          <button class="btn-icon" onclick="downloadBackup('${b.id}')" title="Descargar"><i class="fa-solid fa-download"></i></button>
+          <button class="btn-icon danger" onclick="deleteBackup('${b.id}')" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function esc(s) { return (s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+// ── STATS ──────────────────────────────────────────
+function updateStats() {
+  const clients = new Set(backups.map(b => b.name)).size;
+  const cloud = backups.filter(b => b.source === 'cloud').length;
+  document.getElementById('stat-total').textContent = backups.length;
+  document.getElementById('stat-clients').textContent = clients;
+  document.getElementById('stat-cloud').textContent = cloud;
+  document.getElementById('stat-local').textContent = backups.length - cloud;
+}
+
+// ── DETAIL MODAL ───────────────────────────────────
+function openDetail(id) {
+  const b = backups.find(x => x.id === id);
+  if (!b) return;
+  currentBackupId = id;
+  document.getElementById('detail-title').textContent = b.name;
+  const slides = b.data && b.data.slides ? b.data.slides.length : 0;
+  const sizeKB = Math.round(b.size / 1024);
+  const body = document.getElementById('detail-body');
+  body.innerHTML = `
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-key">Negocio</div><div class="meta-val">${esc(b.name)}</div></div>
+      <div class="meta-item"><div class="meta-key">Sector</div><div class="meta-val">${esc(b.sector||'—')}</div></div>
+      <div class="meta-item"><div class="meta-key">Fecha</div><div class="meta-val">${b.date} ${b.time}</div></div>
+      <div class="meta-item"><div class="meta-key">Tamaño</div><div class="meta-val">${sizeKB} KB</div></div>
+      <div class="meta-item"><div class="meta-key">Slides</div><div class="meta-val">${slides} pantallas</div></div>
+      <div class="meta-item"><div class="meta-key">Almacenamiento</div>
+        <div class="meta-val">
+          <span class="badge ${b.source==='cloud'?'badge-cloud':'badge-local'}">
+            <i class="fa-solid fa-${b.source==='cloud'?'cloud':'hdd'}"></i> ${b.source==='cloud'?'Cloudinary':'Local'}
+          </span>
+        </div>
+      </div>
+    </div>
+    ${b.cloudUrl ? `<div style="font-size:11px;color:var(--green);margin-bottom:12px;word-break:break-all"><i class="fa-solid fa-link" style="margin-right:4px"></i>${b.cloudUrl}</div>` : ''}
+    <div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Vista previa del JSON</div>
+    <div class="json-preview">${JSON.stringify(b.data, null, 2).substring(0,800)}...</div>
+  `;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  currentBackupId = null;
+}
+
+function downloadCurrent() {
+  if (currentBackupId) downloadBackup(currentBackupId);
+}
+
+function deleteCurrent() {
+  if (currentBackupId) { deleteBackup(currentBackupId); closeDetail(); }
+}
+
+function loadInEditor() {
+  const b = backups.find(x => x.id === currentBackupId);
+  if (!b) return;
+  localStorage.setItem('rs_config', JSON.stringify(b.data));
+  showToast('Config cargado — abre el editor y recarga');
+  closeDetail();
+}
+
+// ── DOWNLOAD / DELETE ──────────────────────────────
+function downloadBackup(id) {
+  const b = backups.find(x => x.id === id);
+  if (!b) return;
+  const blob = new Blob([JSON.stringify(b.data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = b.name.replace(/\s+/g,'-').toLowerCase() + '-' + b.date + '.json';
+  a.click();
+  showToast('Descargando ' + b.name);
+}
+
+function deleteBackup(id) {
+  if (!confirm('¿Eliminar este backup? Esta acción no se puede deshacer.')) return;
+  backups = backups.filter(x => x.id !== id);
+  saveBackups(); renderList(); updateStats();
+  showToast('Backup eliminado');
+}
+
+function clearAll() {
+  if (!confirm('¿Eliminar TODOS los backups? Esta acción no se puede deshacer.')) return;
+  backups = []; saveBackups(); renderList(); updateStats();
+  showToast('Todos los backups eliminados');
+}
+
+// ── TOAST ──────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── START ──────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

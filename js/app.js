@@ -16,6 +16,7 @@
         try { if (EP.CatalogUX) EP.CatalogUX.init(); } catch(e) { console.error('CatalogUX.init failed:', e); }
         try { if (EP.PipelinePro) EP.PipelinePro.init(); } catch(e) { console.error('PipelinePro.init failed:', e); }
         try { if (EP.ScrollSectionsUI) EP.ScrollSectionsUI.init(); } catch(e) { console.error('ScrollSectionsUI.init failed:', e); }
+        try { if (EP.RubikToolsUI) EP.RubikToolsUI.init(); } catch(e) { console.error('RubikToolsUI.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();

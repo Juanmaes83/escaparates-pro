@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RS·STUDIO — RUBIK SOTA Experiences Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* =============================================
+   RS·STUDIO — RUBIK SOTA EXPERIENCES PLATFORM
+   Internal tool for Juanma / RUBIK SOTA agency
+   ============================================= */
+
+:root {
+  --bg:       #0c0c0e;
+  --surface:  #141418;
+  --surface2: #1c1c22;
+  --surface3: #242430;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --accent:   #ff4c1f;
+  --accent2:  #ff8040;
+  --gold:     #f0c040;
+  --green:    #3ecf8e;
+  --blue:     #4080ff;
+  --text:     #f0ede8;
+  --muted:    #888890;
+  --muted2:   #505058;
+  --font-h:   'Syne', sans-serif;
+  --font-b:   'DM Sans', sans-serif;
+  --font-m:   'DM Mono', monospace;
+  --r:        6px;
+  --r2:       12px;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex;flex-direction:column}
+
+/* ══════════════════════════════════════
+   SCREEN 0 — LOGIN
+══════════════════════════════════════ */
+#screen-login{
+  align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,76,31,.14) 0%,transparent 65%),
+             var(--bg);
+}
+.login-box{
+  width:360px;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--r2);
+  padding:48px 40px;
+  text-align:center;
+}
+.login-logo{
+  font-family:var(--font-h);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.14em;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.login-logo span{color:var(--accent)}
+.login-tagline{font-size:12px;color:var(--muted);margin-bottom:40px}
+.login-label{display:block;text-align:left;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.login-input{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--r);padding:12px 16px;font-size:14px;font-family:var(--font-m);
+  color:var(--text);outline:none;transition:border-color .2s;margin-bottom:20px;
+}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{
+  width:100%;background:var(--accent);color:white;
+  font-family:var(--font-h);font-size:13px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:14px;border:none;border-radius:var(--r);
+  cursor:pointer;transition:all .2s;
+}
+.login-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+.login-error{font-size:12px;color:#ff6060;margin-top:12px;display:none}
+.login-version{font-size:11px;color:var(--muted2);margin-top:32px;font-family:var(--font-m)}
+
+/* ══════════════════════════════════════
+   SCREEN 1 — DASHBOARD
+══════════════════════════════════════ */
+#screen-dashboard{background:var(--bg)}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 32px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-brand{
+  font-family:var(--font-h);font-size:13px;font-weight:800;
+  letter-spacing:.12em;color:var(--text);
+}
+.topbar-brand span{color:var(--accent)}
+.topbar-brand sub{font-size:9px;color:var(--muted);font-weight:400;letter-spacing:.06em;margin-left:8px;font-family:var(--font-m)}
+
+.topbar-actions{display:flex;align-items:center;gap:12px}
+
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;padding:9px 18px;border-radius:var(--r);
+  cursor:pointer;transition:all .2s;border:1px solid transparent;
+}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border-color:var(--border2);color:var(--text)}
+.btn-ghost:hover{border-color:var(--border2);background:var(--surface2)}
+.btn-danger{background:transparent;border-color:rgba(255,80,80,.3);color:#ff8080}
+.btn-danger:hover{background:rgba(255,80,80,.1)}
+.btn-green{background:rgba(62,207,142,.12);border-color:rgba(62,207,142,.25);color:var(--green)}
+.btn-green:hover{background:rgba(62,207,142,.2)}
+.btn-sm{padding:6px 12px;font-size:10px}
+
+.dash-body{
+  display:grid;grid-template-columns:280px 1fr;
+  min-height:calc(100vh - 57px);
+}
+
+/* SIDEBAR */
+.sidebar{
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:24px 0;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sidebar-section{
+  padding:8px 20px 4px;
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted2);font-weight:500;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;
+  font-size:13px;color:var(--muted);
+  cursor:pointer;transition:all .15s;
+  border-left:2px solid transparent;
+}
+.sidebar-item:hover{color:var(--text);background:var(--surface2)}
+.sidebar-item.active{color:var(--text);background:var(--surface2);border-left-color:var(--accent)}
+.sidebar-item i{width:16px;font-size:13px}
+.sidebar-item .badge{
+  margin-left:auto;background:var(--accent);color:white;
+  font-size:9px;font-weight:700;font-family:var(--font-m);
+  padding:2px 6px;border-radius:100px;
+}
+
+/* MAIN CONTENT */
+.main{padding:32px;overflow-y:auto}
+
+.page{display:none}
+.page.active{display:block}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);padding:24px;
+}
+.stat-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.stat-value{font-family:var(--font-h);font-size:32px;font-weight:800;line-height:1}
+.stat-value.accent{color:var(--accent)}
+.stat-value.green{color:var(--green)}
+.stat-sub{font-size:12px;color:var(--muted2);margin-top:4px}
+
+/* Section header */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-hdr h2{font-family:var(--font-h);font-size:18px;font-weight:700}
+
+/* Search */
+.search-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:10px 16px;
+  margin-bottom:20px;
+}
+.search-bar i{color:var(--muted2);font-size:14px}
+.search-bar input{
+  background:transparent;border:none;outline:none;
+  font-size:13px;color:var(--text);font-family:var(--font-b);flex:1;
+}
+.search-bar input::placeholder{color:var(--muted2)}
+
+/* Client cards grid */
+.clients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+.client-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;
+  transition:all .2s;cursor:pointer;
+}
+.client-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+
+.client-card-thumb{
+  height:140px;position:relative;overflow:hidden;
+}
+.client-card-thumb-bg{
+  width:100%;height:100%;
+  background:linear-gradient(135deg,var(--surface2),var(--surface3));
+  display:flex;align-items:center;justify-content:center;
+}
+.client-card-thumb-letter{
+  font-family:var(--font-h);font-size:56px;font-weight:800;
+  color:rgba(255,255,255,.06);
+  user-select:none;
+}
+.client-card-thumb-sector{
+  position:absolute;top:12px;left:12px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  border:1px solid var(--border2);
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding:4px 10px;border-radius:100px;font-family:var(--font-m);
+}
+.client-card-thumb-status{
+  position:absolute;top:12px;right:12px;
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
+  border:1px solid var(--border2);
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);padding:4px 10px;border-radius:100px;font-family:var(--font-m);
+}
+.status-dot{width:6px;height:6px;border-radius:50%}
+.status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-dot.draft{background:var(--gold)}
+.status-dot.new{background:var(--muted2)}
+
+.client-card-body{padding:16px 20px 20px}
+.client-card-name{font-family:var(--font-h);font-size:16px;font-weight:700;margin-bottom:4px}
+.client-card-meta{font-size:12px;color:var(--muted);display:flex;gap:12px}
+.client-card-meta span{display:flex;align-items:center;gap:4px}
+.client-card-meta i{font-size:11px}
+.client-card-actions{
+  display:flex;gap:8px;margin-top:16px;padding-top:16px;
+  border-top:1px solid var(--border);
+}
+
+/* Empty state */
+.empty-state{
+  text-align:center;padding:80px 40px;
+  background:var(--surface);border:1px dashed var(--border2);
+  border-radius:var(--r2);
+}
+.empty-state-icon{font-size:48px;margin-bottom:16px;opacity:.3}
+.empty-state h3{font-family:var(--font-h);font-size:20px;font-weight:700;margin-bottom:8px}
+.empty-state p{font-size:14px;color:var(--muted);margin-bottom:24px}
+
+/* ══════════════════════════════════════
+   SCREEN 2 — EDITOR
+══════════════════════════════════════ */
+#screen-editor{
+  display:none;flex-direction:row;height:100vh;overflow:hidden;
+}
+#screen-editor.active{display:flex}
+
+.editor-sidebar{
+  width:320px;min-width:320px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+
+.editor-topbar{
+  padding:14px 16px;
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;
+}
+.editor-back{
+  width:28px;height:28px;border-radius:var(--r);
+  background:var(--surface3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);font-size:12px;transition:all .15s;flex-shrink:0;
+}
+.editor-back:hover{color:var(--text);background:var(--surface)}
+.editor-client-name{font-family:var(--font-h);font-size:13px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor-save-btn{
+  padding:7px 14px;background:var(--accent);color:white;
+  font-family:var(--font-h);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  border:none;border-radius:var(--r);cursor:pointer;transition:all .2s;flex-shrink:0;
+}
+.editor-save-btn:hover{background:var(--accent2)}
+
+/* Tab nav */
+.editor-tabs{
+  display:flex;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.editor-tab{
+  flex:1;padding:11px 8px;text-align:center;
+  font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;transition:all .15s;
+  border-bottom:2px solid transparent;
+}
+.editor-tab:hover{color:var(--text)}
+.editor-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* Tab panels */
+.editor-panels{flex:1;overflow-y:auto}
+.editor-panels::-webkit-scrollbar{width:4px}
+.editor-panels::-webkit-scrollbar-track{background:transparent}
+.editor-panels::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px}
+
+.editor-panel{display:none;padding:16px}
+.editor-panel.active{display:block}
+
+/* Form elements */
+.field{margin-bottom:16px}
+.field-label{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px;display:block}
+.field-input{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:9px 12px;font-size:13px;
+  color:var(--text);font-family:var(--font-b);outline:none;transition:border-color .2s;
+}
+.field-input:focus{border-color:var(--accent)}
+.field-textarea{resize:vertical;min-height:80px;font-family:var(--font-b)}
+.field-select{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:9px 12px;font-size:13px;color:var(--text);
+  font-family:var(--font-b);outline:none;cursor:pointer;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  padding-right:36px;
+}
+
+.color-row{display:flex;gap:8px;align-items:center}
+.color-swatch{
+  width:36px;height:36px;border-radius:var(--r);border:2px solid var(--border);
+  cursor:pointer;transition:transform .15s,border-color .15s;
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.color-swatch input[type=color]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;
+}
+.color-swatch:hover{transform:scale(1.1)}
+.color-label{font-size:12px;color:var(--muted);flex:1}
+
+/* Section divider */
+.panel-section{
+  font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted2);font-weight:500;padding:12px 0 8px;
+  border-top:1px solid var(--border);margin-bottom:4px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-section:first-child{border-top:none;padding-top:0}
+
+/* Slide items */
+.slide-item{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px;margin-bottom:8px;
+  cursor:pointer;transition:border-color .15s;
+}
+.slide-item:hover{border-color:var(--border2)}
+.slide-item.active{border-color:var(--accent)}
+.slide-item-hdr{display:flex;align-items:center;gap:8px}
+.slide-item-num{
+  width:20px;height:20px;border-radius:4px;background:var(--surface3);
+  font-size:10px;font-family:var(--font-m);color:var(--muted);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.slide-item-title{font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slide-item-actions{display:flex;gap:4px}
+.slide-item-actions button{
+  background:transparent;border:none;color:var(--muted);
+  font-size:11px;cursor:pointer;padding:2px 4px;transition:color .15s;
+}
+.slide-item-actions button:hover{color:var(--accent)}
+.slide-item-thumb{
+  width:100%;height:50px;border-radius:4px;object-fit:cover;margin-top:8px;
+  background:var(--surface3);display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--muted2);
+}
+.slide-item-thumb img{width:100%;height:50px;object-fit:cover;border-radius:4px}
+
+.add-slide-btn{
+  width:100%;background:transparent;border:1px dashed var(--border2);
+  border-radius:var(--r);padding:10px;color:var(--accent);
+  font-family:var(--font-h);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;
+}
+.add-slide-btn:hover{background:rgba(255,76,31,.06);border-color:rgba(255,76,31,.4)}
+
+/* Upload zone */
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:var(--r);padding:24px;
+  text-align:center;cursor:pointer;transition:all .2s;background:var(--surface2);
+  position:relative;overflow:hidden;
+}
+.upload-zone:hover{border-color:rgba(255,76,31,.5);background:rgba(255,76,31,.04)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone i{font-size:24px;color:var(--muted2);margin-bottom:8px;display:block}
+.upload-zone span{font-size:12px;color:var(--muted);line-height:1.5}
+.upload-zone .uploaded-preview{max-width:100%;max-height:80px;border-radius:4px;margin-top:8px}
+
+/* Font picker */
+.font-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.font-option{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s;text-align:center;
+}
+.font-option:hover{border-color:var(--border2)}
+.font-option.active{border-color:var(--accent);background:rgba(255,76,31,.06)}
+.font-option-name{font-size:14px;font-weight:600;color:var(--text)}
+.font-option-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+/* ── EDITOR PREVIEW AREA ── */
+.editor-preview{
+  flex:1;display:flex;flex-direction:column;background:#111;
+  overflow:hidden;
+}
+.preview-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.preview-device-btns{display:flex;gap:4px}
+.preview-device-btn{
+  width:32px;height:32px;border-radius:var(--r);background:transparent;
+  border:1px solid var(--border);color:var(--muted);font-size:13px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;
+}
+.preview-device-btn:hover{color:var(--text);border-color:var(--border2)}
+.preview-device-btn.active{color:var(--accent);border-color:var(--accent);background:rgba(255,76,31,.08)}
+
+.preview-url{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:6px 14px;font-size:12px;font-family:var(--font-m);
+  color:var(--muted);min-width:280px;text-align:center;
+}
+
+.preview-actions{display:flex;gap:8px}
+
+.preview-frame-wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:20px;overflow:hidden;background:#0a0a0a;
+  background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.preview-frame{
+  background:#111;border-radius:12px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),0 24px 80px rgba(0,0,0,.7);
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+}
+.preview-frame.desktop{width:100%;max-width:900px;height:calc(100vh - 180px)}
+.preview-frame.tablet{width:768px;height:600px;max-width:calc(100% - 40px)}
+.preview-frame.mobile{width:375px;height:700px}
+
+.preview-frame iframe{width:100%;height:100%;border:none;display:block}
+
+/* ══════════════════════════════════════
+   MODAL
+══════════════════════════════════════ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:var(--r2);padding:32px;width:520px;max-width:90vw;
+  max-height:85vh;overflow-y:auto;
+}
+.modal-title{font-family:var(--font-h);font-size:20px;font-weight:800;margin-bottom:24px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+
+/* GitHub modal */
+.github-step{
+  display:flex;gap:14px;padding:16px;
+  background:var(--surface2);border-radius:var(--r);margin-bottom:8px;
+}
+.github-step-num{
+  width:24px;height:24px;border-radius:50%;background:var(--accent);
+  font-size:11px;font-weight:700;font-family:var(--font-m);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;
+}
+.github-step-text{font-size:13px;color:var(--muted);line-height:1.6}
+.github-step-text strong{color:var(--text);font-weight:500}
+.code-block{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 16px;font-family:var(--font-m);font-size:12px;color:var(--green);
+  margin-top:8px;word-break:break-all;position:relative;
+}
+.code-copy{
+  position:absolute;top:8px;right:8px;background:var(--surface2);border:none;
+  color:var(--muted);font-size:10px;padding:4px 8px;border-radius:4px;cursor:pointer;
+  font-family:var(--font-m);transition:color .15s;
+}
+.code-copy:hover{color:var(--text)}
+
+/* Sector badge colors */
+.sector-restaurante{background:rgba(255,140,66,.1);color:var(--accent2);border-color:rgba(255,140,66,.25)}
+.sector-viajes{background:rgba(64,128,255,.1);color:var(--blue);border-color:rgba(64,128,255,.25)}
+.sector-inmobiliaria{background:rgba(240,192,64,.1);color:var(--gold);border-color:rgba(240,192,64,.25)}
+.sector-otro{background:rgba(136,136,144,.1);color:var(--muted);border-color:rgba(136,136,144,.2)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:500;
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);
+  padding:12px 20px;font-size:13px;display:flex;align-items:center;gap:10px;
+  transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success i{color:var(--green)}
+.toast.error i{color:#ff6060}
+.toast.info i{color:var(--blue)}
+
+/* Inline progress bar */
+.progress-bar{
+  height:3px;background:var(--surface3);border-radius:100px;overflow:hidden;margin-top:8px;
+}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;transition:width .4s;width:0}
+
+/* ──────── GitHub Instructions Panel ──────── */
+.gh-instructions{padding:16px;background:var(--surface2);border-radius:var(--r);margin-top:12px}
+.gh-instructions ol{padding-left:20px}
+.gh-instructions li{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+.gh-instructions li strong{color:var(--text)}
+
+/* Scrollbar global */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted2)}
+
+/* Responsive */
+@media(max-width:900px){
+  .dash-body{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .editor-sidebar{width:280px;min-width:280px}
+}
+@media(max-width:640px){
+  .stats-row{grid-template-columns:1fr}
+  #screen-editor{flex-direction:column}
+  .editor-sidebar{width:100%;min-width:unset;height:50vh}
+  .editor-preview{height:50vh}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SCREEN 0 — LOGIN
+══════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">RUBIK<span>·</span>SOTA</div>
+    <div class="login-tagline">EXPERIENCES STUDIO · v1.0</div>
+    <label class="login-label" for="login-pass">Contraseña de acceso</label>
+    <input class="login-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Acceder al Studio</button>
+    <div class="login-error" id="login-error">Contraseña incorrecta</div>
+    <div class="login-version">RS·STUDIO · RUBIK SOTA EXPERIENCES · 629 554 870</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1 — DASHBOARD
+══════════════════════════════════════ -->
+<div id="screen-dashboard" class="screen">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-brand">RS<span>·</span>STUDIO <sub>EXPERIENCES PLATFORM</sub></div>
+    <div class="topbar-actions">
+      <span style="font-size:12px;color:var(--muted);font-family:var(--font-m)">629 554 870</span>
+      <button class="btn btn-primary" onclick="openNewClientModal()">
+        <i class="fa-solid fa-plus"></i> Nuevo Cliente
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" title="Salir">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">Principal</div>
+      <div class="sidebar-item active" onclick="showPage('clients')" id="nav-clients">
+        <i class="fa-solid fa-grid-2"></i> Clientes
+        <span class="badge" id="clients-count-badge">0</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('templates')" id="nav-templates">
+        <i class="fa-solid fa-layer-group"></i> Plantillas
+      </div>
+      <div class="sidebar-section">Herramientas</div>
+      <div class="sidebar-item" onclick="showPage('github')" id="nav-github">
+        <i class="fa-brands fa-github"></i> GitHub Setup
+      </div>
+      <div class="sidebar-item" onclick="showPage('export')" id="nav-export">
+        <i class="fa-solid fa-file-export"></i> Exportar
+      </div>
+      <div class="sidebar-section">Cuenta</div>
+      <div class="sidebar-item" onclick="showPage('settings')" id="nav-settings">
+        <i class="fa-solid fa-gear"></i> Ajustes
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- PAGE: CLIENTS -->
+      <div class="page active" id="page-clients">
+        <div class="stats-row" id="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Clientes</div>
+            <div class="stat-value accent" id="stat-total">0</div>
+            <div class="stat-sub">proyectos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">En Vivo</div>
+            <div class="stat-value green" id="stat-live">0</div>
+            <div class="stat-sub">webs publicadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">En Borrador</div>
+            <div class="stat-value" id="stat-draft">0</div>
+            <div class="stat-sub">en edición</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Facturación Est.</div>
+            <div class="stat-value accent" id="stat-revenue">0€</div>
+            <div class="stat-sub">proyectos activos</div>
+          </div>
+        </div>
+
+        <div class="section-hdr">
+          <h2>Proyectos de clientes</h2>
+          <button class="btn btn-primary" onclick="openNewClientModal()">
+            <i class="fa-solid fa-plus"></i> Nuevo
+          </button>
+        </div>
+
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Buscar cliente, sector, URL..." id="search-input" oninput="filterClients()">
+        </div>
+
+        <div class="clients-grid" id="clients-grid">
+          <!-- populated by JS -->
+        </div>
+        <div class="empty-state" id="empty-state" style="display:none">
+          <div class="empty-state-icon">🚀</div>
+          <h3>Sin proyectos todavía</h3>
+          <p>Crea tu primer cliente y empieza a construir webs de alto impacto.</p>
+          <button class="btn btn-primary" onclick="openNewClientModal()">
+            <i class="fa-solid fa-plus"></i> Crear primer cliente
+          </button>
+        </div>
+      </div>
+
+      <!-- PAGE: TEMPLATES -->
+      <div class="page" id="page-templates">
+        <div class="section-hdr" style="margin-bottom:24px">
+          <h2>Plantillas disponibles</h2>
+          <span style="font-size:12px;color:var(--muted)">Más en desarrollo</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+          <div style="background:var(--surface);border:2px solid var(--accent);border-radius:var(--r2);overflow:hidden;cursor:pointer" onclick="openNewClientModal()">
+            <div style="height:120px;background:linear-gradient(135deg,#1a0808,#0d0d0d,#080d1a);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:var(--font-h);font-size:28px;font-weight:800;color:rgba(255,76,31,.4)">EXP</span>
+            </div>
+            <div style="padding:16px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--font-h);font-size:15px;font-weight:700">Experiences Slider</span>
+                <span style="font-size:10px;background:rgba(62,207,142,.12);color:var(--green);border:1px solid rgba(62,207,142,.25);padding:2px 8px;border-radius:100px;font-family:var(--font-m)">ACTIVA</span>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6">Slider fullscreen vertical con CMS visual. Ideal para viajes, restaurantes, inmobiliaria y más.</p>
+              <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openNewClientModal()">Usar plantilla</button>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;opacity:.5">
+            <div style="height:120px;background:linear-gradient(135deg,#080d1a,#0d0d0d);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:var(--font-h);font-size:28px;font-weight:800;color:rgba(64,128,255,.3)">PRO</span>
+            </div>
+            <div style="padding:16px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--font-h);font-size:15px;font-weight:700">Portfolio Pro</span>
+                <span style="font-size:10px;background:var(--surface3);color:var(--muted2);padding:2px 8px;border-radius:100px;font-family:var(--font-m)">PRÓX.</span>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6">Portfolio con grid masonry. Perfecto para fotógrafos y creativos.</p>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;opacity:.5">
+            <div style="height:120px;background:linear-gradient(135deg,#0d1a08,#0d0d0d);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:var(--font-h);font-size:28px;font-weight:800;color:rgba(62,207,142,.3)">BIZ</span>
+            </div>
+            <div style="padding:16px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--font-h);font-size:15px;font-weight:700">Business Landing</span>
+                <span style="font-size:10px;background:var(--surface3);color:var(--muted2);padding:2px 8px;border-radius:100px;font-family:var(--font-m)">PRÓX.</span>
+              </div>
+              <p style="font-size:13px;color:var(--muted);line-height:1.6">Landing con secciones: hero, servicios, testimonios, contacto.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: GITHUB -->
+      <div class="page" id="page-github">
+        <div class="section-hdr" style="margin-bottom:8px"><h2>GitHub Setup</h2></div>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.7">Flujo de trabajo para replicar proyectos de clientes de forma ágil usando GitHub como repositorio de plantillas.</p>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px;margin-bottom:20px">
+          <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:16px;color:var(--accent)">FLUJO COMPLETO — DE RUBIK SOTA A CLIENTE</div>
+          <div class="github-step">
+            <div class="github-step-num">1</div>
+            <div class="github-step-text"><strong>Template master en GitHub</strong><br>Tienes el repo base <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">rubiksota/experiences-template</code> con la plantilla. Este repo nunca se edita directamente.</div>
+          </div>
+          <div class="github-step">
+            <div class="github-step-num">2</div>
+            <div class="github-step-text"><strong>Por cada cliente nuevo: Fork o desde template</strong><br>En GitHub, haz fork del template o usa "Use this template". Nómbralo con el slug del cliente: <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">restaurante-sol-torrevieja</code></div>
+          </div>
+          <div class="github-step">
+            <div class="github-step-num">3</div>
+            <div class="github-step-text"><strong>Edita en RS·STUDIO y exporta config.json</strong><br>Configura la web del cliente aquí, exporta el <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">config.json</code> y súbelo al repo del cliente en GitHub.</div>
+          </div>
+          <div class="github-step">
+            <div class="github-step-num">4</div>
+            <div class="github-step-text"><strong>Activa GitHub Pages</strong><br>En el repo del cliente: Settings → Pages → Branch: main → /root. En 2 minutos está online en: <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">cliente.github.io/slug</code> o dominio propio.</div>
+          </div>
+          <div class="github-step">
+            <div class="github-step-num">5</div>
+            <div class="github-step-text"><strong>El cliente edita su propia web (opcional)</strong><br>Le das la URL con <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">?edit</code> al final. Cambia textos e imágenes sin código. Descarga su config y te lo manda para actualizar el repo.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px">
+          <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:16px">COMANDOS RÁPIDOS</div>
+          <div style="margin-bottom:12px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Clonar template para nuevo cliente:</div>
+            <div class="code-block">
+              gh repo create cliente-nombre --template rubiksota/experiences-template --public
+              <button class="code-copy" onclick="copyCode(this)">copiar</button>
+            </div>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Subir config actualizado:</div>
+            <div class="code-block">
+              git add config.json && git commit -m "update config [cliente]" && git push
+              <button class="code-copy" onclick="copyCode(this)">copiar</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Activar GitHub Pages (CLI):</div>
+            <div class="code-block">
+              gh api repos/{owner}/{repo}/pages -X POST -f source.branch=main -f source.path=/
+              <button class="code-copy" onclick="copyCode(this)">copiar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: EXPORT -->
+      <div class="page" id="page-export">
+        <div class="section-hdr" style="margin-bottom:8px"><h2>Exportar Proyectos</h2></div>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:24px">Descarga los archivos de cualquier cliente para subir a GitHub.</p>
+        <div id="export-list" style="display:flex;flex-direction:column;gap:12px">
+          <div style="padding:40px;text-align:center;color:var(--muted2);font-size:14px">Crea clientes para verlos aquí</div>
+        </div>
+      </div>
+
+      <!-- PAGE: SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="section-hdr" style="margin-bottom:24px"><h2>Ajustes de Studio</h2></div>
+        <div style="max-width:480px;display:flex;flex-direction:column;gap:20px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px">
+            <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:16px">Agencia</div>
+            <div class="field"><label class="field-label">Nombre de agencia</label><input class="field-input" id="set-agency" value="RUBIK SOTA"></div>
+            <div class="field"><label class="field-label">Teléfono</label><input class="field-input" id="set-phone" value="629 554 870"></div>
+            <div class="field"><label class="field-label">Ciudad</label><input class="field-input" id="set-city" value="Alicante, España"></div>
+            <button class="btn btn-primary btn-sm" onclick="saveSettings()"><i class="fa-solid fa-check"></i> Guardar</button>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:24px">
+            <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:16px">Seguridad</div>
+            <div class="field"><label class="field-label">Nueva contraseña</label><input class="field-input" type="password" id="set-pass" placeholder="Nueva contraseña"></div>
+            <button class="btn btn-ghost btn-sm" onclick="changePassword()">Cambiar contraseña</button>
+          </div>
+          <div style="background:var(--surface);border:1px solid rgba(255,80,80,.2);border-radius:var(--r2);padding:24px">
+            <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:8px;color:#ff8080">Zona de peligro</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Borrar todos los datos del studio (localStorage). Acción irreversible.</p>
+            <button class="btn btn-danger btn-sm" onclick="clearAllData()"><i class="fa-solid fa-trash"></i> Limpiar todo</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /dash-body -->
+</div><!-- /screen-dashboard -->
+
+<!-- ══════════════════════════════════════
+     SCREEN 2 — EDITOR
+══════════════════════════════════════ -->
+<div id="screen-editor" class="screen">
+
+  <!-- SIDEBAR -->
+  <div class="editor-sidebar">
+    <div class="editor-topbar">
+      <div class="editor-back" onclick="exitEditor()" title="Volver al dashboard">
+        <i class="fa-solid fa-arrow-left"></i>
+      </div>
+      <div class="editor-client-name" id="editor-client-title">Cliente</div>
+      <button class="editor-save-btn" onclick="saveClientConfig()">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar
+      </button>
+    </div>
+
+    <!-- TABS -->
+    <div class="editor-tabs">
+      <div class="editor-tab active" data-tab="slides" onclick="switchTab('slides')">
+        <i class="fa-solid fa-images"></i><br>Slides
+      </div>
+      <div class="editor-tab" data-tab="tema" onclick="switchTab('tema')">
+        <i class="fa-solid fa-palette"></i><br>Tema
+      </div>
+      <div class="editor-tab" data-tab="footer" onclick="switchTab('footer')">
+        <i class="fa-solid fa-table-columns"></i><br>Footer
+      </div>
+      <div class="editor-tab" data-tab="info" onclick="switchTab('info')">
+        <i class="fa-solid fa-circle-info"></i><br>Info
+      </div>
+    </div>
+
+    <div class="editor-panels">
+
+      <!-- ── TAB: SLIDES ── -->
+      <div class="editor-panel active" id="tab-slides">
+        <div class="panel-section">Diapositivas</div>
+        <div id="slides-list"></div>
+        <button class="add-slide-btn" onclick="addSlide()">
+          <i class="fa-solid fa-plus"></i> Añadir diapositiva
+        </button>
+
+        <!-- SLIDE EDITOR (inline, shown when slide selected) -->
+        <div id="slide-editor-inline" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div class="panel-section" id="slide-editor-label">Editando slide #1</div>
+          <div class="field">
+            <label class="field-label">Título</label>
+            <input class="field-input" id="se-title" oninput="updateSlideField('title',this.value)">
+          </div>
+          <div class="field">
+            <label class="field-label">Descripción</label>
+            <textarea class="field-input field-textarea" id="se-desc" oninput="updateSlideField('description',this.value)"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Tipo de media</label>
+            <select class="field-select" id="se-media-type" onchange="updateSlideField('mediaType',this.value)">
+              <option value="image">Imagen</option>
+              <option value="video">Vídeo (URL externa)</option>
+            </select>
+          </div>
+          <div class="field" id="se-img-field">
+            <label class="field-label">Imagen de fondo</label>
+            <div class="upload-zone" id="se-upload-zone" onclick="triggerImageUpload()">
+              <input type="file" accept="image/*" id="se-img-input" onchange="handleImageUpload(this)">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Haz clic o arrastra tu imagen<br><small style="color:var(--muted2)">JPG, PNG, WEBP — máx. 5MB</small></span>
+            </div>
+            <div id="se-img-preview" style="margin-top:8px;display:none">
+              <img id="se-img-preview-img" style="width:100%;height:60px;object-fit:cover;border-radius:var(--r);display:block">
+              <button onclick="clearSlideImage()" style="background:transparent;border:none;color:var(--muted);font-size:11px;margin-top:4px;cursor:pointer;font-family:var(--font-b)">× Eliminar imagen</button>
+            </div>
+          </div>
+          <div class="field" id="se-vid-field" style="display:none">
+            <label class="field-label">URL del vídeo (mp4, YouTube embed, etc.)</label>
+            <input class="field-input" id="se-video-url" placeholder="https://..." oninput="updateSlideField('videoUrl',this.value)">
+          </div>
+          <div class="field">
+            <label class="field-label">Posición imagen (ej: 50% 40%)</label>
+            <input class="field-input" id="se-pos" placeholder="50% 50%" oninput="updateSlideField('position',this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: TEMA ── -->
+      <div class="editor-panel" id="tab-tema">
+        <div class="panel-section">Colores</div>
+        <div class="field">
+          <label class="field-label">Color primario</label>
+          <div class="color-row">
+            <div class="color-swatch" id="swatch-primary">
+              <input type="color" id="color-primary" value="#ff512f" oninput="updateTheme()">
+            </div>
+            <span class="color-label" id="color-primary-label">#ff512f</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Color secundario</label>
+          <div class="color-row">
+            <div class="color-swatch" id="swatch-secondary">
+              <input type="color" id="color-secondary" value="#f09819" oninput="updateTheme()">
+            </div>
+            <span class="color-label" id="color-secondary-label">#f09819</span>
+          </div>
+        </div>
+
+        <div class="panel-section">Tipografía</div>
+        <div class="field">
+          <label class="field-label">Fuente títulos</label>
+          <div class="font-grid" id="font-title-grid">
+            <div class="font-option active" onclick="selectFont('title','Salsa')" style="font-family:'Salsa',cursive">
+              <div class="font-option-name">Salsa</div>
+              <div class="font-option-label">display</div>
+            </div>
+            <div class="font-option" onclick="selectFont('title','Syne')" style="font-family:'Syne',sans-serif">
+              <div class="font-option-name">Syne</div>
+              <div class="font-option-label">modern</div>
+            </div>
+            <div class="font-option" onclick="selectFont('title','Playfair Display')" style="font-family:'Playfair Display',serif">
+              <div class="font-option-name">Playfair</div>
+              <div class="font-option-label">editorial</div>
+            </div>
+            <div class="font-option" onclick="selectFont('title','Bebas Neue')" style="font-family:'Bebas Neue',cursive">
+              <div class="font-option-name">Bebas</div>
+              <div class="font-option-label">impacto</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:8px">
+          <label class="field-label">Fuente cuerpo</label>
+          <div class="font-grid" id="font-body-grid">
+            <div class="font-option active" onclick="selectFont('body','Quicksand')" style="font-family:'Quicksand',sans-serif">
+              <div class="font-option-name">Quicksand</div>
+              <div class="font-option-label">friendly</div>
+            </div>
+            <div class="font-option" onclick="selectFont('body','DM Sans')" style="font-family:'DM Sans',sans-serif">
+              <div class="font-option-name">DM Sans</div>
+              <div class="font-option-label">clean</div>
+            </div>
+            <div class="font-option" onclick="selectFont('body','Lato')" style="font-family:'Lato',sans-serif">
+              <div class="font-option-name">Lato</div>
+              <div class="font-option-label">legible</div>
+            </div>
+            <div class="font-option" onclick="selectFont('body','Nunito')" style="font-family:'Nunito',sans-serif">
+              <div class="font-option-name">Nunito</div>
+              <div class="font-option-label">rounded</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">Efectos</div>
+        <div class="field">
+          <label class="field-label">Filtro de imagen de fondo</label>
+          <select class="field-select" id="bg-filter" onchange="updateTheme()">
+            <option value="brightness(90%)">Oscuro (recomendado)</option>
+            <option value="brightness(70%)">Muy oscuro</option>
+            <option value="brightness(100%)">Sin filtro</option>
+            <option value="brightness(90%) saturate(1.3)">Saturado</option>
+            <option value="brightness(80%) grayscale(0.3)">Desaturado</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Velocidad de transición (ms)</label>
+          <input class="field-input" type="number" id="slider-speed" value="1000" min="400" max="3000" step="100" oninput="updateTheme()">
+        </div>
+        <div class="field">
+          <label class="field-label">Duración animación clip (s)</label>
+          <input class="field-input" id="anim-dur" value="3s" oninput="updateTheme()">
+        </div>
+      </div>
+
+      <!-- ── TAB: FOOTER ── -->
+      <div class="editor-panel" id="tab-footer">
+        <div class="panel-section">Características del footer</div>
+        <div id="footer-features-list"></div>
+        <button class="add-slide-btn" onclick="addFooterFeature()" style="margin-top:8px">
+          <i class="fa-solid fa-plus"></i> Añadir característica
+        </button>
+        <div class="panel-section" style="margin-top:16px">Botón principal</div>
+        <div class="field">
+          <label class="field-label">Texto del botón</label>
+          <input class="field-input" id="footer-btn-text" value="Book Now" oninput="updateTheme()">
+        </div>
+        <div class="field">
+          <label class="field-label">Enlace del botón</label>
+          <input class="field-input" id="footer-btn-link" value="#" placeholder="https://wa.me/34629554870">
+        </div>
+        <div class="panel-section">Logo</div>
+        <div class="field">
+          <label class="field-label">Logo (imagen o URL)</label>
+          <div class="upload-zone" onclick="triggerLogoUpload()">
+            <input type="file" accept="image/*" id="logo-input" onchange="handleLogoUpload(this)">
+            <i class="fa-solid fa-image"></i>
+            <span>Subir logo del cliente</span>
+          </div>
+          <div id="logo-preview" style="margin-top:8px;display:none">
+            <img id="logo-preview-img" style="max-height:40px;display:block">
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">URL del logo (alternativa)</label>
+          <input class="field-input" id="logo-url" placeholder="https://..." oninput="updateTheme()">
+        </div>
+        <div class="field">
+          <label class="field-label">Link al hacer clic en logo</label>
+          <input class="field-input" id="logo-link" value="#" placeholder="https://...">
+        </div>
+      </div>
+
+      <!-- ── TAB: INFO ── -->
+      <div class="editor-panel" id="tab-info">
+        <div class="panel-section">Información del proyecto</div>
+        <div class="field"><label class="field-label">Nombre del cliente</label><input class="field-input" id="info-name" oninput="updateInfoField('name',this.value)"></div>
+        <div class="field"><label class="field-label">Sector</label>
+          <select class="field-select" id="info-sector" onchange="updateInfoField('sector',this.value)">
+            <option value="restaurante">Restaurante / Chiringuito</option>
+            <option value="viajes">Agencia de Viajes</option>
+            <option value="inmobiliaria">Inmobiliaria</option>
+            <option value="reformas">Reformas / Arquitectura</option>
+            <option value="nautica">Náutica / Deportes</option>
+            <option value="bienestar">Bienestar / Spa</option>
+            <option value="fotografia">Fotografía / Creativos</option>
+            <option value="eventos">Eventos / Bodas</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="field"><label class="field-label">Teléfono</label><input class="field-input" id="info-phone" placeholder="+34 6XX XXX XXX" oninput="updateInfoField('phone',this.value)"></div>
+        <div class="field"><label class="field-label">Email</label><input class="field-input" id="info-email" placeholder="cliente@email.com" oninput="updateInfoField('email',this.value)"></div>
+        <div class="field"><label class="field-label">Ciudad</label><input class="field-input" id="info-city" placeholder="Torrevieja, Alicante" oninput="updateInfoField('city',this.value)"></div>
+        <div class="field"><label class="field-label">Precio del proyecto</label>
+          <select class="field-select" id="info-price" onchange="updateInfoField('price',this.value)">
+            <option value="197">Starter — 197€</option>
+            <option value="397">Pro — 397€</option>
+            <option value="custom">Business — A medida</option>
+          </select>
+        </div>
+        <div class="field"><label class="field-label">GitHub URL (después del fork)</label><input class="field-input" id="info-github" placeholder="https://github.com/usuario/repo" oninput="updateInfoField('github',this.value)"></div>
+        <div class="field"><label class="field-label">URL pública de la web</label><input class="field-input" id="info-url" placeholder="https://usuario.github.io/repo" oninput="updateInfoField('url',this.value)"></div>
+        <div class="field"><label class="field-label">Estado del proyecto</label>
+          <select class="field-select" id="info-status" onchange="updateInfoField('status',this.value)">
+            <option value="new">Nuevo</option>
+            <option value="draft">En edición</option>
+            <option value="live">En vivo</option>
+          </select>
+        </div>
+        <div class="field"><label class="field-label">Notas internas</label>
+          <textarea class="field-input field-textarea" id="info-notes" placeholder="Notas del proyecto..." oninput="updateInfoField('notes',this.value)"></textarea>
+        </div>
+      </div>
+
+    </div><!-- /editor-panels -->
+
+    <!-- Export bar at bottom -->
+    <div style="padding:12px 16px;border-top:1px solid var(--border);background:var(--surface2);flex-shrink:0">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="downloadConfig()">
+          <i class="fa-solid fa-download"></i> config.json
+        </button>
+        <button class="btn btn-green btn-sm" onclick="openGithubModal()">
+          <i class="fa-brands fa-github"></i> Publicar
+        </button>
+      </div>
+    </div>
+  </div><!-- /editor-sidebar -->
+
+  <!-- PREVIEW -->
+  <div class="editor-preview">
+    <div class="preview-toolbar">
+      <div class="preview-device-btns">
+        <button class="preview-device-btn active" title="Desktop" onclick="setDevice('desktop')">
+          <i class="fa-solid fa-display"></i>
+        </button>
+        <button class="preview-device-btn" title="Tablet" onclick="setDevice('tablet')">
+          <i class="fa-solid fa-tablet-screen-button"></i>
+        </button>
+        <button class="preview-device-btn" title="Móvil" onclick="setDevice('mobile')">
+          <i class="fa-solid fa-mobile-screen"></i>
+        </button>
+      </div>
+      <div class="preview-url" id="preview-url">sin-publicar.github.io/proyecto</div>
+      <div class="preview-actions">
+        <button class="btn btn-ghost btn-sm" onclick="refreshPreview()">
+          <i class="fa-solid fa-rotate-right"></i> Actualizar preview
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openPreviewNewTab()">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir
+        </button>
+      </div>
+    </div>
+    <div class="preview-frame-wrap">
+      <div class="preview-frame desktop" id="preview-frame">
+        <iframe id="preview-iframe" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL — NUEVO CLIENTE
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-new-client">
+  <div class="modal">
+    <div class="modal-title">Nuevo proyecto de cliente</div>
+    <div class="field"><label class="field-label">Nombre del cliente / negocio *</label><input class="field-input" id="nc-name" placeholder="Ej: Chiringuito El Embarcadero"></div>
+    <div class="field"><label class="field-label">Sector</label>
+      <select class="field-select" id="nc-sector">
+        <option value="restaurante">Restaurante / Chiringuito</option>
+        <option value="viajes">Agencia de Viajes</option>
+        <option value="inmobiliaria">Inmobiliaria</option>
+        <option value="reformas">Reformas / Arquitectura</option>
+        <option value="nautica">Náutica / Deportes</option>
+        <option value="bienestar">Bienestar / Spa</option>
+        <option value="fotografia">Fotografía / Creativos</option>
+        <option value="eventos">Eventos / Bodas</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div class="field"><label class="field-label">Ciudad</label><input class="field-input" id="nc-city" placeholder="Torrevieja, Alicante"></div>
+    <div class="field"><label class="field-label">Teléfono</label><input class="field-input" id="nc-phone" placeholder="+34 6XX XXX XXX"></div>
+    <div class="field"><label class="field-label">Precio del proyecto</label>
+      <select class="field-select" id="nc-price">
+        <option value="197">Starter — 197€</option>
+        <option value="397">Pro — 397€</option>
+        <option value="custom">Business — A medida</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-new-client')">Cancelar</button>
+      <button class="btn btn-primary" onclick="createClient()"><i class="fa-solid fa-plus"></i> Crear y editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MODAL — GITHUB PUBLISH
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-github">
+  <div class="modal">
+    <div class="modal-title"><i class="fa-brands fa-github" style="margin-right:8px"></i>Publicar en GitHub Pages</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7">Sigue estos pasos para poner la web del cliente online en minutos.</p>
+    <div class="gh-instructions">
+      <ol>
+        <li><strong>Descarga el config.json</strong> usando el botón de abajo o el de la barra lateral.</li>
+        <li>Ve a <strong>github.com</strong> → busca el repo template <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">experiences-template</code> → clic en <strong>"Use this template"</strong> → nombre: <code id="modal-slug" style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">cliente-slug</code></li>
+        <li>Sube el <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">config.json</code> descargado al nuevo repo (reemplaza el existente).</li>
+        <li>En el repo: <strong>Settings → Pages → Branch: main → Save</strong>. Listo en ~2 minutos.</li>
+        <li>URL pública: <code id="modal-pages-url" style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px;word-break:break-all">https://usuario.github.io/slug</code></li>
+      </ol>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-github')">Cerrar</button>
+      <button class="btn btn-primary" onclick="downloadConfig()"><i class="fa-solid fa-download"></i> Descargar config.json</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fa-solid fa-check-circle"></i>
+  <span id="toast-msg">Guardado</span>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT — STUDIO ENGINE
+══════════════════════════════════════ -->
+<script>
+// ── CONFIG ──────────────────────────────
+const PASS = 'rubik2025'; // cambiar en ajustes
+const STORAGE_KEY = 'rs_studio_clients';
+const PASS_KEY = 'rs_studio_pass';
+
+// ── STATE ────────────────────────────────
+let clients = [];
+let currentClientId = null;
+let currentSlideIdx = null;
+let currentDevice = 'desktop';
+
+// Defaut config for new client
+function defaultConfig(name, sector) {
+  return {
+    theme: {
+      primaryColor: '#ff512f',
+      secondaryColor: '#f09819',
+      fontFamily: "'Quicksand', sans-serif",
+      titleFont: "'Salsa', cursive",
+      backgroundFilter: 'brightness(90%)',
+      animationDuration: '3s',
+      sliderSpeed: 1000
+    },
+    slider: { direction: 'vertical', effect: 'fade', speed: 1000, loop: true, mousewheel: true },
+    slides: [
+      {
+        title: name || 'Tu Negocio',
+        description: 'Describe aquí lo que hace especial a tu negocio. Este texto se puede editar desde el panel.',
+        media: { type: 'image', url: '', position: '50% 50%' }
+      }
+    ],
+    footer: {
+      features: [
+        { icon: 'fa-house', label: 'Alojamiento', detail: '5 días' },
+        { icon: 'fa-headphones', label: 'Atención', detail: 'disponible' },
+        { icon: 'fa-clock', label: 'Cancelación', detail: '48 horas' }
+      ],
+      button: { text: 'Contactar', link: '#' }
+    },
+    logo: { image: '', link: '#', alt: name || 'Logo' },
+    _meta: {
+      name: name || 'Nuevo Cliente',
+      sector: sector || 'otro',
+      city: '', phone: '', email: '',
+      status: 'new', price: '197',
+      github: '', url: '', notes: '',
+      createdAt: new Date().toISOString()
+    }
+  };
+}
+
+// ── AUTH ─────────────────────────────────
+function doLogin() {
+  const pass = document.getElementById('login-pass').value;
+  const stored = localStorage.getItem(PASS_KEY) || PASS;
+  if (pass === stored) {
+    showScreen('dashboard');
+    loadClients();
+  } else {
+    const err = document.getElementById('login-error');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 2500);
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+  showScreen('login');
+  document.getElementById('login-pass').value = '';
+}
+
+function changePassword() {
+  const np = document.getElementById('set-pass').value.trim();
+  if (np.length < 4) { showToast('La contraseña debe tener al menos 4 caracteres','error'); return; }
+  localStorage.setItem(PASS_KEY, np);
+  document.getElementById('set-pass').value = '';
+  showToast('Contraseña actualizada','success');
+}
+
+// ── SCREENS ──────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + name);
+  if (el) el.classList.add('active');
+}
+
+// ── PAGES (inside dashboard) ─────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  const nav = document.getElementById('nav-' + name);
+  if (pg) pg.classList.add('active');
+  if (nav) nav.classList.add('active');
+  if (name === 'export') renderExportList();
+}
+
+// ── CLIENTS DATA ─────────────────────────
+function loadClients() {
+  try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e) { clients = []; }
+  renderClientGrid();
+  updateStats();
+}
+
+function saveClients() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+}
+
+function getClient(id) {
+  return clients.find(c => c.id === id);
+}
+
+function slugify(str) {
+  return str.toLowerCase()
+    .replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i')
+    .replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n')
+    .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
+}
+
+// ── NEW CLIENT ────────────────────────────
+function openNewClientModal() {
+  document.getElementById('nc-name').value = '';
+  document.getElementById('nc-city').value = '';
+  document.getElementById('nc-phone').value = '';
+  openModal('modal-new-client');
+  setTimeout(() => document.getElementById('nc-name').focus(), 100);
+}
+
+function createClient() {
+  const name = document.getElementById('nc-name').value.trim();
+  if (!name) { showToast('El nombre es obligatorio','error'); return; }
+  const sector = document.getElementById('nc-sector').value;
+  const city = document.getElementById('nc-city').value.trim();
+  const phone = document.getElementById('nc-phone').value.trim();
+  const price = document.getElementById('nc-price').value;
+  const id = 'client_' + Date.now();
+  const config = defaultConfig(name, sector);
+  config._meta.city = city;
+  config._meta.phone = phone;
+  config._meta.price = price;
+  const client = { id, slug: slugify(name), config };
+  clients.unshift(client);
+  saveClients();
+  closeModal('modal-new-client');
+  showToast('Cliente creado ✓','success');
+  renderClientGrid();
+  updateStats();
+  setTimeout(() => openEditor(id), 200);
+}
+
+function deleteClient(id, e) {
+  e.stopPropagation();
+  if (!confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.')) return;
+  clients = clients.filter(c => c.id !== id);
+  saveClients();
+  renderClientGrid();
+  updateStats();
+  showToast('Proyecto eliminado','info');
+}
+
+function duplicateClient(id, e) {
+  e.stopPropagation();
+  const src = getClient(id);
+  if (!src) return;
+  const newId = 'client_' + Date.now();
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.id = newId;
+  copy.config._meta.name = copy.config._meta.name + ' (copia)';
+  copy.config._meta.status = 'new';
+  copy.config._meta.createdAt = new Date().toISOString();
+  copy.slug = slugify(copy.config._meta.name);
+  clients.unshift(copy);
+  saveClients();
+  renderClientGrid();
+  updateStats();
+  showToast('Proyecto duplicado ✓','success');
+}
+
+// ── RENDER GRID ───────────────────────────
+function renderClientGrid() {
+  const grid = document.getElementById('clients-grid');
+  const empty = document.getElementById('empty-state');
+  const badge = document.getElementById('clients-count-badge');
+  badge.textContent = clients.length;
+
+  const query = (document.getElementById('search-input') || {}).value || '';
+  const filtered = clients.filter(c =>
+    c.config._meta.name.toLowerCase().includes(query.toLowerCase()) ||
+    c.config._meta.sector.toLowerCase().includes(query.toLowerCase()) ||
+    (c.config._meta.city || '').toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = query ? 'none' : 'block';
+    if (query && clients.length > 0) {
+      grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted2);font-size:14px">Sin resultados para "' + query + '"</div>';
+    }
+    return;
+  }
+  empty.style.display = 'none';
+
+  const sectorColors = {
+    restaurante: 'sector-restaurante', viajes: 'sector-viajes',
+    inmobiliaria: 'sector-inmobiliaria', otro: 'sector-otro',
+    nautica: 'sector-viajes', bienestar: 'sector-otro',
+    fotografia: 'sector-otro', eventos: 'sector-inmobiliaria',
+    reformas: 'sector-restaurante'
+  };
+
+  grid.innerHTML = filtered.map(c => {
+    const m = c.config._meta;
+    const hasThumb = c.config.slides[0] && c.config.slides[0].media.url;
+    const thumb = hasThumb
+      ? `<img src="${c.config.slides[0].media.url.substring(0,100)}" style="width:100%;height:140px;object-fit:cover" onerror="this.style.display='none'">`
+      : `<div class="client-card-thumb-bg"><div class="client-card-thumb-letter">${(m.name||'?')[0].toUpperCase()}</div></div>`;
+    const statusMap = {live:'<div class="status-dot live"></div>EN VIVO', draft:'<div class="status-dot draft"></div>BORRADOR', new:'<div class="status-dot new"></div>NUEVO'};
+    const dateStr = m.createdAt ? new Date(m.createdAt).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) : '';
+    const priceStr = m.price === 'custom' ? 'A medida' : m.price + '€';
+    return `
+    <div class="client-card" onclick="openEditor('${c.id}')">
+      <div class="client-card-thumb">
+        ${thumb}
+        <span class="client-card-thumb-sector ${sectorColors[m.sector]||'sector-otro'}">${m.sector}</span>
+        <span class="client-card-thumb-status">${statusMap[m.status]||statusMap.new}</span>
+      </div>
+      <div class="client-card-body">
+        <div class="client-card-name">${m.name}</div>
+        <div class="client-card-meta">
+          ${m.city ? `<span><i class="fa-solid fa-location-dot"></i>${m.city}</span>` : ''}
+          <span><i class="fa-solid fa-tag"></i>${priceStr}</span>
+          ${dateStr ? `<span><i class="fa-regular fa-calendar"></i>${dateStr}</span>` : ''}
+        </div>
+        <div class="client-card-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-primary btn-sm" onclick="openEditor('${c.id}')">
+            <i class="fa-solid fa-pen"></i> Editar
+          </button>
+          <button class="btn btn-green btn-sm" onclick="downloadClientConfig('${c.id}')">
+            <i class="fa-solid fa-download"></i> Config
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="duplicateClient('${c.id}',event)" title="Duplicar">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}',event)" title="Eliminar">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterClients() { renderClientGrid(); }
+
+// ── STATS ─────────────────────────────────
+function updateStats() {
+  const total = clients.length;
+  const live = clients.filter(c => c.config._meta.status === 'live').length;
+  const draft = clients.filter(c => c.config._meta.status === 'draft').length;
+  const revenue = clients.reduce((s,c) => {
+    const p = c.config._meta.price;
+    return s + (p === 'custom' ? 0 : parseInt(p) || 0);
+  }, 0);
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-live').textContent = live;
+  document.getElementById('stat-draft').textContent = draft;
+  document.getElementById('stat-revenue').textContent = revenue + '€';
+}
+
+// ── EDITOR ────────────────────────────────
+function openEditor(id) {
+  currentClientId = id;
+  currentSlideIdx = null;
+  const client = getClient(id);
+  if (!client) return;
+  showScreen('editor');
+  loadEditorFromConfig(client.config);
+  updatePreview();
+}
+
+function exitEditor() {
+  saveClientConfig();
+  showScreen('dashboard');
+  loadClients();
+}
+
+function loadEditorFromConfig(cfg) {
+  const m = cfg._meta || {};
+  document.getElementById('editor-client-title').textContent = m.name || 'Cliente';
+  // Theme
+  document.getElementById('color-primary').value = cfg.theme.primaryColor || '#ff512f';
+  document.getElementById('color-secondary').value = cfg.theme.secondaryColor || '#f09819';
+  document.getElementById('swatch-primary').style.background = cfg.theme.primaryColor || '#ff512f';
+  document.getElementById('swatch-secondary').style.background = cfg.theme.secondaryColor || '#f09819';
+  document.getElementById('color-primary-label').textContent = cfg.theme.primaryColor || '#ff512f';
+  document.getElementById('color-secondary-label').textContent = cfg.theme.secondaryColor || '#f09819';
+  document.getElementById('bg-filter').value = cfg.theme.backgroundFilter || 'brightness(90%)';
+  document.getElementById('slider-speed').value = cfg.theme.sliderSpeed || 1000;
+  document.getElementById('anim-dur').value = cfg.theme.animationDuration || '3s';
+  // Footer
+  document.getElementById('footer-btn-text').value = cfg.footer.button.text || 'Book Now';
+  document.getElementById('footer-btn-link').value = cfg.footer.button.link || '#';
+  document.getElementById('logo-url').value = cfg.logo.image || '';
+  document.getElementById('logo-link').value = cfg.logo.link || '#';
+  const logoPreviewImg = document.getElementById('logo-preview-img');
+  const logoPreview = document.getElementById('logo-preview');
+  if (cfg.logo.image) {
+    logoPreviewImg.src = cfg.logo.image;
+    logoPreview.style.display = 'block';
+  } else { logoPreview.style.display = 'none'; }
+  // Info
+  document.getElementById('info-name').value = m.name || '';
+  document.getElementById('info-sector').value = m.sector || 'otro';
+  document.getElementById('info-phone').value = m.phone || '';
+  document.getElementById('info-email').value = m.email || '';
+  document.getElementById('info-city').value = m.city || '';
+  document.getElementById('info-price').value = m.price || '197';
+  document.getElementById('info-github').value = m.github || '';
+  document.getElementById('info-url').value = m.url || '';
+  document.getElementById('info-status').value = m.status || 'new';
+  document.getElementById('info-notes').value = m.notes || '';
+  // Preview URL
+  const urlDisplay = m.url || (m.github ? m.github.replace('github.com','').replace('//','/') : 'sin-publicar.github.io/proyecto');
+  document.getElementById('preview-url').textContent = urlDisplay;
+  // Slides
+  renderSlidesList(cfg.slides);
+  // Footer features
+  renderFooterFeatures(cfg.footer.features);
+}
+
+// ── SLIDES ────────────────────────────────
+function renderSlidesList(slides) {
+  const list = document.getElementById('slides-list');
+  list.innerHTML = slides.map((s, i) => {
+    const hasImg = s.media && s.media.url;
+    return `
+    <div class="slide-item${currentSlideIdx === i ? ' active' : ''}" onclick="selectSlide(${i})">
+      <div class="slide-item-hdr">
+        <div class="slide-item-num">${i+1}</div>
+        <div class="slide-item-title">${s.title || 'Sin título'}</div>
+        <div class="slide-item-actions">
+          <button onclick="moveSlide(${i},-1,event)" title="Subir"><i class="fa-solid fa-chevron-up"></i></button>
+          <button onclick="moveSlide(${i},1,event)" title="Bajar"><i class="fa-solid fa-chevron-down"></i></button>
+          <button onclick="deleteSlide(${i},event)" title="Eliminar" style="color:#ff8080"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      ${hasImg ? `<div class="slide-item-thumb"><img src="${s.media.url.substring(0,200)}" alt="" onerror="this.parentNode.innerHTML='Sin imagen'"></div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function selectSlide(idx) {
+  currentSlideIdx = idx;
+  const client = getClient(currentClientId);
+  const slide = client.config.slides[idx];
+  document.getElementById('slide-editor-inline').style.display = 'block';
+  document.getElementById('slide-editor-label').textContent = `Editando slide #${idx+1}`;
+  document.getElementById('se-title').value = slide.title || '';
+  document.getElementById('se-desc').value = slide.description || '';
+  document.getElementById('se-media-type').value = slide.media.type || 'image';
+  document.getElementById('se-pos').value = slide.media.position || '';
+  document.getElementById('se-video-url').value = slide.media.videoUrl || '';
+  const isImg = (slide.media.type || 'image') === 'image';
+  document.getElementById('se-img-field').style.display = isImg ? 'block' : 'none';
+  document.getElementById('se-vid-field').style.display = isImg ? 'none' : 'block';
+  if (slide.media.url && isImg) {
+    document.getElementById('se-img-preview-img').src = slide.media.url;
+    document.getElementById('se-img-preview').style.display = 'block';
+  } else {
+    document.getElementById('se-img-preview').style.display = 'none';
+  }
+  renderSlidesList(client.config.slides);
+}
+
+function updateSlideField(field, value) {
+  if (currentSlideIdx === null) return;
+  const client = getClient(currentClientId);
+  const slide = client.config.slides[currentSlideIdx];
+  if (field === 'title') slide.title = value;
+  else if (field === 'description') slide.description = value;
+  else if (field === 'mediaType') {
+    slide.media.type = value;
+    document.getElementById('se-img-field').style.display = value === 'image' ? 'block' : 'none';
+    document.getElementById('se-vid-field').style.display = value === 'video' ? 'block' : 'none';
+  }
+  else if (field === 'position') slide.media.position = value;
+  else if (field === 'videoUrl') { slide.media.url = value; slide.media.videoUrl = value; }
+  renderSlidesList(client.config.slides);
+}
+
+function addSlide() {
+  const client = getClient(currentClientId);
+  client.config.slides.push({
+    title: 'Nueva diapositiva',
+    description: 'Describe este contenido...',
+    media: { type: 'image', url: '', position: '50% 50%' }
+  });
+  renderSlidesList(client.config.slides);
+  selectSlide(client.config.slides.length - 1);
+  showToast('Diapositiva añadida','success');
+}
+
+function deleteSlide(idx, e) {
+  e.stopPropagation();
+  const client = getClient(currentClientId);
+  if (client.config.slides.length <= 1) { showToast('Debe haber al menos 1 diapositiva','error'); return; }
+  client.config.slides.splice(idx, 1);
+  if (currentSlideIdx >= client.config.slides.length) currentSlideIdx = client.config.slides.length - 1;
+  renderSlidesList(client.config.slides);
+  if (currentSlideIdx !== null) selectSlide(currentSlideIdx);
+  showToast('Diapositiva eliminada','info');
+}
+
+function moveSlide(idx, dir, e) {
+  e.stopPropagation();
+  const client = getClient(currentClientId);
+  const slides = client.config.slides;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= slides.length) return;
+  [slides[idx], slides[newIdx]] = [slides[newIdx], slides[idx]];
+  currentSlideIdx = newIdx;
+  renderSlidesList(slides);
+  selectSlide(newIdx);
+}
+
+// ── IMAGE UPLOAD ─────────────────────────
+function triggerImageUpload() {
+  document.getElementById('se-img-input').click();
+}
+function triggerLogoUpload() {
+  document.getElementById('logo-input').click();
+}
+
+function handleImageUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('Imagen demasiado grande (máx 5MB)','error'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    if (currentSlideIdx === null) return;
+    const client = getClient(currentClientId);
+    client.config.slides[currentSlideIdx].media.url = data;
+    document.getElementById('se-img-preview-img').src = data;
+    document.getElementById('se-img-preview').style.display = 'block';
+    renderSlidesList(client.config.slides);
+    showToast('Imagen cargada ✓','success');
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSlideImage() {
+  if (currentSlideIdx === null) return;
+  const client = getClient(currentClientId);
+  client.config.slides[currentSlideIdx].media.url = '';
+  document.getElementById('se-img-preview').style.display = 'none';
+  renderSlidesList(client.config.slides);
+  updatePreview();
+}
+
+function handleLogoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    const client = getClient(currentClientId);
+    client.config.logo.image = data;
+    document.getElementById('logo-url').value = '';
+    document.getElementById('logo-preview-img').src = data;
+    document.getElementById('logo-preview').style.display = 'block';
+    showToast('Logo cargado ✓','success');
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── FOOTER FEATURES ───────────────────────
+function renderFooterFeatures(features) {
+  const list = document.getElementById('footer-features-list');
+  list.innerHTML = features.map((f,i) => `
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:8px">
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+        <input class="field-input" value="${f.icon}" placeholder="fa-house" style="flex:1;font-size:12px"
+          oninput="updateFooterFeature(${i},'icon',this.value)">
+        <button onclick="deleteFooterFeature(${i})" style="background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 4px">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <input class="field-input" value="${f.label}" placeholder="Etiqueta" style="font-size:12px"
+          oninput="updateFooterFeature(${i},'label',this.value)">
+        <input class="field-input" value="${f.detail}" placeholder="Detalle" style="font-size:12px"
+          oninput="updateFooterFeature(${i},'detail',this.value)">
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateFooterFeature(idx, field, value) {
+  const client = getClient(currentClientId);
+  client.config.footer.features[idx][field] = value;
+}
+
+function addFooterFeature() {
+  const client = getClient(currentClientId);
+  client.config.footer.features.push({ icon: 'fa-star', label: 'Característica', detail: 'detalle' });
+  renderFooterFeatures(client.config.footer.features);
+}
+
+function deleteFooterFeature(idx) {
+  const client = getClient(currentClientId);
+  client.config.footer.features.splice(idx, 1);
+  renderFooterFeatures(client.config.footer.features);
+}
+
+// ── THEME ─────────────────────────────────
+function updateTheme() {
+  const primary = document.getElementById('color-primary').value;
+  const secondary = document.getElementById('color-secondary').value;
+  document.getElementById('swatch-primary').style.background = primary;
+  document.getElementById('swatch-secondary').style.background = secondary;
+  document.getElementById('color-primary-label').textContent = primary;
+  document.getElementById('color-secondary-label').textContent = secondary;
+}
+
+function selectFont(type, fontName) {
+  const gridId = type === 'title' ? 'font-title-grid' : 'font-body-grid';
+  document.querySelectorAll(`#${gridId} .font-option`).forEach(o => o.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function updateInfoField(field, value) {
+  const client = getClient(currentClientId);
+  client.config._meta[field] = value;
+  if (field === 'url' || field === 'github') {
+    const urlDisplay = value || 'sin-publicar.github.io/proyecto';
+    document.getElementById('preview-url').textContent = urlDisplay;
+  }
+  if (field === 'name') {
+    document.getElementById('editor-client-title').textContent = value;
+    client.slug = slugify(value);
+  }
+}
+
+// ── SAVE ──────────────────────────────────
+function saveClientConfig() {
+  if (!currentClientId) return;
+  const client = getClient(currentClientId);
+  if (!client) return;
+  // Sync theme from editor
+  client.config.theme.primaryColor = document.getElementById('color-primary').value;
+  client.config.theme.secondaryColor = document.getElementById('color-secondary').value;
+  client.config.theme.backgroundFilter = document.getElementById('bg-filter').value;
+  client.config.theme.sliderSpeed = parseInt(document.getElementById('slider-speed').value) || 1000;
+  client.config.theme.animationDuration = document.getElementById('anim-dur').value;
+  client.config.theme.sliderSpeed = parseInt(document.getElementById('slider-speed').value) || 1000;
+  // Title/body fonts
+  const titleFontActive = document.querySelector('#font-title-grid .font-option.active');
+  const bodyFontActive = document.querySelector('#font-body-grid .font-option.active');
+  if (titleFontActive) client.config.theme.titleFont = "'" + titleFontActive.querySelector('.font-option-name').textContent + "'";
+  if (bodyFontActive) client.config.theme.fontFamily = "'" + bodyFontActive.querySelector('.font-option-name').textContent + "', sans-serif";
+  // Footer
+  client.config.footer.button.text = document.getElementById('footer-btn-text').value;
+  client.config.footer.button.link = document.getElementById('footer-btn-link').value;
+  const logoUrl = document.getElementById('logo-url').value;
+  if (logoUrl) client.config.logo.image = logoUrl;
+  client.config.logo.link = document.getElementById('logo-link').value;
+  client.config.logo.alt = client.config._meta.name || 'Logo';
+  // Slider speed sync
+  client.config.slider.speed = client.config.theme.sliderSpeed;
+  saveClients();
+  showToast('Proyecto guardado ✓','success');
+}
+
+// ── PREVIEW ───────────────────────────────
+function updatePreview() {
+  const client = getClient(currentClientId);
+  if (!client) return;
+  const html = generatePreviewHTML(client.config);
+  const iframe = document.getElementById('preview-iframe');
+  iframe.srcdoc = html;
+}
+
+function refreshPreview() {
+  saveClientConfig();
+  updatePreview();
+  showToast('Preview actualizado','info');
+}
+
+function setDevice(device) {
+  currentDevice = device;
+  const frame = document.getElementById('preview-frame');
+  frame.className = 'preview-frame ' + device;
+  document.querySelectorAll('.preview-device-btn').forEach(b => b.classList.remove('active'));
+  const icons = { desktop: 'fa-display', tablet: 'fa-tablet-screen-button', mobile: 'fa-mobile-screen' };
+  document.querySelectorAll('.preview-device-btn').forEach(b => {
+    if (b.querySelector('.' + icons[device])) b.classList.add('active');
+  });
+}
+
+function openPreviewNewTab() {
+  saveClientConfig();
+  const client = getClient(currentClientId);
+  const html = generatePreviewHTML(client.config);
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
+
+// Generate full preview HTML (self-contained)
+function generatePreviewHTML(cfg) {
+  const slidesHTML = cfg.slides.map((s, idx) => {
+    let mediaEl = '';
+    if (s.media.type === 'video' && s.media.url) {
+      mediaEl = `<video class="slide-media" autoplay loop muted playsinline src="${s.media.url}"></video>`;
+    } else if (s.media.url) {
+      mediaEl = `<img class="slide-media" src="${s.media.url}" style="object-position:${s.media.position||'50% 50%'}" data-item="slide-${idx}" alt="">`;
+    } else {
+      mediaEl = `<div class="slide-media" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)"></div>`;
+    }
+    return `<div class="swiper-slide">
+      <div class="content" data-content="slide-${idx}">
+        <h1>${escHtml(s.title)}</h1>
+        <p>${escHtml(s.description)}</p>
+      </div>
+      ${mediaEl}
+    </div>`;
+  }).join('');
+
+  const footerFeat = cfg.footer.features.map(f =>
+    `<div class="feature"><i class="fa-solid ${f.icon}"></i><div><p>${escHtml(f.label)}</p><small>${escHtml(f.detail)}</small></div></div><hr>`
+  ).join('');
+
+  const titleFont = cfg.theme.titleFont || "'Salsa', cursive";
+  const bodyFont = cfg.theme.fontFamily || "'Quicksand', sans-serif";
+  const tFontName = titleFont.replace(/'/g,'').split(',')[0].trim();
+  const bFontName = bodyFont.replace(/'/g,'').split(',')[0].trim();
+  const googleFonts = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(tFontName)}&family=${encodeURIComponent(bFontName)}:wght@300;400;500;700&display=swap`;
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>${escHtml(cfg._meta ? cfg._meta.name : 'Web')}</title>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="${googleFonts}" rel="stylesheet">
+<style>
+:root{--primary:${cfg.theme.primaryColor};--secondary:${cfg.theme.secondaryColor};--font-body:${bodyFont};--font-title:${titleFont};--bg-filter:${cfg.theme.backgroundFilter};--anim-duration:${cfg.theme.animationDuration}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#232328;font-family:var(--font-body)}
+.swiper-container{width:100%;height:100vh;overflow:hidden}
+.swiper-slide{position:relative;width:100%;height:100vh}
+.content{position:absolute;display:flex;flex-direction:column;align-items:center;top:14%;left:3%;width:40%;height:max-content;color:#f2f2f2;text-align:center;padding:20px;opacity:0;z-index:2}
+.content h1{font-family:var(--font-title);font-size:clamp(2rem,3vw,6rem);margin-bottom:20px;opacity:0}
+.content p{font-family:var(--font-body);font-size:1.2rem;line-height:1.4;font-weight:500;opacity:0}
+.swiper-slide-active .content{opacity:1}
+.swiper-slide-active .content h1{animation:moveDown .8s ease-in forwards}
+.swiper-slide-active .content p{animation:moveDown 1s ease-in forwards;animation-delay:1s}
+@keyframes moveDown{0%{transform:translateY(-20px);opacity:0}100%{transform:translateY(0);opacity:1}}
+.slide-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:var(--bg-filter);z-index:1}
+.slide-media.animation{animation:resizeClipPath var(--anim-duration) ease-in-out forwards}
+@keyframes resizeClipPath{0%{clip-path:circle(5%);opacity:0}100%{clip-path:circle(71%);opacity:1}}
+.swiper-pagination-bullet{width:16px;height:16px;background-color:#a3a6a3;border-radius:50%;transition:all .6s ease-in-out}
+.swiper-pagination-bullet-active{height:32px;background-image:linear-gradient(180deg,var(--secondary) 0%,var(--primary) 100%);border-radius:14px}
+.footer{position:absolute;display:flex;justify-content:space-between;column-gap:20px;bottom:0;left:50%;transform:translate(-50%,0);width:max-content;padding:20px;color:#f2f2f2;border-radius:8px 8px 0 0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);backdrop-filter:blur(20px);z-index:2}
+.feature{display:flex;align-items:center;column-gap:12px}
+.feature i{font-size:1.4rem}
+.feature p{font-weight:700}
+.btn{display:block;font-weight:700;text-align:center;text-transform:uppercase;color:#fff;padding:15px 20px;border:0;border-radius:10px;background-image:linear-gradient(45deg,var(--primary) 0%,var(--secondary) 51%,var(--primary) 100%);background-size:200% auto;cursor:pointer;transition:.5s}
+.btn:hover{background-position:right center}
+.logo{position:fixed;right:-20px;bottom:-35px;z-index:10}
+.logo img{width:120px}
+@media(max-width:660px){.content,.content[data-content="two"],.content[data-content="three"]{top:unset;left:2%;bottom:3%;width:80%}.footer{column-gap:0;left:unset;bottom:unset;top:20px;right:-30px;padding:0;border-radius:0;border:0;background-color:transparent;backdrop-filter:blur(0)}.feature,hr{display:none}}
+</style>
+</head>
+<body>
+<div class="swiper-container">
+  <div class="swiper-wrapper">${slidesHTML}</div>
+  <div class="swiper-pagination"></div>
+</div>
+<div class="footer" id="footer">
+  ${footerFeat}
+  <button class="btn" onclick="window.location.href='${cfg.footer.button.link}'">${escHtml(cfg.footer.button.text)}</button>
+</div>
+${cfg.logo.image ? `<a href="${cfg.logo.link}" class="logo" target="_blank"><img src="${cfg.logo.image}" alt="${escHtml(cfg.logo.alt)}"></a>` : ''}
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"><\/script>
+<script>
+(function(){
+  var sw=new Swiper('.swiper-container',{
+    direction:'vertical',effect:'fade',speed:${cfg.slider.speed||1000},
+    loop:true,pagination:{el:'.swiper-pagination',clickable:true},
+    mousewheel:{invert:false,thresholdDelta:50,sensitivity:1},
+    on:{
+      init:function(){applyAnim(this.slides[this.activeIndex])},
+      slideChange:function(){this.slides.forEach(s=>{var m=s.querySelector('.slide-media');if(m)m.classList.remove('animation')});applyAnim(this.slides[this.activeIndex])}
+    }
+  });
+  function applyAnim(slide){var m=slide.querySelector('.slide-media');if(m)m.classList.add('animation')}
+})();
+<\/script>
+</body>
+</html>`;
+}
+
+function escHtml(s){if(!s)return '';return s.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+
+// ── TABS ──────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.editor-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── DOWNLOAD CONFIG ───────────────────────
+function downloadConfig() {
+  saveClientConfig();
+  const client = getClient(currentClientId);
+  if (!client) return;
+  const json = JSON.stringify(client.config, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (client.slug || 'config') + '-config.json';
+  a.click();
+  showToast('config.json descargado ✓','success');
+}
+
+function downloadClientConfig(id) {
+  const client = getClient(id);
+  if (!client) return;
+  const json = JSON.stringify(client.config, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (client.slug || 'config') + '-config.json';
+  a.click();
+  showToast('config.json descargado ✓','success');
+}
+
+// ── GITHUB MODAL ──────────────────────────
+function openGithubModal() {
+  const client = getClient(currentClientId);
+  if (!client) return;
+  document.getElementById('modal-slug').textContent = client.slug || 'cliente-slug';
+  const url = client.config._meta.url || `https://usuario.github.io/${client.slug}`;
+  document.getElementById('modal-pages-url').textContent = url;
+  openModal('modal-github');
+}
+
+// ── EXPORT LIST ───────────────────────────
+function renderExportList() {
+  const list = document.getElementById('export-list');
+  if (!clients.length) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted2);font-size:14px">Crea clientes para verlos aquí</div>';
+    return;
+  }
+  list.innerHTML = clients.map(c => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;display:flex;align-items:center;gap:16px">
+      <div style="flex:1">
+        <div style="font-family:var(--font-h);font-size:14px;font-weight:700;margin-bottom:4px">${c.config._meta.name}</div>
+        <div style="font-size:12px;color:var(--muted)">${c.config._meta.sector} · ${c.config._meta.city || 'Sin ciudad'} · ${c.config.slides.length} slides</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="downloadClientConfig('${c.id}')"><i class="fa-solid fa-download"></i> config.json</button>
+      <button class="btn btn-green btn-sm" onclick="openEditor('${c.id}')"><i class="fa-solid fa-pen"></i> Editar</button>
+    </div>
+  `).join('');
+}
+
+// ── SETTINGS ─────────────────────────────
+function saveSettings() {
+  showToast('Ajustes guardados','success');
+}
+function clearAllData() {
+  if (!confirm('¿SEGURO? Esto borrará TODOS los clientes y configuraciones. Irreversible.')) return;
+  localStorage.clear();
+  clients = [];
+  renderClientGrid();
+  updateStats();
+  showToast('Datos borrados','error');
+}
+
+// ── MODALS ────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ── TOAST ─────────────────────────────────
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  const icon = t.querySelector('i');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast ' + type;
+  if (type === 'success') icon.className = 'fa-solid fa-circle-check';
+  else if (type === 'error') icon.className = 'fa-solid fa-circle-xmark';
+  else icon.className = 'fa-solid fa-circle-info';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── CODE COPY ─────────────────────────────
+function copyCode(btn) {
+  const code = btn.parentElement.textContent.replace('copiar','').trim();
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = 'copiar', 1500);
+  });
+}
+
+// ── INIT ──────────────────────────────────
+// Auto-login check (session persistence)
+// For demo: just show login
+loadClients();
+</script>
+</body>
+</html>
