@@ -84,6 +84,7 @@
         canvas.height = H;
         loadScenes();
         drawIdle();
+        setStartButtonState('idle');
         startBtn.addEventListener('click', start);
         restartBtn.addEventListener('click', resetGame);
         playBtn.addEventListener('click', playRiff);
@@ -95,8 +96,11 @@
                 currentScene = btn.dataset.scene;
                 document.querySelectorAll('.scene').forEach(function(item) { item.classList.remove('active'); });
                 btn.classList.add('active');
+                redrawCurrentFrame();
+                updateDebug();
             });
         });
+        panEl.addEventListener('input', redrawCurrentFrame);
         setSignal('red', 'READY');
         updateDebug();
     }
@@ -179,24 +183,61 @@
         hands.onResults(onResults);
     }
 
+    function setStartButtonState(state) {
+        startBtn.classList.remove('is-loading', 'is-active', 'is-error');
+        if (state === 'loading') {
+            startBtn.classList.add('is-loading');
+            startBtn.textContent = 'Activando camara...';
+        } else if (state === 'active') {
+            startBtn.classList.add('is-active');
+            startBtn.textContent = 'Camara activa';
+        } else if (state === 'error') {
+            startBtn.classList.add('is-error');
+            startBtn.textContent = 'Reintentar camara';
+        } else {
+            startBtn.textContent = 'Activar camara y empezar';
+        }
+    }
+
     async function start() {
         if (loading) return;
         loading = true;
         startBtn.disabled = true;
+        setStartButtonState('loading');
         setSignal('yellow', 'LOADING');
-        coach('Preparando escenario, camara y deteccion de manos.');
+        coach('Activando camara primero. Despues cargamos manos y audio sin bloquear la imagen.');
         try {
-            initAudio();
-            await setupHands();
             await setupCamera();
             stepEls.camera.classList.add('ok');
+            setStartButtonState('active');
+            setSignal('yellow', 'CAMERA ON');
+            coach('Camara activa. Cargando deteccion de manos y audio.');
             resetGame();
             running = true;
-            loop();
+
+            try {
+                initAudio();
+            } catch (audioError) {
+                lastError = 'Audio opcional: ' + (audioError && audioError.message ? audioError.message : String(audioError));
+            }
+
+            previewLoop();
+
+            try {
+                await setupHands();
+                setSignal('green', 'LIVE');
+                coach('Camara y manos activas. Una mano al mastil y la otra rasguea la zona verde.');
+                loop();
+            } catch (handsError) {
+                lastError = 'Manos no disponibles: ' + (handsError && handsError.message ? handsError.message : String(handsError));
+                setSignal('yellow', 'CAMERA ONLY');
+                coach('La camara funciona, pero no cargó MediaPipe. Revisa conexion/CDN; el visor queda activo para diagnostico.');
+            }
         } catch (error) {
             lastError = error && error.message ? error.message : String(error);
+            setStartButtonState('error');
             setSignal('red', 'ERROR');
-            coach('No pudo iniciarse. Revisa permisos de camara y usa HTTPS.');
+            coach('No pudo iniciarse la camara. Revisa permisos y usa HTTPS o localhost.');
             drawIdle();
         } finally {
             loading = false;
@@ -230,6 +271,17 @@
             lastError = error && error.message ? error.message : String(error);
         }
         requestAnimationFrame(loop);
+    }
+
+    function previewLoop() {
+        if (!running || hands) return;
+        if (video.readyState >= 2) {
+            render(video, lastHands);
+            updateDebug();
+        } else {
+            drawIdle();
+        }
+        requestAnimationFrame(previewLoop);
     }
 
     function onResults(results) {
@@ -321,9 +373,11 @@
     }
 
     function playChord(chord, intensity, styleKey, ctxTarget, when) {
-        if (!ctxTarget || !masterGain) return;
+        if (!ctxTarget) return;
         var style = STYLES[styleKey] || STYLES.rock;
-        var destination = ctxTarget === audioCtx ? masterGain : ctxTarget.destination;
+        var liveContext = ctxTarget === audioCtx;
+        if (liveContext && !masterGain) return;
+        var destination = liveContext ? masterGain : ctxTarget.destination;
         chord.notes.forEach(function(freq, index) {
             var osc = ctxTarget.createOscillator();
             var gain = ctxTarget.createGain();
@@ -361,15 +415,32 @@
             coach('No hay riff para descargar. Toca primero.');
             return;
         }
-        var duration = Math.max(2, riffEvents[riffEvents.length - 1].t + 1);
-        var offline = new OfflineAudioContext(2, Math.ceil(44100 * duration), 44100);
-        riffEvents.forEach(function(ev) {
-            playChord(CHORDS[ev.chordIndex], ev.intensity, ev.style, offline, ev.t);
-        });
-        var buffer = await offline.startRendering();
-        var wav = encodeWav(buffer);
-        downloadBlob(new Blob([wav], { type: 'audio/wav' }), 'air-guitar-riff.wav');
-        coach('Audio WAV generado con tu riff.');
+        var OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        if (!OfflineCtx) {
+            coach('Este navegador no permite exportar WAV. Prueba en Chrome/Safari moderno o descarga eventos JSON.');
+            return;
+        }
+        wavBtn.disabled = true;
+        wavBtn.textContent = 'Generando audio...';
+        coach('Generando audio WAV con tu riff.');
+        try {
+            var duration = Math.max(2, riffEvents[riffEvents.length - 1].t + 1);
+            var offline = new OfflineCtx(2, Math.ceil(44100 * duration), 44100);
+            riffEvents.forEach(function(ev) {
+                playChord(CHORDS[ev.chordIndex], ev.intensity, ev.style, offline, ev.t);
+            });
+            var buffer = await offline.startRendering();
+            var wav = encodeWav(buffer);
+            downloadBlob(new Blob([wav], { type: 'audio/wav' }), 'air-guitar-riff.wav');
+            coach('Audio WAV generado y descargado con tu riff.');
+        } catch (error) {
+            lastError = 'WAV export: ' + (error && error.message ? error.message : String(error));
+            coach('No se pudo generar el WAV. Descarga eventos JSON y revisamos compatibilidad del navegador.');
+        } finally {
+            wavBtn.disabled = false;
+            wavBtn.textContent = 'Descargar audio WAV';
+            updateDebug();
+        }
     }
 
     function finishGame() {
@@ -518,6 +589,14 @@
         ctx.fillStyle = 'rgba(255,255,255,.72)';
         ctx.font = '24px system-ui, sans-serif';
         ctx.fillText('Crea tu riff de marca en 30 segundos', W / 2, H / 2 + 30);
+    }
+
+    function redrawCurrentFrame() {
+        if (running && video.readyState >= 2) {
+            render(video, lastHands);
+        } else {
+            drawIdle();
+        }
     }
 
     function spawn(origin, intensity) {
