@@ -144,6 +144,21 @@ EP.ScrollSectionsUI = (function() {
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
             { key: 'labels', type: 'wordlist', label: 'Palabras clave (una por línea)',
               default: ['Luz natural', 'Materiales nobles', 'Silencio y calma'] }
+        ],
+        'marquee-video-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'playLabel', type: 'text', label: 'Palabra en la marquesina', default: 'Ver' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: '¿Quieres ver más referencias?' }
+        ],
+        'split-mask-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'intro', type: 'text', label: 'Texto de apertura', default: 'Descubre el arte del movimiento en esta experiencia visual — una exploración creativa que combina diseño, narrativa y código en un recorrido continuo.' },
+            { key: 'heroTitle', type: 'text', label: 'Titular central', default: 'Crezcamos juntos y creemos algo increíble' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: 'Gracias por explorar este recorrido — que inspire tu propia forma de contar historias a través del movimiento.' }
+        ],
+        'falling-text-drop': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'paragraph', type: 'text', label: 'Párrafo de marca', default: 'Cada espacio cuenta una historia. Convertimos visiones estáticas en experiencias vivas, con animaciones cuidadas y presentaciones que enamoran a primera vista. No solo buscamos que luzca bien — buscamos que se sienta inolvidable.' }
         ]
     };
 
