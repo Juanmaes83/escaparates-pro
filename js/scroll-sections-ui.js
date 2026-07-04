@@ -56,6 +56,24 @@ EP.ScrollSectionsUI = (function() {
             { key: 'words', type: 'wordlist', label: 'Palabras (una por línea)',
               default: ['Diseño', 'Presencia', 'Impacto', 'Marca', 'Premium', 'Escaparate',
                         'Detalle', 'Luz', 'Espacio', 'Forma', 'Textura', 'Enfoque'] }
+        ],
+        'parallax-photo-ring': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'accordion-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'spin-scroll-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'infinite-hero-parallax': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'grid-flip-resize': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'blinds-scroll-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ]
     };
 
