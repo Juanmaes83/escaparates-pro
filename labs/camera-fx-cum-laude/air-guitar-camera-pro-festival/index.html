@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Air Guitar Camera PRO Festival - Escaparates Pro</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage">
+            <canvas id="canvas" width="1280" height="720"></canvas>
+            <canvas id="capture" width="1280" height="720"></canvas>
+            <video id="video" playsinline muted autoplay></video>
+
+            <div class="topbar">
+                <div class="brand">
+                    <span>Escaparates Pro</span>
+                    <strong>Festival Air Guitar</strong>
+                </div>
+                <div class="traffic" id="traffic">
+                    <span class="lamp red"></span>
+                    <span id="traffic-label">READY</span>
+                </div>
+            </div>
+
+            <div class="scoreboard">
+                <div><span id="score">0</span><small>score</small></div>
+                <div><span id="combo">x1</span><small>combo</small></div>
+                <div><span id="timer">30.0</span><small>sec</small></div>
+                <div><span id="rank">--</span><small>rank</small></div>
+            </div>
+
+            <div class="result-card" id="result-card" hidden>
+                <p>Festival result</p>
+                <h2 id="result-rank">Stage Ready</h2>
+                <strong id="result-score">0 points</strong>
+            </div>
+        </section>
+
+        <aside class="console">
+            <header>
+                <div class="mark">AG</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Air Guitar Camera PRO</h1>
+                </div>
+            </header>
+
+            <section class="block hero">
+                <h2>Modo Festival</h2>
+                <p>Objetivo: toca la guitarra virtual durante 30 segundos. Cada rasgueo correcto suma puntos, combo y feedback visual.</p>
+                <button id="btn-start" class="primary">Activar camara y empezar</button>
+                <button id="btn-restart">Reiniciar reto</button>
+            </section>
+
+            <section class="block coach">
+                <h2>Coach en vivo</h2>
+                <div class="step" id="step-camera"><b>1</b><span>Camara pendiente</span></div>
+                <div class="step" id="step-hands"><b>2</b><span>Muestra dos manos</span></div>
+                <div class="step" id="step-neck"><b>3</b><span>Mano izquierda al mastil</span></div>
+                <div class="step" id="step-strum"><b>4</b><span>Rasguea sobre las cuerdas</span></div>
+                <p id="coach-text">Pulsa activar. Mantente a media distancia para que se vean torso y manos.</p>
+            </section>
+
+            <section class="block">
+                <h2>Controles PRO</h2>
+                <label>Sensibilidad rasgueo
+                    <input id="sensitivity" type="range" min="14" max="64" value="30">
+                </label>
+                <label>Volumen
+                    <input id="volume" type="range" min="0" max="100" value="70">
+                </label>
+                <label>Intensidad visual
+                    <input id="energy" type="range" min="30" max="140" value="88">
+                </label>
+                <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+            </section>
+
+            <section class="block">
+                <h2>Salida</h2>
+                <button id="btn-png">Descargar poster PNG</button>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico</h2>
+                <pre id="debug">Esperando inicio...</pre>
+            </section>
+        </aside>
+    </main>
+
+    <script src="./app.js?v=festival-1"></script>
+</body>
+</html>
