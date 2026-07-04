@@ -72,6 +72,8 @@
     var combo = 1;
     var bestCombo = 1;
     var lastPick = null;
+    var lastPickPalm = null;
+    var lastFingerPose = null;
     var lastNeck = null;
     var lastStrumAt = 0;
     var lastHands = [];
@@ -254,6 +256,8 @@
         bestCombo = 1;
         riffEvents = [];
         lastPick = null;
+        lastPickPalm = null;
+        lastFingerPose = null;
         lastNeck = null;
         lastGestureStatus = 'waiting';
         lastStrumAt = 0;
@@ -264,7 +268,7 @@
         result.hidden = true;
         stepEls.strum.classList.remove('ok');
         updateScore();
-        coach('Reto activo: una mano en el mastil, la otra cruza la zona verde para crear tu riff.');
+        coach('Reto activo: una mano al mastil y con la otra mueve la mano o los dedos para crear tu riff.');
     }
 
     async function loop() {
@@ -342,21 +346,29 @@
         var pickHand = roles.pick;
         var guitar = geometry(neck);
         var pick = pickHand.indexTip;
+        var pickPalm = pickHand.palm;
+        var fingerPose = getFingerPose(pickHand);
         var threshold = gestureThreshold();
         var dist = distanceToSegment(pick, guitar.bridge, guitar.strumEnd);
         var moved = lastPick ? Math.hypot(pick.x - lastPick.x, pick.y - lastPick.y) : 0;
+        var palmMoved = lastPickPalm ? Math.hypot(pickPalm.x - lastPickPalm.x, pickPalm.y - lastPickPalm.y) : 0;
+        var fingerMoved = lastFingerPose ? Math.abs(fingerPose.spread - lastFingerPose.spread) + Math.abs(fingerPose.height - lastFingerPose.height) : 0;
         var pathDist = lastPick ? distanceBetweenSegments(lastPick, pick, guitar.bridge, guitar.strumEnd) : dist;
         var crossed = pathDist < threshold;
         var armed = dist < threshold * 1.25 || crossed;
-        var minimumMove = isMobileLike() ? 5 : 8;
-        lastGestureStatus = armed ? 'armed' : 'tracking';
-        if (armed && moved > minimumMove && now - lastStrumAt > 105) {
-            strum(neck, pick, moved, now);
+        var minimumMove = isMobileLike() ? 4 : 7;
+        var minimumPalmMove = isMobileLike() ? 12 : 18;
+        var minimumFingerMove = isMobileLike() ? 14 : 20;
+        var easyRiff = moved > minimumMove || palmMoved > minimumPalmMove || fingerMoved > minimumFingerMove;
+        lastGestureStatus = armed ? 'zone-armed' : easyRiff ? 'motion-riff' : 'tracking';
+        if (easyRiff && now - lastStrumAt > 115) {
+            strum(neck, pick, Math.max(moved, palmMoved, fingerMoved * 0.65), now);
         } else {
-            var hint = moved <= minimumMove ? 'Haz un rasgueo mas amplio con la mano derecha.' : 'Cruza la zona verde para grabar el rasgueo.';
-            coach('Manos OK. ' + hint + ' Distancia gesto: ' + Math.round(Math.min(dist, pathDist)) + ' / ' + Math.round(threshold) + '.');
+            coach('Manos OK. Mueve la mano de rasgueo o abre/cierra dedos para crear riffs. Movimiento: ' + Math.round(Math.max(moved, palmMoved)) + ' / dedos: ' + Math.round(fingerMoved) + '.');
         }
         lastPick = { x: pick.x, y: pick.y };
+        lastPickPalm = { x: pickPalm.x, y: pickPalm.y };
+        lastFingerPose = fingerPose;
         lastNeck = { x: neck.palm.x, y: neck.palm.y };
     }
 
@@ -634,6 +646,15 @@
     function gestureThreshold() {
         var base = Number(sensitivityEl.value);
         return Math.max(base, isMobileLike() ? base * 1.85 : base * 1.45);
+    }
+
+    function getFingerPose(hand) {
+        var index = hand.landmarks[8] || hand.indexTip;
+        var middle = hand.landmarks[12] || hand.middleTip;
+        var ring = hand.landmarks[16] || middle;
+        var spread = Math.hypot(index.x - middle.x, index.y - middle.y) + Math.hypot(middle.x - ring.x, middle.y - ring.y);
+        var height = Math.abs(index.y - hand.palm.y) + Math.abs(middle.y - hand.palm.y);
+        return { spread: spread, height: height };
     }
 
     function assignHands(handData) {
