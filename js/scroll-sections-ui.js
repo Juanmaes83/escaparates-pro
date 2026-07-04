@@ -170,6 +170,45 @@ EP.ScrollSectionsUI = (function() {
         ],
         'product-card-slider': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'multi-stage-comparator': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'stages', type: 'itemlist3', label: 'Etapas — Etiqueta | Título | Subtítulo (una por línea)',
+              default: [] }
+        ],
+        'keyhole-scroll-slideshow': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'cues', type: 'itemlist2', label: 'Estancias — Nombre | Descripción (una por línea)',
+              default: [] }
+        ],
+        'six-faces-tour-cube': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'rooms', type: 'itemlist2', label: 'Estancias (6) — Nombre | Descripción (una por línea)',
+              default: [] }
+        ],
+        'masonry-lightbox-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'photo-filter-editor': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'viewing-appointment-ticket': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'propertyName', type: 'text', label: 'Nombre de la propiedad', default: 'Ático Centro' },
+            { key: 'address', type: 'text', label: 'Dirección', default: 'Calle Mayor 12, Madrid' },
+            { key: 'date', type: 'text', label: 'Fecha', default: '18 Jul' },
+            { key: 'time', type: 'text', label: 'Hora', default: '17:30' },
+            { key: 'agent', type: 'text', label: 'Agente', default: 'M. García' },
+            { key: 'reference', type: 'text', label: 'Referencia', default: 'REF-2043' }
+        ],
+        'team-circle-rotator': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Nuestro Equipo' },
+            { key: 'members', type: 'itemlist2', label: 'Equipo — Nombre | Cargo (una por línea)',
+              default: [] }
+        ],
+        'folding-box-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'message', type: 'text', label: 'Mensaje de bienvenida', default: 'Así te entregamos las llaves de tu nuevo hogar.' }
         ]
     };
 
