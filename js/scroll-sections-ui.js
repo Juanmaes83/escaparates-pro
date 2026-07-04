@@ -82,6 +82,30 @@ EP.ScrollSectionsUI = (function() {
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
             { key: 'words', type: 'wordlist', label: 'Líneas de título (una por línea)',
               default: ['ESCAPARATE', 'PREMIUM', 'INTERIOR'] }
+        ],
+        'slide-observer-showcase': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'horizontal-spotlight-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'headline', type: 'text', label: 'Texto de apertura', default: 'Cada scroll revela una nueva perspectiva. Recorre nuestras referencias en un flujo visual continuo.' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: 'Al terminar el recorrido, que estas imágenes se queden contigo — el detalle siempre cuenta una historia.' }
+        ],
+        'drag-explore-canvas': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'description', type: 'text', label: 'Descripción', default: 'Arrastra para explorar la colección completa' }
+        ],
+        'smoother-zigzag-gallery': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'galleryTitle', type: 'text', label: 'Titular central', default: 'Cada detalle cuenta una historia — descúbrela al hacer scroll' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: '¿Quieres ver más referencias?' }
+        ],
+        'morph-to-fullscreen': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'intro', type: 'text', label: 'Texto de apertura', default: 'Entra en un espacio donde cada imagen se expande más allá del marco' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: 'Cada referencia cuenta una historia — la tuya continúa aquí.' },
+            { key: 'caption', type: 'text', label: 'Título central', default: 'Detalle' },
+            { key: 'captionText', type: 'text', label: 'Descripción central', default: 'Una mirada cercana a los acabados y la luz que definen este espacio.' }
         ]
     };
 
@@ -140,20 +164,38 @@ EP.ScrollSectionsUI = (function() {
         return out;
     }
 
+    function makeCard(t) {
+        var card = document.createElement('div');
+        card.className = 'ss-template-card' + (t.id === state.activeId ? ' active' : '');
+        card.innerHTML =
+            '<div class="ss-icon">' + t.icon + '</div>' +
+            '<div><div class="ss-name">' + t.name + '</div><div class="ss-desc">' + t.description + '</div></div>';
+        card.addEventListener('click', function() { selectTemplate(t.id); });
+        return card;
+    }
+
+    // "Original's Top" — a catch-all bucket for templates adapted faithfully from a
+    // specific named original (an Awwwards site, a creative playground, etc.) whose
+    // own interaction model is distinctive enough that it doesn't need to be forced
+    // into any other grouping — they just get flagged and shown together, unchanged.
     function renderCatalog() {
         var container = document.getElementById('scroll-sections-catalog');
         if (!container) return;
         var templates = EP.ScrollSections.getAll();
         container.innerHTML = '';
-        templates.forEach(function(t) {
-            var card = document.createElement('div');
-            card.className = 'ss-template-card' + (t.id === state.activeId ? ' active' : '');
-            card.innerHTML =
-                '<div class="ss-icon">' + t.icon + '</div>' +
-                '<div><div class="ss-name">' + t.name + '</div><div class="ss-desc">' + t.description + '</div></div>';
-            card.addEventListener('click', function() { selectTemplate(t.id); });
-            container.appendChild(card);
-        });
+
+        var regular = templates.filter(function(t) { return t.badge !== 'original-top'; });
+        var originalTop = templates.filter(function(t) { return t.badge === 'original-top'; });
+
+        regular.forEach(function(t) { container.appendChild(makeCard(t)); });
+
+        if (originalTop.length) {
+            var header = document.createElement('div');
+            header.className = 'ss-catalog-section-header';
+            header.textContent = '🏆 Original\'s Top';
+            container.appendChild(header);
+            originalTop.forEach(function(t) { container.appendChild(makeCard(t)); });
+        }
     }
 
     function renderFields() {
