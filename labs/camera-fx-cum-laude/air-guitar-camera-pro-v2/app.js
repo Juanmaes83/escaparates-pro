@@ -100,6 +100,15 @@
     var lastStrumAt = 0;
     var lastHands = [];
     var lastGestureStatus = 'waiting';
+    var twoHandsSince = 0;
+    var currentGesture = {
+        leftZone: '--',
+        rightAction: '--',
+        intensity: '--',
+        distanceEffect: '--',
+        soloMode: false,
+        note: '--'
+    };
     var riffEvents = [];
     var particles = [];
     var flash = 0;
@@ -392,6 +401,15 @@
         lastFingerPose = null;
         lastNeck = null;
         lastGestureStatus = 'waiting';
+        twoHandsSince = 0;
+        currentGesture = {
+            leftZone: '--',
+            rightAction: '--',
+            intensity: '--',
+            distanceEffect: '--',
+            soloMode: false,
+            note: '--'
+        };
         lastStrumAt = 0;
         gameActive = true;
         gameEnded = false;
@@ -466,11 +484,17 @@
             setSignal(handData.length ? 'yellow' : 'red', handData.length ? 'ONE HAND' : 'NO HANDS');
             stepEls.hands.classList.toggle('ok', handData.length >= 2);
             stepEls.neck.classList.remove('ok');
+            stepEls.strum.classList.remove('ok');
             combo = 1;
+            twoHandsSince = 0;
+            lastGestureStatus = handData.length ? 'one-hand-warning' : 'no-hands';
+            currentGesture.soloMode = false;
+            currentGesture.rightAction = handData.length ? 'Falta una mano' : 'Sin tracking';
             updateScore();
-            coach(handData.length ? 'Veo una mano. Muestra las dos para tocar.' : 'No veo manos. Entra en plano con buena luz.');
+            coach(handData.length ? 'Aviso amarillo: veo una mano. Muestra las dos para activar el modo solo y grabar riffs.' : 'No veo manos. Entra en plano con buena luz.');
             return;
         }
+        if (!twoHandsSince) twoHandsSince = now;
         stepEls.hands.classList.add('ok');
         stepEls.neck.classList.add('ok');
         setSignal('green', 'PLAY');
@@ -481,6 +505,9 @@
         var pick = pickHand.indexTip;
         var pickPalm = pickHand.palm;
         var fingerPose = getFingerPose(pickHand);
+        var handDistance = Math.hypot(neck.palm.x - pickPalm.x, neck.palm.y - pickPalm.y);
+        var noteZone = getNoteZone(neck);
+        var soloMode = now - twoHandsSince > 900;
         var threshold = gestureThreshold();
         var dist = distanceToSegment(pick, guitar.bridge, guitar.strumEnd);
         var moved = lastPick ? Math.hypot(pick.x - lastPick.x, pick.y - lastPick.y) : 0;
@@ -493,12 +520,28 @@
         var minimumPalmMove = isMobileLike() ? 12 : 18;
         var minimumFingerMove = isMobileLike() ? 14 : 20;
         var easyRiff = moved > minimumMove || palmMoved > minimumPalmMove || fingerMoved > minimumFingerMove;
+        var rightAction = getRightAction(moved, palmMoved, fingerMoved);
+        var distanceEffect = getDistanceEffect(handDistance);
+        var intensityLabel = getIntensityLabel(Math.max(moved, palmMoved, fingerMoved * 0.65));
         lastGestureStatus = armed ? 'zone-armed' : easyRiff ? 'motion-riff' : 'tracking';
+        currentGesture = {
+            leftZone: noteZone.label,
+            rightAction: rightAction,
+            intensity: intensityLabel,
+            distanceEffect: distanceEffect.label,
+            soloMode: soloMode,
+            note: BLUESMAN_NOTES[selectNoteIndex(neck, handDistance)].name
+        };
         if (easyRiff && now - lastStrumAt > 115) {
-            var handDistance = Math.hypot(neck.palm.x - pickPalm.x, neck.palm.y - pickPalm.y);
-            strum(neck, pick, Math.max(moved, palmMoved, fingerMoved * 0.65), now, handDistance);
+            strum(neck, pick, Math.max(moved, palmMoved, fingerMoved * 0.65), now, handDistance, {
+                noteZone: noteZone,
+                rightAction: rightAction,
+                distanceEffect: distanceEffect,
+                soloMode: soloMode,
+                intensityLabel: intensityLabel
+            });
         } else {
-            coach('Manos OK. Mueve la mano de rasgueo o abre/cierra dedos para crear riffs. Movimiento: ' + Math.round(Math.max(moved, palmMoved)) + ' / dedos: ' + Math.round(fingerMoved) + '.');
+            coach('Manos OK. Izquierda selecciona ' + noteZone.label + '. Derecha: ' + rightAction + '. Distancia: ' + distanceEffect.label + '.');
         }
         lastPick = { x: pick.x, y: pick.y };
         lastPickPalm = { x: pickPalm.x, y: pickPalm.y };
@@ -506,12 +549,14 @@
         lastNeck = { x: neck.palm.x, y: neck.palm.y };
     }
 
-    function strum(neck, pick, moved, now, handDistance) {
+    function strum(neck, pick, moved, now, handDistance, gestureMeta) {
         var noteIndex = selectNoteIndex(neck, handDistance);
         var chordIndex = Math.max(0, Math.min(CHORDS.length - 1, Math.floor((noteIndex / BLUESMAN_NOTES.length) * CHORDS.length)));
         var chord = CHORDS[chordIndex];
         var intensity = Math.max(0.2, Math.min(1, moved / 90));
-        var power = handDistance > W * 0.36;
+        var effect = gestureMeta && gestureMeta.distanceEffect ? gestureMeta.distanceEffect : getDistanceEffect(handDistance);
+        var power = effect.power;
+        var soloMode = !!(gestureMeta && gestureMeta.soloMode);
         var event = {
             t: Math.max(0, (now - startAt) / 1000),
             chord: chord.name,
@@ -519,22 +564,27 @@
             note: BLUESMAN_NOTES[noteIndex].name,
             noteIndex: noteIndex,
             intensity: intensity,
+            intensityLabel: gestureMeta ? gestureMeta.intensityLabel : getIntensityLabel(moved),
             style: styleEl.value,
             handDistance: Math.round(handDistance),
-            power: power
+            power: power,
+            effect: effect.label,
+            leftZone: gestureMeta && gestureMeta.noteZone ? gestureMeta.noteZone.label : getNoteZone(neck).label,
+            rightAction: gestureMeta ? gestureMeta.rightAction : 'Riff',
+            soloMode: soloMode
         };
         if (musicEngine) musicEngine.recordPerformanceEvents(event);
         else riffEvents.push(event);
         lastStrumAt = now;
         combo = Math.min(16, combo + 1);
         bestCombo = Math.max(bestCombo, combo);
-        score += Math.round(100 + intensity * 180 + combo * 22 + (power ? 120 : 0));
+        score += Math.round(100 + intensity * 180 + combo * 22 + (power ? 120 : 0) + (soloMode ? 80 : 0));
         stepEls.strum.classList.add('ok');
         flash = 1;
         spawn(pick, intensity);
         playPerformanceEvent(event, audioCtx, audioCtx ? audioCtx.currentTime : 0);
         updateScore();
-        coach('Riff grabado: ' + event.note + (power ? ' POWER' : '') + '. Tu riff ya tiene ' + riffEvents.length + ' notas.');
+        coach('Riff grabado: ' + event.note + ' / ' + event.rightAction + ' / ' + event.effect + (soloMode ? ' / SOLO' : '') + '.');
     }
 
     function selectNoteIndex(neck, handDistance) {
@@ -543,6 +593,34 @@
         var base = Math.floor((1 - yPart) * 9) + Math.floor(xPart * 4);
         if (handDistance > W * 0.36) base += 2;
         return Math.max(0, Math.min(BLUESMAN_NOTES.length - 1, base));
+    }
+
+    function getNoteZone(neck) {
+        var y = neck.palm.y / H;
+        if (y < 0.28) return { label: 'Zona aguda', color: '#ffd34d' };
+        if (y < 0.48) return { label: 'Zona lead', color: '#5dff9b' };
+        if (y < 0.68) return { label: 'Zona groove', color: '#56a8ff' };
+        return { label: 'Zona grave', color: '#ff3158' };
+    }
+
+    function getRightAction(moved, palmMoved, fingerMoved) {
+        if (fingerMoved > palmMoved && fingerMoved > moved) return 'Finger riff';
+        if (palmMoved > moved) return 'Hand wave riff';
+        return 'Pick strum';
+    }
+
+    function getIntensityLabel(value) {
+        if (value > 72) return 'Explosiva';
+        if (value > 42) return 'Fuerte';
+        if (value > 18) return 'Media';
+        return 'Ligera';
+    }
+
+    function getDistanceEffect(handDistance) {
+        if (handDistance > W * 0.48) return { label: 'Stage Dive', power: true, color: '#ff3158' };
+        if (handDistance > W * 0.36) return { label: 'Power Chord', power: true, color: '#ffd34d' };
+        if (handDistance < W * 0.18) return { label: 'Tight Groove', power: false, color: '#56a8ff' };
+        return { label: 'Standard Riff', power: false, color: '#5dff9b' };
     }
 
     function playPerformanceEvent(event, ctxTarget, when) {
@@ -656,6 +734,7 @@
         drawScene();
         drawCamera(image);
         drawGuitar(handsData);
+        drawGestureHud();
         handsData.forEach(drawHand);
         particles = particles.filter(function(p) { p.x += p.vx; p.y += p.vy; p.life -= 0.025; return p.life > 0; });
         particles.forEach(function(p) {
@@ -774,6 +853,48 @@
         ctx.arc(hand.indexTip.x, hand.indexTip.y, 13, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
+    }
+
+    function drawGestureHud() {
+        var x = 34;
+        var y = 108;
+        var rows = [
+            ['IZQUIERDA', currentGesture.leftZone],
+            ['DERECHA', currentGesture.rightAction],
+            ['INTENSIDAD', currentGesture.intensity],
+            ['DISTANCIA', currentGesture.distanceEffect],
+            ['MODO', currentGesture.soloMode ? 'SOLO ACTIVO' : 'PRE-SOLO'],
+            ['NOTA', currentGesture.note]
+        ];
+        ctx.save();
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(0,0,0,.62)';
+        roundRect(ctx, x - 12, y - 28, 286, 202, 14);
+        ctx.fill();
+        ctx.strokeStyle = currentGesture.soloMode ? 'rgba(255,211,77,.8)' : 'rgba(255,255,255,.18)';
+        ctx.lineWidth = 2;
+        roundRect(ctx, x - 12, y - 28, 286, 202, 14);
+        ctx.stroke();
+        rows.forEach(function(row, index) {
+            var yy = y + index * 29;
+            ctx.fillStyle = 'rgba(255,255,255,.52)';
+            ctx.font = '800 11px ui-monospace, SFMono-Regular, Consolas, monospace';
+            ctx.fillText(row[0], x, yy);
+            ctx.fillStyle = index === 4 && currentGesture.soloMode ? '#ffd34d' : '#fff';
+            ctx.font = '900 17px system-ui, sans-serif';
+            ctx.fillText(row[1], x + 112, yy + 1);
+        });
+        ctx.restore();
+    }
+
+    function roundRect(context, x, y, width, height, radius) {
+        context.beginPath();
+        context.moveTo(x + radius, y);
+        context.arcTo(x + width, y, x + width, y + height, radius);
+        context.arcTo(x + width, y + height, x, y + height, radius);
+        context.arcTo(x, y + height, x, y, radius);
+        context.arcTo(x, y, x + width, y, radius);
+        context.closePath();
     }
 
     function drawIdle() {
