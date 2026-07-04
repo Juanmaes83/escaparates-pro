@@ -10,10 +10,32 @@
         launch: { name: 'Brand Launch', src: './assets/brand-launch.png' }
     };
     var STYLES = {
-        rock: { wave: 'sawtooth', decay: 0.34, gain: 0.11, filter: 1200 },
-        electro: { wave: 'square', decay: 0.22, gain: 0.08, filter: 2100 },
-        funk: { wave: 'triangle', decay: 0.18, gain: 0.095, filter: 1500 }
+        rock: { label: 'Rock Festival', wave: 'sawtooth', decay: 0.34, gain: 0.11, filter: 1200, preset: 'dirty' },
+        electro: { label: 'Electro Stage', wave: 'square', decay: 0.22, gain: 0.08, filter: 2100, preset: 'clean' },
+        funk: { label: 'Funk Groove', wave: 'triangle', decay: 0.18, gain: 0.095, filter: 1500, preset: 'clean' },
+        indie: { label: 'Indie Pop', wave: 'triangle', decay: 0.28, gain: 0.08, filter: 1800, preset: 'clean' },
+        metal: { label: 'Metal Lite', wave: 'sawtooth', decay: 0.42, gain: 0.13, filter: 900, preset: 'dirty' },
+        flamenco: { label: 'Flamenco Fusion', wave: 'triangle', decay: 0.16, gain: 0.1, filter: 2600, preset: 'clean' }
     };
+    var BLUESMAN_NOTES = [
+        { name: 'G4', freq: 392.00 },
+        { name: 'A4', freq: 440.00 },
+        { name: 'C5', freq: 523.25 },
+        { name: 'D5', freq: 587.33 },
+        { name: 'E5', freq: 659.25 },
+        { name: 'G5', freq: 783.99 },
+        { name: 'A5', freq: 880.00 },
+        { name: 'C6', freq: 1046.50 },
+        { name: 'D6', freq: 1174.66 },
+        { name: 'D#6', freq: 1244.51 },
+        { name: 'E6', freq: 1318.51 },
+        { name: 'G6', freq: 1567.98 },
+        { name: 'A6', freq: 1760.00 },
+        { name: 'C7', freq: 2093.00 },
+        { name: 'D7', freq: 2349.32 }
+    ];
+    var BLUESMAN_SAMPLE_BASE = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/355309/';
+    var BLUESMAN_SAMPLE_FILES = ['G4.mp3', 'A4.mp3', 'C5.mp3', 'D5.mp3', 'E5.mp3', 'G5.mp3', 'A5.mp3', 'C6.mp3', 'D6.mp3', 'D%236.mp3', 'E6.mp3', 'G6.mp3', 'A6.mp3', 'C7.mp3', 'D7.mp3'];
     var CHORDS = [
         { name: 'E', notes: [164.81, 246.94, 329.63] },
         { name: 'G', notes: [196.00, 293.66, 392.00] },
@@ -82,6 +104,7 @@
     var particles = [];
     var flash = 0;
     var lastError = '';
+    var musicEngine = null;
 
     function boot() {
         canvas.width = W;
@@ -141,15 +164,123 @@
         });
     }
 
+    function createMusicEngine() {
+        return {
+            buffers: { clean: [], dirty: [] },
+            samplesState: 'not loaded',
+            preset: 'dirty',
+            backingTimer: null,
+            loadSamples: async function(context) {
+                if (!context || this.samplesState === 'ready' || this.samplesState === 'loading') return;
+                this.samplesState = 'loading';
+                try {
+                    var cleanUrls = BLUESMAN_SAMPLE_FILES.map(function(name) { return BLUESMAN_SAMPLE_BASE + name; });
+                    var dirtyUrls = BLUESMAN_SAMPLE_FILES.map(function(name) { return BLUESMAN_SAMPLE_BASE + 'd_' + name; });
+                    this.buffers.clean = await this.loadBank(context, cleanUrls);
+                    this.buffers.dirty = await this.loadBank(context, dirtyUrls);
+                    this.samplesState = 'ready';
+                    updateDebug();
+                } catch (error) {
+                    this.samplesState = 'fallback synth';
+                    lastError = 'Samples: ' + (error && error.message ? error.message : String(error));
+                    updateDebug();
+                }
+            },
+            loadBank: async function(context, urls) {
+                var out = [];
+                for (var i = 0; i < urls.length; i++) {
+                    var response = await fetch(urls[i], { mode: 'cors' });
+                    var data = await response.arrayBuffer();
+                    out[i] = await new Promise(function(resolve, reject) {
+                        context.decodeAudioData(data.slice(0), resolve, reject);
+                    });
+                }
+                return out;
+            },
+            setPreset: function(preset) {
+                this.preset = preset === 'clean' ? 'clean' : 'dirty';
+            },
+            playNote: function(noteIndex, intensity, styleKey, context, destination, when, options) {
+                if (!context || !destination) return;
+                var style = STYLES[styleKey] || STYLES.rock;
+                this.setPreset(style.preset);
+                var bank = this.buffers[this.preset] || [];
+                var buffer = bank[noteIndex];
+                if (buffer && context === audioCtx) {
+                    var source = context.createBufferSource();
+                    var gain = context.createGain();
+                    var filter = context.createBiquadFilter();
+                    source.buffer = buffer;
+                    source.playbackRate.value = options && options.power ? 1.015 : 1;
+                    filter.type = 'lowpass';
+                    filter.frequency.value = style.filter + intensity * 1200;
+                    gain.gain.setValueAtTime(0.0001, when);
+                    gain.gain.exponentialRampToValueAtTime(style.gain * (0.65 + intensity), when + 0.012);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, when + Math.min(buffer.duration, 0.72));
+                    source.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(destination);
+                    source.start(when);
+                    source.stop(when + Math.min(buffer.duration, 0.8));
+                    return;
+                }
+                this.playSynthNote(noteIndex, intensity, styleKey, context, destination, when, options);
+            },
+            playSynthNote: function(noteIndex, intensity, styleKey, context, destination, when, options) {
+                var style = STYLES[styleKey] || STYLES.rock;
+                var note = BLUESMAN_NOTES[noteIndex % BLUESMAN_NOTES.length];
+                var voices = options && options.power ? [1, 1.5, 2] : [1, 1.005];
+                voices.forEach(function(ratio, index) {
+                    var osc = context.createOscillator();
+                    var gain = context.createGain();
+                    var filter = context.createBiquadFilter();
+                    osc.type = index === 0 ? style.wave : 'square';
+                    osc.frequency.value = note.freq * ratio;
+                    filter.type = 'lowpass';
+                    filter.frequency.value = style.filter + intensity * 950;
+                    gain.gain.setValueAtTime(0.0001, when);
+                    gain.gain.exponentialRampToValueAtTime(style.gain * intensity * (index ? 0.34 : 1), when + 0.014);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, when + style.decay);
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(destination);
+                    osc.start(when);
+                    osc.stop(when + style.decay + 0.05);
+                });
+            },
+            playBackingTrack: function(context) {
+                if (!context || !masterGain || this.backingTimer) return;
+                var self = this;
+                this.backingTimer = window.setInterval(function() {
+                    if (!gameActive || gameEnded || !audioCtx) return;
+                    var now = audioCtx.currentTime;
+                    self.playSynthNote(0, 0.18, 'funk', audioCtx, masterGain, now, { power: false });
+                }, 920);
+            },
+            stopBackingTrack: function() {
+                if (this.backingTimer) {
+                    window.clearInterval(this.backingTimer);
+                    this.backingTimer = null;
+                }
+            },
+            recordPerformanceEvents: function(event) {
+                riffEvents.push(event);
+            }
+        };
+    }
+
     function initAudio() {
         if (audioCtx) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (musicEngine) musicEngine.loadSamples(audioCtx);
             return;
         }
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
         masterGain.gain.value = Number(volumeEl.value) / 100;
         masterGain.connect(audioCtx.destination);
+        musicEngine = musicEngine || createMusicEngine();
+        musicEngine.loadSamples(audioCtx);
     }
 
     async function setupCamera() {
@@ -221,6 +352,7 @@
 
             try {
                 initAudio();
+                if (musicEngine) musicEngine.playBackingTrack(audioCtx);
             } catch (audioError) {
                 lastError = 'Audio opcional: ' + (audioError && audioError.message ? audioError.message : String(audioError));
             }
@@ -268,6 +400,7 @@
         result.hidden = true;
         stepEls.strum.classList.remove('ok');
         updateScore();
+        if (musicEngine && audioCtx) musicEngine.playBackingTrack(audioCtx);
         coach('Reto activo: una mano al mastil y con la otra mueve la mano o los dedos para crear tu riff.');
     }
 
@@ -362,7 +495,8 @@
         var easyRiff = moved > minimumMove || palmMoved > minimumPalmMove || fingerMoved > minimumFingerMove;
         lastGestureStatus = armed ? 'zone-armed' : easyRiff ? 'motion-riff' : 'tracking';
         if (easyRiff && now - lastStrumAt > 115) {
-            strum(neck, pick, Math.max(moved, palmMoved, fingerMoved * 0.65), now);
+            var handDistance = Math.hypot(neck.palm.x - pickPalm.x, neck.palm.y - pickPalm.y);
+            strum(neck, pick, Math.max(moved, palmMoved, fingerMoved * 0.65), now, handDistance);
         } else {
             coach('Manos OK. Mueve la mano de rasgueo o abre/cierra dedos para crear riffs. Movimiento: ' + Math.round(Math.max(moved, palmMoved)) + ' / dedos: ' + Math.round(fingerMoved) + '.');
         }
@@ -372,28 +506,56 @@
         lastNeck = { x: neck.palm.x, y: neck.palm.y };
     }
 
-    function strum(neck, pick, moved, now) {
-        var chordIndex = Math.max(0, Math.min(CHORDS.length - 1, Math.floor((neck.palm.y / H) * CHORDS.length)));
+    function strum(neck, pick, moved, now, handDistance) {
+        var noteIndex = selectNoteIndex(neck, handDistance);
+        var chordIndex = Math.max(0, Math.min(CHORDS.length - 1, Math.floor((noteIndex / BLUESMAN_NOTES.length) * CHORDS.length)));
         var chord = CHORDS[chordIndex];
         var intensity = Math.max(0.2, Math.min(1, moved / 90));
+        var power = handDistance > W * 0.36;
         var event = {
             t: Math.max(0, (now - startAt) / 1000),
             chord: chord.name,
             chordIndex: chordIndex,
+            note: BLUESMAN_NOTES[noteIndex].name,
+            noteIndex: noteIndex,
             intensity: intensity,
-            style: styleEl.value
+            style: styleEl.value,
+            handDistance: Math.round(handDistance),
+            power: power
         };
-        riffEvents.push(event);
+        if (musicEngine) musicEngine.recordPerformanceEvents(event);
+        else riffEvents.push(event);
         lastStrumAt = now;
         combo = Math.min(16, combo + 1);
         bestCombo = Math.max(bestCombo, combo);
-        score += Math.round(100 + intensity * 180 + combo * 22);
+        score += Math.round(100 + intensity * 180 + combo * 22 + (power ? 120 : 0));
         stepEls.strum.classList.add('ok');
         flash = 1;
         spawn(pick, intensity);
-        playChord(chord, intensity, styleEl.value, audioCtx, audioCtx ? audioCtx.currentTime : 0);
+        playPerformanceEvent(event, audioCtx, audioCtx ? audioCtx.currentTime : 0);
         updateScore();
-        coach('Rasgueo grabado: ' + chord.name + '. Tu riff ya tiene ' + riffEvents.length + ' notas.');
+        coach('Riff grabado: ' + event.note + (power ? ' POWER' : '') + '. Tu riff ya tiene ' + riffEvents.length + ' notas.');
+    }
+
+    function selectNoteIndex(neck, handDistance) {
+        var yPart = Math.max(0, Math.min(1, neck.palm.y / H));
+        var xPart = Math.max(0, Math.min(1, neck.palm.x / W));
+        var base = Math.floor((1 - yPart) * 9) + Math.floor(xPart * 4);
+        if (handDistance > W * 0.36) base += 2;
+        return Math.max(0, Math.min(BLUESMAN_NOTES.length - 1, base));
+    }
+
+    function playPerformanceEvent(event, ctxTarget, when) {
+        if (!ctxTarget) return;
+        var liveContext = ctxTarget === audioCtx;
+        if (liveContext && !masterGain) return;
+        var destination = liveContext ? masterGain : ctxTarget.destination;
+        if (musicEngine) {
+            musicEngine.playNote(event.noteIndex || 0, event.intensity || 0.5, event.style || styleEl.value, ctxTarget, destination, when, { power: !!event.power });
+            if (event.power) {
+                musicEngine.playNote(Math.min(BLUESMAN_NOTES.length - 1, (event.noteIndex || 0) + 4), (event.intensity || 0.5) * 0.8, event.style || styleEl.value, ctxTarget, destination, when + 0.025, { power: false });
+            }
+        }
     }
 
     function playChord(chord, intensity, styleKey, ctxTarget, when) {
@@ -429,7 +591,7 @@
         }
         var base = audioCtx.currentTime + 0.08;
         riffEvents.forEach(function(ev) {
-            playChord(CHORDS[ev.chordIndex], ev.intensity, ev.style, audioCtx, base + ev.t);
+            playPerformanceEvent(ev, audioCtx, base + ev.t);
         });
         coach('Reproduciendo tu riff de ' + riffEvents.length + ' notas.');
     }
@@ -450,9 +612,12 @@
         try {
             var duration = Math.max(2, riffEvents[riffEvents.length - 1].t + 1);
             var offline = new OfflineCtx(2, Math.ceil(44100 * duration), 44100);
+            var previousEngine = musicEngine;
+            musicEngine = musicEngine || createMusicEngine();
             riffEvents.forEach(function(ev) {
-                playChord(CHORDS[ev.chordIndex], ev.intensity, ev.style, offline, ev.t);
+                playPerformanceEvent(ev, offline, ev.t);
             });
+            musicEngine = previousEngine || musicEngine;
             var buffer = await offline.startRendering();
             var wav = encodeWav(buffer);
             downloadBlob(new Blob([wav], { type: 'audio/wav' }), 'air-guitar-riff.wav');
@@ -470,6 +635,7 @@
     function finishGame() {
         gameActive = false;
         gameEnded = true;
+        if (musicEngine) musicEngine.stopBackingTrack();
         if (!riffEvents.length) {
             rankEl.textContent = 'Sin riff capturado';
             finalScoreEl.textContent = '0 puntos / no se detectaron rasgueos validos';
@@ -729,6 +895,7 @@
         var payload = {
             app: 'Air Guitar Camera PRO V2',
             scene: currentScene,
+            musicEngine: musicEngine ? musicEngine.samplesState : 'off',
             score: score,
             bestCombo: bestCombo,
             events: riffEvents
@@ -801,6 +968,7 @@
             'hands model: ' + (hands ? 'ready' : 'not loaded'),
             'hands detected: ' + lastHands.length,
             'audio: ' + (audioCtx ? audioCtx.state : 'off'),
+            'music engine: ' + (musicEngine ? musicEngine.samplesState : 'off'),
             'scene: ' + currentScene,
             'style: ' + styleEl.value,
             'gesture: ' + lastGestureStatus,
