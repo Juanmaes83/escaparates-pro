@@ -72,8 +72,10 @@
     var combo = 1;
     var bestCombo = 1;
     var lastPick = null;
+    var lastNeck = null;
     var lastStrumAt = 0;
     var lastHands = [];
+    var lastGestureStatus = 'waiting';
     var riffEvents = [];
     var particles = [];
     var flash = 0;
@@ -252,6 +254,8 @@
         bestCombo = 1;
         riffEvents = [];
         lastPick = null;
+        lastNeck = null;
+        lastGestureStatus = 'waiting';
         lastStrumAt = 0;
         gameActive = true;
         gameEnded = false;
@@ -333,19 +337,27 @@
         stepEls.hands.classList.add('ok');
         stepEls.neck.classList.add('ok');
         setSignal('green', 'PLAY');
-        var sorted = handData.slice().sort(function(a, b) { return a.palm.x - b.palm.x; });
-        var neck = sorted[0];
-        var pickHand = sorted[1];
+        var roles = assignHands(handData);
+        var neck = roles.neck;
+        var pickHand = roles.pick;
         var guitar = geometry(neck);
         var pick = pickHand.indexTip;
+        var threshold = gestureThreshold();
         var dist = distanceToSegment(pick, guitar.bridge, guitar.strumEnd);
         var moved = lastPick ? Math.hypot(pick.x - lastPick.x, pick.y - lastPick.y) : 0;
-        if (dist < Number(sensitivityEl.value) && moved > 12 && now - lastStrumAt > 130) {
+        var pathDist = lastPick ? distanceBetweenSegments(lastPick, pick, guitar.bridge, guitar.strumEnd) : dist;
+        var crossed = pathDist < threshold;
+        var armed = dist < threshold * 1.25 || crossed;
+        var minimumMove = isMobileLike() ? 5 : 8;
+        lastGestureStatus = armed ? 'armed' : 'tracking';
+        if (armed && moved > minimumMove && now - lastStrumAt > 105) {
             strum(neck, pick, moved, now);
         } else {
-            coach('Toca la zona verde con la mano derecha. Cada golpe correcto queda grabado en tu riff.');
+            var hint = moved <= minimumMove ? 'Haz un rasgueo mas amplio con la mano derecha.' : 'Cruza la zona verde para grabar el rasgueo.';
+            coach('Manos OK. ' + hint + ' Distancia gesto: ' + Math.round(Math.min(dist, pathDist)) + ' / ' + Math.round(threshold) + '.');
         }
         lastPick = { x: pick.x, y: pick.y };
+        lastNeck = { x: neck.palm.x, y: neck.palm.y };
     }
 
     function strum(neck, pick, moved, now) {
@@ -446,6 +458,14 @@
     function finishGame() {
         gameActive = false;
         gameEnded = true;
+        if (!riffEvents.length) {
+            rankEl.textContent = 'Sin riff capturado';
+            finalScoreEl.textContent = '0 puntos / no se detectaron rasgueos validos';
+            result.hidden = false;
+            setSignal('yellow', 'RETRY');
+            coach('Te vi en camara, pero no se capturo ningun rasgueo. Repite cruzando la zona verde con un gesto amplio.');
+            return;
+        }
         var rank = getRank(score);
         rankEl.textContent = rank;
         finalScoreEl.textContent = score + ' puntos / combo x' + bestCombo + ' / ' + riffEvents.length + ' notas';
@@ -607,6 +627,29 @@
         }
     }
 
+    function isMobileLike() {
+        return Math.min(window.innerWidth || W, window.innerHeight || H) < 760 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
+    }
+
+    function gestureThreshold() {
+        var base = Number(sensitivityEl.value);
+        return Math.max(base, isMobileLike() ? base * 1.85 : base * 1.45);
+    }
+
+    function assignHands(handData) {
+        if (handData.length < 2) return { neck: handData[0], pick: handData[0] };
+        var sorted = handData.slice().sort(function(a, b) { return a.palm.x - b.palm.x; });
+        if (!lastNeck || !lastPick) {
+            return { neck: sorted[0], pick: sorted[1] };
+        }
+        var a = handData[0];
+        var b = handData[1];
+        var scoreAB = Math.hypot(a.palm.x - lastNeck.x, a.palm.y - lastNeck.y) + Math.hypot(b.indexTip.x - lastPick.x, b.indexTip.y - lastPick.y);
+        var scoreBA = Math.hypot(b.palm.x - lastNeck.x, b.palm.y - lastNeck.y) + Math.hypot(a.indexTip.x - lastPick.x, a.indexTip.y - lastPick.y);
+        if (scoreAB <= scoreBA) return { neck: a, pick: b };
+        return { neck: b, pick: a };
+    }
+
     function distanceToSegment(p, a, b) {
         var x = a.x;
         var y = a.y;
@@ -619,6 +662,23 @@
             y += dy * t;
         }
         return Math.hypot(p.x - x, p.y - y);
+    }
+
+    function distanceBetweenSegments(a, b, c, d) {
+        if (segmentsIntersect(a, b, c, d)) return 0;
+        return Math.min(
+            distanceToSegment(a, c, d),
+            distanceToSegment(b, c, d),
+            distanceToSegment(c, a, b),
+            distanceToSegment(d, a, b)
+        );
+    }
+
+    function segmentsIntersect(a, b, c, d) {
+        function ccw(p1, p2, p3) {
+            return (p3.y - p1.y) * (p2.x - p1.x) > (p2.y - p1.y) * (p3.x - p1.x);
+        }
+        return ccw(a, c, d) !== ccw(b, c, d) && ccw(a, b, c) !== ccw(a, b, d);
     }
 
     function updateScore() {
@@ -722,6 +782,8 @@
             'audio: ' + (audioCtx ? audioCtx.state : 'off'),
             'scene: ' + currentScene,
             'style: ' + styleEl.value,
+            'gesture: ' + lastGestureStatus,
+            'threshold: ' + Math.round(gestureThreshold()),
             'riff events: ' + riffEvents.length,
             'score: ' + score,
             'last error: ' + (lastError || 'none')
