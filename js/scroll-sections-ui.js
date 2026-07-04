@@ -106,6 +106,44 @@ EP.ScrollSectionsUI = (function() {
             { key: 'outro', type: 'text', label: 'Texto de cierre', default: 'Cada referencia cuenta una historia — la tuya continúa aquí.' },
             { key: 'caption', type: 'text', label: 'Título central', default: 'Detalle' },
             { key: 'captionText', type: 'text', label: 'Descripción central', default: 'Una mirada cercana a los acabados y la luz que definen este espacio.' }
+        ],
+        'hover-collage-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'hoverLabel', type: 'text', label: 'Texto hover (título)', default: 'Pasa el ratón' },
+            { key: 'hoverSub', type: 'text', label: 'Texto hover (subtítulo)', default: 'para ver la colección' },
+            { key: 'ctaLabel', type: 'text', label: 'Texto CTA en imagen central', default: 'contacta con nosotros' },
+            { key: 'lineA', type: 'text', label: 'Línea 1 del bloque final', default: 'Hagamos algo' },
+            { key: 'lineB', type: 'text', label: 'Línea 2 del bloque final', default: 'increíble juntos' }
+        ],
+        'depth-scatter-intro': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'lineA', type: 'text', label: 'Línea 1 del titular', default: 'Referencias reales' },
+            { key: 'lineB', type: 'text', label: 'Línea 2 del titular', default: 'de espacios reales' }
+        ],
+        'word-swap-statement': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'intro', type: 'text', label: 'Texto de apertura', default: 'Donde el movimiento se convierte en significado. Damos vida a las palabras con animaciones que transforman cada frase en una experiencia.' },
+            { key: 'wordA1', type: 'text', label: 'Palabra que sale (par 1)', default: 'Detalle' },
+            { key: 'wordA2', type: 'text', label: 'Palabra que entra (par 1)', default: 'Carácter' },
+            { key: 'wordMid', type: 'text', label: 'Palabra central fija', default: 'define' },
+            { key: 'wordB1', type: 'text', label: 'Palabra que sale (par 2)', default: 'un espacio' },
+            { key: 'wordB2', type: 'text', label: 'Palabra que entra (par 2)', default: 'un hogar' },
+            { key: 'description', type: 'text', label: 'Párrafo lateral', default: 'Llevamos la creatividad a cada rincón de tu propiedad — porque las marcas más fuertes cuidan hasta el último detalle.' },
+            { key: 'outro', type: 'text', label: 'Texto de cierre', default: 'Más que fotos. Más que movimiento. Esto es diseño en movimiento — un homenaje al arte de contar historias a través del scroll.' }
+        ],
+        'grid-slides-toggle': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
+        ],
+        'block-reveal-loader': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'word1', type: 'text', label: 'Palabra loader 1', default: 'Bienvenido' },
+            { key: 'word2', type: 'text', label: 'Palabra loader 2', default: 'al escaparate' },
+            { key: 'heroTitle', type: 'text', label: 'Titular hero', default: 'bienvenido a tu escaparate' }
+        ],
+        'cursor-poster-scroll': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
+            { key: 'labels', type: 'wordlist', label: 'Palabras clave (una por línea)',
+              default: ['Luz natural', 'Materiales nobles', 'Silencio y calma'] }
         ]
     };
 
