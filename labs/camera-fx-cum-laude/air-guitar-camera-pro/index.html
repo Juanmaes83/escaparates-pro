@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Air Guitar Camera PRO - Cum Laude</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="app">
+        <section class="stage" id="stage">
+            <canvas id="canvas" width="640" height="480"></canvas>
+            <canvas id="capture" width="1280" height="720"></canvas>
+            <video id="video" playsinline muted autoplay></video>
+            <div class="status-pill" id="status-pill">READY</div>
+            <div class="scoreboard">
+                <span id="chord">--</span>
+                <span id="strums">0 strums</span>
+            </div>
+            <div class="pulse" id="pulse"></div>
+        </section>
+
+        <aside class="console">
+            <header>
+                <div class="mark">AG</div>
+                <div>
+                    <p>Camera FX Cum Laude</p>
+                    <h1>Air Guitar Camera PRO</h1>
+                </div>
+            </header>
+
+            <section class="block">
+                <h2>Inicio</h2>
+                <button id="btn-start" class="primary">Activar camara y guitarra</button>
+                <button id="btn-switch">Cambiar camara</button>
+                <button id="btn-pause">Pause</button>
+            </section>
+
+            <section class="block">
+                <h2>Guitarra</h2>
+                <label>Sensibilidad rasgueo
+                    <input id="strum-sensitivity" type="range" min="18" max="120" value="54">
+                </label>
+                <label>Distorsion
+                    <input id="distortion" type="range" min="0" max="100" value="62">
+                </label>
+                <label>Volumen
+                    <input id="volume" type="range" min="0" max="100" value="70">
+                </label>
+                <label class="check"><input id="mirror" type="checkbox" checked> Espejo</label>
+            </section>
+
+            <section class="block">
+                <h2>Salida</h2>
+                <button id="btn-png">Descargar PNG</button>
+            </section>
+
+            <section class="block guide">
+                <h2>Como jugar</h2>
+                <p>Colocate con torso y brazos visibles. Una mano marca el mastil; la otra cruza las cuerdas. Al cruzar, suena el acorde.</p>
+            </section>
+
+            <section class="block debug">
+                <h2>Diagnostico</h2>
+                <pre id="debug">Esperando inicio...</pre>
+            </section>
+        </aside>
+    </main>
+
+    <script src="./app.js?v=air-guitar-cum-laude-1"></script>
+</body>
+</html>
