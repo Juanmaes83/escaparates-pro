@@ -24,6 +24,13 @@
             icon: '✨',
             desc: 'Motor de partículas propio que reconstruye imágenes en 3D con alta resolución.',
             src: 'labs/rubik-sota-tools/particles-engine-v5/index.html'
+        },
+        {
+            id: 'catalogo-inmersivo',
+            name: 'RUBIK SOTA Catálogo Inmersivo',
+            icon: '🗂️',
+            desc: 'Motor de metaverso propio (PixiJS + GSAP) para catálogos de producto inmersivos y navegables.',
+            src: 'labs/rubik-sota-tools/catalogo-inmersivo/index.html'
         }
     ];
 
