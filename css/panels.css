@@ -334,7 +334,20 @@ button:disabled {
 .save-preset-btn:hover { background: var(--accent-dim); border-color: rgba(79,140,255,0.4); color: var(--accent); }
 
 /* Scroll Sections catalog + properties */
-#scroll-sections-catalog { padding: 10px; overflow-y: auto; }
+/* flex: 1 + min-height: 0 are required for this flex child (inside
+   #effects-panel's column flex layout) to actually shrink to the
+   available space and let its own overflow-y scroll internally —
+   without min-height: 0 some browsers let it grow to fit all content
+   instead, which then gets clipped by the parent's overflow: hidden
+   with no scrollbar at all once the catalog outgrows the panel. */
+#scroll-sections-catalog {
+    padding: 10px; overflow-y: auto;
+    flex: 1 1 auto; min-height: 0;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.25) transparent;
+}
+#scroll-sections-catalog::-webkit-scrollbar { width: 7px; }
+#scroll-sections-catalog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 4px; }
+#scroll-sections-catalog::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
 .ss-template-card {
     display: flex; gap: 10px; align-items: flex-start;
     padding: 10px; margin-bottom: 8px; border-radius: var(--radius);

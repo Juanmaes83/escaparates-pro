@@ -318,6 +318,9 @@ EP.ScrollSectionsUI = (function() {
             container.appendChild(header);
             originalTop.forEach(function(t) { container.appendChild(makeCard(t)); });
         }
+
+        var searchEl = document.getElementById('effects-search');
+        if (searchEl && searchEl.value && state.mode === 'scroll-sections') filterCatalog(searchEl.value);
     }
 
     function renderFields() {
@@ -383,6 +386,62 @@ EP.ScrollSectionsUI = (function() {
         if (html) frame.srcdoc = html;
     }
 
+    // The #effects-search box lives in the shared panel-header and its own
+    // input handler (in ui.js) only ever queries .effect-category/.effect-card
+    // — it has no idea .ss-template-card exists, so typing there did nothing
+    // while in Scroll Sections mode. Wired up separately here rather than
+    // editing ui.js's handler, so Effects search behavior is untouched.
+    function normalizeSearchText(str) {
+        return (str || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
+    function filterCatalog(query) {
+        var container = document.getElementById('scroll-sections-catalog');
+        if (!container) return;
+        var q = normalizeSearchText(query);
+        var children = Array.prototype.slice.call(container.children);
+        var pendingHeader = null;
+        var pendingHeaderVisibleCount = 0;
+        function flushHeader() {
+            if (pendingHeader) pendingHeader.style.display = pendingHeaderVisibleCount > 0 ? '' : 'none';
+        }
+        children.forEach(function(child) {
+            if (child.classList.contains('ss-catalog-section-header')) {
+                flushHeader();
+                pendingHeader = child;
+                pendingHeaderVisibleCount = 0;
+                return;
+            }
+            if (child.classList.contains('ss-template-card')) {
+                var nameEl = child.querySelector('.ss-name');
+                var descEl = child.querySelector('.ss-desc');
+                var name = normalizeSearchText(nameEl ? nameEl.textContent : '');
+                var desc = normalizeSearchText(descEl ? descEl.textContent : '');
+                var show = !q || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
+                child.style.display = show ? '' : 'none';
+                if (show) pendingHeaderVisibleCount++;
+            }
+        });
+        flushHeader();
+    }
+
+    function bindCatalogSearch() {
+        var search = document.getElementById('effects-search');
+        var clearBtn = document.getElementById('effects-search-clear');
+        if (!search) return;
+        search.addEventListener('input', function() {
+            if (state.mode === 'scroll-sections') filterCatalog(search.value);
+        });
+        search.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && state.mode === 'scroll-sections') filterCatalog('');
+        });
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                if (state.mode === 'scroll-sections') filterCatalog('');
+            });
+        }
+    }
+
     function selectTemplate(id) {
         state.activeId = id;
         ensureOptions(id);
@@ -444,6 +503,7 @@ EP.ScrollSectionsUI = (function() {
 
     function init() {
         renderCatalog();
+        bindCatalogSearch();
 
         var btnEffects = document.getElementById('mode-btn-effects');
         var btnScroll = document.getElementById('mode-btn-scroll-sections');
