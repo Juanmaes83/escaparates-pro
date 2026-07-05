@@ -193,13 +193,14 @@ EP.ScrollSectionsUI = (function() {
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ],
         'viewing-appointment-ticket': [
-            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
-            { key: 'propertyName', type: 'text', label: 'Nombre de la propiedad', default: 'Ático Centro' },
-            { key: 'address', type: 'text', label: 'Dirección', default: 'Calle Mayor 12, Madrid' },
-            { key: 'date', type: 'text', label: 'Fecha', default: '18 Jul' },
-            { key: 'time', type: 'text', label: 'Hora', default: '17:30' },
-            { key: 'agent', type: 'text', label: 'Agente', default: 'M. García' },
-            { key: 'reference', type: 'text', label: 'Referencia', default: 'REF-2043' }
+            { key: 'title', type: 'text', label: 'Título del evento / viaje', default: 'Concierto de Rock' },
+            { key: 'subtitle', type: 'text', label: 'Lugar / dirección', default: 'Recinto Municipal, Madrid' },
+            { key: 'iconType', type: 'text', label: 'Icono (avion / coche / tren / personas / musica / evento)', default: 'musica' },
+            { key: 'codeFrom', type: 'text', label: 'Código izquierdo (3 letras)', default: 'MAD' },
+            { key: 'codeTo', type: 'text', label: 'Código derecho (3 letras)', default: 'EVT' },
+            { key: 'rightLabel', type: 'text', label: 'Etiqueta del resguardo', default: 'ACCESO' },
+            { key: 'fields', type: 'itemlist2', label: 'Campos — Etiqueta | Valor (hasta 4, una por línea)',
+              default: [] }
         ],
         'team-circle-rotator': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Nuestro Equipo' },
@@ -208,7 +209,25 @@ EP.ScrollSectionsUI = (function() {
         ],
         'folding-box-reveal': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' },
-            { key: 'message', type: 'text', label: 'Mensaje de bienvenida', default: 'Así te entregamos las llaves de tu nuevo hogar.' }
+            { key: 'message', type: 'text', label: 'Mensaje', default: 'Tu pedido, listo para viajar.' },
+            { key: 'faceLabels', type: 'itemlist2', label: 'Caras sin imagen — Texto | Subtexto (hasta 4, una por línea; si subes fotos/vídeos ocupan esas caras primero)',
+              default: [] }
+        ],
+        'rube-goldberg-contact-form': [
+            { key: 'title', type: 'text', label: 'Título de la página', default: 'Contacta con Nosotros' },
+            { key: 'nameLabel', type: 'text', label: 'Placeholder de nombre', default: 'nombre' },
+            { key: 'emailLabel', type: 'text', label: 'Placeholder de email', default: 'email' },
+            { key: 'checkboxLabel', type: 'text', label: 'Texto de la casilla', default: 'acepto recibir información' },
+            { key: 'submitLabel', type: 'text', label: 'Texto del botón', default: 'enviar' }
+        ],
+        'burning-dom-reveal': [
+            { key: 'title', type: 'text', label: 'Título / Marca', default: 'Últimas Plazas Disponibles' },
+            { key: 'message', type: 'text', label: 'Subtítulo', default: 'Cuando se agoten, esta oferta desaparece para siempre.' },
+            { key: 'popupTitle', type: 'text', label: 'Título del popup', default: 'Reserva tu plaza' },
+            { key: 'openLabel', type: 'text', label: 'Texto botón abrir', default: 'Ver oferta' },
+            { key: 'burnLabel', type: 'text', label: 'Texto botón quemar', default: 'Confirmar y quemar' },
+            { key: 'fields', type: 'itemlist2', label: 'Campos del popup — Etiqueta | Valor por defecto (hasta 3, una por línea)',
+              default: [] }
         ]
     };
 

@@ -1,15 +1,21 @@
-// Folding Box Reveal — adapted from the CodePen gist "On-Scroll Folding Box
-// w/ Three.js and GSAP" (source read & understood, full Codrops tutorial: a
-// procedurally generated corrugated-cardboard box — each panel built from
-// merged plane geometries offset to fake a fluted middle layer — whose four
-// flaps and two half-widths animate open/closed via a scrubbed GSAP
-// timeline tied to page scroll, with OrbitControls auto-rotating the camera
-// and manual zoom buttons). Kept the procedural geometry and folding
+// Customizable Folding Box — adapted from the CodePen gist "On-Scroll
+// Folding Box w/ Three.js and GSAP" (source read & understood, full Codrops
+// tutorial: a procedurally generated corrugated-cardboard box — each panel
+// built from merged plane geometries offset to fake a fluted middle layer —
+// whose four flaps and two half-widths animate open/closed via a scrubbed
+// GSAP timeline tied to page scroll, with OrbitControls auto-rotating the
+// camera and manual zoom buttons). Kept the procedural geometry and folding
 // timeline verbatim; dropped the source's dev-only lil-gui parameter panel
 // and its personal clickable-copyright easter egg (both author-tooling, not
-// client-facing), and added an HTML title/message overlay so the reveal
-// works as a "so this is how we hand over the keys" welcome moment instead
-// of a bare mechanical demo.
+// client-facing).
+//
+// Generalized beyond the real-estate "welcome box" per explicit direction:
+// this is a customizable packaging/shipping box for e-commerce, personalized
+// carts, or any sector — each of the box's 4 visible side walls gets its own
+// material built at runtime from either an uploaded image, an uploaded
+// video (THREE.VideoTexture), or a canvas-drawn text/logo panel when no
+// media is provided for that face. The flaps stay a single plain cardboard
+// material so the fold silhouette still reads clearly.
 (function() {
     var THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
     var ORBIT_CDN = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js';
@@ -21,8 +27,23 @@
     function build(mediaList, opts) {
         opts = opts || {};
         var title = opts.title || 'Escaparate';
-        var message = opts.message || 'Así te entregamos las llaves de tu nuevo hogar.';
+        var message = opts.message || 'Tu pedido, listo para viajar.';
         var boxColor = opts.boxColor || '#9C8D7B';
+        var faceLabels = (opts.faceLabels && opts.faceLabels.length ? opts.faceLabels : [
+            { title: title, year: message },
+            { title: 'Frágil', year: 'Manéjese con cuidado' },
+            { title: title, year: '' },
+            { title: '#EscaparatesPro', year: '' }
+        ]).slice(0, 4).map(function(f) { return { text: f.title || '', sub: f.year || '' }; });
+        while (faceLabels.length < 4) faceLabels.push({ text: title, sub: '' });
+
+        var media = EP.ScrollSections.fillMedia(mediaList, 4);
+        var faces = [0, 1, 2, 3].map(function(i) {
+            var m = media[i];
+            if (m && m.type === 'video') return { type: 'video', url: m.url };
+            if (m && m.url) return { type: 'image', url: m.url };
+            return { type: 'text', text: faceLabels[i].text, sub: faceLabels[i].sub };
+        });
 
         return '' +
 '<!DOCTYPE html>\n' +
@@ -30,7 +51,7 @@
 '<head>\n' +
 '<meta charset="UTF-8">\n' +
 '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
-'<title>' + title + ' — Caja de Bienvenida</title>\n' +
+'<title>' + title + ' — Caja Personalizable</title>\n' +
 '<style>\n' +
 '*{box-sizing:border-box;}\n' +
 'body{padding:0;margin:0;background:#f2ede4;font-family:Arial,Helvetica,sans-serif;}\n' +
@@ -65,6 +86,7 @@
 '<script>\n' +
 '(function(){\n' +
 '  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);\n' +
+'  var FACES = ' + JSON.stringify(faces) + ';\n' +
 '  var container = document.querySelector(".container");\n' +
 '  var boxCanvas = document.querySelector("#box-canvas");\n' +
 '\n' +
@@ -86,6 +108,56 @@
 '\n' +
 '  var renderer, scene, camera, orbit;\n' +
 '\n' +
+'  function drawTextTexture(face) {\n' +
+'    var canvas = document.createElement("canvas");\n' +
+'    canvas.width = 512; canvas.height = 512;\n' +
+'    var ctx = canvas.getContext("2d");\n' +
+'    ctx.fillStyle = "' + boxColor + '";\n' +
+'    ctx.fillRect(0, 0, 512, 512);\n' +
+'    ctx.strokeStyle = "rgba(0,0,0,0.07)";\n' +
+'    ctx.lineWidth = 1;\n' +
+'    for (var y = 0; y < 512; y += 7) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke(); }\n' +
+'    ctx.fillStyle = "#3a2f22";\n' +
+'    ctx.textAlign = "center";\n' +
+'    ctx.font = "bold 44px Arial";\n' +
+'    wrapText(ctx, face.text || "", 256, 235, 440, 50);\n' +
+'    if (face.sub) { ctx.font = "26px Arial"; ctx.fillStyle = "#5c4f3d"; ctx.fillText(face.sub, 256, 300); }\n' +
+'    var tex = new THREE.CanvasTexture(canvas);\n' +
+'    tex.needsUpdate = true;\n' +
+'    return tex;\n' +
+'  }\n' +
+'\n' +
+'  function wrapText(ctx, text, x, y, maxWidth, lineHeight) {\n' +
+'    var words = text.split(" ");\n' +
+'    var line = "";\n' +
+'    var lines = [];\n' +
+'    for (var i = 0; i < words.length; i++) {\n' +
+'      var test = line + words[i] + " ";\n' +
+'      if (ctx.measureText(test).width > maxWidth && line !== "") { lines.push(line); line = words[i] + " "; }\n' +
+'      else line = test;\n' +
+'    }\n' +
+'    lines.push(line);\n' +
+'    var startY = y - ((lines.length - 1) * lineHeight) / 2;\n' +
+'    lines.forEach(function(l, i) { ctx.fillText(l.trim(), x, startY + i * lineHeight); });\n' +
+'  }\n' +
+'\n' +
+'  function createFaceMaterial(face) {\n' +
+'    if (face.type === "video") {\n' +
+'      var video = document.createElement("video");\n' +
+'      video.src = face.url; video.crossOrigin = "anonymous"; video.muted = true; video.loop = true; video.playsInline = true;\n' +
+'      video.play().catch(function() {});\n' +
+'      var vt = new THREE.VideoTexture(video);\n' +
+'      return new THREE.MeshStandardMaterial({ map: vt, side: THREE.DoubleSide });\n' +
+'    }\n' +
+'    if (face.type === "image") {\n' +
+'      var loader = new THREE.TextureLoader();\n' +
+'      loader.crossOrigin = "anonymous";\n' +
+'      var tex = loader.load(face.url);\n' +
+'      return new THREE.MeshStandardMaterial({ map: tex, side: THREE.DoubleSide });\n' +
+'    }\n' +
+'    return new THREE.MeshStandardMaterial({ map: drawTextTexture(face), side: THREE.DoubleSide });\n' +
+'  }\n' +
+'\n' +
 '  function initScene() {\n' +
 '    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, canvas: boxCanvas });\n' +
 '    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));\n' +
@@ -95,7 +167,7 @@
 '    updateSceneSize();\n' +
 '    scene.add(box.els.group);\n' +
 '    setGeometryHierarchy();\n' +
-'    var ambientLight = new THREE.AmbientLight(0xffffff, 0.6);\n' +
+'    var ambientLight = new THREE.AmbientLight(0xffffff, 0.7);\n' +
 '    scene.add(ambientLight);\n' +
 '    var lightHolder = new THREE.Group();\n' +
 '    var topLight = new THREE.PointLight(0xffffff, 0.5);\n' +
@@ -106,8 +178,17 @@
 '    lightHolder.add(sideLight);\n' +
 '    scene.add(lightHolder);\n' +
 '    window.__fbLightHolder = lightHolder;\n' +
-'    var material = new THREE.MeshStandardMaterial({ color: new THREE.Color("' + boxColor + '"), side: THREE.DoubleSide });\n' +
-'    box.els.group.traverse(function(c) { if (c.isMesh) c.material = material; });\n' +
+'\n' +
+'    var flapMaterial = new THREE.MeshStandardMaterial({ color: new THREE.Color("' + boxColor + '"), side: THREE.DoubleSide });\n' +
+'    [box.els.frontHalf.width, box.els.frontHalf.length, box.els.backHalf.width, box.els.backHalf.length].forEach(function(g) {\n' +
+'      g.top.material = flapMaterial;\n' +
+'      g.bottom.material = flapMaterial;\n' +
+'    });\n' +
+'    box.els.frontHalf.width.side.material = createFaceMaterial(FACES[0]);\n' +
+'    box.els.frontHalf.length.side.material = createFaceMaterial(FACES[1]);\n' +
+'    box.els.backHalf.width.side.material = createFaceMaterial(FACES[2]);\n' +
+'    box.els.backHalf.length.side.material = createFaceMaterial(FACES[3]);\n' +
+'\n' +
 '    orbit = new THREE.OrbitControls(camera, boxCanvas);\n' +
 '    orbit.enableZoom = false;\n' +
 '    orbit.enablePan = false;\n' +
@@ -260,9 +341,9 @@
     EP.ScrollSections.register({
         badge: 'original-top',
         id: 'folding-box-reveal',
-        name: 'Caja de Bienvenida Plegable',
+        name: 'Caja Personalizable Plegable',
         icon: '📦',
-        description: 'Caja de cartón corrugado en 3D (geometría procedural, textura de canal simulada) que se despliega y se cierra al hacer scroll, con órbita automática de cámara y zoom manual — un reveal cinematográfico para "así entregamos las llaves"',
+        description: 'Caja de cartón corrugado en 3D (geometría procedural) que se despliega al hacer scroll — sus 4 caras laterales se personalizan con imagen, vídeo o texto/logo propio; pensada para packaging, e-commerce y carritos personalizados de cualquier sector',
         sourceUrl: 'https://gist.github.com/Juanmaes83/74515d51f3d04acc4c1eac99075c3a31',
         build: build
     });
