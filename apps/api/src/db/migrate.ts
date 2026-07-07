@@ -4,8 +4,9 @@
  * Usage:
  *   npm run migrate:run
  *
- * This script is also called from the Dockerfile before the server starts,
- * so every deploy automatically applies outstanding migrations.
+ * Migrations are intentionally manual. Run this before the first deploy and
+ * after any deploy that introduces a new migration file. The server does NOT
+ * run migrations on startup.
  */
 
 import { readdir, readFile } from 'node:fs/promises'
