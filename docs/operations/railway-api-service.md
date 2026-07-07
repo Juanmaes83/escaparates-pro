@@ -53,7 +53,35 @@ In the Railway service settings → **Variables**, add:
 
 ---
 
-## Step 4 — Deploy
+## Step 4 — Run migrations
+
+Migrations are **manual and explicit** — the server does not run them on startup. This prevents a failed migration from blocking the service from starting, and gives you full control over when schema changes are applied.
+
+Run migrations before the first deploy and after any schema change:
+
+```bash
+# Set DATABASE_URL in your shell (or use Railway's variable injection)
+export DATABASE_URL="postgresql://..."
+
+# Apply all pending migrations
+npm run migrate:run
+```
+
+Via Railway CLI (runs the command inside the service environment):
+
+```bash
+railway run --service api npm run migrate:run
+```
+
+**When to run migrations:**
+
+- Before the first deploy (to create the initial schema)
+- After each deploy that includes a schema change (new migration file in `migrations/`)
+- Never during automated deploys — always run manually and verify before deploying the new server version
+
+---
+
+## Step 5 — Deploy
 
 Railway will trigger a deploy automatically when you push to `master`. You can also trigger manually:
 
@@ -63,7 +91,7 @@ railway up --service api
 
 ---
 
-## Step 5 — Verify the deployment
+## Step 6 — Verify the deployment
 
 Once deployed, Railway shows the public URL (e.g. `https://api-production-xxxx.up.railway.app`).
 
@@ -74,9 +102,13 @@ Run the smoke tests:
 curl https://your-api-url.up.railway.app/health
 # → { "status": "ok" }
 
-# Readiness
+# Readiness (DATABASE_URL not set)
 curl https://your-api-url.up.railway.app/ready
-# → { "status": "ready" }
+# → { "status": "ready", "database": "not_configured" }
+
+# Readiness (DATABASE_URL set and DB reachable)
+curl https://your-api-url.up.railway.app/ready
+# → { "status": "ready", "database": "connected" }
 
 # API root
 curl https://your-api-url.up.railway.app/v1

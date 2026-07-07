@@ -10,6 +10,9 @@ let _pool: pg.Pool | null = null
 
 export function getPool(): pg.Pool {
   if (!_pool) {
+    if (!env.DATABASE_URL) {
+      throw new Error('DATABASE_URL is not configured')
+    }
     _pool = new Pool({
       connectionString: env.DATABASE_URL,
       max: 10,
