@@ -17,7 +17,8 @@ const envSchema = z.object({
     .url()
     .refine((url) => url.startsWith('postgresql://') || url.startsWith('postgres://'), {
       message: 'DATABASE_URL must be a valid PostgreSQL connection string',
-    }),
+    })
+    .optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
