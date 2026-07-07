@@ -10,18 +10,25 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc --project tsconfig.json",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate:generate": "drizzle-kit generate",
+    "migrate:run": "tsx src/db/migrate.ts",
+    "migrate:status": "drizzle-kit status"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
     "@fastify/helmet": "^11.1.1",
     "@fastify/rate-limit": "^9.1.0",
+    "drizzle-orm": "^0.36.4",
     "fastify": "^4.28.1",
+    "pg": "^8.13.1",
     "pino": "^9.3.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.28.1",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
   }
