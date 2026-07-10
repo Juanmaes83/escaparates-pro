@@ -17,10 +17,12 @@
         try { if (EP.PipelinePro) EP.PipelinePro.init(); } catch(e) { console.error('PipelinePro.init failed:', e); }
         try { if (EP.ScrollSectionsUI) EP.ScrollSectionsUI.init(); } catch(e) { console.error('ScrollSectionsUI.init failed:', e); }
         try { if (EP.RubikToolsUI) EP.RubikToolsUI.init(); } catch(e) { console.error('RubikToolsUI.init failed:', e); }
+        try { if (EP.WebsiteModulesUI) EP.WebsiteModulesUI.init(); } catch(e) { console.error('WebsiteModulesUI.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
             if (EP.UI.refreshCurrentControls) EP.UI.refreshCurrentControls();
+            if (EP.WebsiteModulesUI && EP.WebsiteModulesUI.refresh) EP.WebsiteModulesUI.refresh();
         });
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {

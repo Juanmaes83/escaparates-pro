@@ -315,3 +315,30 @@ body.mode-rubik-tools #canvas-container,
 body.mode-rubik-tools #timeline-bar,
 body.mode-rubik-tools #effects-panel,
 body.mode-rubik-tools #properties-panel { display: none !important; }
+
+/* Website Modules Lab — cinematic web sections in an isolated iframe */
+#website-modules-stage {
+    display: none;
+    position: fixed;
+    top: var(--top-h);
+    left: var(--panel-w);
+    right: var(--panel-w);
+    bottom: 0;
+    background: #050507;
+}
+#website-modules-stage.active { display: block; }
+#website-modules-stage iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: #050507;
+}
+
+body.mode-website-modules #canvas-container,
+body.mode-website-modules #timeline-bar,
+body.mode-website-modules #effects-catalog-body,
+body.mode-website-modules #scroll-sections-catalog,
+body.mode-website-modules #effects-only-sections { display: none !important; }
+
+body.mode-website-modules #website-modules-catalog { display: block !important; }

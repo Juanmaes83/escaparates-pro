@@ -16,6 +16,22 @@ Escaparates Pro permite crear:
 - GIFs y videos cortos para redes sociales.
 - Embeds HTML/JS para integrar en webs externas.
 
+## Website Modules Lab
+
+Website Modules Lab es un modo independiente para probar, personalizar y exportar secciones web cinematograficas. No usa el motor Three.js de efectos, no toca Scroll Sections y no carga los 30 modulos de golpe en `index.html`.
+
+La primera version incluye 5 modulos premium adaptados desde `cinematic-site-components`:
+
+- Text Mask Reveal.
+- Sticky Stack Narrative.
+- Layered Zoom Parallax.
+- Horizontal Scroll Hijack.
+- Cursor Reactive CTA.
+
+Cada modulo se renderiza en un iframe aislado, con controles de headline, subtitle, CTA, URL, colores, fuente, branding textual, velocidad, intensidad, scroll length y media de fondo desde los slots de la plataforma.
+
+Exporta resultado final como HTML standalone, ZIP basico y embed iframe. El export conserva atribucion MIT a `cinematic-site-components` by Jay from RoboLabs / RoboNuggets.
+
 ## Conceptos Clave
 
 ### Editor

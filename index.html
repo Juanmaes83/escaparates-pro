@@ -39,6 +39,11 @@
         </div>
     </div>
 
+    <!-- Website Modules Lab: cinematic web sections, isolated in their own iframe -->
+    <div id="website-modules-stage">
+        <iframe id="wm-preview-frame" title="Vista previa Website Module"></iframe>
+    </div>
+
     <!-- Top bar -->
     <header id="top-bar">
         <div class="top-left">
@@ -46,6 +51,7 @@
             <div id="app-mode-toggle" class="app-mode-toggle">
                 <button class="mode-btn active" data-mode="effects" id="mode-btn-effects" title="Efectos Three.js en canvas">🎬 Efectos</button>
                 <button class="mode-btn" data-mode="scroll-sections" id="mode-btn-scroll-sections" title="Secciones de scroll para web (GSAP)">📜 Scroll Sections</button>
+                <button class="mode-btn" data-mode="website-modules" id="mode-btn-website-modules" title="Modulos web cinematograficos aislados">Web Modules</button>
                 <button class="mode-btn" data-mode="rubik-tools" id="mode-btn-rubik-tools" title="Herramientas RUBIK SOTA (propias, aisladas)">🧬 RUBIK SOTA</button>
             </div>
         </div>
@@ -120,6 +126,7 @@
             <div id="effects-categories"></div>
         </div>
         <div id="scroll-sections-catalog" style="display:none;"></div>
+        <div id="website-modules-catalog" style="display:none;"></div>
     </aside>
 
     <!-- Right panel: Properties -->
@@ -143,6 +150,17 @@
             <div id="ss-props-fields"></div>
             <button id="ss-export-btn" class="top-action" style="width:100%;margin-top:10px;">⬇ Exportar archivo HTML</button>
             <div id="ss-source-note" class="ss-source-note"></div>
+        </div>
+        <div class="panel-section" id="website-modules-props" style="display:none;">
+            <h3 id="wm-props-title">WEBSITE MODULES LAB</h3>
+            <div id="wm-props-fields"></div>
+            <div class="wm-export-row">
+                <button id="wm-export-html-btn" class="top-action">HTML</button>
+                <button id="wm-export-zip-btn" class="top-action top-action-ghost">ZIP</button>
+                <button id="wm-copy-embed-btn" class="top-action top-action-ghost">Embed</button>
+            </div>
+            <textarea id="wm-embed-result" class="final-output-code" readonly placeholder="El iframe/embed final aparecera aqui..." style="display:none;"></textarea>
+            <div id="wm-source-note" class="ss-source-note"></div>
         </div>
         <div class="panel-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -905,6 +923,8 @@
     <script src="js/scroll-sections/spotlight-frame-section.js"></script>
     <script src="js/scroll-sections-ui.js"></script>
     <script src="js/rubik-tools-ui.js"></script>
+    <script src="js/website-modules.js"></script>
+    <script src="js/website-modules-ui.js"></script>
     <!-- FASE G — Kinetic Images + grid -->
     <script src="js/effects/kinetic-images/paper-scroll.js"></script>
     <script src="js/effects/kinetic-images/spiral-ribbon.js"></script>
