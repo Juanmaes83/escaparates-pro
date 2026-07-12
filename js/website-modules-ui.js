@@ -49,7 +49,7 @@
         catalog.innerHTML = '';
         var header = document.createElement('div');
         header.className = 'ss-catalog-section-header';
-        header.textContent = 'Website Modules Lab - Premium 5';
+        header.textContent = 'Website Modules Lab - Premium 10';
         catalog.appendChild(header);
         EP.WebsiteModules.getAll().forEach(function(mod) {
             catalog.appendChild(makeCard(mod));
