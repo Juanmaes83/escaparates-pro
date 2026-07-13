@@ -3,6 +3,12 @@
 // without touching the existing Effects canvas/panel logic (additive only).
 EP.ScrollSectionsUI = (function() {
     var FIELD_SCHEMAS = {
+        'webcodecs-scroll-sync-pro': [
+            { key: 'title', type: 'text', label: 'Titular', default: 'Scroll Sync' },
+            { key: 'eyebrow', type: 'text', label: 'Etiqueta', default: 'WebCodecs Scroll Sync Lab' },
+            { key: 'cta', type: 'text', label: 'CTA', default: 'Explorar secuencia' },
+            { key: 'scrollLength', type: 'range', label: 'Longitud de scroll', min: 260, max: 900, step: 10, default: 480, suffix: ' vh' }
+        ],
         'elastic-grid-scroll': [
             { key: 'title', type: 'text', label: 'Título / Marca', default: 'Escaparate' }
         ],
@@ -356,6 +362,25 @@ EP.ScrollSectionsUI = (function() {
                     opts[f.key] = input.value;
                     scheduleRender();
                 });
+            } else if (f.type === 'range') {
+                input = document.createElement('input');
+                input.type = 'range';
+                input.min = f.min;
+                input.max = f.max;
+                input.step = f.step || 1;
+                input.value = opts[f.key];
+                var value = document.createElement('span');
+                value.className = 'val';
+                value.textContent = input.value + (f.suffix || '');
+                input.addEventListener('input', function() {
+                    opts[f.key] = Number(input.value);
+                    value.textContent = input.value + (f.suffix || '');
+                    scheduleRender();
+                });
+                field.appendChild(input);
+                field.appendChild(value);
+                wrap.appendChild(field);
+                return;
             } else {
                 input = document.createElement('textarea');
                 if (f.type === 'wordlist') input.value = wordlistToText(opts[f.key]);

@@ -343,11 +343,12 @@ button:disabled {
 #scroll-sections-catalog {
     padding: 10px; overflow-y: auto;
     flex: 1 1 auto; min-height: 0;
-    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.25) transparent;
+    scrollbar-width: auto; scrollbar-color: rgba(79,140,255,0.9) rgba(255,255,255,0.06);
 }
-#scroll-sections-catalog::-webkit-scrollbar { width: 7px; }
-#scroll-sections-catalog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 4px; }
-#scroll-sections-catalog::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+#scroll-sections-catalog::-webkit-scrollbar { width: 11px; }
+#scroll-sections-catalog::-webkit-scrollbar-track { background: rgba(255,255,255,0.055); }
+#scroll-sections-catalog::-webkit-scrollbar-thumb { background: rgba(79,140,255,0.82); border: 2px solid var(--surface); border-radius: 999px; }
+#scroll-sections-catalog::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 .ss-template-card {
     display: flex; gap: 10px; align-items: flex-start;
     padding: 10px; margin-bottom: 8px; border-radius: var(--radius);
@@ -381,11 +382,12 @@ button:disabled {
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.25) transparent;
+    scrollbar-width: auto;
+    scrollbar-color: rgba(79,140,255,0.9) rgba(255,255,255,0.06);
 }
-#website-modules-catalog::-webkit-scrollbar { width: 7px; }
-#website-modules-catalog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 4px; }
+#website-modules-catalog::-webkit-scrollbar { width: 11px; }
+#website-modules-catalog::-webkit-scrollbar-track { background: rgba(255,255,255,0.055); }
+#website-modules-catalog::-webkit-scrollbar-thumb { background: rgba(79,140,255,0.82); border: 2px solid var(--surface); border-radius: 999px; }
 .wm-featured-open {
     width: 100%;
     display: grid;
@@ -407,8 +409,9 @@ button:disabled {
 .wm-module-jump { margin: 0 0 12px; }
 .wm-module-jump label { display: block; margin-bottom: 6px; color: var(--text-dim); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .wm-module-jump select { width: 100%; min-height: 34px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); padding: 0 8px; }
-#sector-blueprints-catalog { padding:10px; overflow-y:auto; flex:1 1 auto; min-height:0; }
-#source-labs-catalog { padding:10px; overflow-y:auto; flex:1 1 auto; min-height:0; }
+#sector-blueprints-catalog, #source-labs-catalog { padding:10px; overflow-y:scroll; flex:1 1 auto; min-height:0; scrollbar-gutter:stable; scrollbar-width:auto; scrollbar-color:rgba(79,140,255,0.9) rgba(255,255,255,0.06); }
+#sector-blueprints-catalog::-webkit-scrollbar, #source-labs-catalog::-webkit-scrollbar { width:11px; }
+#sector-blueprints-catalog::-webkit-scrollbar-thumb, #source-labs-catalog::-webkit-scrollbar-thumb { background:rgba(79,140,255,0.82); border:2px solid var(--surface); border-radius:999px; }
 .wm-export-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

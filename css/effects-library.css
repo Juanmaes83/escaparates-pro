@@ -9,32 +9,29 @@
    scrollbar at all. Making this a flex column gives #effects-categories a
    real bounded height to scroll within. */
 #effects-catalog-body {
-    display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;
-}
-#effects-categories {
-    flex: 1;
-    min-height: 0;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    overscroll-behavior: contain;
-    scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(79,140,255,0.82) rgba(255,255,255,0.055);
-    padding: 8px 0 18px;
+    display: block; flex: 1 1 auto; min-height: 0;
+    overflow-y: scroll; overflow-x: hidden;
+    overscroll-behavior: contain; scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: rgba(79,140,255,0.96) rgba(255,255,255,0.075);
     touch-action: pan-y;
 }
-#effects-categories::-webkit-scrollbar { width: 11px; }
-#effects-categories::-webkit-scrollbar-track {
+#effects-categories {
+    overflow: visible;
+    padding: 8px 0 18px;
+}
+#effects-catalog-body::-webkit-scrollbar { width: 13px; }
+#effects-catalog-body::-webkit-scrollbar-track {
     background: rgba(255,255,255,0.045);
     border-left: 1px solid rgba(255,255,255,0.06);
 }
-#effects-categories::-webkit-scrollbar-thumb {
-    min-height: 44px;
-    background: linear-gradient(180deg, rgba(103,160,255,0.95), rgba(52,99,195,0.82));
+#effects-catalog-body::-webkit-scrollbar-thumb {
+    min-height: 56px;
+    background: linear-gradient(180deg, #76a9ff, #3568c7);
     border: 2px solid var(--surface);
     border-radius: 999px;
 }
-#effects-categories::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+#effects-catalog-body::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
 .effect-category {
     margin-bottom: 4px;

@@ -55,6 +55,17 @@ EP.SourceLabs = (function() {
                 { key: 'direction', label: 'Direccion', type: 'select', default: 'normal', options: ['normal', 'reverse'] },
                 { key: 'radius', label: 'Tamano del tambor', type: 'range', min: 28, max: 54, step: 1, default: 50, suffix: ' vmin' }
             ]
+        },
+        {
+            id: 'vits-narration-lab', icon: 'VO', name: 'VITS Narration Lab', family: 'Optional narration engine',
+            description: 'Motor de voz local bajo demanda con ONNX/OPFS. No se carga ni participa en el render de efectos o Scroll Sections.',
+            path: 'labs/narration/vits-web-lab/index.html',
+            note: 'Laboratorio aislado basado en @diffusionstudio/vits-web (MIT). La carga del motor y del modelo ocurre solamente cuando la persona pulsa generar. El WAV se genera localmente y puede descargarse.',
+            fields: [
+                { key: 'text', label: 'Texto de narración', type: 'textarea', default: 'Tu historia comienza aquí. Explora, descubre y comparte una experiencia creada para recordar.' },
+                { key: 'voiceId', label: 'Voice ID VITS', type: 'text', default: 'en_US-hfc_female-medium' },
+                { key: 'brand', label: 'Marca / campaña', type: 'text', default: 'Escaparates Pro' }
+            ]
         }
     ];
     function get(id) { return labs.filter(function(lab) { return lab.id === id; })[0] || null; }

@@ -24,6 +24,11 @@
         { key: 'interactionForce', type: 'range', min: 20, max: 220, default: 100, step: 5, label: 'Fuerza del gesto', unit: '%' },
         { key: 'ambientWind', type: 'range', min: 0, max: 100, default: 0, step: 1, label: 'Brisa automatica', unit: '%' },
         { key: 'windDirection', type: 'select', options: [{ v: 'ltr', l: 'Izquierda a derecha' }, { v: 'rtl', l: 'Derecha a izquierda' }, { v: 'alternate', l: 'Alterna' }], default: 'alternate', label: 'Direccion de brisa' },
+        { key: 'cardSize', type: 'range', min: 35, max: 100, default: 68, step: 1, label: 'Tamano del card superior', unit: '%' },
+        { key: 'cardHeight', type: 'range', min: 45, max: 120, default: 68, step: 1, label: 'Proporcion del card', unit: '%' },
+        { key: 'cardY', type: 'range', min: 10, max: 62, default: 36, step: 1, label: 'Altura del card', unit: '%' },
+        { key: 'cardRadius', type: 'range', min: 0, max: 24, default: 8, step: 1, label: 'Radio del card', unit: '%' },
+        { key: 'cardBorder', type: 'range', min: 0, max: 100, default: 28, step: 1, label: 'Borde del card', unit: '%' },
         { key: 'mediaOpacity', type: 'range', min: 10, max: 100, default: 100, step: 1, label: 'Opacidad imagen/video', unit: '%' },
         { key: 'background', type: 'color', default: '#0c0d12', label: 'Fondo sin medio' }
     ]);
@@ -55,13 +60,43 @@
         var group = new THREE.Group();
         var medium = mediaList && mediaList[0];
         var bgGeo = new THREE.PlaneGeometry(8, 4.5);
-        var bgMat = medium ? EP.Media.createMaterial(medium) : new THREE.MeshBasicMaterial({ color: this.settings.background });
-        bgMat.transparent = !!medium;
-        if (medium) bgMat.opacity = this.settings.mediaOpacity / 100;
+        var bgMat = new THREE.MeshBasicMaterial({ color: this.settings.background });
         this._backgroundMaterial = bgMat;
         var bgMesh = new THREE.Mesh(bgGeo, bgMat);
         bgMesh.position.z = -0.02;
         group.add(bgMesh);
+
+        // The uploaded asset is a deliberate editorial card, not a full-frame
+        // background. This preserves the curtain as the primary movement.
+        var cardGroup = new THREE.Group();
+        var cardW = 5.44 * (this.settings.cardSize / 68);
+        var cardH = cardW * (this.settings.cardHeight / 100);
+        var radius = cardW * (this.settings.cardRadius / 100) * 0.28;
+        var shadow = new THREE.Mesh(
+            EP.RoundedPlaneGeometry(cardW + 0.18, cardH + 0.18, radius + 0.05),
+            new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.36 })
+        );
+        shadow.position.set(0.08, -0.1, 0);
+        cardGroup.add(shadow);
+        var border = new THREE.Mesh(
+            EP.RoundedPlaneGeometry(cardW + 0.08, cardH + 0.08, radius + 0.025),
+            new THREE.MeshBasicMaterial({ color: 0xfff5e6, transparent: true, opacity: this.settings.cardBorder / 100 })
+        );
+        border.position.z = 0.01;
+        cardGroup.add(border);
+        var cardMat = medium ? EP.Media.createMaterial(medium) : new THREE.MeshBasicMaterial({ color: 0x20222c });
+        cardMat.transparent = !!medium;
+        if (medium) cardMat.opacity = this.settings.mediaOpacity / 100;
+        var card = new THREE.Mesh(EP.RoundedPlaneGeometry(cardW, cardH, radius), cardMat);
+        card.position.z = 0.025;
+        cardGroup.add(card);
+        cardGroup.position.y = 1.55 - (this.settings.cardY / 100) * 3.1;
+        cardGroup.position.z = 0.12;
+        cardGroup.userData = { baseW: cardW, baseH: cardH };
+        group.add(cardGroup);
+        this._cardGroup = cardGroup;
+        this._cardMediaMaterial = cardMat;
+        this._cardBorder = border;
 
         this._canvas = document.createElement('canvas');
         this._canvas.width = W;
@@ -76,7 +111,7 @@
             depthWrite: false
         });
         var curtainMesh = new THREE.Mesh(new THREE.PlaneGeometry(8, 4.5), curtainMat);
-        curtainMesh.position.z = 0.04;
+        curtainMesh.position.z = 0.05;
         group.add(curtainMesh);
 
         this._pointer = { x: W * 0.5, y: H * 0.5, visible: false, previous: null, previousTime: 0 };
@@ -262,9 +297,13 @@
         if (!this._ctx || !this._texture) return;
         var key = this._layoutKey();
         if (key !== this._lastLayoutKey) this._buildCurtain();
-        if (this._backgroundMaterial) {
-            if (this._backgroundMaterial.color) this._backgroundMaterial.color.set(this.settings.background);
-            this._backgroundMaterial.opacity = this.settings.mediaOpacity / 100;
+        if (this._backgroundMaterial && this._backgroundMaterial.color) this._backgroundMaterial.color.set(this.settings.background);
+        if (this._cardMediaMaterial && this._cardMediaMaterial.opacity !== undefined) this._cardMediaMaterial.opacity = this.settings.mediaOpacity / 100;
+        if (this._cardBorder) this._cardBorder.material.opacity = this.settings.cardBorder / 100;
+        if (this._cardGroup) {
+            this._cardGroup.position.y = 1.55 - (this.settings.cardY / 100) * 3.1;
+            var sizeScale = this.settings.cardSize / 68;
+            this._cardGroup.scale.set(sizeScale, sizeScale * (this.settings.cardHeight / 68), 1);
         }
         var enabled = this.settings.playbackMotion !== 'off';
         var motionScale = enabled ? clamp((dt || 0.016) * 60 * (this.settings.playbackMotionSpeed / 100), 0, 2.2) : 0;
@@ -308,6 +347,9 @@
         this._onPointerMove = null;
         this._onPointerLeave = null;
         this._backgroundMaterial = null;
+        this._cardGroup = null;
+        this._cardMediaMaterial = null;
+        this._cardBorder = null;
         this._canvas = null;
         this._ctx = null;
         this._texture = null;
