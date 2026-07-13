@@ -5,6 +5,9 @@
         icon: '🌀',
         description: 'Espiral infinita 3D de imagenes — las fotos giran en una helice continua que se adentra en profundidad'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardCount', type: 'range', min: 15, max: 60, default: 30, step: 1, label: 'Photos' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 30, label: 'Spiral Speed', unit: '%' },
         { key: 'radius', type: 'range', min: 20, max: 100, default: 55, label: 'Radius', unit: '%' },
@@ -13,6 +16,16 @@
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#050510', label: 'Background' }
     ]);
+
+    effect.capabilities = { supportsMotionDirection: true, supportsVideo: true, usesCamera: true, usesPostProcessing: false, usesParticlesShaders: false, mobileRisk: 'medium', minMedia: 1, exportSafe: true, hasErrorBoundary: true };
+
+    function directionVector(value) {
+        if (value === 'left-right') return { spin: 1, travel: 1, x: 1, y: 0 };
+        if (value === 'right-left') return { spin: -1, travel: -1, x: -1, y: 0 };
+        if (value === 'top-bottom') return { spin: 1, travel: 1, x: 0, y: -1 };
+        if (value === 'bottom-top') return { spin: -1, travel: -1, x: 0, y: 1 };
+        return { spin: 1, travel: 1, x: 0.35, y: -0.2 };
+    }
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -74,7 +87,9 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var speed = this.settings.speed / 100;
+        var enabled = this.settings.playbackMotion !== 'off';
+        var speed = this.settings.speed / 100 * (enabled ? this.settings.playbackMotionSpeed / 100 : 0);
+        var direction = directionVector(this.settings.motionDirection);
         var totalDepth = this._totalDepth;
         var R = this._R;
 
@@ -84,7 +99,7 @@
         }
         if (!spiralGroup) return;
 
-        var travel = time * speed * 2;
+        var travel = time * speed * 2 * direction.travel;
 
         for (var j = 0; j < spiralGroup.children.length; j++) {
             var card = spiralGroup.children[j];
@@ -95,7 +110,7 @@
             if (z > totalDepth * 0.5) z -= totalDepth;
 
             var progress = (z + totalDepth / 2) / totalDepth;
-            var angle = card.userData.baseAngle + time * speed * 0.3;
+            var angle = card.userData.baseAngle + time * speed * 0.3 * direction.spin;
 
             card.position.set(
                 Math.cos(angle) * R,
@@ -112,8 +127,8 @@
         }
 
         EP.Core.camera.position.set(
-            Math.sin(time * 0.08) * 0.5,
-            Math.cos(time * 0.06) * 0.3,
+            Math.sin(time * 0.08) * 0.5 + direction.x * 0.35,
+            Math.cos(time * 0.06) * 0.3 + direction.y * 0.28,
             8
         );
         EP.Core.camera.lookAt(0, 0, -5);

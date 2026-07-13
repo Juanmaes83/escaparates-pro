@@ -21,6 +21,7 @@
         { key: 'lineThickness', type: 'range', min: 1, max: 14, default: 3, step: 1, label: 'Line Thickness' },
         { key: 'density', type: 'range', min: 25, max: 240, default: 115, step: 1, label: 'Density', unit: '%' },
         { key: 'overlayOpacity', type: 'range', min: 10, max: 100, default: 82, step: 1, label: 'Overlay Opacity', unit: '%' },
+        { key: 'vignette', type: 'range', min: 0, max: 100, default: 0, step: 1, label: 'Vignette', unit: '%' },
         { key: 'matrixCharset', type: 'select', options: [{ v: 'numbers', l: 'Numeros' }, { v: 'binary', l: 'Binario' }, { v: 'letters', l: 'Letras' }, { v: 'symbols', l: 'Simbolos' }, { v: 'tech', l: 'Codigo tecnico' }], default: 'symbols', label: 'Matrix Glyphs' },
         { key: 'customGlyphText', type: 'text', default: 'ESCAPARATES PRO / VISUAL SIGNAL / DATA FLOW', label: 'Frases / Letras', maxLength: 120 },
         { key: 'goldColor', type: 'color', default: '#d4af37', label: 'Primary Color' },
@@ -48,6 +49,7 @@
         'uniform float uDistort;',
         'uniform vec2 uDirection;',
         'uniform vec3 uBackground;',
+        'uniform float uVignette;',
         'varying vec2 vUv;',
         'void main(){',
         '  vec2 uv=vUv;',
@@ -57,7 +59,7 @@
         '  vec4 media=texture2D(uTexture,clamp(uv,0.0,1.0));',
         '  vec3 col=mix(uBackground,media.rgb,uHasTexture);',
         '  float vignette=smoothstep(0.88,0.18,length(vUv-.5));',
-        '  col*=0.78+0.22*vignette;',
+        '  col*=mix(1.0,0.78+0.22*vignette,uVignette);',
         '  gl_FragColor=vec4(col,1.0);',
         '}'
     ].join('\n');
@@ -309,7 +311,8 @@
                 uTime: { value: 0 },
                 uDistort: { value: 0 },
                 uDirection: { value: directionVector(this.settings.motionDirection) },
-                uBackground: { value: new THREE.Color(this.settings.background) }
+                uBackground: { value: new THREE.Color(this.settings.background) },
+                uVignette: { value: Number(this.settings.vignette || 0) / 100 }
             },
             vertexShader: vertexShader,
             fragmentShader: bgFragmentShader
@@ -352,6 +355,7 @@
         u.uDistort.value = modeIs(this, 'kafka') ? this.settings.effectStrength / 120 : 0;
         u.uDirection.value.copy(directionVector(this.settings.motionDirection));
         u.uBackground.value.set(this.settings.background);
+        u.uVignette.value = Number(this.settings.vignette || 0) / 100;
 
         var ctx = this._overlayCtx;
         var w = this._overlayCanvas.width;

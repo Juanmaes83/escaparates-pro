@@ -18,6 +18,8 @@
         description: 'Rejilla de celdas 3D que revela la imagen mediante ordered dithering (Bayer/halftone), con aparición escalonada por celda/fila/columna/aleatoria/esquina — visualización premium del proceso de tramado'
     }, [
         { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'resolution', type: 'range', min: 30, max: 140, default: 80, step: 5, label: 'Densidad rejilla', unit: 'celdas' },
         { key: 'thresholdMap', type: 'select', options: [
             { v: 'bayer4x4', l: 'Bayer 4x4' },
@@ -36,6 +38,18 @@
         { key: 'bgColor', type: 'color', default: '#0a0a0c', label: 'Color fondo' },
         { key: 'depthPop', type: 'range', min: 0, max: 60, default: 22, step: 1, label: 'Profundidad Z', unit: 'u' }
     ]);
+
+    effect.capabilities = {
+        supportsMotionDirection: false,
+        supportsVideo: true,
+        usesCamera: true,
+        usesPostProcessing: false,
+        usesParticlesShaders: true,
+        mobileRisk: 'high',
+        minMedia: 1,
+        exportSafe: true,
+        hasErrorBoundary: true
+    };
 
     var THRESHOLD_MAPS = {
         bayer4x4: { rows: 4, columns: 4, data: [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5] },
@@ -108,12 +122,18 @@
         return new THREE.Vector3(((v >> 16) & 255) / 255, ((v >> 8) & 255) / 255, (v & 255) / 255);
     }
 
+    function getSafeResolution(requested) {
+        var profile = EP.DeviceProfile && EP.DeviceProfile.get ? EP.DeviceProfile.get() : null;
+        if (!profile || profile.type === 'desktop') return requested;
+        return Math.min(requested, profile.lowPower ? 48 : 64);
+    }
+
     effect.build = function(mediaList) {
         var group = new THREE.Group();
         this._m0 = (mediaList && mediaList[0]) || null;
         this._tex = this._m0 ? EP.Media.createTexture(this._m0) : null;
 
-        var cells = Math.round(this.settings.resolution);
+        var cells = getSafeResolution(Math.round(this.settings.resolution));
         var cellSize = 5.6 / cells;
         var geometry = new THREE.BoxGeometry(cellSize * 0.92, cellSize * 0.92, 0.4);
         var count = cells * cells;
@@ -178,7 +198,11 @@
     effect.update = function(time, dt, loopDuration) {
         if (!this._material) return;
         if (this._tex) EP.Media.updateTexture(this._tex);
-        var t = (time % loopDuration) / loopDuration;
+        if (this.settings.playbackMotion === 'off') {
+            this._material.uniforms.uAnimationProgress.value = 1;
+            return;
+        }
+        var t = ((time * (this.settings.playbackMotionSpeed / 100)) % loopDuration) / loopDuration;
         var progress = (Math.sin(t * Math.PI * 2 - Math.PI / 2) + 1) / 2;
         this._material.uniforms.uAnimationProgress.value = progress;
     };

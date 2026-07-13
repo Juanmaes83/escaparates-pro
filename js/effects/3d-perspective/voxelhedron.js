@@ -5,6 +5,9 @@
         icon: '💎',
         description: 'Piramide doble 3D de bloques con imagenes — estructura tipo diamante voxel con rotacion multi-eje'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'layers', type: 'range', min: 3, max: 7, default: 5, step: 1, label: 'Layers' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 25, label: 'Rotation Speed', unit: '%' },
         { key: 'blockSize', type: 'range', min: 30, max: 100, default: 55, label: 'Block Size', unit: '%' },
@@ -12,6 +15,15 @@
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#080818', label: 'Background' }
     ]);
+
+    effect.capabilities = { supportsMotionDirection: true, supportsVideo: true, usesCamera: true, usesPostProcessing: false, usesParticlesShaders: false, mobileRisk: 'medium', minMedia: 1, exportSafe: true, hasErrorBoundary: true };
+
+    function directionVector(value) {
+        if (value === 'right-left') return { x: -1, y: 0, z: -1 };
+        if (value === 'top-bottom') return { x: 0, y: -1, z: 1 };
+        if (value === 'bottom-top') return { x: 0, y: 1, z: -1 };
+        return { x: 1, y: 0, z: 1 };
+    }
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -107,17 +119,19 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group) return;
-        var speed = this.settings.speed / 100;
+        var enabled = this.settings.playbackMotion !== 'off';
+        var speed = this.settings.speed / 100 * (enabled ? this.settings.playbackMotionSpeed / 100 : 0);
+        var direction = directionVector(this.settings.motionDirection);
 
         for (var i = 0; i < this.group.children.length; i++) {
             var child = this.group.children[i];
             if (!child.userData.isPyramid) continue;
 
-            child.rotation.y = time * speed * 0.2;
-            child.rotation.x = Math.sin(time * 0.15) * 0.2;
-            child.rotation.z = Math.sin(time * 0.1) * 0.1;
+            child.rotation.y = time * speed * 0.2 * direction.x;
+            child.rotation.x = Math.sin(time * 0.15 * speed) * 0.2 * (direction.y || 1);
+            child.rotation.z = Math.sin(time * 0.1 * speed) * 0.1 * direction.z;
 
-            var bob = Math.sin(time * 0.4) * 0.15;
+            var bob = Math.sin(time * 0.4 * speed) * 0.15 * (direction.y || 1);
             child.position.y = bob;
 
             child.traverse(function(block) {

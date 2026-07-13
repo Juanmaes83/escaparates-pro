@@ -5,6 +5,9 @@
         icon: '🃏',
         description: 'Carousel de tarjetas apiladas 3D — las cards se apilan y desapilan con rotacion y profundidad'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardCount', type: 'range', min: 5, max: 20, default: 8, step: 1, label: 'Cards' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 30, label: 'Transition Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 40, max: 100, default: 65, label: 'Card Size', unit: '%' },
@@ -12,6 +15,15 @@
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#0a0a18', label: 'Background' }
     ]);
+
+    effect.capabilities = { supportsMotionDirection: true, supportsVideo: true, usesCamera: true, usesPostProcessing: false, usesParticlesShaders: false, mobileRisk: 'medium', minMedia: 1, exportSafe: true, hasErrorBoundary: true };
+
+    function directionVector(value) {
+        if (value === 'right-left') return { x: -1, y: 0 };
+        if (value === 'top-bottom') return { x: 0, y: -1 };
+        if (value === 'bottom-top') return { x: 0, y: 1 };
+        return { x: 1, y: 0 };
+    }
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -68,12 +80,14 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group || !this._cards) return;
-        var speed = this.settings.speed / 100;
+        var enabled = this.settings.playbackMotion !== 'off';
+        var speed = this.settings.speed / 100 * (enabled ? this.settings.playbackMotionSpeed / 100 : 0);
+        var direction = directionVector(this.settings.motionDirection);
         var count = this._count;
         var depthStep = this._depthStep;
 
         var cycleDuration = 2 + 4 * (1 - speed);
-        this._cycleTime += dt;
+        this._cycleTime += dt * (enabled ? this.settings.playbackMotionSpeed / 100 : 0);
 
         if (this._cycleTime > cycleDuration) {
             this._cycleTime = 0;
@@ -88,10 +102,10 @@
             var relIdx = (i - this._currentTop + count) % count;
 
             if (relIdx === 0 && progress < 1) {
-                var throwX = eased * 8;
+                var throwX = eased * 8 * direction.x;
                 var throwRot = eased * 0.3;
                 card.userData.targetX = throwX;
-                card.userData.targetY = eased * 2;
+                card.userData.targetY = eased * 2 * direction.y;
                 card.userData.targetZ = 0;
                 card.userData.targetRotZ = -throwRot;
                 card.material.opacity = 0.95 * (1 - eased * 0.5);
@@ -104,18 +118,19 @@
                 card.material.opacity = Math.max(0.3, 0.95 - stackIdx * 0.07);
             }
 
-            card.position.x += (card.userData.targetX - card.position.x) * Math.min(dt * 5, 1);
-            card.position.y += (card.userData.targetY - card.position.y) * Math.min(dt * 5, 1);
-            card.position.z += (card.userData.targetZ - card.position.z) * Math.min(dt * 5, 1);
-            card.rotation.z += (card.userData.targetRotZ - card.rotation.z) * Math.min(dt * 4, 1);
+            var interpolation = enabled ? Math.min(dt * 5, 1) : 0;
+            card.position.x += (card.userData.targetX - card.position.x) * interpolation;
+            card.position.y += (card.userData.targetY - card.position.y) * interpolation;
+            card.position.z += (card.userData.targetZ - card.position.z) * interpolation;
+            card.rotation.z += (card.userData.targetRotZ - card.rotation.z) * (enabled ? Math.min(dt * 4, 1) : 0);
 
             if (card.material.map && card.material.map.isVideoTexture) card.material.map.needsUpdate = true;
         }
 
         var camDist = 5 + this._ch;
         EP.Core.camera.position.set(
-            Math.sin(time * 0.07) * 0.5,
-            0.5 + Math.sin(time * 0.05) * 0.2,
+            Math.sin(time * 0.07 * (enabled ? 1 : 0)) * 0.5,
+            0.5 + Math.sin(time * 0.05 * (enabled ? 1 : 0)) * 0.2,
             camDist
         );
         EP.Core.camera.lookAt(0.5, 0, -1);

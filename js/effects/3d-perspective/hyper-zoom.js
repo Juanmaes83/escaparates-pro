@@ -5,6 +5,9 @@
         icon: '🚀',
         description: 'Zoom inmersivo hiperespacial — las imagenes se acercan a alta velocidad desde la profundidad con estrellas de fondo'
     }, [
+        { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
+        { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'cardCount', type: 'range', min: 15, max: 50, default: 25, step: 1, label: 'Photos' },
         { key: 'speed', type: 'range', min: 10, max: 100, default: 45, label: 'Zoom Speed', unit: '%' },
         { key: 'cardSize', type: 'range', min: 30, max: 100, default: 50, label: 'Photo Size', unit: '%' },
@@ -13,6 +16,16 @@
         { key: 'easing', type: 'easing', options: ['smooth', 'linear', 'elastic'], default: 'smooth', label: 'Easing' },
         { key: 'background', type: 'color', default: '#020208', label: 'Background' }
     ]);
+
+    effect.capabilities = { supportsMotionDirection: true, supportsVideo: true, usesCamera: true, usesPostProcessing: false, usesParticlesShaders: true, mobileRisk: 'medium', minMedia: 1, exportSafe: true, hasErrorBoundary: true };
+
+    function directionVector(value) {
+        if (value === 'left-right') return { x: 1, y: 0, z: 1 };
+        if (value === 'right-left') return { x: -1, y: 0, z: -1 };
+        if (value === 'top-bottom') return { x: 0, y: -1, z: 1 };
+        if (value === 'bottom-top') return { x: 0, y: 1, z: -1 };
+        return { x: 0.4, y: -0.25, z: 1 };
+    }
 
     effect.build = function(mediaList) {
         if (!mediaList || mediaList.length === 0) return new THREE.Group();
@@ -79,7 +92,9 @@
 
     effect.update = function(time, dt, loopDuration) {
         if (!this.group || !this._cards) return;
-        var speed = this.settings.speed / 100;
+        var enabled = this.settings.playbackMotion !== 'off';
+        var speed = this.settings.speed / 100 * (enabled ? this.settings.playbackMotionSpeed / 100 : 0);
+        var direction = directionVector(this.settings.motionDirection);
         var depth = this._depth;
 
         if (EP.Core.camera.fov !== 75) {
@@ -87,7 +102,7 @@
             EP.Core.camera.updateProjectionMatrix();
         }
 
-        var travel = speed * dt * 12;
+        var travel = speed * dt * 12 * direction.z;
 
         for (var i = 0; i < this._cards.length; i++) {
             var card = this._cards[i];
@@ -127,8 +142,8 @@
         }
 
         EP.Core.camera.position.set(
-            Math.sin(time * 0.1) * 0.3,
-            Math.cos(time * 0.08) * 0.2,
+            Math.sin(time * 0.1) * 0.3 + direction.x * 0.25,
+            Math.cos(time * 0.08) * 0.2 + direction.y * 0.2,
             3
         );
         EP.Core.camera.lookAt(0, 0, -20);

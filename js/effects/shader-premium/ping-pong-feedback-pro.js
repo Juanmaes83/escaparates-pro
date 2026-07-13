@@ -69,8 +69,8 @@
         var group = new THREE.Group();
         var media = mediaList && mediaList[0];
         this._mediaTexture = media ? EP.Media.createTexture(media, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }) : null;
-        var isLow = EP.DeviceProfile && EP.DeviceProfile.get && EP.DeviceProfile.get().tier === 'low';
-        var size = isLow ? 256 : 512;
+        var profile = EP.DeviceProfile && EP.DeviceProfile.get ? EP.DeviceProfile.get() : null;
+        var size = profile && profile.type !== 'desktop' ? (profile.lowPower ? 192 : 256) : 512;
         this._read = createTarget(size);
         this._write = createTarget(size);
         this._quadScene = new THREE.Scene();
@@ -133,7 +133,11 @@
         if (this._onPointer) window.removeEventListener('pointermove', this._onPointer);
         if (this._read) this._read.dispose();
         if (this._write) this._write.dispose();
+        if (this._passMaterial) this._passMaterial.dispose();
+        if (this._displayMaterial) this._displayMaterial.dispose();
+        if (this._quadScene && this._quadScene.children[0] && this._quadScene.children[0].geometry) this._quadScene.children[0].geometry.dispose();
         this._read = this._write = this._mediaTexture = this._mesh = this._passMaterial = null;
+        this._displayMaterial = this._quadScene = this._quadCamera = null;
         EP.EffectBase.prototype.dispose.call(this);
     };
 

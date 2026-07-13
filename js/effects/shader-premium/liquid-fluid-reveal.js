@@ -19,14 +19,30 @@
     }, [
         { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
         { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
+        { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
         { key: 'hazeColor', type: 'color', default: '#f2f2f2', label: 'Color niebla' },
         { key: 'dissipation', type: 'range', min: 90, max: 99, default: 97, step: 1, label: 'Persistencia del rastro', unit: '%' },
         { key: 'splatRadius', type: 'range', min: 10, max: 100, default: 35, step: 5, label: 'Grosor del rastro' },
         { key: 'splatForce', type: 'range', min: 20, max: 300, default: 120, step: 10, label: 'Fuerza del arrastre' }
     ]);
 
-    var SIM_RES = 128;
-    var DYE_RES = 256;
+    effect.capabilities = {
+        supportsMotionDirection: false,
+        supportsVideo: true,
+        usesCamera: true,
+        usesPostProcessing: true,
+        usesParticlesShaders: true,
+        mobileRisk: 'high',
+        minMedia: 0,
+        exportSafe: true,
+        hasErrorBoundary: true
+    };
+
+    function getSimulationResolution() {
+        var profile = EP.DeviceProfile && EP.DeviceProfile.get ? EP.DeviceProfile.get() : null;
+        if (!profile || profile.type === 'desktop') return { sim: 128, dye: 256 };
+        return profile.lowPower ? { sim: 64, dye: 128 } : { sim: 96, dye: 192 };
+    }
 
     var VERT = 'varying vec2 vUv;\nvoid main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
 
@@ -114,6 +130,9 @@
 
     effect.build = function(mediaList) {
         var group = new THREE.Group();
+        var resolution = getSimulationResolution();
+        this._simRes = resolution.sim;
+        this._dyeRes = resolution.dye;
         var m0 = (mediaList && mediaList[0]) || null;
         this._mediaTex = m0 ? EP.Media.createTexture(m0) : null;
 
@@ -131,10 +150,10 @@
 
         this._ready = false;
         try {
-            this._velocity = makeDoubleFBO(SIM_RES, SIM_RES);
-            this._density = makeDoubleFBO(DYE_RES, DYE_RES);
-            this._divergence = makeRT(SIM_RES, SIM_RES);
-            this._pressure = makeDoubleFBO(SIM_RES, SIM_RES);
+            this._velocity = makeDoubleFBO(this._simRes, this._simRes);
+            this._density = makeDoubleFBO(this._dyeRes, this._dyeRes);
+            this._divergence = makeRT(this._simRes, this._simRes);
+            this._pressure = makeDoubleFBO(this._simRes, this._simRes);
 
             this._quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
             this._quadScene = new THREE.Scene();
@@ -149,16 +168,16 @@
 
             this._pointer = { x: 0.5, y: 0.5, px: 0.5, py: 0.5, moved: false };
             var self = this;
-            this._onMove = function(e) {
-                var canvas = document.querySelector('canvas');
+            this._onPointerMove = function(e) {
+                var canvas = EP.Core && EP.Core.renderer && EP.Core.renderer.domElement;
                 if (!canvas) return;
                 var rect = canvas.getBoundingClientRect();
                 self._pointer.px = self._pointer.x; self._pointer.py = self._pointer.y;
-                self._pointer.x = (e.clientX - rect.left) / rect.width;
-                self._pointer.y = 1.0 - (e.clientY - rect.top) / rect.height;
+                self._pointer.x = Math.max(0, Math.min(1, (e.clientX - rect.left) / Math.max(1, rect.width)));
+                self._pointer.y = Math.max(0, Math.min(1, 1.0 - (e.clientY - rect.top) / Math.max(1, rect.height)));
                 self._pointer.moved = true;
             };
-            window.addEventListener('mousemove', this._onMove);
+            window.addEventListener('pointermove', this._onPointerMove, { passive: true });
 
             this._ready = true;
         } catch (e) {
@@ -178,7 +197,13 @@
 
         var prevTarget = renderer.getRenderTarget();
         var W = 8, H = 4.5, aspect = W / H;
-        var dtClamped = Math.min(dt || 0.016, 0.033);
+        if (this.settings.playbackMotion === 'off') {
+            this._displayMat.uniforms.uDensity.value = this._density && this._density.read.texture;
+            return;
+        }
+
+        var speed = this.settings.playbackMotionSpeed / 100;
+        var dtClamped = Math.min((dt || 0.016) * speed, 0.033);
         var dissipation = (this.settings.dissipation || 97) / 100;
         var radius = (this.settings.splatRadius || 35) / 100000;
         var force = (this.settings.splatForce || 120) / 40;
@@ -192,7 +217,7 @@
         }
         runPass = runPass.bind(this);
 
-        var simTexel = new THREE.Vector2(1 / SIM_RES, 1 / SIM_RES);
+        var simTexel = new THREE.Vector2(1 / this._simRes, 1 / this._simRes);
 
         // Advect velocity by itself
         this._matAdvection.uniforms.uVelocity.value = this._velocity.read.texture;
@@ -258,12 +283,17 @@
     };
 
     effect.dispose = function() {
-        if (this._onMove) window.removeEventListener('mousemove', this._onMove);
+        if (this._onPointerMove) window.removeEventListener('pointermove', this._onPointerMove);
         ['_velocity', '_density', '_pressure'].forEach(function(k) {
             if (this[k]) { this[k].read.dispose(); this[k].write.dispose(); }
         }, this);
         if (this._divergence) this._divergence.dispose();
+        ['_matAdvection', '_matSplat', '_matDivergence', '_matPressure', '_matGradSub'].forEach(function(k) {
+            if (this[k]) this[k].dispose();
+        }, this);
+        if (this._quadGeo) this._quadGeo.dispose();
         this._mediaTex = null;
+        this._onPointerMove = this._quadGeo = this._quadMesh = this._quadScene = this._quadCamera = null;
         EP.EffectBase.prototype.dispose.call(this);
     };
 

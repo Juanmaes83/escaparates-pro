@@ -66,8 +66,9 @@
     effect.build = function(mediaList) {
         var group = new THREE.Group();
         if (!mediaList || mediaList.length === 0) return group;
-        var isMobile = EP.DeviceProfile && EP.DeviceProfile.get().type !== 'desktop';
-        var targetCount = Math.min(this.settings.particleAmount, isMobile ? 4200 : 16000);
+        var profile = EP.DeviceProfile && EP.DeviceProfile.get ? EP.DeviceProfile.get() : null;
+        var mobileCap = profile && profile.type !== 'desktop' ? (profile.lowPower ? 900 : 1600) : 16000;
+        var targetCount = Math.min(this.settings.particleAmount, mobileCap);
         var sample = sampleMedia(mediaList[0], targetCount);
         var count = sample.cols * sample.rows;
         var positions = new Float32Array(count * 3);
@@ -122,6 +123,8 @@
         bg.position.z = -2.4;
         group.add(bg);
         this._points = points;
+        this._sourceMedia = mediaList[0];
+        this._lastVideoSampleAt = -Infinity;
         this._handlesOutputSize = true;
         group.scale.setScalar(this.settings.outputSize / 100);
         return group;
@@ -129,6 +132,20 @@
 
     effect.update = function(time) {
         if (!this._points || !this.group) return;
+        if (this._sourceMedia && this._sourceMedia.type === 'video' && time - this._lastVideoSampleAt > 0.08) {
+            var freshSample = sampleMedia(this._sourceMedia, this._points.geometry.attributes.color.count);
+            var colors = this._points.geometry.attributes.color.array;
+            if (freshSample.cols * freshSample.rows === colors.length / 3) {
+                for (var c = 0; c < colors.length / 3; c++) {
+                    var ci = c * 4;
+                    colors[c * 3] = freshSample.data[ci] / 255;
+                    colors[c * 3 + 1] = freshSample.data[ci + 1] / 255;
+                    colors[c * 3 + 2] = freshSample.data[ci + 2] / 255;
+                }
+                this._points.geometry.attributes.color.needsUpdate = true;
+            }
+            this._lastVideoSampleAt = time;
+        }
         var enabled = this.settings.playbackMotion !== 'off';
         var speed = (this.settings.playbackMotionSpeed / 100) * (enabled ? 1 : 0);
         var mode = this.settings.cycleMode;
@@ -162,7 +179,7 @@
     };
 
     effect.dispose = function() {
-        this._points = null;
+        this._points = this._sourceMedia = null;
         EP.EffectBase.prototype.dispose.call(this);
     };
 

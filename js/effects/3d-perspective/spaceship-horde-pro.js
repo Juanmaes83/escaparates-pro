@@ -8,7 +8,7 @@
         { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
         { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
         { key: 'playbackMotionSpeed', type: 'range', min: 0, max: 220, default: 100, step: 1, label: 'Playback Speed', unit: '%' },
-        { key: 'count', type: 'range', min: 1000, max: 25000, default: 25000, step: 500, label: 'Spaceships' },
+        { key: 'count', type: 'range', min: 1000, max: 25000, default: 6000, step: 500, label: 'Spaceships' },
         { key: 'orbitScale', type: 'range', min: 55, max: 180, default: 100, step: 1, label: 'Orbit Scale', unit: '%' },
         { key: 'speed', type: 'range', min: 10, max: 260, default: 100, step: 1, label: 'Speed', unit: '%' },
         { key: 'shipScale', type: 'range', min: 8, max: 60, default: 24, step: 1, label: 'Ship Size', unit: '%' },
