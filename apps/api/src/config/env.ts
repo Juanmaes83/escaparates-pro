@@ -7,7 +7,7 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().min(1).max(65535)),
   NODE_ENV: z
-    .enum(['development', 'production', 'test'])
+    .enum(['development', 'staging', 'production', 'test'])
     .default('development'),
   LOG_LEVEL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
@@ -19,6 +19,7 @@ const envSchema = z.object({
       message: 'DATABASE_URL must be a valid PostgreSQL connection string',
     })
     .optional(),
+  CORS_ORIGINS: z.string().default(''),
 })
 
 const parsed = envSchema.safeParse(process.env)

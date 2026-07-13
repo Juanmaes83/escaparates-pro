@@ -5,7 +5,6 @@ import rateLimit from '@fastify/rate-limit'
 import { env } from './config/env.js'
 import { logger } from './lib/logger.js'
 import { resolveRequestId } from './lib/request-id.js'
-import { buildErrorResponse } from './lib/errors.js'
 import { errorHandler } from './middleware/error-handler.js'
 import { notFoundHandler } from './middleware/not-found.js'
 import { healthRoutes } from './routes/health.js'
@@ -32,22 +31,19 @@ export async function buildApp() {
 
   await app.register(helmet)
 
+  const corsOrigins = env.CORS_ORIGINS.split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0)
+
   await app.register(cors, {
-    origin: env.NODE_ENV === 'production' ? false : true,
+    // Browser access stays disabled until an explicit allowlist is configured.
+    origin: corsOrigins.length > 0 ? corsOrigins : false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   })
 
   await app.register(rateLimit, {
     max: 100,
     timeWindow: '1 minute',
-    errorResponseBuilder: (request, context) => {
-      const requestId = request.requestId ?? 'unknown'
-      return buildErrorResponse(
-        'RATE_LIMITED',
-        `Too many requests — limit is ${context.max} per ${context.after}`,
-        requestId,
-      )
-    },
   })
 
   app.addHook('onSend', async (request, reply, _payload) => {
