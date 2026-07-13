@@ -1,0 +1,68 @@
+<!-- 
+  ===== Circular Logo Wheel Section =====
+  The <section> below creates a GSAP-powered circular logo carousel.
+
+  data-speed      → Controls rotation speed in degrees per second (default: 0.25)
+  data-direction  → Sets rotation direction: "right" for clockwise, "left" for counterclockwise
+  data-radius     → Defines the circle radius as a percentage of the wheel’s half-width (e.g., 70 = larger orbit)
+  aria-label      → Provides an accessible name for screen readers ("Partner logos carousel — circular")
+
+  Inside the Wheel section:
+  - The <div class="wheel"> container holds all the rotating logo items.
+  - Each <div class="wheel-item"> is positioned dynamically around the circle by JavaScript.
+  - Logos remain upright and can include links, tooltips, or other interactive elements.
+-->
+
+<section class="logo-wheel" data-speed="0.25" data-direction="right" data-radius="70" aria-label="Partner logos carousel — circular">
+  
+  <div class="wheel">
+
+    <!-- Wheel items. The script will place them evenly around the circle.
+         The .upright wrapper is counter-rotated so logos stay upright. -->
+
+    <div class="wheel-item" data-tooltip="Google Tooltip Link">
+      <div class="upright"><a href="https://google.com" target="_blank"><img src="https://assets.codepen.io/191814/icon-google.png" alt="Google Logo"></a></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-one.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-two.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-three.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-nine.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-five.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-six.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-seven.png" alt="Logo"></div>
+    </div>
+
+    <div class="wheel-item" data-tooltip="Logo Tooltip">
+      <div class="upright"><img src="https://assets.codepen.io/191814/logo-eight.png" alt="Logo"></div>
+    </div>
+
+    <!-- END Logo items -->
+
+  </div>
+
+  <!-- Centered title inside the wheel -->
+  <div class="wheel-center">
+    <h2>Our Partners</h2>
+  </div>
+
+</section>

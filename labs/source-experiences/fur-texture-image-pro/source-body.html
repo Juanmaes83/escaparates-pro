@@ -1,0 +1,72 @@
+<!-- 
+# Transform Images into a Fur-Like Texture
+
+Image processing tool that converts a standard image into a textured, fur-like representation using pixel analysis and procedural rendering.
+
+---
+
+## How it Works
+
+### Image Upload & Preprocessing
+
+- Upload an image or select one from the **demo images**.
+- The image is **resized** if it exceeds **2048x2048 px** to optimize performance.
+- Image data is extracted into a **Uint8ClampedArray** for **faster pixel access**.
+
+### Pixel Analysis & Fur Mapping
+Each pixel is processed individually, determining:
+- **Color Extraction**: The **RGB values** of the pixel are read.
+- **Fur Color Mapping**: The pixel color is mapped to a **realistic fur palette**.
+- **Hair Density & Orientation**: Pixel brightness and color affect **hair strand density, length, and direction**.
+
+### Fur Strand Rendering
+For each pixel, **multiple hair strands** are drawn procedurally:
+- **Density Control**: Each pixel contains **several hair strands** to define the fur texture.
+- **Randomization**: Hair strands have slight variations in **position, length, and rotation**.
+- **Depth & Realism**: Subtle **color variations and shading** create a natural fur effect.
+- **Layering & Transparency**: Opacity and blending techniques ensure depth and a more **realistic hair distribution**.
+
+### Batch Processing
+- The transformation occurs **in small batches (1000 pixels at a time)**.
+- **`requestAnimationFrame()` is used** to maintain smooth performance and prevent UI freezing.
+
+### Memory Management & Cleanup
+- **Asynchronous Cleanup**: Before processing a new image, **memory is freed**.
+- **`stopProcess()` ensures cleanup finishes** before starting a new transformation.
+- **Garbage Collection Optimization**: Large objects are released to **reduce memory leaks**.
+
+### Final Output & Download
+- The processed image is displayed in a **canvas** with a detailed, fur-like texture.
+- The final result **can be saved as a PNG file**.
+-->
+
+<div class="wrapper">
+
+  <div class="buttons">
+    <!-- Hide these buttons -->
+    <label for="image_upload" class="button" style="display: none;"><span class="text">Upload Image</span></label>
+    <input type="file" id="image_upload" accept="image/*" style="display: none;" />
+    <button id="process_button" class="button" disabled style="display: none;"><span class="text">Process Image</span></button>
+    <button id="stop_button" class="button" disabled style="display: none;"><span class="text">Stop Process</span></button>
+  </div>
+  <div class="canvas-container">
+    <canvas id="canvas"></canvas>
+  </div>
+</div>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Processing complete!</p>
+    <button id="download_button" class="button"><span class="text">Open Generated Image</span></button>
+  </div>
+</div>
+<div id="controls"></div>
+
+<div class="resources-layer">
+  <div class="resources">
+    <a href="https://www.lessrain.com">Less Rain GmbH</a>
+    <a href="https://codepen.io/luis-lessrain/pen/bNbxjwX">Grass Image processing</a>
+    <a href="https://www.instagram.com/deriveddelights/">deriveddelights</a>
+  </div>
+</div>

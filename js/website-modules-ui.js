@@ -9,14 +9,14 @@
     };
     var renderTimer = null;
 
-    function getSchema() {
-        return EP.WebsiteModules ? EP.WebsiteModules.getSchema() : [];
+    function getSchema(id) {
+        return EP.WebsiteModules ? EP.WebsiteModules.getSchema(id) : [];
     }
 
     function ensureOptions(id) {
         if (state.options[id]) return state.options[id];
         var opts = {};
-        getSchema().forEach(function(field) { opts[field.key] = field.default; });
+        getSchema(id).forEach(function(field) { opts[field.key] = field.default; });
         state.options[id] = opts;
         return opts;
     }
@@ -49,12 +49,34 @@
         catalog.innerHTML = '';
         var header = document.createElement('div');
         header.className = 'ss-catalog-section-header';
-        header.textContent = 'Website Modules Lab - Premium 25';
+        header.textContent = 'Website Modules Lab - Premium ' + EP.WebsiteModules.getAll().length;
         catalog.appendChild(header);
+        var featured = EP.WebsiteModules.get('logo-wheel-pro');
+        if (featured) {
+            var quickOpen = document.createElement('button');
+            quickOpen.type = 'button';
+            quickOpen.className = 'wm-featured-open' + (featured.id === state.activeId ? ' active' : '');
+            quickOpen.innerHTML = '<span>NUEVO</span><strong>Logo Wheel PRO</strong><small>Abrir orbita de logos</small>';
+            quickOpen.addEventListener('click', function() { selectModule(featured.id); });
+            catalog.appendChild(quickOpen);
+        }
         EP.WebsiteModules.getAll().forEach(function(mod) {
             catalog.appendChild(makeCard(mod));
         });
         filterCatalog((document.getElementById('effects-search') || {}).value || '');
+    }
+
+    function renderModulePicker() {
+        var picker = document.getElementById('wm-module-picker');
+        if (!picker || !EP.WebsiteModules) return;
+        picker.innerHTML = '';
+        EP.WebsiteModules.getAll().forEach(function(mod) {
+            var option = document.createElement('option');
+            option.value = mod.id;
+            option.textContent = mod.name + ' - ' + mod.family;
+            picker.appendChild(option);
+        });
+        if (state.activeId) picker.value = state.activeId;
     }
 
     function renderFields() {
@@ -66,7 +88,7 @@
         var opts = ensureOptions(mod.id);
         wrap.innerHTML = '';
         if (titleEl) titleEl.textContent = mod.name.toUpperCase();
-        getSchema().forEach(function(field) {
+        getSchema(mod.id).forEach(function(field) {
             var row = document.createElement('div');
             row.className = 'wm-field';
             var label = document.createElement('label');
@@ -147,6 +169,7 @@
         state.activeId = id;
         ensureOptions(id);
         renderCatalog();
+        renderModulePicker();
         renderFields();
         renderPreview();
         var embed = document.getElementById('wm-embed-result');
@@ -192,6 +215,7 @@
             if (first) selectModule(first.id);
         } else {
             renderCatalog();
+            renderModulePicker();
             renderFields();
             renderPreview();
         }
@@ -298,6 +322,7 @@
 
     function init() {
         renderCatalog();
+        renderModulePicker();
         bindSearch();
         var btn = document.getElementById('mode-btn-website-modules');
         var btnEffects = document.getElementById('mode-btn-effects');
@@ -313,6 +338,8 @@
         if (htmlBtn) htmlBtn.addEventListener('click', exportHTML);
         if (zipBtn) zipBtn.addEventListener('click', exportZIP);
         if (embedBtn) embedBtn.addEventListener('click', copyEmbed);
+        var picker = document.getElementById('wm-module-picker');
+        if (picker) picker.addEventListener('change', function() { selectModule(picker.value); });
     }
 
     EP.WebsiteModulesUI = {

@@ -386,7 +386,29 @@ button:disabled {
 }
 #website-modules-catalog::-webkit-scrollbar { width: 7px; }
 #website-modules-catalog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 4px; }
+.wm-featured-open {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 3px 8px;
+    align-items: center;
+    text-align: left;
+    margin: 0 0 10px;
+    padding: 11px;
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(215,168,110,.2), rgba(86,116,154,.18));
+    border: 1px solid rgba(215,168,110,.52);
+    border-radius: 7px;
+}
+.wm-featured-open:hover, .wm-featured-open.active { border-color: var(--accent); background: rgba(215,168,110,.28); }
+.wm-featured-open span { grid-row: span 2; font-size: 9px; font-weight: 800; letter-spacing: .08em; color: var(--accent); }
+.wm-featured-open strong { font-size: 12px; }
+.wm-featured-open small { color: var(--text-dim); font-size: 10px; }
+.wm-module-jump { margin: 0 0 12px; }
+.wm-module-jump label { display: block; margin-bottom: 6px; color: var(--text-dim); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.wm-module-jump select { width: 100%; min-height: 34px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); padding: 0 8px; }
 #sector-blueprints-catalog { padding:10px; overflow-y:auto; flex:1 1 auto; min-height:0; }
+#source-labs-catalog { padding:10px; overflow-y:auto; flex:1 1 auto; min-height:0; }
 .wm-export-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

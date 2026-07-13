@@ -46,6 +46,9 @@
     <div id="sector-blueprints-stage">
         <iframe id="sb-preview-frame" title="Vista previa Sector Website Blueprint"></iframe>
     </div>
+    <div id="source-labs-stage">
+        <iframe id="sl-preview-frame" title="Vista previa Source Lab"></iframe>
+    </div>
 
     <!-- Top bar -->
     <header id="top-bar">
@@ -56,6 +59,7 @@
                 <button class="mode-btn" data-mode="scroll-sections" id="mode-btn-scroll-sections" title="Secciones de scroll para web (GSAP)">📜 Scroll Sections</button>
                 <button class="mode-btn" data-mode="website-modules" id="mode-btn-website-modules" title="Modulos web cinematograficos aislados">Web Modules</button>
                 <button class="mode-btn" data-mode="sector-blueprints" id="mode-btn-sector-blueprints" title="Plantillas web completas por sector">Blueprints</button>
+                <button class="mode-btn" data-mode="source-labs" id="mode-btn-source-labs" title="Experiencias fuente completas aisladas">Source Labs</button>
                 <button class="mode-btn" data-mode="rubik-tools" id="mode-btn-rubik-tools" title="Herramientas RUBIK SOTA (propias, aisladas)">🧬 RUBIK SOTA</button>
             </div>
         </div>
@@ -132,6 +136,7 @@
         <div id="scroll-sections-catalog" style="display:none;"></div>
         <div id="website-modules-catalog" style="display:none;"></div>
         <div id="sector-blueprints-catalog" style="display:none;"></div>
+        <div id="source-labs-catalog" style="display:none;"></div>
     </aside>
 
     <!-- Right panel: Properties -->
@@ -157,6 +162,10 @@
             <div id="ss-source-note" class="ss-source-note"></div>
         </div>
         <div class="panel-section" id="website-modules-props" style="display:none;">
+            <div class="wm-module-jump">
+                <label for="wm-module-picker">Abrir modulo web</label>
+                <select id="wm-module-picker" aria-label="Abrir un modulo de Website Modules"></select>
+            </div>
             <h3 id="wm-props-title">WEBSITE MODULES LAB</h3>
             <div id="wm-props-fields"></div>
             <div class="wm-export-row">
@@ -172,6 +181,12 @@
             <div id="sb-props-fields"></div>
             <button id="sb-export-html-btn" class="top-action" style="width:100%;margin-top:10px;">HTML final</button>
             <div id="sb-source-note" class="ss-source-note"></div>
+        </div>
+        <div class="panel-section" id="source-labs-props" style="display:none;">
+            <h3 id="sl-props-title">SOURCE LABS</h3>
+            <div id="sl-props-fields"></div>
+            <button id="sl-refresh-asset-btn" class="top-action" style="width:100%;margin-top:10px;">Aplicar slot 1</button>
+            <div id="sl-source-note" class="ss-source-note"></div>
         </div>
         <div class="panel-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -760,6 +775,8 @@
     <script src="js/effects/motion/dithering-filter.js"></script>
     <script src="js/effects/motion/water-distortion.js"></script>
     <script src="js/effects/motion/squiggle-deformer.js"></script>
+    <script src="js/effects/motion/glitchify-image-pro.js"></script>
+    <script src="js/effects/motion/fur-texture-image-pro.js"></script>
     <script src="js/effects/motion/svg-filter-anim.js"></script>
     <script src="js/effects/motion/photo-particles.js"></script>
     <script src="js/effects/motion/cloth-wind.js"></script>
@@ -935,10 +952,13 @@
     <script src="js/scroll-sections/spotlight-frame-section.js"></script>
     <script src="js/scroll-sections-ui.js"></script>
     <script src="js/rubik-tools-ui.js"></script>
-    <script src="js/website-modules.js"></script>
-    <script src="js/website-modules-ui.js"></script>
+<script src="js/website-modules.js"></script>
+<script src="js/website-modules-logo-wheel-pro.js"></script>
+<script src="js/website-modules-ui.js"></script>
     <script src="js/sector-blueprints.js"></script>
     <script src="js/sector-blueprints-ui.js"></script>
+    <script src="js/source-labs.js"></script>
+    <script src="js/source-labs-ui.js"></script>
     <!-- FASE G — Kinetic Images + grid -->
     <script src="js/effects/kinetic-images/paper-scroll.js"></script>
     <script src="js/effects/kinetic-images/spiral-ribbon.js"></script>

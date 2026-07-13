@@ -1,0 +1,194 @@
+/* =====  BASE  ===== */
+:root {
+  /* Wheel */
+  --wheel-max: 980px;
+  --wheel-width: min(92vw, var(--wheel-max));
+
+  /* Logo item  size (default) */
+  --item-size-min: 60px;
+  --item-size-vw: 12vw;
+  --item-size-max: 100px;
+
+  /* Logo item size small devices */
+  --sm-item-size-min: 50px;
+  --sm-item-size-vw: 16vw;
+  --sm-item-size-max: 60px;
+
+  /* Focus/outline */
+  --focus-outline: rgba(255,255,255,0.35);
+  --focus-radius: 10px;
+}
+
+/* ===== Circular Logo Wheel ===== */
+.logo-wheel {
+  position: relative;
+  margin:0 auto;
+  width: var(--wheel-width);
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+  touch-action: none;
+}
+
+/* Wheel layer */
+.logo-wheel .wheel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  user-select: none;
+  cursor: default;
+}
+
+/* Items (positioned by JS via polar coords) */
+.logo-wheel .wheel-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Square size via a single clamp; aspect-ratio enforces 1:1 */
+  width: clamp(var(--item-size-min), var(--item-size-vw), var(--item-size-max));
+  aspect-ratio: 1 / 1;
+  height: auto; /* derived from aspect-ratio */
+  transform-origin: 0 0;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+}
+
+/* Keep logos crisp and contained */
+.logo-wheel .wheel-item img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* preserve original logo proportions inside square */
+}
+
+/* Upright wrapper (logos stay right-side up) */
+.logo-wheel .upright {
+  transform-origin: 50% 50%;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Accessible focus style */
+.logo-wheel .wheel-item:focus-within .upright {
+  outline: 2px solid var(--focus-outline);
+  outline-offset: 4px;
+  border-radius: var(--focus-radius);
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+  .logo-wheel .wheel-item {
+    width: clamp(var(--sm-item-size-min), var(--sm-item-size-vw), var(--sm-item-size-max));
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* Reduced motion: static ring layout */
+@media (prefers-reduced-motion: reduce) {
+  .logo-wheel .wheel { animation: none !important; }
+}
+
+
+/* ===== Tooltips on Hover ===== */
+.logo-wheel .wheel-item {
+  position: relative;
+}
+
+/* Tooltip bubble */
+.logo-wheel .wheel-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 110%; /* position above logo */
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 5;
+}
+
+/* Tooltip arrow */
+.logo-wheel .wheel-item::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 4;
+}
+
+/* Show tooltip on hover */
+.logo-wheel .wheel-item:hover::after,
+.logo-wheel .wheel-item:hover::before {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+
+
+/* ===== Centered Title Inside Wheel ===== */
+.logo-wheel .wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none; /* prevent blocking tooltips/logos */
+  z-index: 2;
+}
+
+.logo-wheel .wheel-center h2 {
+  font-size: clamp(1.2rem, 2.8vw, 2.2rem);
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding: 0 0.5rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Optional subtle background or ring */
+.logo-wheel .wheel-center::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  border: 2px dashed rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Dark mode variant */
+@media (prefers-color-scheme: dark) {
+  .logo-wheel .wheel-center h2 {
+    color: #f1f1f1;
+  }
+  .logo-wheel .wheel-center::before {
+    border-color: rgba(255,255,255,0.1);
+  }
+}
+
+
+
+
+body {
+   
+  font-family: system-ui, sans-serif;
+  background:#f7f7f7;
+}

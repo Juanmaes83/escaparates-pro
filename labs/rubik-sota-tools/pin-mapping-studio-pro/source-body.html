@@ -1,0 +1,90 @@
+<div class="wrap">
+  <header>
+    <h1>Pin-Mapping Tool</h1>
+    <span>click to add&ensp;&middot;&ensp;drag to move&ensp;&middot;&ensp;loupe on hover</span>
+  </header>
+
+  <div class="canvas-col">
+    <div class="view-toggle" id="view_toggle" style="display:none">
+      <button class="seg-btn on" id="view_a_btn">crop a</button>
+      <button class="seg-btn" id="view_b_btn">crop b</button>
+    </div>
+    <div class="canvas-outer" id="canvas_outer">
+      <div class="canvas-wrap" id="canvas_wrap">
+        <label class="drop-zone" id="drop_zone">
+          <input type="file" id="img_input" accept="image/*">
+          <span class="drop-icon">⬆</span>
+          <span class="drop-text">drop image or click to select</span>
+        </label>
+        <canvas class="pin-cv" id="pin_cv"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+
+    <details class="ctrl-detail">
+      <summary class="ctrl-detail-sum">about</summary>
+      <div class="ctrl-detail-body">
+        <p class="hint">A visual pin-mapping tool for image overlays across different crop ratios and layouts. Upload an image, place pins once, and instantly translate their positions and relative sizes between two views (for example desktop and mobile). Designed for hotspots, SVG markers, callouts, and any overlay system that needs accurate coordinates across changing aspect ratios and breakpoints.</p>
+      </div>
+    </details>
+
+    <details class="ctrl-detail" open>
+      <summary class="ctrl-detail-sum">image &amp; crops</summary>
+      <div class="ctrl-detail-body">
+        <div class="ctrl-group">
+          <button class="swap-btn" id="change_btn" style="display:none">upload new image</button>
+          <div class="hint" id="img_hint">load an image to begin</div>
+        </div>
+        <div class="crops-grid">
+          <div class="ctrl-group">
+            <div class="ctrl-label">crop a</div>
+            <input class="ratio-input" id="ratio_a" type="text" value="16/9" spellcheck="false">
+            <input class="label-input" id="label_a" type="text" value="wide" spellcheck="false">
+            <div class="pos-grid" id="pos_grid_a">
+              <button class="pos-btn" data-crop="a" data-x="0" data-y="0">↖</button>
+              <button class="pos-btn" data-crop="a" data-x="0.5" data-y="0">↑</button>
+              <button class="pos-btn" data-crop="a" data-x="1" data-y="0">↗</button>
+              <button class="pos-btn" data-crop="a" data-x="0" data-y="0.5">←</button>
+              <button class="pos-btn on" data-crop="a" data-x="0.5" data-y="0.5">·</button>
+              <button class="pos-btn" data-crop="a" data-x="1" data-y="0.5">→</button>
+              <button class="pos-btn" data-crop="a" data-x="0" data-y="1">↙</button>
+              <button class="pos-btn" data-crop="a" data-x="0.5" data-y="1">↓</button>
+              <button class="pos-btn" data-crop="a" data-x="1" data-y="1">↘</button>
+            </div>
+          </div>
+          <div class="ctrl-group">
+            <div class="ctrl-label">crop b</div>
+            <input class="ratio-input" id="ratio_b" type="text" value="3/4" spellcheck="false">
+            <input class="label-input" id="label_b" type="text" value="narrow" spellcheck="false">
+            <div class="pos-grid" id="pos_grid_b">
+              <button class="pos-btn" data-crop="b" data-x="0" data-y="0">↖</button>
+              <button class="pos-btn" data-crop="b" data-x="0.5" data-y="0">↑</button>
+              <button class="pos-btn" data-crop="b" data-x="1" data-y="0">↗</button>
+              <button class="pos-btn" data-crop="b" data-x="0" data-y="0.5">←</button>
+              <button class="pos-btn on" data-crop="b" data-x="0.5" data-y="0.5">·</button>
+              <button class="pos-btn" data-crop="b" data-x="1" data-y="0.5">→</button>
+              <button class="pos-btn" data-crop="b" data-x="0" data-y="1">↙</button>
+              <button class="pos-btn" data-crop="b" data-x="0.5" data-y="1">↓</button>
+              <button class="pos-btn" data-crop="b" data-x="1" data-y="1">↘</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="ctrl-detail" open>
+      <summary class="ctrl-detail-sum">pins</summary>
+      <div class="ctrl-detail-body">
+        <div class="hint" id="wscale_hint"></div>
+        <div class="pin-list" id="pin_list">
+          <div class="empty-hint">no pins placed</div>
+        </div>
+        <button class="swap-btn danger-btn" id="clear_all_btn" style="display:none">clear all pins</button>
+        <button class="copy-btn" id="copy_btn" style="display:none">copy as json</button>
+      </div>
+    </details>
+
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<!--
+    Bash Script to Create Sprite Strips from a Video
+    -----------------------------------------------
+
+    Variables:
+    - $START_TIME: Start time (in seconds) in the video from where the frames should be captured.
+    - $DURATION: Duration (in seconds) to extract frames.
+    - $NUM_FRAMES: Number of frames to extract from the video.
+    - $INPUT_VIDEO: Input video file name.
+    - $OUTPUT_STRIP: Output PNG file name for the sprite strip.
+    - $OUTPUT_WEBP: Output WebP file name for the sprite strip.
+
+    Steps:
+    1. Calculate frame interval: Determines how frequently frames are extracted (`fps=1/$FRAME_INTERVAL`).
+    2. Extract frames: Uses `ffmpeg` to capture frames at the calculated interval from the specified start time and duration.
+    3. Combine frames into a sprite strip: Arranges extracted frames in a single horizontal strip.
+    4. Convert to WebP (optional): Generates a WebP version of the sprite strip for better compression.
+    5. Cleanup: Deletes intermediate frame files to save space.
+
+    Bash Script:
+    -----------------------------------------------
+    # Define parameters
+    START_TIME=38
+    DURATION=5
+    NUM_FRAMES=24
+    INPUT_VIDEO="input.mp4"
+    OUTPUT_STRIP="output_strip.png"
+    OUTPUT_WEBP="output_strip.webp"
+
+    # Calculate frame interval
+    FRAME_INTERVAL=$(($DURATION / $NUM_FRAMES))
+    echo "Frame Interval: $FRAME_INTERVAL"
+
+    # Extract frames and create sprite strip
+    ffmpeg -ss $START_TIME -i $INPUT_VIDEO -t $DURATION -vf "fps=1/$FRAME_INTERVAL" -vframes $NUM_FRAMES frame_%04d.png
+    ffmpeg -i frame_%04d.png -vf "tile=${NUM_FRAMES}x1" -frames:v 1 $OUTPUT_STRIP
+    ffmpeg -i $OUTPUT_STRIP $OUTPUT_WEBP
+
+    # Cleanup intermediate frames
+    rm frame_*.png
+-->
+<div class="wrapper">
+	<div class="zoetrope">
+		<!-- Base of the zoetrope (stationary) -->
+		<div class="zoetrope-base">
+			<div class="zoetrope-drums">
+				<!-- Inner drum (holds the animation strip) -->
+				<div class="zoetrope-drum-inner">
+					<!-- Animation strip (contains frames) -->
+					<div class="zoetrope-strip">
+						<div class="zoetrope-frame" style="--ry: 330deg; --index: 0;"></div>
+						<div class="zoetrope-frame" style="--ry: 300deg; --index: 1;"></div>
+						<div class="zoetrope-frame" style="--ry: 270deg; --index: 2;"></div>
+						<div class="zoetrope-frame" style="--ry: 240deg; --index: 3;"></div>
+						<div class="zoetrope-frame" style="--ry: 210deg; --index: 4;"></div>
+						<div class="zoetrope-frame" style="--ry: 180deg; --index: 5;"></div>
+						<div class="zoetrope-frame" style="--ry: 150deg; --index: 6;"></div>
+						<div class="zoetrope-frame" style="--ry: 120deg; --index: 7;"></div>
+						<div class="zoetrope-frame" style="--ry: 90deg; --index: 8;"></div>
+						<div class="zoetrope-frame" style="--ry: 60deg; --index: 9;"></div>
+						<div class="zoetrope-frame" style="--ry: 30deg; --index: 10;"></div>
+						<div class="zoetrope-frame" style="--ry: 0deg; --index: 11;"></div>
+					</div>
+				</div>
+
+				<!-- Outer drum (contains the slits) -->
+				<div class="zoetrope-drum-outer">
+					<div class="zoetrope-slits">
+						<div class="zoetrope-slit" style="--ry: 330deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 300deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 270deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 240deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 210deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 180deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 150deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 120deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 90deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 60deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 30deg;"></div>
+						<div class="zoetrope-slit" style="--ry: 0deg;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="resources-layer">
+	<div class="resources">
+		<a href="https://www.lessrain.com">Less Rain GmbH</a>
+		<a href="https://codepen.io/luis-lessrain/full/pvzKgdY">Zoetrope v3 (Pen)</a>
+		<a href="https://www.zoetrope.org/zoetrope-history">Zoetrope History</a>
+	</div>
+</div>

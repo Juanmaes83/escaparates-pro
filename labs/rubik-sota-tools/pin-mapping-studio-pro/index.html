@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/labs/rubik-sota-tools/pin-mapping-studio-pro/">
+  <title>Pin Mapping Studio PRO</title>
+  <link rel="stylesheet" href="source-style.css">
+</head>
+<body>
+  <main id="pin-mapping-source" aria-live="polite"></main>
+  <script type="module">
+    const root = document.getElementById('pin-mapping-source');
+    root.innerHTML = await fetch('./source-body.html').then(function(response) { return response.text(); });
+    await import('./source-script.js');
+  </script>
+</body>
+</html>

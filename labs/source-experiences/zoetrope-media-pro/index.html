@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es" data-source-lab="zoetrope-media-pro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/labs/source-experiences/zoetrope-media-pro/">
+  <title>Zoetrope Media PRO</title>
+  <link rel="stylesheet" href="source-style.css">
+  <script src="https://assets.codepen.io/573855/lr-utils.min.js?v=2"></script>
+</head>
+<body>
+  <main id="source-root" aria-live="polite"></main>
+  <script type="module">
+    const root = document.getElementById('source-root');
+    root.innerHTML = await fetch('./source-body.html').then(function(response) { return response.text(); });
+    await import('./source-script.js');
+    await import('./zoetrope-media-adapter.js');
+    await import('../source-lab-bridge.js');
+    // The original CodePen script only validates outbound links through LR.
+    // Do not replay DOMContentLoaded: the 3D source and media adapter are ready
+    // already, while a blocked optional LR utility must not interrupt them.
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es" data-source-lab="agency-studio-pro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/labs/source-experiences/agency-studio-pro/">
+  <title>Agency Studio Blueprint PRO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="source-style.css">
+</head>
+<body>
+  <main id="source-root" aria-live="polite"></main>
+  <script type="module">
+    const root = document.getElementById('source-root');
+    root.innerHTML = await fetch('./source-body.html').then(function(response) { return response.text(); });
+    await import('./source-script.js');
+    await import('../source-lab-bridge.js');
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+  </script>
+</body>
+</html>

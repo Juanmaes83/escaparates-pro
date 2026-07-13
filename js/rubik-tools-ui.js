@@ -31,6 +31,13 @@
             icon: '🗂️',
             desc: 'Motor de metaverso propio (PixiJS + GSAP) para catálogos de producto inmersivos y navegables.',
             src: 'labs/rubik-sota-tools/catalogo-inmersivo/index.html'
+        },
+        {
+            id: 'pin-mapping-studio-pro',
+            name: 'Pin Mapping Studio PRO',
+            icon: 'PIN',
+            desc: 'Herramienta visual de hotspots: compara dos crops, mantiene posicion y escala, permite lupa, arrastre y JSON final.',
+            src: 'labs/rubik-sota-tools/pin-mapping-studio-pro/index.html'
         }
     ];
 

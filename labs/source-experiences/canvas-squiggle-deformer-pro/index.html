@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es" data-source-lab="canvas-squiggle-deformer-pro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/labs/source-experiences/canvas-squiggle-deformer-pro/">
+  <title>Canvas Squiggle Deformer PRO</title>
+  <link rel="stylesheet" href="source-style.css">
+  <script src="https://assets.codepen.io/573855/utils-v3.min.js?v=3"></script>
+  <script src="https://assets.codepen.io/573855/simplex-noise.min.js"></script>
+</head>
+<body>
+  <main id="source-root" aria-live="polite"></main>
+  <script type="module">
+    window.__escaparatesSourceFileInputs = [];
+    const nativeInputClick = HTMLInputElement.prototype.click;
+    const inputTypeDescriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'type');
+    Object.defineProperty(HTMLInputElement.prototype, 'type', {
+      configurable: true,
+      enumerable: inputTypeDescriptor.enumerable,
+      get: inputTypeDescriptor.get,
+      set: function(value) {
+        inputTypeDescriptor.set.call(this, value);
+        if (value === 'file' && !window.__escaparatesSourceFileInputs.includes(this)) {
+          window.__escaparatesSourceFileInputs.push(this);
+        }
+      }
+    });
+    HTMLInputElement.prototype.click = function() {
+      if (this.type === 'file' && !window.__escaparatesSourceFileInputs.includes(this)) {
+        window.__escaparatesSourceFileInputs.push(this);
+      }
+      return nativeInputClick.call(this);
+    };
+    const root = document.getElementById('source-root');
+    root.innerHTML = await fetch('./source-body.html').then(function(response) { return response.text(); });
+    await import('./source-script.js');
+    await import('../source-lab-bridge.js');
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+  </script>
+</body>
+</html>

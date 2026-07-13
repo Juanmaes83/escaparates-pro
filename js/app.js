@@ -19,11 +19,13 @@
         try { if (EP.RubikToolsUI) EP.RubikToolsUI.init(); } catch(e) { console.error('RubikToolsUI.init failed:', e); }
         try { if (EP.WebsiteModulesUI) EP.WebsiteModulesUI.init(); } catch(e) { console.error('WebsiteModulesUI.init failed:', e); }
         try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
+        try { if (EP.SourceLabsUI) EP.SourceLabsUI.init(); } catch(e) { console.error('SourceLabsUI.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
             if (EP.UI.refreshCurrentControls) EP.UI.refreshCurrentControls();
             if (EP.WebsiteModulesUI && EP.WebsiteModulesUI.refresh) EP.WebsiteModulesUI.refresh();
+            if (EP.SourceLabsUI && EP.SourceLabsUI.refresh) EP.SourceLabsUI.refresh();
         });
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {

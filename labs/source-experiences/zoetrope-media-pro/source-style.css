@@ -1,0 +1,202 @@
+:root {
+	--color-dark: #1f1f1f;
+	--color-light: #fff;
+	--color-primary: #c9b39c;
+	--color-primary-dark: #a68059;
+	--color-primary-darker: #634d36;
+	--color-accent: #423324;
+	--zoetrope-radius: 50vmin;
+	--gap-ratio: 0;
+	--effective-frame-width: calc(
+		(var(--zoetrope-radius) * 2 * 3.14159 / 11) * (1 - var(--gap-ratio))
+	);
+	--frame-width: var(--effective-frame-width);
+	--frame-height: var(--frame-width);
+	--zoetrope-radius-inverse: calc(-1 * var(--zoetrope-radius));
+	--zoetrope-radius-outer: calc(var(--zoetrope-radius) + 3vmin);
+	--zoetrope-initial-tilt: -45deg;
+	--zoetrope-tilt: -16deg;
+	--zoetrope-initial-depth: -300vmin;
+	--zoetrope-depth: -50vmin;
+	--spin-duration: 600ms;
+}
+
+*,
+::after,
+::before {
+	border-style: solid;
+	border-width: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background: radial-gradient(
+			circle,
+			var(--color-primary) 0,
+			var(--color-primary-dark) 50%,
+			var(--color-primary-darker) 85%,
+			var(--color-accent) 100%
+		),
+		radial-gradient(circle at 30% 20%, rgba(0, 0, 0, 0.15) 0, transparent 80%),
+		radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.1) 0, transparent 90%);
+	background-color: var(--color-primary);
+	color: var(--color-accent);
+	font-family: "Roboto", sans-serif;
+	height: 100vh;
+	line-height: 1.5;
+	margin: 0;
+	overflow: hidden;
+	width: 100%;
+}
+
+.wrapper {
+	display: grid;
+	place-items: center;
+	height: 100%;
+}
+
+.zoetrope {
+	display: block;
+	height: calc(var(--zoetrope-radius) * 2);
+	perspective: 1000px;
+	position: relative;
+	width: calc(var(--zoetrope-radius) * 2);
+}
+
+.zoetrope-base {
+	animation: none running-animation 2s cubic-bezier(0.5, 0, 0.1, 1) forwards
+		0.25s 0s ease 0s 1 normal none;
+	animation: initial-animation 2s cubic-bezier(0.5, 0, 0.1, 1) 0.25s forwards;
+	display: block;
+	transform: translateZ(var(--zoetrope-none-depth))
+		rotateX(var(--zoetrope-none-tilt));
+	transform: translateZ(var(--zoetrope-initial-depth))
+		rotateX(var(--zoetrope-initial-tilt));
+	transform-style: preserve-3d;
+}
+
+.zoetrope-base,
+.zoetrope-drums {
+	height: 100%;
+	position: relative;
+	width: 100%;
+}
+
+.zoetrope-drums {
+	align-items: center;
+	animation: spin var(--spin-duration) linear infinite;
+	display: grid;
+	justify-items: center;
+	place-items: center;
+	transform-style: preserve-3d;
+}
+
+.zoetrope-drum-inner,
+.zoetrope-drum-outer {
+	grid-area: 1/-1;
+}
+
+.zoetrope-drum-inner,
+.zoetrope-drum-outer,
+.zoetrope-slits,
+.zoetrope-strip {
+	height: 100%;
+	position: relative;
+	transform-style: preserve-3d;
+	width: 100%;
+}
+
+.zoetrope-slits,
+.zoetrope-strip {
+	display: block;
+}
+
+.zoetrope-frame {
+	backface-visibility: hidden;
+	background: url(https://assets.codepen.io/573855/the-horse-in-motion-reverse.png);
+	background-position: calc(var(--index) * -100% / 11) 0;
+	background-size: cover;
+	height: var(--frame-height);
+	transform: translate(-50%, -50%) rotateY(var(--ry))
+		translateZ(var(--zoetrope-radius-inverse));
+}
+
+.zoetrope-frame,
+.zoetrope-slit {
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	width: var(--frame-width);
+}
+
+.zoetrope-slit {
+	backface-visibility: visible;
+	background: linear-gradient(
+			90deg,
+			#000 40%,
+			transparent 0,
+			transparent 60%,
+			#000 0
+		),
+		url(https://assets.codepen.io/573855/slits.png);
+	background-position: 50%;
+	background-repeat: no-repeat;
+	background-size: auto 100%;
+	height: calc(var(--frame-height) * 1.75);
+	transform: translate(-50%, -75%) rotateY(var(--ry))
+		translateZ(var(--zoetrope-radius-outer));
+}
+
+@keyframes spin {
+	from {
+		transform: rotateY(1turn);
+	}
+
+	to {
+		transform: rotateY(0deg);
+	}
+}
+
+@keyframes initial-animation {
+	to {
+		transform: translateZ(var(--zoetrope-depth)) rotateX(var(--zoetrope-tilt));
+	}
+}
+
+.resources-layer {
+	bottom: 0;
+	display: block;
+	position: fixed;
+	right: 0;
+	z-index: 1000;
+}
+
+.resources {
+	background: rgba(29, 29, 31, 0.75);
+	display: grid;
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 0.6875rem;
+	font-weight: 300;
+	grid-auto-flow: column;
+	line-height: 1.3;
+	padding: 0.5rem;
+	pointer-events: auto;
+}
+
+.resources a {
+	align-content: center;
+	display: grid;
+	justify-content: center;
+	padding: 0 0.5rem;
+	place-content: center;
+}
+
+.resources a,
+.resources a:active,
+.resources a:visited {
+	color: hsla(0, 0%, 100%, 0.75);
+}
+
+.resources a:not(:first-child) {
+	border-inline-start: 0.0625rem solid currentColor;
+}

@@ -39,7 +39,10 @@ EP.WebsiteModules = (function() {
     function register(module) { MODULES[module.id] = module; }
     function get(id) { return MODULES[id] || null; }
     function getAll() { return Object.keys(MODULES).map(function(id) { return MODULES[id]; }); }
-    function getSchema() { return SCHEMA.slice(); }
+    function getSchema(moduleId) {
+        var mod = moduleId ? get(moduleId) : null;
+        return SCHEMA.concat(mod && mod.fields ? mod.fields : []);
+    }
 
     function escapeHTML(value) {
         var div = document.createElement('div');
@@ -545,6 +548,7 @@ EP.WebsiteModules = (function() {
     register({ id: 'rgb-motion-triptych-pro', name: 'RGB Motion Triptych PRO', icon: 'RGB', family: 'Motion / Campaign', description: 'Tres capas RGB sincronizadas con imagen o video propio, respuesta a cursor y fallback tactil.', sourceFile: 'Independent adaptation from RGB Dancer reference', mediaMap: 'Slots 1-3 capas RGB. Con un solo video se reutiliza y sincroniza automaticamente.', build: buildRGBMotionTriptych, sourceNote: 'Independent adaptation from RGB Dancer reference.' });
 
     return {
+        register: register,
         get: get,
         getAll: getAll,
         getSchema: getSchema,

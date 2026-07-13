@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es" data-source-lab="particulate-image-pro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="/labs/source-experiences/particulate-image-pro/">
+  <title>Particulate Image PRO</title>
+  <link rel="stylesheet" href="source-style.css">
+</head>
+<body>
+  <main id="source-root" aria-live="polite"></main>
+  <script type="module">
+    const root = document.getElementById('source-root');
+    root.innerHTML = await fetch('./source-body.html').then(function(response) { return response.text(); });
+    await import('./source-script.js');
+    await import('../source-lab-bridge.js');
+  </script>
+</body>
+</html>

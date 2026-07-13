@@ -357,3 +357,19 @@ body.mode-sector-blueprints #scroll-sections-catalog,
 body.mode-sector-blueprints #website-modules-catalog,
 body.mode-sector-blueprints #effects-only-sections { display: none !important; }
 body.mode-sector-blueprints #sector-blueprints-catalog { display: block !important; }
+
+/* Source Labs keep complete reference engines isolated from the Three.js stage. */
+#source-labs-stage {
+    display: none; position: fixed; top: var(--top-h); left: var(--panel-w); right: var(--panel-w); bottom: 0;
+    background: #050507;
+}
+#source-labs-stage.active { display: block; }
+#source-labs-stage iframe { width: 100%; height: 100%; border: 0; display: block; background: #050507; }
+body.mode-source-labs #canvas-container,
+body.mode-source-labs #timeline-bar,
+body.mode-source-labs #effects-catalog-body,
+body.mode-source-labs #scroll-sections-catalog,
+body.mode-source-labs #website-modules-catalog,
+body.mode-source-labs #sector-blueprints-catalog,
+body.mode-source-labs #effects-only-sections { display: none !important; }
+body.mode-source-labs #source-labs-catalog { display: block !important; }
