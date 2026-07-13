@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>MIRRORA Try-On Handoff - Escaparates Pro</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #07080c;
+            --panel: #12151d;
+            --line: rgba(255,255,255,.12);
+            --text: #f5f7ff;
+            --muted: #98a2b7;
+            --accent: #b08d4f;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh;
+            background: var(--bg); color: var(--text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            padding: 32px 24px 60px;
+        }
+        main { width: min(1180px, 100%); margin: 0 auto; display: grid; gap: 20px; }
+        h1, h2, p { margin: 0; }
+        h1 { font-size: clamp(26px, 4.5vw, 44px); }
+        h2 { font-size: 16px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+        .head p { color: var(--muted); line-height: 1.5; max-width: 78ch; margin-top: 8px; }
+        .cols { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+        .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; }
+        label { display: grid; gap: 5px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+        input, select {
+            width: 100%; padding: 9px 11px; border-radius: 8px;
+            border: 1px solid var(--line); background: #0b0d13; color: var(--text);
+            font: inherit; font-size: 14px;
+        }
+        input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button {
+            padding: 11px 16px; border-radius: 999px; border: 1px solid var(--line);
+            background: var(--accent); color: #14100a; font: inherit; font-size: 12px;
+            letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
+        }
+        button.ghost { background: transparent; color: var(--text); }
+        button:hover { filter: brightness(1.1); }
+        .stage {
+            position: relative; min-height: 460px; border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--line);
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(91,134,255,.16), transparent 55%),
+                radial-gradient(ellipse at 75% 80%, rgba(176,141,79,.18), transparent 50%),
+                #0a0c12;
+            display: grid; place-items: center;
+        }
+        .stage-hint { color: var(--muted); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+        textarea {
+            width: 100%; min-height: 150px; resize: vertical;
+            background: #0b0d13; color: #b6ffb6; border: 1px solid var(--line);
+            border-radius: 8px; padding: 12px; font: 12px/1.5 Consolas, monospace;
+            white-space: pre; overflow: auto;
+        }
+        .note { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+        .note code { color: var(--accent); }
+        .toast {
+            position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+            background: var(--accent); color: #14100a; padding: 10px 22px;
+            border-radius: 999px; font-size: 13px; z-index: 99999;
+        }
+        [hidden] { display: none !important; }
+        @media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<main>
+    <div class="head">
+        <p>Escaparates Pro · Fase 2 MIRRORA</p>
+        <h1>MIRRORA Try-On Handoff</h1>
+        <p>Genera el bloque <em>“Pruébatelo en tu móvil”</em> para escaparates y piezas de campaña.
+           El QR envía al cliente a la PWA MIRRORA Style Studio con la campaña de la marca
+           (<code>mirrora-handoff/v0.1</code>) — solo identidad de campaña, nunca datos personales.
+           La salida es un snippet final cerrado, sin paneles de edición, como el resto de exports de la plataforma.</p>
+    </div>
+
+    <div class="cols">
+        <section class="panel">
+            <h2>Campaña</h2>
+            <label>URL de la PWA MIRRORA
+                <input id="f-base" type="url" value="https://mirrora-style-studio.vercel.app/" spellcheck="false"></label>
+            <div class="row">
+                <label>Brand ID<input id="f-brand" type="text" value="maison-demo"></label>
+                <label>Campaña<input id="f-campaign" type="text" value="ss26-bolsos"></label>
+            </div>
+            <div class="row">
+                <label>Look (opcional)<input id="f-look" type="text" placeholder="look-escaparate-01"></label>
+                <label>Origen
+                    <select id="f-source">
+                        <option value="escaparate">escaparate</option>
+                        <option value="gesture-lab">gesture-lab</option>
+                        <option value="web">web</option>
+                    </select></label>
+            </div>
+            <h2>Bloque</h2>
+            <label>Texto del CTA<input id="f-label" type="text" value="Pruébatelo en tu móvil"></label>
+            <div class="row">
+                <label>Posición
+                    <select id="f-position">
+                        <option value="bottom-right">abajo dcha</option>
+                        <option value="bottom-left">abajo izq</option>
+                        <option value="top-right">arriba dcha</option>
+                        <option value="top-left">arriba izq</option>
+                    </select></label>
+                <label>Acento<input id="f-accent" type="color" value="#b08d4f" style="height:38px;padding:3px"></label>
+            </div>
+            <button id="btn-update">Actualizar vista previa</button>
+        </section>
+
+        <section style="display:grid;gap:20px;min-width:0">
+            <div class="stage" id="stage">
+                <p class="stage-hint">Escena de escaparate (simulada) — el bloque flota encima</p>
+            </div>
+            <div class="panel">
+                <h2>Snippet final (standalone, sin JS)</h2>
+                <p class="note">Pégalo en cualquier pieza exportada, web de cliente o pantalla.
+                   El QR va inline como SVG: cero dependencias, cero editor.</p>
+                <textarea id="out-snippet" readonly spellcheck="false"></textarea>
+                <div class="row">
+                    <button id="btn-copy">Copiar snippet</button>
+                    <button class="ghost" id="btn-download">Descargar QR (SVG)</button>
+                </div>
+                <p class="note">Integración viva (widget JS): copia <code>qrcode.js</code> +
+                   <code>mirrora-cta.js</code> junto a tu pieza y añade
+                   <code>&lt;script src="mirrora-cta.js" data-brand="…" data-campaign="…"&gt;</code>.
+                   Así se ha integrado en el Gesture Lab de Rubik Sota.</p>
+            </div>
+        </section>
+    </div>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="qrcode.js"></script>
+<script src="mirrora-cta.js"></script>
+<script>
+(function () {
+    "use strict";
+    var $ = function (s) { return document.querySelector(s); };
+    var mounted = null;
+
+    function opts() {
+        return {
+            baseUrl: $("#f-base").value.trim() || "https://mirrora.example.com/",
+            brand: $("#f-brand").value.trim() || "maison-demo",
+            campaign: $("#f-campaign").value.trim() || "campaign",
+            look: $("#f-look").value.trim(),
+            source: $("#f-source").value,
+            label: $("#f-label").value.trim() || "Pruébatelo en tu móvil",
+            position: $("#f-position").value,
+            accent: $("#f-accent").value
+        };
+    }
+
+    function standaloneSnippet(o) {
+        var svg = MirroraCTA.qrSvg(MirroraCTA.handoffURL(o), 4)
+            .replace("<svg ", '<svg style="width:140px;height:140px;display:block" ');
+        var pos = {
+            "bottom-right": "right:24px;bottom:24px", "bottom-left": "left:24px;bottom:24px",
+            "top-right": "right:24px;top:24px", "top-left": "left:24px;top:24px"
+        }[o.position];
+        return '<!-- MIRRORA Try-On CTA (mirrora-handoff/v0.1) -->\n' +
+            '<aside aria-label="' + o.label + '" style="position:fixed;' + pos + ';z-index:9990;' +
+            'display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 20px 14px;' +
+            'border-radius:16px;background:rgba(12,12,14,.88);border:1px solid ' + o.accent + '55;' +
+            'box-shadow:0 18px 50px rgba(0,0,0,.45);font-family:Georgia,serif;color:#f4efe7;' +
+            'max-width:200px;text-align:center">\n' +
+            '  <p style="margin:0;font-size:15px;font-style:italic">' + o.label + '</p>\n' +
+            '  <div style="background:#fff;border-radius:10px;padding:6px;line-height:0">' + svg + '</div>\n' +
+            '  <p style="margin:0;font-family:system-ui,sans-serif;font-size:9px;letter-spacing:.34em;' +
+            'text-transform:uppercase;color:' + o.accent + '">MIRRORA Style Studio</p>\n' +
+            '</aside>';
+    }
+
+    var toastTimer;
+    function toast(msg) {
+        var t = $("#toast");
+        t.textContent = msg; t.hidden = false;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { t.hidden = true; }, 2200);
+    }
+
+    function update() {
+        var o = opts();
+        if (mounted) mounted.remove();
+        o.container = $("#stage");
+        mounted = MirroraCTA.mount(o);
+        if (mounted) mounted.style.position = "absolute";
+        $("#out-snippet").value = standaloneSnippet(o);
+    }
+
+    $("#btn-update").addEventListener("click", update);
+    $("#btn-copy").addEventListener("click", function () {
+        navigator.clipboard.writeText($("#out-snippet").value).then(function () {
+            toast("Snippet copiado — pégalo en la pieza final");
+        });
+    });
+    $("#btn-download").addEventListener("click", function () {
+        var o = opts();
+        var blob = new Blob([MirroraCTA.qrSvg(MirroraCTA.handoffURL(o), 6)], { type: "image/svg+xml" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "mirrora-qr-" + o.brand + "-" + o.campaign + ".svg";
+        a.click();
+        URL.revokeObjectURL(a.href);
+    });
+
+    update();
+})();
+</script>
+</body>
+</html>

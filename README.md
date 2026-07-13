@@ -742,6 +742,14 @@ El iframe incluye los permisos `allow="camera; autoplay; fullscreen"` para sopor
 
 Genera una URL local temporal para revisar el viewer final. Para publicar en internet, se debe subir la salida final a hosting.
 
+## MIRRORA Try-On Handoff
+
+Herramienta en `labs/mirrora-tryon/` para generar el bloque "Pruebatelo en tu movil" de las campanas de moda MIRRORA Style Studio (Fase 2 del roadmap MIRRORA).
+
+- El QR envia al cliente a la PWA MIRRORA con `schema=mirrora-handoff/v0.1`, brand, campaign, look opcional y `source=escaparate`. Nunca transporta datos personales ni faciales; el motor IA pesado no vive en esta plataforma.
+- Salida principal: snippet HTML standalone con el QR inline como SVG (cero dependencias, sin paneles de edicion), coherente con el contrato de export de la plataforma.
+- Integracion viva: `labs/mirrora-tryon/mirrora-cta.js` + `labs/mirrora-tryon/qrcode.js` (qrcode-generator, MIT) montan el bloque por script con data-attributes. Asi esta integrado en el Gesture Lab de Rubik Sota (`retail-window-pro`).
+
 ## Como Insertar En Una Web De Cliente
 
 Flujo recomendado:
