@@ -1,0 +1,52 @@
+name: API CI
+
+on:
+  push:
+    branches:
+      - master
+      - 'railway/**'
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/api-ci.yml'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'apps/api/**'
+      - '.github/workflows/api-ci.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'apps/api/package-lock.json'
+      
+      - name: Install dependencies
+        working-directory: apps/api
+        run: npm ci
+      
+      - name: TypeScript type check
+        working-directory: apps/api
+        run: npm run typecheck
+      
+      - name: Build
+        working-directory: apps/api
+        run: npm run build
+      
+      - name: Verify dist output
+        working-directory: apps/api
+        run: |
+          test -f dist/index.js && echo "✓ dist/index.js exists" || exit 1
+          test -f dist/app.js && echo "✓ dist/app.js exists" || exit 1
