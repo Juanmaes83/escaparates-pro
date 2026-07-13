@@ -28,6 +28,40 @@
         return found;
     }
 
+    function fallbackShipGeometry() {
+        var geometry = new THREE.ConeGeometry(0.24, 0.82, 4);
+        geometry.rotateX(Math.PI * 0.5);
+        return geometry;
+    }
+
+    function addHorde(self, geometry, fallback) {
+        if (!self.group || !geometry) return;
+        var count = Math.floor(self.settings.count);
+        var material = new THREE.MeshPhongMaterial({
+            flatShading: true,
+            shininess: 100,
+            vertexColors: true
+        });
+        var horde = new THREE.InstancedMesh(geometry.clone(), material, count);
+        horde.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        horde.scale.setScalar(self.settings.shipScale / 100);
+        horde.userData.fallbackGeometry = !!fallback;
+        self.spaceships = [];
+        var color = new THREE.Color();
+        for (var i = 0; i < count; i++) {
+            self.spaceships.push({
+                radius: rnd(20, 200) + rnd(20, 200),
+                offset: rnd(0, Math.PI * 2),
+                speed: rnd(0.01, 0.1)
+            });
+            color.setHSL(Math.random(), 1, 0.5 + 0.5 * Math.random());
+            horde.setColorAt(i, color);
+        }
+        if (horde.instanceColor) horde.instanceColor.needsUpdate = true;
+        self.horde = horde;
+        self.group.add(horde);
+    }
+
     effect.build = function() {
         var group = new THREE.Group();
         var earth = new THREE.Mesh(
@@ -52,7 +86,7 @@
         this.loadToken = (this.loadToken || 0) + 1;
 
         if (typeof THREE.GLTFLoader !== 'function') {
-            console.warn('GLTFLoader no esta disponible para Spaceship Horde PRO');
+            addHorde(this, fallbackShipGeometry(), true);
             return group;
         }
 
@@ -61,32 +95,9 @@
         new THREE.GLTFLoader().load('assets/effects/craft-miner.glb', function(gltf) {
             if (token !== self.loadToken || !self.group) return;
             var source = findMesh(gltf.scene);
-            if (!source) return;
-            var count = Math.floor(self.settings.count);
-            var material = new THREE.MeshPhongMaterial({
-                flatShading: true,
-                shininess: 100,
-                vertexColors: true
-            });
-            var horde = new THREE.InstancedMesh(source.geometry.clone(), material, count);
-            horde.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-            horde.scale.setScalar(self.settings.shipScale / 100);
-            self.spaceships = [];
-            var color = new THREE.Color();
-            for (var i = 0; i < count; i++) {
-                self.spaceships.push({
-                    radius: rnd(20, 200) + rnd(20, 200),
-                    offset: rnd(0, Math.PI * 2),
-                    speed: rnd(0.01, 0.1)
-                });
-                color.setHSL(Math.random(), 1, 0.5 + 0.5 * Math.random());
-                horde.setColorAt(i, color);
-            }
-            if (horde.instanceColor) horde.instanceColor.needsUpdate = true;
-            self.horde = horde;
-            self.group.add(horde);
+            addHorde(self, source ? source.geometry : fallbackShipGeometry(), !source);
         }, undefined, function(err) {
-            console.warn('No se pudo cargar craft-miner.glb', err);
+            if (token === self.loadToken && self.group && !self.horde) addHorde(self, fallbackShipGeometry(), true);
         });
 
         return group;

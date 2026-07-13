@@ -25,15 +25,22 @@
         var ch = cardScale;
 
         this._cards = [];
+        var textureCache = {};
+
+        function textureFor(index) {
+            if (textureCache[index]) return textureCache[index];
+            var media = mediaList[index];
+            if (!media || !media.element) return null;
+            textureCache[index] = EP.Media && EP.Media.createTexture ?
+                EP.Media.createTexture(media, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }) :
+                new THREE.Texture(media.element);
+            textureCache[index].needsUpdate = true;
+            return textureCache[index];
+        }
 
         for (var i = 0; i < count; i++) {
             var mi = i % mediaList.length;
-            var tex = null;
-            if (mediaList[mi].element) {
-                tex = new THREE.Texture(mediaList[mi].element);
-                tex.needsUpdate = true;
-                tex.minFilter = THREE.LinearFilter;
-            }
+            var tex = textureFor(mi);
 
             var geo = EP.RoundedPlaneGeometry ? EP.RoundedPlaneGeometry(cw, ch, 0.04) : new THREE.PlaneGeometry(cw, ch);
             var mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
@@ -100,7 +107,7 @@
             scale = Math.max(0.3, Math.min(2, scale));
             card.scale.set(scale, scale, 1);
 
-            if (card.material.map) card.material.map.needsUpdate = true;
+            if (card.material.map && card.material.map.isVideoTexture) card.material.map.needsUpdate = true;
         }
 
         for (var j = 0; j < this.group.children.length; j++) {

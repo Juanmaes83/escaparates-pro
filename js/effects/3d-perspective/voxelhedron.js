@@ -25,6 +25,18 @@
         pyramidGroup.userData = { isPyramid: true };
 
         var imgIdx = 0;
+        var textureCache = {};
+
+        function textureFor(index) {
+            if (textureCache[index]) return textureCache[index];
+            var media = mediaList[index];
+            if (!media || !media.element) return null;
+            textureCache[index] = EP.Media && EP.Media.createTexture ?
+                EP.Media.createTexture(media, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }) :
+                new THREE.Texture(media.element);
+            textureCache[index].needsUpdate = true;
+            return textureCache[index];
+        }
 
         for (var layer = 0; layer < numLayers * 2 - 1; layer++) {
             var distFromCenter = Math.abs(layer - (numLayers - 1));
@@ -40,12 +52,7 @@
                     if (!isEdge && blocksPerSide > 2) continue;
 
                     var mi = imgIdx % mediaList.length; imgIdx++;
-                    var tex = null;
-                    if (mediaList[mi].element) {
-                        tex = new THREE.Texture(mediaList[mi].element);
-                        tex.needsUpdate = true;
-                        tex.minFilter = THREE.LinearFilter;
-                    }
+                    var tex = textureFor(mi);
 
                     var boxGeo = new THREE.BoxGeometry(bSize, bSize, bSize);
                     var materials = [];
@@ -117,7 +124,7 @@
                 if (block.userData.isBlock && block.material) {
                     var mats = Array.isArray(block.material) ? block.material : [block.material];
                     for (var m = 0; m < mats.length; m++) {
-                        if (mats[m].map) mats[m].map.needsUpdate = true;
+                        if (mats[m].map && mats[m].map.isVideoTexture) mats[m].map.needsUpdate = true;
                     }
                 }
             });

@@ -23,15 +23,22 @@
         var ch = cardScale * 1.7;
 
         this._cards = [];
+        var textureCache = {};
+
+        function textureFor(index) {
+            if (textureCache[index]) return textureCache[index];
+            var media = mediaList[index];
+            if (!media || !media.element) return null;
+            textureCache[index] = EP.Media && EP.Media.createTexture ?
+                EP.Media.createTexture(media, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter }) :
+                new THREE.Texture(media.element);
+            textureCache[index].needsUpdate = true;
+            return textureCache[index];
+        }
 
         for (var i = 0; i < count; i++) {
             var mi = i % mediaList.length;
-            var tex = null;
-            if (mediaList[mi].element) {
-                tex = new THREE.Texture(mediaList[mi].element);
-                tex.needsUpdate = true;
-                tex.minFilter = THREE.LinearFilter;
-            }
+            var tex = textureFor(mi);
 
             var geo = EP.RoundedPlaneGeometry ? EP.RoundedPlaneGeometry(cw, ch, 0.08) : new THREE.PlaneGeometry(cw, ch);
             var mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, transparent: true, opacity: 0.95 });
@@ -102,7 +109,7 @@
             card.position.z += (card.userData.targetZ - card.position.z) * Math.min(dt * 5, 1);
             card.rotation.z += (card.userData.targetRotZ - card.rotation.z) * Math.min(dt * 4, 1);
 
-            if (card.material.map) card.material.map.needsUpdate = true;
+            if (card.material.map && card.material.map.isVideoTexture) card.material.map.needsUpdate = true;
         }
 
         var camDist = 5 + this._ch;

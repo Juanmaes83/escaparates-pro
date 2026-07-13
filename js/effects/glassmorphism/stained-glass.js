@@ -1,6 +1,6 @@
 (function() {
-    var effect = new EP.EffectBase('stained-glass', {
-        name: 'Stained Glass',
+    var effect = new EP.EffectBase('stained-glass-panels', {
+        name: 'Stained Glass Panels',
         category: 'glassmorphism',
         icon: '🪟',
         description: 'Vitral iluminado — paneles circulares semitransparentes con spotlights de color rotantes'

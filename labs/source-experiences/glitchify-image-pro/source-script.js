@@ -2465,7 +2465,9 @@ document.addEventListener("DOMContentLoaded", () => {
     hostDomains.push(window.location.hostname);
 
     const links = document.getElementsByTagName("a");
-    LR.utils.urlUtils.validateLinks(links, hostDomains);
+    if (window.LR && LR.utils && LR.utils.urlUtils && LR.utils.urlUtils.validateLinks) {
+        LR.utils.urlUtils.validateLinks(links, hostDomains);
+    }
 
     TweakpaneUtils.setEnabled(pane, false);
 
