@@ -49,7 +49,7 @@
         catalog.innerHTML = '';
         var header = document.createElement('div');
         header.className = 'ss-catalog-section-header';
-        header.textContent = 'Website Modules Lab - Premium 10';
+        header.textContent = 'Website Modules Lab - Premium 25';
         catalog.appendChild(header);
         EP.WebsiteModules.getAll().forEach(function(mod) {
             catalog.appendChild(makeCard(mod));
@@ -121,7 +121,7 @@
             wrap.appendChild(row);
         });
         if (noteEl) {
-            noteEl.innerHTML = 'Modulo premium aislado en iframe. Fuente MIT: <strong>' + mod.sourceFile + '</strong> de cinematic-site-components. <br><strong>Media:</strong> ' + (mod.mediaMap || 'usa los slots de media disponibles.') + '<br>Export final sin editor.';
+            noteEl.innerHTML = 'Modulo premium aislado en iframe. <strong>Referencia:</strong> ' + mod.sourceFile + '. <br><strong>Media:</strong> ' + (mod.mediaMap || 'usa los slots de media disponibles.') + '<br>Export final sin editor.';
         }
     }
 

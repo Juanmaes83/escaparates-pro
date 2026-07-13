@@ -1,9 +1,12 @@
+// Reflective City PRO
+// Rebuilt as a bounded raymarched city: real building faces and a reflective
+// ground plane, while retaining the existing registry id and control contract.
 (function() {
     var effect = new EP.EffectBase('reflective-city-pro', {
         name: 'Reflective City PRO',
         category: 'shader-premium',
         icon: 'RC',
-        description: 'Ciudad reflectante procedural con calles infinitas, brillo controlado y camara cinematica'
+        description: 'Ciudad procedural en profundidad con edificios raymarched, calles reflectantes y camara cinematica'
     }, [
         { key: 'outputSize', type: 'range', min: 50, max: 800, default: 100, step: 10, label: 'Output Size', unit: '%' },
         { key: 'playbackMotion', type: 'select', options: [{ v: 'on', l: 'Motion On' }, { v: 'off', l: 'Motion Off' }], default: 'on', label: 'Playback Motion' },
@@ -17,62 +20,26 @@
         { key: 'background', type: 'color', default: '#030712', label: 'Background' }
     ]);
 
-    effect.capabilities = {
-        supportsMotionDirection: true,
-        supportsVideo: false,
-        usesCamera: true,
-        usesPostProcessing: false,
-        usesParticlesShaders: true,
-        mobileRisk: 'high',
-        minMedia: 0,
-        exportSafe: true,
-        hasErrorBoundary: true
-    };
+    effect.capabilities = { supportsMotionDirection: true, supportsVideo: false, usesCamera: true, usesPostProcessing: false, usesParticlesShaders: true, mobileRisk: 'high', minMedia: 0, exportSafe: true, hasErrorBoundary: true };
 
-    var vertexShader = 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }';
+    var vertexShader = 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}';
     var fragmentShader = [
-        'uniform float uTime;',
-        'uniform float uDensity;',
-        'uniform float uGlow;',
-        'uniform float uAngle;',
+        'uniform float uTime,uDensity,uGlow,uAngle;',
         'uniform vec2 uDirection;',
-        'uniform vec3 uAccent;',
-        'uniform vec3 uBackground;',
+        'uniform vec3 uAccent,uBackground;',
         'varying vec2 vUv;',
-        'mat2 rot(float a){ float s=sin(a), c=cos(a); return mat2(c,-s,s,c); }',
-        'float hash(vec2 p){ return fract(sin(dot(p, vec2(27.609,57.583))) * 43758.5453); }',
-        'float box(vec2 p, vec2 b){ vec2 d=abs(p)-b; return length(max(d,0.0))+min(max(d.x,d.y),0.0); }',
+        'mat2 rot(float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c);}',
+        'float hash(vec2 p){return fract(sin(dot(p,vec2(27.609,57.583)))*43758.5453);}',
+        'float box3(vec3 p,vec3 b){vec3 d=abs(p)-b;return length(max(d,0.))+min(max(d.x,max(d.y,d.z)),0.);}',
+        'float city(vec3 p){vec2 id=floor(p.xz);vec2 cell=fract(p.xz)-.5;float h=.42+hash(id)*2.35;float inset=.27+hash(id+5.3)*.08;return min(box3(vec3(cell.x,p.y-h*.5,cell.y),vec3(.5-inset,h*.5,.5-inset)),p.y);}',
+        'vec3 normal(vec3 p){vec2 e=vec2(.003,0.);return normalize(vec3(city(p+e.xyy)-city(p-e.xyy),city(p+e.yxy)-city(p-e.yxy),city(p+e.yyx)-city(p-e.yyx)));}',
         'void main(){',
-        '  vec2 uv = vUv*2.0-1.0;',
-        '  uv.x *= 1.777;',
-        '  float angle = mix(0.18, 1.12, clamp(uAngle,0.0,2.0)*0.5);',
-        '  vec2 dir = length(uDirection) < 0.1 ? vec2(1.0,0.35) : normalize(uDirection);',
-        '  vec2 p = uv;',
-        '  p.y += angle;',
-        '  p *= rot(0.14*sin(uTime*0.17));',
-        '  p += dir * uTime * 0.23;',
-        '  float scale = mix(3.4, 8.0, clamp(uDensity,0.0,1.8)/1.8);',
-        '  vec2 grid = p * scale;',
-        '  vec2 id = floor(grid);',
-        '  vec2 f = fract(grid)-0.5;',
-        '  float h = hash(id);',
-        '  float height = 0.10 + h*0.48;',
-        '  float tower = smoothstep(0.03, 0.0, box(f, vec2(0.24, height)));',
-        '  float windowRows = smoothstep(0.015, 0.0, abs(fract((f.y+0.5)*8.0)-0.5)-0.18);',
-        '  float windowCols = smoothstep(0.015, 0.0, abs(fract((f.x+0.5)*5.0)-0.5)-0.20);',
-        '  float windows = windowRows * windowCols * tower;',
-        '  float street = smoothstep(0.025, 0.0, abs(f.x)-0.46) + smoothstep(0.025, 0.0, abs(f.y)-0.46);',
-        '  float horizon = smoothstep(1.1, -0.25, uv.y);',
-        '  float refl = smoothstep(0.85, -0.8, uv.y) * (0.45 + 0.55*sin((uv.x+uTime)*18.0));',
-        '  vec3 base = mix(uBackground, vec3(0.015,0.028,0.055), horizon);',
-        '  vec3 glass = mix(vec3(0.04,0.07,0.09), uAccent, 0.42 + h*0.32);',
-        '  vec3 col = base;',
-        '  col = mix(col, glass, tower*horizon);',
-        '  col += uAccent * windows * 0.45 * uGlow;',
-        '  col += uAccent * street * 0.08 * uGlow;',
-        '  col += uAccent * tower * refl * 0.08 * uGlow;',
-        '  col *= smoothstep(1.7, 0.15, length(uv*vec2(0.75,1.0)));',
-        '  gl_FragColor = vec4(pow(col, vec3(0.82)), 1.0);',
+        ' vec2 uv=vUv*2.-1.;uv.x*=1.777;float angle=mix(.18,1.12,clamp(uAngle,0.,2.)*.5);vec2 dir=length(uDirection)<.1?vec2(1.,.35):normalize(uDirection);float density=mix(.72,1.9,clamp(uDensity,0.,1.8)/1.8);',
+        ' vec3 ro=vec3(dir.x*uTime*.42,1.72+angle*.55,dir.y*uTime*.42);vec3 rd=normalize(vec3(uv.x*.82,uv.y*.36-.045,-1.35));rd.xz*=rot(-.34+dir.x*.18);float travel=.28;vec3 p=ro;float hit=0.;',
+        ' for(int i=0;i<40;i++){p=ro+rd*travel;vec3 scaled=vec3(p.x*density,p.y*density,p.z*density);float d=city(scaled)/density;if(d<.008){hit=1.;break;}travel+=d*.72;if(travel>28.)break;}',
+        ' vec3 sky=mix(uBackground,vec3(.055,.13,.19),smoothstep(-1.,1.,uv.y));vec3 col=sky;',
+        ' if(hit>.5){vec3 n=normal(vec3(p.x*density,p.y*density,p.z*density));float fres=pow(1.-max(0.,dot(n,-rd)),3.);float light=max(.15,dot(n,normalize(vec3(-.5,.8,-.4))));vec2 block=floor(p.xz*density);float windows=step(.79,fract((p.y+block.x*2.1+block.y*1.3)*7.));vec3 concrete=mix(vec3(.025,.04,.055),uAccent,.16+fres*.34);col=concrete*light+uAccent*windows*uGlow*.34;if(p.y<.035){float shimmer=.5+.5*sin((p.x+p.z)*22.+uTime*3.);col=mix(col,uAccent*(.08+.16*shimmer)*uGlow,.62);}}',
+        ' col=mix(col,sky,smoothstep(11.,27.,travel));col+=uAccent*.075*uGlow*pow(max(0.,1.-length(uv)),3.);col*=smoothstep(1.55,.15,length(uv));gl_FragColor=vec4(pow(max(col,0.),vec3(.78)),1.);',
         '}'
     ].join('\n');
 
@@ -87,17 +54,8 @@
     effect.build = function() {
         var group = new THREE.Group();
         this._mesh = new THREE.Mesh(new THREE.PlaneGeometry(12.5, 7.1), new THREE.ShaderMaterial({
-            uniforms: {
-                uTime: { value: 0 },
-                uDensity: { value: this.settings.cityDensity / 100 },
-                uGlow: { value: this.settings.reflectionGlow / 100 },
-                uAngle: { value: this.settings.cameraAngle / 100 },
-                uDirection: { value: directionVector(this.settings.motionDirection) },
-                uAccent: { value: new THREE.Color(this.settings.accentColor) },
-                uBackground: { value: new THREE.Color(this.settings.background) }
-            },
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader
+            uniforms: { uTime: { value: 0 }, uDensity: { value: this.settings.cityDensity / 100 }, uGlow: { value: this.settings.reflectionGlow / 100 }, uAngle: { value: this.settings.cameraAngle / 100 }, uDirection: { value: directionVector(this.settings.motionDirection) }, uAccent: { value: new THREE.Color(this.settings.accentColor) }, uBackground: { value: new THREE.Color(this.settings.background) } },
+            vertexShader: vertexShader, fragmentShader: fragmentShader
         }));
         group.add(this._mesh);
         this._handlesOutputSize = true;
@@ -121,10 +79,6 @@
         EP.Core.camera.lookAt(0, 0, 0);
     };
 
-    effect.dispose = function() {
-        this._mesh = null;
-        EP.EffectBase.prototype.dispose.call(this);
-    };
-
+    effect.dispose = function() { this._mesh = null; EP.EffectBase.prototype.dispose.call(this); };
     EP.Registry.register(effect);
 })();

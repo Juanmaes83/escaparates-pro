@@ -228,6 +228,13 @@ EP.ScrollSectionsUI = (function() {
             { key: 'burnLabel', type: 'text', label: 'Texto botón quemar', default: 'Confirmar y quemar' },
             { key: 'fields', type: 'itemlist2', label: 'Campos del popup — Etiqueta | Valor por defecto (hasta 3, una por línea)',
               default: [] }
+        ],
+        'captured-panels-narrative-pro': [
+            { key: 'title', type: 'text', label: 'Marca', default: 'Escaparate' },
+            { key: 'eyebrow', type: 'text', label: 'Etiqueta superior', default: 'Narrativa capturada' },
+            { key: 'headline', type: 'text', label: 'Titular de apertura', default: 'Lo que te atrapa, permanece.' },
+            { key: 'closing', type: 'text', label: 'Titular de cierre', default: 'Tu historia ya tiene forma.' },
+            { key: 'cta', type: 'text', label: 'Texto CTA', default: 'Empezar una conversación' }
         ]
     };
 

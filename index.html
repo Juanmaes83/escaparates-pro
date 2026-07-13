@@ -43,6 +43,9 @@
     <div id="website-modules-stage">
         <iframe id="wm-preview-frame" title="Vista previa Website Module"></iframe>
     </div>
+    <div id="sector-blueprints-stage">
+        <iframe id="sb-preview-frame" title="Vista previa Sector Website Blueprint"></iframe>
+    </div>
 
     <!-- Top bar -->
     <header id="top-bar">
@@ -52,6 +55,7 @@
                 <button class="mode-btn active" data-mode="effects" id="mode-btn-effects" title="Efectos Three.js en canvas">🎬 Efectos</button>
                 <button class="mode-btn" data-mode="scroll-sections" id="mode-btn-scroll-sections" title="Secciones de scroll para web (GSAP)">📜 Scroll Sections</button>
                 <button class="mode-btn" data-mode="website-modules" id="mode-btn-website-modules" title="Modulos web cinematograficos aislados">Web Modules</button>
+                <button class="mode-btn" data-mode="sector-blueprints" id="mode-btn-sector-blueprints" title="Plantillas web completas por sector">Blueprints</button>
                 <button class="mode-btn" data-mode="rubik-tools" id="mode-btn-rubik-tools" title="Herramientas RUBIK SOTA (propias, aisladas)">🧬 RUBIK SOTA</button>
             </div>
         </div>
@@ -127,6 +131,7 @@
         </div>
         <div id="scroll-sections-catalog" style="display:none;"></div>
         <div id="website-modules-catalog" style="display:none;"></div>
+        <div id="sector-blueprints-catalog" style="display:none;"></div>
     </aside>
 
     <!-- Right panel: Properties -->
@@ -161,6 +166,12 @@
             </div>
             <textarea id="wm-embed-result" class="final-output-code" readonly placeholder="El iframe/embed final aparecera aqui..." style="display:none;"></textarea>
             <div id="wm-source-note" class="ss-source-note"></div>
+        </div>
+        <div class="panel-section" id="sector-blueprints-props" style="display:none;">
+            <h3 id="sb-props-title">SECTOR WEBSITE BLUEPRINT</h3>
+            <div id="sb-props-fields"></div>
+            <button id="sb-export-html-btn" class="top-action" style="width:100%;margin-top:10px;">HTML final</button>
+            <div id="sb-source-note" class="ss-source-note"></div>
         </div>
         <div class="panel-section">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -909,6 +920,7 @@
     <script src="js/scroll-sections/zoom-parallax-section.js"></script>
     <script src="js/scroll-sections/kinetic-text-trigger-section.js"></script>
     <script src="js/scroll-sections/curtain-reveal-section.js"></script>
+    <script src="js/scroll-sections/captured-panels-narrative-pro.js"></script>
     <script src="js/scroll-sections/grid-reveal-section.js"></script>
     <script src="js/scroll-sections/electric-arc-section.js"></script>
     <script src="js/scroll-sections/force-field-section.js"></script>
@@ -925,6 +937,8 @@
     <script src="js/rubik-tools-ui.js"></script>
     <script src="js/website-modules.js"></script>
     <script src="js/website-modules-ui.js"></script>
+    <script src="js/sector-blueprints.js"></script>
+    <script src="js/sector-blueprints-ui.js"></script>
     <!-- FASE G — Kinetic Images + grid -->
     <script src="js/effects/kinetic-images/paper-scroll.js"></script>
     <script src="js/effects/kinetic-images/spiral-ribbon.js"></script>
@@ -952,6 +966,7 @@
     <script src="js/effects/shader-premium/fiesta-truchets-pro.js"></script>
     <script src="js/effects/shader-premium/deco-tile-pro.js"></script>
     <script src="js/effects/shader-premium/reflective-city-pro.js"></script>
+    <script src="js/effects/shader-premium/ping-pong-feedback-pro.js"></script>
     <script src="js/effects/shader-premium/quadtree-eyes-pro.js"></script>
     <script src="js/effects/shader-premium/shader-doodle-gradient-pro.js"></script>
     <script src="js/effects/shader-premium/mutating-field-pro.js"></script>

@@ -342,3 +342,18 @@ body.mode-website-modules #scroll-sections-catalog,
 body.mode-website-modules #effects-only-sections { display: none !important; }
 
 body.mode-website-modules #website-modules-catalog { display: block !important; }
+
+/* Sector Website Blueprints: complete commercial sites, isolated from effects. */
+#sector-blueprints-stage {
+    display: none; position: fixed; top: var(--top-h); left: var(--panel-w); right: var(--panel-w); bottom: 0;
+    background: #050507;
+}
+#sector-blueprints-stage.active { display: block; }
+#sector-blueprints-stage iframe { width: 100%; height: 100%; border: 0; display: block; background: #050507; }
+body.mode-sector-blueprints #canvas-container,
+body.mode-sector-blueprints #timeline-bar,
+body.mode-sector-blueprints #effects-catalog-body,
+body.mode-sector-blueprints #scroll-sections-catalog,
+body.mode-sector-blueprints #website-modules-catalog,
+body.mode-sector-blueprints #effects-only-sections { display: none !important; }
+body.mode-sector-blueprints #sector-blueprints-catalog { display: block !important; }

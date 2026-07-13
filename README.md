@@ -20,7 +20,7 @@ Escaparates Pro permite crear:
 
 Website Modules Lab es un modo independiente para probar, personalizar y exportar secciones web cinematograficas. No usa el motor Three.js de efectos, no toca Scroll Sections y no carga los 30 modulos de golpe en `index.html`.
 
-La version actual incluye 10 modulos premium adaptados desde `cinematic-site-components`:
+La version actual incluye 25 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas:
 
 - Text Mask Reveal.
 - Sticky Stack Narrative.
@@ -32,12 +32,52 @@ La version actual incluye 10 modulos premium adaptados desde `cinematic-site-com
 - Split Scroll Narrative.
 - Image Trail Campaign.
 - Flip Cards Product Grid.
+- Coverflow Carousel PRO.
+- Sticky Card Stack PRO.
+- Kinetic Marquee PRO.
+- Text Scramble Decode PRO.
+- View Transition Morph PRO.
+- Curtain Reveal Campaign PRO.
+- Magnetic Grid Showcase PRO.
+- Mesh Gradient Atmosphere PRO.
+- Glitch Campaign System PRO.
+- Particle CTA Celebration PRO.
+- Image Cloud Canvas PRO.
+- Drag Pan Editorial Gallery PRO.
+- Chromatic Brand Universe PRO.
+- Brand Line Manifesto PRO.
+- RGB Motion Triptych PRO.
 
 Cada modulo se renderiza en un iframe aislado, con controles de headline, subtitle, CTA, URL, colores, fuente, branding textual, velocidad, intensidad, scroll length y media de fondo desde los slots de la plataforma.
 
 El segundo bloque suma comparadores before/after, spotlight reveal, acordeones horizontales/verticales, split scroll de columnas opuestas, estelas de imagen/video por cursor y cartas 3D con anverso/reverso. Todos deben exportarse como viewer final cerrado, con fallback movil y sin paneles de edicion.
 
-Exporta resultado final como HTML standalone, ZIP basico y embed iframe. El export conserva atribucion MIT a `cinematic-site-components` by Jay from RoboLabs / RoboNuggets.
+El tercer bloque suma carrusel coverflow 3D, cards sticky apiladas por scroll, bandas kinetic marquee reactivas, decode de texto con contadores y morph de cards de producto a detalle. Mantiene el mismo contrato: iframe aislado, personalizacion desde panel, media imagen/video y export final cerrado.
+
+El cuarto bloque convierte cinco interacciones visuales en piezas de campana: una apertura de cortina con replay, una galeria magnetica con fallback tactil, una atmosfera mesh de canvas ligera, un sistema glitch controlado y una CTA que recompensa cada accion con particulas. Todas aceptan branding, colores, texto y media imagen/video del panel.
+
+El quinto bloque suma navegacion espacial, narrativa cromatica y manifiestos de marca: nube 3D con inercia y zoom, canvas editorial de arrastre, cinco capitulos de color por scroll y una linea SVG que dibuja el recorrido de una marca. Los cuatro son viewers aislados, con media imagen/video y salida final sin editor.
+
+RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB sincronizadas que se separan con cursor o gesto tactil. Es una implementacion independiente del patron de interaccion, no exporta ni depende de los videos de la referencia.
+
+Exporta resultado final como HTML standalone, ZIP basico y embed iframe. Los modulos adaptados desde `cinematic-site-components` conservan su atribucion MIT; los modulos independientes identifican su referencia sin exportar assets ajenos.
+
+## Sector Website Blueprints
+
+Sector Website Blueprints es un modo separado para construir webs completas de campana o ecommerce dentro de un iframe aislado. El panel conserva los controles comunes de marca, titular, narrativa, CTA, URL, color y media; el resultado exportado es una web final cerrada, sin paneles de Escaparates Pro.
+
+Plantillas aprobadas en esta tanda:
+
+- **Retail Product Launch PRO**: lanzamiento de producto con hero, coleccion, filtros, fichas, bolsa lateral e historia de marca.
+- **Fashion Lookbook PRO**: lookbook editorial con cambio de looks, menu, busqueda, filtros, wishlist, vista rapida, tallas, bolsa, manifiesto y newsletter.
+
+Los assets de los slots se reutilizan en hero, galeria y fichas; cuando el slot contiene video, el viewer usa video en lugar de una imagen. El catalogo tambien contiene tres conceptos piloto (turismo, inmobiliaria y eventos) que no deben promocionarse como plantillas premium terminadas hasta su adaptacion completa y su revision visual.
+
+## Nuevas Piezas Aprobadas
+
+- **Captured Panels Narrative PRO** en Scroll Sections: composicion narrativa de cinco paneles con imagen o video, navegacion por indice, lectura sticky en escritorio y secuencia accesible en movil.
+- **Ping Pong Feedback PRO**: shader con buffers de feedback reales, fuente de imagen/video, refraccion hexagonal, deriva y separacion cromatica.
+- **Reflective City PRO**: ciudad procedural raymarched con edificios, calles, profundidad y reflejos; no utiliza media porque el motivo es generativo.
 
 ## Conceptos Clave
 
@@ -533,6 +573,7 @@ Efectos disponibles:
 - Infinity Zoom PRO.
 - Mutating Field PRO.
 - Particulate Shatter PRO.
+- Ping Pong Feedback PRO.
 - Quadtree Eyes PRO.
 - Reflective City PRO.
 - Shader Clock PRO.

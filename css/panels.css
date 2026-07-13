@@ -386,6 +386,7 @@ button:disabled {
 }
 #website-modules-catalog::-webkit-scrollbar { width: 7px; }
 #website-modules-catalog::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); border-radius: 4px; }
+#sector-blueprints-catalog { padding:10px; overflow-y:auto; flex:1 1 auto; min-height:0; }
 .wm-export-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

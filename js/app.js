@@ -18,6 +18,7 @@
         try { if (EP.ScrollSectionsUI) EP.ScrollSectionsUI.init(); } catch(e) { console.error('ScrollSectionsUI.init failed:', e); }
         try { if (EP.RubikToolsUI) EP.RubikToolsUI.init(); } catch(e) { console.error('RubikToolsUI.init failed:', e); }
         try { if (EP.WebsiteModulesUI) EP.WebsiteModulesUI.init(); } catch(e) { console.error('WebsiteModulesUI.init failed:', e); }
+        try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
