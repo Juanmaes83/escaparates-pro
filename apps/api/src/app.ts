@@ -11,6 +11,7 @@ import { healthRoutes } from './routes/health.js'
 import { readyRoutes } from './routes/ready.js'
 import { v1Routes } from './routes/v1.js'
 import { statusRoutes } from './routes/status.js'
+import { internalDbSchemaRoutes } from './routes/internal-db-schema.js'
 
 export async function buildApp() {
   const app = fastify({
@@ -62,6 +63,7 @@ export async function buildApp() {
   await app.register(readyRoutes)
   await app.register(v1Routes)
   await app.register(statusRoutes)
+  await app.register(internalDbSchemaRoutes)
 
   return app
 }

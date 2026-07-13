@@ -20,6 +20,7 @@ const envSchema = z.object({
     })
     .optional(),
   CORS_ORIGINS: z.string().default(''),
+  INTERNAL_DEBUG_TOKEN: z.string().min(32).optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
