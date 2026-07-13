@@ -2,7 +2,7 @@ var EP = window.EP || {};
 window.EP = EP;
 
 EP.Core = (function() {
-    var scene, camera, renderer, composer, bloomPass, vignettePass, controls;
+    var scene, camera, renderer, composer, bloomPass, afterimagePass, vignettePass, controls;
     var displayGroup = null;
     var container;
     var aspectRatio = 16 / 9;
@@ -19,7 +19,9 @@ EP.Core = (function() {
         bloomStrength: 0.6,
         bloomRadius: 0.3,
         bloomThreshold: 0.7,
-        vignetteEnabled: false
+        vignetteEnabled: false,
+        afterimageEnabled: false,
+        afterimageDamp: 0.91
     };
     var settings = {
         backgroundColor: '#101014',
@@ -27,7 +29,9 @@ EP.Core = (function() {
         bloomStrength: 0.6,
         bloomRadius: 0.3,
         bloomThreshold: 0.7,
-        vignetteEnabled: false
+        vignetteEnabled: false,
+        afterimageEnabled: false,
+        afterimageDamp: 0.91
     };
 
     function init() {
@@ -110,6 +114,13 @@ EP.Core = (function() {
             bloomPass = null;
         }
 
+        if (settings.afterimageEnabled && typeof THREE.AfterimagePass === 'function') {
+            afterimagePass = new THREE.AfterimagePass(settings.afterimageDamp);
+            composer.addPass(afterimagePass);
+        } else {
+            afterimagePass = null;
+        }
+
         if (settings.vignetteEnabled) {
             vignettePass = new THREE.ShaderPass(THREE.VignetteShader);
             vignettePass.uniforms['offset'].value = 0.95;
@@ -135,9 +146,12 @@ EP.Core = (function() {
         if (profile && profile.lowPower) {
             opts.bloomEnabled = false;
             opts.vignetteEnabled = false;
+            opts.afterimageEnabled = false;
         }
         if (typeof opts.bloomEnabled === 'boolean') settings.bloomEnabled = opts.bloomEnabled;
         if (typeof opts.vignetteEnabled === 'boolean') settings.vignetteEnabled = opts.vignetteEnabled;
+        if (typeof opts.afterimageEnabled === 'boolean') settings.afterimageEnabled = opts.afterimageEnabled;
+        if (typeof opts.afterimageDamp === 'number') settings.afterimageDamp = Math.min(0.98, Math.max(0, opts.afterimageDamp));
         if (typeof opts.bloomStrength === 'number') settings.bloomStrength = opts.bloomStrength;
         if (typeof opts.bloomRadius === 'number') settings.bloomRadius = opts.bloomRadius;
         if (typeof opts.bloomThreshold === 'number') settings.bloomThreshold = opts.bloomThreshold;
@@ -165,6 +179,8 @@ EP.Core = (function() {
         settings.bloomRadius = defaultSettings.bloomRadius;
         settings.bloomThreshold = defaultSettings.bloomThreshold;
         settings.vignetteEnabled = defaultSettings.vignetteEnabled;
+        settings.afterimageEnabled = defaultSettings.afterimageEnabled;
+        settings.afterimageDamp = defaultSettings.afterimageDamp;
         rebuildComposer();
     }
 

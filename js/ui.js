@@ -229,6 +229,18 @@ EP.UI = (function() {
                     rebuildCurrent();
                 });
                 row.appendChild(textInput);
+            } else if (ctrl.type === 'file') {
+                var fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = ctrl.accept || '';
+                fileInput.setAttribute('aria-label', ctrl.label || 'Seleccionar archivo');
+                fileInput.addEventListener('change', function() {
+                    var file = this.files && this.files[0];
+                    if (!file) return;
+                    effect.setSetting(ctrl.key, file.name);
+                    if (typeof effect.handleFileControl === 'function') effect.handleFileControl(ctrl.key, file);
+                });
+                row.appendChild(fileInput);
             } else if (ctrl.type === 'slotGroups') {
                 row.className = 'control-row semantic-media-row';
                 row.removeChild(label);
