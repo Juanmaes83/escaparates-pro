@@ -10,6 +10,27 @@
         opts = opts || {};
         var title = opts.title || 'Escaparate';
         var media = EP.ScrollSections.fillMedia(mediaList, opts.itemCount || 6);
+        function placeholder(label, bg, fg) {
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">' +
+                '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+                '<stop stop-color="' + bg + '"/><stop offset="1" stop-color="' + fg + '"/></linearGradient></defs>' +
+                '<rect width="1200" height="800" fill="url(#g)"/>' +
+                '<circle cx="965" cy="150" r="220" fill="rgba(255,255,255,.18)"/>' +
+                '<circle cx="190" cy="690" r="260" fill="rgba(0,0,0,.18)"/>' +
+                '<text x="70" y="650" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="800" fill="white">' + label + '</text>' +
+                '<text x="76" y="710" font-family="Arial, Helvetica, sans-serif" font-size="28" letter-spacing="10" fill="rgba(255,255,255,.72)">CANVAS SLICE GALLERY</text>' +
+                '</svg>'
+            );
+        }
+        if (!media.length) {
+            media = [
+                { type: 'image', url: placeholder('ESCAPARATE', '#101827', '#5b7cfa') },
+                { type: 'image', url: placeholder('PREMIUM', '#1d1531', '#d487ff') },
+                { type: 'image', url: placeholder('MARCA', '#062a2c', '#f8c776') },
+                { type: 'image', url: placeholder('STORY', '#221315', '#fb7867') }
+            ];
+        }
         var urlsJson = JSON.stringify(media.map(function(m) { return m.url; }));
 
         return '' +
@@ -80,6 +101,8 @@
 '    this.ctx2 = this.canvas.getContext("2d");\n' +
 '    this.image = null;\n' +
 '    this.dataArr = [];\n' +
+'    this.drawWidth = 0;\n' +
+'    this.drawHeight = 0;\n' +
 '    this.isLoaded = false;\n' +
 '    this.startTime = 0;\n' +
 '  }\n' +
@@ -107,22 +130,21 @@
 '          ih = iw / ratio;\n' +
 '        }\n' +
 '      }\n' +
-'      self.canvas.width = iw; self.canvas.height = ih;\n' +
-'      self.ctx2.clearRect(0, 0, iw, ih);\n' +
-'      self.ctx2.drawImage(self.image, 0, 0, iw, ih);\n' +
+'      self.canvas.width = Math.max(1, Math.round(iw)); self.canvas.height = Math.max(1, Math.round(ih));\n' +
+'      self.drawWidth = self.canvas.width; self.drawHeight = self.canvas.height;\n' +
 '      self.getImageData();\n' +
 '      self.isLoaded = true;\n' +
 '    });\n' +
+'    this.image.addEventListener("error", function() { self.isLoaded = false; });\n' +
 '  };\n' +
 '  DrawMainImage.prototype.getImageData = function() {\n' +
 '    this.dataArr = [];\n' +
 '    var preHeight = 0, addHeight = 0;\n' +
-'    for (var y = 0; y < this.canvas.height; y += addHeight) {\n' +
+'    for (var y = 0; y < this.drawHeight; y += addHeight) {\n' +
 '      addHeight = Utilities.randomInt(6, 22);\n' +
-'      if (preHeight + addHeight > this.canvas.height) addHeight = Math.floor(this.canvas.height - preHeight);\n' +
+'      if (preHeight + addHeight > this.drawHeight) addHeight = Math.floor(this.drawHeight - preHeight);\n' +
 '      if (addHeight <= 0) break;\n' +
-'      var imgData = this.ctx2.getImageData(0, preHeight, this.canvas.width, addHeight);\n' +
-'      this.dataArr.push({ image: imgData, height: preHeight, offset: (Math.random() - 0.5) * this.width * 0.9 });\n' +
+'      this.dataArr.push({ sy: preHeight, sh: addHeight, height: preHeight, offset: (Math.random() - 0.5) * this.width * 0.9 });\n' +
 '      preHeight += addHeight;\n' +
 '    }\n' +
 '  };\n' +
@@ -131,8 +153,8 @@
 '    var elapsed = now - this.startTime;\n' +
 '    var t = 1.0 - Math.min(elapsed * 0.0016, 1.0);\n' +
 '    var e = this.ease(t);\n' +
-'    var cx = this.width / 2 - this.canvas.width / 2;\n' +
-'    var cy = this.height / 2 - this.canvas.height / 2;\n' +
+'    var cx = this.width / 2 - this.drawWidth / 2;\n' +
+'    var cy = this.height / 2 - this.drawHeight / 2;\n' +
 '    for (var i = 0; i < this.dataArr.length; i++) {\n' +
 '      var band = this.dataArr[i];\n' +
 '      var ox;\n' +
@@ -141,7 +163,11 @@
 '      } else {\n' +
 '        ox = band.offset * e;\n' +
 '      }\n' +
-'      this.ctx.putImageData(band.image, Math.round(cx + ox), Math.round(cy + band.height));\n' +
+'      try {\n' +
+'        var srcY = band.sy / this.drawHeight * this.image.height;\n' +
+'        var srcH = band.sh / this.drawHeight * this.image.height;\n' +
+'        this.ctx.drawImage(this.image, 0, srcY, this.image.width, srcH, Math.round(cx + ox), Math.round(cy + band.height), this.drawWidth, band.sh);\n' +
+'      } catch (err) {}\n' +
 '    }\n' +
 '  };\n' +
 '\n' +
