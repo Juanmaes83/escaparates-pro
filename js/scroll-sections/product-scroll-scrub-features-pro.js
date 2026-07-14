@@ -298,7 +298,6 @@
         name: 'Product Scroll Storytelling PRO',
         icon: 'PS',
         description: 'Presentación cinematográfica de producto con vídeo sincronizado al scroll, beneficios progresivos, barra de avance y CTA comercial.',
-        sourceUrl: 'https://github.com/Juanmaes83/AirPods-Max-Symphony-of-Silence-SoundStudio',
         build: build
     });
 })();
