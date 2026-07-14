@@ -23,21 +23,21 @@
             name: 'RUBIK SOTA Particles Engine v5',
             icon: '✨',
             desc: 'Motor de partículas propio que reconstruye imágenes en 3D con alta resolución.',
-            src: 'labs/rubik-sota-tools/particles-engine-v5/index.html'
+            src: 'labs/rubik-sota-tools/particles-engine-v5/'
         },
         {
             id: 'catalogo-inmersivo',
             name: 'RUBIK SOTA Catálogo Inmersivo',
             icon: '🗂️',
             desc: 'Motor de metaverso propio (PixiJS + GSAP) para catálogos de producto inmersivos y navegables.',
-            src: 'labs/rubik-sota-tools/catalogo-inmersivo/index.html'
+            src: 'labs/rubik-sota-tools/catalogo-inmersivo/'
         },
         {
             id: 'pin-mapping-studio-pro',
             name: 'Pin Mapping Studio PRO',
             icon: 'PIN',
             desc: 'Herramienta visual de hotspots: compara dos crops, mantiene posicion y escala, permite lupa, arrastre y JSON final.',
-            src: 'labs/rubik-sota-tools/pin-mapping-studio-pro/index.html'
+            src: 'labs/rubik-sota-tools/pin-mapping-studio-pro/'
         }
     ];
 
