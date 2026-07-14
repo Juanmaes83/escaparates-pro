@@ -241,6 +241,30 @@ EP.ScrollSectionsUI = (function() {
             { key: 'headline', type: 'text', label: 'Titular de apertura', default: 'Lo que te atrapa, permanece.' },
             { key: 'closing', type: 'text', label: 'Titular de cierre', default: 'Tu historia ya tiene forma.' },
             { key: 'cta', type: 'text', label: 'Texto CTA', default: 'Empezar una conversación' }
+        ],
+        'real-estate-bidirectional-video-story-pro': [
+            { key: 'brand', type: 'text', label: 'Marca', default: 'Escaparates Pro' },
+            { key: 'eyebrow', type: 'text', label: 'Etiqueta superior', default: 'Narrativa inmobiliaria' },
+            { key: 'phase1Title', type: 'text', label: 'Fase 1 — Título', default: 'El entorno' },
+            { key: 'phase1Subtitle', type: 'text', label: 'Fase 1 — Subtítulo', default: 'Ubicación, luz y paisaje que lo cambian todo.' },
+            { key: 'phase2Title', type: 'text', label: 'Fase 2 — Título', default: 'La arquitectura' },
+            { key: 'phase2Subtitle', type: 'text', label: 'Fase 2 — Subtítulo', default: 'Espacios pensados para vivir con amplitud.' },
+            { key: 'phase3Title', type: 'text', label: 'Fase 3 — Título', default: 'Los detalles' },
+            { key: 'phase3Subtitle', type: 'text', label: 'Fase 3 — Subtítulo', default: 'Materiales, acabados y calidad en cada rincón.' },
+            { key: 'phase4Title', type: 'text', label: 'Fase 4 — Título', default: 'Tu nuevo hogar' },
+            { key: 'phase4Subtitle', type: 'text', label: 'Fase 4 — Subtítulo', default: 'Una propiedad que se siente tuya desde el primer momento.' },
+            { key: 'ctaLabel', type: 'text', label: 'Texto CTA', default: 'Solicitar visita' },
+            { key: 'ctaUrl', type: 'text', label: 'URL CTA', default: '#' },
+            { key: 'scrollLength', type: 'range', label: 'Longitud de scroll', min: 300, max: 900, step: 10, default: 500, suffix: ' vh' },
+            { key: 'scrubSmoothing', type: 'range', label: 'Suavizado scrub', min: 0.03, max: 0.30, step: 0.01, default: 0.12 },
+            { key: 'playbackMode', type: 'text', label: 'Modo reproducción (forward | forward-reverse | loop)', default: 'forward-reverse' },
+            { key: 'overlayStrength', type: 'range', label: 'Oscurecimiento', min: 0, max: 0.85, step: 0.01, default: 0.45 },
+            { key: 'textPosition', type: 'text', label: 'Posición texto (center | left | right)', default: 'center' },
+            { key: 'showPhaseDots', type: 'text', label: 'Mostrar dots de fase (true | false)', default: 'true' },
+            { key: 'showDirectionHint', type: 'text', label: 'Mostrar indicador de dirección (true | false)', default: 'true' },
+            { key: 'showProgress', type: 'text', label: 'Mostrar barra de progreso (true | false)', default: 'true' },
+            { key: 'accentColor', type: 'text', label: 'Color de acento', default: '#d4af37' },
+            { key: 'textColor', type: 'text', label: 'Color de texto', default: '#ffffff' }
         ]
     };
 
