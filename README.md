@@ -4,6 +4,28 @@ Escaparates Pro es una plataforma visual para crear piezas inmersivas a partir d
 
 La idea principal es sencilla: el usuario trabaja dentro del editor, pero el cliente recibe solo la pieza final. Nunca debe recibir la herramienta de generacion con sus paneles, controles internos o seleccion de efectos editable.
 
+## Cloud Login Y Billing
+
+El frontend real incluye un panel de cuenta conectado a la API:
+
+- `POST /v1/auth/register`
+- `POST /v1/auth/login`
+- `GET /v1/auth/me`
+- `POST /v1/auth/logout`
+- `GET /v1/billing/status`
+- `POST /v1/billing/checkout`
+
+La API usa email + password, sesiones con refresh token bearer y PostgreSQL. Cada nuevo usuario recibe un workspace `free` por defecto para que el plan y el billing tengan un estado comercial claro.
+
+Billing Foundation usa Stripe Checkout para preparar upgrade a Pro. No activa cobros reales hasta configurar en Railway:
+
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PRICE_PRO_MONTHLY`
+- `APP_PUBLIC_URL`
+- `CORS_ORIGINS`
+
+Para que el login funcione desde GitHub Pages o local, `CORS_ORIGINS` debe incluir los origenes exactos del frontend, por ejemplo `https://juanmaes83.github.io,http://127.0.0.1:8898,http://localhost:8898`.
+
 ## Que Se Puede Crear
 
 Escaparates Pro permite crear:

@@ -21,6 +21,9 @@ const envSchema = z.object({
     .optional(),
   CORS_ORIGINS: z.string().default(''),
   INTERNAL_DEBUG_TOKEN: z.string().min(32).optional(),
+  APP_PUBLIC_URL: z.string().url().default('https://juanmaes83.github.io/escaparates-pro/'),
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_PRICE_PRO_MONTHLY: z.string().min(1).optional(),
 })
 
 const parsed = envSchema.safeParse(process.env)
