@@ -37,3 +37,26 @@ test('billing checkout requires authentication', async () => {
     await app.close()
   }
 })
+
+test('stripe webhook is closed when not configured', async () => {
+  const app = await buildApp()
+
+  try {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/billing/webhook',
+      headers: {
+        'stripe-signature': 'test-signature',
+      },
+      payload: {
+        id: 'evt_test',
+        type: 'checkout.session.completed',
+      },
+    })
+
+    assert.equal(response.statusCode, 503)
+    assert.equal(response.json().error.code, 'WEBHOOK_NOT_CONFIGURED')
+  } finally {
+    await app.close()
+  }
+})

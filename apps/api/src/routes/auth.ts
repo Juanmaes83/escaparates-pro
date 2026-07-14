@@ -9,6 +9,7 @@ import {
   toPublicUser,
 } from '../lib/auth-context.js'
 import { buildErrorResponse } from '../lib/errors.js'
+import { recordRegistrationLegalAcceptance } from '../lib/legal.js'
 import { hashPassword, normalizeEmail, verifyPassword } from '../lib/password.js'
 import {
   createRefreshToken,
@@ -21,6 +22,7 @@ const registerSchema = z.object({
   email: z.string().email().max(320).transform(normalizeEmail),
   password: z.string().min(8).max(256),
   name: z.string().trim().min(1).max(120).optional(),
+  termsAccepted: z.literal(true),
 })
 
 const loginSchema = z.object({
@@ -94,7 +96,8 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       throw new Error('User could not be created')
     }
 
-    await ensureDefaultWorkspace(user)
+    const workspace = await ensureDefaultWorkspace(user)
+    await recordRegistrationLegalAcceptance(request, user.id, workspace.id)
 
     const { refreshToken, session } = await createSession(user.id)
 

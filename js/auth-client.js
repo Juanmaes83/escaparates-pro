@@ -67,7 +67,8 @@
         return {
             email: ($('auth-email') && $('auth-email').value || '').trim(),
             password: ($('auth-password') && $('auth-password').value || ''),
-            name: ($('auth-name') && $('auth-name').value || '').trim()
+            name: ($('auth-name') && $('auth-name').value || '').trim(),
+            termsAccepted: Boolean($('auth-terms') && $('auth-terms').checked)
         };
     }
 
@@ -172,12 +173,29 @@
 
         try {
             state.billing = await request('/v1/billing/status', { method: 'GET' });
+            await refreshEntitlements();
         } catch (err) {
             state.billing = null;
             setStatus('Login correcto, pero no se pudo leer billing: ' + err.message, 'error');
         }
         syncPlanGate();
         render();
+    }
+
+    async function refreshEntitlements() {
+        if (!state.user) return;
+        try {
+            var data = await request('/v1/entitlements', { method: 'GET' });
+            if (data && data.entitlements) {
+                state.billing = Object.assign({}, state.billing || {}, {
+                    entitlements: data.entitlements,
+                    plan: data.entitlements.plan,
+                    billingStatus: data.entitlements.billingStatus
+                });
+            }
+        } catch (err) {
+            setStatus('Login correcto, pero no se pudo leer entitlements: ' + err.message, 'error');
+        }
     }
 
     async function login() {
@@ -205,6 +223,10 @@
 
     async function register() {
         var credentials = getCredentials();
+        if (!credentials.termsAccepted) {
+            setStatus('Debes aceptar Terminos y Politica de privacidad para crear la cuenta.', 'error');
+            return;
+        }
         setBusy(true);
         try {
             var data = await request('/v1/auth/register', {
@@ -212,7 +234,8 @@
                 body: JSON.stringify({
                     email: credentials.email,
                     password: credentials.password,
-                    name: credentials.name || undefined
+                    name: credentials.name || undefined,
+                    termsAccepted: true
                 })
             });
             rememberSession(data);

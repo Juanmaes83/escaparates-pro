@@ -104,6 +104,9 @@ EP.PlanGate = (function() {
     }
 
     function normalizeBillingPlan(billing) {
+        if (billing && billing.entitlements && billing.entitlements.plan && plans[billing.entitlements.plan]) {
+            return billing.entitlements.plan;
+        }
         var rawPlan = billing && billing.plan ? String(billing.plan).toLowerCase() : 'free';
         var rawStatus = billing && billing.billingStatus ? String(billing.billingStatus).toLowerCase() : '';
         if (rawStatus === 'blocked' || rawStatus === 'suspended' || rawStatus === 'past_due') return 'blocked';
@@ -116,8 +119,25 @@ EP.PlanGate = (function() {
         authState.user = user || null;
         authState.billing = billing || null;
         currentId = user ? normalizeBillingPlan(billing) : 'demo';
+        applyServerEntitlements(billing && billing.entitlements);
         notify();
         return getState();
+    }
+
+    function applyServerEntitlements(entitlements) {
+        if (!entitlements || !entitlements.plan || !plans[entitlements.plan]) return;
+        var target = plans[entitlements.plan];
+        var limits = entitlements.limits || {};
+        var features = entitlements.features || {};
+        target.maxUserAssets = typeof limits.userAssets === 'number' ? limits.userAssets : target.maxUserAssets;
+        target.maxAssetMB = typeof limits.assetMb === 'number' ? limits.assetMb : target.maxAssetMB;
+        target.maxVideoSeconds = typeof limits.videoSeconds === 'number' ? limits.videoSeconds : target.maxVideoSeconds;
+        target.canUploadAssets = Boolean(features.uploadAssets);
+        target.canUploadLogo = Boolean(features.uploadLogo);
+        target.canExport = Boolean(features.exportBasic || features.exportPremium);
+        target.canPublish = Boolean(features.publish);
+        target.canUseDemoAssets = Boolean(features.demoAssets);
+        target.message = 'Plan ' + target.label + ': limites y permisos cargados desde el backend.';
     }
 
     function setUserAssetCount(count) {
