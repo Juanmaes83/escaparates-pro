@@ -82,6 +82,15 @@
         state.billing = null;
         state.token = null;
         localStorage.removeItem(TOKEN_KEY);
+        syncPlanGate();
+        render();
+        openPanel();
+    }
+
+    function syncPlanGate() {
+        if (window.EP && EP.PlanGate && typeof EP.PlanGate.setAuthState === 'function') {
+            EP.PlanGate.setAuthState(state.user, state.billing);
+        }
     }
 
     function render() {
@@ -90,14 +99,23 @@
         var upgradeBtn = $('auth-upgrade');
         var planLabel = $('auth-plan-label');
         var planCopy = $('auth-plan-copy');
+        var closeBtn = $('auth-close');
+        var requiresAuth = !state.user;
+
+        document.body.classList.toggle('auth-required', requiresAuth);
+        document.body.classList.toggle('auth-connected', Boolean(state.user));
 
         if (accountBtn) {
-            accountBtn.textContent = state.user ? state.user.email : 'Cuenta';
+            accountBtn.textContent = state.user ? state.user.email : 'Login';
             accountBtn.classList.toggle('auth-connected', Boolean(state.user));
         }
 
         if (logoutBtn) logoutBtn.disabled = !state.user;
         if (upgradeBtn) upgradeBtn.disabled = !state.user;
+        if (closeBtn) {
+            closeBtn.disabled = requiresAuth;
+            closeBtn.setAttribute('aria-hidden', requiresAuth ? 'true' : 'false');
+        }
 
         if (planLabel) {
             planLabel.textContent = state.billing
@@ -107,18 +125,30 @@
 
         if (planCopy) {
             if (!state.user) {
-                planCopy.textContent = 'Entra con email y password para guardar proyectos y preparar billing.';
+                planCopy.textContent = 'Login obligatorio: entra o crea una cuenta para acceder al editor real. Sin sesion el estudio queda bloqueado.';
             } else if (state.billing && !state.billing.billingConfigured) {
-                planCopy.textContent = 'Cuenta activa. Stripe aun no esta configurado en este entorno.';
+                planCopy.textContent = 'Cuenta activa. Billing aun no tiene Stripe configurado en este entorno.';
             } else if (state.billing) {
                 planCopy.textContent = 'Cuenta activa. Billing conectado al backend real.';
+            }
+        }
+
+        if (requiresAuth) {
+            var panel = $('auth-panel');
+            if (panel) {
+                state.isOpen = true;
+                panel.classList.add('open');
+                panel.setAttribute('aria-hidden', 'false');
             }
         }
     }
 
     async function refreshMe() {
         if (!state.token) {
+            syncPlanGate();
             render();
+            openPanel();
+            setStatus('Login obligatorio: entra o crea cuenta para usar Escaparates Pro.', null);
             return;
         }
 
@@ -146,6 +176,7 @@
             state.billing = null;
             setStatus('Login correcto, pero no se pudo leer billing: ' + err.message, 'error');
         }
+        syncPlanGate();
         render();
     }
 
@@ -163,6 +194,7 @@
             rememberSession(data);
             setStatus('Login correcto: ' + state.user.email, 'ok');
             await refreshBilling();
+            closePanel();
         } catch (err) {
             setStatus(err.message, 'error');
         } finally {
@@ -186,6 +218,7 @@
             rememberSession(data);
             setStatus('Cuenta creada: ' + state.user.email, 'ok');
             await refreshBilling();
+            closePanel();
         } catch (err) {
             setStatus(err.message, 'error');
         } finally {
@@ -245,6 +278,11 @@
     }
 
     function closePanel() {
+        if (!state.user) {
+            openPanel();
+            setStatus('Login obligatorio: no puedes cerrar esta pantalla sin una sesion valida.', 'error');
+            return;
+        }
         state.isOpen = false;
         var panel = $('auth-panel');
         if (panel) {
@@ -270,7 +308,7 @@
         if (upgradeBtn) upgradeBtn.addEventListener('click', upgrade);
         if (panel) {
             panel.addEventListener('click', function(event) {
-                if (event.target === panel) closePanel();
+                if (event.target === panel && state.user) closePanel();
             });
         }
     }
@@ -278,6 +316,7 @@
     function init() {
         state.token = localStorage.getItem(TOKEN_KEY);
         bind();
+        syncPlanGate();
         render();
         refreshMe();
     }
@@ -286,6 +325,16 @@
         init: init,
         refreshMe: refreshMe,
         open: openPanel,
-        apiBase: apiBase
+        isAuthenticated: function() {
+            return Boolean(state.user);
+        },
+        apiBase: apiBase,
+        getState: function() {
+            return {
+                token: state.token,
+                user: state.user,
+                billing: state.billing
+            };
+        }
     };
 })();

@@ -20,10 +20,23 @@ EP.Export = (function() {
         if (btnFrame) btnFrame.addEventListener('click', captureFrame);
     }
 
-    function open() { modal.classList.add('open'); }
+    function open() {
+        var effect = EP.UI && EP.UI.getCurrentEffect ? EP.UI.getCurrentEffect() : null;
+        if (EP.PlanGate && !EP.PlanGate.require('export-effect', {
+            effect: effect,
+            title: 'Export bloqueado'
+        })) return;
+        modal.classList.add('open');
+    }
     function close() { modal.classList.remove('open'); }
 
     function showConfig(type) {
+        var effect = EP.UI && EP.UI.getCurrentEffect ? EP.UI.getCurrentEffect() : null;
+        var feature = type === 'publish' ? 'publish' : 'export-effect';
+        if (EP.PlanGate && !EP.PlanGate.require(feature, {
+            effect: effect,
+            title: type === 'publish' ? 'Publicacion bloqueada' : 'Export bloqueado'
+        })) return;
         var area = document.getElementById('export-config-area');
         area.innerHTML = '';
         var panel = document.createElement('div');
@@ -719,7 +732,7 @@ EP.Export = (function() {
         if (!effect) errors.push('Selecciona un efecto antes de exportar.');
         if (EP.PlanGate) {
             if (kind === 'publish' && !EP.PlanGate.can('publish')) errors.push(EP.PlanGate.reason('publish'));
-            else if (!EP.PlanGate.can('export')) errors.push(EP.PlanGate.reason('export'));
+            else if (!EP.PlanGate.canExportEffect(effect)) errors.push(EP.PlanGate.exportReason(effect));
         }
         if (!profile.webgl) errors.push('WebGL no esta disponible en este navegador.');
         if (effect && effect.capabilities && effect.capabilities.exportSafe === false) errors.push('Este efecto no esta marcado como export-safe.');
@@ -1212,6 +1225,11 @@ EP.Export = (function() {
 
     function captureFrame() {
         if (!EP.Core || !EP.Core.renderer) { EP.UI.toast('Renderer no disponible'); return; }
+        var effect = EP.UI && EP.UI.getCurrentEffect ? EP.UI.getCurrentEffect() : null;
+        if (EP.PlanGate && !EP.PlanGate.require('export-effect', {
+            effect: effect,
+            title: 'Frame HD bloqueado'
+        })) return;
         var renderer = EP.Core.renderer;
         var canvas = renderer.domElement;
         var origW = canvas.width;
