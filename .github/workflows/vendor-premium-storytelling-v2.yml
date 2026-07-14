@@ -1,0 +1,185 @@
+name: Vendor Premium Storytelling V2
+
+on:
+  push:
+    branches:
+      - feature/premium-storytelling-pack-v2-source-faithful
+
+permissions:
+  contents: write
+
+jobs:
+  vendor-and-integrate:
+    if: ${{ !contains(github.event.head_commit.message, '[v2-generated]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/premium-storytelling-pack-v2-source-faithful
+          fetch-depth: 0
+
+      - name: Vendor original source experiences and connect catalogs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import urlopen
+          import json, re
+
+          ROOT = Path('.')
+          sources = {
+              'real-estate-storytelling-source-faithful': 'https://raw.githubusercontent.com/Juanmaes83/INMOBILIARIA-STORYTELLING-SCROOL-PREMIUM/main/index.html',
+              'luxury-real-estate-source-faithful': 'https://raw.githubusercontent.com/Juanmaes83/Rubik-Sota-Inmobiliaria-Premium/main/index.html',
+              'product-storytelling-source-faithful': 'https://raw.githubusercontent.com/Juanmaes83/AirPods-Max-Symphony-of-Silence-SoundStudio/main/index.html',
+          }
+
+          bridge = r'''
+          <script id="escaparates-source-bridge">
+          (function(){
+            function decode(){
+              try{
+                var raw=location.hash.slice(1); if(!raw)return {};
+                return JSON.parse(decodeURIComponent(escape(atob(raw))));
+              }catch(e){return {}}
+            }
+            var cfg=decode();
+            function replaceText(from,to){
+              if(!to)return;
+              var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+              var n; while(n=w.nextNode()) if(n.nodeValue&&n.nodeValue.indexOf(from)>-1) n.nodeValue=n.nodeValue.split(from).join(to);
+            }
+            function apply(){
+              var v=document.querySelector('video');
+              if(v&&cfg.media1&&v.getAttribute('src')!==cfg.media1){v.src=cfg.media1;v.load();}
+              if(cfg.brand){replaceText('RUBIK SOTA',cfg.brand);replaceText('Rubik Sota',cfg.brand);replaceText('AURA LAB',cfg.brand);}
+              if(cfg.headline){replaceText('Vive Sin',cfg.headline);replaceText('Diseñado para destacar.',cfg.headline);}
+              if(cfg.productName){replaceText('AURA X',cfg.productName);}
+              if(cfg.cta){replaceText('Solicitar visita',cfg.cta);replaceText('Comprar ahora',cfg.cta);}
+            }
+            var tries=0; var timer=setInterval(function(){apply();if(++tries>30)clearInterval(timer)},200);
+            window.addEventListener('message',function(e){if(e.data&&e.data.type==='ESCAPARATES_CONFIG'){cfg=e.data.payload||{};apply();}});
+          })();
+          </script>
+          '''
+
+          for slug, url in sources.items():
+              out = ROOT / 'labs' / 'source-experiences' / slug
+              out.mkdir(parents=True, exist_ok=True)
+              html = urlopen(url, timeout=45).read().decode('utf-8')
+              if slug == 'product-storytelling-source-faithful':
+                  html = html.replace('AirPods Max', 'AURA X').replace('AirPods', 'AURA')
+                  html = html.replace('SoundStudio', 'AURA LAB')
+                  html = html.replace('APPLE', 'AURA')
+                  html = re.sub(r'<AppleGlyph\s*/>', '<span style="font-weight:900;font-size:14px">A</span>', html)
+                  html = html.replace('const AppleGlyph = () => (', 'const AppleGlyph = () => (')
+                  html = html.replace('LOGO DE APPLE', 'MARCA GENERICA')
+                  html = html.replace('Apple', 'AURA')
+              html = html.replace('</body>', bridge + '\n</body>')
+              (out / 'index.html').write_text(html, encoding='utf-8')
+              manifest = {
+                  'id': slug,
+                  'mode': 'source-faithful',
+                  'source': url.replace('raw.githubusercontent.com','github.com').replace('/main/index.html',''),
+                  'visualFidelityTarget': 0.95,
+                  'adapter': 'hash-config + postMessage',
+                  'assetPolicy': 'original demo assets retained for source-faithful preview; user slot 1 overrides primary video'
+              }
+              (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+
+          def wrapper(slug, id_, name, icon, desc):
+              return f'''(function(){{
+            function esc(v){{return String(v||'').replace(/[&<>\"']/g,function(c){{return {{'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}}[c]}})}}
+            function build(mediaList,opts){{
+              opts=opts||{{}};
+              var media=EP.ScrollSections.normalizeMedia(mediaList||[]);
+              var cfg={{brand:opts.brand||'Escaparates Pro',headline:opts.headline||'',productName:opts.productName||'',cta:opts.cta||'',media1:media[0]?media[0].url:''}};
+              var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+              var url=new URL('labs/source-experiences/{slug}/index.html',window.location.href).href+'#'+encoded;
+              return '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{name}</title><style>*{{box-sizing:border-box}}html,body{{margin:0;width:100%;height:100%;background:#050505;overflow:hidden}}iframe{{width:100%;height:100%;border:0;display:block;background:#050505}}</style></head><body><iframe src="'+esc(url)+'" title="{name}" allow="autoplay; fullscreen" loading="eager"></iframe></body></html>';
+            }}
+            EP.ScrollSections.register({{id:'{id_}',name:'{name}',icon:'{icon}',description:'{desc}',build:build}});
+          }})();\n'''
+
+          scroll_dir = ROOT / 'js' / 'scroll-sections'
+          scroll_dir.mkdir(parents=True, exist_ok=True)
+          (scroll_dir / 'real-estate-storytelling-source-faithful.js').write_text(wrapper(
+              'real-estate-storytelling-source-faithful',
+              'real-estate-storytelling-source-faithful',
+              'Real Estate Storytelling — Source Faithful PRO',
+              'RF',
+              'Adaptación fiel del repositorio original: vídeo real, narrativa bidireccional, cuatro fases, tipografía y coreografía preservadas.'
+          ), encoding='utf-8')
+          (scroll_dir / 'product-storytelling-source-faithful.js').write_text(wrapper(
+              'product-storytelling-source-faithful',
+              'product-storytelling-source-faithful',
+              'Product Storytelling — Source Faithful PRO',
+              'PF',
+              'Patrón premium de producto preservado desde la referencia original, neutralizado como AURA X y conectado al slot 1.'
+          ), encoding='utf-8')
+
+          bp = r'''(function(){
+            function esc(v){return String(v||'').replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]})}
+            function builder(mediaList,opts){
+              opts=opts||{};var media=(mediaList||[]).filter(Boolean);var first=media[0];var media1=first?(first.url||(first.element&&(first.element.currentSrc||first.element.src))||''):'';
+              var cfg={brand:opts.brand||'Escaparates Pro',headline:opts.headline||'Vive Sin',cta:opts.cta||'Solicitar visita',media1:media1};
+              var encoded=btoa(unescape(encodeURIComponent(JSON.stringify(cfg))));
+              var url=new URL('labs/source-experiences/luxury-real-estate-source-faithful/index.html',window.location.href).href+'#'+encoded;
+              return '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Luxury Real Estate — Source Faithful PRO</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#050505;overflow:hidden}iframe{width:100%;height:100%;border:0;display:block}</style></head><body><iframe src="'+esc(url)+'" title="Luxury Real Estate Source Faithful" allow="autoplay; fullscreen" loading="eager"></iframe></body></html>';
+            }
+            builder.id='luxury-real-estate-source-faithful';
+            builder.schema=[
+              {key:'brand',label:'Marca',type:'text',default:'Escaparates Pro'},
+              {key:'headline',label:'Titular hero',type:'text',default:'Vive Sin'},
+              {key:'cta',label:'CTA',type:'text',default:'Solicitar visita'}
+            ];
+            if(EP.SectorBlueprints&&EP.SectorBlueprints.register)EP.SectorBlueprints.register(builder);
+          })();
+          '''
+          bp_dir = ROOT / 'js' / 'sector-blueprints'
+          bp_dir.mkdir(parents=True, exist_ok=True)
+          (bp_dir / 'luxury-real-estate-source-faithful.js').write_text(bp, encoding='utf-8')
+
+          index = (ROOT/'index.html').read_text(encoding='utf-8')
+          anchor = '    <script src="js/scroll-sections-ui.js"></script>'
+          additions = '    <script src="js/scroll-sections/real-estate-storytelling-source-faithful.js"></script>\n    <script src="js/scroll-sections/product-storytelling-source-faithful.js"></script>\n'
+          if 'real-estate-storytelling-source-faithful.js' not in index:
+              index = index.replace(anchor, additions + anchor)
+          bp_anchor = '    <script src="js/sector-blueprints-ui.js"></script>'
+          bp_add = '    <script src="js/sector-blueprints/luxury-real-estate-source-faithful.js"></script>\n'
+          if 'luxury-real-estate-source-faithful.js' not in index:
+              index = index.replace(bp_anchor, bp_add + bp_anchor)
+          (ROOT/'index.html').write_text(index, encoding='utf-8')
+
+          sector = (ROOT/'js/sector-blueprints.js').read_text(encoding='utf-8')
+          if 'luxury-real-estate-source-faithful' not in sector:
+              sector = sector.replace(
+                "        { id:'real-estate', icon:'RE', sector:'Inmobiliaria', name:'Property Signature PRO', accent:'#a4c1ec', title:'El espacio que ya se siente tuyo.', cta:'Solicitar visita', points:['Propiedad en foco','Detalles decisivos','Cita cualificada'] },",
+                "        { id:'real-estate', icon:'RE', sector:'Inmobiliaria', name:'Property Signature PRO', accent:'#a4c1ec', title:'El espacio que ya se siente tuyo.', cta:'Solicitar visita', points:['Propiedad en foco','Detalles decisivos','Cita cualificada'] },\n        { id:'luxury-real-estate-source-faithful', icon:'LF', sector:'Inmobiliaria Premium', name:'Luxury Real Estate — Source Faithful PRO', accent:'#c9a96e', title:'Vive Sin Límites', cta:'Solicitar visita', points:['Fuente original preservada','Vídeo cinematográfico','Experiencia completa'] },"
+              )
+              sector = sector.replace('    var schema = [', '    var customBuilders = {};\n    var schema = [')
+              sector = sector.replace("    function getSchema(id){return schema.concat(id==='agency-studio'?agencySchema:[]);}", "    function getSchema(id){if(customBuilders[id]&&customBuilders[id].schema)return customBuilders[id].schema.slice();return schema.concat(id==='agency-studio'?agencySchema:[]);}\n    function register(builderFn){if(builderFn&&builderFn.id)customBuilders[builderFn.id]=builderFn;}")
+              sector = sector.replace("    function build(id,list,raw){if(id==='retail-product')", "    function build(id,list,raw){if(customBuilders[id])return customBuilders[id](list,raw);if(id==='retail-product')")
+              sector = sector.replace('build:build };', 'build:build,register:register };')
+          (ROOT/'js/sector-blueprints.js').write_text(sector, encoding='utf-8')
+
+          readme = ROOT/'docs/PREMIUM_STORYTELLING_V2_SOURCE_FAITHFUL.md'
+          readme.parent.mkdir(parents=True, exist_ok=True)
+          readme.write_text('''# Premium Storytelling Pack V2 — Source Faithful\n\nEsta versión preserva los tres repositorios originales dentro de experiencias aisladas.\n\n- Real Estate Storytelling — Source Faithful PRO → Scroll Sections.\n- Luxury Real Estate — Source Faithful PRO → Blueprints.\n- Product Storytelling — Source Faithful PRO → Scroll Sections.\n\nLos viewers conservan la composición, vídeo, tipografías, animaciones y ritmo originales. El slot 1 puede sustituir el vídeo principal mediante el bridge de configuración. El módulo de producto neutraliza las referencias visibles a Apple/AirPods como AURA X.\n\nLa V2 no sustituye ningún módulo previo.\n''', encoding='utf-8')
+          PY
+
+      - name: Validate generated integration
+        run: |
+          test -f labs/source-experiences/real-estate-storytelling-source-faithful/index.html
+          test -f labs/source-experiences/luxury-real-estate-source-faithful/index.html
+          test -f labs/source-experiences/product-storytelling-source-faithful/index.html
+          grep -q "real-estate-storytelling-source-faithful" index.html
+          grep -q "luxury-real-estate-source-faithful" js/sector-blueprints.js
+          grep -R "AirPods\|AppleGlyph\|SoundStudio" labs/source-experiences/product-storytelling-source-faithful/index.html && exit 1 || true
+
+      - name: Commit generated V2
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html js labs docs/PREMIUM_STORYTELLING_V2_SOURCE_FAITHFUL.md
+          git commit -m "feat(v2): vendor source-faithful premium storytelling pack [v2-generated]"
+          git push origin HEAD:feature/premium-storytelling-pack-v2-source-faithful
