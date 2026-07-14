@@ -23,6 +23,27 @@ test('auth register rejects invalid input before touching the database', async (
   }
 })
 
+test('auth register requires legal acceptance', async () => {
+  const app = await buildApp()
+
+  try {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/v1/auth/register',
+      payload: {
+        email: 'legal-test@escaparates.pro',
+        password: 'Password123!',
+        name: 'Legal Test',
+      },
+    })
+
+    assert.equal(response.statusCode, 400)
+    assert.equal(response.json().error.code, 'VALIDATION_ERROR')
+  } finally {
+    await app.close()
+  }
+})
+
 test('auth login rejects invalid input before touching the database', async () => {
   const app = await buildApp()
 

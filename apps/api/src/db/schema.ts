@@ -205,3 +205,62 @@ export const idempotencyKeys = pgTable('idempotency_keys', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 })
+
+// --- legal_documents -------------------------------------------------------
+
+export const legalDocuments = pgTable(
+  'legal_documents',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    documentKey: text('document_key').notNull(),
+    title: text('title').notNull(),
+    version: text('version').notNull(),
+    status: text('status').default('draft').notNull(),
+    url: text('url').notNull(),
+    effectiveAt: timestamp('effective_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    uniq: unique().on(table.documentKey, table.version),
+  }),
+)
+
+// --- legal_acceptances -----------------------------------------------------
+
+export const legalAcceptances = pgTable(
+  'legal_acceptances',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    workspaceId: uuid('workspace_id').references(() => workspaces.id, {
+      onDelete: 'set null',
+    }),
+    documentKey: text('document_key').notNull(),
+    documentVersion: text('document_version').notNull(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }).defaultNow().notNull(),
+    ipAddress: inet('ip_address'),
+    userAgent: text('user_agent'),
+    source: text('source').default('registration').notNull(),
+  },
+  (table) => ({
+    uniq: unique().on(table.userId, table.documentKey, table.documentVersion),
+  }),
+)
+
+// --- stripe_webhook_events -------------------------------------------------
+
+export const stripeWebhookEvents = pgTable('stripe_webhook_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  stripeEventId: text('stripe_event_id').unique().notNull(),
+  eventType: text('event_type').notNull(),
+  processedAt: timestamp('processed_at', { withTimezone: true }).defaultNow().notNull(),
+  processingStatus: text('processing_status').default('processed').notNull(),
+  workspaceId: uuid('workspace_id').references(() => workspaces.id, {
+    onDelete: 'set null',
+  }),
+  payload: jsonb('payload'),
+  errorMessage: text('error_message'),
+})

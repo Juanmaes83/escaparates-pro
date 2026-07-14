@@ -2,6 +2,7 @@ import fastify from 'fastify'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
+import { Readable } from 'node:stream'
 import { env } from './config/env.js'
 import { logger } from './lib/logger.js'
 import { resolveRequestId } from './lib/request-id.js'
@@ -15,6 +16,7 @@ import { internalDbSchemaRoutes } from './routes/internal-db-schema.js'
 import { authRoutes } from './routes/auth.js'
 import { internalDbMigrateRoutes } from './routes/internal-db-migrate.js'
 import { billingRoutes } from './routes/billing.js'
+import { entitlementsRoutes } from './routes/entitlements.js'
 
 export async function buildApp() {
   const app = fastify({
@@ -29,6 +31,20 @@ export async function buildApp() {
     // genReqId already resolved the ID; expose it on request.requestId
     // Fastify stores it as request.id — mirror it to our typed field
     request.requestId = String(request.id)
+  })
+
+  app.addHook('preParsing', async (request, _reply, payload) => {
+    if (request.method !== 'POST' || request.url !== '/v1/billing/webhook') {
+      return payload
+    }
+
+    const chunks: Buffer[] = []
+    for await (const chunk of payload) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+    }
+    const rawBody = Buffer.concat(chunks)
+    ;(request as typeof request & { rawBody?: Buffer }).rawBody = rawBody
+    return Readable.from(rawBody)
   })
 
   // ── Plugins ──────────────────────────────────────────────────────────────
@@ -68,6 +84,7 @@ export async function buildApp() {
   await app.register(statusRoutes)
   await app.register(authRoutes)
   await app.register(billingRoutes)
+  await app.register(entitlementsRoutes)
   await app.register(internalDbSchemaRoutes)
   await app.register(internalDbMigrateRoutes)
 

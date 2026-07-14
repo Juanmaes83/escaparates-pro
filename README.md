@@ -14,17 +14,51 @@ El frontend real incluye un panel de cuenta conectado a la API:
 - `POST /v1/auth/logout`
 - `GET /v1/billing/status`
 - `POST /v1/billing/checkout`
+- `POST /v1/billing/webhook`
+- `GET /v1/entitlements`
 
 La API usa email + password, sesiones con refresh token bearer y PostgreSQL. Cada nuevo usuario recibe un workspace `free` por defecto para que el plan y el billing tengan un estado comercial claro.
 
-Billing Foundation usa Stripe Checkout para preparar upgrade a Pro. No activa cobros reales hasta configurar en Railway:
+Billing Foundation usa Stripe Checkout para preparar upgrade a Pro. La activacion comercial debe depender de webhooks firmados y estado interno del backend, nunca de la `success_url`. No activar cobros reales hasta configurar y validar en Railway:
 
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PRICE_PRO_MONTHLY`
+- `STRIPE_WEBHOOK_SECRET`
 - `APP_PUBLIC_URL`
 - `CORS_ORIGINS`
 
 Para que el login funcione desde GitHub Pages o local, `CORS_ORIGINS` debe incluir los origenes exactos del frontend, por ejemplo `https://juanmaes83.github.io,http://127.0.0.1:8898,http://localhost:8898`.
+
+`GET /v1/entitlements` es la fuente de verdad para limites de plan. El frontend puede mostrar y bloquear botones, pero las acciones comerciales deben validarse tambien en API.
+
+## Legal, Trust Y Pricing
+
+Este repositorio incluye una base inicial de Legal & Trust Center:
+
+- `legal/index.html`
+- `legal/terms.html`
+- `legal/privacy.html`
+- `legal/cookies.html`
+- `legal/refunds.html`
+- `legal/dpa.html`
+- `legal/subprocessors.html`
+- `legal/acceptable-use.html`
+- `legal/ai-policy.html`
+- `legal/ip-takedown.html`
+
+El registro requiere aceptar Terminos y Politica de privacidad. La API guarda aceptaciones en `legal_acceptances` con version, usuario, workspace, IP, user agent y fuente.
+
+Documentacion operativa:
+
+- `docs/PRICING_AND_MONETIZATION.md`
+- `docs/LEGAL_TRUST_CENTER.md`
+- `docs/enterprise/MASTER_SPEC.md`
+- `docs/enterprise/Escaparates_Pro_Enterprise_Master_Spec_v2_AI.md`
+- `docs/enterprise/Escaparates_Pro_Enterprise_Master_Spec_v2.0.pdf`
+- `docs/enterprise/Escaparates_Pro_Enterprise_Master_Spec_v2.0.docx`
+- `docs/enterprise/DOCUMENTO_MAESTRO_LEGAL_COMPLIANCE_TRUST_READINESS.docx`
+
+Los textos legales son provisionales y deben validarse con abogado antes de registro publico o pagos reales.
 
 ## Que Se Puede Crear
 
