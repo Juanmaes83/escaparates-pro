@@ -96,6 +96,8 @@
             </div>
         </div>
         <div class="top-right">
+            <button id="btn-pricing-info" class="top-action top-action-ghost" title="Ver planes, limites y creditos">Planes</button>
+            <button id="btn-legal-info" class="top-action top-action-ghost" title="Centro legal y confianza">Legal</button>
             <button id="btn-account" class="top-action top-action-ghost" title="Cuenta, login y plan">Cuenta</button>
             <button id="btn-safe-zone" class="top-action" title="Mostrar/ocultar zona segura RRSS">⬜ Safe Zone</button>
             <button id="btn-copy-code" class="top-action" title="Copiar configuración del efecto como código">&lt;/&gt; Código</button>
@@ -578,6 +580,19 @@
         </div>
     </div>
 
+    <div id="platform-info-panel" class="platform-info-panel" aria-hidden="true">
+        <div class="platform-info-card" role="dialog" aria-modal="true" aria-labelledby="platform-info-title">
+            <div class="platform-info-head">
+                <div>
+                    <span id="platform-info-kicker" class="auth-kicker">Escaparates Pro</span>
+                    <h2 id="platform-info-title">Planes</h2>
+                </div>
+                <button id="platform-info-close" class="auth-icon-btn" aria-label="Cerrar">×</button>
+            </div>
+            <div id="platform-info-body" class="platform-info-body"></div>
+        </div>
+    </div>
+
     <div id="auth-panel" class="auth-panel" aria-hidden="true">
         <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
             <div class="auth-head">
@@ -607,6 +622,8 @@
                 <button id="auth-login" class="auth-primary">Login</button>
                 <button id="auth-register" class="auth-secondary">Crear cuenta</button>
                 <button id="auth-logout" class="auth-secondary" disabled>Logout</button>
+                <button type="button" class="auth-secondary" data-platform-info="pricing">Ver planes</button>
+                <button type="button" class="auth-secondary" data-platform-info="legal">Legal</button>
             </div>
             <div class="auth-plan">
                 <div>
@@ -1096,6 +1113,7 @@
     <script src="js/demo-assets.js"></script>
     <script src="js/timeline-visual.js"></script>
     <script src="js/catalog-ux.js"></script>
+    <script src="js/platform-info.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
