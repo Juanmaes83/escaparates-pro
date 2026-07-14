@@ -1045,61 +1045,6 @@ assets/
 outputs/
 ```
 
-## Premium Storytelling Pack
-
-Tres experiencias aditivas añadidas al catálogo para narrativas premium de inmobiliaria y producto.
-
-### Real Estate Bidirectional Story PRO
-
-- **Categoría:** Scroll Sections
-- **ID:** `real-estate-bidirectional-video-story-pro`
-- **Fuente:** https://github.com/Juanmaes83/INMOBILIARIA-STORYTELLING-SCROOL-PREMIUM
-- **Demo origen:** https://juanmaes83.github.io/INMOBILIARIA-STORYTELLING-SCROOL-PREMIUM/
-- **Archivo:** `js/scroll-sections/real-estate-bidirectional-video-story-pro.js`
-- **Media slots:**
-  - Slot 1: vídeo principal (scrub) o imagen fallback.
-  - Slot 2: poster / imagen fallback.
-  - Slot 3: imagen opcional para CTA final.
-- **Campos editables:** brand, eyebrow, cuatro fases con título/subtítulo, CTA, scrollLength, scrubSmoothing, playbackMode (forward | forward-reverse | loop), overlayStrength, textPosition, showPhaseDots, showDirectionHint, showProgress, accentColor, textColor.
-- **Exportación:** HTML standalone con vídeo scrub bidireccional, indicadores de fase, reduced motion y fallback visual.
-
-### Luxury Real Estate Storytelling PRO
-
-- **Categoría:** Sector Website Blueprints
-- **ID:** `luxury-real-estate-storytelling-pro`
-- **Fuente:** https://github.com/Juanmaes83/Rubik-Sota-Inmobiliaria-Premium
-- **Demo origen:** https://juanmaes83.github.io/Rubik-Sota-Inmobiliaria-Premium/
-- **Archivo:** `js/sector-blueprints/luxury-real-estate-storytelling-pro.js`
-- **Media slots:**
-  - Slot 1: vídeo hero.
-  - Slot 2: poster / imagen hero fallback.
-  - Slots 3-8: propiedades.
-  - Slot 9: panel about.
-  - Slot 10: servicios o CTA final.
-- **Campos editables:** brand, logoText, language, enableLanguageToggle, heroLine1/2, heroEyebrow, heroSubtitle, aboutTitle/Text, propertiesTitle, lista de propiedades, servicesTitle, cuatro servicios, contactTitle/Text, ctaLabel/Url, phone, whatsapp, email, colores, glassStrength, scrubSmoothing, parallaxIntensity, toggles de visibilidad.
-- **Exportación:** web completa standalone con hero scrub, panel glass, propiedades, servicios, contacto demo, footer, responsive y reduced motion.
-
-### Product Scroll Storytelling PRO
-
-- **Categoría:** Scroll Sections
-- **ID:** `product-scroll-scrub-features-pro`
-- **Inspiración técnica:** AirPods Max scroll storytelling (reimplementado como patrón genérico).
-- **Archivo:** `js/scroll-sections/product-scroll-scrub-features-pro.js`
-- **Media slots:**
-  - Slot 1: vídeo principal del producto.
-  - Slot 2: poster / imagen fallback.
-  - Slot 3: detalle de producto.
-  - Slot 4: media complementaria.
-- **Campos editables:** brand, productName, headline, subtitle, eyebrow, hasta cuatro features (label/title/text), CTA, scrollLength, scrubSmoothing, featureRevealStart/End, toggles de navegación/progreso/porcentaje/audio, colores y overlayStrength.
-- **Exportación:** HTML standalone genérico, sin referencias a Apple, con vídeo scrub, tarjetas progresivas, barra de progreso, porcentaje, audio opcional y CTA.
-
-### Notas de integridad
-
-- Los tres módulos son 100 % aditivos: no sustituyen ni modifican efectos, Scroll Sections, Web Modules, Blueprints, Source Labs ni herramientas RUBIK SOTA existentes.
-- `Property Signature PRO` sigue disponible sin cambios.
-- No se incluyen assets propietarios de Apple; el patrón de producto es genérico.
-- Todos los viewers finales usan JavaScript nativo + CSS inline, sin Babel, React development, Tailwind CDN ni dependencias de desarrollo en el export.
-
 ## Principio De Producto
 
 Escaparates Pro no vende el panel de generacion. Vende el resultado final.
