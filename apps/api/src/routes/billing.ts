@@ -4,22 +4,36 @@ import Stripe from 'stripe'
 import { z } from 'zod'
 import { env } from '../config/env.js'
 import { getDb } from '../db/index.js'
-import { stripeWebhookEvents, users, workspaces } from '../db/schema.js'
+import {
+  creditLedgerEntries,
+  stripeWebhookEvents,
+  users,
+  workspaces,
+} from '../db/schema.js'
 import { findAuthContextByBearerToken } from '../lib/auth-context.js'
 import { buildErrorResponse } from '../lib/errors.js'
+import {
+  CREDIT_PACKS,
+  getCreditPackPriceId,
+  getSubscriptionPriceId,
+  publicPricingCatalog,
+} from '../lib/pricing.js'
 import {
   ensureDefaultWorkspace,
   findPrimaryWorkspace,
 } from '../lib/workspace-defaults.js'
 
 const checkoutSchema = z.object({
-  plan: z.literal('pro').default('pro'),
+  kind: z.enum(['subscription', 'credits']).default('subscription'),
+  plan: z.enum(['pro', 'studio']).default('pro'),
+  interval: z.enum(['monthly', 'yearly']).default('monthly'),
+  creditPack: z.enum(['credits_29']).optional(),
   successUrl: z.string().url().optional(),
   cancelUrl: z.string().url().optional(),
 })
 
 function billingIsConfigured(): boolean {
-  return Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_PRICE_PRO_MONTHLY)
+  return Boolean(env.STRIPE_SECRET_KEY)
 }
 
 function buildStripeClient(): Stripe {
@@ -143,10 +157,48 @@ async function updateWorkspaceSubscription(params: {
   return updated ?? workspace
 }
 
+async function addCreditsFromCheckoutSession(
+  session: Stripe.Checkout.Session,
+  eventId: string,
+) {
+  const workspaceId = session.metadata?.workspaceId
+  const userId = session.metadata?.userId
+  const creditPack = session.metadata?.creditPack
+
+  if (!workspaceId || creditPack !== 'credits_29') {
+    return null
+  }
+
+  const [entry] = await getDb()
+    .insert(creditLedgerEntries)
+    .values({
+      workspaceId,
+      userId: userId ?? null,
+      source: 'stripe_checkout',
+      amount: CREDIT_PACKS.credits_29.credits,
+      stripeEventId: eventId,
+      checkoutSessionId: session.id,
+      metadata: {
+        creditPack,
+        stripeCustomerId:
+          typeof session.customer === 'string' ? session.customer : session.customer?.id,
+      },
+    })
+    .onConflictDoNothing()
+    .returning()
+
+  return entry ?? null
+}
+
 async function processStripeEvent(event: Stripe.Event) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const workspace = await updateWorkspaceSubscription({
+
+    if (session.metadata?.kind === 'credits') {
+      return await addCreditsFromCheckoutSession(session, event.id)
+    }
+
+    return await updateWorkspaceSubscription({
       workspaceId: session.metadata?.workspaceId ?? null,
       customerId:
         typeof session.customer === 'string' ? session.customer : session.customer?.id,
@@ -157,7 +209,6 @@ async function processStripeEvent(event: Stripe.Event) {
       plan: session.metadata?.plan ?? 'pro',
       billingStatus: 'active',
     })
-    return workspace
   }
 
   if (
@@ -166,53 +217,61 @@ async function processStripeEvent(event: Stripe.Event) {
     event.type === 'customer.subscription.deleted'
   ) {
     const subscription = event.data.object as Stripe.Subscription
-    const subscriptionAny = subscription as Stripe.Subscription & {
+    const subscriptionWithPeriod = subscription as Stripe.Subscription & {
       current_period_end?: number
     }
-    const workspace = await updateWorkspaceSubscription({
+
+    return await updateWorkspaceSubscription({
       workspaceId: subscription.metadata?.workspaceId ?? null,
       customerId:
         typeof subscription.customer === 'string'
           ? subscription.customer
           : subscription.customer?.id,
       subscriptionId: subscription.id,
-      plan: event.type === 'customer.subscription.deleted'
-        ? 'free'
-        : subscription.metadata?.plan ?? 'pro',
+      plan:
+        event.type === 'customer.subscription.deleted'
+          ? 'free'
+          : subscription.metadata?.plan ?? 'pro',
       billingStatus:
         event.type === 'customer.subscription.deleted'
           ? 'cancelled'
           : subscription.status,
       currentPeriodEnd: toDateFromStripeTimestamp(
-        subscriptionAny.current_period_end ?? null,
+        subscriptionWithPeriod.current_period_end ?? null,
       ),
     })
-    return workspace
   }
 
   if (event.type === 'invoice.paid' || event.type === 'invoice.payment_failed') {
     const invoice = event.data.object as Stripe.Invoice
-    const invoiceAny = invoice as Stripe.Invoice & {
+    const invoiceWithSubscription = invoice as Stripe.Invoice & {
       subscription?: string | Stripe.Subscription | null
     }
     const subscriptionId =
-      typeof invoiceAny.subscription === 'string'
-        ? invoiceAny.subscription
-        : invoiceAny.subscription?.id
+      typeof invoiceWithSubscription.subscription === 'string'
+        ? invoiceWithSubscription.subscription
+        : invoiceWithSubscription.subscription?.id
     const customerId =
       typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id
-    const workspace = await updateWorkspaceSubscription({
+
+    return await updateWorkspaceSubscription({
       customerId,
       subscriptionId,
       billingStatus: event.type === 'invoice.paid' ? 'active' : 'past_due',
     })
-    return workspace
   }
 
   return null
 }
 
 export async function billingRoutes(app: FastifyInstance): Promise<void> {
+  app.get('/v1/billing/catalog', async (_request, reply) => {
+    return reply.status(200).send({
+      ...publicPricingCatalog(),
+      currency: 'EUR',
+    })
+  })
+
   app.get('/v1/billing/status', async (request, reply) => {
     const requestId = request.requestId
     const auth = await findAuthContextByBearerToken(request)
@@ -227,6 +286,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
     return reply.status(200).send({
       billingConfigured: billingIsConfigured(),
+      portalConfigured: billingIsConfigured(),
       plan: workspace?.plan ?? 'free',
       billingStatus: workspace?.billingStatus ?? 'free',
       stripeCustomerLinked: Boolean(
@@ -269,12 +329,22 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       )
     }
 
-    const stripe = buildStripeClient()
-    const priceId = env.STRIPE_PRICE_PRO_MONTHLY
+    const priceId =
+      parsed.data.kind === 'credits'
+        ? getCreditPackPriceId(parsed.data.creditPack ?? 'credits_29')
+        : getSubscriptionPriceId(parsed.data.plan, parsed.data.interval)
+
     if (!priceId) {
-      throw new Error('STRIPE_PRICE_PRO_MONTHLY is not configured')
+      return reply.status(503).send(
+        buildErrorResponse(
+          'PRICE_NOT_CONFIGURED',
+          'Stripe price is not configured for this checkout option',
+          requestId,
+        ),
+      )
     }
 
+    const stripe = buildStripeClient()
     const workspace = await ensureDefaultWorkspace(auth.user)
     const customerId = await ensureStripeCustomer(stripe, auth.user)
 
@@ -287,28 +357,34 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
       .where(eq(workspaces.id, workspace.id))
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: parsed.data.kind === 'credits' ? 'payment' : 'subscription',
       customer: customerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: buildSuccessUrl(parsed.data.successUrl),
       cancel_url: buildCancelUrl(parsed.data.cancelUrl),
       metadata: {
         userId: auth.user.id,
         workspaceId: workspace.id,
+        kind: parsed.data.kind,
         plan: parsed.data.plan,
+        interval: parsed.data.interval,
+        creditPack:
+          parsed.data.kind === 'credits'
+            ? parsed.data.creditPack ?? 'credits_29'
+            : '',
       },
-      subscription_data: {
-        metadata: {
-          userId: auth.user.id,
-          workspaceId: workspace.id,
-          plan: parsed.data.plan,
-        },
-      },
+      ...(parsed.data.kind === 'subscription'
+        ? {
+            subscription_data: {
+              metadata: {
+                userId: auth.user.id,
+                workspaceId: workspace.id,
+                plan: parsed.data.plan,
+                interval: parsed.data.interval,
+              },
+            },
+          }
+        : {}),
     })
 
     if (!session.url) {
@@ -323,6 +399,81 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
 
     return reply.status(200).send({
       checkoutUrl: session.url,
+      requestId,
+    })
+  })
+
+  app.post('/v1/billing/portal', async (request, reply) => {
+    const requestId = request.requestId
+    const auth = await findAuthContextByBearerToken(request)
+
+    if (!auth) {
+      return reply.status(401).send(
+        buildErrorResponse('UNAUTHORIZED', 'Authentication required', requestId),
+      )
+    }
+
+    if (!billingIsConfigured()) {
+      return reply.status(503).send(
+        buildErrorResponse(
+          'BILLING_NOT_CONFIGURED',
+          'Stripe billing is not configured for this environment',
+          requestId,
+        ),
+      )
+    }
+
+    const workspace = await ensureDefaultWorkspace(auth.user)
+    const customerId = workspace.stripeCustomerId || auth.user.stripeCustomerId
+
+    if (!customerId) {
+      return reply.status(409).send(
+        buildErrorResponse(
+          'STRIPE_CUSTOMER_MISSING',
+          'Create a checkout session before opening the customer portal',
+          requestId,
+        ),
+      )
+    }
+
+    const stripe = buildStripeClient()
+    const session = await stripe.billingPortal.sessions.create({
+      customer: customerId,
+      return_url: env.APP_PUBLIC_URL,
+    })
+
+    return reply.status(200).send({
+      portalUrl: session.url,
+      requestId,
+    })
+  })
+
+  app.get('/v1/billing/credits', async (request, reply) => {
+    const requestId = request.requestId
+    const auth = await findAuthContextByBearerToken(request)
+
+    if (!auth) {
+      return reply.status(401).send(
+        buildErrorResponse('UNAUTHORIZED', 'Authentication required', requestId),
+      )
+    }
+
+    const workspace = await ensureDefaultWorkspace(auth.user)
+    const entries = await getDb()
+      .select()
+      .from(creditLedgerEntries)
+      .where(eq(creditLedgerEntries.workspaceId, workspace.id))
+
+    const balance = entries.reduce((total, entry) => total + entry.amount, 0)
+
+    return reply.status(200).send({
+      balance,
+      entries: entries.map((entry) => ({
+        id: entry.id,
+        source: entry.source,
+        amount: entry.amount,
+        createdAt: entry.createdAt.toISOString(),
+      })),
       requestId,
     })
   })
@@ -396,12 +547,19 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
     }
 
     try {
-      const workspace = await processStripeEvent(event)
+      const workspaceOrCreditEntry = await processStripeEvent(event)
+      const workspaceId =
+        workspaceOrCreditEntry && 'workspaceId' in workspaceOrCreditEntry
+          ? workspaceOrCreditEntry.workspaceId
+          : workspaceOrCreditEntry && 'id' in workspaceOrCreditEntry
+            ? workspaceOrCreditEntry.id
+            : null
+
       await getDb().insert(stripeWebhookEvents).values({
         stripeEventId: event.id,
         eventType: event.type,
         processingStatus: 'processed',
-        workspaceId: workspace?.id ?? null,
+        workspaceId,
         payload: event as unknown as Record<string, unknown>,
       })
 
@@ -410,7 +568,7 @@ export async function billingRoutes(app: FastifyInstance): Promise<void> {
         duplicate: false,
         eventId: event.id,
         eventType: event.type,
-        workspaceId: workspace?.id ?? null,
+        workspaceId,
         requestId,
       })
     } catch (error) {

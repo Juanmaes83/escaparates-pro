@@ -13,16 +13,23 @@ El frontend real incluye un panel de cuenta conectado a la API:
 - `GET /v1/auth/me`
 - `POST /v1/auth/logout`
 - `GET /v1/billing/status`
+- `GET /v1/billing/catalog`
 - `POST /v1/billing/checkout`
+- `POST /v1/billing/portal`
+- `GET /v1/billing/credits`
 - `POST /v1/billing/webhook`
 - `GET /v1/entitlements`
 
 La API usa email + password, sesiones con refresh token bearer y PostgreSQL. Cada nuevo usuario recibe un workspace `free` por defecto para que el plan y el billing tengan un estado comercial claro.
 
-Billing Foundation usa Stripe Checkout para preparar upgrade a Pro. La activacion comercial debe depender de webhooks firmados y estado interno del backend, nunca de la `success_url`. No activar cobros reales hasta configurar y validar en Railway:
+Billing Foundation usa Stripe Checkout para preparar upgrade a Pro, Studio y packs de creditos. La activacion comercial debe depender de webhooks firmados y estado interno del backend, nunca de la `success_url`. No activar cobros reales hasta configurar y validar en Railway:
 
 - `STRIPE_SECRET_KEY`
 - `STRIPE_PRICE_PRO_MONTHLY`
+- `STRIPE_PRICE_PRO_YEARLY`
+- `STRIPE_PRICE_STUDIO_MONTHLY`
+- `STRIPE_PRICE_STUDIO_YEARLY`
+- `STRIPE_PRICE_CREDITS_29`
 - `STRIPE_WEBHOOK_SECRET`
 - `APP_PUBLIC_URL`
 - `CORS_ORIGINS`
@@ -30,6 +37,17 @@ Billing Foundation usa Stripe Checkout para preparar upgrade a Pro. La activacio
 Para que el login funcione desde GitHub Pages o local, `CORS_ORIGINS` debe incluir los origenes exactos del frontend, por ejemplo `https://juanmaes83.github.io,http://127.0.0.1:8898,http://localhost:8898`.
 
 `GET /v1/entitlements` es la fuente de verdad para limites de plan. El frontend puede mostrar y bloquear botones, pero las acciones comerciales deben validarse tambien en API.
+
+Pricing aprobado:
+
+| Plan | Mensual | Anual | Enfoque |
+| --- | ---: | ---: | --- |
+| Free | 0 EUR | 0 EUR | Prueba, efectos basicos, descargas limitadas. |
+| Pro | 49 EUR/mes | 490 EUR/ano | Freelance, comercios pequenos, creadores. |
+| Studio | 99 EUR/mes | 990 EUR/ano | Agencias, estudios, marcas con volumen. |
+| Enterprise | Custom | Custom | Retail, eventos, instalaciones, integraciones. |
+
+Los creditos extra empiezan con el pack `credits_29` desde 29 EUR. La migracion `018_create_credit_ledger_entries.sql` crea el ledger inicial para registrar compras de creditos via Stripe Checkout.
 
 ## Legal, Trust Y Pricing
 

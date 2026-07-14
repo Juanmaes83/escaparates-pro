@@ -614,7 +614,29 @@
                     <strong id="auth-plan-label">Sin sesion</strong>
                     <p id="auth-plan-copy">Sin sesion el estudio queda bloqueado. El plan y los limites se leen del backend real.</p>
                 </div>
-                <button id="auth-upgrade" class="auth-primary" disabled>Upgrade Pro</button>
+                <button id="auth-portal" class="auth-secondary" disabled>Portal cliente</button>
+            </div>
+            <div class="auth-pricing">
+                <div class="auth-pricing-head">
+                    <div>
+                        <span class="auth-kicker">Pricing aprobado</span>
+                        <strong>Suscripcion + creditos</strong>
+                    </div>
+                    <div class="auth-billing-toggle" role="group" aria-label="Periodo de facturacion">
+                        <button class="active" data-billing-interval="monthly">Mensual</button>
+                        <button data-billing-interval="yearly">Anual</button>
+                    </div>
+                </div>
+                <div id="auth-pricing-grid" class="auth-pricing-grid" aria-live="polite"></div>
+                <div class="auth-credit-card">
+                    <div>
+                        <span class="auth-kicker">Creditos extra</span>
+                        <strong id="auth-credits-label">Pack desde 29 EUR</strong>
+                        <p id="auth-credits-copy">Para mas exportaciones, IA, renders y campanas.</p>
+                    </div>
+                    <button id="auth-buy-credits" class="auth-primary" disabled>Comprar creditos</button>
+                </div>
+                <p class="auth-pricing-note">Free permite probar. Las descargas premium, publicaciones, creditos e integraciones dependen del plan y se validaran tambien en backend.</p>
             </div>
         </div>
     </div>

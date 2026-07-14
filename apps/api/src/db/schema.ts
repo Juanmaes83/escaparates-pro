@@ -264,3 +264,20 @@ export const stripeWebhookEvents = pgTable('stripe_webhook_events', {
   payload: jsonb('payload'),
   errorMessage: text('error_message'),
 })
+
+// --- credit_ledger_entries -----------------------------------------------
+
+export const creditLedgerEntries = pgTable('credit_ledger_entries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  workspaceId: uuid('workspace_id')
+    .references(() => workspaces.id, { onDelete: 'cascade' })
+    .notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  source: text('source').notNull(),
+  amount: integer('amount').notNull(),
+  balanceAfter: integer('balance_after'),
+  stripeEventId: text('stripe_event_id'),
+  checkoutSessionId: text('checkout_session_id'),
+  metadata: jsonb('metadata').default({}).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
