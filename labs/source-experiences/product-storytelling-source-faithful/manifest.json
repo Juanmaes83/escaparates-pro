@@ -1,0 +1,8 @@
+{
+  "id": "product-storytelling-source-faithful",
+  "mode": "source-faithful",
+  "source": "https://github.com/Juanmaes83/AirPods-Max-Symphony-of-Silence-SoundStudio",
+  "visualFidelityTarget": 0.95,
+  "adapter": "hash-config + postMessage",
+  "assetPolicy": "original demo assets retained for source-faithful preview; user slot 1 overrides primary video"
+}

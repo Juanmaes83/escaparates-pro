@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Rubik Sota · Inmobiliaria Premium</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+            serif: ['Instrument Serif', 'serif'],
+            dirtyline: ['Dirtyline36Daysoftype2022', 'sans-serif'],
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            },
+            floatUp: {
+              '0%': { opacity: '0', transform: 'translateY(40px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            marquee: 'marquee 25s linear infinite',
+            floatUp: 'floatUp 0.8s ease-out forwards',
+          },
+        },
+      },
+    };
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <style>
+    @font-face {
+      font-family: 'Dirtyline36Daysoftype2022';
+      src: url('https://db.onlinewebfonts.com/t/3010f9da43a41a81d5daa32bd6edebc2.woff2') format('woff2'),
+           url('https://db.onlinewebfonts.com/t/3010f9da43a41a81d5daa32bd6edebc2.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #0a0a0a;
+      color: #f0f0f0;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 0; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-strong {
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(80px);
+      -webkit-backdrop-filter: blur(80px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #c9a96e, #e8d5b0, #c9a96e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    const VIDEO_SRC = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260703_055342_32b0f5da-a9f6-4e7b-82b2-891b700fa6d9.mp4';
+
+    // ─── TRADUCCIONES ──────────────────────
+    const translations = {
+      es: {
+        nav: { home: 'INICIO', about: 'NOSOTROS', services: 'SERVICIOS', contact: 'CONTACTO' },
+        hero: { line1: 'Vive Sin', line2: 'Límites' },
+        about: { title: 'Sobre Nosotros', text: 'Transformamos espacios en experiencias. Cada propiedad cuenta una historia de diseño, lujo y confort sin igual.' },
+        properties: { title: 'Propiedades Exclusivas', cta: 'Ver propiedad' },
+        services: { title: 'Servicios Premium', items: ['Compra/Venta', 'Alquiler de Lujo', 'Gestión de Activos', 'Consultoría'] },
+        contact: { title: 'Contacto', text: 'Solicite una consulta privada' },
+        footer: { credits: 'IDEA BY RUBIK SOTA 629554870', rights: '© 2026 Rubik Sota. Todos los derechos reservados.' },
+      },
+      en: {
+        nav: { home: 'HOME', about: 'ABOUT', services: 'SERVICES', contact: 'CONTACT' },
+        hero: { line1: 'Live Without', line2: 'Limits' },
+        about: { title: 'About Us', text: 'We transform spaces into experiences. Every property tells a story of design, luxury, and unparalleled comfort.' },
+        properties: { title: 'Exclusive Properties', cta: 'View property' },
+        services: { title: 'Premium Services', items: ['Buy/Sell', 'Luxury Rentals', 'Asset Management', 'Consulting'] },
+        contact: { title: 'Contact', text: 'Request a private consultation' },
+        footer: { credits: 'IDEA BY RUBIK SOTA 629554870', rights: '© 2026 Rubik Sota. All rights reserved.' },
+      },
+    };
+
+    // ─── HOOK DE IDIOMA ────────────────────
+    const useLanguage = () => {
+      const [lang, setLang] = useState('es');
+      const t = translations[lang];
+      const toggleLang = () => setLang(prev => prev === 'es' ? 'en' : 'es');
+      return { lang, t, toggleLang };
+    };
+
+    // ─── COMPONENTE: ScrollVideo ───────────
+    const ScrollVideo = ({ src }) => {
+      const videoRef = useRef(null);
+      const wrapperRef = useRef(null);
+      const [loading, setLoading] = useState(true);
+      const currentTimeRef = useRef(0);
+
+      useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+        const handleCanPlay = () => setLoading(false);
+        video.addEventListener('canplay', handleCanPlay);
+        return () => video.removeEventListener('canplay', handleCanPlay);
+      }, []);
+
+      useEffect(() => {
+        let rafId;
+        const video = videoRef.current;
+        if (!video || loading) return;
+        const scrub = () => {
+          const scrollY = window.scrollY;
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
+          const targetTime = progress * (video.duration - 0.05);
+          currentTimeRef.current += (targetTime - currentTimeRef.current) * 0.08;
+          if (!video.seeking && Math.abs(currentTimeRef.current - video.currentTime) > 0.01) {
+            video.currentTime = currentTimeRef.current;
+          }
+          rafId = requestAnimationFrame(scrub);
+        };
+        rafId = requestAnimationFrame(scrub);
+        return () => cancelAnimationFrame(rafId);
+      }, [loading]);
+
+      useEffect(() => {
+        const wrapper = wrapperRef.current;
+        if (!wrapper) return;
+        const handleMouseMove = (e) => {
+          const x = (e.clientX / window.innerWidth - 0.5) * 40;
+          const y = (e.clientY / window.innerHeight - 0.5) * 40;
+          gsap.to(wrapper, { x, y, duration: 1.8, ease: 'power2.out' });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+      }, []);
+
+      return (
+        <div ref={wrapperRef} className="fixed inset-0 z-0 overflow-hidden" style={{ transform: 'scale(1.05)' }}>
+          <video ref={videoRef} src={src} muted playsInline preload="auto"
+            style={{ transform: 'scale(1.35)', width: '100%', height: '100%', objectFit: 'cover' }} />
+          {loading && (
+            <div className="absolute inset-0 bg-black flex items-center justify-center text-white text-xl font-sans tracking-wider">
+              Cargando experiencia...
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
+        </div>
+      );
+    };
+
+    // ─── COMPONENTE: NavBar ────────────────
+    const NavBar = ({ t, lang, toggleLang }) => {
+      const [scrolled, setScrolled] = useState(false);
+      const logoRef = useRef(null);
+
+      useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      useEffect(() => {
+        gsap.fromTo(logoRef.current, { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1, ease: 'back.out(1.7)', delay: 0.3 });
+      }, []);
+
+      const navItems = [
+        { label: t.nav.home, onClick: () => gsap.to(window, { scrollTo: 0, duration: 2, ease: 'power3.inOut' }) },
+        { label: t.nav.about, onClick: () => gsap.to(window, { scrollTo: '#about', offsetY: -80, duration: 2, ease: 'power3.inOut' }) },
+        { label: t.nav.services, onClick: () => gsap.to(window, { scrollTo: '#services', offsetY: -80, duration: 2, ease: 'power3.inOut' }) },
+        { label: t.nav.contact, onClick: () => gsap.to(window, { scrollTo: '#contact', offsetY: -80, duration: 2, ease: 'power3.inOut' }) },
+      ];
+
+      return (
+        <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-black/70 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'}`}>
+          <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex items-center justify-between h-20">
+            <div ref={logoRef} className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center font-serif italic text-black text-xl font-bold">R</div>
+              <span className="text-white font-sans font-semibold tracking-widest text-sm uppercase hidden sm:block">Rubik Sota</span>
+            </div>
+            <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full px-2 py-1.5 backdrop-blur-md border border-white/10">
+              {navItems.map((item, idx) => (
+                <button key={idx} onClick={item.onClick}
+                  className="relative overflow-hidden text-white/80 hover:text-white rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-widest transition-all duration-300 font-sans">
+                  {item.label}
+                </button>
+              ))}
+              <button onClick={toggleLang}
+                className="ml-2 w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase hover:bg-amber-500/30 transition-all">
+                {lang}
+              </button>
+            </div>
+            <button className="md:hidden text-white text-sm uppercase tracking-widest" onClick={toggleLang}>
+              {lang === 'es' ? 'EN' : 'ES'}
+            </button>
+          </div>
+        </nav>
+      );
+    };
+
+    // ─── COMPONENTE: ScrollFloat (Hero Text) ──
+    const ScrollFloat = ({ text }) => {
+      const charsRef = useRef([]);
+
+      useEffect(() => {
+        const chars = charsRef.current.filter(Boolean);
+        if (chars.length === 0) return;
+        gsap.fromTo(chars,
+          { opacity: 1, yPercent: 0, scaleY: 1, scaleX: 1, transformOrigin: '50% 0%' },
+          { opacity: 0, yPercent: 250, scaleY: 1.2, scaleX: 0.9, stagger: 0.04, ease: 'power2.inOut', duration: 1,
+            scrollTrigger: { trigger: document.body, start: 'top top', end: '+=700', scrub: 1.5 } }
+        );
+      }, [text]);
+
+      const lines = text.split('\n');
+      let charIndex = 0;
+      return (
+        <div className="fixed inset-0 z-10 flex flex-col justify-center items-center pointer-events-none px-4">
+          <div className="text-white uppercase text-center" style={{ fontFamily: 'Dirtyline36Daysoftype2022, sans-serif', fontSize: 'clamp(3.5rem, 12vw, 280px)', lineHeight: 0.82, letterSpacing: '-0.02em' }}>
+            {lines.map((line, li) => (
+              <div key={li} className="block">
+                {line.split('').map((char, ci) => (
+                  <span key={`${li}-${ci}`} ref={(el) => charsRef.current.push(el)} className="char inline-block">
+                    {char === ' ' ? '\u00A0' : char}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── COMPONENTE: GlassPanel (Sección About) ──
+    const GlassPanel = ({ t }) => {
+      const panelRef = useRef(null);
+
+      useEffect(() => {
+        gsap.fromTo(panelRef.current, { y: '100%', opacity: 0 },
+          { y: '0%', opacity: 1,
+            scrollTrigger: { trigger: panelRef.current, start: 'top bottom', end: 'bottom bottom', scrub: 1.5, ease: 'none' } }
+        );
+      }, []);
+
+      useEffect(() => {
+        const panel = panelRef.current;
+        if (!panel) return;
+        const handleMouseMove = (e) => {
+          const x = (e.clientX / window.innerWidth - 0.5) * 30;
+          const y = (e.clientY / window.innerHeight - 0.5) * 30;
+          const rotY = (e.clientX / window.innerWidth - 0.5) * 6;
+          const rotX = (e.clientY / window.innerHeight - 0.5) * -6;
+          gsap.to(panel, { x, y, rotationY: rotY, rotationX: rotX, duration: 1.2, ease: 'power3.out' });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+      }, []);
+
+      return (
+        <div ref={panelRef} id="about"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[800px] max-h-[80vh] mb-10 rounded-3xl glass-card-strong flex flex-col items-center justify-center px-8 md:px-16"
+          style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}>
+          <p className="text-amber-400/80 text-sm md:text-base uppercase tracking-[0.3em] font-sans mb-6">{t.about.title}</p>
+          <p className="text-white/80 text-xl md:text-3xl lg:text-5xl font-serif italic text-center max-w-[800px] leading-relaxed">
+            {t.about.text}
+          </p>
+        </div>
+      );
+    };
+
+    // ─── COMPONENTE: PropertiesSection ─────
+    const PropertiesSection = ({ t }) => {
+      const sectionRef = useRef(null);
+      const cardsRef = useRef([]);
+
+      const properties = [
+        { id: 1, title: 'Villa Mediterránea', location: 'Marbella, España', price: '€4.200.000', img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=600&h=400&fit=crop' },
+        { id: 2, title: 'Penthouse Dubai', location: 'Dubai, EAU', price: '€7.800.000', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=400&fit=crop' },
+        { id: 3, title: 'Chalet Alpino', location: 'Gstaad, Suiza', price: '€5.100.000', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop' },
+      ];
+
+      useEffect(() => {
+        cardsRef.current.filter(Boolean).forEach((card, i) => {
+          gsap.fromTo(card, { y: 80, opacity: 0 },
+            { y: 0, opacity: 1, duration: 1, delay: i * 0.2, ease: 'power3.out',
+              scrollTrigger: { trigger: card, start: 'top bottom-=100', toggleActions: 'play none none reverse' } }
+          );
+        });
+      }, []);
+
+      return (
+        <section ref={sectionRef} className="relative z-20 py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-4">
+            {t.properties.title.split(' ').map((word, i) => (
+              <span key={i} className={i === 0 ? 'text-gradient' : ''}>{word}{i < t.properties.title.split(' ').length - 1 ? ' ' : ''}</span>
+            ))}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            {properties.map((prop, i) => (
+              <div key={prop.id} ref={(el) => cardsRef.current[i] = el}
+                className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-transform duration-700 cursor-pointer">
+                <div className="h-64 overflow-hidden">
+                  <img src={prop.img} alt={prop.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                </div>
+                <div className="p-6">
+                  <p className="text-amber-400 text-sm uppercase tracking-widest font-sans">{prop.location}</p>
+                  <h3 className="text-white text-xl font-serif mt-2">{prop.title}</h3>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-white/90 font-sans font-semibold text-lg">{prop.price}</span>
+                    <button className="text-amber-400 text-sm uppercase tracking-wider font-sans border border-amber-400/30 rounded-full px-4 py-2 hover:bg-amber-400/10 transition-all">
+                      {t.properties.cta}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    };
+
+    // ─── COMPONENTE: ServicesSection ───────
+    const ServicesSection = ({ t }) => {
+      const sectionRef = useRef(null);
+      return (
+        <section ref={sectionRef} id="services" className="relative z-20 py-32 px-6 md:px-12 max-w-[1400px] mx-auto">
+          <div className="glass-card-strong rounded-3xl p-10 md:p-20">
+            <h2 className="text-4xl md:text-6xl font-serif text-white mb-12 text-gradient">{t.services.title}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {t.services.items.map((item, i) => (
+                <div key={i} className="group glass-card rounded-2xl p-8 text-center hover:bg-white/5 transition-all cursor-pointer">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-2xl font-serif">
+                    {i + 1}
+                  </div>
+                  <h3 className="text-white font-sans font-semibold text-lg uppercase tracking-wider">{item}</h3>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    };
+
+    // ─── COMPONENTE: ContactSection ────────
+    const ContactSection = ({ t }) => {
+      return (
+        <section id="contact" className="relative z-20 py-32 px-6 md:px-12 max-w-[1400px] mx-auto text-center">
+          <div className="glass-card-strong rounded-3xl p-10 md:p-20 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-serif text-white mb-6">{t.contact.title}</h2>
+            <p className="text-white/60 font-sans text-lg mb-10">{t.contact.text}</p>
+            <button className="bg-amber-500 hover:bg-amber-400 text-black font-sans font-semibold uppercase tracking-widest text-sm px-10 py-4 rounded-full transition-all hover:scale-105">
+              {t.contact.title}
+            </button>
+          </div>
+        </section>
+      );
+    };
+
+    // ─── COMPONENTE: Footer ────────────────
+    const Footer = ({ t }) => {
+      return (
+        <footer className="relative z-20 border-t border-white/5 py-12 px-6 md:px-12">
+          <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center font-serif italic text-black text-sm font-bold">R</div>
+              <span className="text-white/40 font-sans text-xs uppercase tracking-[0.3em]">{t.footer.credits}</span>
+            </div>
+            <p className="text-white/30 font-sans text-xs">{t.footer.rights}</p>
+          </div>
+        </footer>
+      );
+    };
+
+    // ─── COMPONENTE PRINCIPAL: App ─────────
+    const App = () => {
+      const { lang, t, toggleLang } = useLanguage();
+
+      return (
+        <>
+          <ScrollVideo src={VIDEO_SRC} />
+          <NavBar t={t} lang={lang} toggleLang={toggleLang} />
+          <div style={{ position: 'relative', height: '300vh' }}>
+            <ScrollFloat text={`${t.hero.line1}\n${t.hero.line2}`} />
+            <GlassPanel t={t} />
+          </div>
+          <PropertiesSection t={t} />
+          <ServicesSection t={t} />
+          <ContactSection t={t} />
+          <Footer t={t} />
+        </>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+<script id="escaparates-source-bridge">
+(function(){
+  function decode(){
+    try{
+      var raw=location.hash.slice(1); if(!raw)return {};
+      return JSON.parse(decodeURIComponent(escape(atob(raw))));
+    }catch(e){return {}}
+  }
+  var cfg=decode();
+  function replaceText(from,to){
+    if(!to)return;
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    var n; while(n=w.nextNode()) if(n.nodeValue&&n.nodeValue.indexOf(from)>-1) n.nodeValue=n.nodeValue.split(from).join(to);
+  }
+  function apply(){
+    var v=document.querySelector('video');
+    if(v&&cfg.media1&&v.getAttribute('src')!==cfg.media1){v.src=cfg.media1;v.load();}
+    if(cfg.brand){replaceText('RUBIK SOTA',cfg.brand);replaceText('Rubik Sota',cfg.brand);replaceText('AURA LAB',cfg.brand);}
+    if(cfg.headline){replaceText('Vive Sin',cfg.headline);replaceText('Diseñado para destacar.',cfg.headline);}
+    if(cfg.productName){replaceText('AURA X',cfg.productName);}
+    if(cfg.cta){replaceText('Solicitar visita',cfg.cta);replaceText('Comprar ahora',cfg.cta);}
+  }
+  var tries=0; var timer=setInterval(function(){apply();if(++tries>30)clearInterval(timer)},200);
+  window.addEventListener('message',function(e){if(e.data&&e.data.type==='ESCAPARATES_CONFIG'){cfg=e.data.payload||{};apply();}});
+})();
+</script>
+
+</body>
+</html>

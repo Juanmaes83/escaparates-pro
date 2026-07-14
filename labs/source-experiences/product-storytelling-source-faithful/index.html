@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>AURA X — Symphony of Silence | AURA LAB</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- React, ReactDOM, Framer Motion -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    /* Aplicar Inter globalmente */
+    .font-inter {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Ocultar scrollbar para mejor estética */
+    ::-webkit-scrollbar {
+      width: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+    const { motion, AnimatePresence } = window.Motion;
+
+    // ─── ICONOS ──────────────────────────────
+    const Volume2 = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+    );
+    const VolumeX = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    );
+    const ShoppingBag = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <path d="M16 10a4 4 0 0 1-8 0"></path>
+      </svg>
+    );
+    const Search = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    );
+    const Menu = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line>
+      </svg>
+    );
+    const X = ({ size = 24, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    );
+    const Sparkles = ({ size = 20, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3l1.5 5.5L19 12l-5.5 1.5L12 19l-1.5-5.5L5 12l5.5-1.5L12 3z"/>
+        <path d="M18 2l.5 2L20 4.5 18 5l-.5 2L17 5l-2-.5L17 4l.5-2z"/>
+        <path d="M6 18l.5 2L8 20.5 6 21l-.5 2L5 21l-2-.5L5 20l.5-2z"/>
+      </svg>
+    );
+    const Radio = ({ size = 20, color = "currentColor" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48m-8.48 0a6 6 0 0 1 0-8.48m11.31-3.3a10 10 0 0 1 0 14.14M5.64 5.64a10 10 0 0 0 0 14.14"/>
+      </svg>
+    );
+    const Heart = ({ size = 24, color = "currentColor", fill = "none" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    );
+
+    // ─── LOGO DE AURA (SVG) ──────────────────
+    const AURAGlyph = () => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
+      </svg>
+    );
+
+    // ─── COMPONENTE PRINCIPAL ──────────────────
+    const App = () => {
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [cartCount, setCartCount] = useState(0);
+      const [liked, setLiked] = useState(false);
+      const [muted, setMuted] = useState(false);
+      const [scrollProgress, setScrollProgress] = useState(0);
+
+      const containerRef = useRef(null);
+      const videoRef = useRef(null);
+      const targetProgress = useRef(0);
+      const currentProgress = useRef(0);
+
+      // ─── SCROLL SCRUBBING ────────────────────
+      useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        // Preparar el video
+        video.preload = "auto";
+        video.currentTime = 0.05;
+        video.play().then(() => video.pause()).catch(() => {});
+
+        const handleScroll = () => {
+          const rect = containerRef.current?.getBoundingClientRect();
+          if (!rect) return;
+          const totalHeight = rect.height - (window.innerHeight - 72);
+          if (totalHeight <= 0) return;
+          const scrolled = 72 - rect.top;
+          const progress = Math.max(0.01, Math.min(0.999, scrolled / totalHeight));
+          targetProgress.current = progress;
+          setScrollProgress(progress);
+        };
+
+        const updateVideoFrame = () => {
+          if (video.duration && !isNaN(video.duration)) {
+            currentProgress.current += (targetProgress.current - currentProgress.current) * 0.15;
+            if (Math.abs(targetProgress.current - currentProgress.current) > 0.0005) {
+              const t = currentProgress.current * video.duration;
+              if (isFinite(t)) video.currentTime = t;
+            }
+          }
+          requestAnimationFrame(updateVideoFrame);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll();
+        const rafId = requestAnimationFrame(updateVideoFrame);
+
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+          cancelAnimationFrame(rafId);
+        };
+      }, []);
+
+      // ─── CART HANDLER ─────────────────────────
+      const addToCart = () => setCartCount(prev => prev + 1);
+
+      // ─── NAV LINKS ────────────────────────────
+      const navLinks = [
+        { label: 'Store', href: '#store' },
+        { label: 'AURA X', href: '#airpods-max' },
+        { label: 'Features', href: '#features' },
+        { label: 'Specs', href: '#specs' },
+        { label: 'Support', href: '#support' },
+      ];
+
+      // ─── VISIBILIDAD DE TARJETAS ──────────────
+      const cardOpacity = Math.max(0, Math.min(1, 1 - Math.abs(scrollProgress - 0.55) * 6));
+      const cardTranslateX = 30 * (1 - cardOpacity);
+      const headlineOpacity = Math.max(0, 1 - scrollProgress * 1.5);
+
+      return (
+        <div className="flex flex-col min-h-screen w-full bg-black text-white select-none font-inter">
+          {/* ─── NAVBAR ────────────────────────── */}
+          <nav className="fixed top-0 left-0 w-full h-[72px] z-50 bg-black border-b border-white/10 px-6 md:px-12 flex items-center">
+            <div className="max-w-7xl mx-auto flex items-center justify-between w-full">
+              {/* Logo */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-white/10">
+                  <span style="font-weight:900;font-size:14px">A</span>
+                </div>
+                <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+                  AURA LAB
+                </span>
+              </motion.div>
+
+              {/* Desktop nav links */}
+              <div className="hidden md:flex items-center gap-8">
+                {navLinks.map((link, idx) => (
+                  <motion.a
+                    key={link.label}
+                    href={link.href}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.08, duration: 0.3 }}
+                    className="relative text-sm font-medium text-zinc-400 hover:text-white group transition-colors"
+                  >
+                    {link.label}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300" />
+                  </motion.a>
+                ))}
+              </div>
+
+              {/* Right cluster */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-4 md:gap-6"
+              >
+                <button className="text-zinc-400 hover:text-white p-1 rounded-full hover:bg-white/5 transition">
+                  <Search size={20} />
+                </button>
+                <button
+                  onClick={() => setLiked(!liked)}
+                  className={`p-1 rounded-full hover:bg-white/5 transition ${liked ? 'text-red-500' : 'text-zinc-400 hover:text-white'}`}
+                >
+                  <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
+                </button>
+                <button className="relative text-zinc-400 hover:text-white p-1 rounded-full hover:bg-white/5 transition" onClick={addToCart}>
+                  <ShoppingBag size={20} />
+                  {cartCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-1 -right-1 bg-white text-black text-[10px] font-bold w-4 h-4 rounded-full border border-black flex items-center justify-center"
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </button>
+                <button className="md:hidden text-zinc-400 hover:text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                  {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </motion.div>
+            </div>
+          </nav>
+
+          {/* ─── MOBILE MENU ────────────────────── */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="fixed inset-x-0 top-[72px] z-40 bg-black border-b border-white/5 py-8 px-6 flex flex-col gap-6 md:hidden"
+              >
+                {navLinks.map(link => (
+                  <a key={link.label} href={link.href} className="text-lg font-medium text-zinc-300 hover:text-white transition" onClick={() => setMobileMenuOpen(false)}>
+                    {link.label}
+                  </a>
+                ))}
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <span className="text-zinc-400 text-sm">Free Shipping on all orders</span>
+                  <span className="text-white font-semibold text-sm">Shop Now</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ─── SCROLL STAGE ───────────────────── */}
+          <div ref={containerRef} className="relative w-full h-[300vh] mt-[72px] bg-black">
+            <div className="sticky top-[72px] w-full h-[calc(100vh-72px)] overflow-hidden bg-black flex flex-col justify-between">
+              {/* Background video */}
+              <video
+                ref={videoRef}
+                muted={muted}
+                playsInline
+                preload="auto"
+                className="absolute inset-0 w-full h-full object-cover object-top z-0"
+                src="https://cdn.jiro.build/Sumon/Airpods%20header%20video.mp4"
+              />
+
+              {/* ─── BENEFIT CARDS ────────────────── */}
+              <div className="absolute inset-x-0 top-[45%] -translate-y-1/2 px-6 md:px-16 flex justify-between items-center max-w-7xl mx-auto pointer-events-none z-20">
+                {/* Left card (desktop) */}
+                <motion.div
+                  style={{ opacity: cardOpacity, transform: `translateX(${-cardTranslateX}px)` }}
+                  className="bg-black/70 border border-white/10 backdrop-blur-md p-4 rounded-xl max-w-[260px] shadow-[0_20px_50px_rgba(0,0,0,0.8)] hidden md:block"
+                >
+                  <div className="flex items-center gap-2 text-emerald-400 uppercase text-xs font-semibold tracking-wider mb-2">
+                    <Sparkles size={16} /> Acoustic Art
+                  </div>
+                  <h4 className="text-white font-bold text-lg mb-2">High-Fidelity Audio</h4>
+                  <p className="text-zinc-400 text-sm leading-relaxed">
+                    An AURA-designed custom dynamic driver delivers rich, ultra-low distortion bass and crystal-clear highs.
+                  </p>
+                </motion.div>
+
+                {/* Right card (desktop) */}
+                <motion.div
+                  style={{ opacity: cardOpacity, transform: `translateX(${cardTranslateX}px)` }}
+                  className="bg-black/70 border border-white/10 backdrop-blur-md p-4 rounded-xl max-w-[260px] shadow-[0_20px_50px_rgba(0,0,0,0.8)] hidden md:block"
+                >
+                  <div className="flex items-center gap-2 text-sky-400 uppercase text-xs font-semibold tracking-wider mb-2">
+                    <Radio size={16} /> Silence Engine
+                  </div>
+                  <h4 className="text-white font-bold text-lg mb-2">Noise Cancellation</h4>
+                  <p className="text-zinc-400 text-sm leading-relaxed">
+                    Industry-leading Active Noise Cancellation blocks external noise, allowing complete auditory immersion.
+                  </p>
+                </motion.div>
+
+                {/* Mobile card (centered) */}
+                <motion.div
+                  style={{ opacity: cardOpacity }}
+                  className="md:hidden bg-black/75 backdrop-blur-lg p-4 rounded-xl max-w-[280px] mx-auto shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center gap-2 text-emerald-400 uppercase text-xs font-semibold tracking-wider mb-1">
+                        <Sparkles size={14} /> High-Fidelity Sound
+                      </div>
+                      <p className="text-zinc-400 text-xs leading-relaxed">
+                        Rich, ultra-low distortion bass and crystal-clear highs.
+                      </p>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 text-sky-400 uppercase text-xs font-semibold tracking-wider mb-1">
+                        <Radio size={14} /> Active Noise Cancellation
+                      </div>
+                      <p className="text-zinc-400 text-xs leading-relaxed">
+                        Blocks external noise for complete auditory immersion.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* ─── HEADLINE OVERLAY ──────────────── */}
+              <div className="absolute inset-0 flex flex-col justify-end pb-24 px-6 md:px-12 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none z-10">
+                <motion.h1
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: headlineOpacity, y: 0 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-tight drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] text-center"
+                >
+                  AURA X
+                  <br />
+                  <span className="bg-gradient-to-r from-zinc-100 via-white to-zinc-400 bg-clip-text text-transparent">
+                    Symphony of Silence
+                  </span>
+                </motion.h1>
+              </div>
+
+              {/* ─── HUD BAR ───────────────────────── */}
+              <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row items-center justify-between gap-4 pointer-events-auto z-20">
+                <div className="flex items-center gap-3">
+                  <span className="text-zinc-500 uppercase tracking-widest text-xs font-medium">Scroll to Experience</span>
+                  <div className="w-24 h-[1px] bg-zinc-800 rounded-full relative overflow-hidden">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-white rounded-full transition-all duration-100"
+                      style={{ width: `${scrollProgress * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-zinc-500 text-xs font-mono">{Math.round(scrollProgress * 100)}%</span>
+                </div>
+                <button
+                  onClick={() => setMuted(!muted)}
+                  className="w-10 h-10 rounded-full bg-black/50 border border-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white hover:text-black transition-all"
+                >
+                  {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+
+<script id="escaparates-source-bridge">
+(function(){
+  function decode(){
+    try{
+      var raw=location.hash.slice(1); if(!raw)return {};
+      return JSON.parse(decodeURIComponent(escape(atob(raw))));
+    }catch(e){return {}}
+  }
+  var cfg=decode();
+  function replaceText(from,to){
+    if(!to)return;
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+    var n; while(n=w.nextNode()) if(n.nodeValue&&n.nodeValue.indexOf(from)>-1) n.nodeValue=n.nodeValue.split(from).join(to);
+  }
+  function apply(){
+    var v=document.querySelector('video');
+    if(v&&cfg.media1&&v.getAttribute('src')!==cfg.media1){v.src=cfg.media1;v.load();}
+    if(cfg.brand){replaceText('RUBIK SOTA',cfg.brand);replaceText('Rubik Sota',cfg.brand);replaceText('AURA LAB',cfg.brand);}
+    if(cfg.headline){replaceText('Vive Sin',cfg.headline);replaceText('Diseñado para destacar.',cfg.headline);}
+    if(cfg.productName){replaceText('AURA X',cfg.productName);}
+    if(cfg.cta){replaceText('Solicitar visita',cfg.cta);replaceText('Comprar ahora',cfg.cta);}
+  }
+  var tries=0; var timer=setInterval(function(){apply();if(++tries>30)clearInterval(timer)},200);
+  window.addEventListener('message',function(e){if(e.data&&e.data.type==='ESCAPARATES_CONFIG'){cfg=e.data.payload||{};apply();}});
+})();
+</script>
+
+</body>
+</html>
