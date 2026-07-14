@@ -615,6 +615,20 @@
         </div>
     </div>
 
+    <div id="plan-gate-modal" class="plan-gate-modal" aria-hidden="true">
+        <div class="plan-gate-card" role="dialog" aria-modal="true" aria-labelledby="plan-gate-title">
+            <button class="auth-icon-btn plan-gate-close" data-plan-gate-close title="Cerrar">x</button>
+            <span class="auth-kicker">Plan y limites</span>
+            <h2 id="plan-gate-title" data-plan-gate-title>Accion bloqueada por plan</h2>
+            <p data-plan-gate-copy>Conecta tu cuenta para continuar.</p>
+            <div class="plan-gate-actions">
+                <button class="auth-primary" data-plan-gate-login>Login / crear cuenta</button>
+                <button class="auth-secondary" data-plan-gate-upgrade>Ver upgrade</button>
+                <button class="auth-secondary" data-plan-gate-close data-plan-gate-demo>Seguir con demo assets</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Feedback toast -->
     <div id="toast" aria-live="polite"></div>
 

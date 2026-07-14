@@ -82,6 +82,13 @@
         state.billing = null;
         state.token = null;
         localStorage.removeItem(TOKEN_KEY);
+        syncPlanGate();
+    }
+
+    function syncPlanGate() {
+        if (window.EP && EP.PlanGate && typeof EP.PlanGate.setAuthState === 'function') {
+            EP.PlanGate.setAuthState(state.user, state.billing);
+        }
     }
 
     function render() {
@@ -107,9 +114,9 @@
 
         if (planCopy) {
             if (!state.user) {
-                planCopy.textContent = 'Entra con email y password para guardar proyectos y preparar billing.';
+                planCopy.textContent = 'Modo demo: puedes probar con assets de ejemplo. Login para subir, exportar y activar limites reales.';
             } else if (state.billing && !state.billing.billingConfigured) {
-                planCopy.textContent = 'Cuenta activa. Stripe aun no esta configurado en este entorno.';
+                planCopy.textContent = 'Cuenta activa. Billing aun no tiene Stripe configurado en este entorno.';
             } else if (state.billing) {
                 planCopy.textContent = 'Cuenta activa. Billing conectado al backend real.';
             }
@@ -118,6 +125,7 @@
 
     async function refreshMe() {
         if (!state.token) {
+            syncPlanGate();
             render();
             return;
         }
@@ -146,6 +154,7 @@
             state.billing = null;
             setStatus('Login correcto, pero no se pudo leer billing: ' + err.message, 'error');
         }
+        syncPlanGate();
         render();
     }
 
@@ -278,6 +287,7 @@
     function init() {
         state.token = localStorage.getItem(TOKEN_KEY);
         bind();
+        syncPlanGate();
         render();
         refreshMe();
     }
@@ -286,6 +296,13 @@
         init: init,
         refreshMe: refreshMe,
         open: openPanel,
-        apiBase: apiBase
+        apiBase: apiBase,
+        getState: function() {
+            return {
+                token: state.token,
+                user: state.user,
+                billing: state.billing
+            };
+        }
     };
 })();

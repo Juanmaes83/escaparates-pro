@@ -484,6 +484,9 @@ EP.ScrollSectionsUI = (function() {
 
     function exportCurrent() {
         if (!state.activeId) return;
+        if (EP.PlanGate && !EP.PlanGate.require('export', {
+            title: 'Export Scroll Section bloqueado'
+        })) return;
         var mediaList = (EP.Media && EP.Media.getAll) ? EP.Media.getAll() : [];
         var html = EP.ScrollSections.buildDocument(state.activeId, mediaList, buildOptsFor(state.activeId));
         if (!html) return;

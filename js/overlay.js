@@ -162,8 +162,9 @@ EP.Overlay = (function() {
         });
 
         document.getElementById('upload-logo-btn').addEventListener('click', function() {
-            if (EP.PlanGate && !EP.PlanGate.can('upload-logo')) {
-                EP.UI.toast(EP.PlanGate.reason('upload-logo'));
+            if (EP.PlanGate && !EP.PlanGate.require('upload-logo', {
+                title: 'Logo bloqueado'
+            })) {
                 return;
             }
             document.getElementById('logo-file-input').click();
@@ -172,8 +173,9 @@ EP.Overlay = (function() {
         document.getElementById('logo-file-input').addEventListener('change', function(e) {
             if (!e.target.files.length) return;
             var file = e.target.files[0];
-            if (EP.PlanGate && !EP.PlanGate.can('upload-logo')) {
-                EP.UI.toast(EP.PlanGate.reason('upload-logo'));
+            if (EP.PlanGate && !EP.PlanGate.require('upload-logo', {
+                title: 'Logo bloqueado'
+            })) {
                 e.target.value = '';
                 return;
             }

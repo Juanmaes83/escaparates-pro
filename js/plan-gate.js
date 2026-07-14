@@ -75,31 +75,49 @@ EP.PlanGate = (function() {
         }
     };
 
-    var currentId = readPlanId();
+    var currentId = 'demo';
+    var authState = {
+        source: 'guest',
+        user: null,
+        billing: null
+    };
     var userAssetCount = 0;
     var listeners = [];
-
-    function readPlanId() {
-        try {
-            var params = new URLSearchParams(window.location.search || '');
-            var fromUrl = params.get('plan');
-            var fromStorage = window.localStorage && localStorage.getItem('ep-plan');
-            return plans[fromUrl] ? fromUrl : plans[fromStorage] ? fromStorage : 'pro';
-        } catch (e) {
-            return 'pro';
-        }
-    }
 
     function getPlan() {
         return plans[currentId] || plans.pro;
     }
 
     function setPlan(id) {
-        if (!plans[id]) id = 'pro';
+        if (!isPlanDebugEnabled()) {
+            showBlocker('El plan ya no se simula en produccion. Entra con tu cuenta para cargar el plan real desde el backend.', {
+                title: 'Simulador desactivado'
+            });
+            notify();
+            return getPlan();
+        }
+        if (!plans[id]) id = 'demo';
         currentId = id;
-        try { localStorage.setItem('ep-plan', id); } catch (e) {}
+        authState.source = 'simulator';
         notify();
         return getPlan();
+    }
+
+    function normalizeBillingPlan(billing) {
+        var rawPlan = billing && billing.plan ? String(billing.plan).toLowerCase() : 'free';
+        var rawStatus = billing && billing.billingStatus ? String(billing.billingStatus).toLowerCase() : '';
+        if (rawStatus === 'blocked' || rawStatus === 'suspended' || rawStatus === 'past_due') return 'blocked';
+        if (plans[rawPlan]) return rawPlan;
+        return rawPlan === 'creator' || rawPlan === 'studio' || rawPlan === 'enterprise' ? 'pro' : 'free';
+    }
+
+    function setAuthState(user, billing) {
+        authState.source = user ? 'backend' : 'guest';
+        authState.user = user || null;
+        authState.billing = billing || null;
+        currentId = user ? normalizeBillingPlan(billing) : 'demo';
+        notify();
+        return getState();
     }
 
     function setUserAssetCount(count) {
@@ -111,6 +129,10 @@ EP.PlanGate = (function() {
         var plan = getPlan();
         return {
             plan: plan,
+            source: authState.source,
+            user: authState.user,
+            billing: authState.billing,
+            authenticated: !!authState.user,
             userAssetCount: userAssetCount,
             remainingAssets: Math.max(0, plan.maxUserAssets - userAssetCount),
             uploadAssets: plan.canUploadAssets && userAssetCount < plan.maxUserAssets,
@@ -126,18 +148,85 @@ EP.PlanGate = (function() {
         if (feature === 'upload-logo') return state.uploadLogo;
         if (feature === 'publish') return state.publish;
         if (feature === 'export') return state.exportFinal;
+        if (feature === 'premium-export') return state.authenticated && state.plan.id === 'pro';
         return true;
     }
 
     function reason(feature) {
         var plan = getPlan();
+        if (!authState.user && (feature === 'export' || feature === 'upload-assets' || feature === 'upload-logo' || feature === 'publish' || feature === 'premium-export')) {
+            return 'Entra con tu cuenta para desbloquear esta accion. Puedes seguir probando con assets demo.';
+        }
         if (plan.id === 'blocked') return plan.message;
         if (feature === 'upload-assets' && !plan.canUploadAssets) return 'Tu plan no permite subir assets propios. Puedes probar con assets demo.';
         if (feature === 'upload-assets' && userAssetCount >= plan.maxUserAssets) return 'Has alcanzado el limite de assets del plan ' + plan.label + '.';
         if (feature === 'upload-logo' && !plan.canUploadLogo) return 'Subir logo requiere plan Pro.';
         if (feature === 'publish' && !plan.canPublish) return 'Publicar URL requiere plan Pro.';
         if (feature === 'export' && !plan.canExport) return 'Exportar resultado requiere activar un plan.';
+        if (feature === 'premium-export') return 'Este efecto o salida premium requiere plan Pro o superior.';
         return plan.message;
+    }
+
+    function isPremiumEffect(effect) {
+        if (!effect || !effect.meta) return false;
+        var tags = effect.meta.tags || [];
+        var category = effect.meta.category || '';
+        return tags.indexOf('premium') !== -1 ||
+            category === 'camera-fx-premium' ||
+            category === 'shader-premium' ||
+            category === '3d-perspective' ||
+            category === 'particle-morph' ||
+            category === 'carousel-flow' ||
+            category === 'glassmorphism';
+    }
+
+    function canExportEffect(effect) {
+        var state = getState();
+        if (!state.exportFinal) return false;
+        if (state.plan.id === 'free' && isPremiumEffect(effect)) return false;
+        if (state.plan.id === 'demo') return false;
+        return true;
+    }
+
+    function exportReason(effect) {
+        if (!can('export')) return reason('export');
+        if (getPlan().id === 'free' && isPremiumEffect(effect)) return reason('premium-export');
+        return reason('export');
+    }
+
+    function require(feature, context) {
+        context = context || {};
+        var allowed = feature === 'export-effect' ? canExportEffect(context.effect) : can(feature);
+        if (allowed) return true;
+        var message = feature === 'export-effect' ? exportReason(context.effect) : reason(feature);
+        showBlocker(message, context);
+        return false;
+    }
+
+    function showBlocker(message, context) {
+        context = context || {};
+        if (window.EP && EP.UI && EP.UI.toast) EP.UI.toast(message);
+        renderBlocker(message, context);
+    }
+
+    function renderBlocker(message, context) {
+        var overlay = document.getElementById('plan-gate-modal');
+        if (!overlay) return;
+        var title = overlay.querySelector('[data-plan-gate-title]');
+        var copy = overlay.querySelector('[data-plan-gate-copy]');
+        var demo = overlay.querySelector('[data-plan-gate-demo]');
+        if (title) title.textContent = context.title || 'Accion bloqueada por plan';
+        if (copy) copy.textContent = message || getPlan().message;
+        if (demo) demo.style.display = getPlan().canUseDemoAssets ? '' : 'none';
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeBlocker() {
+        var overlay = document.getElementById('plan-gate-modal');
+        if (!overlay) return;
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
     }
 
     function validateFile(file, metadata, kind) {
@@ -185,6 +274,7 @@ EP.PlanGate = (function() {
         var plan = state.plan;
         el.innerHTML =
             '<div class="plan-row"><strong>' + escapeHTML(plan.label) + '</strong><span>' + state.userAssetCount + '/' + plan.maxUserAssets + ' assets</span></div>' +
+            '<div class="plan-source">' + (state.authenticated ? 'Cuenta conectada: ' + escapeHTML(state.user.email) : 'Sin login: modo demo') + '</div>' +
             '<div class="plan-message">' + escapeHTML(plan.message) + '</div>' +
             '<div class="plan-grid">' +
             '<span class="' + (state.uploadAssets ? 'ok' : 'locked') + '">Assets</span>' +
@@ -195,18 +285,24 @@ EP.PlanGate = (function() {
 
         var select = document.getElementById('plan-simulator');
         if (select && select.value !== plan.id) select.value = plan.id;
+        if (select) {
+            select.disabled = !isPlanDebugEnabled();
+            select.title = isPlanDebugEnabled() ? 'Simulador local de plan' : 'Plan real conectado al backend. Usa ?planDebug=1 solo para QA.';
+        }
         syncControls(state);
     }
 
     function syncControls(state) {
         var exportBtn = document.getElementById('btn-export');
         if (exportBtn) {
-            exportBtn.disabled = !state.exportFinal;
+            exportBtn.disabled = false;
+            exportBtn.classList.toggle('is-plan-locked', !state.exportFinal);
             exportBtn.title = state.exportFinal ? 'Exportar pieza' : reason('export');
         }
         var logoBtn = document.getElementById('upload-logo-btn');
         if (logoBtn) {
-            logoBtn.disabled = !state.uploadLogo;
+            logoBtn.disabled = false;
+            logoBtn.classList.toggle('is-plan-locked', !state.uploadLogo);
             logoBtn.title = state.uploadLogo ? 'Subir logo' : reason('upload-logo');
         }
     }
@@ -216,6 +312,16 @@ EP.PlanGate = (function() {
         if (select) {
             select.value = getPlan().id;
             select.addEventListener('change', function() { setPlan(this.value); });
+        }
+        var modal = document.getElementById('plan-gate-modal');
+        if (modal) {
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal || event.target.hasAttribute('data-plan-gate-close')) closeBlocker();
+            });
+            var login = modal.querySelector('[data-plan-gate-login]');
+            var upgrade = modal.querySelector('[data-plan-gate-upgrade]');
+            if (login) login.addEventListener('click', function() { closeBlocker(); if (EP.AuthClient) EP.AuthClient.open(); });
+            if (upgrade) upgrade.addEventListener('click', function() { closeBlocker(); if (EP.AuthClient) EP.AuthClient.open(); });
         }
         onChange(renderStatus);
         renderStatus();
@@ -227,13 +333,25 @@ EP.PlanGate = (function() {
         return d.innerHTML;
     }
 
+    function isPlanDebugEnabled() {
+        try {
+            return new URLSearchParams(window.location.search || '').get('planDebug') === '1';
+        } catch (e) {
+            return false;
+        }
+    }
+
     return {
         bindUI: bindUI,
         can: can,
+        canExportEffect: canExportEffect,
+        exportReason: exportReason,
         getPlan: getPlan,
         getState: getState,
+        setAuthState: setAuthState,
         setPlan: setPlan,
         setUserAssetCount: setUserAssetCount,
+        require: require,
         reason: reason,
         validateFile: validateFile,
         onChange: onChange

@@ -249,11 +249,17 @@
 
     function exportHTML() {
         if (!state.activeId) return;
+        if (EP.PlanGate && !EP.PlanGate.require('export', {
+            title: 'Export Website Module bloqueado'
+        })) return;
         download('website-module-' + state.activeId + '.html', buildCurrentDocument(), 'text/html');
         if (EP.UI && EP.UI.toast) EP.UI.toast('Website module HTML descargado');
     }
 
     function exportZIP() {
+        if (EP.PlanGate && !EP.PlanGate.require('export', {
+            title: 'ZIP bloqueado'
+        })) return;
         if (typeof JSZip === 'undefined') {
             if (EP.UI && EP.UI.toast) EP.UI.toast('ZIP no disponible: JSZip no esta cargado');
             return;
@@ -279,6 +285,9 @@
     }
 
     function copyEmbed() {
+        if (EP.PlanGate && !EP.PlanGate.require('publish', {
+            title: 'Embed bloqueado'
+        })) return;
         var html = buildCurrentDocument();
         var embed = '<iframe title="Escaparates Pro Website Module" loading="lazy" style="width:100%;min-height:100vh;border:0;display:block;overflow:auto;" srcdoc="' +
             String(html).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;') + '"></iframe>';

@@ -89,8 +89,9 @@ EP.Media = (function() {
                 div.appendChild(label);
             }
             div.addEventListener('click', function() {
-                if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
-                    EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+                if (EP.PlanGate && !EP.PlanGate.require('upload-assets', {
+                    title: 'Subida de assets bloqueada'
+                })) {
                     return;
                 }
                 activeSlotIndex = parseInt(this.dataset.index);
@@ -112,10 +113,24 @@ EP.Media = (function() {
 
     function handleFileSelect(e) {
         var files = Array.from(e.target.files);
-        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
-            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+        if (EP.PlanGate && !EP.PlanGate.require('upload-assets', {
+            title: 'Subida de assets bloqueada'
+        })) {
             fileInput.value = '';
             return;
+        }
+        if (EP.PlanGate) {
+            var state = EP.PlanGate.getState();
+            var remaining = Math.max(0, state.plan.maxUserAssets - countUserAssets());
+            if (remaining <= 0) {
+                EP.PlanGate.require('upload-assets', { title: 'Limite de assets alcanzado' });
+                fileInput.value = '';
+                return;
+            }
+            if (files.length > remaining) {
+                files = files.slice(0, remaining);
+                EP.UI.toast('Solo se cargaran ' + remaining + ' archivos por limite del plan ' + state.plan.label + '.');
+            }
         }
         files.forEach(function(file, fi) {
             var targetIdx = activeSlotIndex + fi;
@@ -126,8 +141,9 @@ EP.Media = (function() {
     }
 
     function loadFileToSlot(file, idx) {
-        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
-            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+        if (EP.PlanGate && !EP.PlanGate.require('upload-assets', {
+            title: 'Subida de assets bloqueada'
+        })) {
             return;
         }
         if (file.type.startsWith('video/')) {
@@ -187,8 +203,11 @@ EP.Media = (function() {
 
     function syncPlanAssetCount() {
         if (!EP.PlanGate) return;
-        var count = slots.filter(function(slot) { return slot && slot.source === 'user'; }).length;
-        EP.PlanGate.setUserAssetCount(count);
+        EP.PlanGate.setUserAssetCount(countUserAssets());
+    }
+
+    function countUserAssets() {
+        return slots.filter(function(slot) { return slot && slot.source === 'user'; }).length;
     }
 
     function validateFileWithPlan(file, metadata, kind) {
@@ -205,8 +224,9 @@ EP.Media = (function() {
     }
 
     function openSlot(idx) {
-        if (EP.PlanGate && !EP.PlanGate.can('upload-assets')) {
-            EP.UI.toast(EP.PlanGate.reason('upload-assets'));
+        if (EP.PlanGate && !EP.PlanGate.require('upload-assets', {
+            title: 'Subida de assets bloqueada'
+        })) {
             return false;
         }
         activeSlotIndex = Math.max(0, Math.min(14, parseInt(idx, 10) || 0));
