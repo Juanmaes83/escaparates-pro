@@ -96,6 +96,7 @@
             </div>
         </div>
         <div class="top-right">
+            <button id="btn-account" class="top-action top-action-ghost" title="Cuenta, login y plan">Cuenta</button>
             <button id="btn-safe-zone" class="top-action" title="Mostrar/ocultar zona segura RRSS">⬜ Safe Zone</button>
             <button id="btn-copy-code" class="top-action" title="Copiar configuración del efecto como código">&lt;/&gt; Código</button>
             <button id="btn-capture-frame" class="top-action top-action-ghost" title="Capturar frame actual en PNG HD (1920px)">📸 Frame HD</button>
@@ -577,6 +578,43 @@
         </div>
     </div>
 
+    <div id="auth-panel" class="auth-panel" aria-hidden="true">
+        <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+            <div class="auth-head">
+                <div>
+                    <span class="auth-kicker">Escaparates Pro Cloud</span>
+                    <h2 id="auth-title">Cuenta y plan</h2>
+                </div>
+                <button id="auth-close" class="auth-icon-btn" title="Cerrar">x</button>
+            </div>
+            <div id="auth-status" class="auth-status">Conecta tu cuenta para guardar proyectos y activar planes.</div>
+            <div class="auth-grid">
+                <label>Email
+                    <input id="auth-email" type="email" autocomplete="email" placeholder="tu@email.com">
+                </label>
+                <label>Nombre
+                    <input id="auth-name" type="text" autocomplete="name" placeholder="Nombre de marca">
+                </label>
+                <label class="auth-grid-full">Password
+                    <input id="auth-password" type="password" autocomplete="current-password" placeholder="Minimo 8 caracteres">
+                </label>
+            </div>
+            <div class="auth-actions">
+                <button id="auth-login" class="auth-primary">Login</button>
+                <button id="auth-register" class="auth-secondary">Crear cuenta</button>
+                <button id="auth-logout" class="auth-secondary" disabled>Logout</button>
+            </div>
+            <div class="auth-plan">
+                <div>
+                    <span class="auth-kicker">Plan actual</span>
+                    <strong id="auth-plan-label">Sin sesion</strong>
+                    <p id="auth-plan-copy">Login activo: status, proyectos y billing quedan conectados al backend real.</p>
+                </div>
+                <button id="auth-upgrade" class="auth-primary" disabled>Upgrade Pro</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Feedback toast -->
     <div id="toast" aria-live="polite"></div>
 
@@ -599,6 +637,7 @@
     <!-- App modules -->
     <script src="js/device-profile.js"></script>
     <script src="js/plan-gate.js"></script>
+    <script src="js/auth-client.js"></script>
     <script src="js/core.js"></script>
     <script src="js/easing.js"></script>
     <script src="js/performance-path.js"></script>

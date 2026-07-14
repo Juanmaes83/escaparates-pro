@@ -14,6 +14,7 @@ import { statusRoutes } from './routes/status.js'
 import { internalDbSchemaRoutes } from './routes/internal-db-schema.js'
 import { authRoutes } from './routes/auth.js'
 import { internalDbMigrateRoutes } from './routes/internal-db-migrate.js'
+import { billingRoutes } from './routes/billing.js'
 
 export async function buildApp() {
   const app = fastify({
@@ -66,6 +67,7 @@ export async function buildApp() {
   await app.register(v1Routes)
   await app.register(statusRoutes)
   await app.register(authRoutes)
+  await app.register(billingRoutes)
   await app.register(internalDbSchemaRoutes)
   await app.register(internalDbMigrateRoutes)
 

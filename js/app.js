@@ -5,6 +5,7 @@
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
         try { if (EP.PerformancePath) EP.PerformancePath.init(); } catch(e) { console.error('PerformancePath.init failed:', e); }
         try { if (EP.PlanGate) EP.PlanGate.bindUI(); } catch(e) { console.error('PlanGate.bindUI failed:', e); }
+        try { if (EP.AuthClient) EP.AuthClient.init(); } catch(e) { console.error('AuthClient.init failed:', e); }
         try { EP.Media.init(); } catch(e) { console.error('Media.init failed:', e); }
         try { EP.UI.init(); } catch(e) { console.error('UI.init failed:', e); }
         try { EP.Overlay.init(); } catch(e) { console.error('Overlay.init failed:', e); }

@@ -17,6 +17,7 @@ export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').unique().notNull(),
   passwordHash: text('password_hash'),
+  stripeCustomerId: text('stripe_customer_id').unique(),
   name: text('name'),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -45,6 +46,10 @@ export const workspaces = pgTable('workspaces', {
     .references(() => users.id, { onDelete: 'restrict' })
     .notNull(),
   plan: text('plan').default('free').notNull(),
+  stripeCustomerId: text('stripe_customer_id'),
+  stripeSubscriptionId: text('stripe_subscription_id'),
+  billingStatus: text('billing_status').default('free').notNull(),
+  currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

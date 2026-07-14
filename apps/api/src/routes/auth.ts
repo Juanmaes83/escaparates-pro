@@ -1,8 +1,13 @@
-import type { FastifyInstance, FastifyRequest } from 'fastify'
-import { and, eq, gt } from 'drizzle-orm'
+import type { FastifyInstance } from 'fastify'
+import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { getDb } from '../db/index.js'
 import { sessions, users } from '../db/schema.js'
+import {
+  findAuthContextByBearerToken,
+  readBearerToken,
+  toPublicUser,
+} from '../lib/auth-context.js'
 import { buildErrorResponse } from '../lib/errors.js'
 import { hashPassword, normalizeEmail, verifyPassword } from '../lib/password.js'
 import {
@@ -10,6 +15,7 @@ import {
   createRefreshTokenExpiry,
   hashRefreshToken,
 } from '../lib/session-token.js'
+import { ensureDefaultWorkspace } from '../lib/workspace-defaults.js'
 
 const registerSchema = z.object({
   email: z.string().email().max(320).transform(normalizeEmail),
@@ -21,38 +27,6 @@ const loginSchema = z.object({
   email: z.string().email().max(320).transform(normalizeEmail),
   password: z.string().min(1).max(256),
 })
-
-type UserPublic = {
-  id: string
-  email: string
-  name: string | null
-  avatarUrl: string | null
-  createdAt: string
-}
-
-function toPublicUser(user: typeof users.$inferSelect): UserPublic {
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    avatarUrl: user.avatarUrl,
-    createdAt: user.createdAt.toISOString(),
-  }
-}
-
-function readBearerToken(request: FastifyRequest): string | null {
-  const raw = request.headers.authorization
-  if (!raw) {
-    return null
-  }
-
-  const [scheme, token] = raw.split(' ')
-  if (scheme !== 'Bearer' || !token) {
-    return null
-  }
-
-  return token
-}
 
 async function createSession(userId: string) {
   const refreshToken = createRefreshToken()
@@ -73,28 +47,6 @@ async function createSession(userId: string) {
   }
 
   return { refreshToken, session }
-}
-
-async function findUserByBearerToken(request: FastifyRequest) {
-  const refreshToken = readBearerToken(request)
-  if (!refreshToken) {
-    return null
-  }
-
-  const refreshTokenHash = hashRefreshToken(refreshToken)
-  const rows = await getDb()
-    .select({ user: users, session: sessions })
-    .from(sessions)
-    .innerJoin(users, eq(sessions.userId, users.id))
-    .where(
-      and(
-        eq(sessions.refreshTokenHash, refreshTokenHash),
-        gt(sessions.expiresAt, new Date()),
-      ),
-    )
-    .limit(1)
-
-  return rows[0] ?? null
 }
 
 export async function authRoutes(app: FastifyInstance): Promise<void> {
@@ -141,6 +93,8 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     if (!user) {
       throw new Error('User could not be created')
     }
+
+    await ensureDefaultWorkspace(user)
 
     const { refreshToken, session } = await createSession(user.id)
 
@@ -203,7 +157,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
   app.get('/v1/auth/me', async (request, reply) => {
     const requestId = request.requestId
-    const auth = await findUserByBearerToken(request)
+    const auth = await findAuthContextByBearerToken(request)
 
     if (!auth) {
       return reply.status(401).send(
