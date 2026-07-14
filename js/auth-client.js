@@ -11,6 +11,9 @@
         token: null,
         user: null,
         billing: null,
+        catalog: null,
+        credits: null,
+        selectedInterval: 'monthly',
         isOpen: false
     };
 
@@ -31,9 +34,14 @@
     }
 
     function setBusy(isBusy) {
-        ['auth-login', 'auth-register', 'auth-logout', 'auth-upgrade'].forEach(function(id) {
+        var ids = ['auth-login', 'auth-register', 'auth-logout', 'auth-portal', 'auth-buy-credits'];
+        ids.forEach(function(id) {
             var el = $(id);
             if (el) el.dataset.busy = isBusy ? '1' : '0';
+        });
+
+        Array.prototype.forEach.call(document.querySelectorAll('[data-plan-checkout]'), function(btn) {
+            btn.dataset.busy = isBusy ? '1' : '0';
         });
     }
 
@@ -81,6 +89,7 @@
     function clearSession() {
         state.user = null;
         state.billing = null;
+        state.credits = null;
         state.token = null;
         localStorage.removeItem(TOKEN_KEY);
         syncPlanGate();
@@ -94,10 +103,88 @@
         }
     }
 
+    function formatPrice(value, suffix) {
+        if (value === null || typeof value === 'undefined') return 'Custom';
+        if (value === 0) return '0 EUR';
+        return value + ' EUR' + (suffix || '');
+    }
+
+    function planPrice(plan) {
+        if (state.selectedInterval === 'yearly') {
+            return formatPrice(plan.yearly, '/ano');
+        }
+        return formatPrice(plan.monthly, '/mes');
+    }
+
+    function planIsCheckoutEnabled(plan) {
+        if (!state.user) return false;
+        if (plan.id === 'free' || plan.id === 'enterprise') return false;
+        if (!plan.stripeConfigured) return false;
+        return Boolean(plan.stripeConfigured[state.selectedInterval]);
+    }
+
+    function renderPricing() {
+        var grid = $('auth-pricing-grid');
+        if (!grid) return;
+
+        if (!state.catalog || !state.catalog.plans) {
+            grid.innerHTML = '<div class="auth-price-card"><h3>Cargando pricing</h3><p>Consultando catalogo publico del backend.</p></div>';
+            return;
+        }
+
+        grid.innerHTML = state.catalog.plans.map(function(plan) {
+            var isPaid = plan.id === 'pro' || plan.id === 'studio';
+            var ready = planIsCheckoutEnabled(plan);
+            var stateText = plan.id === 'free'
+                ? 'Incluido'
+                : plan.id === 'enterprise'
+                    ? 'Venta consultiva'
+                    : ready
+                        ? 'Stripe listo'
+                        : 'Price ID pendiente';
+            var buttonText = plan.id === 'free'
+                ? 'Plan actual base'
+                : plan.id === 'enterprise'
+                    ? 'Contactar'
+                    : plan.cta;
+            var disabled = ready ? '' : ' disabled';
+            var featured = plan.id === 'pro' ? ' is-featured' : '';
+
+            return '<article class="auth-price-card' + featured + '">' +
+                '<h3>' + plan.name + '</h3>' +
+                '<div class="auth-price-value">' + planPrice(plan) + '</div>' +
+                '<p>' + plan.audience + '</p>' +
+                '<span class="auth-price-state' + (ready || plan.id === 'free' ? ' is-ready' : '') + '">' + stateText + '</span>' +
+                '<button class="' + (isPaid ? 'auth-primary' : 'auth-secondary') + '" data-plan-checkout="' + plan.id + '"' + disabled + '>' + buttonText + '</button>' +
+            '</article>';
+        }).join('');
+    }
+
+    function renderCredits() {
+        var label = $('auth-credits-label');
+        var copy = $('auth-credits-copy');
+        var button = $('auth-buy-credits');
+        var pack = state.catalog && state.catalog.creditPacks && state.catalog.creditPacks[0];
+        var balance = state.credits ? state.credits.balance : 0;
+
+        if (pack && label) {
+            label.textContent = pack.name + ': ' + pack.price + ' EUR / ' + pack.credits + ' creditos';
+        }
+        if (copy) {
+            copy.textContent = state.user
+                ? 'Saldo actual: ' + balance + ' creditos. Para mas exportaciones, IA, renders y campanas.'
+                : 'Login obligatorio para comprar y usar creditos.';
+        }
+        if (button) {
+            button.disabled = !state.user || !pack || !pack.stripeConfigured;
+            button.textContent = pack && pack.stripeConfigured ? 'Comprar creditos' : 'Creditos pendientes Stripe';
+        }
+    }
+
     function render() {
         var accountBtn = $('btn-account');
         var logoutBtn = $('auth-logout');
-        var upgradeBtn = $('auth-upgrade');
+        var portalBtn = $('auth-portal');
         var planLabel = $('auth-plan-label');
         var planCopy = $('auth-plan-copy');
         var closeBtn = $('auth-close');
@@ -112,7 +199,7 @@
         }
 
         if (logoutBtn) logoutBtn.disabled = !state.user;
-        if (upgradeBtn) upgradeBtn.disabled = !state.user;
+        if (portalBtn) portalBtn.disabled = !state.user || !state.billing || !state.billing.stripeCustomerLinked;
         if (closeBtn) {
             closeBtn.disabled = requiresAuth;
             closeBtn.setAttribute('aria-hidden', requiresAuth ? 'true' : 'false');
@@ -130,9 +217,12 @@
             } else if (state.billing && !state.billing.billingConfigured) {
                 planCopy.textContent = 'Cuenta activa. Billing aun no tiene Stripe configurado en este entorno.';
             } else if (state.billing) {
-                planCopy.textContent = 'Cuenta activa. Billing conectado al backend real.';
+                planCopy.textContent = 'Cuenta activa. Billing conectado al backend real. Los derechos se leen desde /v1/entitlements.';
             }
         }
+
+        renderPricing();
+        renderCredits();
 
         if (requiresAuth) {
             var panel = $('auth-panel');
@@ -142,6 +232,16 @@
                 panel.setAttribute('aria-hidden', 'false');
             }
         }
+    }
+
+    async function refreshCatalog() {
+        try {
+            state.catalog = await request('/v1/billing/catalog', { method: 'GET' });
+        } catch (err) {
+            state.catalog = null;
+            setStatus('No se pudo leer pricing: ' + err.message, 'error');
+        }
+        render();
     }
 
     async function refreshMe() {
@@ -174,6 +274,7 @@
         try {
             state.billing = await request('/v1/billing/status', { method: 'GET' });
             await refreshEntitlements();
+            await refreshCredits();
         } catch (err) {
             state.billing = null;
             setStatus('Login correcto, pero no se pudo leer billing: ' + err.message, 'error');
@@ -195,6 +296,15 @@
             }
         } catch (err) {
             setStatus('Login correcto, pero no se pudo leer entitlements: ' + err.message, 'error');
+        }
+    }
+
+    async function refreshCredits() {
+        if (!state.user) return;
+        try {
+            state.credits = await request('/v1/billing/credits', { method: 'GET' });
+        } catch (_err) {
+            state.credits = null;
         }
     }
 
@@ -269,19 +379,60 @@
         }
     }
 
-    async function upgrade() {
+    async function checkoutPlan(plan) {
+        if (!state.user || plan === 'free' || plan === 'enterprise') return;
+        setBusy(true);
+        try {
+            var data = await request('/v1/billing/checkout', {
+                method: 'POST',
+                body: JSON.stringify({
+                    kind: 'subscription',
+                    plan: plan,
+                    interval: state.selectedInterval,
+                    successUrl: window.location.origin + window.location.pathname + '?billing=success',
+                    cancelUrl: window.location.origin + window.location.pathname + '?billing=cancelled'
+                })
+            });
+            window.location.href = data.checkoutUrl;
+        } catch (err) {
+            setStatus(err.message, 'error');
+        } finally {
+            setBusy(false);
+            render();
+        }
+    }
+
+    async function buyCredits() {
         if (!state.user) return;
         setBusy(true);
         try {
             var data = await request('/v1/billing/checkout', {
                 method: 'POST',
                 body: JSON.stringify({
-                    plan: 'pro',
-                    successUrl: window.location.origin + window.location.pathname + '?billing=success',
-                    cancelUrl: window.location.origin + window.location.pathname + '?billing=cancelled'
+                    kind: 'credits',
+                    creditPack: 'credits_29',
+                    successUrl: window.location.origin + window.location.pathname + '?credits=success',
+                    cancelUrl: window.location.origin + window.location.pathname + '?credits=cancelled'
                 })
             });
             window.location.href = data.checkoutUrl;
+        } catch (err) {
+            setStatus(err.message, 'error');
+        } finally {
+            setBusy(false);
+            render();
+        }
+    }
+
+    async function openCustomerPortal() {
+        if (!state.user) return;
+        setBusy(true);
+        try {
+            var data = await request('/v1/billing/portal', {
+                method: 'POST',
+                body: '{}'
+            });
+            window.location.href = data.portalUrl;
         } catch (err) {
             setStatus(err.message, 'error');
         } finally {
@@ -320,7 +471,8 @@
         var loginBtn = $('auth-login');
         var registerBtn = $('auth-register');
         var logoutBtn = $('auth-logout');
-        var upgradeBtn = $('auth-upgrade');
+        var portalBtn = $('auth-portal');
+        var creditsBtn = $('auth-buy-credits');
         var panel = $('auth-panel');
 
         if (accountBtn) accountBtn.addEventListener('click', openPanel);
@@ -328,10 +480,21 @@
         if (loginBtn) loginBtn.addEventListener('click', login);
         if (registerBtn) registerBtn.addEventListener('click', register);
         if (logoutBtn) logoutBtn.addEventListener('click', logout);
-        if (upgradeBtn) upgradeBtn.addEventListener('click', upgrade);
+        if (portalBtn) portalBtn.addEventListener('click', openCustomerPortal);
+        if (creditsBtn) creditsBtn.addEventListener('click', buyCredits);
         if (panel) {
             panel.addEventListener('click', function(event) {
                 if (event.target === panel && state.user) closePanel();
+                if (event.target && event.target.dataset && event.target.dataset.planCheckout) {
+                    checkoutPlan(event.target.dataset.planCheckout);
+                }
+                if (event.target && event.target.dataset && event.target.dataset.billingInterval) {
+                    state.selectedInterval = event.target.dataset.billingInterval;
+                    Array.prototype.forEach.call(document.querySelectorAll('[data-billing-interval]'), function(btn) {
+                        btn.classList.toggle('active', btn.dataset.billingInterval === state.selectedInterval);
+                    });
+                    render();
+                }
             });
         }
     }
@@ -341,12 +504,14 @@
         bind();
         syncPlanGate();
         render();
+        refreshCatalog();
         refreshMe();
     }
 
     window.EP.AuthClient = {
         init: init,
         refreshMe: refreshMe,
+        refreshBilling: refreshBilling,
         open: openPanel,
         isAuthenticated: function() {
             return Boolean(state.user);
@@ -356,7 +521,9 @@
             return {
                 token: state.token,
                 user: state.user,
-                billing: state.billing
+                billing: state.billing,
+                catalog: state.catalog,
+                credits: state.credits
             };
         }
     };

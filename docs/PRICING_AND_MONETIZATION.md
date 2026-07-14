@@ -1,6 +1,6 @@
 # Escaparates Pro Pricing And Monetization
 
-Status: v0.1 foundation, pending final prices, tax review, legal validation, and Stripe live configuration.
+Status: v0.2 approved pricing foundation. Prices are approved for staging and product UI. Tax review, legal validation, Stripe live configuration, and signed webhook validation remain required before real public billing.
 
 ## Product Position
 
@@ -12,18 +12,20 @@ The pricing model is hybrid:
 - plan limits for assets, exports, publishes, seats, and premium modules;
 - extra credits for high-cost or burst usage such as AI, heavy exports, premium rendering, storage, or campaign spikes.
 
-## Launch Catalog
+## Approved Launch Catalog
 
 Do not launch five paid plans at once. The first paid beta should keep the catalog simple enough to operate and support.
 
-| Plan | Audience | Purpose |
-| --- | --- | --- |
-| Free | Trial users, curious creators | Try the product, use demo assets, limited simple downloads. |
-| Pro | Freelancers, small businesses | Real exports, premium effects, own assets, logo, first publishes. |
-| Studio | Agencies, ecommerce, recurring clients | More assets, exports, publishes, brand kits, review links, team seats. |
-| Enterprise | Brands, retail, events, installations | Custom limits, DPA, SLA, support, procurement, private deployment options. |
+| Plan | Monthly | Annual Discount | Audience | Purpose |
+| --- | ---: | ---: | --- | --- |
+| Free | 0 EUR | 0 EUR | Trial users, curious creators | Try the product, use basic effects, limited simple downloads. |
+| Pro | 49 EUR/month | 490 EUR/year | Freelancers, small businesses, creators | Real exports, premium effects, own assets, logo, first publishes. |
+| Studio | 99 EUR/month | 990 EUR/year | Agencies, studios, ecommerce, recurring clients | More assets, exports, publishes, brand kits, review links, higher volume. |
+| Enterprise | Custom | Custom | Brands, retail, events, installations | Custom limits, DPA, SLA, support, procurement, integrations, private deployment options. |
 
-Creator can be added later if analytics prove a pricing gap between Free and Pro.
+Extra credits start with a one-off pack from 29 EUR. Credits are intended for additional exports, AI usage, renders, and campaign spikes.
+
+Creator can be added later only if analytics prove a pricing gap between Free and Pro. Do not add it before the first paid beta because it complicates support, Stripe setup, copy, and entitlement rules.
 
 ## Monetizable Dimensions
 
@@ -49,16 +51,30 @@ Required API contract:
 - Stripe success pages must never activate plans directly.
 - Stripe webhook events and reconciliation must update subscription state.
 
-## Suggested Price Discovery
+## Stripe Configuration
 
-Initial candidates to validate:
+The approved pricing can be displayed immediately, but real checkout requires Stripe Price IDs configured in Railway.
 
-- Pro: 39-49 EUR/month.
-- Studio: 99-149 EUR/month.
-- Enterprise: custom.
-- Annual discount: 15-20%.
+Required variables for staging and later production:
 
-Do not hardcode final public prices until customer interviews, first paid beta usage, tax treatment, and Stripe products are approved.
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_PRICE_PRO_MONTHLY`
+- `STRIPE_PRICE_PRO_YEARLY`
+- `STRIPE_PRICE_STUDIO_MONTHLY`
+- `STRIPE_PRICE_STUDIO_YEARLY`
+- `STRIPE_PRICE_CREDITS_29`
+- `APP_PUBLIC_URL`
+- `CORS_ORIGINS`
+
+Stripe Checkout supports:
+
+- subscription checkout for Pro monthly/yearly;
+- subscription checkout for Studio monthly/yearly;
+- one-off payment checkout for the 29 EUR credits pack;
+- Customer Portal for cancellation, invoice access, and subscription management after a Stripe customer exists.
+
+Never activate or upgrade a plan from `success_url`. Activation must come from signed Stripe webhooks and internal subscription state.
 
 ## Credit Model
 
@@ -72,7 +88,13 @@ Good credit candidates:
 - Additional publishes.
 - Storage overflow.
 
-Credits require an internal ledger before being sold at scale.
+Credits require an internal ledger before being sold at scale. The first ledger table is `credit_ledger_entries`, introduced by migration `018_create_credit_ledger_entries.sql`.
+
+Initial credit pack:
+
+| Pack | Price | Credits | Use |
+| --- | ---: | ---: | --- |
+| credits_29 | 29 EUR | 100 | Extra exports, AI, renders, campaigns. |
 
 ## Paid Launch Blockers
 
