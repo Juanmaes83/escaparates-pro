@@ -10,6 +10,12 @@ type R2Config = {
   uploadTtlSeconds: number
 }
 
+type PresignedRequest = {
+  url: string
+  headers: Record<string, string>
+  expiresIn: number
+}
+
 function hmac(key: Buffer | string, value: string): Buffer {
   return createHmac('sha256', key).update(value).digest()
 }
@@ -52,12 +58,13 @@ export function publicAssetUrl(storageKey: string, config = getR2Config()): stri
   return `${config.publicUrl}/${encodePath(storageKey)}`
 }
 
-export function createPresignedPutUrl(
+function createPresignedRequest(
+  method: 'PUT' | 'DELETE',
   storageKey: string,
-  mimeType: string,
+  mimeType: string | null,
   config = getR2Config(),
   now = new Date(),
-): { url: string; headers: Record<string, string>; expiresIn: number } | null {
+): PresignedRequest | null {
   if (!config) return null
 
   const host = `${config.accountId}.r2.cloudflarestorage.com`
@@ -67,22 +74,25 @@ export function createPresignedPutUrl(
   const service = 's3'
   const scope = `${dateStamp}/${region}/${service}/aws4_request`
   const credential = `${config.accessKeyId}/${scope}`
+  const signedHeaders = mimeType ? 'content-type;host' : 'host'
   const query = new URLSearchParams({
     'X-Amz-Algorithm': 'AWS4-HMAC-SHA256',
     'X-Amz-Credential': credential,
     'X-Amz-Date': amzDate,
     'X-Amz-Expires': String(config.uploadTtlSeconds),
-    'X-Amz-SignedHeaders': 'content-type;host',
+    'X-Amz-SignedHeaders': signedHeaders,
   })
   query.sort()
 
-  const canonicalHeaders = `content-type:${mimeType.trim()}\nhost:${host}\n`
+  const canonicalHeaders = mimeType
+    ? `content-type:${mimeType.trim()}\nhost:${host}\n`
+    : `host:${host}\n`
   const canonicalRequest = [
-    'PUT',
+    method,
     canonicalUri,
     query.toString(),
     canonicalHeaders,
-    'content-type;host',
+    signedHeaders,
     'UNSIGNED-PAYLOAD',
   ].join('\n')
   const stringToSign = [
@@ -101,7 +111,32 @@ export function createPresignedPutUrl(
 
   return {
     url: `https://${host}${canonicalUri}?${query.toString()}`,
-    headers: { 'Content-Type': mimeType },
+    headers: mimeType ? { 'Content-Type': mimeType } : {},
     expiresIn: config.uploadTtlSeconds,
   }
+}
+
+export function createPresignedPutUrl(
+  storageKey: string,
+  mimeType: string,
+  config = getR2Config(),
+  now = new Date(),
+): PresignedRequest | null {
+  return createPresignedRequest('PUT', storageKey, mimeType, config, now)
+}
+
+export function createPresignedDeleteUrl(
+  storageKey: string,
+  config = getR2Config(),
+  now = new Date(),
+): PresignedRequest | null {
+  return createPresignedRequest('DELETE', storageKey, null, config, now)
+}
+
+export async function deleteR2Object(storageKey: string): Promise<boolean> {
+  const request = createPresignedDeleteUrl(storageKey)
+  if (!request) return false
+  const response = await fetch(request.url, { method: 'DELETE', headers: request.headers })
+  if (response.ok || response.status === 404) return true
+  throw new Error(`R2 deletion failed with HTTP ${response.status}`)
 }
