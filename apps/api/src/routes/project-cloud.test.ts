@@ -13,6 +13,9 @@ const protectedRoutes = [
   { method: 'POST', url: '/v1/projects/00000000-0000-4000-8000-000000000000/versions', payload: {} },
   { method: 'POST', url: '/v1/projects/00000000-0000-4000-8000-000000000000/publish', payload: {} },
   { method: 'DELETE', url: '/v1/projects/00000000-0000-4000-8000-000000000000/publish' },
+  { method: 'POST', url: '/v1/projects/00000000-0000-4000-8000-000000000000/assets', payload: {} },
+  { method: 'POST', url: '/v1/projects/00000000-0000-4000-8000-000000000000/assets/00000000-0000-4000-8000-000000000001/complete', payload: {} },
+  { method: 'DELETE', url: '/v1/projects/00000000-0000-4000-8000-000000000000/assets/00000000-0000-4000-8000-000000000001' },
 ] as const
 
 for (const route of protectedRoutes) {
