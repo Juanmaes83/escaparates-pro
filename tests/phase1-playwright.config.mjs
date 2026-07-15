@@ -6,7 +6,11 @@ export default defineConfig({
   timeout: 60000,
   retries: 1,
   workers: 1,
-  reporter: [['line']],
+  reporter: [
+    ['line'],
+    ['json', { outputFile: 'phase1-results.json' }]
+  ],
+  outputDir: 'test-results',
   use: {
     baseURL: 'http://127.0.0.1:4173',
     trace: 'retain-on-failure',
