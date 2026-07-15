@@ -20,6 +20,7 @@ import { entitlementsRoutes } from './routes/entitlements.js'
 import { projectsRoutes } from './routes/projects.js'
 import { projectVersionsRoutes } from './routes/project-versions.js'
 import { projectPublicationsRoutes } from './routes/project-publications.js'
+import { projectAssetsRoutes } from './routes/project-assets.js'
 
 export async function buildApp() {
   const app = fastify({
@@ -80,6 +81,7 @@ export async function buildApp() {
   await app.register(projectsRoutes)
   await app.register(projectVersionsRoutes)
   await app.register(projectPublicationsRoutes)
+  await app.register(projectAssetsRoutes)
   await app.register(internalDbSchemaRoutes)
   await app.register(internalDbMigrateRoutes)
 
