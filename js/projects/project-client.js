@@ -2,7 +2,16 @@
   'use strict';
   window.EP=window.EP||{};
   var DEFAULT_API='https://escaparates-pro-api-staging-staging.up.railway.app';
-  function apiBase(){return (localStorage.getItem('ep.apiBaseUrl')||DEFAULT_API).replace(/\/+$/,'');}
+  function validBase(value){try{var u=new URL(String(value||''));return u.protocol==='https:'||u.hostname==='localhost'||u.hostname==='127.0.0.1';}catch(_e){return false;}}
+  function runtimeBase(){
+    var params=new URLSearchParams(location.search||'');
+    var fromQuery=params.get('api');
+    if(fromQuery&&validBase(fromQuery)){localStorage.setItem('ep.apiBaseUrl',fromQuery.replace(/\/+$/,''));}
+    var configured=(window.EP_API_BASE_URL||localStorage.getItem('ep.apiBaseUrl')||DEFAULT_API);
+    return validBase(configured)?configured.replace(/\/+$/,''):DEFAULT_API;
+  }
+  function apiBase(){return runtimeBase();}
+  function setApiBase(value){if(!validBase(value))throw new Error('La URL de la API debe ser HTTPS.');localStorage.setItem('ep.apiBaseUrl',String(value).replace(/\/+$/,''));return apiBase();}
   function token(){return localStorage.getItem('ep.refreshToken')||'';}
   async function request(path,options){
     options=options||{};
@@ -31,5 +40,5 @@
     completeAsset:function(id,assetId,data){return request('/v1/projects/'+encodeURIComponent(id)+'/assets/'+encodeURIComponent(assetId)+'/complete',{method:'POST',body:JSON.stringify(data||{})});},
     deleteAsset:function(id,assetId){return request('/v1/projects/'+encodeURIComponent(id)+'/assets/'+encodeURIComponent(assetId),{method:'DELETE'});}
   };
-  EP.ProjectClient={request:request,apiBase:apiBase,hasSession:function(){return Boolean(token());},api:api};
+  EP.ProjectClient={request:request,apiBase:apiBase,setApiBase:setApiBase,hasSession:function(){return Boolean(token());},api:api};
 })();
