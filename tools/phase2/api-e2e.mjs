@@ -1,10 +1,133 @@
 #!/usr/bin/env node
-
 import { randomBytes } from 'node:crypto';
 
 const base = String(process.argv[2] || process.env.API_BASE_URL || 'http://127.0.0.1:8080').replace(/\/+$/, '');
-const runId = `${Date.now()}-${randomBytes(3).toString('hex')}`;
-const email = `railway-phase2-${runId}@example.test`;
+const id = `${Date.now()}-${randomBytes(3).toString('hex')}`;
+const email = `railway-phase2-${id}@example.test`;
 const password = randomBytes(24).toString('base64url');
-const createdProjectIds = [];
-let token =
+const templates = [
+  'real-estate-storytelling-custom-pro',
+  'product-storytelling-custom-pro',
+  'luxury-real-estate-custom-pro',
+];
+let token = '';
+const created = [];
+
+function fail(message, extra) {
+  console.error(JSON.stringify({ ok: false, message, extra }, null, 2));
+  process.exitCode = 1;
+  throw new Error(message);
+}
+async function req(path, options = {}) {
+  const headers = { Accept: 'application/json', 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(base + path, { ...options, headers });
+  const text = await response.text();
+  let body; try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+  return { status: response.status, body, headers: Object.fromEntries(response.headers.entries()) };
+}
+function expect(result, status, label) {
+  if (result.status !== status) fail(`${label}: expected ${status}, received ${result.status}`, result.body);
+  console.log(JSON.stringify({ ok: true, label, status: result.status }, null, 2));
+  return result.body;
+}
+
+async function main() {
+  for (const path of ['/health', '/ready', '/v1']) {
+    const result = await req(path, { method: 'GET' });
+    expect(result, 200, `smoke ${path}`);
+  }
+
+  const registered = expect(await req('/v1/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password, name: 'Railway Phase2 QA', termsAccepted: true }),
+  }), 201, 'register');
+  token = registered.session.refreshToken;
+
+  expect(await req('/v1/auth/me', { method: 'GET' }), 200, 'auth me');
+  expect(await req('/v1/entitlements', { method: 'GET' }), 200, 'entitlements');
+
+  for (const templateId of templates) {
+    const body = expect(await req('/v1/projects', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: `QA ${templateId} ${id}`,
+        templateId,
+        templateVersion: '2.2.0',
+        config: { title: `QA ${id}` },
+        media: [],
+        responsive: {},
+        seo: {},
+        status: 'draft',
+      }),
+    }), 201, `create ${templateId}`);
+    created.push(body.project.id);
+  }
+
+  const listed = expect(await req('/v1/projects', { method: 'GET' }), 200, 'list projects');
+  if (!Array.isArray(listed.projects) || listed.projects.length < 3) fail('list projects returned fewer than three projects', listed);
+
+  const projectId = created[0];
+  const opened = expect(await req(`/v1/projects/${projectId}`, { method: 'GET' }), 200, 'get project').project;
+  const revision = opened.revision;
+
+  const updated = expect(await req(`/v1/projects/${projectId}`, {
+    method: 'PATCH',
+    headers: { 'If-Match': String(revision) },
+    body: JSON.stringify({ name: `QA updated ${id}` }),
+  }), 200, 'update with current revision').project;
+  if (!(updated.revision > revision)) fail('revision did not increment', updated);
+
+  const conflict = await req(`/v1/projects/${projectId}`, {
+    method: 'PATCH',
+    headers: { 'If-Match': String(revision) },
+    body: JSON.stringify({ name: `QA stale ${id}` }),
+  });
+  expect(conflict, 409, 'stale revision conflict');
+  if (conflict.body?.error?.code !== 'PROJECT_CONFLICT') fail('unexpected conflict code', conflict.body);
+
+  const duplicate = expect(await req(`/v1/projects/${projectId}/duplicate`, {
+    method: 'POST', body: JSON.stringify({ name: `QA duplicate ${id}` }),
+  }), 201, 'duplicate project').project;
+  created.push(duplicate.id);
+
+  const version = expect(await req(`/v1/projects/${projectId}/versions`, {
+    method: 'POST', body: JSON.stringify({ label: 'QA checkpoint', reason: 'qa' }),
+  }), 201, 'create version').version;
+  expect(await req(`/v1/projects/${projectId}/versions`, { method: 'GET' }), 200, 'list versions');
+  expect(await req(`/v1/projects/${projectId}/versions/${version.id}/restore`, { method: 'POST', body: '{}' }), 200, 'restore version');
+
+  const slug = `qa-${id}`.toLowerCase();
+  expect(await req(`/v1/projects/${projectId}/publish`, {
+    method: 'POST', body: JSON.stringify({ slug, snapshot: { name: `QA ${id}`, html: '<!doctype html><title>QA</title><h1>QA</h1>' } }),
+  }), 200, 'publish project');
+  token = '';
+  expect(await req(`/v1/publications/${slug}`, { method: 'GET' }), 200, 'public publication');
+  token = registered.session.refreshToken;
+  expect(await req(`/v1/projects/${projectId}/publish`, { method: 'DELETE' }), 200, 'unpublish project');
+  token = '';
+  expect(await req(`/v1/publications/${slug}`, { method: 'GET' }), 404, 'publication removed');
+  token = registered.session.refreshToken;
+
+  const storage = await req(`/v1/projects/${projectId}/assets`, {
+    method: 'POST',
+    body: JSON.stringify({ filename: 'qa.png', mimeType: 'image/png', size: 68, slot: 'hero' }),
+  });
+  if (storage.status === 503 && storage.body?.error?.code === 'STORAGE_NOT_CONFIGURED') {
+    console.log(JSON.stringify({ ok: true, label: 'R2 not configured', status: 503, code: 'STORAGE_NOT_CONFIGURED' }, null, 2));
+  } else if (storage.status === 201) {
+    console.log(JSON.stringify({ ok: true, label: 'R2 upload session created', status: 201 }, null, 2));
+  } else fail('unexpected asset response', storage);
+
+  for (const projectIdToDelete of created.reverse()) {
+    expect(await req(`/v1/projects/${projectIdToDelete}`, { method: 'DELETE' }), 200, `delete ${projectIdToDelete}`);
+  }
+  expect(await req('/v1/auth/logout', { method: 'POST', body: '{}' }), 200, 'logout');
+  token = '';
+  console.log(JSON.stringify({ ok: true, result: 'Phase 2 API E2E completed', account: email, projectsCleaned: created.length }, null, 2));
+}
+
+main().catch((error) => {
+  console.error(JSON.stringify({ ok: false, fatal: error.message }, null, 2));
+  process.exit(1);
+});
