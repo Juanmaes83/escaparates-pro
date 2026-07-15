@@ -1,0 +1,19 @@
+name: Fix Product Storytelling V2
+
+on:
+  push:
+    branches:
+      - feature/premium-storytelling-pack-v2-source-faithful
+    paths:
+      - .github/workflows/fix-product-storytelling-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/premium-storytelling-pack-v2-source-faithful
