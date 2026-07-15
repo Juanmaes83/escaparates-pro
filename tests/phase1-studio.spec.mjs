@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const path = '/review/premium-storytelling-phase1-studio.html';
 
 async function waitReady(page) {
-  await page.waitForSelector('#previewLoading.hidden');
+  await expect(page.locator('#previewLoading')).toBeHidden();
 }
 
 test('desktop editor scroll, preview scroll and transactional templates', async ({ page }) => {
