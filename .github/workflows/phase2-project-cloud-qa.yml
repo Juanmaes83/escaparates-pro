@@ -1,0 +1,36 @@
+name: Phase 2 Project Cloud QA
+
+on:
+  pull_request:
+    paths:
+      - 'js/projects/**'
+      - 'js/export/**'
+      - 'review/phase2-studio-extension.*'
+      - 'review/premium-storytelling-phase1-studio.html'
+      - 'tests/phase2-contract.spec.mjs'
+      - '.github/workflows/phase2-project-cloud-qa.yml'
+  workflow_dispatch:
+
+jobs:
+  contract-and-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Phase 2 contracts
+        run: node tests/phase2-contract.spec.mjs
+      - name: Protect Source Faithful files
+        shell: bash
+        run: |
+          git diff --name-only HEAD^ HEAD | grep '^labs/source-experiences/.*source-faithful/' && {
+            echo 'Source Faithful files were modified'; exit 1;
+          } || true
+      - name: Reject temporary URLs in export modules
+        shell: bash
+        run: |
+          grep -R "blob:" js/export js/projects && true
+          grep -R "Authorization: Bearer" js/export && exit 1 || true
