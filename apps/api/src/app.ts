@@ -17,6 +17,9 @@ import { authRoutes } from './routes/auth.js'
 import { internalDbMigrateRoutes } from './routes/internal-db-migrate.js'
 import { billingRoutes } from './routes/billing.js'
 import { entitlementsRoutes } from './routes/entitlements.js'
+import { projectsRoutes } from './routes/projects.js'
+import { projectVersionsRoutes } from './routes/project-versions.js'
+import { projectPublicationsRoutes } from './routes/project-publications.js'
 
 export async function buildApp() {
   const app = fastify({
@@ -25,11 +28,7 @@ export async function buildApp() {
     genReqId: (req) => resolveRequestId(req.headers['x-request-id']),
   })
 
-  // ── Request ID hook (must run before rate-limit) ─────────────────────────
-
   app.addHook('onRequest', async (request) => {
-    // genReqId already resolved the ID; expose it on request.requestId
-    // Fastify stores it as request.id — mirror it to our typed field
     request.requestId = String(request.id)
   })
 
@@ -47,8 +46,6 @@ export async function buildApp() {
     return Readable.from(rawBody)
   })
 
-  // ── Plugins ──────────────────────────────────────────────────────────────
-
   await app.register(helmet)
 
   const corsOrigins = env.CORS_ORIGINS.split(',')
@@ -56,7 +53,6 @@ export async function buildApp() {
     .filter((origin) => origin.length > 0)
 
   await app.register(cors, {
-    // Browser access stays disabled until an explicit allowlist is configured.
     origin: corsOrigins.length > 0 ? corsOrigins : false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   })
@@ -66,17 +62,13 @@ export async function buildApp() {
     timeWindow: '1 minute',
   })
 
-  app.addHook('onSend', async (request, reply, _payload) => {
+  app.addHook('onSend', async (request, reply, payload) => {
     void reply.header('X-Request-ID', request.requestId)
-    return _payload
+    return payload
   })
-
-  // ── Error handlers ────────────────────────────────────────────────────────
 
   app.setErrorHandler(errorHandler)
   app.setNotFoundHandler(notFoundHandler)
-
-  // ── Routes ────────────────────────────────────────────────────────────────
 
   await app.register(healthRoutes)
   await app.register(readyRoutes)
@@ -85,6 +77,9 @@ export async function buildApp() {
   await app.register(authRoutes)
   await app.register(billingRoutes)
   await app.register(entitlementsRoutes)
+  await app.register(projectsRoutes)
+  await app.register(projectVersionsRoutes)
+  await app.register(projectPublicationsRoutes)
   await app.register(internalDbSchemaRoutes)
   await app.register(internalDbMigrateRoutes)
 
