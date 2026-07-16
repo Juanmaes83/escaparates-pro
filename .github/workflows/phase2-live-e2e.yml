@@ -1,0 +1,46 @@
+name: Phase 2 Railway Live E2E
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/scripts/phase2-e2e.mjs'
+      - '.github/workflows/phase2-live-e2e.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: phase2-railway-live-e2e
+  cancel-in-progress: false
+
+jobs:
+  live-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API_BASE_URL: https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait for Railway API
+        shell: bash
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error "$API_BASE_URL/health" >/tmp/phase2-health.json; then
+              cat /tmp/phase2-health.json
+              exit 0
+            fi
+            echo "Railway API not ready yet (attempt $attempt/30)"
+            sleep 10
+          done
+          echo "Railway API did not become reachable"
+          exit 1
+      - name: Run authenticated Phase 2 E2E
+        run: node apps/api/scripts/phase2-e2e.mjs "$API_BASE_URL" | tee phase2-live-e2e.log
+      - name: Upload live E2E diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-live-e2e-diagnostics
+          path: phase2-live-e2e.log
+          if-no-files-found: ignore
