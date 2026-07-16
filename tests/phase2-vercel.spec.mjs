@@ -1,11 +1,7 @@
 import { test, expect } from '@playwright/test';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 const API = 'https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const imagePath = path.join(__dirname, 'fixtures', 'qa-image.png');
-const videoPath = path.join(__dirname, 'fixtures', 'qa-video.mp4');
+const imageBuffer = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+X0Y6WQAAAABJRU5ErkJggg==', 'base64');
 const customTemplates = [
   ['real-estate-storytelling-custom-pro', 'Real Estate Storytelling'],
   ['product-storytelling-custom-pro', 'Product Storytelling'],
@@ -23,7 +19,7 @@ async function registerQa(request, suffix) {
   return { email, token: body.session.refreshToken };
 }
 
-async function authHeaders(token) {
+function authHeaders(token) {
   return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 }
 
@@ -47,19 +43,50 @@ async function currentProject(page, name) {
   }, name);
 }
 
+async function createWebmFile(page) {
+  const bytes = await page.evaluate(async () => {
+    if (!window.MediaRecorder) throw new Error('MediaRecorder is unavailable');
+    const canvas = document.createElement('canvas');
+    canvas.width = 320;
+    canvas.height = 180;
+    const context = canvas.getContext('2d');
+    const stream = canvas.captureStream(20);
+    const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8') ? 'video/webm;codecs=vp8' : 'video/webm';
+    const recorder = new MediaRecorder(stream, { mimeType });
+    const chunks = [];
+    recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+    const stopped = new Promise(resolve => recorder.onstop = resolve);
+    recorder.start(100);
+    for (let frame = 0; frame < 20; frame += 1) {
+      context.fillStyle = frame % 2 ? '#111111' : '#d3ad68';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = frame % 2 ? '#ffffff' : '#111111';
+      context.font = '24px sans-serif';
+      context.fillText('Escaparates Pro QA', 48, 96);
+      await new Promise(resolve => setTimeout(resolve, 40));
+    }
+    recorder.stop();
+    await stopped;
+    stream.getTracks().forEach(track => track.stop());
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    return Array.from(new Uint8Array(await blob.arrayBuffer()));
+  });
+  return Buffer.from(bytes);
+}
+
 async function deleteProject(request, token, projectId) {
   if (!projectId) return;
-  await request.delete(`${API}/v1/projects/${projectId}`, { headers: await authHeaders(token) });
+  await request.delete(`${API}/v1/projects/${projectId}`, { headers: authHeaders(token) });
 }
 
 async function deleteAsset(request, token, projectId, assetId) {
   if (!projectId || !assetId) return;
-  await request.delete(`${API}/v1/projects/${projectId}/assets/${assetId}`, { headers: await authHeaders(token) });
+  await request.delete(`${API}/v1/projects/${projectId}/assets/${assetId}`, { headers: authHeaders(token) });
 }
 
 async function unpublish(request, token, projectId) {
   if (!projectId) return;
-  await request.delete(`${API}/v1/projects/${projectId}/publish`, { headers: await authHeaders(token) });
+  await request.delete(`${API}/v1/projects/${projectId}/publish`, { headers: authHeaders(token) });
 }
 
 async function noHorizontalOverflow(page) {
@@ -77,7 +104,6 @@ test.describe('catálogo protegido', () => {
 
   test('las tres Source Faithful no tienen edición y las tres Custom PRO sí', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
     await page.locator('#mode-btn-scroll-sections').click();
     const scrollCatalog = page.locator('#scroll-sections-catalog');
     await expect(scrollCatalog).toContainText('Real Estate Storytelling — Source Faithful PRO');
@@ -127,8 +153,7 @@ test.describe('responsive Studio', () => {
         await expect(page.locator('#previewPanel')).toBeVisible();
       }
 
-      const preview = page.locator('#preview');
-      const marker = await preview.evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
+      const marker = await page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
       expect(marker).toBe(templateId);
       expect(errors).toEqual([]);
     });
@@ -138,12 +163,11 @@ test.describe('responsive Studio', () => {
 test.describe('flujo cloud real Vercel + Railway + R2', () => {
   test.skip(({ browserName }, testInfo) => browserName !== 'chromium' || testInfo.project.name !== 'desktop-chromium', 'Flujo destructivo único');
 
-  test('sube MP4 y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser }) => {
+  test('sube WebM y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser }) => {
     const qa = await registerQa(request, 'desktop');
     await seedBrowser(page, qa.token);
     const name = `QA Vercel R2 ${Date.now()}`;
     let projectId = null;
-    let publicationUrl = null;
     let assetIds = [];
 
     try {
@@ -154,17 +178,19 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
       await page.locator('#save').click();
       await page.waitForTimeout(1200);
 
+      const videoBuffer = await createWebmFile(page);
+      expect(videoBuffer.length).toBeGreaterThan(500);
       const firstNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-0').setInputFiles(videoPath);
+      await page.locator('#media-0').setInputFiles({ name: 'qa-video.webm', mimeType: 'video/webm', buffer: videoBuffer });
       await firstNavigation;
       await waitStudio(page);
-      await expect(page.locator('#media').locator('.media-card').nth(0)).toContainText('qa-video.mp4');
+      await expect(page.locator('#media .media-card').nth(0)).toContainText('qa-video.webm');
 
       const secondNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-1').setInputFiles(imagePath);
+      await page.locator('#media-1').setInputFiles({ name: 'qa-image.png', mimeType: 'image/png', buffer: imageBuffer });
       await secondNavigation;
       await waitStudio(page);
-      await expect(page.locator('#media').locator('.media-card').nth(1)).toContainText('qa-image.png');
+      await expect(page.locator('#media .media-card').nth(1)).toContainText('qa-image.png');
 
       const project = await currentProject(page, name);
       expect(project).toBeTruthy();
@@ -176,34 +202,31 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
       expect(project.media[1].status).toBe('ready');
       assetIds = project.media.map(item => item?.assetId).filter(Boolean);
 
-      const publicVideo = await request.get(project.media[0].url);
-      const publicImage = await request.get(project.media[1].url);
-      expect(publicVideo.status()).toBe(200);
-      expect(publicImage.status()).toBe(200);
+      expect((await request.get(project.media[0].url)).status()).toBe(200);
+      expect((await request.get(project.media[1].url)).status()).toBe(200);
 
       await page.locator('#exportProject').click();
       await expect(page.locator('#phase2Modal')).toHaveClass(/open/);
       await expect(page.locator('.phase2-check.bad')).toHaveCount(0);
-
       const htmlDownloadPromise = page.waitForEvent('download');
       await page.locator('#doHtml').click();
       const htmlDownload = await htmlDownloadPromise;
       expect(htmlDownload.suggestedFilename()).toMatch(/\.html$/);
-      expect((await htmlDownload.createReadStream())).toBeTruthy();
+      await page.locator('#phase2Close').click();
 
       await page.locator('#exportProject').click();
       const zipDownloadPromise = page.waitForEvent('download', { timeout: 90000 });
       await page.locator('#doZip').click();
       const zipDownload = await zipDownloadPromise;
       expect(zipDownload.suggestedFilename()).toMatch(/\.zip$/);
-      expect((await zipDownload.createReadStream())).toBeTruthy();
+      await page.locator('#phase2Close').click();
 
       await page.locator('#exportProject').click();
       await page.locator('#doPublish').click();
       await expect(page.locator('#phase2Title')).toHaveText('Proyecto publicado', { timeout: 60000 });
-      publicationUrl = (await page.locator('#phase2Body textarea').inputValue()).trim();
+      const publicationUrl = (await page.locator('#phase2Body textarea').inputValue()).trim();
       expect(publicationUrl).toMatch(/^https:\/\//);
-      expect(new URL(publicationUrl).origin).toBe(test.info().project.use.baseURL || new URL(page.url()).origin);
+      expect(new URL(publicationUrl).origin).toBe(new URL(page.url()).origin);
 
       const cleanContext = await browser.newContext();
       const publicPage = await cleanContext.newPage();
@@ -212,14 +235,15 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
       await expect(publicPage.locator('body')).toContainText(/.+/);
       await cleanContext.close();
 
+      await page.locator('#phase2Close').click();
       await page.locator('#exportProject').click();
       await page.locator('#doEmbed').click();
       await expect(page.locator('#phase2Title')).toHaveText('Código embed');
       const embed = await page.locator('#phase2Body textarea').inputValue();
       expect(embed).toContain(publicationUrl);
       expect(embed).toContain('<iframe');
-
       await page.locator('#phase2Close').click();
+
       let navigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 60000 });
       await page.locator('#media .media-card').nth(0).getByRole('button', { name: 'Eliminar' }).click();
       await navigation;
@@ -238,7 +262,7 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
         for (const assetId of assetIds) await deleteAsset(request, qa.token, projectId, assetId).catch(() => {});
         await deleteProject(request, qa.token, projectId).catch(() => {});
       }
-      await request.post(`${API}/v1/auth/logout`, { headers: await authHeaders(qa.token), data: {} }).catch(() => {});
+      await request.post(`${API}/v1/auth/logout`, { headers: authHeaders(qa.token), data: {} }).catch(() => {});
     }
   });
 });
