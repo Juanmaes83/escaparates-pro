@@ -94,7 +94,8 @@
         localStorage.removeItem(TOKEN_KEY);
         syncPlanGate();
         render();
-        openPanel();
+        // After logout or an expired session the visitor returns to the public
+        // catalog as a guest; the login panel opens only on demand.
     }
 
     function syncPlanGate() {
@@ -190,7 +191,11 @@
         var closeBtn = $('auth-close');
         var requiresAuth = !state.user;
 
-        document.body.classList.toggle('auth-required', requiresAuth);
+        // 'auth-required' used to blur the whole catalog and force the auth panel
+        // open. The public catalog must stay browsable without a session, so the app
+        // is no longer gated at load; the panel opens on demand and the backend keeps
+        // enforcing authorization on every persistent action.
+        document.body.classList.remove('auth-required');
         document.body.classList.toggle('auth-connected', Boolean(state.user));
 
         if (accountBtn) {
@@ -201,8 +206,10 @@
         if (logoutBtn) logoutBtn.disabled = !state.user;
         if (portalBtn) portalBtn.disabled = !state.user || !state.billing || !state.billing.stripeCustomerLinked;
         if (closeBtn) {
-            closeBtn.disabled = requiresAuth;
-            closeBtn.setAttribute('aria-hidden', requiresAuth ? 'true' : 'false');
+            // The panel is a dismissible dialog for everyone: anonymous visitors
+            // must be able to close it and keep browsing the public catalog.
+            closeBtn.disabled = false;
+            closeBtn.setAttribute('aria-hidden', 'false');
         }
 
         if (planLabel) {
@@ -224,14 +231,8 @@
         renderPricing();
         renderCredits();
 
-        if (requiresAuth) {
-            var panel = $('auth-panel');
-            if (panel) {
-                state.isOpen = true;
-                panel.classList.add('open');
-                panel.setAttribute('aria-hidden', 'false');
-            }
-        }
+        // The auth panel is opened on demand (Login button or a protected action),
+        // never forced open on load. The public catalog stays reachable without a session.
     }
 
     async function refreshCatalog() {
@@ -246,10 +247,10 @@
 
     async function refreshMe() {
         if (!state.token) {
+            // Anonymous visitor: guest/demo plan, free to explore the catalog.
+            // Authentication is requested only when a protected action needs it.
             syncPlanGate();
             render();
-            openPanel();
-            setStatus('Login obligatorio: entra o crea cuenta para usar Escaparates Pro.', null);
             return;
         }
 
@@ -452,11 +453,8 @@
     }
 
     function closePanel() {
-        if (!state.user) {
-            openPanel();
-            setStatus('Login obligatorio: no puedes cerrar esta pantalla sin una sesion valida.', 'error');
-            return;
-        }
+        // Always dismissible. Protected actions re-open it on demand; the backend
+        // remains the real authorization boundary for every persistent operation.
         state.isOpen = false;
         var panel = $('auth-panel');
         if (panel) {
@@ -482,9 +480,14 @@
         if (logoutBtn) logoutBtn.addEventListener('click', logout);
         if (portalBtn) portalBtn.addEventListener('click', openCustomerPortal);
         if (creditsBtn) creditsBtn.addEventListener('click', buyCredits);
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && state.isOpen) closePanel();
+        });
+
         if (panel) {
             panel.addEventListener('click', function(event) {
-                if (event.target === panel && state.user) closePanel();
+                // Backdrop click (never a click inside the card) dismisses the panel.
+                if (event.target === panel) closePanel();
                 if (event.target && event.target.dataset && event.target.dataset.planCheckout) {
                     checkoutPlan(event.target.dataset.planCheckout);
                 }
