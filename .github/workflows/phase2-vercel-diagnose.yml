@@ -1,0 +1,22 @@
+name: Phase 2 Vercel Preview Diagnose
+
+on:
+  pull_request:
+    paths:
+      - 'tools/phase2/vercel-preview-diagnose.mjs'
+      - '.github/workflows/phase2-vercel-diagnose.yml'
+  workflow_dispatch:
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VERCEL_BASE_URL: https://escaparates-pro-git-feature-pr-cf2d77-juanma-espinosas-projects.vercel.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Diagnose preview files
+        run: node tools/phase2/vercel-preview-diagnose.mjs
