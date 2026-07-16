@@ -16,8 +16,8 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: phase2-vercel-browser-qa
-  cancel-in-progress: true
+  group: phase2-railway-shared-e2e
+  cancel-in-progress: false
 
 jobs:
   vercel-browser-qa:
