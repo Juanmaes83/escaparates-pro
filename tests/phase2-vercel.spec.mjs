@@ -9,6 +9,23 @@ const customTemplates = [
   ['luxury-real-estate-custom-pro', 'Luxury Real Estate']
 ];
 
+// A page error is attributed to the application and fails the test UNLESS its stack
+// demonstrably originates from a Vercel-injected third-party script (the Live Toolbar
+// feedback widget or Vercel Insights), which are added only to preview deployments and
+// are not part of the shipped product. Attribution is by stack origin URL only, never by
+// message text; an error with no provable third-party origin still fails the test.
+const VERCEL_THIRDPARTY_ORIGIN = /(?:https?:\/\/(?:[a-z0-9-]+\.)*vercel\.live\/)|\/_next-live\/|\/_vercel\/(?:insights|speed-insights)\//i;
+
+function classifyPageError(error) {
+  const stack = (error && error.stack) || '';
+  const originMatch = stack.match(/https?:\/\/[^\s)]+/);
+  return {
+    message: (error && error.message) || String(error),
+    origin: originMatch ? originMatch[0] : '',
+    isThirdParty: VERCEL_THIRDPARTY_ORIGIN.test(stack)
+  };
+}
+
 async function registerQa(request, suffix) {
   const id = `${Date.now()}-${randomBytes(3).toString('hex')}`;
   const email = `phase2-vercel-${id}-${suffix}@example.test`;
@@ -172,8 +189,12 @@ test.describe('catálogo protegido', () => {
 test.describe('responsive Studio', () => {
   for (const [templateId, label] of customTemplates) {
     test(`${label}: carga, preview y layout sin desbordamiento`, async ({ page }, testInfo) => {
-      const errors = [];
-      page.on('pageerror', error => errors.push(error.message));
+      const appErrors = [];
+      const externalErrors = [];
+      page.on('pageerror', error => {
+        const info = classifyPageError(error);
+        (info.isThirdParty ? externalErrors : appErrors).push(info);
+      });
 
       await page.goto(`/studio.html?template=${encodeURIComponent(templateId)}&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
       await waitStudio(page);
@@ -200,7 +221,14 @@ test.describe('responsive Studio', () => {
 
       const marker = await page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
       expect(marker).toBe(templateId);
-      expect(errors).toEqual([]);
+
+      // Third-party Vercel preview errors are reported but do not fail the product QA.
+      if (externalErrors.length) {
+        console.warn(`[phase2-vercel] ${testInfo.project.name} — excluded ${externalErrors.length} third-party page error(s) injected by the Vercel preview (not shipped with the product):`);
+        for (const e of externalErrors) console.warn(`  · ${e.message} @ ${e.origin || 'unknown-origin'}`);
+      }
+      // Any error not provably from a Vercel third-party script fails the test.
+      expect(appErrors.map(e => (e.origin ? `${e.message} @ ${e.origin}` : e.message))).toEqual([]);
     });
   }
 });
