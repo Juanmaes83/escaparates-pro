@@ -15,6 +15,7 @@ on:
       - '.github/workflows/phase2-vercel-browser-qa.yml'
   workflow_dispatch:
 
+# Serialize all authenticated tests that share the isolated Railway staging API.
 concurrency:
   group: phase2-railway-shared-e2e
   cancel-in-progress: false
