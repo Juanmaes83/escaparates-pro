@@ -1,7 +1,7 @@
 (function(){
   'use strict';
   window.EP=window.EP||{};
-  var DEFAULT_API='https://escaparates-pro-api-staging-staging.up.railway.app';
+  var DEFAULT_API='https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app';
   function validBase(value){try{var u=new URL(String(value||''));return u.protocol==='https:'||u.hostname==='localhost'||u.hostname==='127.0.0.1';}catch(_e){return false;}}
   function runtimeBase(){
     var params=new URLSearchParams(location.search||'');
