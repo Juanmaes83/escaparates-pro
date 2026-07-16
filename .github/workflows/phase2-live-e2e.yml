@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: phase2-railway-shared-e2e
+  group: phase2-railway-live-e2e
   cancel-in-progress: false
 
 jobs:
