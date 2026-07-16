@@ -6,7 +6,15 @@ import { getPool } from '../db/index.js'
 import { buildEntitlements } from '../lib/entitlements.js'
 import { buildErrorResponse } from '../lib/errors.js'
 import { canEditProject, projectExistsInWorkspace, resolveProjectAccess } from '../lib/project-access.js'
-import { createPresignedDeleteUrl, createPresignedPutUrl, getR2Config, publicAssetUrl } from '../lib/r2-storage.js'
+import { createPresignedDeleteUrl, createPresignedPutUrl, getR2Config, missingR2Settings, publicAssetUrl } from '../lib/r2-storage.js'
+
+function storageUnavailable(requestId: string) {
+  const body = buildErrorResponse('STORAGE_NOT_CONFIGURED', 'Persistent storage is not configured', requestId)
+  if (env.NODE_ENV !== 'production') {
+    ;(body.error as typeof body.error & { storage?: { missing: string[] } }).storage = { missing: missingR2Settings() }
+  }
+  return body
+}
 
 const projectParams = z.object({ projectId: z.string().uuid() })
 const assetParams = projectParams.extend({ assetId: z.string().uuid() })
@@ -77,12 +85,12 @@ export async function projectAssetsRoutes(app: FastifyInstance): Promise<void> {
     if (Number(countResult.rows[0]?.count ?? 0) >= entitlement.limits.userAssets) return reply.status(403).send(buildErrorResponse('ASSET_QUOTA_REACHED', 'Asset quota reached for this plan', request.requestId))
 
     const config = getR2Config()
-    if (!config) return reply.status(503).send(buildErrorResponse('STORAGE_NOT_CONFIGURED', 'Persistent storage is not configured', request.requestId))
+    if (!config) return reply.status(503).send(storageUnavailable(request.requestId))
     const assetId = randomUUID()
     const storageKey = `${access.workspaceId}/${params.data.projectId}/${assetId}-${safeName(body.data.filename)}`
     const upload = createPresignedPutUrl(storageKey, body.data.mimeType, config)
     const url = publicAssetUrl(storageKey, config)
-    if (!upload || !url) return reply.status(503).send(buildErrorResponse('STORAGE_NOT_CONFIGURED', 'Persistent storage is not configured', request.requestId))
+    if (!upload || !url) return reply.status(503).send(storageUnavailable(request.requestId))
 
     const result = await getPool().query<AssetRow>(
       `INSERT INTO project_assets
