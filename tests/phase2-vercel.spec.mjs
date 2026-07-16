@@ -57,8 +57,10 @@ async function logoutQa(request, token) {
 async function closeAuthPanel(page) {
   const panel = page.locator('#auth-panel');
   await panel.waitFor({ state: 'attached' });
+  // The public catalog must be reachable without a session: the auth panel must
+  // NOT auto-open on load, and when opened it must be dismissible accessibly.
   if (await panel.evaluate(element => element.classList.contains('open'))) {
-    await page.locator('#btn-account').click();
+    await page.keyboard.press('Escape');
   }
   await expect(panel).not.toHaveClass(/open/);
 }
@@ -178,7 +180,14 @@ test.describe('responsive Studio', () => {
       await expect(page.locator('.tab.active')).toContainText(label);
       await noHorizontalOverflow(page);
 
-      if (testInfo.project.name.includes('phone') || testInfo.project.name.includes('iphone')) {
+      // Classify by the real rendered viewport, not by the Playwright project name:
+      // the Studio switches to the single-panel Editar/Vista previa layout at <=900px
+      // (see review/phase1-studio-v2.css). iPad Pro 11 portrait (834px) is intentionally
+      // in that mobile layout, so it is validated with the toggle, not dual panels.
+      const viewportWidth = page.viewportSize()?.width ?? 0;
+      const usesMobileLayout = viewportWidth <= 900;
+
+      if (usesMobileLayout) {
         await expect(page.locator('.mobile-mode')).toBeVisible();
         await page.getByRole('button', { name: 'Vista previa' }).click();
         await expect(page.locator('.app')).toHaveClass(/mobile-preview/);
