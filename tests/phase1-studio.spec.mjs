@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const path = '/review/premium-storytelling-phase1-studio.html';
 
 async function waitReady(page) {
-  await page.waitForSelector('#previewLoading.hidden');
+  await expect(page.locator('#previewLoading')).toBeHidden();
 }
 
 test('desktop editor scroll, preview scroll and transactional templates', async ({ page }) => {
@@ -28,13 +28,25 @@ test('desktop editor scroll, preview scroll and transactional templates', async 
   expect(await page.locator('#frameShell').evaluate(el => el.style.height)).toBe('900px');
   expect(await page.locator('#frameShell').evaluate(el => el.style.transform)).toContain('scale(');
 
-  const initialScroll = await page.locator('#preview').evaluate(frame => ({
-    page: frame.contentDocument.body.scrollHeight,
-    viewport: frame.contentWindow.innerHeight
-  }));
+  const initialScroll = await page.locator('#preview').evaluate(frame => {
+    const document = frame.contentDocument;
+    const scroller = document.scrollingElement || document.documentElement;
+    return {
+      page: scroller.scrollHeight,
+      viewport: scroller.clientHeight
+    };
+  });
   expect(initialScroll.page).toBeGreaterThan(initialScroll.viewport);
-  await page.locator('#preview').evaluate(frame => frame.contentWindow.scrollTo(0, 600));
-  expect(await page.locator('#preview').evaluate(frame => frame.contentWindow.scrollY)).toBeGreaterThan(0);
+  await page.locator('#preview').evaluate(frame => {
+    const document = frame.contentDocument;
+    const scroller = document.scrollingElement || document.documentElement;
+    scroller.scrollTop = Math.min(600, scroller.scrollHeight - scroller.clientHeight);
+  });
+  await expect.poll(() => page.locator('#preview').evaluate(frame => {
+    const document = frame.contentDocument;
+    const scroller = document.scrollingElement || document.documentElement;
+    return scroller.scrollTop;
+  })).toBeGreaterThan(0);
 
   await page.getByRole('button', { name: 'Product Storytelling' }).click();
   await waitReady(page);
@@ -46,10 +58,14 @@ test('desktop editor scroll, preview scroll and transactional templates', async 
   await expect(page.locator('#media')).toContainText('Propiedad 1');
   expect(await page.locator('#fields textarea').count()).toBeGreaterThan(0);
 
-  const luxuryScroll = await page.locator('#preview').evaluate(frame => ({
-    page: frame.contentDocument.body.scrollHeight,
-    viewport: frame.contentWindow.innerHeight
-  }));
+  const luxuryScroll = await page.locator('#preview').evaluate(frame => {
+    const document = frame.contentDocument;
+    const scroller = document.scrollingElement || document.documentElement;
+    return {
+      page: scroller.scrollHeight,
+      viewport: scroller.clientHeight
+    };
+  });
   expect(luxuryScroll.page).toBeGreaterThan(luxuryScroll.viewport);
 
   await page.getByRole('button', { name: 'Tablet' }).click();

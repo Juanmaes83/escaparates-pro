@@ -11,7 +11,7 @@
     "build": "tsc --project tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test \"src/**/*.test.ts\"",
+    "test": "node scripts/run-tests.mjs",
     "migrate:generate": "drizzle-kit generate",
     "migrate:run": "tsx src/db/migrate.ts",
     "migrate:status": "drizzle-kit status"

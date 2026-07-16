@@ -29,6 +29,16 @@ const envSchema = z.object({
   STRIPE_PRICE_STUDIO_YEARLY: z.string().min(1).optional(),
   STRIPE_PRICE_CREDITS_29: z.string().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+  STORAGE_PROVIDER: z.enum(['r2']).optional(),
+  R2_ACCOUNT_ID: z.string().min(1).optional(),
+  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
+  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  R2_BUCKET: z.string().min(1).optional(),
+  R2_PUBLIC_URL: z.string().url().optional(),
+  R2_UPLOAD_TTL_SECONDS: z.coerce.number().int().min(60).max(3600).default(900),
+  ASSET_MAX_IMAGE_BYTES: z.coerce.number().int().positive().default(25 * 1024 * 1024),
+  ASSET_MAX_VIDEO_BYTES: z.coerce.number().int().positive().default(250 * 1024 * 1024),
+  ASSET_MAX_FONT_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
 })
 
 const parsed = envSchema.safeParse(process.env)
@@ -39,6 +49,4 @@ if (!parsed.success) {
   process.exit(1)
 }
 
-// process.exit(1) above guarantees we never reach here with a failed parse,
-// but TypeScript cannot narrow through process.exit, so we assert the type.
 export const env = parsed.data as z.infer<typeof envSchema>

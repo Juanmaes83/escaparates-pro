@@ -1,0 +1,59 @@
+name: Phase 2 Vercel Browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'studio.html'
+      - 'projects.html'
+      - 'publication.html'
+      - 'js/projects/**'
+      - 'js/customization/project-store-local.js'
+      - 'js/export/**'
+      - 'review/**'
+      - 'tests/phase2-vercel.config.mjs'
+      - 'tests/phase2-vercel.spec.mjs'
+      - '.github/workflows/phase2-vercel-browser-qa.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: phase2-vercel-browser-qa
+  cancel-in-progress: true
+
+jobs:
+  vercel-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERCEL_BASE_URL: https://escaparates-pro-git-feature-pr-cf2d77-juanma-espinosas-projects.vercel.app
+      API_BASE_URL: https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright browsers
+        run: |
+          npm install --no-save @playwright/test@1.53.1
+          npx playwright install --with-deps chromium webkit
+
+      - name: Wait for current Vercel preview
+        run: node tools/phase2/wait-vercel-preview.mjs
+
+      - name: Verify Railway API
+        run: node tools/phase2/railway-smoke.mjs "$API_BASE_URL"
+
+      - name: Run final Vercel browser QA
+        run: npx playwright test --config=tests/phase2-vercel.config.mjs
+
+      - name: Upload browser QA diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-vercel-browser-qa
+          path: |
+            tests/phase2-vercel-results.json
+            tests/phase2-vercel-report/
+            tests/phase2-vercel-test-results/
+          if-no-files-found: warn
+          retention-days: 14
