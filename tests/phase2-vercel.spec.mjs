@@ -219,8 +219,15 @@ test.describe('responsive Studio', () => {
         await expect(page.locator('#previewPanel')).toBeVisible();
       }
 
-      const marker = await page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
-      expect(marker).toBe(templateId);
+      // Poll the marker: the preview iframe is rebuilt when the URL template is
+      // selected, so a single read can land mid-srcdoc-swap (contentDocument null →
+      // ''). The product renders the marker reliably; wait for it instead of racing.
+      await expect
+        .poll(
+          () => page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || ''),
+          { timeout: 15000 }
+        )
+        .toBe(templateId);
 
       // Third-party Vercel preview errors are reported but do not fail the product QA.
       if (externalErrors.length) {
