@@ -30,6 +30,11 @@ async function seedBrowser(page, token) {
   }, { api: API, refreshToken: token });
 }
 
+async function logoutQa(request, token) {
+  if (!token) return;
+  await request.post(`${API}/v1/auth/logout`, { headers: authHeaders(token), data: {} }).catch(() => {});
+}
+
 async function waitStudio(page) {
   await expect(page.locator('#previewLoading')).toBeHidden({ timeout: 30000 });
   await page.waitForFunction(() => Boolean(window.EP?.StudioR2Bridge));
@@ -102,68 +107,80 @@ async function noHorizontalOverflow(page) {
 test.describe('catálogo protegido', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'Se valida una vez en Chromium');
 
-  test('las tres Source Faithful no tienen edición y las tres Custom PRO sí', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('#mode-btn-scroll-sections').click();
-    const scrollCatalog = page.locator('#scroll-sections-catalog');
-    await expect(scrollCatalog).toContainText('Real Estate Storytelling — Source Faithful PRO');
-    await expect(scrollCatalog).toContainText('Product Storytelling — Source Faithful PRO');
-    await expect(scrollCatalog).toContainText('Real Estate Storytelling — Custom PRO');
-    await expect(scrollCatalog).toContainText('Product Storytelling — Custom PRO');
+  test('las tres Source Faithful no tienen edición y las tres Custom PRO sí', async ({ page, request }, testInfo) => {
+    const qa = await registerQa(request, `catalog-${testInfo.project.name}`);
+    await seedBrowser(page, qa.token);
+    try {
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('#auth-panel')).not.toHaveClass(/open/);
+      await page.locator('#mode-btn-scroll-sections').click();
+      const scrollCatalog = page.locator('#scroll-sections-catalog');
+      await expect(scrollCatalog).toContainText('Real Estate Storytelling — Source Faithful PRO');
+      await expect(scrollCatalog).toContainText('Product Storytelling — Source Faithful PRO');
+      await expect(scrollCatalog).toContainText('Real Estate Storytelling — Custom PRO');
+      await expect(scrollCatalog).toContainText('Product Storytelling — Custom PRO');
 
-    for (const name of ['Real Estate Storytelling — Source Faithful PRO', 'Product Storytelling — Source Faithful PRO']) {
-      const card = scrollCatalog.locator('.ss-template-card').filter({ hasText: name });
-      await expect(card).toHaveCount(1);
-      await expect(card.locator('.pc-studio-link')).toHaveCount(0);
-    }
-    for (const name of ['Real Estate Storytelling — Custom PRO', 'Product Storytelling — Custom PRO']) {
-      const card = scrollCatalog.locator('.ss-template-card').filter({ hasText: name });
-      await expect(card).toHaveCount(1);
-      await expect(card.locator('.pc-studio-link')).toHaveCount(1);
-    }
+      for (const name of ['Real Estate Storytelling — Source Faithful PRO', 'Product Storytelling — Source Faithful PRO']) {
+        const card = scrollCatalog.locator('.ss-template-card').filter({ hasText: name });
+        await expect(card).toHaveCount(1);
+        await expect(card.locator('.pc-studio-link')).toHaveCount(0);
+      }
+      for (const name of ['Real Estate Storytelling — Custom PRO', 'Product Storytelling — Custom PRO']) {
+        const card = scrollCatalog.locator('.ss-template-card').filter({ hasText: name });
+        await expect(card).toHaveCount(1);
+        await expect(card.locator('.pc-studio-link')).toHaveCount(1);
+      }
 
-    await page.locator('#mode-btn-sector-blueprints').click();
-    const blueprintCatalog = page.locator('#sector-blueprints-catalog');
-    await expect(blueprintCatalog).toContainText('Luxury Real Estate');
-    const sourceCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Source Faithful' });
-    const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Custom' });
-    await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
-    await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+      await page.locator('#mode-btn-sector-blueprints').click();
+      const blueprintCatalog = page.locator('#sector-blueprints-catalog');
+      await expect(blueprintCatalog).toContainText('Luxury Real Estate');
+      const sourceCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Source Faithful' });
+      const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Custom' });
+      await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
+      await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+    } finally {
+      await logoutQa(request, qa.token);
+    }
   });
 });
 
 test.describe('responsive Studio', () => {
   for (const [templateId, label] of customTemplates) {
-    test(`${label}: carga, preview y layout sin desbordamiento`, async ({ page }, testInfo) => {
+    test(`${label}: carga, preview y layout sin desbordamiento`, async ({ page, request }, testInfo) => {
+      const qa = await registerQa(request, `responsive-${templateId}-${testInfo.project.name}`);
+      await seedBrowser(page, qa.token);
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));
-      await page.goto(`/studio.html?template=${encodeURIComponent(templateId)}&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
-      await waitStudio(page);
-      await expect(page.locator('.tab.active')).toContainText(label);
-      await noHorizontalOverflow(page);
+      try {
+        await page.goto(`/studio.html?template=${encodeURIComponent(templateId)}&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
+        await waitStudio(page);
+        await expect(page.locator('.tab.active')).toContainText(label);
+        await noHorizontalOverflow(page);
 
-      if (testInfo.project.name.includes('phone') || testInfo.project.name.includes('iphone')) {
-        await expect(page.locator('.mobile-mode')).toBeVisible();
-        await page.getByRole('button', { name: 'Vista previa' }).click();
-        await expect(page.locator('.app')).toHaveClass(/mobile-preview/);
-        await page.getByRole('button', { name: 'Editar' }).click();
-        await expect(page.locator('.app')).toHaveClass(/mobile-edit/);
-      } else {
-        await expect(page.locator('#editorPanel')).toBeVisible();
-        await expect(page.locator('#previewPanel')).toBeVisible();
+        if (testInfo.project.name.includes('phone') || testInfo.project.name.includes('iphone')) {
+          await expect(page.locator('.mobile-mode')).toBeVisible();
+          await page.getByRole('button', { name: 'Vista previa' }).click();
+          await expect(page.locator('.app')).toHaveClass(/mobile-preview/);
+          await page.getByRole('button', { name: 'Editar' }).click();
+          await expect(page.locator('.app')).toHaveClass(/mobile-edit/);
+        } else {
+          await expect(page.locator('#editorPanel')).toBeVisible();
+          await expect(page.locator('#previewPanel')).toBeVisible();
+        }
+
+        const marker = await page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
+        expect(marker).toBe(templateId);
+        expect(errors).toEqual([]);
+      } finally {
+        await logoutQa(request, qa.token);
       }
-
-      const marker = await page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('meta[name="ep-template-id"]')?.content || '');
-      expect(marker).toBe(templateId);
-      expect(errors).toEqual([]);
     });
   }
 });
 
 test.describe('flujo cloud real Vercel + Railway + R2', () => {
-  test.skip(({ browserName }, testInfo) => browserName !== 'chromium' || testInfo.project.name !== 'desktop-chromium', 'Flujo destructivo único');
-
-  test('sube WebM y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser }) => {
+  test('sube WebM y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser, browserName }, testInfo) => {
+    test.skip(browserName !== 'chromium' || testInfo.project.name !== 'desktop-chromium', 'Flujo destructivo único');
     const qa = await registerQa(request, 'desktop');
     await seedBrowser(page, qa.token);
     const name = `QA Vercel R2 ${Date.now()}`;
@@ -262,7 +279,7 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
         for (const assetId of assetIds) await deleteAsset(request, qa.token, projectId, assetId).catch(() => {});
         await deleteProject(request, qa.token, projectId).catch(() => {});
       }
-      await request.post(`${API}/v1/auth/logout`, { headers: authHeaders(qa.token), data: {} }).catch(() => {});
+      await logoutQa(request, qa.token);
     }
   });
 });
