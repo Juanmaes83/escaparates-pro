@@ -6,6 +6,9 @@ on:
       - 'studio.html'
       - 'js/projects/product-integration.js'
       - 'js/projects/studio-route.js'
+      - 'js/projects/project-library-page.js'
+      - 'review/phase2-studio-extension.js'
+      - 'review/phase2-studio-extension.css'
       - 'tests/product-studio-module.spec.mjs'
       - '.github/workflows/product-studio-module-qa.yml'
   workflow_dispatch:
@@ -23,6 +26,8 @@ jobs:
         run: |
           node --check js/projects/product-integration.js
           node --check js/projects/studio-route.js
+          node --check js/projects/project-library-page.js
+          node --check review/phase2-studio-extension.js
           node --check tests/product-studio-module.spec.mjs
       - name: Verify Product Studio contract
         run: node tests/product-studio-module.spec.mjs
