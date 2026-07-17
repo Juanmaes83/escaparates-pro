@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'tools/phase2/vercel-preview-diagnose.mjs'
+      - 'tools/phase2/resolve-vercel-preview.mjs'
       - '.github/workflows/phase2-vercel-diagnose.yml'
   workflow_dispatch:
 
@@ -12,17 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      VERCEL_BASE_URL: https://escaparates-pro-git-feature-pr-cf2d77-juanma-espinosas-projects.vercel.app
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Resolve current Vercel preview
+        run: node tools/phase2/resolve-vercel-preview.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Diagnose preview files
         run: node tools/phase2/vercel-preview-diagnose.mjs
       - name: Upload diagnostic result
         uses: actions/upload-artifact@v4
         with:
           name: phase2-vercel-preview-diagnose
-          path: tests/diagnostics/vercel-preview.json
+          path: |
+            tests/diagnostics/vercel-preview.json
+            tests/diagnostics/matrix.json
           retention-days: 7

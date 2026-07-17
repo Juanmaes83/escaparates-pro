@@ -183,6 +183,85 @@ test.describe('catálogo protegido', () => {
     const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Custom' });
     await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
     await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+
+    const links = page.locator('.pc-studio-link');
+    await expect(links).toHaveCount(3);
+    const hrefs = await links.evaluateAll(items => items.map(item => new URL(item.href).searchParams.get('template')).sort());
+    expect(hrefs).toEqual(customTemplates.map(([id]) => id).sort());
+  });
+});
+
+test.describe('contrato Studio en navegador', () => {
+  test.skip(({ browserName }) => browserName !== 'chromium', 'Se valida una vez en Chromium');
+
+  test('rutas, local mode, duplicado, unknown template, nested paths y media slots', async ({ page }) => {
+    await page.goto(`/studio.html?template=product-storytelling-custom-pro&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
+    await waitStudio(page);
+
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'product-storytelling-custom-pro');
+    await expect(page.locator('#cloudSave')).toBeDisabled();
+    await expect(page.locator('#versionsBtn')).toBeDisabled();
+    await expect(page.locator('#phase2Status')).toContainText(/Modo local|Sesion no iniciada|sesion no iniciada/i);
+
+    await expect(page.locator('#media-0')).toHaveAttribute('accept', /video/);
+    await expect(page.locator('#media-1')).toHaveAttribute('accept', /image/);
+
+    const contract = await page.evaluate(async () => {
+      const registry = window.EP.StudioTemplateRegistry;
+      const base = registry.normalizeProject({
+        id: 'qa-original',
+        projectId: 'qa-original',
+        cloudId: 'cloud-original',
+        revision: 9,
+        published: { url: 'https://example.test/published' },
+        templateId: 'product-storytelling-custom-pro',
+        name: 'QA Original',
+        config: { brand: 'QA Brand', motion: { intensity: 2 } },
+        media: [{ type: 'video', url: 'https://example.test/video.webm' }]
+      });
+      const copy = window.EP.ProjectStoreLocal.fork(base, 'QA Copy');
+      const unknown = registry.normalizeProject({
+        templateId: 'future-template-custom-pro',
+        templateVersion: '99',
+        schemaVersion: 1,
+        config: { future: { untouched: true } },
+        media: [{ url: 'a' }, { url: 'b' }, { url: 'c' }, { url: 'd' }]
+      });
+      const nested = {};
+      registry.setPath(nested, 'theme.colors.primary', '#123456');
+      registry.setPath(nested, 'responsive.mobile.alignment', 'center');
+      registry.setPath(nested, 'motion.intensity', 7);
+      return {
+        forkIdsDiffer: copy.id !== base.id && copy.projectId !== base.projectId,
+        forkCloudCleared: !copy.cloudId && !copy.revision && !copy.published,
+        originalUnchanged: base.cloudId === 'cloud-original' && base.id === 'qa-original',
+        unknownReadOnly: unknown.readOnly === true && unknown.templateId === 'future-template-custom-pro',
+        unknownPreserved: unknown.config.future.untouched === true && unknown.media.length === 4,
+        nestedValues: [
+          registry.getPath(nested, 'theme.colors.primary'),
+          registry.getPath(nested, 'responsive.mobile.alignment'),
+          registry.getPath(nested, 'motion.intensity')
+        ],
+        noLiteralNestedKey: !Object.prototype.hasOwnProperty.call(nested, 'theme.colors.primary')
+      };
+    });
+
+    expect(contract).toEqual({
+      forkIdsDiffer: true,
+      forkCloudCleared: true,
+      originalUnchanged: true,
+      unknownReadOnly: true,
+      unknownPreserved: true,
+      nestedValues: ['#123456', 'center', 7],
+      noLiteralNestedKey: true
+    });
+
+    await page.locator('.tab[data-template-id="real-estate-storytelling-custom-pro"]').click();
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'real-estate-storytelling-custom-pro');
+    await expect(page.locator('#projectName')).toHaveValue(/Real Estate Storytelling/);
+    await page.locator('.tab[data-template-id="product-storytelling-custom-pro"]').click();
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'product-storytelling-custom-pro');
+    await expect(page.locator('#projectName')).toHaveValue(/Product Storytelling/);
   });
 });
 

@@ -55,7 +55,7 @@ function openModal(title,html){$('phase2Title').textContent=title;body.innerHTML
 function closeModal(){modal.classList.remove('open')}
 function reportHtml(report){
   var c=report.checks||{};
-  return '<div class="phase2-checks">'+[['Plantilla Custom PRO',c.template],['Sin URLs temporales',c.noTemporaryUrls],['Assets preparados',c.assetsReady],['Enlaces vÃ¡lidos',c.linksValid],['Fuentes autorizadas',c.fontsReady]].map(function(x){return '<div class="phase2-check '+(x[1]?'ok':'bad')+'">'+(x[1]?'âœ“ ':'âœ• ')+x[0]+'</div>'}).join('')+'</div>';
+  return '<div class="phase2-checks">'+[['Plantilla Custom PRO',c.template],['Sin URLs temporales',c.noTemporaryUrls],['Assets preparados',c.assetsReady],['Enlaces validos',c.linksValid],['Fuentes autorizadas',c.fontsReady]].map(function(x){return '<div class="phase2-check '+(x[1]?'ok':'bad')+'">'+(x[1]?'OK ':'NO ')+x[0]+'</div>'}).join('')+'</div>';
 }
 async function saveCloud(){
   if(!hasSession()){
@@ -100,11 +100,11 @@ async function publishProject(p,html){
 }
 async function showVersions(){
   if(!cloudReady()){
-    openModal(hasSession()?'Sin conexiÃ³n':'Inicia sesiÃ³n',hasSession()?'<p>ConÃ©ctate a Internet para consultar versiones cloud.</p>':'<p>Las versiones cloud requieren iniciar sesiÃ³n.</p>');
+    openModal(hasSession()?'Sin conexion':'Inicia sesion',hasSession()?'<p>Conectate a Internet para consultar versiones cloud.</p>':'<p>Las versiones cloud requieren iniciar sesion.</p>');
     return;
   }
   var p=await latestLocal(),result=await EP.ProjectVersioning.list(p),items=(result.cloud||[]).concat(result.local||[]);
-  openModal('Versiones del proyecto',items.length?items.map(function(v){return '<div class="phase2-version"><div><strong>'+(v.label||'VersiÃ³n')+'</strong><small>'+(v.createdAt||'')+'</small></div><button class="btn" data-version="'+(v.id||'')+'">Restaurar</button></div>'}).join(''):'<p>No hay versiones todavÃ­a.</p>');
+  openModal('Versiones del proyecto',items.length?items.map(function(v){return '<div class="phase2-version"><div><strong>'+(v.label||'Version')+'</strong><small>'+(v.createdAt||'')+'</small></div><button class="btn" data-version="'+(v.id||'')+'">Restaurar</button></div>'}).join(''):'<p>No hay versiones todavia.</p>');
   body.querySelectorAll('[data-version]').forEach(function(btn){btn.onclick=async function(){var v=items.find(function(x){return x.id===btn.dataset.version});if(v){await EP.ProjectVersioning.restore(p,v);location.reload()}}});
 }
 function observeLocalStatus(){
