@@ -7,6 +7,10 @@ async function waitReady(page) {
     () => page.locator('#preview').evaluate(frame => Boolean(frame.contentDocument?.querySelector('.rs-page'))),
     { timeout: 20000 }
   ).toBe(true);
+  await expect.poll(
+    () => page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('.rs-page')?.dataset.state || ''),
+    { timeout: 20000 }
+  ).toMatch(/ready|skipped/);
 }
 
 async function preview(page, fn, arg) {
