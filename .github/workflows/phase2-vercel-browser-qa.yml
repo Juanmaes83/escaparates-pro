@@ -98,7 +98,7 @@ jobs:
         run: node tools/phase2/railway-smoke.mjs "$API_BASE_URL"
 
       - name: Run real cloud, Railway and R2 Vercel QA
-        run: npx playwright test --config=tests/phase2-vercel.config.mjs --grep "flujo cloud real Vercel \\+ Railway \\+ R2"
+        run: npx playwright test --config=tests/phase2-vercel.config.mjs --project=desktop-chromium --grep "flujo cloud real Vercel \\+ Railway \\+ R2"
 
       - name: Upload cloud/R2 diagnostics
         if: always()

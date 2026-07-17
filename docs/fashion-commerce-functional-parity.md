@@ -45,6 +45,19 @@ Last known CI split:
 | `vercel-ui-studio-catalog` | Public catalog, Studio routing, Custom PRO contracts, responsive matrix | Yes |
 | `cloud-railway-r2` | Railway auth/API smoke, signed upload, R2 persistence, export/publish/delete | No, unless UI code changes caused the failure |
 
+Last captured isolated Cloud/R2 evidence:
+
+| Field | Value |
+|---|---|
+| Run | `29619366772` |
+| HEAD | `406463f81289fe1c4eece7790feaf280cb20fbb0` |
+| Preview | `https://escaparates-p3ge446fu-juanma-espinosas-projects.vercel.app` |
+| API host | `https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app` |
+| UI/Studio/catalog lane | `success` |
+| Cloud/R2 lane | `failure` |
+| Real upload failure | `qa-video.webm` did not appear in media slot 1 after the 60s poll; card stayed at `Slot 1 · Video hero Subir desde local Eliminar Demo original disponible al previsualizar.` |
+| Noise corrected after capture | The isolated cloud job now runs only `desktop-chromium`, matching the destructive-flow test guard, so missing WebKit installation cannot mask the R2 result. |
+
 Do not merge while Cloud/R2 remains unresolved. Do not modify backend, Railway, Prisma, auth or R2 configuration inside Fashion Core commits.
 
 ## Next Functional Reconstruction
