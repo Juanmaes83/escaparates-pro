@@ -22,8 +22,16 @@ test('ELORIA Signature star product travels as one continuous node', async ({ pa
       const win = frame.contentWindow;
       const doc = frame.contentDocument;
       const max = Math.max(1, doc.documentElement.scrollHeight - win.innerHeight);
-      win.scrollTo(0, max * pct / 100);
-      await new Promise(resolve => win.requestAnimationFrame(() => win.requestAnimationFrame(resolve)));
+      const target = max * pct / 100;
+      doc.documentElement.style.scrollBehavior = 'auto';
+      doc.body.style.scrollBehavior = 'auto';
+      win.scrollTo(0, target);
+      for (let index = 0; index < 24 && Math.abs(win.scrollY - target) > 2; index += 1) {
+        await new Promise(resolve => win.requestAnimationFrame(resolve));
+      }
+      for (let index = 0; index < 8; index += 1) {
+        await new Promise(resolve => win.requestAnimationFrame(resolve));
+      }
       const nodes = doc.querySelectorAll('#eloriaStarProduct');
       const box = nodes[0].getBoundingClientRect();
       const anchors = Array.from(doc.querySelectorAll('[data-product-anchor]')).map(anchor => anchor.dataset.scene);

@@ -47,7 +47,7 @@ test('desktop editor scroll, preview scroll and transactional templates', async 
 
   await page.getByRole('button', { name: 'Tablet' }).click();
   await expect(page.locator('#viewportInfo')).toContainText('834 × 1112');
-  await page.getByRole('button', { name: 'Móvil' }).click();
+  await page.locator('[data-device="mobile"]').click();
   await expect(page.locator('#viewportInfo')).toContainText('390 × 844');
   expect(errors).toEqual([]);
 });
