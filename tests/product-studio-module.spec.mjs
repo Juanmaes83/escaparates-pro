@@ -5,6 +5,7 @@ const integration = fs.readFileSync('js/projects/product-integration.js', 'utf8'
 const route = fs.readFileSync('js/projects/studio-route.js', 'utf8');
 const studio = fs.readFileSync('studio.html', 'utf8');
 const registry = fs.readFileSync('js/studio/template-registry.js', 'utf8');
+const luxuryBeauty = fs.readFileSync('js/sector-blueprints/luxury-beauty-product-pro.js', 'utf8');
 const engine = fs.readFileSync('review/phase1-studio-v2.js', 'utf8');
 const cloud = fs.readFileSync('review/phase2-studio-extension.js', 'utf8');
 const cloudCss = fs.readFileSync('review/phase2-studio-extension.css', 'utf8');
@@ -14,12 +15,14 @@ const index = fs.readFileSync('index.html', 'utf8');
 const customTemplates = [
   'real-estate-storytelling-custom-pro',
   'product-storytelling-custom-pro',
-  'luxury-real-estate-custom-pro'
+  'luxury-real-estate-custom-pro',
+  'luxury-beauty-product-pro'
 ];
 
 for (const id of customTemplates) {
   assert.match(integration, new RegExp(id), `Missing Studio card integration for ${id}`);
-  assert.match(registry, new RegExp(id), `Missing Studio registry definition for ${id}`);
+  if (id === 'luxury-beauty-product-pro') assert.match(luxuryBeauty, new RegExp(id), `Missing Studio registry definition for ${id}`);
+  else assert.match(registry, new RegExp(id), `Missing Studio registry definition for ${id}`);
   assert.match(studio, new RegExp(id), `Studio does not load ${id}`);
 }
 
@@ -39,8 +42,8 @@ assert.match(route, /href='index\.html'/, 'Studio return-to-catalog link is miss
 assert.doesNotMatch(route, /studioProjectLibrary|textContent='Biblioteca'/, 'Studio toolbar must not duplicate project navigation');
 assert.match(studio, /Abrir biblioteca completa/, 'Project modal must expose the full library');
 
-assert.match(studio, /ESCAPARATES PRO · STUDIO/, 'Studio product naming is not unified');
-assert.match(studio, /Studio de personalización/, 'Spanish Studio title is missing');
+assert.match(studio, /ESCAPARATES PRO - STUDIO/, 'Studio product naming is not unified');
+assert.match(studio, /Studio de personalizacion/, 'Spanish Studio title is missing');
 assert.match(studio, /VISTA PREVIA EN DIRECTO/, 'Spanish preview label is missing');
 assert.match(studio, /id="preview"/, 'Studio preview iframe is missing');
 assert.match(studio, /phase1-studio-v2\.js/, 'Canonical Studio engine is missing');

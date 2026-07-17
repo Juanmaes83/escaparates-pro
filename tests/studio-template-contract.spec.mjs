@@ -23,6 +23,7 @@ load('js/scroll-sections/real-estate-storytelling-custom-pro.js', context);
 load('js/scroll-sections/product-storytelling-custom-pro.js', context);
 load('js/sector-blueprints.js', context);
 load('js/sector-blueprints/luxury-real-estate-custom-pro.js', context);
+load('js/sector-blueprints/luxury-beauty-product-pro.js', context);
 load('js/customization/project-store-local.js', context);
 
 const registry = context.EP.StudioTemplateRegistry;
@@ -31,11 +32,12 @@ const ids = registry.listCustomPro().map((definition) => definition.id);
 assert.equal(JSON.stringify(ids), JSON.stringify([
   'real-estate-storytelling-custom-pro',
   'product-storytelling-custom-pro',
-  'luxury-real-estate-custom-pro'
+  'luxury-real-estate-custom-pro',
+  'luxury-beauty-product-pro'
 ]));
 assert.equal(new Set(ids).size, ids.length, 'template ids must be unique');
 assert.equal(registry.validateRegistry().ok, true, registry.validateRegistry().errors.join('\n'));
-assert.equal(JSON.stringify(registry.validateBuilders().map((item) => item.builderExists)), JSON.stringify([true, true, true]));
+assert.equal(JSON.stringify(registry.validateBuilders().map((item) => item.builderExists)), JSON.stringify([true, true, true, true]));
 
 for (const definition of registry.listCustomPro()) {
   assert.ok(definition.defaults, `${definition.id} defaults`);

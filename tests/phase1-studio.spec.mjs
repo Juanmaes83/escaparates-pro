@@ -47,7 +47,7 @@ test('desktop editor scroll, preview scroll and transactional templates', async 
 
   await page.getByRole('button', { name: 'Tablet' }).click();
   await expect(page.locator('#viewportInfo')).toContainText('834 × 1112');
-  await page.getByRole('button', { name: 'Móvil' }).click();
+  await page.locator('[data-device="mobile"]').click();
   await expect(page.locator('#viewportInfo')).toContainText('390 × 844');
   expect(errors).toEqual([]);
 });
@@ -74,7 +74,7 @@ test('advanced Product Storytelling controls change the rendered preview', async
   await page.goto(`${studioPath}?template=product-storytelling-custom-pro`, { waitUntil: 'domcontentloaded' });
   await waitReady(page);
 
-  const advanced = page.getByRole('button', { name: /CONTROLES AVANZADOS/ });
+  const advanced = page.locator('.group').filter({ hasText: 'CONTROLES AVANZADOS' }).locator('button').first();
   if ((await advanced.getAttribute('aria-expanded')) !== 'true') await advanced.click();
 
   const repeater = page.locator('[data-field-key="highlights"] .repeater-control');
@@ -95,7 +95,7 @@ test('advanced Product Storytelling controls change the rendered preview', async
   const responsive = page.locator('[data-field-key="responsiveCopy"] .responsive-control');
   await responsive.locator('label', { hasText: 'mobile' }).locator('input').fill('Mensaje móvil verificado');
   await waitReady(page);
-  await page.getByRole('button', { name: 'Móvil' }).click();
+  await page.locator('[data-device="mobile"]').click();
   const mobileCopy = page.frameLocator('#preview').locator('.responsive-copy .mobile');
   await expect(mobileCopy).toHaveText('Mensaje móvil verificado');
   await expect(mobileCopy).toBeVisible();
@@ -147,7 +147,8 @@ test('unsupported projects remain byte-for-byte protected in IndexedDB', async (
   await expect(page.locator('#cloudSave')).toBeDisabled();
   await expect(page.locator('#versionsBtn')).toBeDisabled();
   await expect(page.locator('#exportProject')).toBeDisabled();
-  await expect(page.locator('#tabs .tab:disabled')).toHaveCount(3);
+  const customTemplateCount = await page.evaluate(() => window.EP.StudioTemplateRegistry.listCustomPro().length);
+  await expect(page.locator('#tabs .tab:disabled')).toHaveCount(customTemplateCount);
   await expect(page.locator('#media input[type="file"]')).toHaveCount(0);
   await expect(page.frameLocator('#preview').getByText('Proyecto no compatible con este Studio')).toBeVisible();
 
