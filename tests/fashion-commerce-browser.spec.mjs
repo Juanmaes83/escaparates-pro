@@ -27,6 +27,15 @@ async function openGroupFor(page, key) {
   return field;
 }
 
+async function expandEditorGroups(page) {
+  const buttons = page.locator('.group > button');
+  const count = await buttons.count();
+  for (let index = 0; index < count; index += 1) {
+    const button = buttons.nth(index);
+    if (await button.getAttribute('aria-expanded') !== 'true') await button.click();
+  }
+}
+
 test('Fashion Commerce Studio controls render real preview behavior and diagnostics', async ({ page }, testInfo) => {
   const consoleErrors = [];
   const networkErrors = [];
@@ -41,12 +50,14 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/studio.html?template=fashion-commerce-pro', { waitUntil: 'domcontentloaded' });
   await waitReady(page);
+  await expandEditorGroups(page);
 
   const featureMatrix = {};
   const ctaLabel = await openGroupFor(page, 'heroCtaLabel');
   const ctaUrl = await openGroupFor(page, 'heroCtaUrl');
   await expect(ctaLabel.locator('input')).toHaveAttribute('type', 'text');
   await expect(ctaUrl.locator('input')).toHaveAttribute('type', 'url');
+  await ctaLabel.scrollIntoViewIfNeeded();
   await ctaLabel.locator('input').fill('Solicitar visita');
   await ctaLabel.locator('input').dispatchEvent('input');
   await ctaUrl.locator('input').fill('#section2');
