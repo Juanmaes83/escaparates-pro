@@ -8,13 +8,17 @@ on:
       - 'publication.html'
       - 'js/projects/**'
       - 'js/customization/project-store-local.js'
+      - 'js/sector-blueprints/**'
       - 'js/export/**'
       - 'review/**'
       - 'js/studio/template-registry.js'
+      - 'assets/templates/fashion-commerce/**'
+      - 'docs/fashion-commerce-*.md'
       - 'tools/phase2/resolve-vercel-preview.mjs'
       - 'tools/phase2/wait-vercel-preview.mjs'
       - 'tests/phase2-vercel.config.mjs'
       - 'tests/phase2-vercel.spec.mjs'
+      - 'tests/fashion-commerce-*.mjs'
       - '.github/workflows/phase2-vercel-browser-qa.yml'
   workflow_dispatch:
 
@@ -23,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vercel-browser-qa:
+  vercel-ui-studio-catalog:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -48,17 +52,59 @@ jobs:
       - name: Wait for current Vercel preview
         run: node tools/phase2/wait-vercel-preview.mjs
 
-      - name: Verify Railway API
-        run: node tools/phase2/railway-smoke.mjs "$API_BASE_URL"
+      - name: Run UI, Studio and catalog Vercel QA
+        run: npx playwright test --config=tests/phase2-vercel.config.mjs --grep-invert "flujo cloud real Vercel \\+ Railway \\+ R2"
 
-      - name: Run final Vercel browser QA
-        run: npx playwright test --config=tests/phase2-vercel.config.mjs
-
-      - name: Upload browser QA diagnostics
+      - name: Upload UI/Studio/catalog diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: phase2-vercel-browser-qa
+          name: phase2-vercel-ui-studio-catalog
+          path: |
+            tests/phase2-vercel-results.json
+            tests/diagnostics/matrix.json
+            tests/diagnostics/vercel-preview-ready.json
+            tests/phase2-vercel-report/
+            tests/phase2-vercel-test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  cloud-railway-r2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      API_BASE_URL: https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright browsers
+        run: |
+          npm install --no-save @playwright/test@1.53.1
+          npx playwright install --with-deps chromium
+
+      - name: Resolve current Vercel preview
+        run: node tools/phase2/resolve-vercel-preview.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Wait for current Vercel preview
+        run: node tools/phase2/wait-vercel-preview.mjs
+
+      - name: Verify Railway API
+        run: node tools/phase2/railway-smoke.mjs "$API_BASE_URL"
+
+      - name: Run real cloud, Railway and R2 Vercel QA
+        run: npx playwright test --config=tests/phase2-vercel.config.mjs --grep "flujo cloud real Vercel \\+ Railway \\+ R2"
+
+      - name: Upload cloud/R2 diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-vercel-cloud-railway-r2
           path: |
             tests/phase2-vercel-results.json
             tests/diagnostics/matrix.json

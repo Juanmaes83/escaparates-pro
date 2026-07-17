@@ -110,7 +110,11 @@ assert.match(html, /PANTALÓN CARGO/);
 assert.match(html, /PARKA URBANA/);
 assert.match(html, /BERMUDA CARGO/);
 assert.match(html, /hf_20260403_050628/);
-assert.match(html, /data-state="ready"/);
+assert.match(html, /data-state="boot"/);
+assert.match(html, /state\("teaser"\)/);
+assert.match(html, /state\("preloader"\)/);
+assert.match(html, /state\("ready"\)/);
+assert.match(html, /state\("skipped"\)/);
 assert.doesNotMatch(html, /randomuser\.me/);
 assert.doesNotMatch(html, /ReactDOM|Babel|tailwind/i);
 

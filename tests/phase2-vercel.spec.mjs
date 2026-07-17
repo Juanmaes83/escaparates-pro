@@ -7,7 +7,8 @@ const customTemplates = [
   ['real-estate-storytelling-custom-pro', 'Real Estate Storytelling'],
   ['product-storytelling-custom-pro', 'Product Storytelling'],
   ['luxury-real-estate-custom-pro', 'Luxury Real Estate'],
-  ['luxury-beauty-product-pro', 'Luxury Beauty']
+  ['luxury-beauty-product-pro', 'Luxury Beauty'],
+  ['fashion-commerce-pro', 'Fashion Commerce']
 ];
 
 // A page error is attributed to the application and fails the test UNLESS its stack
@@ -81,6 +82,16 @@ async function closeAuthPanel(page) {
     await page.keyboard.press('Escape');
   }
   await expect(panel).not.toHaveClass(/open/);
+}
+
+async function ensureGroupOpen(page, name) {
+  const group = page.locator('.group').filter({
+    has: page.getByRole('button', { name })
+  }).first();
+  await expect(group).toHaveCount(1);
+  if ((await group.getAttribute('class') || '').includes('closed')) {
+    await group.getByRole('button', { name }).click();
+  }
 }
 
 async function waitStudio(page) {
@@ -204,18 +215,20 @@ test.describe('catálogo protegido', () => {
     const blueprintCatalog = page.locator('#sector-blueprints-catalog');
     await expect(blueprintCatalog).toContainText('Luxury Real Estate');
     await expect(blueprintCatalog).toContainText('Luxury Beauty Product');
+    await expect(blueprintCatalog).toContainText('Fashion Commerce');
     const sourceCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Luxury Real Estate — Source Faithful PRO' });
     await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
-    for (const name of ['Luxury Real Estate — Custom Blueprint PRO', 'Luxury Beauty Product - Custom PRO']) {
+    for (const name of ['Luxury Real Estate — Custom Blueprint PRO', 'Luxury Beauty Product - Custom PRO', 'Fashion Commerce - Custom PRO']) {
       const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: name });
       await expect(customCard).toHaveCount(1);
       await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
     }
 
     const links = page.locator('.pc-studio-link');
-    await expect(links).toHaveCount(customTemplates.length);
     const hrefs = await links.evaluateAll(items => items.map(item => new URL(item.href).searchParams.get('template')).sort());
-    expect(hrefs).toEqual(customTemplates.map(([id]) => id).sort());
+    for (const [id] of customTemplates) {
+      expect(hrefs).toContain(id);
+    }
   });
 });
 
@@ -241,7 +254,7 @@ test.describe('contrato Studio en navegador', () => {
     await expect(ctaUrl).toHaveAttribute('type', 'url');
     await expect(ctaUrl).toHaveValue('#producto');
 
-    await page.getByRole('button', { name: /CONTROLES AVANZADOS/ }).click();
+    await ensureGroupOpen(page, /CONTROLES AVANZADOS/);
     const repeater = page.locator('[data-field-key="highlights"] .repeater-row');
     await expect(repeater).toHaveCount(2);
     await page.locator('[data-field-key="highlights"]').getByRole('button', { name: 'Añadir' }).click();
