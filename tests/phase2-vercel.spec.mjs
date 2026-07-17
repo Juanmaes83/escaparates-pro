@@ -6,7 +6,8 @@ const imageBuffer = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAA
 const customTemplates = [
   ['real-estate-storytelling-custom-pro', 'Real Estate Storytelling'],
   ['product-storytelling-custom-pro', 'Product Storytelling'],
-  ['luxury-real-estate-custom-pro', 'Luxury Real Estate']
+  ['luxury-real-estate-custom-pro', 'Luxury Real Estate'],
+  ['luxury-beauty-product-pro', 'Luxury Beauty']
 ];
 
 // A page error is attributed to the application and fails the test UNLESS its stack
@@ -177,7 +178,7 @@ async function noHorizontalOverflow(page) {
 test.describe('catálogo protegido', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'Se valida una vez en Chromium');
 
-  test('las tres Source Faithful no tienen edición y las tres Custom PRO sí', async ({ page }) => {
+  test('Source Faithful no tienen edición y Custom PRO sí', async ({ page }) => {
     await page.goto(`/?api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
     await closeAuthPanel(page);
 
@@ -202,13 +203,17 @@ test.describe('catálogo protegido', () => {
     await page.locator('#mode-btn-sector-blueprints').click();
     const blueprintCatalog = page.locator('#sector-blueprints-catalog');
     await expect(blueprintCatalog).toContainText('Luxury Real Estate');
-    const sourceCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Source Faithful' });
-    const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Custom' });
+    await expect(blueprintCatalog).toContainText('Luxury Beauty Product');
+    const sourceCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Luxury Real Estate — Source Faithful PRO' });
     await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
-    await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+    for (const name of ['Luxury Real Estate — Custom Blueprint PRO', 'Luxury Beauty Product - Custom PRO']) {
+      const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: name });
+      await expect(customCard).toHaveCount(1);
+      await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+    }
 
     const links = page.locator('.pc-studio-link');
-    await expect(links).toHaveCount(3);
+    await expect(links).toHaveCount(customTemplates.length);
     const hrefs = await links.evaluateAll(items => items.map(item => new URL(item.href).searchParams.get('template')).sort());
     expect(hrefs).toEqual(customTemplates.map(([id]) => id).sort());
   });

@@ -74,7 +74,7 @@ test('advanced Product Storytelling controls change the rendered preview', async
   await page.goto(`${studioPath}?template=product-storytelling-custom-pro`, { waitUntil: 'domcontentloaded' });
   await waitReady(page);
 
-  const advanced = page.getByRole('button', { name: /CONTROLES AVANZADOS/ });
+  const advanced = page.locator('.group').filter({ hasText: 'CONTROLES AVANZADOS' }).locator('button').first();
   if ((await advanced.getAttribute('aria-expanded')) !== 'true') await advanced.click();
 
   const repeater = page.locator('[data-field-key="highlights"] .repeater-control');
@@ -147,7 +147,8 @@ test('unsupported projects remain byte-for-byte protected in IndexedDB', async (
   await expect(page.locator('#cloudSave')).toBeDisabled();
   await expect(page.locator('#versionsBtn')).toBeDisabled();
   await expect(page.locator('#exportProject')).toBeDisabled();
-  await expect(page.locator('#tabs .tab:disabled')).toHaveCount(3);
+  const customTemplateCount = await page.evaluate(() => window.EP.StudioTemplateRegistry.listCustomPro().length);
+  await expect(page.locator('#tabs .tab:disabled')).toHaveCount(customTemplateCount);
   await expect(page.locator('#media input[type="file"]')).toHaveCount(0);
   await expect(page.frameLocator('#preview').getByText('Proyecto no compatible con este Studio')).toBeVisible();
 

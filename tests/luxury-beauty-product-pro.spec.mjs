@@ -34,17 +34,22 @@ assert.ok(context.EP.SectorBlueprints.getSchema('luxury-beauty-product-pro').len
 assert.equal(registry.builderExists(definition), true, 'builder must exist');
 
 const requiredKeys = [
-  'brand', 'productName', 'eyebrow', 'heroLine1', 'heroLine2', 'heroDescription',
-  'price', 'currency', 'volume', 'footerText', 'primaryCtaLabel', 'primaryCtaUrl',
-  'purchaseMode', 'purchaseButtonLabel', 'checkoutUrl', 'ingredientsTitle',
-  'ingredientsSubtitle', 'ingredients', 'storyEyebrow', 'storyTitle', 'storyText',
-  'storyCtaLabel', 'storyCtaUrl', 'storyLayout', 'modalTitle', 'modalSubtitle',
-  'showQuantity', 'showEngraving', 'engravingMaxLength', 'demoSuccessMessage',
-  'primaryColor', 'secondaryColor', 'backgroundColor', 'surfaceColor', 'textColor',
-  'mutedTextColor', 'heroOverlayStrength', 'cardRadius', 'glassBlur',
-  'headlineTypography', 'bodyTypography', 'responsiveCopy', 'packshotScaleDesktop',
-  'packshotScaleTablet', 'packshotScaleMobile', 'motionProfile', 'packshotTravel',
-  'packshotScaleEnd', 'revealDuration', 'reducedMotion'
+  'brand', 'productName', 'heroKicker', 'heroTitleLine1', 'heroTitleLine2',
+  'heroSubtitle', 'price', 'currency', 'volume', 'footerText', 'primaryCtaLabel',
+  'primaryCtaUrl', 'checkoutUrl', 'ingredientsTitle', 'ingredientsSubtitle',
+  'ingredients', 'collectionProducts', 'ritualSteps', 'brandFacts',
+  'storyEyebrow', 'storyTitle', 'storyText', 'modalTitle', 'modalSubtitle',
+  'engravingMaxLength', 'primaryColor', 'secondaryColor', 'backgroundColor',
+  'surfaceColor', 'textColor', 'mutedTextColor', 'headlineTypography',
+  'bodyTypography', 'responsiveCopy', 'journeyEnabled', 'journeyIntensity',
+  'journeySmoothing', 'journeyDuration', 'journeyEasing', 'journeyReducedMotion',
+  'heroProductX', 'heroProductY', 'heroProductScale', 'heroProductRotation',
+  'ingredientsProductX', 'ingredientsProductY', 'ingredientsProductScale',
+  'ingredientsProductRotation', 'collectionProductX', 'collectionProductY',
+  'collectionProductScale', 'collectionProductRotation', 'ritualProductX',
+  'ritualProductY', 'ritualProductScale', 'ritualProductRotation',
+  'storyProductX', 'storyProductY', 'storyProductScale', 'storyProductRotation',
+  'finalProductX', 'finalProductY', 'finalProductScale', 'finalProductRotation'
 ];
 for (const key of requiredKeys) {
   assert.ok(definition.schema.some((field) => field.key === key), `schema missing ${key}`);
@@ -52,22 +57,32 @@ for (const key of requiredKeys) {
 }
 
 assert.equal(definition.schema.find((field) => field.key === 'ingredients').type, 'repeater');
+assert.equal(definition.schema.find((field) => field.key === 'collectionProducts').type, 'repeater');
+assert.equal(definition.schema.find((field) => field.key === 'ritualSteps').type, 'repeater');
+assert.equal(definition.schema.find((field) => field.key === 'brandFacts').type, 'repeater');
 assert.equal(definition.schema.find((field) => field.key === 'headlineTypography').type, 'typography');
 assert.equal(definition.schema.find((field) => field.key === 'responsiveCopy').type, 'responsive');
-assert.equal(definition.schema.find((field) => field.key === 'motionProfile').type, 'motion');
+assert.equal(definition.schema.find((field) => field.key === 'journeyDuration').type, 'range');
 assert.equal(definition.exportSupport.html, true);
 assert.equal(definition.exportSupport.json, true);
 assert.equal(definition.exportSupport.publish, true);
 
 const slots = definition.mediaSlots.map((slot) => slot.id);
-assert.equal(JSON.stringify(slots), JSON.stringify(['heroMedia', 'heroPoster', 'packshot', 'decorativeOverlay', 'ingredient1', 'ingredient2', 'ingredient3', 'ingredient4', 'ingredient5', 'storyMedia', 'logo']));
+assert.equal(JSON.stringify(slots), JSON.stringify([
+  'heroBackground', 'starProduct', 'topCloud', 'ingredientIcon1', 'ingredientIcon2',
+  'ingredientIcon3', 'ingredientIcon4', 'ingredientIcon5', 'collectionProduct1',
+  'collectionProduct2', 'collectionProduct3', 'collectionProduct4',
+  'collectionProduct5', 'collectionProduct6', 'storyMedia', 'logo'
+]));
 assert.equal(new Set(slots).size, slots.length, 'media slots must be unique');
 assert.doesNotMatch(fs.readFileSync('js/sector-blueprints/luxury-beauty-product-pro.js', 'utf8'), /EP\.Media\.getAll\(/, 'builder must not use global media');
+assert.doesNotMatch(fs.readFileSync('js/sector-blueprints/luxury-beauty-product-pro.js', 'utf8'), /cdn\.jiro\.build/, 'ELORIA production assets must be local');
 
 const presets = Object.fromEntries(definition.presets.map((preset) => [preset.id, preset]));
 assert.ok(presets.default, 'default preset required for legacy contract');
 assert.equal(presets.default.visible, false);
-assert.equal(presets['plum-signature'].label, 'Plum Signature');
+assert.equal(presets['eloria-signature'].label, 'ELORIA Signature');
+assert.equal(presets['plum-signature'].visible, false);
 assert.equal(presets['botanical-editorial'].label, 'Botanical Editorial');
 assert.equal(definition.presets.filter((preset) => preset.visible !== false).length, 2);
 
@@ -79,20 +94,30 @@ for (const preset of definition.presets) {
 }
 
 const beforeDefaults = JSON.stringify(definition.defaults);
-const plum = registry.applyPreset(definition, 'plum-signature', {});
+const plum = registry.applyPreset(definition, 'eloria-signature', {});
 const botanical = registry.applyPreset(definition, 'botanical-editorial', {});
 assert.equal(plum.brand, 'ELORIA');
 assert.equal(botanical.brand, 'WILD DAISY');
 assert.notEqual(plum.primaryColor, botanical.primaryColor);
-assert.notEqual(plum.motionProfile.intensity, botanical.motionProfile.intensity);
+assert.notEqual(plum.journeyIntensity, botanical.journeyIntensity);
 assert.equal(JSON.stringify(definition.defaults), beforeDefaults, 'presets must not mutate defaults');
 
 const html = context.EP.SectorBlueprints.build('luxury-beauty-product-pro', [], plum);
 assert.match(html, /data-template="luxury-beauty-product-pro"/);
+assert.match(html, /id="eloriaStarProduct"/);
+assert.match(html, /data-product-anchor/);
+assert.match(html, /data-scene="hero"/);
+assert.match(html, /data-scene="ingredients"/);
+assert.match(html, /data-scene="collection"/);
+assert.match(html, /data-scene="ritual"/);
+assert.match(html, /data-scene="story"/);
+assert.match(html, /data-scene="final"/);
+assert.match(html, /Hero%20Image\.png/);
+assert.match(html, /Perfume%20Bottle\.png/);
 assert.match(html, /role="dialog"/);
-assert.match(html, /data-ingredient/);
-assert.match(html, /No real purchase is processed/);
+assert.match(html, /Demo comercial/);
 assert.doesNotMatch(html, /React|ReactDOM|Babel|tailwind/i);
+assert.doesNotMatch(html, /cdn\.jiro\.build/i);
 
 const studio = fs.readFileSync('studio.html', 'utf8');
 assert.match(studio, /luxury-beauty-product-pro\.js/, 'Studio must load the builder');
