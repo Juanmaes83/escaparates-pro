@@ -97,6 +97,9 @@ assert.deepEqual(Array.from(definition.defaults.products, (product) => product.i
 ]);
 
 const html = context.EP.SectorBlueprints.build('fashion-commerce-pro', [], definition.defaults);
+const embeddedScripts = Array.from(html.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g), match => match[1]);
+assert.ok(embeddedScripts.length >= 2, 'exported HTML must include data and runtime scripts');
+assert.doesNotThrow(() => new vm.Script(embeddedScripts.at(-1)), 'embedded runtime script must be valid JavaScript');
 assert.match(html, /data-template="fashion-commerce-pro"/);
 assert.match(html, /RUBIK SOTA/);
 assert.match(html, /DISRUPCIÓN/);
