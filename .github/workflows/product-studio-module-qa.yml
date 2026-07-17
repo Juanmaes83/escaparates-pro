@@ -46,9 +46,11 @@ jobs:
           node --check tests/product-studio-module.spec.mjs
           node --check tests/studio-template-contract.spec.mjs
           node --check tests/phase2-contract.spec.mjs
-      - name: Verify Studio contracts
-        run: |
-          node tests/interface-utf8.spec.mjs
-          node tests/product-studio-module.spec.mjs
-          node tests/studio-template-contract.spec.mjs
-          node tests/phase2-contract.spec.mjs
+      - name: Verify UTF-8 interface contract
+        run: node tests/interface-utf8.spec.mjs
+      - name: Verify Product Studio module contract
+        run: node tests/product-studio-module.spec.mjs
+      - name: Verify Studio template contract
+        run: node tests/studio-template-contract.spec.mjs
+      - name: Verify Project Cloud regression contract
+        run: node tests/phase2-contract.spec.mjs
