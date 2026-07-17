@@ -4,6 +4,9 @@ import assert from 'node:assert/strict';
 const integration = fs.readFileSync('js/projects/product-integration.js', 'utf8');
 const route = fs.readFileSync('js/projects/studio-route.js', 'utf8');
 const studio = fs.readFileSync('studio.html', 'utf8');
+const cloud = fs.readFileSync('review/phase2-studio-extension.js', 'utf8');
+const cloudCss = fs.readFileSync('review/phase2-studio-extension.css', 'utf8');
+const library = fs.readFileSync('js/projects/project-library-page.js', 'utf8');
 const index = fs.readFileSync('index.html', 'utf8');
 
 const customTemplates = [
@@ -23,12 +26,31 @@ assert.doesNotMatch(route, /source-faithful/, 'Source Faithful must not be routa
 
 assert.match(integration, /href='studio\.html'/, 'Main Studio product link is missing');
 assert.match(integration, /studio\.html\?template=/, 'Direct template Studio link is missing');
-assert.match(route, /href='index\.html'/, 'Studio return-to-catalog link is missing');
-assert.match(route, /href='projects\.html'/, 'Studio project library link is missing');
+assert.match(integration, /pc-studio-top/, 'Studio needs its own persistent responsive class');
+assert.doesNotMatch(integration, /max-width:1180px\)\{\.pc-studio-top\{display:none/, 'Studio must never disappear at the old breakpoint');
 
+assert.match(route, /href='index\.html'/, 'Studio return-to-catalog link is missing');
+assert.doesNotMatch(route, /studioProjectLibrary|textContent='Biblioteca'/, 'Studio toolbar must not duplicate project navigation');
+assert.match(studio, /Abrir biblioteca completa/, 'Project modal must expose the full library');
+
+assert.match(studio, /ESCAPARATES PRO · STUDIO/, 'Studio product naming is not unified');
+assert.match(studio, /Studio de personalización/, 'Spanish Studio title is missing');
+assert.match(studio, /VISTA PREVIA EN DIRECTO/, 'Spanish preview label is missing');
 assert.match(studio, /id="preview"/, 'Studio preview iframe is missing');
 assert.match(studio, /phase1-studio-v2\.js/, 'Canonical Studio engine is missing');
 assert.match(studio, /studio-route\.js/, 'Studio route module is missing');
+
+assert.match(cloud, /Modo local · sesión no iniciada/, 'Local mode must be explicit');
+assert.match(cloud, /Proyecto guardado localmente ✓/, 'Local save confirmation is missing');
+assert.match(cloud, /save\.disabled=!session\|\|!online/, 'Cloud save must be disabled without session or connection');
+assert.match(cloud, /versions\.disabled=!session\|\|!online/, 'Cloud versions must be disabled without session or connection');
+assert.match(cloud, /navigator\.onLine\?'api-error':'offline'/, 'API errors and offline state must be distinct');
+assert.match(cloudCss, /data-state="local"/, 'Local mode needs a neutral visual state');
+assert.match(cloudCss, /\.phase2-bar \.btn:disabled/, 'Disabled cloud controls need a visible state');
+assert.doesNotMatch(cloudCss, /position:sticky;bottom:0/, 'Cloud footer must not overlap mobile fields');
+
+assert.match(library, /Todavía no tienes proyectos/, 'True empty-library message is missing');
+assert.match(library, /No hay proyectos que coincidan con la búsqueda o los filtros/, 'Filtered-empty message is missing');
 
 assert.doesNotMatch(index, /<iframe[^>]+studio\.html/i, 'Studio must not be embedded in index.html');
 assert.doesNotMatch(index, /review\/premium-storytelling-phase1-studio\.html/, 'Product must use studio.html, not the review page');
