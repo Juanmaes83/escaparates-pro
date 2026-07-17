@@ -49,6 +49,10 @@ async function openProject(id){
   }
   if(!project)return;
   if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.normalizeProject)project=EP.StudioTemplateRegistry.normalizeProject(project);
+  if(EP.StudioRuntime&&EP.StudioRuntime.openProject){
+    EP.StudioRuntime.openProject(project);
+    return;
+  }
   openTemplate(project.templateId);
   var button=document.getElementById('projectsBtn');
   if(button)button.click();
@@ -71,10 +75,6 @@ async function init(){
   if(template)openTemplate(template);
   if(project)await openProject(project);
 }
-function start(){
-  setTimeout(function(){
-    init().catch(function(error){var status=document.getElementById('status');if(status)status.textContent=error.message});
-  },80);
-}
+function start(){setTimeout(function(){init().catch(function(error){var status=document.getElementById('status');if(status)status.textContent=error.message})},80)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
