@@ -108,6 +108,17 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('#rsAudio')).toHaveAttribute('aria-pressed', 'true');
   featureMatrix.effects = 'grain, scanner, film burn, custom cursor and audio toggle verified';
 
+  const galleryBefore = await preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0);
+  await page.frameLocator('#preview').locator('#rsTrackNext').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0)).toBeGreaterThan(galleryBefore);
+  await page.frameLocator('#preview').locator('#rsTrackShell').press('ArrowLeft');
+  await page.frameLocator('#preview').locator('#rsRunway').click();
+  await expect(page.frameLocator('#preview').locator('.rs-page')).toHaveClass(/runway-on/);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.runway-active')?.dataset.productIndex || '')).not.toBe('');
+  await page.frameLocator('#preview').locator('#rsRunway').click();
+  await expect(page.frameLocator('#preview').locator('.rs-page')).not.toHaveClass(/runway-on/);
+  featureMatrix.galleryRunway = 'next, keyboard, runway start/stop and active card verified';
+
   const products = await openGroupFor(page, 'products');
   const before = await products.locator('.repeater-row').count();
   await products.locator('.repeater-row').last().getByRole('button', { name: 'Eliminar' }).click();

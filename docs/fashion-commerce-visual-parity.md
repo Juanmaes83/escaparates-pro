@@ -29,9 +29,9 @@ Source and preview must be compared at these viewports:
 | Header/nav | Partial |
 | Cinematic hero | Partial, second pass with responsive crop/overlay controls |
 | Glitch | Partial, autonomous pulse and hover distortion implemented |
-| Gallery | Partial |
-| Drag | Pending |
-| Runway | Partial |
+| Gallery | Partial, snap track with prev/next and keyboard implemented |
+| Drag | Partial, pointer drag/swipe implemented without global wheel hijack |
+| Runway | Partial, start/stop/active/progress/cleanup implemented |
 | Modal | Partial |
 | Wishlist | Partial |
 | Cart | Partial |
@@ -53,7 +53,7 @@ Source and preview must be compared at these viewports:
 
 ## Current Visual Assessment
 
-Current implementation has moved beyond the first functional block: it preserves the authorized RUBIK SOTA hero/campaign media, uses responsive hero variables, and includes grain, scanner, film burn, autonomous glitch, custom drag cursor, CTA magnetism and audio/mute UI state. It is still below the Core gate because several source sections and advanced gallery/product interactions are not yet reconstructed.
+Current implementation has moved beyond the first functional block: it preserves the authorized RUBIK SOTA hero/campaign media, uses responsive hero variables, and includes grain, scanner, film burn, autonomous glitch, custom drag cursor, CTA magnetism, audio/mute UI state, snap gallery controls, pointer drag/swipe and runway progress state. It is still below the Core gate because several source sections and deeper product/commerce interactions are not yet reconstructed.
 
 ## Evidence Rules
 
