@@ -120,6 +120,15 @@ assert.match(html, /id="rsNavPanel"/);
 assert.match(html, /data-i18n="heroCtaLabel"/);
 assert.match(html, /ep:fashion-commerce:language/);
 assert.match(html, /data-hero-mobile-min="86"/);
+assert.match(html, /class="rs-grain"/);
+assert.match(html, /class="rs-scanner"/);
+assert.match(html, /class="rs-film-burn"/);
+assert.match(html, /id="rsCursor"/);
+assert.match(html, /id="rsAudio"/);
+assert.match(html, /rsGlitch/);
+assert.match(html, /pointermove/);
+assert.match(html, /setupMagnet/);
+assert.match(html, /removeEventListener\("pointermove",moveCursor\)/);
 assert.doesNotMatch(html, /randomuser\.me/);
 assert.doesNotMatch(html, /ReactDOM|Babel|tailwind/i);
 

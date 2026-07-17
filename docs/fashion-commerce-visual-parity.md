@@ -27,8 +27,8 @@ Source and preview must be compared at these viewports:
 | Teaser | Implemented first pass, pending source comparison |
 | Preloader | Implemented first pass, pending source comparison |
 | Header/nav | Partial |
-| Cinematic hero | Partial |
-| Glitch | Partial |
+| Cinematic hero | Partial, second pass with responsive crop/overlay controls |
+| Glitch | Partial, autonomous pulse and hover distortion implemented |
 | Gallery | Partial |
 | Drag | Pending |
 | Runway | Partial |
@@ -47,13 +47,13 @@ Source and preview must be compared at these viewports:
 | Newsletter | Pending |
 | Footer | Pending |
 | Floating CTA | Partial |
-| Cursor | Pending |
-| Audio/mute | Pending |
+| Cursor | Partial, custom drag cursor implemented for gallery |
+| Audio/mute | Partial, UI state implemented without external audio asset |
 | Back-to-top | Pending |
 
 ## Current Visual Assessment
 
-Current implementation is a first functional block, not a final parity build. It preserves the authorized RUBIK SOTA hero/campaign media and the initial brutalist fashion direction, but it is still below the Core gate because several source sections and interaction details are not yet reconstructed.
+Current implementation has moved beyond the first functional block: it preserves the authorized RUBIK SOTA hero/campaign media, uses responsive hero variables, and includes grain, scanner, film burn, autonomous glitch, custom drag cursor, CTA magnetism and audio/mute UI state. It is still below the Core gate because several source sections and advanced gallery/product interactions are not yet reconstructed.
 
 ## Evidence Rules
 

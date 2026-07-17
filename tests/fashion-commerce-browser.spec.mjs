@@ -96,6 +96,18 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   expect(dictionaryCoverage.userSet).toBe('1');
   featureMatrix.language = dictionaryCoverage;
 
+  const effects = await preview(page, (win, doc) => ({
+    grain: Boolean(doc.querySelector('.rs-grain')),
+    scanner: Boolean(doc.querySelector('.rs-scanner')),
+    filmBurn: Boolean(doc.querySelector('.rs-film-burn')),
+    cursor: Boolean(doc.querySelector('#rsCursor')),
+    reducedMotionClass: doc.body.classList.contains('motion-reduced')
+  }));
+  expect(effects).toEqual({ grain: true, scanner: true, filmBurn: true, cursor: true, reducedMotionClass: false });
+  await page.frameLocator('#preview').locator('#rsAudio').click();
+  await expect(page.frameLocator('#preview').locator('#rsAudio')).toHaveAttribute('aria-pressed', 'true');
+  featureMatrix.effects = 'grain, scanner, film burn, custom cursor and audio toggle verified';
+
   const products = await openGroupFor(page, 'products');
   const before = await products.locator('.repeater-row').count();
   await products.locator('.repeater-row').last().getByRole('button', { name: 'Eliminar' }).click();
