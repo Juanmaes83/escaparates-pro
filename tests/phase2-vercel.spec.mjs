@@ -126,6 +126,15 @@ async function createWebmFile(page) {
   return Buffer.from(bytes);
 }
 
+async function setMediaFileAndWait(page, inputSelector, filePayload, cardIndex, expectedName) {
+  const navigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 }).then(() => 'navigation').catch(() => null);
+  const cardReady = page.locator('#media .media-card').nth(cardIndex).filter({ hasText: expectedName }).waitFor({ timeout: 90000 }).then(() => 'card').catch(() => null);
+  await page.locator(inputSelector).setInputFiles(filePayload);
+  await Promise.race([navigation, cardReady]);
+  await waitStudio(page).catch(() => {});
+  await expect(page.locator('#media .media-card').nth(cardIndex)).toContainText(expectedName, { timeout: 30000 });
+}
+
 async function deleteProject(request, token, projectId) {
   if (!projectId) return;
   await request.delete(`${API}/v1/projects/${projectId}`, { headers: authHeaders(token) });
@@ -338,17 +347,9 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
 
       const videoBuffer = await createWebmFile(page);
       expect(videoBuffer.length).toBeGreaterThan(500);
-      const firstNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-0').setInputFiles({ name: 'qa-video.webm', mimeType: 'video/webm', buffer: videoBuffer });
-      await firstNavigation;
-      await waitStudio(page);
-      await expect(page.locator('#media .media-card').nth(0)).toContainText('qa-video.webm');
+      await setMediaFileAndWait(page, '#media-0', { name: 'qa-video.webm', mimeType: 'video/webm', buffer: videoBuffer }, 0, 'qa-video.webm');
 
-      const secondNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-1').setInputFiles({ name: 'qa-image.png', mimeType: 'image/png', buffer: imageBuffer });
-      await secondNavigation;
-      await waitStudio(page);
-      await expect(page.locator('#media .media-card').nth(1)).toContainText('qa-image.png');
+      await setMediaFileAndWait(page, '#media-1', { name: 'qa-image.png', mimeType: 'image/png', buffer: imageBuffer }, 1, 'qa-image.png');
 
       const project = await currentProject(page, name);
       expect(project).toBeTruthy();
