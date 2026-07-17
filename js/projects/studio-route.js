@@ -12,6 +12,7 @@ function tabFor(id){
   return Array.from(document.querySelectorAll('.tab')).find(function(button){return button.dataset&&button.dataset.templateId===id})||Array.from(document.querySelectorAll('.tab')).find(function(button){return button.textContent.trim()===label})||null;
 }
 function openTemplate(id){var tab=tabFor(id);if(tab&&!tab.classList.contains('active'))tab.click()}
+function openPreset(id){if(!id)return;if(EP.StudioRuntime&&EP.StudioRuntime.applyPreset)EP.StudioRuntime.applyPreset(id)}
 function addProductNavigation(){
   var toolbar=document.querySelector('.toolbar');
   if(!toolbar||document.getElementById('studioBackCatalog'))return;
@@ -71,8 +72,9 @@ function loadR2Bridge(){
 async function init(){
   addProductNavigation();
   await loadR2Bridge();
-  var query=params(),template=query.get('template'),project=query.get('project');
+  var query=params(),template=query.get('template'),project=query.get('project'),preset=query.get('preset');
   if(template)openTemplate(template);
+  if(preset)openPreset(preset);
   if(project)await openProject(project);
 }
 function start(){setTimeout(function(){init().catch(function(error){var status=document.getElementById('status');if(status)status.textContent=error.message})},80)}

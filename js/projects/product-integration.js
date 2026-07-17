@@ -1,13 +1,14 @@
-(function(){
+﻿(function(){
 'use strict';
 window.EP=window.EP||{};
 var CUSTOM_BY_NAME={
-  'Real Estate Storytelling — Custom PRO':'real-estate-storytelling-custom-pro',
-  'Product Storytelling — Custom PRO':'product-storytelling-custom-pro',
-  'Luxury Real Estate — Custom Blueprint PRO':'luxury-real-estate-custom-pro',
-  'Luxury Real Estate — Custom PRO':'luxury-real-estate-custom-pro'
+  'Real Estate Storytelling - Custom PRO':'real-estate-storytelling-custom-pro',
+  'Product Storytelling - Custom PRO':'product-storytelling-custom-pro',
+  'Luxury Real Estate - Custom Blueprint PRO':'luxury-real-estate-custom-pro',
+  'Luxury Real Estate - Custom PRO':'luxury-real-estate-custom-pro',
+  'Luxury Beauty Product - Custom PRO':'luxury-beauty-product-pro'
 };
-function customByName(){var map=Object.assign({},CUSTOM_BY_NAME);if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.listCustomPro){EP.StudioTemplateRegistry.listCustomPro().forEach(function(def){map[def.title+' — Custom PRO']=def.id;map[def.title+' — Custom Blueprint PRO']=def.id;});}return map;}
+function customByName(){var map=Object.assign({},CUSTOM_BY_NAME);if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.listCustomPro){EP.StudioTemplateRegistry.listCustomPro().forEach(function(def){map[def.title+' - Custom PRO']=def.id;map[def.title+' - Custom Blueprint PRO']=def.id;});}return map;}
 function addStyles(){
   if(document.getElementById('pcProductStyles'))return;
   var style=document.createElement('style');
@@ -48,7 +49,7 @@ function addTopLinks(){
 }
 function resolveCard(card){
   var explicit=card.getAttribute('data-sector-blueprint');
-  if(explicit==='luxury-real-estate-custom-pro')return explicit;
+  if(explicit&&EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.get&&EP.StudioTemplateRegistry.get(explicit))return explicit;
   var name=card.querySelector('.ss-name');
   return name?customByName()[name.textContent.trim()]||null:null;
 }
