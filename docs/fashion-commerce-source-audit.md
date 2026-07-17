@@ -68,7 +68,21 @@ Per the user instruction, production hotlinking is not allowed and only owned, a
 
 > Detenerse si la procedencia de assets clave es dudosa.
 
-No builder implementation should start until one of these routes is approved:
+PR #26 was later unblocked by explicit user authorization on 2026-07-17:
+
+> Confirmo que soy propietario de los cuatro videos alojados en CloudFront o que dispongo de autorizacion suficiente para copiarlos, almacenarlos y utilizarlos dentro de Escaparates Pro y sus plantillas exportables.
+
+The four CloudFront videos are therefore classified as `approved-by-owner`.
+
+Implementation may continue using the technically best strategy:
+
+1. Keep authorized CloudFront URLs when committing large MP4 files is not justified.
+2. Copy to controlled storage later if performance, CORS, or export constraints require it.
+3. Include locally only when file size and repository policy make that reasonable.
+
+Unsplash imagery is classified as `approved-unsplash` for the Draft phase. RandomUser portraits remain excluded from copying and must be replaced before the designers/influencers implementation.
+
+Original gate options, kept for history:
 
 1. Provide written confirmation that the CloudFront MP4s and selected source imagery are owned/authorized for copying into Escaparates Pro.
 2. Provide a replacement asset pack for `assets/templates/fashion-commerce/rubik-sota/` with equivalent composition and rights.
@@ -158,4 +172,4 @@ Required Suits data:
 
 ## Current Decision
 
-Implementation is paused at the source-audit gate. Continuing without an approved asset route would either hotlink production assets, copy media with unclear provenance, or build a reinterpretation that violates the requested fidelity.
+Implementation is unblocked for the first functional block. The current builder strategy keeps CloudFront videos as authorized remote URLs, preserves Unsplash imagery for source fidelity, and defers RandomUser replacement until the designers/influencers block.
