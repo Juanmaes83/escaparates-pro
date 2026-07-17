@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Premium Storytelling Custom Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#111;--line:#292929;--text:#f5f4f0;--muted:#999;--accent:#d3ad68}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;overflow:hidden}.shell{height:100vh;display:grid;grid-template-columns:390px 1fr}.panel{border-right:1px solid var(--line);background:#0c0c0c;overflow:auto;padding:22px}.brand{font-size:12px;font-weight:900;letter-spacing:.15em}.badge{display:inline-flex;margin-top:10px;padding:7px 9px;border:1px solid #5a492c;border-radius:999px;color:var(--accent);font-size:10px;font-weight:800}.panel h1{font-size:34px;line-height:.95;letter-spacing:-.05em;margin:26px 0 12px}.intro{font-size:13px;line-height:1.55;color:var(--muted)}.tabs{display:grid;gap:8px;margin:22px 0}.tab{border:1px solid var(--line);background:#151515;color:#ddd;padding:12px;text-align:left;border-radius:11px;font-weight:800;cursor:pointer}.tab.active{border-color:var(--accent);background:#1b1812;color:#fff}.section-title{margin:25px 0 10px;font-size:10px;letter-spacing:.18em;color:var(--accent);font-weight:900}.field{display:grid;gap:6px;margin-bottom:12px}.field label{font-size:11px;color:#bbb}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#171717;color:#fff;border-radius:9px;padding:10px;font:inherit;font-size:12px}.field textarea{min-height:78px;resize:vertical}.range-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:9px}.range-row output{font-size:11px;color:var(--accent);min-width:42px;text-align:right}.slot{border:1px solid var(--line);border-radius:11px;padding:10px;margin-bottom:10px;background:#121212}.slot strong{display:block;font-size:11px;margin-bottom:8px}.slot-grid{display:grid;grid-template-columns:92px 1fr;gap:8px}.actions{position:sticky;bottom:-22px;margin:24px -22px -22px;padding:15px 22px;background:rgba(12,12,12,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex;gap:9px}.actions button{flex:1;border:0;border-radius:999px;padding:12px;font-weight:900;cursor:pointer}.primary{background:var(--accent);color:#090909}.secondary{background:#232323;color:white}.stage{position:relative;background:#050505}.stage iframe{width:100%;height:100%;border:0;display:block;background:#000}.status{position:absolute;z-index:5;top:14px;right:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:8px 12px;font-size:10px;letter-spacing:.1em;color:#aaa;pointer-events:none}@media(max-width:900px){body{overflow:auto}.shell{height:auto;min-height:100vh;grid-template-columns:1fr}.panel{border-right:0;border-bottom:1px solid var(--line);max-height:none}.stage{height:78vh;min-height:620px}.actions{bottom:0}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="panel">
+    <div class="brand">ESCAPARATES PRO · CUSTOM LAB</div>
+    <div class="badge">6 PLANTILLAS TOTALES · 3 CUSTOM PRO</div>
+    <h1>Personalización premium en directo</h1>
+    <p class="intro">Las tres versiones Source Faithful se mantienen intactas. Este laboratorio usa las tres nuevas copias editables. Cambia textos, colores y URLs de vídeo o imágenes; el resultado se reconstruye al instante y es el mismo HTML que exportará Escaparates Pro.</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="section-title">CONTENIDO Y ESTILO</div>
+    <div id="fields"></div>
+    <div class="section-title">MEDIA SLOTS</div>
+    <div id="slots"></div>
+    <div class="actions"><button class="secondary" id="reset">Restablecer</button><button class="primary" id="open">Abrir completa</button></div>
+  </aside>
+  <main class="stage"><div class="status" id="status">PREVIEW LIVE</div><iframe id="preview" title="Premium Custom PRO preview"></iframe></main>
+</div>
+<script>window.EP=window.EP||{};</script>
+<script src="../js/scroll-sections.js"></script>
+<script src="../js/scroll-sections/real-estate-storytelling-custom-pro.js"></script>
+<script src="../js/scroll-sections/product-storytelling-custom-pro.js"></script>
+<script src="../js/sector-blueprints.js"></script>
+<script src="../js/sector-blueprints/luxury-real-estate-custom-pro.js"></script>
+<script>
+(function(){
+  var definitions=[
+    {id:'real-estate-storytelling-custom-pro',kind:'scroll',label:'01 · Real Estate Storytelling — Custom PRO',slots:['Vídeo hero','Poster / fallback','Logotipo']},
+    {id:'product-storytelling-custom-pro',kind:'scroll',label:'02 · Product Storytelling — Custom PRO',slots:['Vídeo principal','Poster / fallback','Imagen feature 1','Imagen feature 2','Logotipo']},
+    {id:'luxury-real-estate-custom-pro',kind:'blueprint',label:'03 · Luxury Real Estate — Custom Blueprint PRO',slots:['Vídeo hero','Poster hero','Propiedad 1','Propiedad 2','Propiedad 3','Imagen About','Imagen Contacto','Logotipo']}
+  ];
+  var active=definitions[0],state={},mediaState={},timer=null,lastHTML='';
+  var tabs=document.getElementById('tabs'),fields=document.getElementById('fields'),slots=document.getElementById('slots'),preview=document.getElementById('preview'),status=document.getElementById('status');
+  function tpl(){return active.kind==='scroll'?EP.ScrollSections.get(active.id):EP.SectorBlueprints.get(active.id);}
+  function schema(){return active.kind==='scroll'?(tpl().schema||[]):EP.SectorBlueprints.getSchema(active.id);}
+  function ensure(){if(!state[active.id]){state[active.id]={};schema().forEach(function(f){state[active.id][f.key]=f.default;});}if(!mediaState[active.id])mediaState[active.id]=active.slots.map(function(){return {type:'',url:''};});}
+  function renderTabs(){tabs.innerHTML='';definitions.forEach(function(d){var b=document.createElement('button');b.className='tab'+(d.id===active.id?' active':'');b.textContent=d.label;b.onclick=function(){active=d;ensure();renderTabs();renderFields();renderSlots();render();};tabs.appendChild(b);});}
+  function renderFields(){ensure();fields.innerHTML='';schema().forEach(function(f){var row=document.createElement('div');row.className='field';var label=document.createElement('label');label.textContent=f.label;row.appendChild(label);var input;if(f.type==='textarea'){input=document.createElement('textarea');input.value=state[active.id][f.key]||'';}else{input=document.createElement('input');input.type=f.type==='range'?'range':(f.type==='color'?'color':'text');input.value=state[active.id][f.key]!==undefined?state[active.id][f.key]:'';if(f.min!==undefined)input.min=f.min;if(f.max!==undefined)input.max=f.max;if(f.step!==undefined)input.step=f.step;}if(f.type==='range'){var wrap=document.createElement('div');wrap.className='range-row';var out=document.createElement('output');out.textContent=input.value+(f.suffix||'');wrap.appendChild(input);wrap.appendChild(out);row.appendChild(wrap);input.oninput=function(){state[active.id][f.key]=Number(input.value);out.textContent=input.value+(f.suffix||'');schedule();};}else{row.appendChild(input);input.oninput=function(){state[active.id][f.key]=input.value;schedule();};}fields.appendChild(row);});}
+  function infer(url){return /\.(mp4|webm|mov)(\?|#|$)/i.test(url)||url.indexOf('video')>-1?'video':'image';}
+  function renderSlots(){ensure();slots.innerHTML='';active.slots.forEach(function(name,i){var box=document.createElement('div');box.className='slot';box.innerHTML='<strong>Slot '+(i+1)+' · '+name+'</strong>';var grid=document.createElement('div');grid.className='slot-grid';var type=document.createElement('select');type.innerHTML='<option value="">Auto</option><option value="video">Vídeo</option><option value="image">Imagen</option>';type.value=mediaState[active.id][i].type;var url=document.createElement('input');url.type='url';url.placeholder='https://… (vacío = demo original)';url.value=mediaState[active.id][i].url;type.onchange=function(){mediaState[active.id][i].type=type.value;schedule();};url.oninput=function(){mediaState[active.id][i].url=url.value;schedule();};grid.appendChild(type);grid.appendChild(url);box.appendChild(grid);slots.appendChild(box);});}
+  function media(){ensure();return mediaState[active.id].filter(function(m){return m.url.trim();}).map(function(m){return {type:m.type||infer(m.url),url:m.url.trim()};});}
+  function build(){return active.kind==='scroll'?EP.ScrollSections.buildDocument(active.id,media(),state[active.id]):EP.SectorBlueprints.build(active.id,media(),state[active.id]);}
+  function render(){clearTimeout(timer);status.textContent='RENDERING…';timer=setTimeout(function(){try{lastHTML=build();preview.srcdoc=lastHTML;status.textContent='PREVIEW LIVE · '+active.label.split(' · ')[0];}catch(e){status.textContent='ERROR · '+e.message;console.error(e);}},120);}
+  function schedule(){render();}
+  document.getElementById('reset').onclick=function(){delete state[active.id];delete mediaState[active.id];ensure();renderFields();renderSlots();render();};
+  document.getElementById('open').onclick=function(){lastHTML=build();var url=URL.createObjectURL(new Blob([lastHTML],{type:'text/html'}));window.open(url,'_blank','noopener');setTimeout(function(){URL.revokeObjectURL(url);},60000);};
+  ensure();renderTabs();renderFields();renderSlots();render();
+})();
+</script>
+</body>
+</html>

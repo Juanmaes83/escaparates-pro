@@ -1,0 +1,8 @@
+{
+  "id": "luxury-real-estate-source-faithful",
+  "mode": "source-faithful",
+  "source": "https://github.com/Juanmaes83/Rubik-Sota-Inmobiliaria-Premium",
+  "visualFidelityTarget": 0.95,
+  "adapter": "hash-config + postMessage",
+  "assetPolicy": "original demo assets retained for source-faithful preview; user slot 1 overrides primary video"
+}

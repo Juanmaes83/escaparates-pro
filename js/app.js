@@ -1,5 +1,19 @@
 // Escaparates Pro — Main bootstrap
 (function() {
+    function loadProjectCloudProduct() {
+        if (document.querySelector('script[data-project-cloud-product]')) return;
+        var script = document.createElement('script');
+        script.src = 'js/projects/product-integration.js';
+        script.async = false;
+        script.setAttribute('data-project-cloud-product', 'true');
+        script.onload = function() {
+            try { if (EP.ProjectCloudProduct) EP.ProjectCloudProduct.init(); }
+            catch (e) { console.error('ProjectCloudProduct.init failed:', e); }
+        };
+        script.onerror = function() { console.error('Project Cloud product integration could not be loaded'); };
+        document.head.appendChild(script);
+    }
+
     function boot() {
         try { EP.Core.init(); } catch(e) { console.error('Core.init failed:', e); }
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
@@ -22,6 +36,7 @@
         try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
         try { if (EP.SourceLabsUI) EP.SourceLabsUI.init(); } catch(e) { console.error('SourceLabsUI.init failed:', e); }
         try { if (EP.PlatformInfo) EP.PlatformInfo.init(); } catch(e) { console.error('PlatformInfo.init failed:', e); }
+        loadProjectCloudProduct();
 
         EP.Media.onChange(function() {
             EP.UI.rebuildCurrent();
@@ -49,7 +64,6 @@
             if (e.code === 'Space') { e.preventDefault(); EP.Timeline.toggle(); }
         });
 
-        // Safe Zone toggle
         var btnSZ = document.getElementById('btn-safe-zone');
         var szOverlay = document.getElementById('safe-zone-overlay');
         if (btnSZ && szOverlay) {

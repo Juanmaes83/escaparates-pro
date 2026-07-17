@@ -247,7 +247,7 @@ EP.ScrollSectionsUI = (function() {
     var state = { mode: 'effects', activeId: null, options: {} };
     var renderTimer = null;
 
-    function getSchema(id) { return FIELD_SCHEMAS[id] || []; }
+    function getSchema(id) { var tpl = EP.ScrollSections.get(id); return FIELD_SCHEMAS[id] || (tpl && tpl.schema ? tpl.schema : []); }
 
     function ensureOptions(id) {
         if (state.options[id]) return state.options[id];
@@ -398,9 +398,10 @@ EP.ScrollSectionsUI = (function() {
         });
 
         if (noteEl) {
-            noteEl.innerHTML = tpl.sourceUrl
+            var slots = tpl.mediaSlots && tpl.mediaSlots.length ? '<br><strong>Media slots:</strong> ' + tpl.mediaSlots.map(function(s,i){ return (i+1) + '. ' + s; }).join(' · ') : '';
+            noteEl.innerHTML = (tpl.sourceUrl
                 ? 'Técnica adaptada de <a href="' + tpl.sourceUrl + '" target="_blank" rel="noopener">' + tpl.sourceUrl.replace('https://', '') + '</a>. Los textos y la media se sustituyen por los tuyos.'
-                : '';
+                : (tpl.schema ? 'Plantilla premium editable desde este panel.' : '')) + slots;
         }
     }
 
