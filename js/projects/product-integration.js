@@ -2,12 +2,12 @@
 'use strict';
 window.EP=window.EP||{};
 var CUSTOM_BY_NAME={
-  'Real Estate Storytelling â€” Custom PRO':'real-estate-storytelling-custom-pro',
-  'Product Storytelling â€” Custom PRO':'product-storytelling-custom-pro',
-  'Luxury Real Estate â€” Custom Blueprint PRO':'luxury-real-estate-custom-pro',
-  'Luxury Real Estate â€” Custom PRO':'luxury-real-estate-custom-pro'
+  'Real Estate Storytelling — Custom PRO':'real-estate-storytelling-custom-pro',
+  'Product Storytelling — Custom PRO':'product-storytelling-custom-pro',
+  'Luxury Real Estate — Custom Blueprint PRO':'luxury-real-estate-custom-pro',
+  'Luxury Real Estate — Custom PRO':'luxury-real-estate-custom-pro'
 };
-function customByName(){var map=Object.assign({},CUSTOM_BY_NAME);if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.listCustomPro){EP.StudioTemplateRegistry.listCustomPro().forEach(function(def){map[def.title+' — Custom PRO']=def.id;map[def.title+' â€” Custom PRO']=def.id;map[def.title+' — Custom Blueprint PRO']=def.id;map[def.title+' â€” Custom Blueprint PRO']=def.id;});}return map;}
+function customByName(){var map=Object.assign({},CUSTOM_BY_NAME);if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.listCustomPro){EP.StudioTemplateRegistry.listCustomPro().forEach(function(def){map[def.title+' — Custom PRO']=def.id;map[def.title+' — Custom Blueprint PRO']=def.id;});}return map;}
 function addStyles(){
   if(document.getElementById('pcProductStyles'))return;
   var style=document.createElement('style');

@@ -229,6 +229,39 @@ test.describe('contrato Studio en navegador', () => {
     await expect(page.locator('#media-0')).toHaveAttribute('accept', /video/);
     await expect(page.locator('#media-1')).toHaveAttribute('accept', /image/);
 
+    const ctaLabel = page.locator('[data-field-key="ctaLabel"] input');
+    await expect(ctaLabel).toHaveAttribute('type', 'text');
+    await expect(ctaLabel).toHaveValue('Descubrir producto');
+    const ctaUrl = page.locator('[data-field-key="ctaUrl"] input');
+    await expect(ctaUrl).toHaveAttribute('type', 'url');
+    await expect(ctaUrl).toHaveValue('#producto');
+
+    await page.getByRole('button', { name: /CONTROLES AVANZADOS/ }).click();
+    const repeater = page.locator('[data-field-key="highlights"] .repeater-row');
+    await expect(repeater).toHaveCount(2);
+    await page.locator('[data-field-key="highlights"]').getByRole('button', { name: 'Añadir' }).click();
+    await expect(repeater).toHaveCount(3);
+    await repeater.nth(2).locator('input').first().fill('Garantía extendida');
+    await repeater.nth(2).getByRole('button', { name: '↑' }).click();
+    await expect(repeater.nth(1).locator('input').first()).toHaveValue('Garantía extendida');
+    await repeater.nth(1).getByRole('button', { name: 'Eliminar' }).click();
+    await expect(repeater).toHaveCount(2);
+
+    const typography = page.locator('[data-field-key="headlineTypography"]');
+    await typography.locator('input[type="text"]').fill('Manrope');
+    await typography.locator('select').selectOption('700');
+    await typography.locator('input[type="number"]').fill('88');
+    await expect(typography.locator('input[type="text"]')).toHaveValue('Manrope');
+
+    const responsive = page.locator('[data-field-key="responsiveCopy"]');
+    await responsive.locator('label').filter({ hasText: 'mobile' }).locator('input').fill('Compacto');
+    await expect(responsive.locator('label').filter({ hasText: 'mobile' }).locator('input')).toHaveValue('Compacto');
+
+    const motion = page.locator('[data-field-key="motionProfile"]');
+    await motion.locator('input[type="range"]').fill('80');
+    await motion.locator('input[type="checkbox"]').check();
+    await expect(motion.locator('input[type="checkbox"]')).toBeChecked();
+
     const contract = await page.evaluate(async () => {
       const registry = window.EP.StudioTemplateRegistry;
       const base = registry.normalizeProject({

@@ -37,16 +37,16 @@ assert.match(route, /href='index\.html'/, 'Studio return-to-catalog link is miss
 assert.doesNotMatch(route, /studioProjectLibrary|textContent='Biblioteca'/, 'Studio toolbar must not duplicate project navigation');
 assert.match(studio, /Abrir biblioteca completa/, 'Project modal must expose the full library');
 
-assert.match(studio, /ESCAPARATES PRO (?:Â·|·) STUDIO/, 'Studio product naming is not unified');
-assert.match(studio, /Studio de personalizaci(?:Ã³|ó)n/, 'Spanish Studio title is missing');
+assert.match(studio, /ESCAPARATES PRO · STUDIO/, 'Studio product naming is not unified');
+assert.match(studio, /Studio de personalización/, 'Spanish Studio title is missing');
 assert.match(studio, /VISTA PREVIA EN DIRECTO/, 'Spanish preview label is missing');
 assert.match(studio, /id="preview"/, 'Studio preview iframe is missing');
 assert.match(studio, /phase1-studio-v2\.js/, 'Canonical Studio engine is missing');
 assert.match(studio, /studio-route\.js/, 'Studio route module is missing');
 assert.match(studio, /template-registry\.js/, 'Studio registry must load before route modules');
 
-assert.match(cloud, /Modo local (?:Â·|·) sesi(?:Ã³|ó)n no iniciada/, 'Local mode must be explicit');
-assert.match(cloud, /Proyecto guardado localmente (?:âœ“|✓)/, 'Local save confirmation is missing');
+assert.match(cloud, /Modo local · sesión no iniciada/, 'Local mode must be explicit');
+assert.match(cloud, /Proyecto guardado localmente ✓/, 'Local save confirmation is missing');
 assert.match(cloud, /save\.disabled=!session\|\|!online/, 'Cloud save must be disabled without session or connection');
 assert.match(cloud, /versions\.disabled=!session\|\|!online/, 'Cloud versions must be disabled without session or connection');
 assert.match(cloud, /navigator\.onLine\?'api-error':'offline'/, 'API errors and offline state must be distinct');
@@ -54,8 +54,8 @@ assert.match(cloudCss, /data-state="local"/, 'Local mode needs a neutral visual 
 assert.match(cloudCss, /\.phase2-bar \.btn:disabled/, 'Disabled cloud controls need a visible state');
 assert.doesNotMatch(cloudCss, /position:sticky;bottom:0/, 'Cloud footer must not overlap mobile fields');
 
-assert.match(library, /Todav(?:Ã­|i)a no tienes proyectos/, 'True empty-library message is missing');
-assert.match(library, /No hay proyectos que coincidan con la b(?:Ãº|u)squeda o los filtros/, 'Filtered-empty message is missing');
+assert.match(library, /Todavía no tienes proyectos/, 'True empty-library message is missing');
+assert.match(library, /No hay proyectos que coincidan con la búsqueda o los filtros/, 'Filtered-empty message is missing');
 assert.match(library, /ProjectStoreLocal\.fork/, 'Library duplicate action must use canonical local fork');
 
 assert.doesNotMatch(index, /<iframe[^>]+studio\.html/i, 'Studio must not be embedded in index.html');

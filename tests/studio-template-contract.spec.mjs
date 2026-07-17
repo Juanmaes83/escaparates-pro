@@ -50,7 +50,19 @@ for (const definition of registry.listCustomPro()) {
   const builderSchema = definition.templateKind === 'scroll'
     ? context.EP.ScrollSections.get(definition.id).schema
     : context.EP.SectorBlueprints.getSchema(definition.id);
-  assert.equal(JSON.stringify(definition.schema.map((field) => field.key)), JSON.stringify(builderSchema.map((field) => field.key)), `${definition.id} schema parity`);
+  const pickSchema = (schema) => schema.map((field) => ({
+    key: field.key,
+    type: field.type,
+    label: field.label,
+    default: field.default,
+    required: field.required || false,
+    options: field.options,
+    min: field.min,
+    max: field.max,
+    step: field.step,
+    group: field.group || 'Contenido'
+  }));
+  assert.equal(JSON.stringify(pickSchema(definition.schema)), JSON.stringify(pickSchema(builderSchema)), `${definition.id} schema parity`);
   assert.equal(JSON.stringify(definition.defaults), JSON.stringify(registry.defaultsFromSchema(builderSchema)), `${definition.id} defaults parity`);
 }
 
@@ -168,6 +180,12 @@ assert.notEqual(a.templateId, b.templateId);
 
 const studio = fs.readFileSync('review/phase1-studio-v2.js', 'utf8');
 assert.doesNotMatch(studio, /EP\.Media\.getAll\(/, 'Studio must not read global catalog media slots');
+assert.match(studio, /f\.type==='url'\?'url'/, 'URL fields must render URL inputs');
+assert.match(studio, /:'text'\}if\(f\.type!==/, 'CTA labels must fall through to text inputs');
+assert.match(studio, /function makeRepeater/, 'Repeater fields need usable controls');
+assert.match(studio, /function makeTypography/, 'Typography fields need usable controls');
+assert.match(studio, /function makeResponsive/, 'Responsive fields need usable controls');
+assert.match(studio, /function makeMotion/, 'Motion fields need usable controls');
 assert.doesNotMatch(fs.readFileSync('index.html', 'utf8'), /Customization Studio|PREVIEW EN DIRECTO/, 'index.html must not embed Studio UI');
 
 for (const file of [

@@ -43,8 +43,8 @@
       {key:'feature2Label',type:'text',label:'Feature 2 · etiqueta',default:'SILENCE ENGINE'},
       {key:'feature2Title',type:'text',label:'Feature 2 · título',default:'Noise Cancellation'},
       {key:'feature2Text',type:'text',label:'Feature 2 · descripción',default:'La cancelación activa bloquea el ruido exterior para crear una experiencia totalmente inmersiva.'},
-      {key:'ctaLabel',type:'text',label:'CTA',default:'Descubrir producto'},
-      {key:'ctaUrl',type:'text',label:'URL del CTA',default:'#producto'},
+      {key:'ctaLabel',type:'cta',label:'CTA',default:'Descubrir producto'},
+      {key:'ctaUrl',type:'url',label:'URL del CTA',default:'#producto'},
       {key:'accent',type:'text',label:'Color CTA (HEX)',default:'#ffffff'},
       {key:'feature1Color',type:'text',label:'Color feature 1',default:'#34d399'},
       {key:'feature2Color',type:'text',label:'Color feature 2',default:'#38bdf8'},
@@ -54,7 +54,11 @@
       {key:'revealCenter',type:'range',label:'Centro aparición features',min:20,max:80,step:1,default:55,suffix:'%'},
       {key:'revealWidth',type:'range',label:'Duración aparición features',min:5,max:35,step:1,default:17,suffix:'%'},
       {key:'showProgress',type:'range',label:'Mostrar progreso (0/1)',min:0,max:1,step:1,default:1},
-      {key:'showAudio',type:'range',label:'Mostrar audio (0/1)',min:0,max:1,step:1,default:1}
+      {key:'showAudio',type:'range',label:'Mostrar audio (0/1)',min:0,max:1,step:1,default:1},
+      {key:'highlights',type:'repeater',label:'Highlights',group:'CONTROLES AVANZADOS',default:[{title:'Batería 24h'},{title:'Audio espacial'}],itemFields:[{key:'title',label:'Título',type:'text'}]},
+      {key:'headlineTypography',type:'typography',label:'Tipografía titular',group:'CONTROLES AVANZADOS',default:{family:'Inter',weight:'800',size:72}},
+      {key:'responsiveCopy',type:'responsive',label:'Copy por viewport',group:'CONTROLES AVANZADOS',default:{desktop:'Amplio',tablet:'Equilibrado',mobile:'Directo'}},
+      {key:'motionProfile',type:'motion',label:'Movimiento',group:'CONTROLES AVANZADOS',default:{intensity:55,duration:700,reducedMotion:false}}
     ],build:build
   });
 })();

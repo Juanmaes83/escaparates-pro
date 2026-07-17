@@ -15,7 +15,7 @@
   function fork(project,name){var copy=JSON.parse(JSON.stringify(project||{})),nextId=uid();copy.id=nextId;copy.projectId=nextId;delete copy.cloudId;delete copy.revision;delete copy.published;delete copy.publishedAt;delete copy.publication;delete copy.publicationId;delete copy.publicationUrl;delete copy.archivedAt;copy.name=name||((project&&project.name)||'Proyecto')+' — copia';copy.projectName=copy.name;copy.createdAt=null;copy.updatedAt=null;copy.status='draft';copy.persistenceMode='local';return normalize(copy);}
   function duplicate(id,name){return get(id).then(function(p){if(!p)throw new Error('Proyecto no encontrado');return save(fork(p,name))});}
   function exportJSON(id){return get(id).then(function(p){if(!p)throw new Error('Proyecto no encontrado');return JSON.stringify(p,null,2)});}
-  function importJSON(text){var p=JSON.parse(text);delete p.id;delete p.cloudId;delete p.revision;p.name=(p.name||'Proyecto importado')+' â€” importado';return save(p);}
+  function importJSON(text){var p=JSON.parse(text);delete p.id;delete p.cloudId;delete p.revision;p.name=(p.name||'Proyecto importado')+' — importado';return save(p);}
   function Autosave(options){this.delay=(options&&options.delay)||800;this.onStatus=(options&&options.onStatus)||function(){};this.timer=null;this.project=null;}
   Autosave.prototype.setProject=function(p){this.project=p;};
   Autosave.prototype.schedule=function(p){var self=this;this.project=p||this.project;if(!this.project)return;clearTimeout(this.timer);this.onStatus('pending');this.timer=setTimeout(function(){self.onStatus('saving');save(self.project).then(function(saved){self.project=saved;self.onStatus('saved',saved)}).catch(function(e){self.onStatus('error',e)});},this.delay);};
