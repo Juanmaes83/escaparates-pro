@@ -180,12 +180,14 @@ assert.notEqual(a.templateId, b.templateId);
 
 const studio = fs.readFileSync('review/phase1-studio-v2.js', 'utf8');
 assert.doesNotMatch(studio, /EP\.Media\.getAll\(/, 'Studio must not read global catalog media slots');
-assert.match(studio, /f\.type==='url'\?'url'/, 'URL fields must render URL inputs');
-assert.match(studio, /:'text'\}if\(f\.type!==/, 'CTA labels must fall through to text inputs');
+assert.match(studio, /field\.type==='url'\?'url'/, 'URL fields must render URL inputs');
+assert.doesNotMatch(studio, /field\.type==='cta'\?'url'/, 'CTA labels must never be coerced to URL inputs');
 assert.match(studio, /function makeRepeater/, 'Repeater fields need usable controls');
 assert.match(studio, /function makeTypography/, 'Typography fields need usable controls');
 assert.match(studio, /function makeResponsive/, 'Responsive fields need usable controls');
 assert.match(studio, /function makeMotion/, 'Motion fields need usable controls');
+assert.match(studio, /function enterUnsupported/, 'Unsupported projects need a dedicated read-only state');
+assert.doesNotMatch(studio, /\|\|defs\[0\]/, 'Unsupported projects must not use the first template as fallback');
 assert.doesNotMatch(fs.readFileSync('index.html', 'utf8'), /Customization Studio|PREVIEW EN DIRECTO/, 'index.html must not embed Studio UI');
 
 for (const file of [
