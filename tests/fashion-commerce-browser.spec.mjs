@@ -79,17 +79,21 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('en');
   await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveText('EN');
   await expect(page.frameLocator('#preview').locator('[data-i18n="galleryTitle"]')).toContainText('The street does not wait.');
+  await page.frameLocator('#preview').locator('#rsLanguage').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('es');
   const dictionaryCoverage = await preview(page, (win, doc) => {
     const data = JSON.parse(doc.querySelector('#rsData').textContent);
     return {
       es: Object.keys(data.i18n.es).length,
       en: Object.keys(data.i18n.en).length,
-      stored: win.localStorage.getItem('ep:fashion-commerce:language')
+      stored: win.localStorage.getItem('ep:fashion-commerce:language'),
+      userSet: win.localStorage.getItem('ep:fashion-commerce:language:user')
     };
   });
   expect(dictionaryCoverage.es).toBeGreaterThanOrEqual(20);
   expect(dictionaryCoverage.en).toBeGreaterThanOrEqual(20);
-  expect(dictionaryCoverage.stored).toBe('en');
+  expect(dictionaryCoverage.stored).toBe('es');
+  expect(dictionaryCoverage.userSet).toBe('1');
   featureMatrix.language = dictionaryCoverage;
 
   const products = await openGroupFor(page, 'products');
