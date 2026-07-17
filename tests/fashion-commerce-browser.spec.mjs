@@ -174,7 +174,7 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
 
   await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.state || '')).toMatch(/ready|skipped/);
   await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }));
-  await page.frameLocator('#preview').locator('[data-product-index="0"] [data-open-product="0"]').first().click();
+  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"] [data-open-product="0"]')?.click());
   await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
   await page.frameLocator('#preview').locator('#rsWishlist').click();
   await page.frameLocator('#preview').locator('#rsCart').click();
