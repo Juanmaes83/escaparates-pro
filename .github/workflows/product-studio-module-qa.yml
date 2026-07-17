@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'studio.html'
+      - 'js/studio/template-registry.js'
       - 'js/projects/product-integration.js'
       - 'js/projects/studio-route.js'
       - 'js/projects/project-library-page.js'
@@ -25,6 +26,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check js/projects/product-integration.js
+          node --check js/studio/template-registry.js
           node --check js/projects/studio-route.js
           node --check js/projects/project-library-page.js
           node --check review/phase2-studio-extension.js

@@ -9,7 +9,7 @@ function tabFor(id){
     if(status)status.textContent='Plantilla no reconocida; se mantiene la plantilla por defecto.';
     return null;
   }
-  return Array.from(document.querySelectorAll('.tab')).find(function(button){return button.textContent.trim()===label})||null;
+  return Array.from(document.querySelectorAll('.tab')).find(function(button){return button.dataset&&button.dataset.templateId===id})||Array.from(document.querySelectorAll('.tab')).find(function(button){return button.textContent.trim()===label})||null;
 }
 function openTemplate(id){var tab=tabFor(id);if(tab&&!tab.classList.contains('active'))tab.click()}
 function addProductNavigation(){
