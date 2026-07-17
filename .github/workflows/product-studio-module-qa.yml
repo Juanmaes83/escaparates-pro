@@ -8,9 +8,11 @@ on:
       - 'js/studio/template-registry.js'
       - 'js/scroll-sections/*-custom-pro.js'
       - 'js/sector-blueprints/*-custom-pro.js'
+      - 'js/sector-blueprints/fashion-commerce-pro.js'
       - 'js/customization/project-store-local.js'
       - 'js/projects/product-integration.js'
       - 'js/projects/studio-route.js'
+      - 'js/sector-blueprints.js'
       - 'js/projects/project-library-page.js'
       - 'review/phase1-studio-v2.js'
       - 'review/phase1-studio-v2.css'
@@ -21,9 +23,14 @@ on:
       - 'tests/studio-template-contract.spec.mjs'
       - 'tests/luxury-beauty-product-pro.spec.mjs'
       - 'tests/luxury-beauty-journey.spec.mjs'
+      - 'tests/fashion-commerce-pro.spec.mjs'
+      - 'tests/fashion-commerce-browser.spec.mjs'
+      - 'tests/fashion-commerce-playwright.config.mjs'
       - 'tests/static-server.mjs'
       - 'tests/phase2-contract.spec.mjs'
       - 'assets/templates/luxury-beauty/eloria/**'
+      - 'assets/templates/fashion-commerce/rubik-sota/**'
+      - 'docs/fashion-commerce-*.md'
       - '.github/workflows/product-studio-module-qa.yml'
   workflow_dispatch:
 
@@ -44,6 +51,7 @@ jobs:
           node --check js/projects/project-library-page.js
           node --check js/customization/project-store-local.js
           node --check js/scroll-sections/product-storytelling-custom-pro.js
+          node --check js/sector-blueprints/fashion-commerce-pro.js
           node --check js/sector-blueprints/luxury-beauty-product-pro.js
           node --check review/phase1-studio-v2.js
           node --check review/phase2-studio-extension.js
@@ -52,6 +60,9 @@ jobs:
           node --check tests/studio-template-contract.spec.mjs
           node --check tests/luxury-beauty-product-pro.spec.mjs
           node --check tests/luxury-beauty-journey.spec.mjs
+          node --check tests/fashion-commerce-pro.spec.mjs
+          node --check tests/fashion-commerce-browser.spec.mjs
+          node --check tests/fashion-commerce-playwright.config.mjs
           node --check tests/static-server.mjs
           node --check tests/phase2-contract.spec.mjs
       - name: Verify UTF-8 interface contract
@@ -62,5 +73,22 @@ jobs:
         run: node tests/studio-template-contract.spec.mjs
       - name: Verify Luxury Beauty Product PRO contract
         run: node tests/luxury-beauty-product-pro.spec.mjs
+      - name: Verify Fashion Commerce PRO contract
+        run: node tests/fashion-commerce-pro.spec.mjs
       - name: Verify Project Cloud regression contract
         run: node tests/phase2-contract.spec.mjs
+      - name: Install Playwright browser
+        run: |
+          npm install --no-save @playwright/test@1.53.1
+          npx playwright install --with-deps chromium
+      - name: Verify Fashion Commerce browser QA
+        run: npx playwright test --config=tests/fashion-commerce-playwright.config.mjs
+      - name: Upload Fashion Commerce browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fashion-commerce-browser-qa
+          path: |
+            tests/test-results/fashion-commerce
+            fashion-commerce-results.json
+          if-no-files-found: ignore

@@ -1,0 +1,145 @@
+import { test, expect } from '@playwright/test';
+
+async function waitReady(page) {
+  await expect(page.locator('#previewLoading')).toBeHidden({ timeout: 30000 });
+  await expect(page.locator('#previewError')).toBeHidden();
+  await expect.poll(
+    () => page.locator('#preview').evaluate(frame => Boolean(frame.contentDocument?.querySelector('.rs-page'))),
+    { timeout: 20000 }
+  ).toBe(true);
+}
+
+async function preview(page, fn, arg) {
+  return page.locator('#preview').evaluate((frame, payload) => {
+    const run = new Function('win', 'doc', 'arg', `return (${payload.source})(win, doc, arg);`);
+    return run(frame.contentWindow, frame.contentDocument, payload.arg);
+  }, { source: fn.toString(), arg });
+}
+
+async function openGroupFor(page, key) {
+  const field = page.locator(`[data-field-key="${key}"]`);
+  if (await field.count()) return field;
+  const group = page.locator('.group').filter({ has: page.locator(`[data-field-key="${key}"]`) });
+  if (await group.count()) {
+    const button = group.locator('button').first();
+    if (await button.getAttribute('aria-expanded') !== 'true') await button.click();
+  }
+  return field;
+}
+
+test('Fashion Commerce Studio controls render real preview behavior and diagnostics', async ({ page }, testInfo) => {
+  const consoleErrors = [];
+  const networkErrors = [];
+  page.on('pageerror', error => consoleErrors.push(error.message));
+  page.on('console', message => {
+    if (['error', 'warning'].includes(message.type())) consoleErrors.push(`${message.type()}: ${message.text()}`);
+  });
+  page.on('requestfailed', request => {
+    networkErrors.push({ url: request.url(), failure: request.failure()?.errorText || 'unknown' });
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/studio.html?template=fashion-commerce-pro', { waitUntil: 'domcontentloaded' });
+  await waitReady(page);
+
+  const featureMatrix = {};
+  const ctaLabel = await openGroupFor(page, 'heroCtaLabel');
+  const ctaUrl = await openGroupFor(page, 'heroCtaUrl');
+  await expect(ctaLabel.locator('input')).toHaveAttribute('type', 'text');
+  await expect(ctaUrl.locator('input')).toHaveAttribute('type', 'url');
+  await ctaLabel.locator('input').fill('Solicitar visita');
+  await ctaLabel.locator('input').dispatchEvent('input');
+  await ctaUrl.locator('input').fill('#section2');
+  await ctaUrl.locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').getByRole('link', { name: 'Solicitar visita' })).toHaveAttribute('href', /#section2$/);
+  featureMatrix.cta = 'label text control and URL control verified separately';
+
+  const season = await openGroupFor(page, 'season');
+  await season.locator('input').fill('OTOÑO QA');
+  await season.locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').locator('.rs-hero-copy p')).toContainText('OTOÑO QA');
+  featureMatrix.season = 'visible in hero subtitle';
+
+  const language = await openGroupFor(page, 'language');
+  await language.locator('select').selectOption('en');
+  await waitReady(page);
+  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('en');
+  await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveText('EN');
+  featureMatrix.language = 'select updates html lang and language toggle';
+
+  const products = await openGroupFor(page, 'products');
+  const before = await products.locator('.repeater-row').count();
+  await products.locator('.repeater-row').last().getByRole('button', { name: 'Eliminar' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before - 1);
+  await products.getByRole('button', { name: 'Añadir' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before);
+  await products.locator('.repeater-row').last().locator('input').nth(1).fill('PIEZA QA BROWSER');
+  await products.locator('.repeater-row').last().locator('input').nth(1).dispatchEvent('input');
+  await products.locator('.repeater-row').last().getByRole('button', { name: '↑' }).click();
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').getByText('PIEZA QA BROWSER')).toBeVisible();
+  await products.locator('.repeater-row').nth(before - 2).getByRole('button', { name: 'Eliminar' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before - 1);
+  featureMatrix.repeater = 'add, edit, reorder and delete controls used';
+
+  const typography = await openGroupFor(page, 'headlineTypography');
+  await typography.locator('.typography-control input[type="text"]').fill('Inter');
+  await typography.locator('.typography-control input[type="text"]').dispatchEvent('input');
+  await typography.locator('.typography-control select').selectOption('900');
+  await typography.locator('.typography-control input[type="number"]').fill('88');
+  await typography.locator('.typography-control input[type="number"]').dispatchEvent('input');
+  await waitReady(page);
+  const headlineStyle = await preview(page, (win, doc) => {
+    const style = win.getComputedStyle(doc.querySelector('.rs-glitch'));
+    return { family: style.fontFamily, weight: style.fontWeight, size: parseFloat(style.fontSize) };
+  });
+  expect(headlineStyle.family).toContain('Inter');
+  expect(Number(headlineStyle.weight)).toBeGreaterThanOrEqual(800);
+  expect(headlineStyle.size).toBeLessThanOrEqual(90);
+  featureMatrix.typography = headlineStyle;
+
+  const responsive = await openGroupFor(page, 'responsiveHero');
+  await responsive.locator('label', { hasText: 'mobile' }).locator('input').fill('QA mobile hero');
+  await responsive.locator('label', { hasText: 'mobile' }).locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.responsiveMobile || '')).toBe('QA mobile hero');
+  featureMatrix.responsive = 'mobile viewport value exported to preview data attribute';
+
+  const motion = await openGroupFor(page, 'motionProfile');
+  await motion.locator('.motion-control input[type="range"]').fill('25');
+  await motion.locator('.motion-control input[type="range"]').dispatchEvent('input');
+  await motion.locator('.motion-control input[type="number"]').fill('1200');
+  await motion.locator('.motion-control input[type="number"]').dispatchEvent('input');
+  await waitReady(page);
+  await expect.poll(() => preview(page, (win, doc) => win.getComputedStyle(doc.querySelector('.rs-card-img')).transitionDuration)).toContain('1.2s');
+  await motion.locator('.motion-control input[type="checkbox"]').check();
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').locator('body')).toHaveClass(/motion-reduced/);
+  featureMatrix.motion = 'duration, intensity and reduced motion controls used';
+
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.state || '')).toMatch(/ready|skipped/);
+  await page.frameLocator('#preview').locator('[data-open-product="0"]').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsWishlist').click();
+  await page.frameLocator('#preview').locator('#rsCart').click();
+  const storageState = await preview(page, (win) => ({
+    wishlist: JSON.parse(win.localStorage.getItem('rsWishlist') || '[]'),
+    cart: JSON.parse(win.localStorage.getItem('rsCart') || '[]')
+  }));
+  expect(storageState.wishlist.length).toBeGreaterThan(0);
+  expect(storageState.cart.length).toBeGreaterThan(0);
+  featureMatrix.commerce = 'modal, wishlist and cart localStorage verified';
+
+  const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+  await testInfo.attach('fashion-commerce-studio-screenshot', { path: screenshotPath, contentType: 'image/png' });
+  await testInfo.attach('fashion-commerce-feature-matrix', { body: JSON.stringify(featureMatrix, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-localStorage', { body: JSON.stringify(storageState, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-console', { body: JSON.stringify(consoleErrors, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-network', { body: JSON.stringify(networkErrors, null, 2), contentType: 'application/json' });
+
+  expect(consoleErrors).toEqual([]);
+  expect(networkErrors.filter(item => item.url.startsWith('http://127.0.0.1'))).toEqual([]);
+});
