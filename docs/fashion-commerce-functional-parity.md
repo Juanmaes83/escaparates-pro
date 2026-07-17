@@ -65,6 +65,6 @@ Do not merge while Cloud/R2 remains unresolved. Do not modify backend, Railway, 
 - Structured ES/EN dictionary: implemented for the current Core surface. Runtime updates text, aria labels, `html.lang` and persisted language state.
 - Mobile nav overlay: implemented with hamburger, `aria-expanded`, panel close, Escape, focus trap and focus restore.
 - Responsive hero controls: implemented as editable viewport values for min height, content alignment, title scale, video position, overlay strength and mobile navigation mode.
-- Replace the current gallery with drag/swipe/keyboard/snap behavior.
-- Expand modal, cart, wishlist and storage isolation by template/project/preset.
+- Gallery drag/swipe/keyboard/snap behavior: implemented with prev/next controls, pointer drag, keyboard arrows, runway progress, stop-on-modal and cleanup.
+- Product modal, cart and wishlist: implemented with product detail modal, size/color selectors, wishlist without duplicates, cart quantities, subtotal, counters, remove controls and scoped localStorage keys (`ep:fashion-commerce:<preset>:cart|wishlist`).
 - Add lookbook, reservation, co-creation, fitting room, style generator, timeline, designers, audiovisual, polaroids, newsletter, footer and utilities.

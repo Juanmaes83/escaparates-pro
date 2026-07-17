@@ -177,14 +177,32 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"] [data-open-product="0"]')?.click());
   await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
   await page.frameLocator('#preview').locator('#rsWishlist').click();
+  await expect(page.frameLocator('#preview').locator('#rsCommercePanel')).toHaveClass(/open/);
+  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('1');
+  await page.frameLocator('#preview').locator('#rsCart').click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('1');
+  await expect(page.frameLocator('#preview').locator('#rsCommerceTitle')).toContainText(/Carrito|cart/i);
+  await page.frameLocator('#preview').locator('[data-cart-inc]').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('2');
+  await page.frameLocator('#preview').locator('[data-remove-cart]').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('0');
+  await page.frameLocator('#preview').locator('#rsWishlistOpen').click();
+  await page.frameLocator('#preview').locator('[data-remove-wishlist]').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
+  await page.frameLocator('#preview').locator('#rsCommerceClose').click();
   await page.frameLocator('#preview').locator('#rsCart').click();
   const storageState = await preview(page, (win) => ({
-    wishlist: JSON.parse(win.localStorage.getItem('rsWishlist') || '[]'),
-    cart: JSON.parse(win.localStorage.getItem('rsCart') || '[]')
+    keys: Object.keys(win.localStorage).filter(key => key.startsWith('ep:fashion-commerce:')).sort(),
+    wishlist: JSON.parse(win.localStorage.getItem('ep:fashion-commerce:rubik-sota-disruption:wishlist') || '[]'),
+    cart: JSON.parse(win.localStorage.getItem('ep:fashion-commerce:rubik-sota-disruption:cart') || '[]'),
+    legacyWishlist: win.localStorage.getItem('rsWishlist'),
+    legacyCart: win.localStorage.getItem('rsCart')
   }));
-  expect(storageState.wishlist.length).toBeGreaterThan(0);
-  expect(storageState.cart.length).toBeGreaterThan(0);
-  featureMatrix.commerce = 'modal, wishlist and cart localStorage verified';
+  expect(storageState.wishlist).toEqual([]);
+  expect(storageState.cart).toEqual([{ id: 'jacket-industrial', qty: 1 }]);
+  expect(storageState.legacyWishlist).toBeNull();
+  expect(storageState.legacyCart).toBeNull();
+  featureMatrix.commerce = 'modal, isolated wishlist/cart storage, counts, quantity and removal verified';
 
   const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
   await page.screenshot({ path: screenshotPath, fullPage: true });

@@ -32,9 +32,9 @@ Source and preview must be compared at these viewports:
 | Gallery | Partial, snap track with prev/next and keyboard implemented |
 | Drag | Partial, pointer drag/swipe implemented without global wheel hijack |
 | Runway | Partial, start/stop/active/progress/cleanup implemented |
-| Modal | Partial |
-| Wishlist | Partial |
-| Cart | Partial |
+| Modal | Partial, product media/details/options/actions implemented |
+| Wishlist | Partial, scoped persistence, counter, panel and removal implemented |
+| Cart | Partial, scoped persistence, quantities, subtotal, counter and removal implemented |
 | Editorial/store lookbook | Pending |
 | Reservation | Pending |
 | Co-creation | Pending |
@@ -53,7 +53,7 @@ Source and preview must be compared at these viewports:
 
 ## Current Visual Assessment
 
-Current implementation has moved beyond the first functional block: it preserves the authorized RUBIK SOTA hero/campaign media, uses responsive hero variables, and includes grain, scanner, film burn, autonomous glitch, custom drag cursor, CTA magnetism, audio/mute UI state, snap gallery controls, pointer drag/swipe and runway progress state. It is still below the Core gate because several source sections and deeper product/commerce interactions are not yet reconstructed.
+Current implementation has moved beyond the first functional block: it preserves the authorized RUBIK SOTA hero/campaign media, uses responsive hero variables, and includes grain, scanner, film burn, autonomous glitch, custom drag cursor, CTA magnetism, audio/mute UI state, snap gallery controls, pointer drag/swipe, runway progress state, product detail modal, wishlist panel and demo cart panel. It is still below the Core gate because several source sections and deeper editorial/utility interactions are not yet reconstructed.
 
 ## Evidence Rules
 

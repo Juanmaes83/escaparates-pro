@@ -12,12 +12,12 @@ Core gate is not approved yet. Current score is provisional until source and pre
 | Typography / art direction | 10 | 8.0 | 4.0 | Partial |
 | Effects / motion | 10 | 8.0 | 2.5 | Partial |
 | Gallery / runway | 12 | 10.8 | 4.0 | Partial |
-| Product / modal / commerce | 10 | 8.0 | 3.5 | Partial |
+| Product / modal / commerce | 10 | 8.0 | 5.5 | Partial |
 | Lookbook / reservation | 10 | 8.0 | 1.0 | Pending |
 | Remaining editorial sections | 10 | 8.0 | 1.0 | Pending |
 | Responsive | 8 | 7.2 | 3.0 | Partial |
 | Accessibility / perf / QA | 7 | 5.6 | 3.0 | Partial |
-| Total | 100 | 90.0 | 30.0 | Not approved |
+| Total | 100 | 90.0 | 32.0 | Not approved |
 
 ## Gate Rules
 
