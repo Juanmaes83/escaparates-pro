@@ -127,12 +127,26 @@ async function createWebmFile(page) {
 }
 
 async function setMediaFileAndWait(page, inputSelector, filePayload, cardIndex, expectedName) {
-  const navigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 }).then(() => 'navigation').catch(() => null);
-  const cardReady = page.locator('#media .media-card').nth(cardIndex).filter({ hasText: expectedName }).waitFor({ timeout: 90000 }).then(() => 'card').catch(() => null);
+  const beforeUrl = page.url();
+  const navigation = page.waitForURL(url => url.toString() !== beforeUrl, { waitUntil: 'domcontentloaded', timeout: 120000 }).then(() => 'navigation').catch(() => null);
+  const cardReady = page.locator('#media .media-card').nth(cardIndex).filter({ hasText: expectedName }).waitFor({ timeout: 120000 }).then(() => 'card').catch(() => null);
+  const persistedReady = expect.poll(
+    () => page.evaluate(async ({ index, name }) => {
+      const projectName = document.getElementById('projectName')?.value || '';
+      const list = await window.EP.ProjectStoreLocal.list();
+      const project = list.find(item => item?.name === projectName) || null;
+      const media = project?.media?.[index] || null;
+      return media && media.name === name && media.status === 'ready' && /^https:\/\/pub-[a-z0-9]+\.r2\.dev\//.test(media.url || '');
+    }, { index: cardIndex, name: expectedName }),
+    { timeout: 120000 }
+  ).toBe(true).then(() => 'local-store').catch(() => null);
   await page.locator(inputSelector).setInputFiles(filePayload);
-  await Promise.race([navigation, cardReady]);
+  await Promise.race([navigation, cardReady, persistedReady]);
   await waitStudio(page).catch(() => {});
-  await expect(page.locator('#media .media-card').nth(cardIndex)).toContainText(expectedName, { timeout: 30000 });
+  await expect.poll(
+    () => page.locator('#media .media-card').nth(cardIndex).textContent(),
+    { timeout: 60000 }
+  ).toContain(expectedName);
 }
 
 async function deleteProject(request, token, projectId) {
@@ -330,6 +344,7 @@ test.describe('responsive Studio', () => {
 
 test.describe('flujo cloud real Vercel + Railway + R2', () => {
   test('sube WebM y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser, browserName }, testInfo) => {
+    test.setTimeout(300000);
     test.skip(browserName !== 'chromium' || testInfo.project.name !== 'desktop-chromium', 'Flujo destructivo único');
     const qa = await registerQa(request, 'desktop');
     await seedBrowser(page, qa.token);
@@ -340,6 +355,8 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
     try {
       await page.goto(`/studio.html?template=real-estate-storytelling-custom-pro&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
       await waitStudio(page);
+      await expect.poll(() => page.evaluate(() => Boolean(window.EP?.ProjectClient?.hasSession?.())), { timeout: 30000 }).toBe(true);
+      await expect(page.locator('#cloudSave')).toBeEnabled({ timeout: 30000 });
       await page.locator('#projectName').fill(name);
       await page.locator('#projectName').dispatchEvent('input');
       await page.locator('#save').click();
