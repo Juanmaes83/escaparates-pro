@@ -9,14 +9,14 @@ function setCloudStatus(state){
   if(!statusEl)return;
   statusEl.dataset.state=state;
   var map={
-    local:'Modo local · sesión no iniciada',
-    'saved-local':'Proyecto guardado localmente ✓',
-    synced:'Guardado en la nube ✓',
-    syncing:'Sincronizando…',
-    pending:'Cloud disponible · cambios pendientes',
-    offline:'Sin conexión',
+    local:'Modo local Â· sesiÃ³n no iniciada',
+    'saved-local':'Proyecto guardado localmente âœ“',
+    synced:'Guardado en la nube âœ“',
+    syncing:'Sincronizandoâ€¦',
+    pending:'Cloud disponible Â· cambios pendientes',
+    offline:'Sin conexiÃ³n',
     'api-error':'API no disponible',
-    conflict:'Conflicto de versión',
+    conflict:'Conflicto de versiÃ³n',
     error:'Error cloud'
   };
   statusEl.querySelector('span:last-child').textContent=map[state]||state;
@@ -28,12 +28,12 @@ function updateCloudControls(){
   save.disabled=!session||!online;
   versions.disabled=!session||!online;
   if(!session){
-    save.title='Inicia sesión para guardar en la nube';
-    versions.title='Las versiones cloud requieren iniciar sesión';
+    save.title='Inicia sesiÃ³n para guardar en la nube';
+    versions.title='Las versiones cloud requieren iniciar sesiÃ³n';
     setCloudStatus('local');
   }else if(!online){
-    save.title='Sin conexión a Internet';
-    versions.title='Sin conexión a Internet';
+    save.title='Sin conexiÃ³n a Internet';
+    versions.title='Sin conexiÃ³n a Internet';
     setCloudStatus('offline');
   }else{
     save.title='Guardar este proyecto en la nube';
@@ -46,7 +46,7 @@ async function latestLocal(){
   var list=await EP.ProjectStoreLocal.list();
   current=list.find(function(p){return p.name===name})||list[0]||null;
   if(!current){
-    current=EP.ProjectStoreLocal.normalize({name:name||'Proyecto sin título',templateId:(document.querySelector('.tab.active')||{}).textContent||'',templateKind:'scroll',config:{},media:[]});
+    current=EP.ProjectStoreLocal.normalize({name:name||'Proyecto sin tÃ­tulo',templateId:(document.querySelector('.tab.active')&&document.querySelector('.tab.active').dataset&&document.querySelector('.tab.active').dataset.templateId)||'',templateKind:'scroll',config:{},media:[]});
   }
   return current;
 }
@@ -55,16 +55,16 @@ function openModal(title,html){$('phase2Title').textContent=title;body.innerHTML
 function closeModal(){modal.classList.remove('open')}
 function reportHtml(report){
   var c=report.checks||{};
-  return '<div class="phase2-checks">'+[['Plantilla Custom PRO',c.template],['Sin URLs temporales',c.noTemporaryUrls],['Assets preparados',c.assetsReady],['Enlaces válidos',c.linksValid],['Fuentes autorizadas',c.fontsReady]].map(function(x){return '<div class="phase2-check '+(x[1]?'ok':'bad')+'">'+(x[1]?'✓ ':'✕ ')+x[0]+'</div>'}).join('')+'</div>';
+  return '<div class="phase2-checks">'+[['Plantilla Custom PRO',c.template],['Sin URLs temporales',c.noTemporaryUrls],['Assets preparados',c.assetsReady],['Enlaces vÃ¡lidos',c.linksValid],['Fuentes autorizadas',c.fontsReady]].map(function(x){return '<div class="phase2-check '+(x[1]?'ok':'bad')+'">'+(x[1]?'âœ“ ':'âœ• ')+x[0]+'</div>'}).join('')+'</div>';
 }
 async function saveCloud(){
   if(!hasSession()){
-    openModal('Inicia sesión','<p>El proyecto está guardado localmente. Inicia sesión para guardarlo también en la nube.</p>');
+    openModal('Inicia sesiÃ³n','<p>El proyecto estÃ¡ guardado localmente. Inicia sesiÃ³n para guardarlo tambiÃ©n en la nube.</p>');
     return;
   }
   if(!navigator.onLine){
     setCloudStatus('offline');
-    openModal('Sin conexión','<p>El proyecto sigue guardado localmente. Conéctate a Internet para sincronizarlo.</p>');
+    openModal('Sin conexiÃ³n','<p>El proyecto sigue guardado localmente. ConÃ©ctate a Internet para sincronizarlo.</p>');
     return;
   }
   var p=await latestLocal();
@@ -74,20 +74,20 @@ async function saveCloud(){
     setCloudStatus('synced');
   }catch(e){
     setCloudStatus(navigator.onLine?'api-error':'offline');
-    openModal('Sincronización cloud','<p>'+e.message+'</p><p>El proyecto sigue guardado localmente.</p>');
+    openModal('SincronizaciÃ³n cloud','<p>'+e.message+'</p><p>El proyecto sigue guardado localmente.</p>');
   }
 }
 async function showExport(){
   var p=await latestLocal(),html=buildHtml(),r=EP.ExportValidator.validate(p,html);
   openModal('Exportar proyecto',reportHtml(r)+'<div class="phase2-grid"><button class="phase2-option" id="doHtml"><strong>HTML completo</strong><span>Landing final con URLs persistentes.</span></button><button class="phase2-option" id="doZip"><strong>ZIP portable</strong><span>HTML, assets, manifest y README.</span></button><button class="phase2-option" id="doEmbed"><strong>Copiar embed</strong><span>Iframe responsive para otra web.</span></button><button class="phase2-option" id="doPublish"><strong>Publicar</strong><span>Genera o actualiza el enlace alojado.</span></button></div>');
   $('doHtml').onclick=function(){try{var out=EP.HtmlExport.build(p,html);EP.HtmlExport.download(out)}catch(e){alert((e.report&&e.report.errors.map(function(x){return x.message}).join('\n'))||e.message)}};
-  $('doZip').onclick=async function(){try{this.disabled=true;this.textContent='Preparando ZIP…';var out=await EP.ZipExport.build(p,html);EP.ZipExport.download(out)}catch(e){alert(e.message)}finally{this.disabled=false;this.textContent='ZIP portable'}};
-  $('doEmbed').onclick=async function(){if(!p.published||!p.published.url){alert('Publica primero el proyecto para obtener una URL HTTPS.');return}var code=EP.EmbedExport.responsive(p.published.url,{title:p.name});await EP.EmbedExport.copy(code);openModal('Código embed','<textarea class="phase2-code" readonly>'+code.replace(/</g,'&lt;')+'</textarea>')};
+  $('doZip').onclick=async function(){try{this.disabled=true;this.textContent='Preparando ZIPâ€¦';var out=await EP.ZipExport.build(p,html);EP.ZipExport.download(out)}catch(e){alert(e.message)}finally{this.disabled=false;this.textContent='ZIP portable'}};
+  $('doEmbed').onclick=async function(){if(!p.published||!p.published.url){alert('Publica primero el proyecto para obtener una URL HTTPS.');return}var code=EP.EmbedExport.responsive(p.published.url,{title:p.name});await EP.EmbedExport.copy(code);openModal('CÃ³digo embed','<textarea class="phase2-code" readonly>'+code.replace(/</g,'&lt;')+'</textarea>')};
   $('doPublish').onclick=function(){publishProject(p,html)};
 }
 async function publishProject(p,html){
   var r=EP.ExportValidator.validate(p,html);
-  if(!r.ok){openModal('Publicación bloqueada',reportHtml(r));return}
+  if(!r.ok){openModal('PublicaciÃ³n bloqueada',reportHtml(r));return}
   if(!p.cloudId){openModal('Proyecto no sincronizado','<p>Guarda primero el proyecto en la nube.</p>');return}
   try{
     setCloudStatus('syncing');
@@ -95,16 +95,16 @@ async function publishProject(p,html){
     p=await manager.publish(p,{html:html,slug:EP.HtmlExport.slug(p.name)});
     current=p;
     setCloudStatus('synced');
-    openModal('Proyecto publicado','<p>URL pública:</p><textarea class="phase2-code" readonly>'+(p.published&&p.published.url||'')+'</textarea>');
-  }catch(e){setCloudStatus('api-error');openModal('Error de publicación','<p>'+e.message+'</p>')}
+    openModal('Proyecto publicado','<p>URL pÃºblica:</p><textarea class="phase2-code" readonly>'+(p.published&&p.published.url||'')+'</textarea>');
+  }catch(e){setCloudStatus('api-error');openModal('Error de publicaciÃ³n','<p>'+e.message+'</p>')}
 }
 async function showVersions(){
   if(!cloudReady()){
-    openModal(hasSession()?'Sin conexión':'Inicia sesión',hasSession()?'<p>Conéctate a Internet para consultar versiones cloud.</p>':'<p>Las versiones cloud requieren iniciar sesión.</p>');
+    openModal(hasSession()?'Sin conexiÃ³n':'Inicia sesiÃ³n',hasSession()?'<p>ConÃ©ctate a Internet para consultar versiones cloud.</p>':'<p>Las versiones cloud requieren iniciar sesiÃ³n.</p>');
     return;
   }
   var p=await latestLocal(),result=await EP.ProjectVersioning.list(p),items=(result.cloud||[]).concat(result.local||[]);
-  openModal('Versiones del proyecto',items.length?items.map(function(v){return '<div class="phase2-version"><div><strong>'+(v.label||'Versión')+'</strong><small>'+(v.createdAt||'')+'</small></div><button class="btn" data-version="'+(v.id||'')+'">Restaurar</button></div>'}).join(''):'<p>No hay versiones todavía.</p>');
+  openModal('Versiones del proyecto',items.length?items.map(function(v){return '<div class="phase2-version"><div><strong>'+(v.label||'VersiÃ³n')+'</strong><small>'+(v.createdAt||'')+'</small></div><button class="btn" data-version="'+(v.id||'')+'">Restaurar</button></div>'}).join(''):'<p>No hay versiones todavÃ­a.</p>');
   body.querySelectorAll('[data-version]').forEach(function(btn){btn.onclick=async function(){var v=items.find(function(x){return x.id===btn.dataset.version});if(v){await EP.ProjectVersioning.restore(p,v);location.reload()}}});
 }
 function observeLocalStatus(){

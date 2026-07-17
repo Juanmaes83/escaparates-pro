@@ -2,13 +2,13 @@
 'use strict';
 function params(){return new URLSearchParams(location.search)}
 function tabFor(id){
-  var map={
-    'real-estate-storytelling-custom-pro':'Real Estate Storytelling',
-    'product-storytelling-custom-pro':'Product Storytelling',
-    'luxury-real-estate-custom-pro':'Luxury Real Estate'
-  };
-  var label=map[id];
-  if(!label)return null;
+  var def=EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.get&&EP.StudioTemplateRegistry.get(id);
+  var label=def&&(def.shortTitle||def.title);
+  if(!label){
+    var status=document.getElementById('status');
+    if(status)status.textContent='Plantilla no reconocida; se mantiene la plantilla por defecto.';
+    return null;
+  }
   return Array.from(document.querySelectorAll('.tab')).find(function(button){return button.textContent.trim()===label})||null;
 }
 function openTemplate(id){var tab=tabFor(id);if(tab&&!tab.classList.contains('active'))tab.click()}
@@ -48,6 +48,7 @@ async function openProject(id){
     }
   }
   if(!project)return;
+  if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.normalizeProject)project=EP.StudioTemplateRegistry.normalizeProject(project);
   openTemplate(project.templateId);
   var button=document.getElementById('projectsBtn');
   if(button)button.click();

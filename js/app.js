@@ -1,7 +1,23 @@
 // Escaparates Pro — Main bootstrap
 (function() {
+    function loadScriptOnce(src, marker, callback) {
+        var existing = document.querySelector('script[' + marker + ']');
+        if (existing) {
+            if (callback) callback();
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = src;
+        script.async = false;
+        script.setAttribute(marker, 'true');
+        script.onload = callback || function(){};
+        script.onerror = function() { console.error(src + ' could not be loaded'); };
+        document.head.appendChild(script);
+    }
+
     function loadProjectCloudProduct() {
         if (document.querySelector('script[data-project-cloud-product]')) return;
+        loadScriptOnce('js/studio/template-registry.js', 'data-studio-template-registry', function() {
         var script = document.createElement('script');
         script.src = 'js/projects/product-integration.js';
         script.async = false;
@@ -12,6 +28,7 @@
         };
         script.onerror = function() { console.error('Project Cloud product integration could not be loaded'); };
         document.head.appendChild(script);
+        });
     }
 
     function boot() {
