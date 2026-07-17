@@ -78,7 +78,19 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await waitReady(page);
   await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('en');
   await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveText('EN');
-  featureMatrix.language = 'select updates html lang and language toggle';
+  await expect(page.frameLocator('#preview').locator('[data-i18n="galleryTitle"]')).toContainText('The street does not wait.');
+  const dictionaryCoverage = await preview(page, (win, doc) => {
+    const data = JSON.parse(doc.querySelector('#rsData').textContent);
+    return {
+      es: Object.keys(data.i18n.es).length,
+      en: Object.keys(data.i18n.en).length,
+      stored: win.localStorage.getItem('ep:fashion-commerce:language')
+    };
+  });
+  expect(dictionaryCoverage.es).toBeGreaterThanOrEqual(20);
+  expect(dictionaryCoverage.en).toBeGreaterThanOrEqual(20);
+  expect(dictionaryCoverage.stored).toBe('en');
+  featureMatrix.language = dictionaryCoverage;
 
   const products = await openGroupFor(page, 'products');
   const before = await products.locator('.repeater-row').count();
@@ -112,11 +124,14 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   featureMatrix.typography = headlineStyle;
 
   const responsive = await openGroupFor(page, 'responsiveHero');
-  await responsive.locator('label', { hasText: 'mobile' }).locator('input').fill('QA mobile hero');
-  await responsive.locator('label', { hasText: 'mobile' }).locator('input').dispatchEvent('input');
+  await responsive.locator('label', { hasText: 'mobile minHeight' }).locator('input').fill('84');
+  await responsive.locator('label', { hasText: 'mobile minHeight' }).locator('input').dispatchEvent('input');
+  await responsive.locator('label', { hasText: 'mobile navigationMode' }).locator('input').fill('overlay');
+  await responsive.locator('label', { hasText: 'mobile navigationMode' }).locator('input').dispatchEvent('input');
   await waitReady(page);
-  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.responsiveMobile || '')).toBe('QA mobile hero');
-  featureMatrix.responsive = 'mobile viewport value exported to preview data attribute';
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.heroMobileMin || '')).toBe('84');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.mobileNavigation || '')).toBe('overlay');
+  featureMatrix.responsive = 'mobile minHeight and navigation mode controls exported to preview';
 
   const motion = await openGroupFor(page, 'motionProfile');
   await motion.locator('.motion-control input[type="range"]').fill('25');

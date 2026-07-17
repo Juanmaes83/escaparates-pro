@@ -115,8 +115,19 @@ assert.match(html, /state\("teaser"\)/);
 assert.match(html, /state\("preloader"\)/);
 assert.match(html, /state\("ready"\)/);
 assert.match(html, /state\("skipped"\)/);
+assert.match(html, /id="rsMenu"/);
+assert.match(html, /id="rsNavPanel"/);
+assert.match(html, /data-i18n="heroCtaLabel"/);
+assert.match(html, /ep:fashion-commerce:language/);
+assert.match(html, /data-hero-mobile-min="86"/);
 assert.doesNotMatch(html, /randomuser\.me/);
 assert.doesNotMatch(html, /ReactDOM|Babel|tailwind/i);
+
+const embeddedData = JSON.parse((html.match(/<script type="application\/json" id="rsData">([\s\S]*?)<\/script>/) || [])[1]);
+assert.ok(Object.keys(embeddedData.i18n.es).length >= 20, 'Spanish dictionary must cover interface text');
+assert.ok(Object.keys(embeddedData.i18n.en).length >= 20, 'English dictionary must cover interface text');
+assert.equal(embeddedData.i18n.en.heroTitle, 'DISRUPTION');
+assert.equal(embeddedData.i18n.en.navGallery, 'GALLERY');
 
 const customized = context.EP.SectorBlueprints.build('fashion-commerce-pro', [], {
   heroTitle: 'COLECCIÓN',
@@ -126,7 +137,11 @@ const customized = context.EP.SectorBlueprints.build('fashion-commerce-pro', [],
   language: 'en',
   headlineTypography: { family: 'Inter', weight: '900', size: 88 },
   bodyTypography: { family: 'Arial', weight: '700', size: 18 },
-  responsiveHero: { desktop: 'QA desktop', tablet: 'QA tablet', mobile: 'QA mobile' },
+  responsiveHero: {
+    desktop: { minHeight: 98, contentAlign: 'center', titleScale: 0.9, videoPosition: '50% 40%', overlayStrength: 70 },
+    tablet: { minHeight: 90, contentAlign: 'center', titleScale: 0.74, videoPosition: 'center center', overlayStrength: 80 },
+    mobile: { minHeight: 82, contentAlign: 'end', titleScale: 0.52, videoPosition: '50% 30%', overlayStrength: 92, navigationMode: 'overlay' }
+  },
   motionProfile: { intensity: 20, duration: 1200, reducedMotion: true },
   products: [
     { id: 'qa', name: 'PIEZA QA', category: 'QA', eyebrow: 'TEST', description: 'Editable', price: 12.5, ctaLabel: 'Descubrir producto' }
@@ -137,7 +152,10 @@ assert.match(customized, /Solicitar visita/);
 assert.match(customized, /Descubrir producto/);
 assert.match(customized, /VERANO QA/);
 assert.match(customized, /lang="en"/);
-assert.match(customized, /data-responsive-mobile="QA mobile"/);
+assert.match(customized, /data-hero-mobile-min="82"/);
+assert.match(customized, /data-mobile-navigation="overlay"/);
+assert.match(customized, /--hero-min:98vh/);
+assert.match(customized, /--hero-title-scale:0\.9/);
 assert.match(customized, /--headline-family:"Inter"/);
 assert.match(customized, /--headline-size:88px/);
 assert.match(customized, /--body-family:"Arial"/);
