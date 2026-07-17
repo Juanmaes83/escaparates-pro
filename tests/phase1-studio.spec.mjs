@@ -95,7 +95,7 @@ test('advanced Product Storytelling controls change the rendered preview', async
   const responsive = page.locator('[data-field-key="responsiveCopy"] .responsive-control');
   await responsive.locator('label', { hasText: 'mobile' }).locator('input').fill('Mensaje móvil verificado');
   await waitReady(page);
-  await page.getByRole('button', { name: 'Móvil' }).click();
+  await page.locator('[data-device="mobile"]').click();
   const mobileCopy = page.frameLocator('#preview').locator('.responsive-copy .mobile');
   await expect(mobileCopy).toHaveText('Mensaje móvil verificado');
   await expect(mobileCopy).toBeVisible();
