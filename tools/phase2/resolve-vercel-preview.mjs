@@ -82,20 +82,29 @@ async function probe(base) {
   };
 }
 
-const candidates = explicit ? [{ base: explicit, source: 'env:VERCEL_BASE_URL' }] : await candidatesFromGitHub();
 let selected = null;
 const attempts = [];
+const maxAttempts = explicit ? 1 : Number(process.env.VERCEL_RESOLVE_ATTEMPTS || 30);
 
-for (const candidate of candidates) {
-  try {
-    const check = await probe(candidate.base);
-    attempts.push({ ...candidate, ...check });
-    if (check.ok) {
-      selected = candidate;
-      break;
+for (let attempt = 1; attempt <= maxAttempts && !selected; attempt += 1) {
+  const candidates = explicit ? [{ base: explicit, source: 'env:VERCEL_BASE_URL' }] : await candidatesFromGitHub();
+  if (!candidates.length) attempts.push({ attempt, ok: false, error: 'no-candidates-yet' });
+
+  for (const candidate of candidates) {
+    try {
+      const check = await probe(candidate.base);
+      attempts.push({ attempt, ...candidate, ...check });
+      if (check.ok) {
+        selected = candidate;
+        break;
+      }
+    } catch (error) {
+      attempts.push({ attempt, ...candidate, ok: false, error: error.message });
     }
-  } catch (error) {
-    attempts.push({ ...candidate, ok: false, error: error.message });
+  }
+
+  if (!selected && attempt < maxAttempts) {
+    await new Promise(resolve => setTimeout(resolve, 10000));
   }
 }
 
