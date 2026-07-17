@@ -6,7 +6,8 @@ var CUSTOM_BY_NAME={
   'Product Storytelling - Custom PRO':'product-storytelling-custom-pro',
   'Luxury Real Estate - Custom Blueprint PRO':'luxury-real-estate-custom-pro',
   'Luxury Real Estate - Custom PRO':'luxury-real-estate-custom-pro',
-  'Luxury Beauty Product - Custom PRO':'luxury-beauty-product-pro'
+  'Luxury Beauty Product - Custom PRO':'luxury-beauty-product-pro',
+  'Fashion Commerce - Custom PRO':'fashion-commerce-pro'
 };
 function customByName(){var map=Object.assign({},CUSTOM_BY_NAME);if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.listCustomPro){EP.StudioTemplateRegistry.listCustomPro().forEach(function(def){map[def.title+' - Custom PRO']=def.id;map[def.title+' - Custom Blueprint PRO']=def.id;});}return map;}
 function addStyles(){
