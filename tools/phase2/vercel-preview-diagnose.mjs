@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const base = String(process.env.VERCEL_BASE_URL || '').replace(/\/+$/, '');
+const sha = process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || '';
 if (!base) throw new Error('VERCEL_BASE_URL is required');
 
 const paths = [
@@ -33,5 +34,5 @@ for (const path of paths) {
 }
 
 mkdirSync('tests/diagnostics', { recursive: true });
-writeFileSync('tests/diagnostics/vercel-preview.json', JSON.stringify({ base, results }, null, 2));
-console.log(JSON.stringify({ base, results }));
+writeFileSync('tests/diagnostics/vercel-preview.json', JSON.stringify({ sha, base, results }, null, 2));
+console.log(JSON.stringify({ sha, base, results }));

@@ -10,6 +10,9 @@ on:
       - 'js/customization/project-store-local.js'
       - 'js/export/**'
       - 'review/**'
+      - 'js/studio/template-registry.js'
+      - 'tools/phase2/resolve-vercel-preview.mjs'
+      - 'tools/phase2/wait-vercel-preview.mjs'
       - 'tests/phase2-vercel.config.mjs'
       - 'tests/phase2-vercel.spec.mjs'
       - '.github/workflows/phase2-vercel-browser-qa.yml'
@@ -24,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
-      VERCEL_BASE_URL: https://escaparates-pro-git-feature-pr-cf2d77-juanma-espinosas-projects.vercel.app
       API_BASE_URL: https://escaparates-pro-api-phase2-staging-phase2-cloud.up.railway.app
+      PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,6 +39,11 @@ jobs:
         run: |
           npm install --no-save @playwright/test@1.53.1
           npx playwright install --with-deps chromium webkit
+
+      - name: Resolve current Vercel preview
+        run: node tools/phase2/resolve-vercel-preview.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Wait for current Vercel preview
         run: node tools/phase2/wait-vercel-preview.mjs
@@ -53,6 +61,8 @@ jobs:
           name: phase2-vercel-browser-qa
           path: |
             tests/phase2-vercel-results.json
+            tests/diagnostics/matrix.json
+            tests/diagnostics/vercel-preview-ready.json
             tests/phase2-vercel-report/
             tests/phase2-vercel-test-results/
           if-no-files-found: warn

@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env.VERCEL_BASE_URL || 'https://escaparates-pro-git-feature-pr-cf2d77-juanma-espinosas-projects.vercel.app';
+const baseURL = process.env.VERCEL_BASE_URL;
+if (!baseURL) throw new Error('VERCEL_BASE_URL must be resolved by tools/phase2/resolve-vercel-preview.mjs');
 
 export default defineConfig({
   testDir: '.',

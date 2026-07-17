@@ -126,6 +126,29 @@ async function createWebmFile(page) {
   return Buffer.from(bytes);
 }
 
+async function setMediaFileAndWait(page, inputSelector, filePayload, cardIndex, expectedName) {
+  const beforeUrl = page.url();
+  const navigation = page.waitForURL(url => url.toString() !== beforeUrl, { waitUntil: 'domcontentloaded', timeout: 120000 }).then(() => 'navigation').catch(() => null);
+  const cardReady = page.locator('#media .media-card').nth(cardIndex).filter({ hasText: expectedName }).waitFor({ timeout: 120000 }).then(() => 'card').catch(() => null);
+  const persistedReady = expect.poll(
+    () => page.evaluate(async ({ index, name }) => {
+      const projectName = document.getElementById('projectName')?.value || '';
+      const list = await window.EP.ProjectStoreLocal.list();
+      const project = list.find(item => item?.name === projectName) || null;
+      const media = project?.media?.[index] || null;
+      return media && media.name === name && media.status === 'ready' && /^https:\/\/pub-[a-z0-9]+\.r2\.dev\//.test(media.url || '');
+    }, { index: cardIndex, name: expectedName }),
+    { timeout: 120000 }
+  ).toBe(true).then(() => 'local-store').catch(() => null);
+  await page.locator(inputSelector).setInputFiles(filePayload);
+  await Promise.race([navigation, cardReady, persistedReady]);
+  await waitStudio(page).catch(() => {});
+  await expect.poll(
+    () => page.locator('#media .media-card').nth(cardIndex).textContent(),
+    { timeout: 60000 }
+  ).toContain(expectedName);
+}
+
 async function deleteProject(request, token, projectId) {
   if (!projectId) return;
   await request.delete(`${API}/v1/projects/${projectId}`, { headers: authHeaders(token) });
@@ -183,6 +206,118 @@ test.describe('catálogo protegido', () => {
     const customCard = blueprintCatalog.locator('.ss-template-card').filter({ hasText: 'Custom' });
     await expect(sourceCard.locator('.pc-studio-link')).toHaveCount(0);
     await expect(customCard.locator('.pc-studio-link')).toHaveCount(1);
+
+    const links = page.locator('.pc-studio-link');
+    await expect(links).toHaveCount(3);
+    const hrefs = await links.evaluateAll(items => items.map(item => new URL(item.href).searchParams.get('template')).sort());
+    expect(hrefs).toEqual(customTemplates.map(([id]) => id).sort());
+  });
+});
+
+test.describe('contrato Studio en navegador', () => {
+  test.skip(({ browserName }) => browserName !== 'chromium', 'Se valida una vez en Chromium');
+
+  test('rutas, local mode, duplicado, unknown template, nested paths y media slots', async ({ page }) => {
+    await page.goto(`/studio.html?template=product-storytelling-custom-pro&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
+    await waitStudio(page);
+
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'product-storytelling-custom-pro');
+    await expect(page.locator('#cloudSave')).toBeDisabled();
+    await expect(page.locator('#versionsBtn')).toBeDisabled();
+    await expect(page.locator('#phase2Status')).toContainText(/Modo local|Sesion no iniciada|sesion no iniciada/i);
+
+    await expect(page.locator('#media-0')).toHaveAttribute('accept', /video/);
+    await expect(page.locator('#media-1')).toHaveAttribute('accept', /image/);
+
+    const ctaLabel = page.locator('[data-field-key="ctaLabel"] input');
+    await expect(ctaLabel).toHaveAttribute('type', 'text');
+    await expect(ctaLabel).toHaveValue('Descubrir producto');
+    const ctaUrl = page.locator('[data-field-key="ctaUrl"] input');
+    await expect(ctaUrl).toHaveAttribute('type', 'url');
+    await expect(ctaUrl).toHaveValue('#producto');
+
+    await page.getByRole('button', { name: /CONTROLES AVANZADOS/ }).click();
+    const repeater = page.locator('[data-field-key="highlights"] .repeater-row');
+    await expect(repeater).toHaveCount(2);
+    await page.locator('[data-field-key="highlights"]').getByRole('button', { name: 'Añadir' }).click();
+    await expect(repeater).toHaveCount(3);
+    await repeater.nth(2).locator('input').first().fill('Garantía extendida');
+    await repeater.nth(2).getByRole('button', { name: '↑' }).click();
+    await expect(repeater.nth(1).locator('input').first()).toHaveValue('Garantía extendida');
+    await repeater.nth(1).getByRole('button', { name: 'Eliminar' }).click();
+    await expect(repeater).toHaveCount(2);
+
+    const typography = page.locator('[data-field-key="headlineTypography"]');
+    await typography.locator('input[type="text"]').fill('Manrope');
+    await typography.locator('select').selectOption('700');
+    await typography.locator('input[type="number"]').fill('88');
+    await expect(typography.locator('input[type="text"]')).toHaveValue('Manrope');
+
+    const responsive = page.locator('[data-field-key="responsiveCopy"]');
+    await responsive.locator('label').filter({ hasText: 'mobile' }).locator('input').fill('Compacto');
+    await expect(responsive.locator('label').filter({ hasText: 'mobile' }).locator('input')).toHaveValue('Compacto');
+
+    const motion = page.locator('[data-field-key="motionProfile"]');
+    await motion.locator('input[type="range"]').fill('80');
+    await motion.locator('input[type="checkbox"]').check();
+    await expect(motion.locator('input[type="checkbox"]')).toBeChecked();
+
+    const contract = await page.evaluate(async () => {
+      const registry = window.EP.StudioTemplateRegistry;
+      const base = registry.normalizeProject({
+        id: 'qa-original',
+        projectId: 'qa-original',
+        cloudId: 'cloud-original',
+        revision: 9,
+        published: { url: 'https://example.test/published' },
+        templateId: 'product-storytelling-custom-pro',
+        name: 'QA Original',
+        config: { brand: 'QA Brand', motion: { intensity: 2 } },
+        media: [{ type: 'video', url: 'https://example.test/video.webm' }]
+      });
+      const copy = window.EP.ProjectStoreLocal.fork(base, 'QA Copy');
+      const unknown = registry.normalizeProject({
+        templateId: 'future-template-custom-pro',
+        templateVersion: '99',
+        schemaVersion: 1,
+        config: { future: { untouched: true } },
+        media: [{ url: 'a' }, { url: 'b' }, { url: 'c' }, { url: 'd' }]
+      });
+      const nested = {};
+      registry.setPath(nested, 'theme.colors.primary', '#123456');
+      registry.setPath(nested, 'responsive.mobile.alignment', 'center');
+      registry.setPath(nested, 'motion.intensity', 7);
+      return {
+        forkIdsDiffer: copy.id !== base.id && copy.projectId !== base.projectId,
+        forkCloudCleared: !copy.cloudId && !copy.revision && !copy.published,
+        originalUnchanged: base.cloudId === 'cloud-original' && base.id === 'qa-original',
+        unknownReadOnly: unknown.readOnly === true && unknown.templateId === 'future-template-custom-pro',
+        unknownPreserved: unknown.config.future.untouched === true && unknown.media.length === 4,
+        nestedValues: [
+          registry.getPath(nested, 'theme.colors.primary'),
+          registry.getPath(nested, 'responsive.mobile.alignment'),
+          registry.getPath(nested, 'motion.intensity')
+        ],
+        noLiteralNestedKey: !Object.prototype.hasOwnProperty.call(nested, 'theme.colors.primary')
+      };
+    });
+
+    expect(contract).toEqual({
+      forkIdsDiffer: true,
+      forkCloudCleared: true,
+      originalUnchanged: true,
+      unknownReadOnly: true,
+      unknownPreserved: true,
+      nestedValues: ['#123456', 'center', 7],
+      noLiteralNestedKey: true
+    });
+
+    await page.locator('.tab[data-template-id="real-estate-storytelling-custom-pro"]').click();
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'real-estate-storytelling-custom-pro');
+    await expect(page.locator('#projectName')).toHaveValue(/Real Estate Storytelling/);
+    await page.locator('.tab[data-template-id="product-storytelling-custom-pro"]').click();
+    await expect(page.locator('.tab.active')).toHaveAttribute('data-template-id', 'product-storytelling-custom-pro');
+    await expect(page.locator('#projectName')).toHaveValue(/Product Storytelling/);
   });
 });
 
@@ -242,6 +377,7 @@ test.describe('responsive Studio', () => {
 
 test.describe('flujo cloud real Vercel + Railway + R2', () => {
   test('sube WebM y PNG, exporta HTML/ZIP, publica, valida embed y elimina assets', async ({ page, request, browser, browserName }, testInfo) => {
+    test.setTimeout(300000);
     test.skip(browserName !== 'chromium' || testInfo.project.name !== 'desktop-chromium', 'Flujo destructivo único');
     const qa = await registerQa(request, 'desktop');
     await seedBrowser(page, qa.token);
@@ -252,6 +388,8 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
     try {
       await page.goto(`/studio.html?template=real-estate-storytelling-custom-pro&api=${encodeURIComponent(API)}`, { waitUntil: 'domcontentloaded' });
       await waitStudio(page);
+      await expect.poll(() => page.evaluate(() => Boolean(window.EP?.ProjectClient?.hasSession?.())), { timeout: 30000 }).toBe(true);
+      await expect(page.locator('#cloudSave')).toBeEnabled({ timeout: 30000 });
       await page.locator('#projectName').fill(name);
       await page.locator('#projectName').dispatchEvent('input');
       await page.locator('#save').click();
@@ -259,17 +397,9 @@ test.describe('flujo cloud real Vercel + Railway + R2', () => {
 
       const videoBuffer = await createWebmFile(page);
       expect(videoBuffer.length).toBeGreaterThan(500);
-      const firstNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-0').setInputFiles({ name: 'qa-video.webm', mimeType: 'video/webm', buffer: videoBuffer });
-      await firstNavigation;
-      await waitStudio(page);
-      await expect(page.locator('#media .media-card').nth(0)).toContainText('qa-video.webm');
+      await setMediaFileAndWait(page, '#media-0', { name: 'qa-video.webm', mimeType: 'video/webm', buffer: videoBuffer }, 0, 'qa-video.webm');
 
-      const secondNavigation = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 90000 });
-      await page.locator('#media-1').setInputFiles({ name: 'qa-image.png', mimeType: 'image/png', buffer: imageBuffer });
-      await secondNavigation;
-      await waitStudio(page);
-      await expect(page.locator('#media .media-card').nth(1)).toContainText('qa-image.png');
+      await setMediaFileAndWait(page, '#media-1', { name: 'qa-image.png', mimeType: 'image/png', buffer: imageBuffer }, 1, 'qa-image.png');
 
       const project = await currentProject(page, name);
       expect(project).toBeTruthy();
