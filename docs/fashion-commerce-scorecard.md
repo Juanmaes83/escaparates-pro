@@ -15,13 +15,13 @@ for that review, not a self-granted approval.
 | Nav / architecture | 8 | 8.0 | 4.5 | Partial — Gate 1 fixed nav being visible before boot finished (now slides in only at ready/skipped, matching source); still only 4 of source's 10 links exist and mobile (390px) overflows |
 | Typography / art direction | 10 | 8.0 | 4.0 | Partial, unchanged this pass |
 | Effects / motion | 10 | 8.0 | 5.0 | Partial — Gate 1 ported real teaser stamp/line/spark keyframes (were missing) and fixed hover-glitch to match source's JS-randomized distortion (removed an invented autonomous pulse not in source) |
-| Gallery / runway | 12 | 10.8 | 4.0 | Partial, unchanged this pass (Gate 2 scope) |
-| Product / modal / commerce | 10 | 8.0 | 5.5 | Partial, unchanged this pass (Gate 3 scope) |
+| Gallery / runway | 12 | 10.8 | 6.5 | Partial — Gate 2 fixed and verified real interaction bugs (pointer-capture blocking clicks, scroll-snap fighting drag, missing wheel-hijack), but a significant structural gap remains: source has no gallery header and uses a full-bleed hotspot grid, builder uses a card grid with an invented header |
+| Product / modal / commerce | 10 | 8.0 | 7.0 | Partial — Gate 2 added REF/STOCK meta line and color-pop matching source, verified modal open/close via driven interaction; close-button focus-on-open unconfirmed under automation (see functional parity doc) |
 | Lookbook / reservation | 10 | 8.0 | 1.0 | Pending (Gate 3 scope) |
 | Remaining editorial sections | 10 | 8.0 | 1.0 | Pending (Gate 4 scope) |
 | Responsive | 8 | 7.2 | 3.0 | Partial, unchanged this pass (Gate 5 scope; mobile nav overflow tracked) |
 | Accessibility / perf / QA | 7 | 5.6 | 3.0 | Partial, unchanged this pass |
-| Total | 100 | 90.0 | 41.0 | Not approved |
+| Total | 100 | 90.0 | 45.0 | Not approved |
 
 ## Gate Rules
 

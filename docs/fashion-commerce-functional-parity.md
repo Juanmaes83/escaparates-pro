@@ -113,6 +113,69 @@ per-hover transform values), teaser stamp/line/spark keyframe animations (were m
 entirely; only a static two-line placeholder existed before), and preloader typewriter
 speed (110ms/char, was 70ms/char).
 
+## Gate 2 fixes (2026-07-18, this pass)
+
+Three severe interaction bugs were found via actual driven interaction testing (not code
+review — see the lesson from Gate 1) and fixed. Verification script:
+`tests/fashion-commerce-gate2-verify.mjs` (drives wheel, drag, keyboard, runway, modal via
+Playwright and asserts real DOM state, not just visual appearance).
+
+1. **Product cards were unclickable whenever a real click passed through pointer capture.**
+   The mouse-drag-to-scroll handler called `setPointerCapture` unconditionally on every
+   `pointerdown` inside the gallery track — including simple clicks with no drag motion.
+   Once captured, the browser retargets the resulting `click` event to the capturing
+   element (the track shell) instead of the button/image the user actually clicked,
+   silently breaking `openProduct()`. Confirmed via instrumented event logging (click
+   target was `DIV.rs-track-shell`, not the product button). Fixed with a drag-threshold:
+   capture is only engaged once pointer movement exceeds 6px, so a plain click never
+   triggers capture and reaches the button normally.
+2. **Mouse-drag never visually tracked the cursor.** `.rs-track-shell` has
+   `scroll-snap-type:x mandatory`; the drag handler wrote `scrollLeft` directly on every
+   `pointermove`, but the browser instantly snaps any non-snap-point `scrollLeft` back to
+   the nearest card (confirmed directly: assigning `scrollLeft=40` reverted to `0`;
+   `scrollLeft=250` jumped straight to `363`, the next snap point). Fixed by suspending
+   `scroll-snap-type` to `none` for the duration of an active drag (or an active wheel
+   burst, debounced 150ms), and restoring it on release — the standard fix for this
+   class of CSS-scroll-snap-vs-JS-drag conflict.
+3. **Wheel/trackpad over the gallery scrolled the page, not the gallery.** No wheel
+   listener existed at all; source explicitly hijacks `deltaY` into horizontal movement
+   while over the gallery, releasing control back to the page at the scroll boundaries
+   (`(scrollLeft<=0 && deltaY<0) || (scrollLeft>=max && deltaY>0)`). Ported the same logic
+   verbatim, confirmed working (scrollLeft moves 0→771 on wheel) and boundary release
+   confirmed independently (no `preventDefault()` at `scrollLeft=0` with upward wheel).
+
+Also added: color-pop transition when a product's modal opens (card image turns from
+grayscale to color while its modal is open, matching source's `color-pop` behavior, cleared
+on close), a `REF: RS-00N · STOCK: N UD` meta line in the product modal matching source's
+format, and a deferred (`setTimeout(0)`) focus-to-close-button call on modal open for
+keyboard/screen-reader users.
+
+**Verified via driven interaction (not just code review):** wheel-hijack + boundary
+release, mouse drag (via direct PointerEvent dispatch — Playwright's `mouse.move/down/up`
+loses event delivery once `setPointerCapture` engages mid-gesture, a CDP/synthetic-input
+limitation confirmed separately, not an app bug), keyboard arrow navigation, runway
+start/progress/stop/cleanup, and product modal open/meta/color-pop/close.
+
+**Known-unresolved this pass:** the deferred focus-on-open call is confirmed to actually
+invoke `.focus()` on the correct, visible, enabled close button (verified by monkeypatching
+the method), but `document.activeElement` does not reflect it when checked via Playwright
+automation afterward — a manual `.focus()` call issued from a separate script does succeed
+on the same element moments later. This could be a genuine timing bug or a Chromium
+headless/CDP limitation around focus during synthetic interaction; it was not resolved with
+confidence either way in the time available. Flagging honestly rather than claiming it's
+fixed.
+
+**Significant structural gap found, not fixed this pass:** the source gallery
+(`.horizontal-section`) has **no header/title text at all** — its DOM is just the runway
+toggle button, a runway indicator, and a full-bleed edge-to-edge image track with small
+circular `.hotspot` markers overlaid on images (hover reveals a tooltip with name + price).
+Our builder renders a card-grid with visible gaps, per-card borders, large number badges,
+and an invented "01 / GALERÍA" eyebrow + title copy block above the track that doesn't
+exist in source at all. This is a deeper visual-redesign-level gap (new hotspot/tooltip
+system, full-bleed layout, removing the header) rather than a behavior bug, and was not
+attempted this pass to avoid a rushed, shallow rebuild. Screenshots:
+`tests/phase-gate2-evidence/{source,builder}-gallery-*.png`.
+
 **Tracked remaining differences** (not fixed this pass, deferred to their stated gate):
 - Nav only has 4 links (Hero/Gallery/Lookbook/Videos); source has 10, pointing at sections
   that don't exist yet (co-creación, probador, estilo IA, behind, polaroid, newsletter).
