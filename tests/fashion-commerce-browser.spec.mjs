@@ -190,6 +190,7 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('2');
   await page.frameLocator('#preview').locator('[data-remove-cart]').first().click();
   await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('0');
+  await page.frameLocator('#preview').locator('#rsCommerceClose').click();
   await page.frameLocator('#preview').locator('#rsWishlistOpen').click();
   await page.frameLocator('#preview').locator('[data-remove-wishlist]').first().click();
   await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
