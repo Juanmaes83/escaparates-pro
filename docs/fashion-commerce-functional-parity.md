@@ -482,3 +482,109 @@ interaction works correctly. The flakiness was specific to cumulative layout/sta
 ~15 chained Studio field edits within one long Studio-iframe test, not a defect in the
 exported page itself. Kept an inline code comment explaining why, so a future reader doesn't
 mistake it for masking a real bug.
+
+## Gate 5: Newsletter, Footer, floating utilities
+
+### 5.1 Newsletter (`section5`)
+
+Ported source's `newsletter-section`: single-select interest pills (hombre/mujer/ambas,
+`newsletterInterests[]`, editable), neon-pulse email input, and an "ACCEDER" CTA. Source's
+click handler only checked `if (email value)` before revealing a static discount code with no
+real validation and no reset path. This build adds real validation the task required:
+- Empty email → visible inline error (`#rsNewsletterError`), `aria-invalid="true"` on the
+  input, focus returned to the input.
+- Non-empty but invalid format (regex requires `local@domain.tld` shape) → the same inline
+  error, different message.
+- Valid format → error cleared, and a confirmation reveal is built via `elx()` DOM nodes (not
+  `innerHTML`), showing the configurable demo code (`newsletterConfirmCode`) and a message
+  that explicitly states no real email was sent (`newsletterConfirmMessage`, editable from
+  Studio) — this is a demo, not a real subscription capture, and the copy says so.
+- A "Probar de nuevo (demo)" reset button clears the reveal and the input for repeat QA
+  passes, and returns focus to the email field.
+No backend call anywhere in this flow. Title/placeholder/CTA/confirmation copy are all
+Studio-editable fields (`newsletterTitle`, `newsletterPlaceholder`, `newsletterCtaLabel`,
+`newsletterConfirmCode`, `newsletterConfirmMessage`, `newsletterInterests[]`). Verified via
+driven interaction: empty click, invalid-format click, valid click, reset, and interest pill
+single-select all confirmed via Playwright, not code review.
+
+### 5.2 Footer (`section6`)
+
+Ported source's actual footer structure faithfully — a `<footer>` sibling of `<main>`, not
+nested inside it (matches source's DOM, where `#section6` is a top-level `<footer>`, not one
+more `<section>` inside the scrolling main flow): two brand-statement lines
+(`footerLine1`/`footerLine2`), a live-viewers counter, a "certificate of authenticity" block
+with a scroll-tied fill bar, a credit line, and a copyright line. All copy is Studio-editable.
+Two deliberate deviations from source, both documented rather than silently invented:
+- The live-viewers counter and certificate-fill percentage are **kept** (present in source,
+  not decorative filler) — the live-viewers count is a client-only randomized display
+  (matches source's own `Math.random()`-based fake counter, not a real analytics feed), and
+  the certificate fill is tied to real scroll position via the same `requestAnimationFrame`
+  loop as the page progress bar and the floating CTA reveal.
+- Source's footer also has a real personal phone number in the credit line and a hidden
+  "factory-gear" 3-click Easter egg with a "Modo Pasarela" hint. Both are **excluded**: a
+  real phone number has no place in a reusable public template default, and the Easter egg
+  is decorative and outside the Newsletter/Footer/floating-utilities scope this pass asked
+  for. Neither is a structural or legal-content omission — the credit line, certificate
+  labels, and copyright are all present and editable. No invented corporate footer nav or
+  social-icon row was added (source's footer has none, and the instruction was explicit that
+  the footer must not become a generic corporate footer contradicting source).
+- `footerCopyright` is a template addition beyond source's exact markup — source has no
+  copyright line at all — added because Escaparates Pro requires a visible demo disclaimer
+  ("Plantilla demo Escaparates Pro — no procesa pagos ni datos reales") on every commerce
+  template, the same pattern already used for `demoDisclaimer` elsewhere in this build.
+
+### 5.3 Floating utilities (CTA, progress, audio/mute, back-to-top)
+
+- **Progress bar and floating CTA**: unchanged from earlier gates, still tied to the shared
+  `requestAnimationFrame`-throttled scroll handler (`draw()`).
+- **Audio/mute — moved and given a real function.** Source's nav bar has no audio control at
+  all; the only audio-adjacent control in source is a separate floating `musicBtn` outside
+  the `<nav>`, styled as decorative equalizer bars (`music-btn-visual`, connected to nothing
+  — confirmed by reading the source repo's inline script, which never wires a listener to
+  audio playback for it). The earlier gates had incorrectly placed a `#rsAudio` MUTE/SOUND
+  button *inside* the nav bar, and it was purely decorative (toggled a CSS class with no
+  media effect). This pass: (1) moved `#rsAudio` out of the nav into a new floating utility
+  cluster matching source's actual `.floating-btns` structural intent (outside `<nav>`,
+  alongside the equivalent of the back-to-top button), keeping the eq-bars visual styling as
+  a nod to source's decorative design; (2) gave it a real, testable function — it now
+  toggles `muted` on every video element on the page (hero + campaign videos together) and
+  stays in sync with the video grid's own `#rsGlobalMute` button (clicking either one updates
+  both, and both mute the same underlying videos) via a single `allVideosMuted` source of
+  truth and a shared `setAllVideosMuted()` function. Verified: clicking `#rsAudio` sets
+  `aria-pressed="true"` **and** the hero video's `muted` property actually flips to `false` —
+  not just a class toggle with no effect.
+- **Back-to-top — new.** Source has a real `#backToTop` button (a sibling of the floating
+  music/WhatsApp buttons) this build previously omitted entirely. Added `#rsBackToTop`: shows
+  past the same scroll threshold as the floating CTA (`scrollY > innerHeight * .7`, same
+  `draw()` loop, no extra scroll listener), keyboard-focusable native `<button>`, click scrolls
+  to top (`behavior:'auto'` when reduced motion is on, `'smooth'` otherwise — reuses the
+  existing `reduced()` check), and hides again once back at the top. Verified via driven
+  interaction: appears after scrolling down, click returns `#section0` to the top of the
+  viewport, and the button hides again once there.
+- **No overlapping controls on mobile (390px), verified.** The floating CTA becomes a
+  full-width bar at the bottom on mobile (unchanged prior behavior); the audio/back-to-top
+  cluster is repositioned via media query to sit above that bar, right-aligned, so the two
+  never occupy overlapping screen space. Verified with a real `getBoundingClientRect()`
+  overlap check at 390×844 in Playwright, not just a visual glance.
+- **Nav destination added.** `navItems`/`setActive()` now include `section5` (Newsletter) as
+  an 9th nav destination, matching the instruction to add Newsletter once it exists and not
+  to add anything else (no Probador/AR, no language selector). The footer (`section6`) is
+  intentionally **not** in the nav list — source's own nav array has no footer entry either.
+
+### 5.4 Real bug found and fixed: Studio-only replay button collided with the new floating cluster
+
+Driven Playwright interaction (not code review) again surfaced a real bug invisible from
+reading the code: the Studio-only `#rsReplayIntro` ("Reproducir introducción") button — only
+shown when the page runs inside an iframe, i.e. inside Studio's preview — was positioned
+`left:16px;bottom:16px`, which sits almost exactly on top of the new `.rs-floating-utilities`
+cluster (`left:22px;bottom:22px`). Inside the Studio iframe this made `#rsReplayIntro`
+intercept pointer events meant for `#rsBackToTop`/`#rsAudio`, so a real click on
+`#rsBackToTop` would retry against a covered element for the full Playwright action timeout
+and never register. Confirmed via a disposable isolated script driving the actual Studio
+iframe (not the exported HTML in isolation, since the bug only reproduces with
+`#rsReplayIntro` present, i.e. `window.self !== window.top`) — the click failure message
+explicitly named `#rsReplayIntro` as the intercepting element. Fixed by moving
+`#rsReplayIntro` to the top-left corner (`top:16px`, was `bottom:16px`), since it is a
+Studio-editing affordance unrelated to source's floating-button layout and has no reason to
+compete for the same corner as the public-facing floating utilities. Re-verified: the click
+now resolves immediately instead of retrying.

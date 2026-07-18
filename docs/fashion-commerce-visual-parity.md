@@ -42,7 +42,7 @@ documented in the Functional Parity doc.
 |---|---|
 | Teaser | Gate 1 pass complete: session-gated (once per session, matches source `sessionStorage`), stamp/line/spark keyframes ported, z-index-vs-preloader stacking bug fixed. See `builder-teaser-state.png`. |
 | Preloader | Gate 1 pass complete: session-gated, 110ms/char typewriter matching source, no longer hidden behind teaser. |
-| Header/nav | Gate 1 pass: nav now slides in only after boot (matches source's hidden-until-ready navbar), hover states correct. Still only 4 of source's 10 links exist (rest depend on Gate 4/5 sections); mobile (390px) overflows — deferred to Gate 5. The ES/EN language selector that used to sit in this row is now fully removed (product decision, Spanish-only — see Functional Parity doc), which is a net simplification of this row, not a regression. |
+| Header/nav | Gate 5: nav now carries 9 destinations (added Newsletter); the decorative audio/mute control that was incorrectly sitting inside the nav bar was moved out to a floating utility (source's nav has no audio control at all — confirmed against the source repo). ES/EN language selector remains fully removed (product decision, Spanish-only). Mobile (390px) overflow and full architecture hardening tracked under the hardening pass. |
 | Cinematic hero | Gate 1 pass complete for the core visual: fixed a severe bug where the glitch title rendered at 11px instead of 160px (a descendant CSS selector was leaking into the nested glitch-char spans). Hover-per-character glitch distortion now uses JS-randomized transforms matching source exactly (removed an invented autonomous glitch animation not present in source). Responsive crop/overlay controls unchanged from prior pass. |
 | Glitch | Gate 1 pass complete: hover-only, JS-randomized per-character distortion matching source exactly (an invented autonomous CSS pulse was removed — source has no autonomous glitch, only hover). |
 | Gallery | Gate 2 closure complete: rebuilt as a full-bleed, edge-to-edge hotspot grid — invented header/eyebrow/title and bordered cards removed. Matches source's structural model (runway toggle + indicator floating over a gapless image track with hover-tooltip hotspots). See `tests/phase-gate3-evidence` screenshots taken alongside the Gate 3 pass, and `tests/phase-gate2-evidence/builder-gallery-*.png` for the pre-rebuild comparison. Remaining gap: hotspot pixel positions are a formulaic approximation, not identical to source's exact per-image coordinates. |
@@ -60,12 +60,12 @@ documented in the Functional Parity doc.
 | Designers | Gate 4 complete: same structure as source (4 cards, circular portrait, 2 creation thumbnails each) with RandomUser portraits replaced by already-authorized Unsplash imagery; creation click opens the correctly linked product (`designers[]`). |
 | Video grid | Gate 4 complete: source's hover-spotlight-dim + global mute button ported; added pause-outside-viewport, pause-on-tab-hidden, poster fallback, and keyboard support beyond source. See `tests/phase-gate4-evidence/{source,builder}-videogrid-*.png`. |
 | Polaroids | Gate 4 complete: source's actual flex-wrap + fixed-rotation composition (not a rectangular grid), front/back flip, single-open-at-a-time, click-outside-closes (`polaroids[]`); keyboard support added beyond source. See `tests/phase-gate4-evidence/{source,builder}-polaroid-*.png`. |
-| Newsletter | Pending (Gate 5) |
-| Footer | Pending (Gate 5) |
-| Floating CTA | Partial |
+| Newsletter | Gate 5 complete: pill interests, neon-pulse input, real empty/invalid/valid email validation, demo-labeled confirmation reveal, QA reset. See `tests/phase-gate5-evidence/{source,builder}-newsletter-*.png`. |
+| Footer | Gate 5 complete: brand statement lines, live-viewers counter, scroll-tied certificate fill, credit, copyright — footer sibling of `<main>` matching source's DOM, no invented nav/social row. See `tests/phase-gate5-evidence/{source,builder}-footer-*.png`. |
+| Floating CTA | Unchanged from earlier gates, verified again this pass at all 4 viewports |
 | Cursor | Partial, custom drag cursor implemented for gallery |
-| Audio/mute | Partial, UI state implemented without external audio asset |
-| Back-to-top | Pending (Gate 5) |
+| Audio/mute | Gate 5 complete: moved out of the nav (source has no nav audio control) into a floating utility matching source's decorative eq-bars styling, now with a real function — toggles `muted` on hero + campaign videos together, synced with the video grid's own mute button |
+| Back-to-top | Gate 5 complete: new `#rsBackToTop`, shows/hides on the same scroll threshold as the floating CTA, scrolls to top, reduced-motion aware, verified not to overlap the floating CTA at 390px |
 
 ## Current Visual Assessment
 

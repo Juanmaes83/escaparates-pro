@@ -304,6 +304,47 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(0)).not.toHaveClass(/flipped/);
   featureMatrix.polaroids = 'flip-on-click verified, only one polaroid stays flipped at a time';
 
+  // Gate 5: newsletter - empty state, invalid format, valid demo confirmation + QA reset, focus/aria.
+  await preview(page, (win, doc) => doc.getElementById('section5')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterEmail')).toHaveAttribute('aria-invalid', 'true');
+  await page.frameLocator('#preview').locator('#rsNewsletterEmail').fill('not-an-email');
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsNewsletterEmail').fill('qa@example.com');
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeHidden();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-code')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-reveal p')).toContainText('no se ha enviado ningún email real');
+  await page.frameLocator('#preview').locator('.rs-newsletter-reset').click();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-code')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterEmail')).toHaveValue('');
+  await page.frameLocator('#preview').locator('.rs-pill[data-interest="mujer"]').click();
+  await expect(page.frameLocator('#preview').locator('.rs-pill[data-interest="mujer"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.frameLocator('#preview').locator('.rs-pill[data-interest="hombre"]')).toHaveAttribute('aria-pressed', 'false');
+  featureMatrix.newsletter = 'empty state, invalid-format state, valid demo confirmation (clearly labeled, no real submission), QA reset, and single-select interest pills all verified';
+
+  // Gate 5: footer - faithful structure (brand statements, live viewers, certificate scroll-fill, credit, copyright), no invented nav/social links.
+  await preview(page, (win, doc) => doc.getElementById('section6')?.scrollIntoView());
+  await expect(page.frameLocator('#preview').locator('#section6')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('#rsLiveViewers')).toContainText('👁');
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsCertificateFill')?.style.width)).not.toBe('0%');
+  featureMatrix.footer = 'brand statement lines, live-viewers counter, and scroll-tied certificate fill verified; no invented footer nav/social links added';
+
+  // Gate 5: floating utilities - back-to-top appears on scroll, scrolls to top, and audio toggle has a real effect on video mute state (not decorative).
+  await expect(page.frameLocator('#preview').locator('#rsBackToTop')).toHaveClass(/show/);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-hero-video')?.muted)).toBe(false);
+  await page.frameLocator('#preview').locator('#rsBackToTop').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('section0')?.getBoundingClientRect().top), { timeout: 5000 }).toBeLessThan(200);
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsBackToTop')?.classList.contains('show')), { timeout: 5000 }).toBe(false);
+  featureMatrix.backToTop = 'shows only past the same scroll threshold as the floating CTA, click scrolls to top, hides again at top';
+  // No-overlap-on-mobile is verified independently against the pristine exported HTML
+  // (not by resizing this already-long Studio iframe test) in
+  // tests/fashion-commerce-gate5-verify.mjs, following this project's established
+  // preference for verifying against the pristine built HTML rather than a live,
+  // already-mutated Studio iframe.
+
   const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
   await page.screenshot({ path: screenshotPath, fullPage: true });
   await testInfo.attach('fashion-commerce-studio-screenshot', { path: screenshotPath, contentType: 'image/png' });
