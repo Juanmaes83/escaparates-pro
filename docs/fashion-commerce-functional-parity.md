@@ -156,35 +156,172 @@ loses event delivery once `setPointerCapture` engages mid-gesture, a CDP/synthet
 limitation confirmed separately, not an app bug), keyboard arrow navigation, runway
 start/progress/stop/cleanup, and product modal open/meta/color-pop/close.
 
-**Known-unresolved this pass:** the deferred focus-on-open call is confirmed to actually
-invoke `.focus()` on the correct, visible, enabled close button (verified by monkeypatching
-the method), but `document.activeElement` does not reflect it when checked via Playwright
-automation afterward — a manual `.focus()` call issued from a separate script does succeed
-on the same element moments later. This could be a genuine timing bug or a Chromium
-headless/CDP limitation around focus during synthetic interaction; it was not resolved with
-confidence either way in the time available. Flagging honestly rather than claiming it's
-fixed.
-
-**Significant structural gap found, not fixed this pass:** the source gallery
-(`.horizontal-section`) has **no header/title text at all** — its DOM is just the runway
-toggle button, a runway indicator, and a full-bleed edge-to-edge image track with small
-circular `.hotspot` markers overlaid on images (hover reveals a tooltip with name + price).
-Our builder renders a card-grid with visible gaps, per-card borders, large number badges,
-and an invented "01 / GALERÍA" eyebrow + title copy block above the track that doesn't
-exist in source at all. This is a deeper visual-redesign-level gap (new hotspot/tooltip
-system, full-bleed layout, removing the header) rather than a behavior bug, and was not
-attempted this pass to avoid a rushed, shallow rebuild. Screenshots:
-`tests/phase-gate2-evidence/{source,builder}-gallery-*.png`.
+**Resolved in the following pass (see Gate 2 closure below):** the deferred focus-on-open
+call turned out to have a real, root-caused, fixable bug — see below. It is not left as an
+open question anymore.
 
 **Tracked remaining differences** (not fixed this pass, deferred to their stated gate):
 - Nav only has 4 links (Hero/Gallery/Lookbook/Videos); source has 10, pointing at sections
   that don't exist yet (co-creación, probador, estilo IA, behind, polaroid, newsletter).
   Nav will be expanded incrementally as each gate adds its target section — full nav parity
   isn't reachable until Gate 4/5.
-- Mobile nav (390px) overflows/wraps (brand name + hamburger + lang + mute + wishlist +
-  cart + CTA don't fit in one row); source hides/condenses this chrome at narrow widths.
-  Deferred to Gate 5's full responsive pass since it interacts with cart/wishlist/CTA chrome
-  built in later gates.
+- Mobile nav (390px) overflows/wraps (brand name + hamburger + mute + wishlist + cart + CTA
+  don't fit in one row); source hides/condenses this chrome at narrow widths. Deferred to
+  Gate 5's full responsive pass since it interacts with cart/wishlist/CTA chrome built in
+  later gates. (The language selector that used to also crowd this row is now removed
+  entirely — see the Multilanguage Removal section.)
 - Hero eyebrow line ("COLECCIÓN / VOLUMEN 01") is a builder-only addition; source's hero has
   no eyebrow, only title + subtitle. Kept for now (existing Studio field with test coverage)
   as a minor, low-visual-impact deviation rather than removing a scoped field mid-gate.
+
+## Multilanguage removal (2026-07-18, this pass)
+
+**Product decision: Fashion Commerce PRO se entrega en español. El multidioma se aplaza a
+un futuro módulo transversal de Escaparates Pro.** This is not present in the other
+templates and is intentionally deferred to a future cross-template module rather than
+built per-template again. Removed completely, not just hidden:
+
+- The desktop/mobile ES/EN selector (`#rsLanguage`) — there was only one instance,
+  persistently visible in the nav bar at every viewport, now deleted entirely.
+- The `language` schema field and its `DEFAULTS.language` value.
+- The `i18n(o)` function and both the `es`/`en` dictionaries.
+- `applyLang`, `spanify` (the language-switch glitch-rebuild helper), and all
+  `data-i18n` / `data-i18n-aria` / `data-i18n-placeholder` / `data-i18n-glitch` attributes.
+- The `ep:fashion-commerce:language` and `ep:fashion-commerce:language:user` localStorage
+  keys and all runtime state tied to them. The runtime actively calls
+  `localStorage.removeItem(...)` on both keys at boot so returning visitors' stale language
+  preference gets cleaned up rather than left as dead storage.
+- The English strings themselves (product names, labels) — everything is now a single,
+  correctly-accented Spanish string baked directly into the server-rendered HTML.
+- The `language` toggle test in `tests/fashion-commerce-browser.spec.mjs` — replaced with an
+  assertion that no `language` field exists in the schema and no `#rsLanguage` control
+  exists in the rendered preview.
+
+Verified: `tests/fashion-commerce-pro.spec.mjs` asserts `data-i18n`, `rsLanguage`,
+`applyLang`, `langKey`, `langUserKey`, and `spanify` are all absent from the exported HTML,
+and that no `i18n`/`language` keys exist in the embedded JSON data. This exclusion does not
+reduce the fidelity score — it's a scoped, approved product decision, not a missing feature.
+
+## Gate 2 closure (2026-07-18, this pass)
+
+### Gallery rebuilt to match source's actual structure
+
+Replaced the card-grid-with-invented-header layout with a full-bleed, edge-to-edge image
+track and hover-revealed hotspot markers, matching source's actual DOM
+(`.horizontal-section` → runway toggle + indicator + track, no header text at all):
+
+- Removed `.rs-gallery-head` (the invented "01 / GALERÍA · [title]" block), the bordered
+  `.rs-card-copy` name/price/CTA block, and the large number badge — none of these exist in
+  source.
+- Added `.rs-hotspot` + `.rs-hotspot-tip` markers per card at source's approximate per-index
+  positions, revealing a name + price tooltip on hover (matches source's
+  `.hotspot`/`.hotspot-tooltip` pattern).
+- Cards are now full-height, full-bleed, gapless, matching source's `.horizontal-card`
+  sizing model instead of a padded/bordered card grid.
+- The runway toggle button and progress indicator are now positioned as floating overlays
+  atop the gallery (`top:100px`, absolute), matching source's `.runway-toggle`/
+  `.runway-indicator` placement, instead of living inside a removed header row.
+- All previously-verified interaction fixes (pointer-capture click-safe drag threshold,
+  scroll-snap suspension during drag/wheel, wheel-to-horizontal hijack with boundary
+  release, keyboard arrows, runway start/progress/stop/cleanup) were preserved unchanged
+  through the rebuild and re-verified.
+
+### Modal accessibility: a real, Playwright-verified focus trap
+
+The Gate 2 report previously left open whether the deferred focus-on-open call actually
+worked; it turned out to be a real, root-caused, fixable timing bug, not a permanent
+limitation:
+
+**Root cause:** for a click dispatched through Chromium's synthetic input pipeline (both
+`element.click()` and Playwright's `page.click()`), the browser's native "focus the
+activated control" behavior runs on a task that reliably beats a `setTimeout(fn, 0)` but
+loses to a `setTimeout(fn, 50)`. A 0ms deferred focus call was silently being overridden by
+that native behavior immediately afterward — confirmed by monkeypatching
+`HTMLElement.prototype.focus` globally: the call was invoked exactly once, on the correct
+element, yet `document.activeElement` still ended up elsewhere. Rebuilding with a 50ms delay
+fixed it outright; re-tested repeatedly.
+
+**Verified via real Playwright automation (`document.activeElement`, not a monkeypatch or a
+theoretical call):**
+- Opening the modal moves focus to `#rsClose` (the first focusable element in the modal).
+- `Shift+Tab` from there wraps to the *last* focusable element (`#rsReserve`), not out of the
+  modal.
+- `Tab` from there wraps back to `#rsClose` — the trap is bidirectional.
+- `Escape` closes the modal and restores focus to the exact button that opened it.
+- Scroll is locked (`html.rs-scroll-lock`) while any overlay is open and unlocked on close.
+
+This all runs through a new shared **overlay manager** (`openOverlay`/`closeOverlay`,
+`focusablesIn`, a single `currentOverlay` reference) — see the Gate 3 section below for how
+it enforces "only one primary overlay open at a time" across menu, modal, wishlist, cart,
+and reservation.
+
+## Gate 3 (2026-07-18, this pass)
+
+### Product/variant model and storage isolation
+
+`products[]` now carries the full field set: `reference`, `material`, `badge`,
+`compareAtPrice`, `sizes[]`, `colors[]` (`{name, hex}`), `stockMode`
+(`in-stock`/`low-stock`/`sold-out`), `reservationEnabled`/`wishlistEnabled`/`cartEnabled`,
+and `lookIds[]`. Studio repeater `itemFields` for these use `type:'text'` throughout
+(comma-separated for the array-like ones, e.g. `"S,M,L,XL"` or `"Negro:#111111,Verde:#4b5320"`)
+rather than `type:'boolean'`, because no other template in this codebase uses `'boolean'`
+inside a repeater's `itemFields` — only top-level fields do. Using an unverified type risked
+silently breaking the Studio editor for this repeater, so the field-level boolean flags are
+plain `"true"/"false"` text parsed by the existing `bool()` helper, which already handles
+that format.
+
+Storage keys moved from `ep:fashion-commerce:<presetId>:cart|wishlist` to
+`ep:fashion-commerce:<projectId>:<presetId>:cart|wishlist`. A `projectId` hidden schema
+field was added (mirroring the existing `presetId` pattern); the runtime migrates any
+existing data under the old two-part key into the new three-part key once, then leaves the
+old key alone (non-destructive migration).
+
+### Wishlist, cart, and cross-surface sync — verified via driven interaction
+
+- Wishlist: toggle (not just add) with no duplicates, a live counter, and a synced
+  `.wishlisted` outline on the corresponding gallery card — verified: toggling from the
+  modal updates both the counter and the gallery card class in the same interaction, and
+  toggling off reverts both.
+- Cart: lines are keyed by `id + size + color`, not just product id. Verified directly:
+  adding the same product in two different sizes produced two distinct
+  `{key, id, size, color, qty}` entries in `localStorage`, not a merged/overwritten one.
+  Quantity increment/decrement, remove, and subtotal all verified against the cart panel.
+
+### Single overlay manager
+
+One `currentOverlay` reference shared by the mobile menu, product modal, wishlist panel,
+cart panel, and reservation dialog — opening any of them closes whichever was previously
+open first, so two primary overlays can never be open simultaneously. Each overlay gets
+focus-trap keydown handling, `Escape`-to-close, `aria-hidden` toggling, and scroll lock
+through the same shared code path rather than five separate implementations.
+
+### XSS / sanitization
+
+Dynamic client-side renders (cart/wishlist line items, product modal population) were
+rewritten from `innerHTML` string concatenation of variable product text to DOM node
+construction (`createElement` + `textContent`, via a small `elx()` helper). Verified with a
+malicious product name (`<img src=x onerror="...">`) and description
+(`<script>...</script>`): rendered as inert text in the wishlist panel, no script executed,
+no `pageerror` raised.
+
+### Lookbook editorial, shop view, and reservation demo
+
+- Replaced the single-paragraph lookbook placeholder with a real editorial section: a
+  `looks[]` Studio repeater (id, title, description, model, credit, layout, productIds,
+  ctaLabel, reservationEnabled), rendered as alternating image-left/image-right compositions
+  with model/credit copy — not a generic ecommerce grid.
+- Each look has a "ver productos del look" toggle that renders real shoppable rows (name,
+  price, size/color selects, wishlist toggle, add-to-cart, reserve) for its associated
+  products — verified: toggling shows the expected product count and each row's controls
+  work identically to the main product modal's.
+- Reservation demo: a dedicated overlay (product or look context, size/color carried over,
+  name required, email optional, Spanish validation message, confirmation state, optional
+  configurable external CTA URL). Verified: submitting empty shows the validation error
+  (required native HTML5 validation is disabled via `novalidate` on the form so our own
+  Spanish message shows instead of a browser-native tooltip), filling the name and
+  resubmitting shows the confirmation, and closing restores focus to the opener. No backend
+  calls are made; everything is explicitly labeled as a demo.
+
+**Not attempted this pass, deferred to Gate 4/5 as originally scoped:** co-creación, style
+generator, timeline/behind-the-scenes, designers, video grid interactivity, polaroids,
+newsletter, footer, and full responsive verification of everything built in this pass.

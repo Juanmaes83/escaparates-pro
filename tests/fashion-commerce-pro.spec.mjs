@@ -52,10 +52,23 @@ assert.equal(schema.find((field) => field.key === 'heroCtaUrl').type, 'url', 'CT
 assert.equal(schema.find((field) => field.key === 'products').type, 'repeater', 'products must be a repeater');
 assert.equal(schema.find((field) => field.key === 'products').minItems, 4);
 assert.equal(schema.find((field) => field.key === 'products').maxItems, 10);
+assert.equal(schema.find((field) => field.key === 'looks').type, 'repeater', 'looks must be a repeater');
 assert.equal(schema.find((field) => field.key === 'headlineTypography').type, 'typography');
 assert.equal(schema.find((field) => field.key === 'bodyTypography').type, 'typography');
 assert.equal(schema.find((field) => field.key === 'responsiveHero').type, 'responsive');
 assert.equal(schema.find((field) => field.key === 'motionProfile').type, 'motion');
+assert.equal(schema.some((field) => field.key === 'language'), false, 'language field must be fully removed (product decision: Spanish-only)');
+assert.equal(schema.some((field) => field.key === 'projectId'), true, 'projectId must exist for storage isolation');
+assert.equal(schema.some((field) => field.key === 'reservationExternalUrl'), true, 'reservation external CTA must be configurable');
+
+const productItemKeys = schema.find((field) => field.key === 'products').itemFields.map((f) => f.key);
+for (const required of ['reference', 'material', 'sizes', 'colors', 'stockMode', 'reservationEnabled', 'wishlistEnabled', 'cartEnabled', 'lookIds', 'compareAtPrice']) {
+  assert.ok(productItemKeys.includes(required), `product itemFields must include ${required}`);
+}
+const lookItemKeys = schema.find((field) => field.key === 'looks').itemFields.map((f) => f.key);
+for (const required of ['title', 'description', 'model', 'credit', 'layout', 'productIds', 'reservationEnabled']) {
+  assert.ok(lookItemKeys.includes(required), `look itemFields must include ${required}`);
+}
 
 const mediaSlots = definition.mediaSlots.map((slot) => slot.id);
 for (const required of [
@@ -95,6 +108,11 @@ assert.deepEqual(Array.from(definition.defaults.products, (product) => product.i
   'parka-urbana',
   'bermuda-cargo'
 ]);
+assert.ok(definition.defaults.looks.length >= 3, 'at least 3 editorial looks expected by default');
+for (const product of definition.defaults.products) {
+  assert.ok(Array.isArray(product.sizes) && product.sizes.length, `${product.id} must expose real sizes`);
+  assert.ok(Array.isArray(product.colors) && product.colors.length, `${product.id} must expose real colors`);
+}
 
 const html = context.EP.SectorBlueprints.build('fashion-commerce-pro', [], definition.defaults);
 const embeddedScripts = Array.from(html.matchAll(/<script(?:[^>]*)>([\s\S]*?)<\/script>/g), match => match[1]);
@@ -120,8 +138,6 @@ assert.match(html, /state\(['"]ready['"]\)/);
 assert.match(html, /state\(['"]skipped['"]\)/);
 assert.match(html, /id="rsMenu"/);
 assert.match(html, /id="rsNavPanel"/);
-assert.match(html, /data-i18n="heroCtaLabel"/);
-assert.match(html, /ep:fashion-commerce:language/);
 assert.match(html, /data-hero-mobile-min="86"/);
 assert.match(html, /class="rs-grain"/);
 assert.match(html, /class="rs-scanner"/);
@@ -133,8 +149,6 @@ assert.match(html, /id="rsCartOpen"/);
 assert.match(html, /id="rsWishlistCount"/);
 assert.match(html, /id="rsCartCount"/);
 assert.match(html, /id="rsCommercePanel"/);
-assert.match(html, /id="rsTrackPrev"/);
-assert.match(html, /id="rsTrackNext"/);
 assert.match(html, /id="rsRunwayProgress"/);
 assert.match(html, /tabindex="0"/);
 assert.match(html, /scroll-snap-type:x mandatory/);
@@ -146,29 +160,72 @@ assert.match(html, /ArrowRight/);
 assert.match(html, /setPointerCapture/);
 assert.match(html, /runway-on/);
 assert.match(html, /--runway-progress/);
-assert.match(html, /ep:fashion-commerce:/, 'commerce storage must be scoped by template/preset');
+assert.match(html, /ep:fashion-commerce:/, 'commerce storage must be scoped by template');
 assert.match(html, /cartKey=storageScope\+"cart"/);
 assert.match(html, /wishlistKey=storageScope\+"wishlist"/);
-assert.match(html, /data-cart-inc/);
-assert.match(html, /data-remove-cart/);
-assert.match(html, /data-remove-wishlist/);
+assert.match(html, /storageScope="ep:fashion-commerce:"\+projectId\+":"\+presetId\+":"/, 'storage keys must be scoped by projectId AND presetId');
+assert.match(html, /migrateLegacyStorage/, 'must migrate from the old preset-only storage keys');
 assert.match(html, /setupMagnet/);
 assert.match(html, /removeEventListener\(['"]pointermove['"],moveCursor\)/);
 assert.doesNotMatch(html, /randomuser\.me/);
 assert.doesNotMatch(html, /ReactDOM|Babel|tailwind/i);
 
+// Objective 1: multilanguage system must be fully gone, not just hidden.
+assert.doesNotMatch(html, /data-i18n/, 'no data-i18n* attributes may remain anywhere in the markup');
+assert.doesNotMatch(html, /rsLanguage|langButton|applyLang|langKey|langUserKey/, 'no language selector, state, or persistence code may remain');
+assert.doesNotMatch(html, /\bspanify\b/, 'the language-switch glitch-rebuild helper must be removed along with i18n');
+assert.match(html, /localStorage\.removeItem\("ep:fashion-commerce:language"\)/, 'must clean up the legacy language key for returning visitors');
+assert.match(html, /<html lang="es">/, 'document language stays a fixed real accessibility attribute, not a switchable one');
+
+// Gate 2 closure: gallery must be full-bleed with hotspots, not a card grid with an invented header.
+assert.doesNotMatch(html, /rs-gallery-head|rs-card-copy|galleryEyebrow|galleryTitle/, 'invented gallery header/eyebrow/card-copy block must be removed');
+assert.doesNotMatch(html, /id="rsTrackPrev"|id="rsTrackNext"/, 'invented prev/next buttons not present in source must be removed');
+assert.match(html, /rs-hotspot"/, 'gallery must render hotspot markers matching source');
+assert.match(html, /rs-hotspot-tip/, 'gallery hotspots must carry a name+price tooltip like source');
+assert.match(html, /class="rs-runway-toggle"/);
+assert.match(html, /rs-runway-indicator/);
+
+// Gate 2 closure: modal accessibility — real overlay manager, not a monkeypatched focus() call.
+assert.match(html, /function openOverlay/);
+assert.match(html, /function closeOverlay/);
+assert.match(html, /focusablesIn/);
+assert.match(html, /currentOverlay/);
+assert.match(html, /lockScroll/);
+assert.match(html, /rs-scroll-lock/);
+assert.match(html, /aria-labelledby="rsModalTitle"/);
+assert.match(html, /id="rsModalCompareAt"/);
+assert.match(html, /id="rsSize"><\/select>|id="rsSize">/, 'size select must exist, populated dynamically from product variants');
+assert.doesNotMatch(html, /<option>S<\/option><option selected>M/, 'size options must no longer be hardcoded globally');
+
+// Gate 3: wishlist/cart variant model, reservation flow, lookbook editorial + shop view.
+assert.match(html, /function toggleWishlist/);
+assert.match(html, /function addCart/);
+assert.match(html, /function variantKey/);
+assert.match(html, /reservationContext/);
+assert.match(html, /id="rsReservation"/);
+assert.match(html, /id="rsReservationForm"/);
+assert.match(html, /id="rsReservationExternal"/);
+assert.match(html, /rs-look-image-left|rs-look-image-right/);
+assert.match(html, /rs-look-shop/);
+assert.match(html, /id="rsViewToggle"/);
+assert.match(html, /INDUSTRIAL DROP/);
+
+// Security: dynamic renders must build via DOM/textContent, not raw innerHTML string concatenation of variable text.
+assert.doesNotMatch(html, /innerHTML=rows\.map/, 'commerce rows must no longer be built via unescaped innerHTML concatenation');
+assert.match(html, /function elx\(/, 'DOM-node helper must be used for dynamic rendering');
+assert.match(html, /textContent=p\.name|textContent\s*=\s*product\.name/, 'product name must be assigned via textContent, not concatenated into innerHTML');
+
 const embeddedData = JSON.parse((html.match(/<script type="application\/json" id="rsData">([\s\S]*?)<\/script>/) || [])[1]);
-assert.ok(Object.keys(embeddedData.i18n.es).length >= 20, 'Spanish dictionary must cover interface text');
-assert.ok(Object.keys(embeddedData.i18n.en).length >= 20, 'English dictionary must cover interface text');
-assert.equal(embeddedData.i18n.en.heroTitle, 'DISRUPTION');
-assert.equal(embeddedData.i18n.en.navGallery, 'GALLERY');
+assert.equal(embeddedData.i18n, undefined, 'no i18n dictionary may be embedded in the exported data');
+assert.equal(embeddedData.language, undefined, 'no language field may be embedded in the exported data');
+assert.ok(Array.isArray(embeddedData.looks) && embeddedData.looks.length >= 3);
+assert.ok(embeddedData.products.every((p) => Array.isArray(p.sizes) && Array.isArray(p.colors)));
 
 const customized = context.EP.SectorBlueprints.build('fashion-commerce-pro', [], {
   heroTitle: 'COLECCIÓN',
   heroCtaLabel: 'Solicitar visita',
   heroCtaUrl: '#section1',
   season: 'VERANO QA',
-  language: 'en',
   headlineTypography: { family: 'Inter', weight: '900', size: 88 },
   bodyTypography: { family: 'Arial', weight: '700', size: 18 },
   responsiveHero: {
@@ -178,14 +235,11 @@ const customized = context.EP.SectorBlueprints.build('fashion-commerce-pro', [],
   },
   motionProfile: { intensity: 20, duration: 1200, reducedMotion: true },
   products: [
-    { id: 'qa', name: 'PIEZA QA', category: 'QA', eyebrow: 'TEST', description: 'Editable', price: 12.5, ctaLabel: 'Descubrir producto' }
+    { id: 'qa', name: 'PIEZA QA', category: 'QA', eyebrow: 'TEST', description: 'Editable', price: 12.5, ctaLabel: 'Descubrir producto', sizes: ['S', 'M'], colors: [{ name: 'Negro', hex: '#111' }] }
   ]
 });
 assert.match(customized, /COLECCIÓN/);
 assert.match(customized, /Solicitar visita/);
-assert.match(customized, /Descubrir producto/);
-assert.match(customized, /VERANO QA/);
-assert.match(customized, /lang="en"/);
 assert.match(customized, /data-hero-mobile-min="82"/);
 assert.match(customized, /data-mobile-navigation="overlay"/);
 assert.match(customized, /--hero-min:98vh/);
@@ -196,7 +250,7 @@ assert.match(customized, /--body-family:"Arial"/);
 assert.match(customized, /--dur:1200ms/);
 assert.match(customized, /motion-reduced/);
 assert.match(customized, /PIEZA QA/);
-assert.match(customized, /12,50/);
+assert.match(customized, /VERANO QA/, 'hero subtitle composes heroSubtitle + season');
 
 const uploaded = [
   { slot: 'campaignVideo1', type: 'video', url: 'https://cdn.test/campaign-1.mp4' },

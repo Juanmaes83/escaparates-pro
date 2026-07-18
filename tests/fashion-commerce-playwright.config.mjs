@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   testMatch: ['fashion-commerce-browser.spec.mjs'],
-  timeout: 90000,
+  timeout: 120000,
   retries: 1,
   workers: 1,
   reporter: [

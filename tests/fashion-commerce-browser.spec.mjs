@@ -77,28 +77,10 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('.rs-hero-copy p')).toContainText('OTOÑO QA');
   featureMatrix.season = 'visible in hero subtitle';
 
-  const language = await openGroupFor(page, 'language');
-  await language.locator('select').selectOption('en');
-  await waitReady(page);
-  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('en');
-  await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveText('EN');
-  await expect(page.frameLocator('#preview').locator('[data-i18n="galleryTitle"]')).toContainText('The street does not wait.');
-  await page.frameLocator('#preview').locator('#rsLanguage').click();
-  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.lang)).toBe('es');
-  const dictionaryCoverage = await preview(page, (win, doc) => {
-    const data = JSON.parse(doc.querySelector('#rsData').textContent);
-    return {
-      es: Object.keys(data.i18n.es).length,
-      en: Object.keys(data.i18n.en).length,
-      stored: win.localStorage.getItem('ep:fashion-commerce:language'),
-      userSet: win.localStorage.getItem('ep:fashion-commerce:language:user')
-    };
-  });
-  expect(dictionaryCoverage.es).toBeGreaterThanOrEqual(20);
-  expect(dictionaryCoverage.en).toBeGreaterThanOrEqual(20);
-  expect(dictionaryCoverage.stored).toBe('es');
-  expect(dictionaryCoverage.userSet).toBe('1');
-  featureMatrix.language = dictionaryCoverage;
+  // Multilanguage system must be fully absent from the Studio schema, not merely hidden.
+  await expect(page.locator('[data-field-key="language"]')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveCount(0);
+  featureMatrix.noLanguage = 'no language field in Studio schema, no #rsLanguage control in preview';
 
   const effects = await preview(page, (win, doc) => ({
     grain: Boolean(doc.querySelector('.rs-grain')),
@@ -112,8 +94,12 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('#rsAudio')).toHaveAttribute('aria-pressed', 'true');
   featureMatrix.effects = 'grain, scanner, film burn, custom cursor and audio toggle verified';
 
+  // Gallery: full-bleed hotspot grid, no invented header/cards. Wheel hijack, drag threshold, keyboard, runway.
+  await expect(page.frameLocator('#preview').locator('.rs-gallery-head')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('.rs-hotspot').first()).toBeVisible();
   const galleryBefore = await preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0);
-  await page.frameLocator('#preview').locator('#rsTrackNext').click();
+  await page.frameLocator('#preview').locator('#rsTrackShell').focus();
+  await page.frameLocator('#preview').locator('#rsTrackShell').press('ArrowRight');
   await expect.poll(() => preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0)).toBeGreaterThan(galleryBefore);
   await page.frameLocator('#preview').locator('#rsTrackShell').press('ArrowLeft');
   await page.frameLocator('#preview').locator('#rsRunway').click();
@@ -121,7 +107,7 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.runway-active')?.dataset.productIndex || '')).not.toBe('');
   await page.frameLocator('#preview').locator('#rsRunway').click();
   await expect(page.frameLocator('#preview').locator('.rs-page')).not.toHaveClass(/runway-on/);
-  featureMatrix.galleryRunway = 'next, keyboard, runway start/stop and active card verified';
+  featureMatrix.galleryRunway = 'full-bleed hotspots present, keyboard nav, runway start/stop and active card verified';
 
   const products = await openGroupFor(page, 'products');
   const before = await products.locator('.repeater-row').count();
@@ -177,41 +163,90 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   featureMatrix.motion = 'duration, intensity and reduced motion controls used';
 
   await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.state || '')).toMatch(/ready|skipped/);
+
+  // Product modal: real focus trap verified by Playwright (not a theoretical focus() call).
+  // A real Playwright click (not a JS-injected .click() call) is used deliberately: only a
+  // genuine pointer activation sets document.activeElement to the trigger beforehand, which
+  // the overlay manager needs to capture for correct focus restoration on close.
   await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }));
-  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"] [data-open-product="0"]')?.click());
+  await page.frameLocator('#preview').locator('[data-product-index="0"] [data-open-product="0"]').click();
   await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsClose');
+  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.classList.contains('rs-scroll-lock'))).toBe(true);
+  await page.frameLocator('#preview').locator('body').press('Shift+Tab');
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsReserve');
+  await page.frameLocator('#preview').locator('body').press('Tab');
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsClose');
+  featureMatrix.modalFocusTrap = 'initial focus, Shift+Tab wrap-to-last, Tab back-to-first all verified via document.activeElement';
+
+  // Wishlist toggle, synced to the gallery card.
   await page.frameLocator('#preview').locator('#rsWishlist').click();
-  await expect(page.frameLocator('#preview').locator('#rsCommercePanel')).toHaveClass(/open/);
   await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('1');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.classList.contains('wishlisted'))).toBe(true);
+  await page.frameLocator('#preview').locator('#rsWishlist').click();
+  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.classList.contains('wishlisted'))).toBe(false);
+  featureMatrix.wishlistSync = 'toggle from modal reflected on gallery card and counter';
+
+  // Cart: two distinct variants of the same product must create two distinct lines.
+  await page.frameLocator('#preview').locator('#rsSize').selectOption({ index: 0 });
   await page.frameLocator('#preview').locator('#rsCart').click();
-  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('1');
-  await expect(page.frameLocator('#preview').locator('#rsCommerceTitle')).toContainText(/Carrito|cart/i);
-  await page.frameLocator('#preview').locator('[data-cart-inc]').first().click();
+  await page.frameLocator('#preview').locator('#rsSize').selectOption({ index: 1 });
+  await page.frameLocator('#preview').locator('#rsCart').click();
   await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('2');
-  await page.frameLocator('#preview').locator('[data-remove-cart]').first().click();
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsModal').classList.contains('open'))).toBe(false);
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.getAttribute('data-open-product'))).toBe('0');
+
+  await page.frameLocator('#preview').locator('#rsCartOpen').click();
+  await expect(page.frameLocator('#preview').locator('.rs-commerce-item')).toHaveCount(2);
+  await page.frameLocator('#preview').locator('.rs-commerce-qty button').last().click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('3');
+  await page.frameLocator('#preview').locator('.rs-commerce-remove').first().click();
+  await page.frameLocator('#preview').locator('.rs-commerce-remove').first().click();
   await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('0');
   await page.frameLocator('#preview').locator('#rsCommerceClose').click();
-  await page.frameLocator('#preview').locator('#rsClose').click();
-  await page.frameLocator('#preview').locator('#rsWishlistOpen').click();
-  await page.frameLocator('#preview').locator('[data-remove-wishlist]').first().click();
-  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
-  await page.frameLocator('#preview').locator('#rsCommerceClose').click();
-  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }));
-  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"] [data-open-product="0"]')?.click());
-  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
-  await page.frameLocator('#preview').locator('#rsCart').click();
-  const storageState = await preview(page, (win) => ({
-    keys: Object.keys(win.localStorage).filter(key => key.startsWith('ep:fashion-commerce:')).sort(),
-    wishlist: JSON.parse(win.localStorage.getItem('ep:fashion-commerce:rubik-sota-disruption:wishlist') || '[]'),
-    cart: JSON.parse(win.localStorage.getItem('ep:fashion-commerce:rubik-sota-disruption:cart') || '[]'),
-    legacyWishlist: win.localStorage.getItem('rsWishlist'),
-    legacyCart: win.localStorage.getItem('rsCart')
-  }));
-  expect(storageState.wishlist).toEqual([]);
-  expect(storageState.cart).toEqual([{ id: 'jacket-industrial', qty: 1 }]);
+  featureMatrix.cartVariants = 'two size variants of the same product created two distinct cart lines, qty/remove verified';
+
+  const storageState = await preview(page, (win) => {
+    const key = Object.keys(win.localStorage).find((k) => k.endsWith(':cart'));
+    return {
+      key,
+      cart: JSON.parse(win.localStorage.getItem(key) || '[]'),
+      legacyWishlist: win.localStorage.getItem('rsWishlist'),
+      legacyCart: win.localStorage.getItem('rsCart'),
+      legacyLanguage: win.localStorage.getItem('ep:fashion-commerce:language')
+    };
+  });
+  expect(storageState.key).toMatch(/^ep:fashion-commerce:.+:.+:cart$/);
+  expect(storageState.cart).toEqual([]);
   expect(storageState.legacyWishlist).toBeNull();
   expect(storageState.legacyCart).toBeNull();
-  featureMatrix.commerce = 'modal, isolated wishlist/cart storage, counts, quantity and removal verified';
+  expect(storageState.legacyLanguage).toBeNull();
+  featureMatrix.storageIsolation = 'storage key is scoped by projectId AND presetId; no legacy keys written';
+
+  // Reservation demo flow. Opening it while the product modal is open must auto-close the
+  // modal first (single-overlay enforcement), so the modal is already closed by the time
+  // the reservation dialog itself closes — there is no modal left to close afterward.
+  await page.frameLocator('#preview').locator('[data-product-index="0"] [data-open-product="0"]').click();
+  await page.frameLocator('#preview').locator('#rsReserve').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservation')).toHaveClass(/open/);
+  await expect(page.frameLocator('#preview').locator('#rsModal')).not.toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsReservationForm button[type="submit"]').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservationError')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsReservationName').fill('QA Reserva');
+  await page.frameLocator('#preview').locator('#rsReservationForm button[type="submit"]').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservationConfirm')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsReservationClose').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservation')).not.toHaveClass(/open/);
+  featureMatrix.reservation = 'validation, confirmation, single-overlay auto-close of the underlying modal, and close verified';
+
+  // Lookbook editorial + shop view toggle.
+  await preview(page, (win, doc) => doc.getElementById('section2')?.scrollIntoView());
+  const firstLookId = await preview(page, (win, doc) => doc.querySelector('.rs-look')?.getAttribute('data-look-id'));
+  await page.frameLocator('#preview').locator(`[data-toggle-shop="${firstLookId}"]`).click();
+  await expect(page.frameLocator('#preview').locator(`[data-look-shop="${firstLookId}"] .rs-look-shop-item`).first()).toBeVisible();
+  featureMatrix.lookbookShopView = 'per-look shop view renders real shoppable product rows';
 
   const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
   await page.screenshot({ path: screenshotPath, fullPage: true });
