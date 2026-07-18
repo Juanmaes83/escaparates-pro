@@ -1,0 +1,941 @@
+(function(){
+'use strict';
+window.EP=window.EP||{};
+
+var VIDEO_BASE='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/';
+var RUBIK_MEDIA={
+  heroVideo:VIDEO_BASE+'hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4',
+  campaignVideo1:VIDEO_BASE+'hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4',
+  campaignVideo2:VIDEO_BASE+'hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4',
+  campaignVideo3:VIDEO_BASE+'hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4',
+  campaignVideo4:VIDEO_BASE+'hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4',
+  heroPoster:'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1920&q=80',
+  product1:'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=900&q=80',
+  product2:'https://images.unsplash.com/photo-1556906781-9a412961c28c?w=900&q=80',
+  product3:'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&q=80',
+  product4:'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&q=80',
+  product5:'https://images.unsplash.com/photo-1533050487297-09b450131914?w=900&q=80',
+  product6:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&q=80',
+  product7:'https://images.unsplash.com/photo-1475180098004-ca77a66827be?w=900&q=80',
+  product8:'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=900&q=80',
+  product9:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80',
+  product10:'https://images.unsplash.com/photo-1544441893-675973e31985?w=900&q=80'
+};
+
+function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function attr(value){return esc(value).replace(/`/g,'&#96;');}
+function bool(value,fallback){if(value===true||value===false)return value;if(value==='true'||value===1||value==='1')return true;if(value==='false'||value===0||value==='0')return false;return fallback;}
+function clamp(value,min,max,fallback){value=Number(value);return Number.isFinite(value)?Math.max(min,Math.min(max,value)):fallback;}
+function safeUrl(value,fallback){value=String(value||'').trim();return /^(https?:|mailto:|tel:|#)/i.test(value)?value:(fallback||'#');}
+function money(value,currency,locale){var n=Number(value);if(!Number.isFinite(n))n=0;try{return new Intl.NumberFormat(locale||'es-ES',{style:'currency',currency:currency||'EUR'}).format(n);}catch(e){return (currency||'EUR')+' '+n.toFixed(2);}}
+function normalizeMedia(list){return (list||[]).filter(Boolean).map(function(item){return {slot:item.slot||'',type:item.type||'image',url:item.url||(item.element&&(item.element.currentSrc||item.element.src))||''};});}
+function mediaFor(media,id,fallback,type){var item=media.filter(function(candidate){return candidate.slot===id;})[0]||null;return item&&item.url?item:{slot:id,type:type||'image',url:fallback||''};}
+function objectValue(value,fallback){return Object.assign({},fallback,value&&typeof value==='object'?value:{});}
+function listValue(value){if(Array.isArray(value))return value.slice();return String(value||'').split(',').map(function(s){return s.trim();}).filter(Boolean);}
+function colorListValue(value){
+  if(Array.isArray(value))return value.map(function(item){return typeof item==='object'?{name:String(item.name||''),hex:String(item.hex||'#111111')}:{name:String(item||''),hex:'#111111'};}).filter(function(c){return c.name;});
+  return String(value||'').split(',').map(function(pair){var parts=pair.split(':');return {name:(parts[0]||'').trim(),hex:(parts[1]||'').trim()||'#111111'};}).filter(function(c){return c.name;});
+}
+function normalizeProduct(item,fallback){
+  var merged=Object.assign({},fallback,item||{});
+  merged.sizes=listValue(merged.sizes&&merged.sizes.length?merged.sizes:fallback.sizes);
+  merged.colors=colorListValue(merged.colors&&(Array.isArray(merged.colors)?merged.colors.length:String(merged.colors).length)?merged.colors:fallback.colors);
+  merged.lookIds=listValue(merged.lookIds&&merged.lookIds.length?merged.lookIds:fallback.lookIds);
+  merged.stockMode=/^(in-stock|low-stock|sold-out)$/.test(merged.stockMode)?merged.stockMode:'in-stock';
+  merged.reservationEnabled=bool(merged.reservationEnabled,true);
+  merged.wishlistEnabled=bool(merged.wishlistEnabled,true);
+  merged.cartEnabled=bool(merged.cartEnabled,true);
+  merged.compareAtPrice=Number(merged.compareAtPrice)||0;
+  return merged;
+}
+function products(value){
+  var source=Array.isArray(value)?value:DEFAULTS.products;
+  var list=source.slice(0,10).map(function(item,index){return normalizeProduct(item,DEFAULTS.products[index%DEFAULTS.products.length]);});
+  while(list.length<4)list.push(normalizeProduct({},DEFAULTS.products[list.length]));
+  return list;
+}
+function normalizeLook(item,fallback){
+  var merged=Object.assign({},fallback,item||{});
+  merged.productIds=listValue(merged.productIds&&merged.productIds.length?merged.productIds:fallback.productIds);
+  merged.reservationEnabled=bool(merged.reservationEnabled,true);
+  merged.layout=merged.layout==='wide'?'wide':'normal';
+  return merged;
+}
+function looksValue(value){
+  var source=Array.isArray(value)&&value.length?value:DEFAULTS.looks;
+  return source.map(function(item,index){return normalizeLook(item,DEFAULTS.looks[index%DEFAULTS.looks.length]);});
+}
+function listOf(value,defaults,normalizeFn){
+  var source=Array.isArray(value)&&value.length?value:defaults;
+  return source.map(function(item,index){return normalizeFn(item,defaults[index%defaults.length]);});
+}
+function normalizeCoCreationItem(item,fallback){return Object.assign({},fallback,item||{});}
+function normalizeStyleOption(item,fallback){var merged=Object.assign({},fallback,item||{});merged.productIds=listValue(merged.productIds&&merged.productIds.length?merged.productIds:fallback.productIds);return merged;}
+function normalizeTimelineItem(item,fallback){var merged=Object.assign({},fallback,item||{});merged.alignment=/^(left|right)$/.test(merged.alignment)?merged.alignment:'left';return merged;}
+function normalizeDesigner(item,fallback){var merged=Object.assign({},fallback,item||{});merged.productIds=listValue(merged.productIds&&merged.productIds.length?merged.productIds:fallback.productIds);return merged;}
+function normalizePolaroid(item,fallback){var merged=Object.assign({},fallback,item||{});merged.rotation=Number(merged.rotation);if(!Number.isFinite(merged.rotation))merged.rotation=fallback.rotation;return merged;}
+function responsiveConfig(value){
+  var defaults={desktop:{minHeight:100,contentAlign:'center',titleScale:1,videoPosition:'center center',overlayStrength:78},tablet:{minHeight:92,contentAlign:'center',titleScale:.82,videoPosition:'center center',overlayStrength:82},mobile:{minHeight:86,contentAlign:'end',titleScale:.58,videoPosition:'center center',overlayStrength:88,navigationMode:'overlay'}};
+  var source=value&&typeof value==='object'?value:{};
+  ['desktop','tablet','mobile'].forEach(function(viewport){
+    if(typeof source[viewport]==='string')source[viewport]=Object.assign({},defaults[viewport],{note:source[viewport]});
+    source[viewport]=Object.assign({},defaults[viewport],source[viewport]||{});
+  });
+  return source;
+}
+function alignValue(value){return /^(start|center|end)$/i.test(String(value||''))?String(value).toLowerCase():'center';}
+function pxPercent(value,min,max,fallback){return clamp(value,min,max,fallback);}
+function mediaImage(item,className,alt,loading){return '<img class="'+className+'" src="'+attr(item.url)+'" alt="'+attr(alt||'')+'" loading="'+(loading||'lazy')+'">';}
+function mediaVideo(item,className,poster){return '<video class="'+className+'" autoplay loop muted playsinline preload="metadata" poster="'+attr(poster||'')+'"><source src="'+attr(item.url)+'" type="video/mp4"></video>';}
+
+var HOTSPOT_POS=[[25,30],[40,50],[55,35],[30,55],[45,32],[60,48],[28,42],[50,38],[35,52],[42,45]];
+
+function build(mediaInput,raw){
+  var media=normalizeMedia(mediaInput);
+  var o=Object.assign({},DEFAULTS,raw||{});
+  var lang='es';
+  var list=products(o.products);
+  var looks=looksValue(o.looks);
+  var coCreationItems=listOf(o.coCreationItems,DEFAULTS.coCreationItems,normalizeCoCreationItem);
+  var styleOptions=listOf(o.styleOptions,DEFAULTS.styleOptions,normalizeStyleOption);
+  var timelineItems=listOf(o.timelineItems,DEFAULTS.timelineItems,normalizeTimelineItem);
+  var designers=listOf(o.designers,DEFAULTS.designers,normalizeDesigner);
+  var polaroids=listOf(o.polaroids,DEFAULTS.polaroids,normalizePolaroid);
+  var newsletterInterests=listOf(o.newsletterInterests,DEFAULTS.newsletterInterests,normalizeCoCreationItem);
+  var heroVideo=mediaFor(media,'heroVideo',RUBIK_MEDIA.heroVideo,'video');
+  var heroPoster=mediaFor(media,'heroPoster',RUBIK_MEDIA.heroPoster,'image');
+  var logo=mediaFor(media,'logo','','image');
+  var responsive=responsiveConfig(o.responsiveHero);
+  var byId={};
+  list.forEach(function(p){byId[p.id]=p;});
+  var gallery=list.map(function(product,index){
+    var image=mediaFor(media,'product'+(index+1)+'Primary',RUBIK_MEDIA['product'+(index+1)],'image');
+    var pos=HOTSPOT_POS[index%HOTSPOT_POS.length];
+    var tipPos=[Math.max(6,pos[0]-6),Math.min(72,pos[1]+6)];
+    return '<article class="rs-card" data-product-index="'+index+'">'
+      +'<button class="rs-media-button" type="button" data-open-product="'+index+'" aria-label="Ver '+attr(product.name)+'">'
+      +mediaImage(image,'rs-card-img',product.name)
+      +'<span class="rs-hotspot" style="top:'+pos[0]+'%;left:'+pos[1]+'%" aria-hidden="true"></span>'
+      +'<span class="rs-hotspot-tip" style="top:'+tipPos[0]+'%;left:'+tipPos[1]+'%" aria-hidden="true"><b>'+esc(product.name)+'</b><br><em>'+esc(money(product.price,o.currency,o.priceLocale))+'</em></span>'
+      +'</button></article>';
+  }).join('');
+  var navItems=[['section0',o.navHero],['section1',o.navGallery],['section2',o.navLookbook],['section8',o.navCoCreation],['section10',o.navStyleGenerator],['section7',o.navTimeline],['section3',o.navVideos],['section4',o.navPolaroids],['section5',o.navNewsletter]];
+  var nav=navItems.map(function(item){return '<button type="button" class="rs-nav-link" data-scroll="'+item[0]+'" data-nav-target="'+item[0]+'">'+esc(item[1])+'</button>';}).join('');
+  var glitch=String(o.heroTitle||'DISRUPCIÓN').split('').map(function(char){return '<span class="rs-glitch-char">'+esc(char)+'</span>';}).join('');
+  var videos=['campaignVideo1','campaignVideo2','campaignVideo3','campaignVideo4'].map(function(slot,index){
+    var poster=mediaFor(media,'heroPoster',RUBIK_MEDIA.heroPoster,'image');
+    return '<article class="rs-video-tile" data-video-tile tabindex="0" role="button" aria-label="Vídeo de campaña '+(index+1)+'">'+mediaVideo(mediaFor(media,slot,RUBIK_MEDIA[slot],'video'),'rs-video',poster.url)+'<span>0'+(index+1)+'</span></article>';
+  }).join('');
+  var heroSubtitle=[o.heroSubtitle,o.season].filter(Boolean).join(' · ');
+  var brandMark=logo.url?'<img class="rs-logo" src="'+attr(logo.url)+'" alt="'+attr(o.brand)+' logo">':'<strong>'+esc(o.brand)+'</strong>';
+  var m=objectValue(o.motionProfile,{intensity:70,duration:650,reducedMotion:false});
+  var looksHtml=looks.map(function(look,index){
+    var media0=mediaFor(media,'look'+(index+1)+'Media',RUBIK_MEDIA['product'+((index*3+1))]||RUBIK_MEDIA.product1,'image');
+    var wide=look.layout==='wide'?' rs-look-wide':'';
+    var caption=[look.title,look.model].filter(Boolean).join(' — ');
+    var firstProduct=byId[(look.productIds||[])[0]]||null;
+    var sizeChips=firstProduct?(firstProduct.sizes||[]).map(function(s){return '<span class="rs-look-size">'+esc(s)+'</span>';}).join(''):'';
+    return '<article class="rs-look'+wide+'" data-look-index="'+index+'" data-look-id="'+attr(look.id)+'">'
+      +'<button type="button" class="rs-look-media-button" data-open-look="'+index+'" aria-label="Ver '+attr(caption)+'" title="'+attr(look.description||'')+'">'
+      +mediaImage(media0,'rs-look-img',look.title)
+      +(caption?'<span class="rs-look-caption">'+esc(caption)+'</span>':'')
+      +(look.credit?'<span class="rs-look-credit-badge">'+esc(look.credit)+'</span>':'')
+      +(firstProduct?'<span class="rs-look-shop-badge"><span class="rs-look-sizes">'+sizeChips+'</span><button type="button" class="rs-look-reserve" data-look-reserve="'+attr(look.id)+'">'+esc(look.ctaLabel&&/reserv/i.test(look.ctaLabel)?look.ctaLabel:'Reservar')+'</button></span>':'')
+      +'</button></article>';
+  }).join('');
+  var coCreationHtml=coCreationItems.map(function(item,index){
+    var product=byId[item.productId]||null;
+    var img=mediaFor(media,'coCreation'+(index+1)+'Media',product?RUBIK_MEDIA['product'+(list.indexOf(product)+1)]:RUBIK_MEDIA.product1,'image');
+    return '<article class="rs-cocreation-item" data-cocreation-id="'+attr(item.id)+'">'
+      +(item.status?'<span class="rs-cocreation-status">'+esc(item.status)+'</span>':'')
+      +mediaImage(img,'rs-cocreation-img',item.title)
+      +'<h3>'+esc(item.title)+'</h3>'
+      +(item.description?'<p class="rs-cocreation-desc">'+esc(item.description)+'</p>':'')
+      +(item.optionLabel?'<p class="rs-cocreation-option">'+esc(item.optionLabel)+'</p>':'')
+      +'<div class="rs-cocreation-bar"><div class="rs-cocreation-fill" data-cocreation-fill="'+attr(item.id)+'"></div></div>'
+      +'<p class="rs-cocreation-count" data-cocreation-count="'+attr(item.id)+'"></p>'
+      +'<button type="button" class="rs-cocreation-vote" data-cocreation-vote="'+attr(item.id)+'">'+esc(item.ctaLabel||'Votar')+'</button>'
+      +'</article>';
+  }).join('');
+  var styleTagsHtml=styleOptions.map(function(opt){return '<button type="button" class="rs-style-tag" data-style-tag="'+attr(opt.id)+'">'+esc(opt.label)+'</button>';}).join('');
+  var timelineHtml=timelineItems.map(function(item,index){
+    var thumb=mediaFor(media,'timeline'+(index+1)+'Media',RUBIK_MEDIA['product'+(index+1)]||RUBIK_MEDIA.product1,'image');
+    return '<div class="rs-timeline-item" data-timeline-item>'
+      +mediaImage(thumb,'rs-timeline-thumb',item.title)
+      +'<div class="rs-timeline-dot"></div>'
+      +'<div class="rs-timeline-copy"><h4>'+esc(item.year)+'</h4><p class="rs-timeline-title">'+esc(item.title)+'</p><p class="rs-timeline-desc">'+esc(item.description)+'</p>'
+      +(item.ctaLabel&&item.ctaUrl?'<a class="rs-timeline-cta" href="'+attr(safeUrl(item.ctaUrl,'#'))+'">'+esc(item.ctaLabel)+'</a>':'')
+      +'</div></div>';
+  }).join('');
+  var designersHtml=designers.map(function(designer,index){
+    var portrait=mediaFor(media,'designer'+(index+1)+'Portrait',RUBIK_MEDIA['product'+(index+1)]||RUBIK_MEDIA.product1,'image');
+    var creations=(designer.productIds||[]).slice(0,2).map(function(pid,ci){
+      var p=byId[pid];if(!p)return '';
+      var thumb=mediaFor(media,'designer'+(index+1)+'Creation'+(ci+1),RUBIK_MEDIA['product'+((list.indexOf(p)%10)+1)]||RUBIK_MEDIA.product1,'image');
+      return '<button type="button" class="rs-designer-creation" data-open-product="'+list.indexOf(p)+'">'+mediaImage(thumb,'','',null)+'</button>';
+    }).join('');
+    return '<article class="rs-designer-card">'
+      +mediaImage(portrait,'rs-designer-portrait',designer.name)
+      +'<h4>'+esc(designer.name)+'</h4><p class="rs-designer-role">'+esc(designer.role)+'</p>'
+      +(designer.bio?'<p class="rs-designer-bio">'+esc(designer.bio)+'</p>':'')
+      +'<div class="rs-designer-creations">'+creations+'</div>'
+      +'</article>';
+  }).join('');
+  var interestsHtml=newsletterInterests.map(function(item,index){return '<button type="button" class="rs-pill'+(index===0?' selected':'')+'" data-interest="'+attr(item.id)+'" aria-pressed="'+(index===0?'true':'false')+'">'+esc(item.label)+'</button>';}).join('');
+  var polaroidHtml=polaroids.map(function(item,index){
+    var img=mediaFor(media,'polaroid'+(index+1)+'Media',RUBIK_MEDIA['product'+((index%10)+1)]||RUBIK_MEDIA.product1,'image');
+    return '<div class="rs-polaroid" data-polaroid style="transform:rotate('+clamp(item.rotation,-15,15,0)+'deg)" tabindex="0" role="button" aria-label="'+attr(item.title||'Polaroid')+', pulsa para ver la historia">'
+      +'<div class="rs-polaroid-front">'+mediaImage(img,'','',null).replace('alt=""','alt="'+attr(item.frontLabel||'BTS')+'"')+'</div>'
+      +'<div class="rs-polaroid-back"><span>'+esc(item.story||'')+'</span>'+(item.backLabel?'<small>'+esc(item.backLabel)+'</small>':'')+'</div>'
+      +'</div>';
+  }).join('');
+  var dataJson=JSON.stringify({
+    presetId:o.presetId,
+    projectId:o.projectId,
+    products:list,
+    looks:looks,
+    coCreationItems:coCreationItems,
+    styleOptions:styleOptions,
+    timelineItems:timelineItems,
+    designers:designers,
+    currency:o.currency,
+    priceLocale:o.priceLocale,
+    runwayLabel:o.runwayLabel,
+    runwayStopLabel:o.runwayStopLabel,
+    demoDisclaimer:o.demoDisclaimer,
+    reservationCtaLabel:o.reservationCtaLabel,
+    reservationExternalUrl:o.reservationExternalUrl,
+    newsletterConfirmCode:o.newsletterConfirmCode,
+    newsletterConfirmMessage:o.newsletterConfirmMessage,
+    responsiveHero:responsive,
+    mediaSlots:MEDIA_SLOTS.map(function(slot){return slot.id;})
+  }).replace(/</g,'\\u003c');
+  var responsiveAttrs=' data-hero-desktop-min="'+attr(responsive.desktop.minHeight)+'" data-hero-tablet-min="'+attr(responsive.tablet.minHeight)+'" data-hero-mobile-min="'+attr(responsive.mobile.minHeight)+'" data-hero-desktop-align="'+attr(responsive.desktop.contentAlign)+'" data-hero-tablet-align="'+attr(responsive.tablet.contentAlign)+'" data-hero-mobile-align="'+attr(responsive.mobile.contentAlign)+'" data-mobile-navigation="'+attr(responsive.mobile.navigationMode)+'"';
+  return '<!doctype html><html lang="'+attr(lang)+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(o.brand)+' | '+esc(o.collectionName)+'</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"><style>'+css(o,responsive)+'</style></head><body class="'+(m.reducedMotion?'motion-reduced':'')+'"><div class="rs-page" data-template="fashion-commerce-pro" data-preset="'+attr(o.presetId)+'" data-state="boot"'+responsiveAttrs+'>'
+    +'<div class="rs-progress" id="rsProgress"></div><div class="rs-grain" aria-hidden="true"></div><div class="rs-scanner" aria-hidden="true"></div><div class="rs-film-burn" aria-hidden="true"></div><div class="rs-cursor" id="rsCursor" aria-hidden="true"><span>Arrastra</span></div>'
+    +(bool(o.teaserEnabled,true)?'<section class="rs-teaser" id="rsTeaser" aria-label="Teaser"><div class="rs-teaser-content"><div class="rs-teaser-stamp"><span class="rs-teaser-line"></span><h1 class="rs-teaser-logo">'+esc(o.brand)+'</h1><span class="rs-teaser-line"></span></div><p class="rs-teaser-volume">'+esc(o.volumeLabel)+'</p><div class="rs-teaser-spark" aria-hidden="true"></div></div></section>':'')
+    +(bool(o.preloaderEnabled,true)?'<section class="rs-preloader" id="rsPreloader"><strong id="rsPreloaderText"></strong></section>':'')
+    +'<button type="button" class="rs-replay-intro" id="rsReplayIntro" hidden>Reproducir introducción</button>'
+    +'<nav class="rs-nav" id="rsNav">'+brandMark+'<button type="button" class="rs-menu" id="rsMenu" aria-controls="rsNavPanel" aria-expanded="false" aria-label="Menú"><span></span><span></span></button><div class="rs-nav-links">'+nav+'</div><button type="button" class="rs-commerce-trigger" id="rsWishlistOpen" aria-label="Abrir deseos">♡ <b id="rsWishlistCount">0</b></button><button type="button" class="rs-commerce-trigger" id="rsCartOpen" aria-label="Abrir carrito">BAG <b id="rsCartCount">0</b></button><a class="rs-nav-cta" href="'+attr(safeUrl(o.heroCtaUrl,'#section1'))+'">'+esc(o.heroCtaLabel)+'</a></nav>'
+    +'<div class="rs-nav-panel" id="rsNavPanel" aria-hidden="true">'+nav+'<button type="button" class="rs-panel-close" id="rsPanelClose">Cerrar menú</button></div>'
+    +'<main><section class="rs-hero" id="section0">'+mediaVideo(heroVideo,'rs-hero-video',heroPoster.url)+'<div class="rs-hero-overlay"></div><div class="rs-hero-copy"><span>'+esc(o.heroEyebrow)+'</span><h1 class="rs-glitch" aria-label="'+attr(o.heroTitle)+'">'+glitch+'</h1><p>'+esc(heroSubtitle)+'</p></div></section>'
+    +'<section class="rs-gallery" id="section1"><button type="button" class="rs-runway-toggle" id="rsRunway">'+esc(o.runwayLabel)+'</button><span class="rs-runway-indicator" id="rsRunwayIndicator" aria-hidden="true"></span><div class="rs-track-shell" id="rsTrackShell" tabindex="0" aria-label="Galería de producto"><div class="rs-track" id="rsTrack">'+gallery+'</div></div><div class="rs-runway-progress" id="rsRunwayProgress" aria-hidden="true"></div></section>'
+    +'<section class="rs-lookbook" id="section2"><button type="button" class="rs-view-toggle" id="rsViewToggle" aria-pressed="false">VISTA TIENDA</button><div class="rs-looks" id="rsLooks">'+looksHtml+'</div></section>'
+    +'<section class="rs-cocreation" id="section8"><div class="rs-cocreation-container"><h2>'+esc(o.coCreationTitle)+'</h2><p class="rs-cocreation-subtitle">'+esc(o.coCreationSubtitle)+'</p><div class="rs-cocreation-grid">'+coCreationHtml+'</div><div class="rs-cocreation-winner" id="rsCocreationWinner" hidden></div><button type="button" class="rs-cocreation-reset" id="rsCocreationReset">Reiniciar votos (demo)</button></div></section>'
+    +'<section class="rs-style-generator" id="section10"><div class="rs-style-generator-container"><h2>'+esc(o.styleGeneratorTitle)+'</h2><p class="rs-style-generator-subtitle">'+esc(o.styleGeneratorSubtitle)+'</p><div class="rs-style-tags">'+styleTagsHtml+'</div><button type="button" class="rs-style-generate" id="rsStyleGenerate" disabled>'+esc(o.styleGeneratorCtaLabel)+'</button><div class="rs-style-result" id="rsStyleResult" hidden><h3>TU SELECCIÓN PERSONALIZADA</h3><div class="rs-style-result-grid" id="rsStyleResultGrid"></div><button type="button" class="rs-style-reset" id="rsStyleReset">Reiniciar</button></div></div></section>'
+    +'<section class="rs-timeline-section" id="section7"><h2 class="rs-timeline-title">'+esc(o.timelineTitle)+'</h2><div class="rs-timeline" id="rsTimeline">'+timelineHtml+'</div><h2 class="rs-designers-title">'+esc(o.designersTitle)+'</h2><div class="rs-designers-grid">'+designersHtml+'</div></section>'
+    +'<section class="rs-videos" id="section3"><span>03 / CAMPAIGN FILMS</span><button type="button" class="rs-mute-btn" id="rsGlobalMute" aria-pressed="true" aria-label="Activar sonido">🔊</button><div class="rs-video-grid">'+videos+'</div></section>'
+    +'<section class="rs-polaroid-section" id="section4">'+(o.polaroidWallTitle?'<h2 class="rs-polaroid-title">'+esc(o.polaroidWallTitle)+'</h2>':'')+'<div class="rs-polaroid-wall" id="rsPolaroidWall">'+polaroidHtml+'</div></section>'
+    +'<section class="rs-newsletter" id="section5"><div class="rs-newsletter-box"><h2>'+esc(o.newsletterTitle)+'</h2><div class="rs-pill-row">'+interestsHtml+'</div><label for="rsNewsletterEmail" class="rs-visually-hidden">Email</label><input type="email" class="rs-neon-input" id="rsNewsletterEmail" placeholder="'+attr(o.newsletterPlaceholder)+'" autocomplete="email"><p class="rs-newsletter-error" id="rsNewsletterError" role="alert" hidden></p><button type="button" class="rs-newsletter-cta" id="rsNewsletterSubscribe">'+esc(o.newsletterCtaLabel)+'</button><div class="rs-newsletter-reveal" id="rsNewsletterReveal" aria-live="polite"></div></div></section>'
+    +'</main>'
+    +'<footer class="rs-footer" id="section6"><p class="rs-footer-line">'+esc(o.footerLine1)+'</p><p class="rs-footer-line">'+esc(o.footerLine2)+'</p><div class="rs-live-viewers"><span id="rsLiveViewers">👁 0</span> personas viendo esta colección ahora</div><div class="rs-certificate" id="rsCertificate"><p>🔒 '+esc(o.footerCertificateLabel)+'</p><p>'+esc(o.footerCertificateRef)+'</p><div class="rs-certificate-bar"><div class="rs-certificate-fill" id="rsCertificateFill"></div></div><p id="rsCertificateStatus">0%</p></div><p class="rs-footer-credit">'+esc(o.footerCredit)+'</p><p class="rs-footer-copyright">'+esc(o.footerCopyright)+'</p></footer>'
+    +'<div class="rs-floating-utilities"><button type="button" class="rs-audio" id="rsAudio" aria-pressed="false" aria-label="Activar sonido de vídeos"><span class="rs-eq-bars" aria-hidden="true"><span></span><span></span><span></span></span></button><button type="button" class="rs-back-to-top" id="rsBackToTop" aria-label="Volver arriba">↑</button></div>'
+    +'<button class="rs-floating" type="button" id="rsFloating">'+esc(o.floatingCtaLabel)+'</button>'
+    +'<section class="rs-modal" id="rsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rsModalTitle"><div class="rs-modal-card"><button type="button" id="rsClose" aria-label="Cerrar">×</button><div id="rsModalMedia"></div><div><span id="rsModalEyebrow"></span><h2 id="rsModalTitle"></h2><p id="rsModalDescription"></p><div id="rsModalPriceRow"><strong id="rsModalPrice"></strong><s id="rsModalCompareAt"></s></div><small id="rsModalMeta" class="rs-modal-meta"></small><div class="rs-product-options"><label><span>Talla</span><select id="rsSize"></select></label><label><span>Color</span><select id="rsColor"></select></label></div><div class="rs-modal-actions"><button type="button" id="rsWishlist">'+esc(o.wishlistLabel)+'</button><button type="button" id="rsCart">'+esc(o.cartLabel)+'</button><button type="button" id="rsReserve" class="rs-reserve-link">'+esc(o.reservationCtaLabel)+'</button></div><small>'+esc(o.demoDisclaimer)+'</small></div></div></section>'
+    +'<aside class="rs-commerce-panel" id="rsCommercePanel" aria-hidden="true"><header><h2 id="rsCommerceTitle">Carrito demo</h2><button type="button" id="rsCommerceClose" aria-label="Cerrar">×</button></header><div id="rsCommerceItems" class="rs-commerce-items"></div><footer><span>Subtotal demo</span><strong id="rsCommerceSubtotal">0</strong><small>'+esc(o.demoDisclaimer)+'</small></footer></aside>'
+    +'<section class="rs-reservation" id="rsReservation" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rsReservationTitle"><div class="rs-reservation-card"><button type="button" id="rsReservationClose" aria-label="Cerrar">×</button><h2 id="rsReservationTitle">Reserva demo</h2><p id="rsReservationItem" class="rs-reservation-item"></p><form id="rsReservationForm" novalidate><label><span>Nombre</span><input type="text" id="rsReservationName" required></label><label><span>Email (opcional)</span><input type="email" id="rsReservationEmail"></label><p class="rs-reservation-error" id="rsReservationError" hidden>Escribe tu nombre para continuar.</p><button type="submit">Confirmar reserva demo</button></form><div class="rs-reservation-confirm" id="rsReservationConfirm" hidden><p>Reserva demo confirmada. No se ha procesado ningún pago ni reserva real.</p><a id="rsReservationExternal" class="rs-reservation-external" target="_blank" rel="noopener" hidden>Continuar</a></div></div></section>'
+    +'<script type="application/json" id="rsData">'+dataJson+'</script><script>'+runtimeScript(o)+'</script></div></body></html>';
+}
+
+function css(o,responsive){
+  responsive=responsive||responsiveConfig(o.responsiveHero);
+  var m=objectValue(o.motionProfile,{intensity:70,duration:650,reducedMotion:false});
+  var headline=objectValue(o.headlineTypography,{family:'Bebas Neue',weight:'400',size:160});
+  var body=objectValue(o.bodyTypography,{family:'Inter',weight:'400',size:16});
+  var intensity=clamp(m.intensity,0,100,70)/100;
+  return ':root{--orange:'+attr(o.accentColor)+';--black:'+attr(o.backgroundColor)+';--white:'+attr(o.textColor)+';--gray:#151515;--line:rgba(255,255,255,.18);--dur:'+clamp(m.duration,0,5000,650)+'ms;--motion:'+intensity+';--headline-family:"'+attr(headline.family)+'",Impact,sans-serif;--headline-weight:'+attr(headline.weight)+';--headline-size:'+clamp(headline.size,36,220,160)+'px;--body-family:"'+attr(body.family)+'",Arial,sans-serif;--body-weight:'+attr(body.weight)+';--body-size:'+clamp(body.size,12,28,16)+'px;--hero-min:'+pxPercent(responsive.desktop.minHeight,60,120,100)+'vh;--hero-align:'+alignValue(responsive.desktop.contentAlign)+';--hero-title-scale:'+clamp(responsive.desktop.titleScale,.45,1.4,1)+';--hero-video-position:'+attr(responsive.desktop.videoPosition)+';--hero-overlay:'+clamp(responsive.desktop.overlayStrength,0,100,78)/100+'}*{box-sizing:border-box}html{scroll-behavior:smooth}html.rs-scroll-lock{overflow:hidden}main>section{scroll-margin-top:80px}body{margin:0;background:var(--black);color:var(--white);font-family:var(--body-family);font-weight:var(--body-weight);font-size:var(--body-size);overflow-x:hidden}body.motion-reduced,body.motion-reduced *{scroll-behavior:auto!important;animation:none!important;transition:none!important}button,a{font:inherit}.rs-page{background:var(--black);min-height:100vh}.rs-progress{position:fixed;z-index:200;left:0;top:0;height:3px;width:0;background:var(--orange)}.rs-grain,.rs-scanner,.rs-film-burn{position:fixed;z-index:75;inset:0;pointer-events:none;mix-blend-mode:screen}.rs-grain{opacity:calc(.18 * var(--motion));background-image:radial-gradient(circle at 20% 30%,rgba(255,255,255,.28) 0 1px,transparent 1px),radial-gradient(circle at 80% 70%,rgba(255,92,0,.2) 0 1px,transparent 1px);background-size:6px 6px,9px 9px;animation:rsGrain .7s steps(2,end) infinite}.rs-scanner{opacity:calc(.34 * var(--motion));background:linear-gradient(180deg,transparent 0 48%,rgba(255,92,0,.2) 50%,transparent 52%);transform:translateY(-100%);animation:rsScan calc(4.8s / max(var(--motion),.25)) linear infinite}.rs-film-burn{opacity:0;background:radial-gradient(circle at 8% 20%,rgba(255,92,0,.42),transparent 24%),linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);animation:rsBurn 9s linear infinite}.rs-cursor{position:fixed;z-index:240;left:0;top:0;width:84px;height:84px;border:1px solid var(--orange);border-radius:50%;display:grid;place-items:center;color:var(--orange);font-family:"Space Mono";font-size:9px;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;opacity:0;transform:translate3d(-50%,-50%,0) scale(.8);transition:opacity .2s,transform .16s}.rs-cursor.drag{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}@keyframes rsGrain{0%{transform:translate(0)}50%{transform:translate(-2px,2px)}100%{transform:translate(2px,-1px)}}@keyframes rsScan{to{transform:translateY(100%)}}@keyframes rsBurn{0%,78%,100%{opacity:0}82%{opacity:calc(.38 * var(--motion))}86%{opacity:calc(.12 * var(--motion))}}.rs-teaser,.rs-preloader{position:fixed;inset:0;background:#000;display:grid;place-items:center;text-align:center}.rs-teaser{z-index:181;transition:opacity .8s ease,transform .8s ease}.rs-preloader{z-index:180;transition:opacity .6s ease}.rs-page[data-state="ready"] .rs-teaser,.rs-teaser.hide{opacity:0;visibility:hidden;pointer-events:none;transform:scale(1.1)}.rs-page[data-state="ready"] .rs-preloader,.rs-preloader.hide{opacity:0;visibility:hidden;pointer-events:none}.rs-teaser-logo,.rs-preloader strong{font-family:var(--headline-family);font-weight:var(--headline-weight);font-size:clamp(48px,9vw,112px);letter-spacing:.18em;margin:0}.rs-teaser-stamp{display:flex;align-items:center;gap:20px;justify-content:center}.rs-teaser-line{width:60px;height:2px;background:var(--orange);transform-origin:center;animation:rsTeaserLineExpand .8s ease-out forwards}@keyframes rsTeaserLineExpand{0%{transform:scaleX(0);opacity:0}100%{transform:scaleX(1);opacity:1}}.rs-teaser-logo{animation:rsTeaserStamp .6s cubic-bezier(.22,1,.36,1) .3s both}@keyframes rsTeaserStamp{0%{transform:scale(2);opacity:0;filter:blur(10px)}60%{transform:scale(.95)}100%{transform:scale(1);opacity:1;filter:blur(0)}}.rs-teaser-volume{margin-top:1rem;animation:rsTeaserFadeIn .6s ease-out .8s both}@keyframes rsTeaserFadeIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}.rs-teaser-spark{width:80px;height:80px;margin:2rem auto 0;border:1px solid var(--orange);border-radius:50%;opacity:0;animation:rsTeaserSpark .4s ease-out 1s both,rsTeaserPulse .6s ease-in-out 1.5s}@keyframes rsTeaserSpark{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:.8}}@keyframes rsTeaserPulse{0%{box-shadow:0 0 0 var(--orange)}100%{box-shadow:0 0 40px var(--orange);opacity:0;transform:scale(1.5)}}.rs-teaser-volume,.rs-hero-copy>span,.rs-videos>span,.rs-modal-card span{font-family:"Space Mono",monospace;text-transform:uppercase;letter-spacing:.22em;font-size:11px;color:var(--orange)}.rs-preloader strong{border-right:3px solid var(--orange);padding-right:12px;animation:rsBlink .6s step-end infinite}@keyframes rsBlink{50%{border-color:transparent}}.rs-replay-intro{position:fixed;z-index:190;left:16px;top:16px;border:1px solid var(--orange);background:#000;color:#fff;padding:10px 16px;font-family:"Space Mono";font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.rs-replay-intro[hidden]{display:none}.rs-nav{position:fixed;z-index:90;top:0;left:0;right:0;height:72px;display:flex;align-items:center;gap:18px;padding:0 28px;background:rgba(0,0,0,.62);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);transform:translateY(-100%);transition:transform .6s ease}.rs-page[data-state="ready"] .rs-nav,.rs-page[data-state="skipped"] .rs-nav{transform:translateY(0)}.rs-nav strong{font-family:var(--headline-family);font-weight:var(--headline-weight);font-size:26px;letter-spacing:.1em;margin-right:auto}.rs-logo{width:42px;height:42px;object-fit:contain;margin-right:auto}.rs-nav-links{display:flex;gap:8px;flex-wrap:wrap}.rs-menu{display:none;width:44px;height:40px;border:1px solid var(--line);background:#000;color:#fff;align-items:center;justify-content:center;gap:5px;flex-direction:column;cursor:pointer}.rs-menu span{display:block;width:18px;height:2px;background:#fff}.rs-nav-panel{position:fixed;z-index:88;inset:72px 0 auto auto;width:min(360px,100%);padding:24px;background:rgba(0,0,0,.94);border-left:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;gap:12px;transform:translateX(105%);transition:transform .28s;visibility:hidden}.rs-page.nav-open .rs-nav-panel{transform:none;visibility:visible}.rs-panel-close{border:1px solid var(--orange);background:var(--orange);color:#050505;padding:12px 14px;text-transform:uppercase;font-family:"Space Mono";font-size:11px;cursor:pointer}.rs-nav-link,.rs-nav a,.rs-audio,.rs-commerce-trigger{background:none;border:0;color:rgba(255,255,255,.75);text-decoration:none;text-transform:uppercase;font-family:"Space Mono";font-size:11px;letter-spacing:.12em;cursor:pointer}.rs-nav-link.active{color:#fff;border-bottom:1px solid var(--orange)}.rs-nav a{border:1px solid var(--orange);padding:10px 14px;color:#fff}.rs-audio,.rs-commerce-trigger{border:1px solid var(--line);height:36px;color:#fff}.rs-commerce-trigger{display:inline-flex;align-items:center;gap:6px;padding:0 10px}.rs-commerce-trigger b{display:inline-grid;place-items:center;min-width:18px;height:18px;background:var(--orange);color:#050505;border-radius:999px;font-size:10px}.rs-audio{min-width:62px}.rs-audio[aria-pressed="true"]{border-color:var(--orange);color:var(--orange)}.rs-hero{min-height:var(--hero-min);position:relative;display:grid;align-items:var(--hero-align);justify-items:center;overflow:hidden;text-align:center;padding:92px 0 46px}.rs-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--hero-video-position);filter:grayscale(1) contrast(1.32)}.rs-hero-overlay{position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,92,0,.06),rgba(0,0,0,var(--hero-overlay)) 72%)}.rs-hero-copy{position:relative;z-index:2;padding:0 18px}.rs-hero-copy>span{display:block;margin-bottom:10px}.rs-glitch{display:flex;justify-content:center;flex-wrap:wrap;font-family:var(--headline-family);font-weight:var(--headline-weight);font-size:clamp(68px,calc(15vw * var(--hero-title-scale)),calc(var(--headline-size) * var(--hero-title-scale)));line-height:.78;letter-spacing:.01em;margin:18px 0;text-shadow:4px 4px 0 rgba(0,0,0,.82)}.rs-glitch-char{display:inline-block;transition:transform .1s ease,color .1s ease}.rs-glitch-char:hover{color:var(--orange);transform:translate(-3px,2px) skew(-5deg)}.rs-hero-copy p{font-family:"Space Mono";font-size:clamp(12px,1.5vw,18px);letter-spacing:.28em}.rs-gallery{position:relative;height:100vh;overflow:hidden;background:#030303}.rs-runway-toggle{position:absolute;top:100px;right:20px;z-index:35;background:#000;border:1px solid var(--orange);color:#fff;padding:8px 16px;border-radius:20px;font-family:"Space Mono";font-size:11px;letter-spacing:.06em;cursor:pointer}.rs-runway-toggle.active,.rs-page.runway-on .rs-runway-toggle{background:var(--orange);color:#050505}.rs-runway-indicator{position:absolute;top:100px;left:20px;z-index:35;font-family:"Space Mono";font-size:12px;color:var(--orange);opacity:0;transition:opacity .2s}.rs-page.runway-on .rs-runway-indicator{opacity:1}.rs-track-shell{height:100%;overflow:auto;scrollbar-width:none;cursor:grab;scroll-snap-type:x mandatory;outline:none}.rs-track-shell::-webkit-scrollbar{display:none}.rs-track-shell.dragging{cursor:grabbing;user-select:none}.rs-track-shell:focus-visible{box-shadow:inset 0 0 0 2px var(--orange)}.rs-track{display:flex;height:100%;width:max-content}.rs-card{width:min(360px,86vw);height:100%;background:#111;scroll-snap-align:center;flex-shrink:0}.rs-card.wishlisted{box-shadow:inset 0 0 0 3px var(--orange)}.rs-runway-progress{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--orange);z-index:36;transition:width .25s}.rs-page.runway-on .rs-runway-progress{width:calc(var(--runway-progress,0) * 1%)}.rs-media-button{position:relative;display:block;width:100%;height:100%;border:0;padding:0;overflow:hidden;background:#222;cursor:pointer}.rs-card-img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.18);transition:filter var(--dur),transform var(--dur)}.rs-card:hover .rs-card-img,.rs-card.runway-active .rs-card-img,.rs-card-img.color-pop{filter:grayscale(0) contrast(1);transform:scale(calc(1 + (.03 * var(--motion))))}.rs-hotspot{position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);transition:all .2s;pointer-events:none}.rs-media-button:hover .rs-hotspot{background:var(--orange);border-color:var(--orange);box-shadow:0 0 16px var(--orange);transform:scale(1.3)}.rs-hotspot-tip{position:absolute;background:#000;border:1px solid var(--orange);color:#fff;padding:8px 12px;font-family:"Space Mono";font-size:11px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;border-radius:4px;z-index:5}.rs-media-button:hover .rs-hotspot-tip{opacity:1}.rs-lookbook{padding:4rem 1rem;background:#000}@media(min-width:640px){.rs-lookbook{padding:6rem 1.5rem}}.rs-view-toggle{position:sticky;top:70px;z-index:20;display:inline-block;padding:8px 20px;border-radius:40px;background:#1a1a1a;color:#fff;font-family:"Space Mono";font-size:11px;letter-spacing:.05em;cursor:pointer;border:1px solid var(--line);margin-bottom:1.5rem}.rs-view-toggle[aria-pressed="true"]{background:var(--orange);color:#050505;border-color:var(--orange)}.rs-looks{display:grid;grid-template-columns:1fr;gap:8px;max-width:1400px;margin:0 auto;scroll-margin-top:96px}.rs-look{scroll-margin-top:96px}@media(min-width:640px){.rs-looks{grid-template-columns:repeat(2,1fr)}}@media(min-width:1024px){.rs-looks{grid-template-columns:repeat(3,1fr)}}.rs-look-wide{grid-column:span 1}@media(min-width:640px){.rs-look-wide{grid-column:span 2}}.rs-look-media-button{position:relative;display:block;width:100%;height:100%;aspect-ratio:3/4;border:0;padding:0;overflow:hidden;cursor:pointer;filter:grayscale(1) contrast(1.2);transition:filter .35s}.rs-look-media-button:hover{filter:grayscale(.6) contrast(1.05)}.rs-look-img{width:100%;height:100%;object-fit:cover}.rs-look-caption{position:absolute;top:10%;left:5%;font-family:var(--headline-family);font-size:clamp(16px,3vw,32px);z-index:2;background:rgba(0,0,0,.5);padding:8px 16px;border-radius:4px;color:#fff;text-align:left}.rs-look-credit-badge{position:absolute;bottom:6px;right:6px;font-size:9px;background:#000;padding:4px 8px;border-radius:4px;color:rgba(255,255,255,.75);font-family:"Space Mono"}.rs-look-shop-badge{display:none;position:absolute;bottom:8px;left:8px;right:8px;gap:6px;align-items:center;z-index:5;flex-wrap:wrap}.rs-page.shop-view .rs-look-shop-badge{display:flex}.rs-look-sizes{display:flex;gap:4px;flex-wrap:wrap}.rs-look-size{background:#000;color:#fff;padding:3px 8px;font-size:9px;font-family:"Space Mono"}.rs-look-reserve{background:var(--orange);color:#050505;border:0;padding:5px 12px;font-family:var(--headline-family);font-size:13px;cursor:pointer;margin-left:auto}.rs-videos{position:relative;min-height:100vh;padding:100px 5vw;background:#000}.rs-video-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:24px}.rs-video-tile{position:relative;aspect-ratio:16/9;overflow:hidden;background:#111}.rs-video{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.2)}.rs-video-tile span{position:absolute;left:12px;bottom:10px;font-family:var(--headline-family);font-size:42px}.rs-video-tile.dimmed{filter:brightness(.3) blur(2px);transform:scale(.96)}.rs-mute-btn{position:absolute;top:12px;right:12px;z-index:10;background:#000;border:1px solid var(--line);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}.rs-cocreation{min-height:100vh;background:#000;display:flex;align-items:center;justify-content:center;padding:4rem 1rem}.rs-cocreation-container{max-width:1200px;width:100%;text-align:center}.rs-cocreation-container h2{font-family:var(--headline-family);font-size:clamp(32px,6vw,64px);letter-spacing:-1px;margin-bottom:1rem}.rs-cocreation-subtitle{font-family:"Space Mono";font-size:13px;color:rgba(255,255,255,.6);margin-bottom:2rem;max-width:60ch;margin-left:auto;margin-right:auto}.rs-cocreation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:2rem 0}.rs-cocreation-item{position:relative;background:#151515;border:1px solid var(--line);border-radius:16px;padding:1rem;transition:all .3s}.rs-cocreation-item.voted{opacity:.6}.rs-cocreation-status{position:absolute;top:8px;left:8px;background:var(--orange);color:#050505;padding:3px 8px;font-size:9px;font-family:"Space Mono";border-radius:4px;z-index:2}.rs-cocreation-img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;filter:grayscale(1) contrast(1.2)}.rs-cocreation-item h3{font-family:var(--headline-family);font-size:20px;margin-top:8px}.rs-cocreation-desc,.rs-cocreation-option{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px}.rs-cocreation-bar{height:6px;background:#2d2d2d;border-radius:3px;margin-top:12px;overflow:hidden}.rs-cocreation-fill{height:100%;width:0;background:var(--orange);transition:width .6s ease}.rs-cocreation-count{font-family:"Space Mono";font-size:11px;margin-top:4px;color:rgba(255,255,255,.6)}.rs-cocreation-vote{margin-top:10px;background:var(--orange);color:#050505;border:0;padding:9px 18px;font-family:var(--headline-family);font-size:15px;cursor:pointer;border-radius:20px}.rs-cocreation-vote[disabled]{opacity:.5;cursor:not-allowed}.rs-cocreation-winner{margin-top:2rem;font-family:var(--headline-family);font-size:28px;color:var(--orange);letter-spacing:2px}.rs-cocreation-reset{margin-top:2rem;background:none;border:1px solid var(--line);color:rgba(255,255,255,.6);padding:8px 16px;font-family:"Space Mono";font-size:11px;cursor:pointer;border-radius:20px}.rs-style-generator{min-height:100vh;background:#000;display:flex;align-items:center;justify-content:center;padding:4rem 1rem}.rs-style-generator-container{max-width:800px;width:100%;text-align:center}.rs-style-generator-container h2{font-family:var(--headline-family);font-size:clamp(32px,6vw,64px);letter-spacing:-1px;margin-bottom:1rem}.rs-style-generator-subtitle{font-family:"Space Mono";font-size:13px;color:rgba(255,255,255,.6);margin-bottom:2rem}.rs-style-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.rs-style-tag{background:none;border:1px solid var(--line);color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:"Space Mono";font-size:11px}.rs-style-tag.selected{border-color:var(--orange);color:var(--orange);background:rgba(255,92,0,.1)}.rs-style-generate{background:var(--orange);color:#050505;border:0;padding:12px 32px;border-radius:40px;font-family:var(--headline-family);font-size:18px;cursor:pointer;margin-top:1.5rem;opacity:.5}.rs-style-generate:not([disabled]){opacity:1}.rs-style-result{margin-top:3rem}.rs-style-result h3{font-family:var(--headline-family);font-size:24px;margin-bottom:1rem}.rs-style-result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.rs-style-result-item{background:#151515;border:1px solid var(--line);border-radius:8px;padding:10px}.rs-style-result-item img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:6px;filter:grayscale(1) contrast(1.2)}.rs-style-result-item p{font-family:"Space Mono";font-size:11px;margin-top:6px}.rs-style-reset{margin-top:1.5rem;background:none;border:1px solid var(--line);color:rgba(255,255,255,.6);padding:8px 16px;font-family:"Space Mono";font-size:11px;cursor:pointer;border-radius:20px}.rs-timeline-section{min-height:100vh;background:#151515;padding:4rem 1rem}.rs-timeline-title,.rs-designers-title{font-family:var(--headline-family);font-size:clamp(28px,5vw,42px);text-align:center;margin-bottom:2rem;letter-spacing:1px}.rs-timeline{max-width:700px;width:100%;margin:0 auto 4rem;position:relative;padding-left:30px}.rs-timeline::before{content:"";position:absolute;left:0;top:0;width:2px;height:100%;background:rgba(255,255,255,.08)}.rs-timeline::after{content:"";position:absolute;left:0;top:0;width:2px;height:var(--timeline-progress,0%);background:var(--orange);transition:height .6s}.rs-timeline-item{margin-bottom:2.5rem;position:relative;display:flex;gap:16px;align-items:flex-start;opacity:0;transform:translateX(-20px);transition:all .5s}.rs-timeline-item.visible{opacity:1;transform:translateX(0)}.rs-timeline-dot{position:absolute;left:-38px;top:4px;width:10px;height:10px;background:var(--orange);border-radius:50%}.rs-timeline-thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;filter:grayscale(1) contrast(1.2);flex-shrink:0}.rs-timeline-copy h4{font-family:var(--headline-family);font-size:22px;margin:0}.rs-timeline-title{margin:0}.rs-timeline-copy .rs-timeline-title{font-family:"Space Mono";font-size:12px;color:var(--orange);text-align:left;margin:2px 0}.rs-timeline-desc{font-family:"Space Mono";font-size:12px;color:rgba(255,255,255,.7)}.rs-timeline-cta{display:inline-block;margin-top:6px;color:var(--orange);font-family:"Space Mono";font-size:11px}.rs-designers-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:1000px;margin:0 auto}@media(min-width:640px){.rs-designers-grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:1024px){.rs-designers-grid{grid-template-columns:repeat(4,1fr)}}.rs-designer-card{background:#000;border:1px solid var(--line);border-radius:12px;padding:1.2rem;text-align:center}.rs-designer-card:hover{border-color:var(--orange)}.rs-designer-portrait{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #2d2d2d;margin-bottom:.8rem}.rs-designer-card h4{margin:0;font-family:var(--headline-family);font-size:20px}.rs-designer-role{color:var(--orange);font-size:11px;font-family:"Space Mono"}.rs-designer-bio{font-size:11px;color:rgba(255,255,255,.6);margin-top:6px}.rs-designer-creations{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:.8rem}.rs-designer-creation{padding:0;border:0;cursor:pointer}.rs-designer-creation img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:4px;filter:grayscale(1) contrast(1.2);transition:filter .3s}.rs-designer-creation:hover img{filter:grayscale(0) contrast(1)}.rs-polaroid-section{min-height:100vh;background:#151515;padding:4rem 1rem}.rs-polaroid-title{text-align:center;font-family:var(--headline-family);font-size:clamp(28px,5vw,42px);margin-bottom:2rem}.rs-polaroid-wall{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;max-width:1200px;margin:0 auto}.rs-polaroid{background:#fff;padding:10px 10px 35px;box-shadow:5px 10px 20px rgba(0,0,0,.4);cursor:pointer;transition:transform .5s,box-shadow .3s;transform-style:preserve-3d;position:relative;width:150px}@media(min-width:480px){.rs-polaroid{width:180px}}@media(min-width:768px){.rs-polaroid{width:200px}}.rs-polaroid:hover,.rs-polaroid:focus-visible{box-shadow:5px 10px 28px rgba(255,92,0,.35)}.rs-polaroid.flipped{transform:rotateY(180deg) !important}.rs-polaroid-front,.rs-polaroid-back{backface-visibility:hidden;width:100%}.rs-polaroid-front img{width:100%;aspect-ratio:1/1;object-fit:cover;filter:grayscale(1) contrast(1.2)}.rs-polaroid-back{position:absolute;inset:10px;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;font-family:"Space Mono";font-size:10px;text-align:center;transform:rotateY(180deg);border:1px solid var(--orange)}.rs-polaroid-back small{margin-top:6px;color:var(--orange)}.rs-newsletter{min-height:80vh;display:flex;align-items:center;justify-content:center;background:#000;padding:3rem 1rem}.rs-newsletter-box{max-width:450px;width:100%;text-align:center}.rs-newsletter-box h2{font-family:var(--headline-family);font-size:clamp(28px,5vw,42px);letter-spacing:-1px;margin-bottom:1.5rem}.rs-pill-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}.rs-pill{background:none;border:1px solid var(--line);color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:"Space Mono";font-size:11px}.rs-pill.selected,.rs-pill[aria-pressed="true"]{border-color:var(--orange);color:var(--orange);background:rgba(255,92,0,.1)}.rs-visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.rs-neon-input{border:2px solid rgba(255,92,0,.4);background:transparent;color:#fff;padding:14px 18px;font-family:"Space Mono";font-size:13px;width:100%;border-radius:4px;outline:none;animation:rsNeonPulse 3s ease-in-out infinite}.rs-neon-input:focus-visible{box-shadow:0 0 0 2px var(--orange)}@keyframes rsNeonPulse{0%,100%{box-shadow:0 0 8px rgba(255,92,0,.4)}50%{box-shadow:0 0 20px rgba(255,92,0,.7)}}.rs-newsletter-error{color:#ff8a5c;font-size:12px;margin:10px 0 0}.rs-newsletter-cta{margin-top:14px;padding:12px 36px;background:#000;color:#fff;border:2px solid var(--orange);font-family:var(--headline-family);font-size:18px;cursor:pointer;border-radius:4px}.rs-newsletter-reveal{margin-top:20px}.rs-newsletter-reveal .rs-newsletter-code{font-family:var(--headline-family);font-size:32px;color:var(--orange);border:2px dashed var(--orange);padding:12px 24px;display:inline-block}.rs-newsletter-reveal p{color:var(--orange);font-size:11px;margin-top:8px;font-family:"Space Mono"}.rs-newsletter-reveal .rs-newsletter-reset{margin-top:10px;background:none;border:1px solid var(--line);color:rgba(255,255,255,.6);padding:6px 14px;font-family:"Space Mono";font-size:10px;cursor:pointer;border-radius:20px}.rs-footer{background:#000;padding:4rem 1rem 6rem;text-align:center}.rs-footer-line{font-family:var(--headline-family);font-size:clamp(19px,4vw,40px);margin:0 0 .4rem}.rs-live-viewers{font-family:"Space Mono";font-size:12px;color:rgba(255,255,255,.7);margin-top:1rem;transition:all .3s ease}.rs-live-viewers.updating{color:var(--orange);transform:scale(1.05)}.rs-certificate{max-width:360px;margin:2rem auto 0;border:1px solid var(--line);border-radius:8px;padding:16px;font-family:"Space Mono";font-size:11px;color:rgba(255,255,255,.75)}.rs-certificate-bar{height:6px;background:#2d2d2d;border-radius:3px;margin:10px 0;overflow:hidden}.rs-certificate-fill{height:100%;width:0;background:var(--orange);transition:width .3s ease}.rs-footer-credit{color:var(--orange);font-family:"Space Mono";font-size:11px;margin-top:1.5rem}.rs-footer-copyright{color:rgba(255,255,255,.4);font-family:"Space Mono";font-size:10px;margin-top:.6rem}.rs-floating-utilities{position:fixed;z-index:80;left:22px;bottom:22px;display:flex;flex-direction:column;gap:10px}.rs-audio,.rs-back-to-top{width:46px;height:46px;border-radius:50%;border:1px solid var(--orange);background:#000;color:#fff;display:grid;place-items:center;cursor:pointer;font-size:17px}.rs-eq-bars{display:flex;align-items:flex-end;gap:2px;height:16px}.rs-eq-bars span{width:3px;background:var(--orange);height:40%;animation:rsEqBar 1s ease-in-out infinite}.rs-eq-bars span:nth-child(2){animation-delay:.2s}.rs-eq-bars span:nth-child(3){animation-delay:.4s}.rs-audio[aria-pressed="false"] .rs-eq-bars span{animation-play-state:paused;height:20%}@keyframes rsEqBar{0%,100%{height:30%}50%{height:100%}}.rs-back-to-top{opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .3s,transform .3s}.rs-back-to-top.show{opacity:1;transform:none;pointer-events:auto}.rs-floating{position:fixed;z-index:80;right:22px;bottom:22px;border:1px solid var(--orange);background:#000;color:#fff;padding:15px 22px;border-radius:999px;font-family:var(--headline-family);font-size:19px;letter-spacing:.08em;opacity:0;transform:translateY(24px);transition:opacity .35s,transform .35s;cursor:pointer}.rs-floating.show{opacity:1;transform:none}.rs-modal,.rs-reservation{position:fixed;z-index:130;inset:0;background:rgba(0,0,0,.82);display:grid;place-items:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}.rs-modal.open,.rs-reservation.open{opacity:1;visibility:visible}.rs-modal-card{position:relative;width:min(900px,96vw);max-height:88vh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:24px;background:#111;border:1px solid var(--orange);padding:22px}.rs-modal-card #rsClose,.rs-reservation-card #rsReservationClose{position:absolute;right:12px;top:10px;background:none;border:1px solid var(--line);color:#fff;width:38px;height:38px;cursor:pointer}.rs-modal-card img{width:100%;height:100%;max-height:520px;object-fit:cover}.rs-modal-card h2{font-family:var(--headline-family);font-size:54px;line-height:.9;margin:12px 0}.rs-modal-card p{line-height:1.55;color:rgba(255,255,255,.72)}#rsModalPriceRow{display:flex;align-items:baseline;gap:10px;margin:16px 0}#rsModalPriceRow strong{color:var(--orange);font-family:"Space Mono";font-size:20px}#rsModalPriceRow s{color:rgba(255,255,255,.4);font-family:"Space Mono";font-size:14px}.rs-modal-meta{display:block;color:rgba(255,255,255,.55);font-family:"Space Mono";font-size:11px;letter-spacing:.06em}.rs-product-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}.rs-product-options label{display:grid;gap:6px}.rs-product-options select{width:100%;background:#050505;color:#fff;border:1px solid var(--line);padding:10px;font:inherit}.rs-modal-actions{display:flex;gap:10px;flex-wrap:wrap}.rs-modal-actions button{background:var(--orange);color:#050505;border:0;padding:13px 17px;font-family:var(--headline-family);font-size:16px;letter-spacing:.04em;cursor:pointer}.rs-modal-actions .rs-reserve-link{background:none;border:1px solid var(--orange);color:var(--orange)}.rs-modal-actions button[disabled]{opacity:.4;cursor:not-allowed}.rs-commerce-panel{position:fixed;z-index:140;right:0;top:0;width:min(420px,100%);height:100dvh;background:#0a0a0a;border-left:1px solid var(--orange);box-shadow:-28px 0 70px rgba(0,0,0,.45);transform:translateX(105%);transition:transform .28s;display:grid;grid-template-rows:auto 1fr auto;color:#fff}.rs-commerce-panel.open{transform:none}.rs-commerce-panel header,.rs-commerce-panel footer{padding:20px;border-bottom:1px solid var(--line)}.rs-commerce-panel footer{border-top:1px solid var(--line);border-bottom:0;display:grid;gap:8px}.rs-commerce-panel h2{font-family:var(--headline-family);font-size:42px;line-height:.9;margin:0}.rs-commerce-panel header{display:flex;justify-content:space-between;align-items:start}.rs-commerce-panel header button,.rs-commerce-remove,.rs-commerce-qty button{background:none;border:1px solid var(--line);color:#fff;cursor:pointer}.rs-commerce-panel header button{width:38px;height:38px}.rs-commerce-items{overflow:auto;padding:10px 20px}.rs-commerce-empty{color:rgba(255,255,255,.66);font-family:"Space Mono";font-size:12px}.rs-commerce-item{display:grid;grid-template-columns:1fr auto;gap:10px;padding:16px 0;border-bottom:1px solid var(--line)}.rs-commerce-item h3{font-family:var(--headline-family);font-size:26px;margin:0;line-height:.9}.rs-commerce-meta{color:rgba(255,255,255,.62);font-family:"Space Mono";font-size:11px}.rs-commerce-qty{display:flex;align-items:center;gap:8px}.rs-commerce-qty button{width:28px;height:28px}.rs-commerce-remove{padding:7px 9px;font-size:11px}.rs-commerce-panel footer strong{color:var(--orange);font-family:"Space Mono";font-size:20px}.rs-reservation-card{position:relative;width:min(480px,94vw);background:#111;border:1px solid var(--orange);padding:26px;display:grid;gap:14px}.rs-reservation-card h2{font-family:var(--headline-family);font-size:36px;margin:0}.rs-reservation-item{font-family:"Space Mono";font-size:12px;color:var(--orange)}.rs-reservation-card label{display:grid;gap:6px;font-family:"Space Mono";font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.7)}.rs-reservation-card input{background:#050505;border:1px solid var(--line);color:#fff;padding:10px;font:inherit}.rs-reservation-card button[type="submit"]{background:var(--orange);color:#050505;border:0;padding:13px;font-family:var(--headline-family);font-size:18px;cursor:pointer}.rs-reservation-error{color:#ff8a5c;font-size:12px}.rs-reservation-confirm p{line-height:1.5}.rs-reservation-external{display:inline-block;margin-top:8px;background:var(--orange);color:#050505;padding:10px 16px;text-decoration:none;font-family:var(--headline-family)}@media(max-width:1024px){:root{--hero-min:'+pxPercent(responsive.tablet.minHeight,60,120,92)+'vh;--hero-align:'+alignValue(responsive.tablet.contentAlign)+';--hero-title-scale:'+clamp(responsive.tablet.titleScale,.45,1.4,.82)+';--hero-video-position:'+attr(responsive.tablet.videoPosition)+';--hero-overlay:'+clamp(responsive.tablet.overlayStrength,0,100,82)/100+'}}@media(max-width:820px){:root{--hero-min:'+pxPercent(responsive.mobile.minHeight,60,120,86)+'vh;--hero-align:'+alignValue(responsive.mobile.contentAlign)+';--hero-title-scale:'+clamp(responsive.mobile.titleScale,.45,1.4,.58)+';--hero-video-position:'+attr(responsive.mobile.videoPosition)+';--hero-overlay:'+clamp(responsive.mobile.overlayStrength,0,100,88)/100+'}.rs-nav{height:auto;min-height:66px;padding:10px 18px}.rs-nav-links{display:none}.rs-menu{display:flex}.rs-nav strong{font-size:21px}.rs-nav a{padding:8px 10px}.rs-page[data-mobile-navigation="inline"] .rs-nav-links{display:flex;width:100%;order:5}.rs-page[data-mobile-navigation="inline"] .rs-menu{display:none}.rs-view-toggle{margin-top:16px}.rs-card{width:82vw}.rs-video-grid,.rs-modal-card{grid-template-columns:1fr}.rs-hero-copy p{letter-spacing:.12em}.rs-floating{left:16px;right:16px;border-radius:0}.rs-floating-utilities{left:auto;right:16px;bottom:82px;flex-direction:row}.rs-audio,.rs-back-to-top{width:40px;height:40px}.rs-footer{padding-bottom:150px}.rs-cursor{display:none}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rs-card-img,.rs-glitch-char,.rs-floating,.rs-teaser,.rs-preloader,.rs-nav-panel,.rs-nav,.rs-teaser-line,.rs-teaser-logo,.rs-teaser-volume,.rs-teaser-spark,.rs-preloader strong{transition:none;animation:none}.rs-hero-video,.rs-video,.rs-grain,.rs-scanner,.rs-film-burn{animation:none}.rs-cursor{display:none}}';
+}
+
+function runtimeScript(o){
+  var teaserMs=clamp(o.teaserDuration,0,5000,2000),runwayMs=clamp(o.runwayInterval,1200,9000,2500),preloader=String(o.preloaderText||'RUBIK SOTA');
+  return `(function(){
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;","'":"&#39;"}[c]})}
+function elx(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
+var data=JSON.parse($("#rsData").textContent),products=data.products,looks=data.looks||[],coCreationItems=data.coCreationItems||[],styleOptions=data.styleOptions||[],timelineItems=data.timelineItems||[],designers=data.designers||[],modal=$("#rsModal"),runway=$("#rsRunway"),floating=$("#rsFloating"),progress=$("#rsProgress"),page=$(".rs-page"),menu=$("#rsMenu"),panel=$("#rsNavPanel"),panelClose=$("#rsPanelClose"),audio=$("#rsAudio"),cursor=$("#rsCursor"),trackShell=$("#rsTrackShell"),commercePanel=$("#rsCommercePanel"),commerceTitle=$("#rsCommerceTitle"),commerceItems=$("#rsCommerceItems"),commerceSubtotal=$("#rsCommerceSubtotal"),cartOpen=$("#rsCartOpen"),wishlistOpen=$("#rsWishlistOpen"),cartCount=$("#rsCartCount"),wishlistCount=$("#rsWishlistCount"),commerceClose=$("#rsCommerceClose"),reservation=$("#rsReservation"),reservationClose=$("#rsReservationClose"),reservationForm=$("#rsReservationForm"),viewToggle=$("#rsViewToggle"),runwayIndicator=$("#rsRunwayIndicator"),globalMuteBtn=$("#rsGlobalMute"),styleGenerateBtn=$("#rsStyleGenerate"),styleResetBtn=$("#rsStyleReset"),styleResultBox=$("#rsStyleResult"),styleResultGrid=$("#rsStyleResultGrid"),cocreationResetBtn=$("#rsCocreationReset"),timelineEl=$("#rsTimeline"),newsletterEmailEl=$("#rsNewsletterEmail"),newsletterErrorEl=$("#rsNewsletterError"),newsletterSubscribeBtn=$("#rsNewsletterSubscribe"),newsletterRevealEl=$("#rsNewsletterReveal"),liveViewersEl=$("#rsLiveViewers"),certificateSection=$("#rsCertificate"),certificateFillEl=$("#rsCertificateFill"),certificateStatusEl=$("#rsCertificateStatus"),backToTopBtn=$("#rsBackToTop"),runwayTimer=null,runwayIndex=0,dragging=false,dragArmed=false,dragPointerId=0,dragStartX=0,dragStartScroll=0,wheelSnapTimer=0,raf=0,cursorRaf=0,timers=[],allVideosMuted=true,activeProduct=null,activeVariant=null,activePanel="cart",reservationContext=null,selectedStyleId=null,selectedInterest=null;
+function byIndex(list,id){return list.filter(function(x){return x.id===id})[0]||null}
+function productById(id){return byIndex(products,id)}
+function lookById(id){return byIndex(looks,id)}
+function later(fn,ms){var id=setTimeout(fn,ms);timers.push(id);return id}
+function money(v){try{return new Intl.NumberFormat(data.priceLocale||"es-ES",{style:"currency",currency:data.currency||"EUR"}).format(Number(v)||0)}catch(e){return (data.currency||"EUR")+" "+v}}
+function reduced(){return document.body.classList.contains("motion-reduced")||(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}
+function state(next){if(page)page.dataset.state=next}
+
+var projectId=String(data.projectId||"default-project"),presetId=String(data.presetId||"default");
+var storageScope="ep:fashion-commerce:"+projectId+":"+presetId+":",cartKey=storageScope+"cart",wishlistKey=storageScope+"wishlist",teaserKey=storageScope+"teaserShown",visitedKey=storageScope+"visited";
+(function migrateLegacyStorage(){
+  var legacyScope="ep:fashion-commerce:"+presetId+":",legacyCart=legacyScope+"cart",legacyWishlist=legacyScope+"wishlist";
+  if(localStorage.getItem(cartKey)==null&&localStorage.getItem(legacyCart)!=null)localStorage.setItem(cartKey,localStorage.getItem(legacyCart));
+  if(localStorage.getItem(wishlistKey)==null&&localStorage.getItem(legacyWishlist)!=null)localStorage.setItem(wishlistKey,localStorage.getItem(legacyWishlist));
+  localStorage.removeItem("ep:fashion-commerce:language");localStorage.removeItem("ep:fashion-commerce:language:user");
+})();
+function readList(key){try{var parsed=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(parsed)?parsed:[]}catch(e){return []}}
+var wishlist=readList(wishlistKey),cart=readList(cartKey);
+function saveCommerce(){localStorage.setItem(cartKey,JSON.stringify(cart));localStorage.setItem(wishlistKey,JSON.stringify(wishlist));updateCommerce();syncWishlistUI()}
+
+/* ---- overlay manager: only one primary overlay open at a time, with focus trap + restore ---- */
+var currentOverlay=null;
+function focusablesIn(container){return $$('button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])',container).filter(function(el){return !el.disabled&&el.offsetParent!==null})}
+function lockScroll(lock){document.documentElement.classList.toggle("rs-scroll-lock",lock)}
+function openOverlay(name,container,onOpen,onClose){
+  if(currentOverlay&&currentOverlay.name!==name)closeOverlay();
+  var trigger=document.activeElement;
+  currentOverlay={name:name,container:container,restore:trigger,onClose:onClose};
+  lockScroll(true);
+  if(onOpen)onOpen();
+  later(function(){var list=focusablesIn(container);(list[0]||container).focus()},50);
+}
+function closeOverlay(name){
+  if(!currentOverlay)return;
+  if(name&&currentOverlay.name!==name)return;
+  var o=currentOverlay;currentOverlay=null;
+  lockScroll(false);
+  if(o.onClose)o.onClose();
+  if(o.restore&&document.contains(o.restore)&&typeof o.restore.focus==="function")o.restore.focus();
+}
+document.addEventListener("keydown",function(e){
+  if(!currentOverlay)return;
+  if(e.key==="Escape"){e.preventDefault();closeOverlay();return}
+  if(e.key!=="Tab")return;
+  var list=focusablesIn(currentOverlay.container);
+  if(!list.length)return;
+  var first=list[0],last=list[list.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+});
+
+function scrollToId(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:reduced()?"auto":"smooth"})}
+function closeMenu(){if(!page)return;page.classList.remove("nav-open");if(panel)panel.setAttribute("aria-hidden","true");if(menu)menu.setAttribute("aria-expanded","false");closeOverlay("menu")}
+function openMenu(){if(!page)return;page.classList.add("nav-open");if(panel)panel.setAttribute("aria-hidden","false");if(menu)menu.setAttribute("aria-expanded","true");openOverlay("menu",panel,null,function(){page.classList.remove("nav-open");if(panel)panel.setAttribute("aria-hidden","true");if(menu)menu.setAttribute("aria-expanded","false")})}
+function toggleMenu(){currentOverlay&&currentOverlay.name==="menu"?closeMenu():openMenu()}
+$$('[data-scroll]').forEach(function(b){b.addEventListener('click',function(){closeOverlay();scrollToId(b.dataset.scroll)})});
+if(menu)menu.addEventListener('click',toggleMenu);if(panelClose)panelClose.addEventListener('click',closeMenu);
+function setActive(){var sections=["section0","section1","section2","section8","section10","section7","section3","section4","section5"],active=sections[0];sections.forEach(function(id){var el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<innerHeight*.45)active=id});$$('[data-nav-target]').forEach(function(item){item.classList.toggle('active',item.dataset.navTarget===active)})}
+
+/* ---- variant-aware product modal ---- */
+function fillSelect(select,items,placeholder){select.innerHTML="";if(!items.length){var opt=document.createElement("option");opt.textContent=placeholder;select.appendChild(opt);select.disabled=true;return}select.disabled=false;items.forEach(function(item){var opt=document.createElement("option");opt.value=typeof item==="object"?item.name:item;opt.textContent=typeof item==="object"?item.name:item;select.appendChild(opt)})}
+function openProduct(i){
+  var p=products[i];if(!p)return;
+  activeProduct=p;stopRunway();
+  var card=$$('[data-product-index]')[i],img=card&&card.querySelector('img');
+  var mediaHost=$("#rsModalMedia");mediaHost.innerHTML="";if(img){var clone=document.createElement("img");clone.src=img.src;clone.alt=p.name;mediaHost.appendChild(clone)}
+  $("#rsModalEyebrow").textContent=p.eyebrow||p.category||"";
+  $("#rsModalTitle").textContent=p.name;
+  $("#rsModalDescription").textContent=p.description||"";
+  $("#rsModalPrice").textContent=money(p.price);
+  var compareAt=$("#rsModalCompareAt");if(p.compareAtPrice>p.price){compareAt.textContent=money(p.compareAtPrice);compareAt.hidden=false}else{compareAt.textContent="";compareAt.hidden=true}
+  var stockNote=p.stockMode==="sold-out"?" · AGOTADO":(p.stockMode==="low-stock"?" · ÚLTIMAS UNIDADES":"");
+  var meta=$("#rsModalMeta");if(meta)meta.textContent="REF: "+(p.reference||("RS-00"+(i+1)))+" · "+(p.material||"")+stockNote;
+  fillSelect($("#rsSize"),p.sizes||[],"Talla única");
+  fillSelect($("#rsColor"),p.colors||[],"Color único");
+  if(img)img.classList.add("color-pop");
+  var cartBtn=$("#rsCart"),wishBtn=$("#rsWishlist"),reserveBtn=$("#rsReserve");
+  if(cartBtn){cartBtn.disabled=!p.cartEnabled||p.stockMode==="sold-out";cartBtn.hidden=!p.cartEnabled}
+  if(wishBtn){wishBtn.hidden=!p.wishlistEnabled;updateWishlistButton(wishBtn,p.id)}
+  if(reserveBtn)reserveBtn.hidden=!p.reservationEnabled;
+  modal.classList.add("open");modal.setAttribute("aria-hidden","false");
+  openOverlay("modal",$(".rs-modal-card",modal),null,function(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");$$('.rs-card-img').forEach(function(im){im.classList.remove("color-pop")})});
+}
+function closeProduct(){closeOverlay("modal")}
+function currentVariant(){var sizeSel=$("#rsSize"),colorSel=$("#rsColor");return {size:sizeSel&&!sizeSel.disabled?sizeSel.value:"",color:colorSel&&!colorSel.disabled?colorSel.value:""}}
+function variantKey(id,size,color){return id+"__"+(size||"")+"__"+(color||"")}
+function updateWishlistButton(btn,id){if(!btn)return;var on=wishlist.indexOf(id)!==-1;btn.setAttribute("aria-pressed",String(on));btn.textContent=on?"En deseos ✓":(data.products.length?"Deseos":"Deseos")}
+function syncWishlistUI(){$$('[data-wishlist-toggle]').forEach(function(btn){updateWishlistButton(btn,btn.getAttribute("data-wishlist-toggle"))});var modalWish=$("#rsWishlist");if(modalWish&&activeProduct)updateWishlistButton(modalWish,activeProduct.id);$$('[data-product-index]').forEach(function(card,i){var p=products[i];card.classList.toggle("wishlisted",Boolean(p&&wishlist.indexOf(p.id)!==-1))})}
+function toggleWishlist(id){var idx=wishlist.indexOf(id);if(idx===-1){wishlist.push(id);toast("Añadido a deseos")}else{wishlist.splice(idx,1);toast("Eliminado de deseos")}saveCommerce();renderCommerce(activePanel==="wishlist"?"wishlist":activePanel)}
+function addCart(product,variant){if(!product)return;var key=variantKey(product.id,variant.size,variant.color);var line=cart.filter(function(row){return row.key===key})[0];if(line)line.qty+=1;else cart.push({key:key,id:product.id,size:variant.size,color:variant.color,qty:1});saveCommerce();toast("Añadido al carrito demo")}
+function updateQty(key,delta){cart=cart.map(function(item){return item.key===key?Object.assign({},item,{qty:Math.max(0,(Number(item.qty)||0)+delta)}):item}).filter(function(item){return item.qty>0});saveCommerce();renderCommerce("cart")}
+function removeItem(mode,key){if(mode==="wishlist")wishlist=wishlist.filter(function(id){return id!==key});else cart=cart.filter(function(item){return item.key!==key});saveCommerce();renderCommerce(mode)}
+function cartUnits(){return cart.reduce(function(total,item){return total+(Number(item.qty)||0)},0)}
+function updateCommerce(){if(cartCount)cartCount.textContent=String(cartUnits());if(wishlistCount)wishlistCount.textContent=String(wishlist.length)}
+function renderCommerce(mode){
+  if(!commercePanel||!commerceItems)return;activePanel=mode||activePanel;
+  var rows=activePanel==="wishlist"
+    ?wishlist.map(function(id){return {product:productById(id),key:id}}).filter(function(r){return r.product})
+    :cart.map(function(item){return {product:productById(item.id),key:item.key,size:item.size,color:item.color,qty:item.qty}}).filter(function(r){return r.product});
+  if(commerceTitle)commerceTitle.textContent=activePanel==="wishlist"?"Lista de deseos":"Carrito demo";
+  commerceItems.innerHTML="";
+  if(!rows.length){commerceItems.appendChild(elx("p","rs-commerce-empty",activePanel==="wishlist"?"Tu wishlist está vacía.":"Tu carrito demo está vacío."))}
+  else{rows.forEach(function(row){
+    var product=row.product,qty=row.qty||1,total=(Number(product.price)||0)*qty;
+    var art=elx("article","rs-commerce-item");art.setAttribute("data-commerce-key",row.key);
+    var left=document.createElement("div");
+    left.appendChild(elx("h3",null,product.name));
+    var metaParts=[product.eyebrow||product.category||""];
+    if(row.size)metaParts.push("Talla "+row.size);
+    if(row.color)metaParts.push(row.color);
+    metaParts.push(money(product.price));
+    left.appendChild(elx("p","rs-commerce-meta",metaParts.filter(Boolean).join(" · ")));
+    if(activePanel==="cart"){
+      var qtyRow=elx("div","rs-commerce-qty");qtyRow.setAttribute("aria-label","Cantidad");
+      var dec=elx("button",null,"-");dec.type="button";dec.onclick=function(){updateQty(row.key,-1)};
+      var span=elx("span",null,String(qty));
+      var inc=elx("button",null,"+");inc.type="button";inc.onclick=function(){updateQty(row.key,1)};
+      qtyRow.appendChild(dec);qtyRow.appendChild(span);qtyRow.appendChild(inc);left.appendChild(qtyRow);
+    }
+    var right=document.createElement("div");
+    right.appendChild(elx("strong",null,money(activePanel==="cart"?total:product.price)));
+    var removeBtn=elx("button","rs-commerce-remove","Eliminar");removeBtn.type="button";
+    removeBtn.onclick=function(){removeItem(activePanel,row.key)};
+    right.appendChild(removeBtn);
+    art.appendChild(left);art.appendChild(right);commerceItems.appendChild(art);
+  })}
+  if(commerceSubtotal)commerceSubtotal.textContent=money(activePanel==="cart"?cart.reduce(function(total,item){var product=productById(item.id);return total+(product?(Number(product.price)||0)*(Number(item.qty)||0):0)},0):0);
+}
+function openCommerce(mode){renderCommerce(mode);if(commercePanel){commercePanel.classList.add('open');commercePanel.setAttribute('aria-hidden','false');openOverlay(mode,commercePanel,null,function(){commercePanel.classList.remove('open');commercePanel.setAttribute('aria-hidden','true')})}}
+function closeCommerce(){closeOverlay(activePanel)}
+$$('[data-open-product]').forEach(function(b){b.addEventListener('click',function(){openProduct(Number(b.dataset.openProduct))})});
+if($("#rsClose"))$("#rsClose").addEventListener('click',closeProduct);
+if(modal)modal.addEventListener('click',function(e){if(e.target===modal)closeProduct()});
+if($("#rsWishlist"))$("#rsWishlist").addEventListener('click',function(){if(activeProduct)toggleWishlist(activeProduct.id)});
+if($("#rsCart"))$("#rsCart").addEventListener('click',function(){addCart(activeProduct,currentVariant())});
+if($("#rsReserve"))$("#rsReserve").addEventListener('click',function(){if(activeProduct)openReservation({product:activeProduct,variant:currentVariant()})});
+if(cartOpen)cartOpen.addEventListener('click',function(){openCommerce('cart')});
+if(wishlistOpen)wishlistOpen.addEventListener('click',function(){openCommerce('wishlist')});
+if(commerceClose)commerceClose.addEventListener('click',closeCommerce);
+
+/* ---- reservation demo ---- */
+function openReservation(ctx){
+  reservationContext=ctx;
+  var label=ctx.look?ctx.look.title:(ctx.product?ctx.product.name:"");
+  var extra=[];if(ctx.variant&&ctx.variant.size)extra.push("Talla "+ctx.variant.size);if(ctx.variant&&ctx.variant.color)extra.push(ctx.variant.color);
+  $("#rsReservationItem").textContent=label+(extra.length?" · "+extra.join(" · "):"");
+  $("#rsReservationForm").hidden=false;$("#rsReservationConfirm").hidden=true;$("#rsReservationError").hidden=true;
+  $("#rsReservationName").value="";$("#rsReservationEmail").value="";
+  reservation.classList.add("open");reservation.setAttribute("aria-hidden","false");
+  openOverlay("reservation",$(".rs-reservation-card",reservation),null,function(){reservation.classList.remove("open");reservation.setAttribute("aria-hidden","true")});
+}
+function closeReservation(){closeOverlay("reservation")}
+if(reservationClose)reservationClose.addEventListener('click',closeReservation);
+if(reservation)reservation.addEventListener('click',function(e){if(e.target===reservation)closeReservation()});
+if(reservationForm)reservationForm.addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=$("#rsReservationName").value.trim();
+  if(!name){$("#rsReservationError").hidden=false;$("#rsReservationName").focus();return}
+  $("#rsReservationError").hidden=true;$("#rsReservationForm").hidden=true;
+  var confirmBox=$("#rsReservationConfirm");confirmBox.hidden=false;
+  var externalLink=$("#rsReservationExternal");
+  if(data.reservationExternalUrl){externalLink.href=data.reservationExternalUrl;externalLink.textContent=data.reservationCtaLabel||"Continuar";externalLink.hidden=false}else{externalLink.hidden=true}
+});
+
+/* ---- lookbook: source's actual grid + overlay caption + editorial/shop toggle ---- */
+function productIndexById(id){for(var i=0;i<products.length;i++){if(products[i].id===id)return i}return -1}
+function firstLookProduct(look){return look&&look.productIds&&look.productIds.length?productById(look.productIds[0]):null}
+$$('[data-open-look]').forEach(function(btn){btn.addEventListener('click',function(){
+  var look=looks[Number(btn.dataset.openLook)];if(!look)return;
+  var product=firstLookProduct(look);if(!product)return;
+  var idx=productIndexById(product.id);if(idx>=0)openProduct(idx);
+})});
+$$('[data-look-reserve]').forEach(function(btn){btn.addEventListener('click',function(e){
+  e.stopPropagation();
+  var look=lookById(btn.getAttribute('data-look-reserve'));if(!look)return;
+  var product=firstLookProduct(look);if(!product)return;
+  openReservation({product:product,variant:{size:(product.sizes||[])[0]||'',color:(product.colors||[])[0]&&product.colors[0].name||''}});
+})});
+if(viewToggle)viewToggle.addEventListener('click',function(){
+  var shop=viewToggle.getAttribute("aria-pressed")==="true";
+  viewToggle.setAttribute("aria-pressed",String(!shop));
+  viewToggle.textContent=shop?"VISTA TIENDA":"VISTA EDITORIAL";
+  page.classList.toggle("shop-view",!shop);
+});
+
+/* ---- co-creación: local demo voting (not a real global vote, no backend) ---- */
+var cocreationKey=storageScope+"cocreationVotes",cocreationVotedKey=storageScope+"cocreationVoted";
+function loadCocreationVotes(){try{var v=JSON.parse(localStorage.getItem(cocreationKey)||"{}");return v&&typeof v==="object"?v:{}}catch(e){return {}}}
+function renderCocreation(){
+  var votes=loadCocreationVotes();
+  var total=coCreationItems.reduce(function(sum,item){return sum+(Number(votes[item.id])||0)},0);
+  var voted=sessionStorage.getItem(cocreationVotedKey)==="true";
+  coCreationItems.forEach(function(item){
+    var count=Number(votes[item.id])||0,pct=total>0?Math.round(count/total*100):0;
+    var fill=$('[data-cocreation-fill="'+item.id+'"]');if(fill)fill.style.width=pct+"%";
+    var countEl=$('[data-cocreation-count="'+item.id+'"]');if(countEl)countEl.textContent=count+" votos ("+pct+"%)";
+    var voteBtn=$('[data-cocreation-vote="'+item.id+'"]');if(voteBtn)voteBtn.disabled=voted;
+    var card=$('[data-cocreation-id="'+item.id+'"]');if(card)card.classList.toggle("voted",voted);
+  });
+  var winnerEl=$("#rsCocreationWinner");
+  if(winnerEl){
+    var max=0,winner=null;
+    coCreationItems.forEach(function(item){var v=Number(votes[item.id])||0;if(v>max){max=v;winner=item}});
+    if(max>0&&winner){winnerEl.hidden=false;winnerEl.textContent="🏆 "+winner.title+" · Elegida por la calle (demo)"}else winnerEl.hidden=true;
+  }
+}
+function voteCocreation(id){
+  if(sessionStorage.getItem(cocreationVotedKey)==="true")return;
+  var votes=loadCocreationVotes();votes[id]=(Number(votes[id])||0)+1;
+  localStorage.setItem(cocreationKey,JSON.stringify(votes));
+  sessionStorage.setItem(cocreationVotedKey,"true");
+  renderCocreation();
+}
+$$('[data-cocreation-vote]').forEach(function(btn){btn.addEventListener('click',function(){voteCocreation(btn.getAttribute('data-cocreation-vote'))})});
+if(cocreationResetBtn)cocreationResetBtn.addEventListener('click',function(){localStorage.removeItem(cocreationKey);sessionStorage.removeItem(cocreationVotedKey);renderCocreation()});
+renderCocreation();
+
+/* ---- style generator: local rule-based demo, no AI model connected ---- */
+$$('.rs-style-tag').forEach(function(tag){tag.addEventListener('click',function(){
+  $$('.rs-style-tag').forEach(function(t){t.classList.remove('selected')});
+  tag.classList.add('selected');selectedStyleId=tag.getAttribute('data-style-tag');
+  if(styleGenerateBtn)styleGenerateBtn.disabled=false;
+})});
+if(styleGenerateBtn)styleGenerateBtn.addEventListener('click',function(){
+  var opt=styleOptions.filter(function(o){return o.id===selectedStyleId})[0];
+  if(!opt&&styleOptions.length)opt=styleOptions[Math.floor(Math.random()*styleOptions.length)];
+  if(!opt||!styleResultGrid)return;
+  styleResultGrid.innerHTML="";
+  (opt.productIds||[]).forEach(function(pid){
+    var product=productById(pid);if(!product)return;
+    var idx=productIndexById(pid),srcCard=$$('[data-product-index]')[idx],srcImg=srcCard&&srcCard.querySelector("img");
+    var card=elx("article","rs-style-result-item");
+    var img=document.createElement("img");if(srcImg)img.src=srcImg.src;img.alt=product.name;img.loading="lazy";card.appendChild(img);
+    card.appendChild(elx("p",null,product.name));
+    styleResultGrid.appendChild(card);
+  });
+  if(styleResultBox)styleResultBox.hidden=false;
+  toast("✨ Selección "+(opt.label||"")+" generada (demostración local)");
+});
+if(styleResetBtn)styleResetBtn.addEventListener('click',function(){
+  selectedStyleId=null;$$('.rs-style-tag').forEach(function(t){t.classList.remove('selected')});
+  if(styleGenerateBtn)styleGenerateBtn.disabled=true;
+  if(styleResultBox)styleResultBox.hidden=true;
+});
+
+/* ---- timeline: reveal on scroll + growing progress line ---- */
+(function(){
+  var items=$$('[data-timeline-item]');
+  if(!items.length||typeof IntersectionObserver==="undefined")return;
+  var visibleCount=0;
+  function updateLine(){if(page)page.style.setProperty('--timeline-progress',(visibleCount/items.length*100)+'%')}
+  items.forEach(function(item){
+    var obs=new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting&&!item.classList.contains('visible')){item.classList.add('visible');visibleCount++;updateLine();obs.disconnect()}
+    },{threshold:.4});
+    obs.observe(item);
+  });
+})();
+
+/* ---- designers: creation thumbnails open the linked product's real modal ---- */
+$$('.rs-designer-creation').forEach(function(btn){btn.addEventListener('click',function(){var idx=Number(btn.dataset.openProduct);if(!isNaN(idx))openProduct(idx)})});
+
+/* ---- video grid: hover spotlight, global mute, pause outside viewport / tab hidden, cleanup ---- */
+(function(){
+  var tiles=$$('[data-video-tile]');if(!tiles.length)return;
+  tiles.forEach(function(tile){
+    var video=tile.querySelector('video');if(!video)return;
+    tile.addEventListener('mouseenter',function(){tiles.forEach(function(t){t.classList.toggle('dimmed',t!==tile)})});
+    tile.addEventListener('mouseleave',function(){tiles.forEach(function(t){t.classList.remove('dimmed')})});
+    tile.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();if(video.paused)video.play().catch(function(){});else video.pause()}});
+  });
+  if(globalMuteBtn)globalMuteBtn.addEventListener('click',function(){setAllVideosMuted(!allVideosMuted)});
+  var viewportObserver=typeof IntersectionObserver!=="undefined"?new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var v=entry.target.querySelector('video');if(!v)return;
+      if(entry.isIntersecting){if(!document.hidden)v.play().catch(function(){})}else v.pause();
+    });
+  },{threshold:.15}):null;
+  if(viewportObserver)tiles.forEach(function(t){viewportObserver.observe(t)});
+  function onVisibility(){tiles.forEach(function(t){var v=t.querySelector('video');if(!v)return;if(document.hidden)v.pause();else{var rect=t.getBoundingClientRect();if(rect.top<innerHeight&&rect.bottom>0)v.play().catch(function(){})}})}
+  document.addEventListener('visibilitychange',onVisibility);
+  window.addEventListener('pagehide',function(){tiles.forEach(function(t){var v=t.querySelector('video');if(v)v.pause()});if(viewportObserver)viewportObserver.disconnect();document.removeEventListener('visibilitychange',onVisibility)});
+})();
+
+/* ---- polaroids: flip on click/keyboard, single open at a time, reduced-motion aware ---- */
+(function(){
+  var wall=$("#rsPolaroidWall");if(!wall)return;
+  function toggleFlip(p){var isFlipped=p.classList.contains('flipped');$$('.rs-polaroid.flipped').forEach(function(x){if(x!==p)x.classList.remove('flipped')});p.classList.toggle('flipped',!isFlipped)}
+  $$('.rs-polaroid',wall).forEach(function(p){
+    p.addEventListener('click',function(){toggleFlip(p)});
+    p.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFlip(p)}});
+  });
+  document.addEventListener('click',function(e){if(!e.target.closest('.rs-polaroid'))$$('.rs-polaroid.flipped').forEach(function(p){p.classList.remove('flipped')})});
+})();
+
+/* ---- gallery: drag / wheel / keyboard / runway (verified fixes kept) ---- */
+function clampScroll(value){if(!trackShell)return 0;return Math.max(0,Math.min(trackShell.scrollWidth-trackShell.clientWidth,value))}
+function scrollTrack(delta){if(!trackShell)return;trackShell.scrollTo({left:clampScroll(trackShell.scrollLeft+delta),behavior:reduced()?"auto":"smooth"})}
+function setRunway(i){var cards=$$('[data-product-index]');runwayIndex=(i+products.length)%products.length;cards.forEach(function(card,n){card.classList.toggle('runway-active',n===runwayIndex)});if(page)page.style.setProperty('--runway-progress',String(((runwayIndex+1)/products.length*100).toFixed(2)));if(runwayIndicator)runwayIndicator.textContent=(runwayIndex+1)+"/"+products.length;if(cards[runwayIndex])cards[runwayIndex].scrollIntoView({behavior:reduced()?"auto":"smooth",inline:"center",block:"nearest"})}
+function stopRunway(){clearInterval(runwayTimer);runwayTimer=null;if(page)page.classList.remove('runway-on');if(runway){runway.textContent=data.runwayLabel;runway.classList.remove('active')}if(runwayIndicator)runwayIndicator.textContent=""}
+function startRunway(){stopRunway();if(page)page.classList.add('runway-on');runway.textContent=data.runwayStopLabel;runway.classList.add('active');setRunway(runwayIndex);if(reduced())return;runwayTimer=setInterval(function(){setRunway(runwayIndex+1)},${runwayMs})}
+if(runway)runway.addEventListener('click',function(){runwayTimer||(page&&page.classList.contains('runway-on'))?stopRunway():startRunway()});
+if(trackShell){
+  trackShell.addEventListener('keydown',function(e){if(e.key==="ArrowRight"){e.preventDefault();scrollTrack(Math.max(260,innerWidth*.4))}if(e.key==="ArrowLeft"){e.preventDefault();scrollTrack(-Math.max(260,innerWidth*.4))}});
+  trackShell.addEventListener('pointerdown',function(e){dragArmed=true;dragging=false;dragStartX=e.clientX;dragStartScroll=trackShell.scrollLeft;dragPointerId=e.pointerId});
+  trackShell.addEventListener('pointermove',function(e){if(!dragArmed)return;var dx=e.clientX-dragStartX;if(!dragging&&Math.abs(dx)>6){dragging=true;trackShell.classList.add('dragging');trackShell.style.scrollSnapType='none';trackShell.setPointerCapture&&trackShell.setPointerCapture(dragPointerId)}if(dragging)trackShell.scrollLeft=clampScroll(dragStartScroll-dx)});
+  ["pointerup","pointercancel","pointerleave"].forEach(function(type){trackShell.addEventListener(type,function(){dragArmed=false;dragging=false;trackShell.classList.remove('dragging');trackShell.style.scrollSnapType=''})});
+  trackShell.addEventListener('wheel',function(e){var max=trackShell.scrollWidth-trackShell.clientWidth;if((trackShell.scrollLeft<=0&&e.deltaY<0)||(trackShell.scrollLeft>=max&&e.deltaY>0))return;e.preventDefault();trackShell.style.scrollSnapType='none';clearTimeout(wheelSnapTimer);wheelSnapTimer=later(function(){trackShell.style.scrollSnapType=''},150);trackShell.scrollLeft=clampScroll(trackShell.scrollLeft+e.deltaY*2);stopRunway()},{passive:false});
+}
+function draw(){raf=0;var max=document.documentElement.scrollHeight-innerHeight;progress.style.width=(max>0?Math.min(100,scrollY/max*100):0)+"%";floating.classList.toggle('show',scrollY>innerHeight*.7);if(backToTopBtn)backToTopBtn.classList.toggle('show',scrollY>innerHeight*.7);if(certificateSection&&certificateFillEl&&certificateStatusEl){var rect=certificateSection.getBoundingClientRect(),prog=Math.max(0,Math.min(100,Math.round((1-rect.bottom/innerHeight)*100)));certificateFillEl.style.width=prog+"%";certificateStatusEl.textContent=prog>=100?"✅ 100% VERIFICADO":prog+"%"}setActive()}
+function requestDraw(){if(!raf)raf=requestAnimationFrame(draw)}
+function moveCursor(e){if(!cursor||reduced())return;var over=trackShell&&trackShell.contains(e.target);cursor.classList.toggle('drag',over);if(!cursorRaf)cursorRaf=requestAnimationFrame(function(){cursorRaf=0;cursor.style.left=e.clientX+"px";cursor.style.top=e.clientY+"px"})}
+function wireGlitch(){$$('.rs-glitch-char').forEach(function(span){span.onmouseenter=function(){if(reduced())return;span.style.transform="translate("+((Math.random()-0.5)*8)+"px,"+((Math.random()-0.5)*6)+"px) skew("+((Math.random()-0.5)*10)+"deg)";span.style.color="var(--orange)"};span.onmouseleave=function(){span.style.transform="";span.style.color=""}})}
+function setupMagnet(){if(reduced())return;$$('.rs-nav-cta,.rs-floating,.rs-look-cta,.rs-commerce-trigger').forEach(function(el){el.addEventListener('pointermove',function(e){var r=el.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)*.16,y=(e.clientY-r.top-r.height/2)*.16;el.style.transform="translate("+x+"px,"+y+"px)"});el.addEventListener('pointerleave',function(){el.style.transform=""})})}
+window.addEventListener('scroll',requestDraw,{passive:true});window.addEventListener('resize',requestDraw);window.addEventListener('pointermove',moveCursor,{passive:true});
+if(floating)floating.addEventListener('click',function(){scrollToId('section1')});
+function setAllVideosMuted(muted){allVideosMuted=muted;$$('.rs-hero-video,.rs-video').forEach(function(v){v.muted=muted});if(audio){audio.setAttribute('aria-pressed',String(!muted));audio.setAttribute('aria-label',muted?'Activar sonido de vídeos':'Silenciar vídeos')}if(globalMuteBtn){globalMuteBtn.setAttribute('aria-pressed',String(!muted));globalMuteBtn.textContent=muted?'🔊':'🔇'}page.classList.toggle('audio-on',!muted)}
+if(audio)audio.addEventListener('click',function(){setAllVideosMuted(!allVideosMuted)});
+function toast(text){var el=document.createElement('div');el.textContent=text;el.style.cssText="position:fixed;z-index:220;left:50%;bottom:26px;transform:translateX(-50%);background:#ff5c00;color:#050505;padding:12px 18px;font-family:Space Mono,monospace;font-size:12px";document.body.appendChild(el);later(function(){el.remove()},1800)}
+function runIntro(){var teaser=$("#rsTeaser"),pre=$("#rsPreloader"),preText=$("#rsPreloaderText"),word="${esc(preloader)}",i=0;if(reduced()||(!teaser&&!pre)){state('skipped');later(function(){state('ready')},0);return}var teaserSeen=sessionStorage.getItem(teaserKey);if(!teaserSeen){sessionStorage.setItem(teaserKey,'true');if(teaser){state('teaser');later(function(){teaser.classList.add('hide')},${teaserMs})}}else if(teaser)teaser.style.display='none';var visited=sessionStorage.getItem(visitedKey);if(!visited){sessionStorage.setItem(visitedKey,'true');if(!teaserSeen&&teaser)later(showPreloader,2200);else showPreloader()}else{if(pre)pre.style.display='none';state('ready')}function showPreloader(){if(!pre){state('ready');return}state('preloader');type()}function type(){if(!preText){state('ready');return}if(i<=word.length){preText.textContent=word.slice(0,i++);later(type,110)}else{pre.classList.add('hide');state('ready')}}}
+function resetIntro(){sessionStorage.removeItem(teaserKey);sessionStorage.removeItem(visitedKey);var teaser=$("#rsTeaser"),pre=$("#rsPreloader"),preText=$("#rsPreloaderText");if(teaser){teaser.classList.remove('hide');teaser.style.display=''}if(pre){pre.classList.remove('hide');pre.style.display=''}if(preText)preText.textContent='';state('boot');runIntro()}
+var replayIntro=$("#rsReplayIntro");if(replayIntro&&window.self!==window.top){replayIntro.hidden=false;replayIntro.addEventListener('click',resetIntro)}
+/* ---- newsletter: interest pills, email validation, demo confirmation, QA reset ---- */
+(function(){
+  var pills=$$('.rs-pill');
+  pills.forEach(function(p){p.addEventListener('click',function(){pills.forEach(function(o){o.classList.remove('selected');o.setAttribute('aria-pressed','false')});p.classList.add('selected');p.setAttribute('aria-pressed','true');selectedInterest=p.dataset.interest})});
+  if(!newsletterSubscribeBtn)return;
+  function showError(msg){if(!newsletterErrorEl)return;newsletterErrorEl.textContent=msg;newsletterErrorEl.hidden=false;if(newsletterEmailEl)newsletterEmailEl.setAttribute('aria-invalid','true')}
+  function clearError(){if(!newsletterErrorEl)return;newsletterErrorEl.hidden=true;newsletterErrorEl.textContent='';if(newsletterEmailEl)newsletterEmailEl.removeAttribute('aria-invalid')}
+  if(newsletterEmailEl)newsletterEmailEl.addEventListener('input',clearError);
+  newsletterSubscribeBtn.addEventListener('click',function(){
+    var value=(newsletterEmailEl&&newsletterEmailEl.value||'').trim();
+    if(!value){showError('Escribe tu email para continuar.');if(newsletterEmailEl)newsletterEmailEl.focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){showError('Ese email no parece válido. Revisa el formato.');if(newsletterEmailEl)newsletterEmailEl.focus();return}
+    clearError();
+    if(!newsletterRevealEl)return;
+    newsletterRevealEl.textContent='';
+    var code=elx('div','rs-newsletter-code',String(data.newsletterConfirmCode||''));
+    var msg=elx('p',null,String(data.newsletterConfirmMessage||''));
+    var reset=elx('button','rs-newsletter-reset','Probar de nuevo (demo)');
+    reset.type='button';
+    reset.addEventListener('click',function(){newsletterRevealEl.textContent='';if(newsletterEmailEl){newsletterEmailEl.value='';newsletterEmailEl.focus()}clearError()});
+    newsletterRevealEl.appendChild(code);newsletterRevealEl.appendChild(msg);newsletterRevealEl.appendChild(reset);
+  });
+})();
+/* ---- footer: randomized live-viewer counter (demo), cleaned up via the shared timer registry ---- */
+(function(){
+  if(!liveViewersEl)return;
+  function updateLiveViewers(){
+    var base=Math.floor(Math.random()*30)+15,fluctuation=Math.floor(Math.random()*10)-5,viewers=Math.max(8,base+fluctuation);
+    liveViewersEl.textContent='👁 '+viewers;
+    liveViewersEl.classList.add('updating');
+    later(function(){liveViewersEl.classList.remove('updating')},300);
+    scheduleNext();
+  }
+  function scheduleNext(){later(updateLiveViewers,4000+Math.floor(Math.random()*3000))}
+  updateLiveViewers();
+})();
+/* ---- back to top: keyboard/touch accessible, reduced-motion aware ---- */
+if(backToTopBtn)backToTopBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:reduced()?'auto':'smooth'})});
+window.addEventListener('pagehide',cleanup);window.addEventListener('beforeunload',cleanup);function cleanup(){stopRunway();if(raf)cancelAnimationFrame(raf);if(cursorRaf)cancelAnimationFrame(cursorRaf);timers.forEach(clearTimeout);window.removeEventListener('scroll',requestDraw);window.removeEventListener('resize',requestDraw);window.removeEventListener('pointermove',moveCursor)}
+document.documentElement.lang="es";setupMagnet();updateCommerce();syncWishlistUI();wireGlitch();requestDraw();runIntro()})();`;
+}
+
+var DEFAULTS={
+  presetId:'rubik-sota-disruption',
+  projectId:'default-project',
+  brand:'RUBIK SOTA',
+  collectionName:'Volumen 01',
+  volumeLabel:'VOLUMEN 01',
+  season:'INVIERNO 2025',
+  currency:'EUR',
+  priceLocale:'es-ES',
+  heroEyebrow:'COLECCIÓN / VOLUMEN 01',
+  heroTitle:'DISRUPCIÓN',
+  heroSubtitle:'VOLUMEN 01',
+  heroCtaLabel:'Ver la colección',
+  heroCtaUrl:'#section1',
+  runwayLabel:'▶ MODO PASARELA',
+  runwayStopLabel:'DETENER PASARELA',
+  runwayInterval:2500,
+  productCtaLabel:'Ver prenda',
+  lookbookTitle:'Lookbook editorial',
+  lookbookIntro:'Una secuencia de looks, materiales y actitud urbana que conserva el pulso brutalista de la fuente.',
+  floatingCtaLabel:'CONSIGUE LA COLECCIÓN',
+  wishlistLabel:'Deseos',
+  cartLabel:'Añadir al carrito',
+  reservationCtaLabel:'Reservar',
+  reservationExternalUrl:'',
+  demoDisclaimer:'Demostración local. No procesa pagos, stock ni reservas reales.',
+  teaserEnabled:true,
+  teaserDuration:2000,
+  preloaderEnabled:true,
+  preloaderText:'RUBIK SOTA',
+  navHero:'HERO',
+  navGallery:'GALERÍA',
+  navLookbook:'LOOKBOOK',
+  navVideos:'VIDEOS',
+  navCoCreation:'CO-CREACIÓN',
+  navStyleGenerator:'ESTILO IA',
+  navTimeline:'BEHIND',
+  navPolaroids:'POLAROID',
+  accentColor:'#FF5C00',
+  backgroundColor:'#000000',
+  textColor:'#FFFFFF',
+  headlineTypography:{family:'Bebas Neue',weight:'400',size:160},
+  bodyTypography:{family:'Inter',weight:'400',size:16},
+  responsiveHero:{
+    desktop:{minHeight:100,contentAlign:'center',titleScale:1,videoPosition:'center center',overlayStrength:78},
+    tablet:{minHeight:92,contentAlign:'center',titleScale:.82,videoPosition:'center center',overlayStrength:82},
+    mobile:{minHeight:86,contentAlign:'end',titleScale:.58,videoPosition:'center center',overlayStrength:88,navigationMode:'overlay'}
+  },
+  motionProfile:{intensity:70,duration:650,reducedMotion:false},
+  products:[
+    {id:'jacket-industrial',name:'CHAQUETA INDUSTRIAL',category:'Outerwear',eyebrow:'DROP 01',description:'Chaqueta de volumen técnico con presencia de campaña.',price:189,compareAtPrice:219,reference:'RS-001',material:'Sarga técnica reforzada',badge:'NUEVO',sizes:['S','M','L','XL'],colors:[{name:'Negro',hex:'#111111'},{name:'Verde militar',hex:'#4b5320'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-industrial','look-street']},
+    {id:'pantalon-cargo',name:'PANTALÓN CARGO',category:'Pants',eyebrow:'DROP 01',description:'Pantalón cargo urbano con estructura amplia y bolsillos protagonistas.',price:129,compareAtPrice:0,reference:'RS-002',material:'Algodón ripstop',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Negro',hex:'#111111'},{name:'Caqui',hex:'#8a7752'}],stockMode:'low-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-industrial']},
+    {id:'camiseta-oversized',name:'CAMISETA OVERSIZED',category:'Top',eyebrow:'BASE',description:'Camiseta amplia con corte editorial y caída pesada.',price:79,compareAtPrice:0,reference:'RS-003',material:'Algodón pesado 260gsm',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Blanco',hex:'#f5f5f5'},{name:'Negro',hex:'#111111'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-street']},
+    {id:'sudadera',name:'SUDADERA',category:'Top',eyebrow:'VOLUMEN',description:'Sudadera de silueta limpia para capas de invierno.',price:149,compareAtPrice:0,reference:'RS-004',material:'Felpa perchada',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Gris jaspeado',hex:'#8a8a8a'},{name:'Negro',hex:'#111111'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-street','look-invierno']},
+    {id:'abrigo-largo',name:'ABRIGO LARGO',category:'Coat',eyebrow:'HERO PIECE',description:'Abrigo largo con peso visual y contraste brutalista.',price:249,compareAtPrice:289,reference:'RS-005',material:'Lana mezcla',badge:'DROP LIMITADO',sizes:['S','M','L'],colors:[{name:'Negro',hex:'#111111'}],stockMode:'low-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-invierno']},
+    {id:'jeans-rotos',name:'JEANS ROTOS',category:'Denim',eyebrow:'STREET',description:'Denim roto con actitud de backstage y corte recto.',price:109,compareAtPrice:0,reference:'RS-006',material:'Denim rígido',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Azul crudo',hex:'#2b3a55'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-street']},
+    {id:'chaleco-tecnico',name:'CHALECO TÉCNICO',category:'Vest',eyebrow:'UTILITY',description:'Chaleco técnico con bolsillos y lenguaje funcional.',price:159,compareAtPrice:0,reference:'RS-007',material:'Nylon técnico',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Negro',hex:'#111111'},{name:'Naranja señal',hex:'#ff5c00'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-industrial']},
+    {id:'camisa-blanca',name:'CAMISA BLANCA',category:'Shirt',eyebrow:'ESSENTIAL',description:'Camisa blanca de contraste para equilibrar la colección.',price:99,compareAtPrice:0,reference:'RS-008',material:'Popelín de algodón',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Blanco',hex:'#f5f5f5'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-invierno']},
+    {id:'parka-urbana',name:'PARKA URBANA',category:'Outerwear',eyebrow:'WINTER',description:'Parka urbana para cerrar la secuencia de abrigo y volumen.',price:219,compareAtPrice:259,reference:'RS-009',material:'Poliéster acolchado',badge:'ÚLTIMAS UNIDADES',sizes:['S','M','L'],colors:[{name:'Negro',hex:'#111111'}],stockMode:'sold-out',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:false,lookIds:['look-invierno']},
+    {id:'bermuda-cargo',name:'BERMUDA CARGO',category:'Utility',eyebrow:'DROP 02',description:'Bermuda cargo de contraste táctico para estilismos de transición.',price:89,compareAtPrice:0,reference:'RS-010',material:'Algodón cargo',badge:'',sizes:['S','M','L','XL'],colors:[{name:'Caqui',hex:'#8a7752'}],stockMode:'in-stock',ctaLabel:'Ver prenda',reservationEnabled:true,wishlistEnabled:true,cartEnabled:true,lookIds:['look-street']}
+  ],
+  looks:[
+    {id:'look-industrial',title:'INDUSTRIAL DROP',description:'Volumen técnico y utilidad de fábrica: la chaqueta industrial se combina con cargo y chaleco para una silueta de trabajo reinterpretada en clave urbana.',model:'Look 01 — Alicante',credit:'Foto: Estudio RUBIK SOTA',layout:'wide',productIds:['jacket-industrial','pantalon-cargo','chaleco-tecnico'],ctaLabel:'Ver productos del look',reservationEnabled:true},
+    {id:'look-street',title:'CALLE Y CONTRASTE',description:'Base oversized, denim roto y bermuda cargo. Un look pensado para el asfalto, con el pulso brutalista de la colección VOLUMEN 01.',model:'Look 02 — Puerto',credit:'Foto: Estudio RUBIK SOTA',layout:'normal',productIds:['camiseta-oversized','jeans-rotos','sudadera','bermuda-cargo'],ctaLabel:'Ver productos del look',reservationEnabled:true},
+    {id:'look-invierno',title:'VOLUMEN DE INVIERNO',description:'Capas de abrigo con peso visual: parka, abrigo largo y camisa blanca de contraste para cerrar la narrativa de la colección.',model:'Look 03 — Muelle',credit:'Foto: Estudio RUBIK SOTA',layout:'wide',productIds:['abrigo-largo','parka-urbana','camisa-blanca','sudadera'],ctaLabel:'Ver productos del look',reservationEnabled:true}
+  ],
+  coCreationTitle:'LA CALLE DECIDE',
+  coCreationSubtitle:'Vota qué prenda debería producirse en edición limitada. Demostración local: no representa una votación real ni vinculante.',
+  coCreationItems:[
+    {id:'co-jacket',title:'CHAQUETA INDUSTRIAL',description:'',optionLabel:'Vota para producción limitada',status:'',ctaLabel:'Votar',productId:'jacket-industrial'},
+    {id:'co-cargo',title:'PANTALÓN CARGO',description:'',optionLabel:'Vota para producción limitada',status:'',ctaLabel:'Votar',productId:'pantalon-cargo'},
+    {id:'co-camiseta',title:'CAMISETA OVERSIZED',description:'',optionLabel:'Vota para producción limitada',status:'',ctaLabel:'Votar',productId:'camiseta-oversized'},
+    {id:'co-parka',title:'PARKA URBANA',description:'',optionLabel:'Vota para producción limitada',status:'ÚLTIMAS UNIDADES',ctaLabel:'Votar',productId:'parka-urbana'}
+  ],
+  styleGeneratorTitle:'TU ESTILO RUBIK SOTA',
+  styleGeneratorSubtitle:'Elige tu estilo para una selección personalizada de la colección. Demostración con reglas locales: no hay un modelo de IA conectado.',
+  styleGeneratorCtaLabel:'✨ GENERAR MI LOOKBOOK',
+  styleOptions:[
+    {id:'street',label:'Street',productIds:['jacket-industrial','pantalon-cargo','abrigo-largo']},
+    {id:'minimal',label:'Minimal',productIds:['camiseta-oversized','camisa-blanca','bermuda-cargo']},
+    {id:'avantgarde',label:'Avant-Garde',productIds:['jacket-industrial','jeans-rotos','parka-urbana']},
+    {id:'techwear',label:'Techwear',productIds:['abrigo-largo','chaleco-tecnico','parka-urbana']},
+    {id:'vintage',label:'Vintage',productIds:['jeans-rotos','camisa-blanca','bermuda-cargo']}
+  ],
+  timelineTitle:'BEHIND THE SCENES',
+  timelineItems:[
+    {id:'day-1',year:'DÍA 1',title:'Bocetos iniciales',description:'Bocetos iniciales en el estudio de Alicante.',alignment:'left',ctaLabel:'',ctaUrl:''},
+    {id:'day-14',year:'DÍA 14',title:'Selección de tejidos',description:'Selección de tejidos en fábrica textil.',alignment:'left',ctaLabel:'',ctaUrl:''},
+    {id:'day-30',year:'DÍA 30',title:'Primera prueba',description:'Primera prueba de patrones y ajustes.',alignment:'left',ctaLabel:'',ctaUrl:''},
+    {id:'day-60',year:'DÍA 60',title:'Sesión de fotos',description:'Sesión de fotos en el muelle portuario.',alignment:'left',ctaLabel:'',ctaUrl:''},
+    {id:'day-90',year:'DÍA 90',title:'Lanzamiento oficial',description:'Lanzamiento oficial de la colección.',alignment:'left',ctaLabel:'Ver la colección',ctaUrl:'#section1'}
+  ],
+  designersTitle:'LOS CREADORES',
+  designers:[
+    {id:'designer-1',name:'Elena Vargas',role:'Dir. Creativa',bio:'Dirección creativa de la colección VOLUMEN 01.',productIds:['jacket-industrial','pantalon-cargo'],ctaLabel:'Ver piezas',ctaUrl:''},
+    {id:'designer-2',name:'Rubik Sota',role:'Fundador',bio:'Fundador y dirección de marca de RUBIK SOTA.',productIds:['camiseta-oversized','sudadera'],ctaLabel:'Ver piezas',ctaUrl:''},
+    {id:'designer-3',name:'Clara Méndez',role:'VFX',bio:'Dirección visual y postproducción de campaña.',productIds:['abrigo-largo','jeans-rotos'],ctaLabel:'Ver piezas',ctaUrl:''},
+    {id:'designer-4',name:'Diego Rojas',role:'Sonido',bio:'Diseño sonoro para la campaña audiovisual.',productIds:['chaleco-tecnico','parka-urbana'],ctaLabel:'Ver piezas',ctaUrl:''}
+  ],
+  polaroidWallTitle:'',
+  polaroids:[
+    {id:'polaroid-1',title:'',story:'4:23 AM, muelle 7. Niebla real.',rotation:-5,position:0,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-2',title:'',story:'12 km caminados sin quejas.',rotation:4,position:1,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-3',title:'',story:'Tormenta eléctrica improvisada.',rotation:-3,position:2,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-4',title:'',story:'Chaqueta de 3 kg.',rotation:6,position:3,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-5',title:'',story:'23 personas en backstage.',rotation:-6,position:4,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-6',title:'',story:'Flash falló. Foto accidental.',rotation:7,position:5,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-7',title:'',story:'Helicóptero a 200m.',rotation:-4,position:6,frontLabel:'BTS',backLabel:''},
+    {id:'polaroid-8',title:'',story:'6h montando la escena.',rotation:5,position:7,frontLabel:'BTS',backLabel:''}
+  ],
+  navNewsletter:'NEWSLETTER',
+  newsletterTitle:'ENTRA AL SÓTANO',
+  newsletterPlaceholder:'TU EMAIL PARA ENTRAR AL SÓTANO',
+  newsletterCtaLabel:'ACCEDER',
+  newsletterConfirmCode:'RS-VOL01-10%',
+  newsletterConfirmMessage:'Guarda este código. Válido 48h. Demostración local: no se ha enviado ningún email real.',
+  newsletterInterests:[
+    {id:'hombre',label:'ROPA HOMBRE'},
+    {id:'mujer',label:'ROPA MUJER'},
+    {id:'ambas',label:'AMBAS'}
+  ],
+  footerLine1:'RUBIK SOTA no sigue tendencias.',
+  footerLine2:'RUBIK SOTA crea las condiciones para que la calle hable.',
+  footerCredit:'IDEA BY RUBIK SOTA',
+  footerCertificateLabel:'CERTIFICADO DE AUTENTICIDAD',
+  footerCertificateRef:'COLECCIÓN: VOLUMEN 01 · REF: RS-V01-2025',
+  footerCopyright:'© 2026 RUBIK SOTA. Plantilla demo Escaparates Pro — no procesa pagos ni datos reales.'
+};
+
+function field(key,type,label,def,extra){return Object.assign({key:key,type:type,label:label,default:def,group:'Contenido'},extra||{});}
+build.id='fashion-commerce-pro';
+build.schema=[
+  field('presetId','text','Preset id',DEFAULTS.presetId,{visible:false,group:'Identidad'}),
+  field('projectId','text','Project id',DEFAULTS.projectId,{visible:false,group:'Identidad'}),
+  field('brand','text','Marca',DEFAULTS.brand,{required:true,group:'Identidad'}),
+  field('collectionName','text','Colección',DEFAULTS.collectionName,{group:'Identidad'}),
+  field('volumeLabel','text','Volumen',DEFAULTS.volumeLabel,{group:'Identidad'}),
+  field('season','text','Temporada',DEFAULTS.season,{group:'Identidad'}),
+  field('currency','text','Moneda',DEFAULTS.currency,{group:'Comercio demo'}),
+  field('priceLocale','text','Locale de precios',DEFAULTS.priceLocale,{group:'Comercio demo'}),
+  field('heroEyebrow','text','Hero eyebrow',DEFAULTS.heroEyebrow,{group:'Hero'}),
+  field('heroTitle','text','Hero titular',DEFAULTS.heroTitle,{group:'Hero'}),
+  field('heroSubtitle','text','Hero subtítulo',DEFAULTS.heroSubtitle,{group:'Hero'}),
+  field('heroCtaLabel','text','Hero CTA label',DEFAULTS.heroCtaLabel,{group:'Hero'}),
+  field('heroCtaUrl','url','Hero CTA URL',DEFAULTS.heroCtaUrl,{group:'Hero'}),
+  field('teaserEnabled','boolean','Mostrar teaser',DEFAULTS.teaserEnabled,{group:'Teaser'}),
+  field('teaserDuration','range','Duración teaser',DEFAULTS.teaserDuration,{min:0,max:5000,step:100,suffix:' ms',group:'Teaser'}),
+  field('preloaderEnabled','boolean','Mostrar preloader',DEFAULTS.preloaderEnabled,{group:'Preloader'}),
+  field('preloaderText','text','Texto preloader',DEFAULTS.preloaderText,{group:'Preloader'}),
+  field('navHero','text','Nav Hero',DEFAULTS.navHero,{group:'Navegación'}),
+  field('navGallery','text','Nav Galería',DEFAULTS.navGallery,{group:'Navegación'}),
+  field('navLookbook','text','Nav Lookbook',DEFAULTS.navLookbook,{group:'Navegación'}),
+  field('navVideos','text','Nav Videos',DEFAULTS.navVideos,{group:'Navegación'}),
+  field('navCoCreation','text','Nav Co-creación',DEFAULTS.navCoCreation,{group:'Navegación'}),
+  field('navStyleGenerator','text','Nav Estilo IA',DEFAULTS.navStyleGenerator,{group:'Navegación'}),
+  field('navTimeline','text','Nav Behind the scenes',DEFAULTS.navTimeline,{group:'Navegación'}),
+  field('navPolaroids','text','Nav Polaroid',DEFAULTS.navPolaroids,{group:'Navegación'}),
+  field('runwayLabel','text','Pasarela label',DEFAULTS.runwayLabel,{group:'Galería'}),
+  field('runwayStopLabel','text','Pasarela detener',DEFAULTS.runwayStopLabel,{group:'Galería'}),
+  field('runwayInterval','range','Pasarela intervalo',DEFAULTS.runwayInterval,{min:1200,max:9000,step:100,suffix:' ms',group:'Galería'}),
+  field('products','repeater','Productos',DEFAULTS.products,{minItems:4,maxItems:10,group:'Productos',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'name',label:'Nombre',type:'text'},
+    {key:'category',label:'Categoría',type:'text'},
+    {key:'eyebrow',label:'Eyebrow',type:'text'},
+    {key:'description',label:'Descripción',type:'text'},
+    {key:'price',label:'Precio',type:'number'},
+    {key:'compareAtPrice',label:'Precio antes (0 = sin descuento)',type:'number'},
+    {key:'reference',label:'Referencia',type:'text'},
+    {key:'material',label:'Material',type:'text'},
+    {key:'badge',label:'Badge',type:'text'},
+    {key:'sizes',label:'Tallas (separadas por coma)',type:'text'},
+    {key:'colors',label:'Colores (nombre:hex, separados por coma)',type:'text'},
+    {key:'stockMode',label:'Stock (in-stock, low-stock, sold-out)',type:'text'},
+    {key:'ctaLabel',label:'CTA label',type:'text'},
+    {key:'reservationEnabled',label:'Permite reserva (true/false)',type:'text'},
+    {key:'wishlistEnabled',label:'Permite wishlist (true/false)',type:'text'},
+    {key:'cartEnabled',label:'Permite carrito (true/false)',type:'text'},
+    {key:'lookIds',label:'Looks asociados (ids separados por coma)',type:'text'}
+  ]}),
+  field('productCtaLabel','text','CTA producto fallback',DEFAULTS.productCtaLabel,{group:'Productos'}),
+  field('lookbookTitle','text','Lookbook título',DEFAULTS.lookbookTitle,{group:'Lookbook'}),
+  field('lookbookIntro','textarea','Lookbook intro',DEFAULTS.lookbookIntro,{group:'Lookbook'}),
+  field('looks','repeater','Looks editoriales',DEFAULTS.looks,{minItems:1,maxItems:8,group:'Lookbook',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'title',label:'Título',type:'text'},
+    {key:'description',label:'Descripción',type:'text'},
+    {key:'model',label:'Modelo',type:'text'},
+    {key:'credit',label:'Crédito',type:'text'},
+    {key:'layout',label:'Tamaño en la cuadrícula (wide, normal)',type:'text'},
+    {key:'productIds',label:'Productos del look (ids separados por coma)',type:'text'},
+    {key:'ctaLabel',label:'CTA label',type:'text'},
+    {key:'reservationEnabled',label:'Permite reserva (true/false)',type:'text'}
+  ]}),
+  field('coCreationTitle','text','Co-creación título',DEFAULTS.coCreationTitle,{group:'Co-creación'}),
+  field('coCreationSubtitle','textarea','Co-creación subtítulo',DEFAULTS.coCreationSubtitle,{group:'Co-creación'}),
+  field('coCreationItems','repeater','Co-creación items',DEFAULTS.coCreationItems,{minItems:2,maxItems:6,group:'Co-creación',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'title',label:'Título',type:'text'},
+    {key:'description',label:'Descripción',type:'text'},
+    {key:'optionLabel',label:'Texto de opción',type:'text'},
+    {key:'status',label:'Badge de estado',type:'text'},
+    {key:'ctaLabel',label:'CTA label',type:'text'},
+    {key:'productId',label:'Producto asociado (id)',type:'text'}
+  ]}),
+  field('styleGeneratorTitle','text','Generador de estilo título',DEFAULTS.styleGeneratorTitle,{group:'Generador de estilo'}),
+  field('styleGeneratorSubtitle','textarea','Generador de estilo subtítulo',DEFAULTS.styleGeneratorSubtitle,{group:'Generador de estilo'}),
+  field('styleGeneratorCtaLabel','text','Generador de estilo CTA',DEFAULTS.styleGeneratorCtaLabel,{group:'Generador de estilo'}),
+  field('styleOptions','repeater','Estilos',DEFAULTS.styleOptions,{minItems:2,maxItems:8,group:'Generador de estilo',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'label',label:'Etiqueta',type:'text'},
+    {key:'productIds',label:'Productos (ids separados por coma)',type:'text'}
+  ]}),
+  field('timelineTitle','text','Timeline título',DEFAULTS.timelineTitle,{group:'Timeline'}),
+  field('timelineItems','repeater','Timeline items',DEFAULTS.timelineItems,{minItems:2,maxItems:8,group:'Timeline',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'year',label:'Año / hito',type:'text'},
+    {key:'title',label:'Título',type:'text'},
+    {key:'description',label:'Descripción',type:'text'},
+    {key:'alignment',label:'Alineación (left, right)',type:'text'},
+    {key:'ctaLabel',label:'CTA label',type:'text'},
+    {key:'ctaUrl',label:'CTA URL',type:'text'}
+  ]}),
+  field('designersTitle','text','Diseñadores título',DEFAULTS.designersTitle,{group:'Diseñadores'}),
+  field('designers','repeater','Diseñadores',DEFAULTS.designers,{minItems:2,maxItems:8,group:'Diseñadores',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'name',label:'Nombre',type:'text'},
+    {key:'role',label:'Rol',type:'text'},
+    {key:'bio',label:'Bio',type:'text'},
+    {key:'productIds',label:'Piezas (ids separados por coma)',type:'text'},
+    {key:'ctaLabel',label:'CTA label',type:'text'},
+    {key:'ctaUrl',label:'CTA URL',type:'text'}
+  ]}),
+  field('polaroidWallTitle','text','Polaroid título (opcional)',DEFAULTS.polaroidWallTitle,{group:'Polaroids'}),
+  field('polaroids','repeater','Polaroids',DEFAULTS.polaroids,{minItems:4,maxItems:16,group:'Polaroids',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'title',label:'Título (opcional)',type:'text'},
+    {key:'story',label:'Historia (dorso)',type:'text'},
+    {key:'rotation',label:'Rotación en grados',type:'number'},
+    {key:'frontLabel',label:'Alt de la foto',type:'text'},
+    {key:'backLabel',label:'Etiqueta adicional dorso',type:'text'}
+  ]}),
+  field('navNewsletter','text','Nav Newsletter',DEFAULTS.navNewsletter,{group:'Navegación'}),
+  field('newsletterTitle','text','Newsletter título',DEFAULTS.newsletterTitle,{group:'Newsletter'}),
+  field('newsletterPlaceholder','text','Newsletter placeholder email',DEFAULTS.newsletterPlaceholder,{group:'Newsletter'}),
+  field('newsletterCtaLabel','text','Newsletter CTA label',DEFAULTS.newsletterCtaLabel,{group:'Newsletter'}),
+  field('newsletterConfirmCode','text','Newsletter código demo',DEFAULTS.newsletterConfirmCode,{group:'Newsletter'}),
+  field('newsletterConfirmMessage','textarea','Newsletter mensaje confirmación',DEFAULTS.newsletterConfirmMessage,{group:'Newsletter'}),
+  field('newsletterInterests','repeater','Newsletter intereses',DEFAULTS.newsletterInterests,{minItems:2,maxItems:6,group:'Newsletter',itemFields:[
+    {key:'id',label:'ID',type:'text'},
+    {key:'label',label:'Etiqueta',type:'text'}
+  ]}),
+  field('footerLine1','text','Footer línea 1',DEFAULTS.footerLine1,{group:'Footer'}),
+  field('footerLine2','text','Footer línea 2',DEFAULTS.footerLine2,{group:'Footer'}),
+  field('footerCredit','text','Footer crédito',DEFAULTS.footerCredit,{group:'Footer'}),
+  field('footerCertificateLabel','text','Footer certificado label',DEFAULTS.footerCertificateLabel,{group:'Footer'}),
+  field('footerCertificateRef','text','Footer certificado ref',DEFAULTS.footerCertificateRef,{group:'Footer'}),
+  field('footerCopyright','text','Footer copyright',DEFAULTS.footerCopyright,{group:'Footer'}),
+  field('floatingCtaLabel','text','CTA flotante label',DEFAULTS.floatingCtaLabel,{group:'CTA'}),
+  field('wishlistLabel','text','Wishlist label',DEFAULTS.wishlistLabel,{group:'Comercio demo'}),
+  field('cartLabel','text','Carrito label',DEFAULTS.cartLabel,{group:'Comercio demo'}),
+  field('reservationCtaLabel','text','Reserva CTA label',DEFAULTS.reservationCtaLabel,{group:'Reserva'}),
+  field('reservationExternalUrl','url','Reserva CTA URL externa',DEFAULTS.reservationExternalUrl,{group:'Reserva'}),
+  field('demoDisclaimer','textarea','Aviso demo',DEFAULTS.demoDisclaimer,{group:'Comercio demo'}),
+  field('accentColor','color','Color naranja',DEFAULTS.accentColor,{group:'Estilo'}),
+  field('backgroundColor','color','Color fondo',DEFAULTS.backgroundColor,{group:'Estilo'}),
+  field('textColor','color','Color texto',DEFAULTS.textColor,{group:'Estilo'}),
+  field('headlineTypography','typography','Tipografía titular',DEFAULTS.headlineTypography,{group:'Tipografía'}),
+  field('bodyTypography','typography','Tipografía cuerpo',DEFAULTS.bodyTypography,{group:'Tipografía'}),
+  field('responsiveHero','responsive','Hero responsive',DEFAULTS.responsiveHero,{group:'Responsive'}),
+  field('motionProfile','motion','Movimiento',DEFAULTS.motionProfile,{group:'Movimiento'})
+];
+
+var MEDIA_SLOTS=[
+  {id:'heroVideo',label:'Hero video autorizado',type:'video',accepts:['video/mp4','video/webm'],fallback:RUBIK_MEDIA.heroVideo,recommendedAspectRatio:'16:9',semanticUse:'Video hero B/N de RUBIK SOTA',usageStatus:'approved-by-owner'},
+  {id:'heroPoster',label:'Hero poster',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.heroPoster,recommendedAspectRatio:'16:9',semanticUse:'Poster del hero',usageStatus:'approved-unsplash'},
+  {id:'product1Primary',label:'Producto 1',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product1,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product2Primary',label:'Producto 2',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product2,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product3Primary',label:'Producto 3',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product3,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product4Primary',label:'Producto 4',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product4,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product5Primary',label:'Producto 5',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product5,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product6Primary',label:'Producto 6',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product6,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product7Primary',label:'Producto 7',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product7,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product8Primary',label:'Producto 8',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product8,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product9Primary',label:'Producto 9',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product9,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'product10Primary',label:'Producto 10',type:'image',accepts:['image/*'],fallback:RUBIK_MEDIA.product10,recommendedAspectRatio:'3:4',usageStatus:'approved-unsplash'},
+  {id:'campaignVideo1',label:'Campaign video 1',type:'video',accepts:['video/mp4','video/webm'],fallback:RUBIK_MEDIA.campaignVideo1,recommendedAspectRatio:'16:9',usageStatus:'approved-by-owner'},
+  {id:'campaignVideo2',label:'Campaign video 2',type:'video',accepts:['video/mp4','video/webm'],fallback:RUBIK_MEDIA.campaignVideo2,recommendedAspectRatio:'16:9',usageStatus:'approved-by-owner'},
+  {id:'campaignVideo3',label:'Campaign video 3',type:'video',accepts:['video/mp4','video/webm'],fallback:RUBIK_MEDIA.campaignVideo3,recommendedAspectRatio:'16:9',usageStatus:'approved-by-owner'},
+  {id:'campaignVideo4',label:'Campaign video 4',type:'video',accepts:['video/mp4','video/webm'],fallback:RUBIK_MEDIA.campaignVideo4,recommendedAspectRatio:'16:9',usageStatus:'approved-by-owner'},
+  {id:'logo',label:'Logo',type:'image',accepts:['image/*'],fallback:'',recommendedAspectRatio:'1:1',usageStatus:'pending-metadata'}
+];
+var PRESETS=[
+  {id:'default',label:'Default RUBIK SOTA base',visible:false,defaults:DEFAULTS,media:{}},
+  {id:'rubik-sota-disruption',label:'RUBIK SOTA — DISRUPCIÓN',visible:true,defaults:DEFAULTS,media:{heroVideo:RUBIK_MEDIA.heroVideo,heroPoster:RUBIK_MEDIA.heroPoster,campaignVideo1:RUBIK_MEDIA.campaignVideo1,campaignVideo2:RUBIK_MEDIA.campaignVideo2,campaignVideo3:RUBIK_MEDIA.campaignVideo3,campaignVideo4:RUBIK_MEDIA.campaignVideo4}}
+];
+
+if(EP.SectorBlueprints&&EP.SectorBlueprints.register)EP.SectorBlueprints.register(build);
+if(EP.StudioTemplateRegistry&&EP.StudioTemplateRegistry.register&&!EP.StudioTemplateRegistry.get('fashion-commerce-pro')){
+  EP.StudioTemplateRegistry.register({
+    id:'fashion-commerce-pro',
+    familyId:'fashion-commerce',
+    version:1,
+    title:'Fashion Commerce',
+    shortTitle:'Fashion Commerce',
+    description:'RUBIK SOTA — DISRUPCIÓN Custom PRO beta with teaser, video hero, full-bleed hotspot gallery, editorial lookbook and runway mode under Core Fidelity V1 review.',
+    category:'Sector Blueprints',
+    sector:'Fashion & Apparel',
+    status:'beta',
+    templateType:'custom-pro',
+    templateKind:'blueprint',
+    visible:true,
+    builder:{kind:'blueprint',id:'fashion-commerce-pro'},
+    sourceFaithfulReference:'https://juanmaes83.github.io/WEB-PREMIUM-MODA-CON-CLAUDE/',
+    thumbnail:{label:'FC'},
+    tags:['fashion','commerce','rubik-sota','custom-pro'],
+    schema:build.schema,
+    mediaSlots:MEDIA_SLOTS,
+    presets:PRESETS
+  });
+}
+})();

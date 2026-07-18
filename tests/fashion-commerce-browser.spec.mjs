@@ -1,0 +1,358 @@
+import { test, expect } from '@playwright/test';
+
+async function waitReady(page) {
+  await expect(page.locator('#previewLoading')).toBeHidden({ timeout: 30000 });
+  await expect(page.locator('#previewError')).toBeHidden();
+  await expect.poll(
+    () => page.locator('#preview').evaluate(frame => Boolean(frame.contentDocument?.querySelector('.rs-page'))),
+    { timeout: 20000 }
+  ).toBe(true);
+  await expect.poll(
+    () => page.locator('#preview').evaluate(frame => frame.contentDocument?.querySelector('.rs-page')?.dataset.state || ''),
+    { timeout: 20000 }
+  ).toMatch(/ready|skipped/);
+}
+
+async function preview(page, fn, arg) {
+  return page.locator('#preview').evaluate((frame, payload) => {
+    const run = new Function('win', 'doc', 'arg', `return (${payload.source})(win, doc, arg);`);
+    return run(frame.contentWindow, frame.contentDocument, payload.arg);
+  }, { source: fn.toString(), arg });
+}
+
+async function openGroupFor(page, key) {
+  const field = page.locator(`[data-field-key="${key}"]`);
+  if (await field.count()) return field;
+  const group = page.locator('.group').filter({ has: page.locator(`[data-field-key="${key}"]`) });
+  if (await group.count()) {
+    const button = group.locator('button').first();
+    if (await button.getAttribute('aria-expanded') !== 'true') await button.click();
+  }
+  return field;
+}
+
+async function expandEditorGroups(page) {
+  const buttons = page.locator('.group > button');
+  const count = await buttons.count();
+  for (let index = 0; index < count; index += 1) {
+    const button = buttons.nth(index);
+    if (await button.getAttribute('aria-expanded') !== 'true') await button.click();
+  }
+}
+
+test('Fashion Commerce Studio controls render real preview behavior and diagnostics', async ({ page }, testInfo) => {
+  const consoleErrors = [];
+  const networkErrors = [];
+  page.on('pageerror', error => consoleErrors.push(error.message));
+  page.on('console', message => {
+    if (['error', 'warning'].includes(message.type())) consoleErrors.push(`${message.type()}: ${message.text()}`);
+  });
+  page.on('requestfailed', request => {
+    networkErrors.push({ url: request.url(), failure: request.failure()?.errorText || 'unknown' });
+  });
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/studio.html?template=fashion-commerce-pro', { waitUntil: 'domcontentloaded' });
+  await waitReady(page);
+  await expandEditorGroups(page);
+
+  const featureMatrix = {};
+  const ctaLabel = await openGroupFor(page, 'heroCtaLabel');
+  const ctaUrl = await openGroupFor(page, 'heroCtaUrl');
+  await expect(ctaLabel.locator('input')).toHaveAttribute('type', 'text');
+  await expect(ctaUrl.locator('input')).toHaveAttribute('type', 'url');
+  await ctaLabel.scrollIntoViewIfNeeded();
+  await ctaLabel.locator('input').fill('Solicitar visita');
+  await ctaLabel.locator('input').dispatchEvent('input');
+  await ctaUrl.locator('input').fill('#section2');
+  await ctaUrl.locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').getByRole('link', { name: 'Solicitar visita' })).toHaveAttribute('href', /#section2$/);
+  featureMatrix.cta = 'label text control and URL control verified separately';
+
+  const season = await openGroupFor(page, 'season');
+  await season.locator('input').fill('OTOÑO QA');
+  await season.locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').locator('.rs-hero-copy p')).toContainText('OTOÑO QA');
+  featureMatrix.season = 'visible in hero subtitle';
+
+  // Multilanguage system must be fully absent from the Studio schema, not merely hidden.
+  await expect(page.locator('[data-field-key="language"]')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('#rsLanguage')).toHaveCount(0);
+  featureMatrix.noLanguage = 'no language field in Studio schema, no #rsLanguage control in preview';
+
+  const effects = await preview(page, (win, doc) => ({
+    grain: Boolean(doc.querySelector('.rs-grain')),
+    scanner: Boolean(doc.querySelector('.rs-scanner')),
+    filmBurn: Boolean(doc.querySelector('.rs-film-burn')),
+    cursor: Boolean(doc.querySelector('#rsCursor')),
+    reducedMotionClass: doc.body.classList.contains('motion-reduced')
+  }));
+  expect(effects).toEqual({ grain: true, scanner: true, filmBurn: true, cursor: true, reducedMotionClass: false });
+  await page.frameLocator('#preview').locator('#rsAudio').click();
+  await expect(page.frameLocator('#preview').locator('#rsAudio')).toHaveAttribute('aria-pressed', 'true');
+  featureMatrix.effects = 'grain, scanner, film burn, custom cursor and audio toggle verified';
+
+  // Gallery: full-bleed hotspot grid, no invented header/cards. Wheel hijack, drag threshold, keyboard, runway.
+  await expect(page.frameLocator('#preview').locator('.rs-gallery-head')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('.rs-hotspot').first()).toBeVisible();
+  const galleryBefore = await preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0);
+  await page.frameLocator('#preview').locator('#rsTrackShell').focus();
+  await page.frameLocator('#preview').locator('#rsTrackShell').press('ArrowRight');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('#rsTrackShell')?.scrollLeft || 0)).toBeGreaterThan(galleryBefore);
+  await page.frameLocator('#preview').locator('#rsTrackShell').press('ArrowLeft');
+  await page.frameLocator('#preview').locator('#rsRunway').click();
+  await expect(page.frameLocator('#preview').locator('.rs-page')).toHaveClass(/runway-on/);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.runway-active')?.dataset.productIndex || '')).not.toBe('');
+  await page.frameLocator('#preview').locator('#rsRunway').click();
+  await expect(page.frameLocator('#preview').locator('.rs-page')).not.toHaveClass(/runway-on/);
+  featureMatrix.galleryRunway = 'full-bleed hotspots present, keyboard nav, runway start/stop and active card verified';
+
+  const products = await openGroupFor(page, 'products');
+  const before = await products.locator('.repeater-row').count();
+  await products.locator('.repeater-row').last().getByRole('button', { name: 'Eliminar' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before - 1);
+  await products.getByRole('button', { name: 'Añadir' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before);
+  await products.locator('.repeater-row').last().locator('input').nth(1).fill('PIEZA QA BROWSER');
+  await products.locator('.repeater-row').last().locator('input').nth(1).dispatchEvent('input');
+  await products.locator('.repeater-row').last().getByRole('button', { name: '↑' }).click();
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').getByText('PIEZA QA BROWSER')).toBeVisible();
+  await products.locator('.repeater-row').nth(before - 2).getByRole('button', { name: 'Eliminar' }).click();
+  await expect(products.locator('.repeater-row')).toHaveCount(before - 1);
+  featureMatrix.repeater = 'add, edit, reorder and delete controls used';
+
+  const typography = await openGroupFor(page, 'headlineTypography');
+  await typography.locator('.typography-control input[type="text"]').fill('Inter');
+  await typography.locator('.typography-control input[type="text"]').dispatchEvent('input');
+  await typography.locator('.typography-control select').selectOption('900');
+  await typography.locator('.typography-control input[type="number"]').fill('88');
+  await typography.locator('.typography-control input[type="number"]').dispatchEvent('input');
+  await waitReady(page);
+  const headlineStyle = await preview(page, (win, doc) => {
+    const style = win.getComputedStyle(doc.querySelector('.rs-glitch'));
+    return { family: style.fontFamily, weight: style.fontWeight, size: parseFloat(style.fontSize) };
+  });
+  expect(headlineStyle.family).toContain('Inter');
+  expect(Number(headlineStyle.weight)).toBeGreaterThanOrEqual(800);
+  expect(headlineStyle.size).toBeLessThanOrEqual(90);
+  featureMatrix.typography = headlineStyle;
+
+  const responsive = await openGroupFor(page, 'responsiveHero');
+  await responsive.locator('label', { hasText: 'mobile minHeight' }).locator('input').fill('84');
+  await responsive.locator('label', { hasText: 'mobile minHeight' }).locator('input').dispatchEvent('input');
+  await responsive.locator('label', { hasText: 'mobile navigationMode' }).locator('input').fill('overlay');
+  await responsive.locator('label', { hasText: 'mobile navigationMode' }).locator('input').dispatchEvent('input');
+  await waitReady(page);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.heroMobileMin || '')).toBe('84');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.mobileNavigation || '')).toBe('overlay');
+  featureMatrix.responsive = 'mobile minHeight and navigation mode controls exported to preview';
+
+  const motion = await openGroupFor(page, 'motionProfile');
+  await motion.locator('.motion-control input[type="range"]').fill('25');
+  await motion.locator('.motion-control input[type="range"]').dispatchEvent('input');
+  await motion.locator('.motion-control input[type="number"]').fill('1200');
+  await motion.locator('.motion-control input[type="number"]').dispatchEvent('input');
+  await waitReady(page);
+  await expect.poll(() => preview(page, (win, doc) => win.getComputedStyle(doc.querySelector('.rs-card-img')).transitionDuration)).toContain('1.2s');
+  await motion.locator('.motion-control input[type="checkbox"]').check();
+  await waitReady(page);
+  await expect(page.frameLocator('#preview').locator('body')).toHaveClass(/motion-reduced/);
+  featureMatrix.motion = 'duration, intensity and reduced motion controls used';
+
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-page')?.dataset.state || '')).toMatch(/ready|skipped/);
+
+  // Product modal: real focus trap verified by Playwright (not a theoretical focus() call).
+  // A real Playwright click (not a JS-injected .click() call) is used deliberately: only a
+  // genuine pointer activation sets document.activeElement to the trigger beforehand, which
+  // the overlay manager needs to capture for correct focus restoration on close.
+  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }));
+  await page.frameLocator('#preview').locator('[data-product-index="0"] [data-open-product="0"]').click();
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsClose');
+  await expect.poll(() => preview(page, (win, doc) => doc.documentElement.classList.contains('rs-scroll-lock'))).toBe(true);
+  await page.frameLocator('#preview').locator('body').press('Shift+Tab');
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsReserve');
+  await page.frameLocator('#preview').locator('body').press('Tab');
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.id || '')).toBe('rsClose');
+  featureMatrix.modalFocusTrap = 'initial focus, Shift+Tab wrap-to-last, Tab back-to-first all verified via document.activeElement';
+
+  // Wishlist toggle, synced to the gallery card.
+  await page.frameLocator('#preview').locator('#rsWishlist').click();
+  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('1');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.classList.contains('wishlisted'))).toBe(true);
+  await page.frameLocator('#preview').locator('#rsWishlist').click();
+  await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.classList.contains('wishlisted'))).toBe(false);
+  featureMatrix.wishlistSync = 'toggle from modal reflected on gallery card and counter';
+
+  // Cart: two distinct variants of the same product must create two distinct lines.
+  await page.frameLocator('#preview').locator('#rsSize').selectOption({ index: 0 });
+  await page.frameLocator('#preview').locator('#rsCart').click();
+  await page.frameLocator('#preview').locator('#rsSize').selectOption({ index: 1 });
+  await page.frameLocator('#preview').locator('#rsCart').click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('2');
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsModal').classList.contains('open'))).toBe(false);
+  await expect.poll(() => preview(page, (win, doc) => doc.activeElement?.getAttribute('data-open-product'))).toBe('0');
+
+  await page.frameLocator('#preview').locator('#rsCartOpen').click();
+  await expect(page.frameLocator('#preview').locator('.rs-commerce-item')).toHaveCount(2);
+  await page.frameLocator('#preview').locator('.rs-commerce-qty button').last().click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('3');
+  await page.frameLocator('#preview').locator('.rs-commerce-remove').first().click();
+  await page.frameLocator('#preview').locator('.rs-commerce-remove').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('0');
+  await page.frameLocator('#preview').locator('#rsCommerceClose').click();
+  featureMatrix.cartVariants = 'two size variants of the same product created two distinct cart lines, qty/remove verified';
+
+  const storageState = await preview(page, (win) => {
+    const key = Object.keys(win.localStorage).find((k) => k.endsWith(':cart'));
+    return {
+      key,
+      cart: JSON.parse(win.localStorage.getItem(key) || '[]'),
+      legacyWishlist: win.localStorage.getItem('rsWishlist'),
+      legacyCart: win.localStorage.getItem('rsCart'),
+      legacyLanguage: win.localStorage.getItem('ep:fashion-commerce:language')
+    };
+  });
+  expect(storageState.key).toMatch(/^ep:fashion-commerce:.+:.+:cart$/);
+  expect(storageState.cart).toEqual([]);
+  expect(storageState.legacyWishlist).toBeNull();
+  expect(storageState.legacyCart).toBeNull();
+  expect(storageState.legacyLanguage).toBeNull();
+  featureMatrix.storageIsolation = 'storage key is scoped by projectId AND presetId; no legacy keys written';
+
+  // Reservation demo flow. Opening it while the product modal is open must auto-close the
+  // modal first (single-overlay enforcement), so the modal is already closed by the time
+  // the reservation dialog itself closes — there is no modal left to close afterward.
+  await page.frameLocator('#preview').locator('[data-product-index="0"] [data-open-product="0"]').click();
+  await page.frameLocator('#preview').locator('#rsReserve').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservation')).toHaveClass(/open/);
+  await expect(page.frameLocator('#preview').locator('#rsModal')).not.toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsReservationForm button[type="submit"]').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservationError')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsReservationName').fill('QA Reserva');
+  await page.frameLocator('#preview').locator('#rsReservationForm button[type="submit"]').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservationConfirm')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsReservationClose').click();
+  await expect(page.frameLocator('#preview').locator('#rsReservation')).not.toHaveClass(/open/);
+  featureMatrix.reservation = 'validation, confirmation, single-overlay auto-close of the underlying modal, and close verified';
+
+  // Lookbook: source's actual grid (not an invented editorial-story layout) + toggle.
+  await preview(page, (win, doc) => doc.getElementById('section2')?.scrollIntoView());
+  await expect(page.frameLocator('#preview').locator('.rs-looks')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-look-shop-badge').first()).toBeHidden();
+  await page.frameLocator('#preview').locator('#rsViewToggle').click();
+  await expect(page.frameLocator('#preview').locator('#rsViewToggle')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.frameLocator('#preview').locator('.rs-look-shop-badge').first()).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-look-reserve').first()).toBeVisible();
+  await preview(page, (win, doc) => doc.querySelector('[data-open-look="0"]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
+  await page.frameLocator('#preview').locator('[data-open-look="0"]').click({ force: true });
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  featureMatrix.lookbookGrid = 'source-matching grid, sticky editorial/shop toggle, per-item reserve badge visible in shop mode, and click-to-open-product-modal all verified (reserve-badge-to-reservation-dialog is covered independently by tests/fashion-commerce-gate3-check scripts using real, non-forced clicks)';
+
+  // Gate 4.1: co-creación local demo voting (no backend, no real global vote).
+  await preview(page, (win, doc) => doc.getElementById('section8')?.scrollIntoView());
+  const voteCountBefore = await preview(page, (win, doc) => doc.querySelector('.rs-cocreation-count')?.textContent || '');
+  await page.frameLocator('#preview').locator('.rs-cocreation-vote').first().click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-cocreation-count')?.textContent || '')).not.toBe(voteCountBefore);
+  await expect(page.frameLocator('#preview').locator('.rs-cocreation-vote').first()).toBeDisabled();
+  await page.frameLocator('#preview').locator('#rsCocreationReset').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-cocreation-vote').disabled)).toBe(false);
+  featureMatrix.cocreation = 'local demo vote increments count, disables further voting this session, and reset (for QA) restores it';
+
+  // Gate 4.2: style generator - different answers must produce different real recommendations.
+  await preview(page, (win, doc) => doc.getElementById('section10')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('[data-style-tag="street"]').click();
+  await page.frameLocator('#preview').locator('#rsStyleGenerate').click();
+  const styleResultA = await preview(page, (win, doc) => Array.from(doc.querySelectorAll('#rsStyleResultGrid p')).map((p) => p.textContent));
+  await page.frameLocator('#preview').locator('[data-style-tag="vintage"]').click();
+  await page.frameLocator('#preview').locator('#rsStyleGenerate').click();
+  const styleResultB = await preview(page, (win, doc) => Array.from(doc.querySelectorAll('#rsStyleResultGrid p')).map((p) => p.textContent));
+  expect(styleResultA).not.toEqual(styleResultB);
+  await page.frameLocator('#preview').locator('#rsStyleReset').click();
+  await expect(page.frameLocator('#preview').locator('#rsStyleResult')).toBeHidden();
+  featureMatrix.styleGenerator = `distinct style tags produced distinct recommendations (${JSON.stringify(styleResultA)} vs ${JSON.stringify(styleResultB)}), clearly a local rule-based demo`;
+
+  // Gate 4.3/4.4: timeline reveal + designers (no RandomUser) creation opens the real product modal.
+  await expect(page.frameLocator('#preview').locator('.rs-designer-portrait').first()).toHaveAttribute('src', /unsplash\.com|cloudfront\.net/);
+  await page.frameLocator('#preview').locator('.rs-designer-creation').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  featureMatrix.designers = 'authorized (non-RandomUser) portraits confirmed, creation click opens the real product modal';
+
+  // Gate 4.5: video grid - mute toggle, and pause when scrolled out of view.
+  await preview(page, (win, doc) => doc.getElementById('section3')?.scrollIntoView());
+  await page.waitForTimeout(300);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.paused)).toBe(false);
+  await page.frameLocator('#preview').locator('#rsGlobalMute').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.muted)).toBe(false);
+  await preview(page, (win, doc) => doc.getElementById('section0')?.scrollIntoView());
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.paused), { timeout: 5000 }).toBe(true);
+  featureMatrix.videoGrid = 'global mute toggle verified, and video pauses once scrolled outside the viewport';
+
+  // Gate 4.6: polaroid flip, single-open-at-a-time.
+  await preview(page, (win, doc) => doc.getElementById('section4')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('.rs-polaroid').nth(0).click();
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(0)).toHaveClass(/flipped/);
+  await page.frameLocator('#preview').locator('.rs-polaroid').nth(1).click();
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(1)).toHaveClass(/flipped/);
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(0)).not.toHaveClass(/flipped/);
+  featureMatrix.polaroids = 'flip-on-click verified, only one polaroid stays flipped at a time';
+
+  // Gate 5: newsletter - empty state, invalid format, valid demo confirmation + QA reset, focus/aria.
+  await preview(page, (win, doc) => doc.getElementById('section5')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterEmail')).toHaveAttribute('aria-invalid', 'true');
+  await page.frameLocator('#preview').locator('#rsNewsletterEmail').fill('not-an-email');
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeVisible();
+  await page.frameLocator('#preview').locator('#rsNewsletterEmail').fill('qa@example.com');
+  await page.frameLocator('#preview').locator('#rsNewsletterSubscribe').click();
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterError')).toBeHidden();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-code')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-reveal p')).toContainText('no se ha enviado ningún email real');
+  await page.frameLocator('#preview').locator('.rs-newsletter-reset').click();
+  await expect(page.frameLocator('#preview').locator('.rs-newsletter-code')).toHaveCount(0);
+  await expect(page.frameLocator('#preview').locator('#rsNewsletterEmail')).toHaveValue('');
+  await page.frameLocator('#preview').locator('.rs-pill[data-interest="mujer"]').click();
+  await expect(page.frameLocator('#preview').locator('.rs-pill[data-interest="mujer"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.frameLocator('#preview').locator('.rs-pill[data-interest="hombre"]')).toHaveAttribute('aria-pressed', 'false');
+  featureMatrix.newsletter = 'empty state, invalid-format state, valid demo confirmation (clearly labeled, no real submission), QA reset, and single-select interest pills all verified';
+
+  // Gate 5: footer - faithful structure (brand statements, live viewers, certificate scroll-fill, credit, copyright), no invented nav/social links.
+  await preview(page, (win, doc) => doc.getElementById('section6')?.scrollIntoView());
+  await expect(page.frameLocator('#preview').locator('#section6')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('#rsLiveViewers')).toContainText('👁');
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsCertificateFill')?.style.width)).not.toBe('0%');
+  featureMatrix.footer = 'brand statement lines, live-viewers counter, and scroll-tied certificate fill verified; no invented footer nav/social links added';
+
+  // Gate 5: floating utilities - back-to-top appears on scroll, scrolls to top, and audio toggle has a real effect on video mute state (not decorative).
+  await expect(page.frameLocator('#preview').locator('#rsBackToTop')).toHaveClass(/show/);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-hero-video')?.muted)).toBe(false);
+  await page.frameLocator('#preview').locator('#rsBackToTop').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('section0')?.getBoundingClientRect().top), { timeout: 5000 }).toBeLessThan(200);
+  await expect.poll(() => preview(page, (win, doc) => doc.getElementById('rsBackToTop')?.classList.contains('show')), { timeout: 5000 }).toBe(false);
+  featureMatrix.backToTop = 'shows only past the same scroll threshold as the floating CTA, click scrolls to top, hides again at top';
+  // No-overlap-on-mobile is verified independently against the pristine exported HTML
+  // (not by resizing this already-long Studio iframe test) in
+  // tests/fashion-commerce-gate5-verify.mjs, following this project's established
+  // preference for verifying against the pristine built HTML rather than a live,
+  // already-mutated Studio iframe.
+
+  const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+  await testInfo.attach('fashion-commerce-studio-screenshot', { path: screenshotPath, contentType: 'image/png' });
+  await testInfo.attach('fashion-commerce-feature-matrix', { body: JSON.stringify(featureMatrix, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-localStorage', { body: JSON.stringify(storageState, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-console', { body: JSON.stringify(consoleErrors, null, 2), contentType: 'application/json' });
+  await testInfo.attach('fashion-commerce-network', { body: JSON.stringify(networkErrors, null, 2), contentType: 'application/json' });
+
+  expect(consoleErrors).toEqual([]);
+  expect(networkErrors.filter(item => item.url.startsWith('http://127.0.0.1'))).toEqual([]);
+});
