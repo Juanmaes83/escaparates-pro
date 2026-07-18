@@ -205,10 +205,44 @@ assert.match(html, /reservationContext/);
 assert.match(html, /id="rsReservation"/);
 assert.match(html, /id="rsReservationForm"/);
 assert.match(html, /id="rsReservationExternal"/);
-assert.match(html, /rs-look-image-left|rs-look-image-right/);
-assert.match(html, /rs-look-shop/);
+// Gate 3 visual audit: lookbook rebuilt to match source's actual grid (responsive
+// 1/2/3 column masonry with overlay captions and a sticky toggle button), not the
+// alternating editorial-story layout from the first Gate 3 pass.
+assert.match(html, /class="rs-looks"/);
+assert.match(html, /rs-look-caption/);
+assert.match(html, /rs-look-shop-badge/);
+assert.doesNotMatch(html, /rs-lookbook-head|rs-look-image-left|rs-look-image-right|rs-look-model|rs-look-desc\b/, 'the invented editorial-story layout (header block, alternating image-left/right, model/description copy blocks) must not remain');
 assert.match(html, /id="rsViewToggle"/);
 assert.match(html, /INDUSTRIAL DROP/);
+
+// Gate 4: co-creación, style generator, timeline, designers, video grid, polaroids.
+assert.match(html, /class="rs-cocreation-item"/);
+assert.match(html, /data-cocreation-vote=/);
+assert.match(html, /id="rsCocreationReset"/);
+assert.match(html, /class="rs-style-tag"/);
+assert.match(html, /id="rsStyleGenerate"/);
+assert.match(html, /id="rsStyleReset"/);
+assert.match(html, /class="rs-timeline-item"/);
+assert.match(html, /rs-timeline-dot/);
+assert.match(html, /class="rs-designer-card"/);
+assert.doesNotMatch(html, /randomuser\.me/i, 'designer portraits must not use RandomUser');
+assert.match(html, /rs-designer-creation/);
+assert.match(html, /data-video-tile/);
+assert.match(html, /id="rsGlobalMute"/);
+assert.match(html, /IntersectionObserver/);
+assert.match(html, /document\.hidden/);
+assert.match(html, /class="rs-polaroid"/);
+assert.match(html, /rs-polaroid-back/);
+assert.match(html, /function toggleFlip/);
+
+const schemaKeys = schema.map((field) => field.key);
+for (const required of ['coCreationItems', 'styleOptions', 'timelineItems', 'designers', 'polaroids']) {
+  assert.ok(schemaKeys.includes(required), `${required} must be an editable Studio field`);
+}
+const designerItemKeys = schema.find((field) => field.key === 'designers').itemFields.map((f) => f.key);
+for (const required of ['name', 'role', 'bio', 'productIds']) {
+  assert.ok(designerItemKeys.includes(required), `designer itemFields must include ${required}`);
+}
 
 // Security: dynamic renders must build via DOM/textContent, not raw innerHTML string concatenation of variable text.
 assert.doesNotMatch(html, /innerHTML=rows\.map/, 'commerce rows must no longer be built via unescaped innerHTML concatenation');

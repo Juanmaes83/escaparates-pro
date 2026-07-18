@@ -241,12 +241,68 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await expect(page.frameLocator('#preview').locator('#rsReservation')).not.toHaveClass(/open/);
   featureMatrix.reservation = 'validation, confirmation, single-overlay auto-close of the underlying modal, and close verified';
 
-  // Lookbook editorial + shop view toggle.
+  // Lookbook: source's actual grid (not an invented editorial-story layout) + toggle.
   await preview(page, (win, doc) => doc.getElementById('section2')?.scrollIntoView());
-  const firstLookId = await preview(page, (win, doc) => doc.querySelector('.rs-look')?.getAttribute('data-look-id'));
-  await page.frameLocator('#preview').locator(`[data-toggle-shop="${firstLookId}"]`).click();
-  await expect(page.frameLocator('#preview').locator(`[data-look-shop="${firstLookId}"] .rs-look-shop-item`).first()).toBeVisible();
-  featureMatrix.lookbookShopView = 'per-look shop view renders real shoppable product rows';
+  await expect(page.frameLocator('#preview').locator('.rs-looks')).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-look-shop-badge').first()).toBeHidden();
+  await page.frameLocator('#preview').locator('#rsViewToggle').click();
+  await expect(page.frameLocator('#preview').locator('#rsViewToggle')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.frameLocator('#preview').locator('.rs-look-shop-badge').first()).toBeVisible();
+  await expect(page.frameLocator('#preview').locator('.rs-look-reserve').first()).toBeVisible();
+  await preview(page, (win, doc) => doc.querySelector('[data-open-look="0"]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
+  await page.frameLocator('#preview').locator('[data-open-look="0"]').click({ force: true });
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  featureMatrix.lookbookGrid = 'source-matching grid, sticky editorial/shop toggle, per-item reserve badge visible in shop mode, and click-to-open-product-modal all verified (reserve-badge-to-reservation-dialog is covered independently by tests/fashion-commerce-gate3-check scripts using real, non-forced clicks)';
+
+  // Gate 4.1: co-creación local demo voting (no backend, no real global vote).
+  await preview(page, (win, doc) => doc.getElementById('section8')?.scrollIntoView());
+  const voteCountBefore = await preview(page, (win, doc) => doc.querySelector('.rs-cocreation-count')?.textContent || '');
+  await page.frameLocator('#preview').locator('.rs-cocreation-vote').first().click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-cocreation-count')?.textContent || '')).not.toBe(voteCountBefore);
+  await expect(page.frameLocator('#preview').locator('.rs-cocreation-vote').first()).toBeDisabled();
+  await page.frameLocator('#preview').locator('#rsCocreationReset').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('.rs-cocreation-vote').disabled)).toBe(false);
+  featureMatrix.cocreation = 'local demo vote increments count, disables further voting this session, and reset (for QA) restores it';
+
+  // Gate 4.2: style generator - different answers must produce different real recommendations.
+  await preview(page, (win, doc) => doc.getElementById('section10')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('[data-style-tag="street"]').click();
+  await page.frameLocator('#preview').locator('#rsStyleGenerate').click();
+  const styleResultA = await preview(page, (win, doc) => Array.from(doc.querySelectorAll('#rsStyleResultGrid p')).map((p) => p.textContent));
+  await page.frameLocator('#preview').locator('[data-style-tag="vintage"]').click();
+  await page.frameLocator('#preview').locator('#rsStyleGenerate').click();
+  const styleResultB = await preview(page, (win, doc) => Array.from(doc.querySelectorAll('#rsStyleResultGrid p')).map((p) => p.textContent));
+  expect(styleResultA).not.toEqual(styleResultB);
+  await page.frameLocator('#preview').locator('#rsStyleReset').click();
+  await expect(page.frameLocator('#preview').locator('#rsStyleResult')).toBeHidden();
+  featureMatrix.styleGenerator = `distinct style tags produced distinct recommendations (${JSON.stringify(styleResultA)} vs ${JSON.stringify(styleResultB)}), clearly a local rule-based demo`;
+
+  // Gate 4.3/4.4: timeline reveal + designers (no RandomUser) creation opens the real product modal.
+  await expect(page.frameLocator('#preview').locator('.rs-designer-portrait').first()).toHaveAttribute('src', /unsplash\.com|cloudfront\.net/);
+  await page.frameLocator('#preview').locator('.rs-designer-creation').first().click();
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
+  await page.frameLocator('#preview').locator('#rsClose').click();
+  featureMatrix.designers = 'authorized (non-RandomUser) portraits confirmed, creation click opens the real product modal';
+
+  // Gate 4.5: video grid - mute toggle, and pause when scrolled out of view.
+  await preview(page, (win, doc) => doc.getElementById('section3')?.scrollIntoView());
+  await page.waitForTimeout(300);
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.paused)).toBe(false);
+  await page.frameLocator('#preview').locator('#rsGlobalMute').click();
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.muted)).toBe(false);
+  await preview(page, (win, doc) => doc.getElementById('section0')?.scrollIntoView());
+  await expect.poll(() => preview(page, (win, doc) => doc.querySelector('[data-video-tile] video')?.paused), { timeout: 5000 }).toBe(true);
+  featureMatrix.videoGrid = 'global mute toggle verified, and video pauses once scrolled outside the viewport';
+
+  // Gate 4.6: polaroid flip, single-open-at-a-time.
+  await preview(page, (win, doc) => doc.getElementById('section4')?.scrollIntoView());
+  await page.frameLocator('#preview').locator('.rs-polaroid').nth(0).click();
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(0)).toHaveClass(/flipped/);
+  await page.frameLocator('#preview').locator('.rs-polaroid').nth(1).click();
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(1)).toHaveClass(/flipped/);
+  await expect(page.frameLocator('#preview').locator('.rs-polaroid').nth(0)).not.toHaveClass(/flipped/);
+  featureMatrix.polaroids = 'flip-on-click verified, only one polaroid stays flipped at a time';
 
   const screenshotPath = testInfo.outputPath('fashion-commerce-studio.png');
   await page.screenshot({ path: screenshotPath, fullPage: true });
