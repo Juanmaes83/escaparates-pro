@@ -191,10 +191,14 @@ test('Fashion Commerce Studio controls render real preview behavior and diagnost
   await page.frameLocator('#preview').locator('[data-remove-cart]').first().click();
   await expect(page.frameLocator('#preview').locator('#rsCartCount')).toHaveText('0');
   await page.frameLocator('#preview').locator('#rsCommerceClose').click();
+  await page.frameLocator('#preview').locator('#rsClose').click();
   await page.frameLocator('#preview').locator('#rsWishlistOpen').click();
   await page.frameLocator('#preview').locator('[data-remove-wishlist]').first().click();
   await expect(page.frameLocator('#preview').locator('#rsWishlistCount')).toHaveText('0');
   await page.frameLocator('#preview').locator('#rsCommerceClose').click();
+  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"]')?.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }));
+  await preview(page, (win, doc) => doc.querySelector('[data-product-index="0"] [data-open-product="0"]')?.click());
+  await expect(page.frameLocator('#preview').locator('#rsModal')).toHaveClass(/open/);
   await page.frameLocator('#preview').locator('#rsCart').click();
   const storageState = await preview(page, (win) => ({
     keys: Object.keys(win.localStorage).filter(key => key.startsWith('ep:fashion-commerce:')).sort(),
