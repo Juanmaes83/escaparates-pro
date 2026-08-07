@@ -75,3 +75,5 @@ jobs:
           git add README.md js/website-modules-ui.js .github/workflows/integrate-kinetic-letter-curtain-pro-v1-1.yml
           git commit -m "feat(web-modules): connect Kinetic Letter Curtain PRO V1.1"
           git push origin HEAD:feat/kinetic-letter-curtain-pro-v1-1
+
+# retry: canonical HTML uploaded as exact base64 blob
