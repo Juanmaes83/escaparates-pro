@@ -91,7 +91,8 @@
         if (mod.standalonePath) {
             var standalone = document.createElement('div');
             standalone.className = 'wm-field';
-            standalone.innerHTML = '<div style="padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.03);line-height:1.5"><strong>Editor completo dentro del preview.</strong><br><span style="opacity:.72">Portadas, contraportadas, 6 paginas por libro, logo, fondo, textos, video y entregables se editan en el panel propio de la pieza.</span></div>';
+            var standaloneCopy = mod.standaloneEditorNote || 'Editor completo dentro del preview. La personalizacion y los entregables se gestionan desde el panel propio de la pieza.';
+            standalone.innerHTML = '<div style="padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.03);line-height:1.5"><strong>Editor standalone integrado.</strong><br><span style="opacity:.72">' + standaloneCopy + '</span></div>';
             wrap.appendChild(standalone);
         } else {
             getSchema(mod.id).forEach(function(field) {
@@ -151,7 +152,7 @@
         }
         if (noteEl) {
             if (mod.standalonePath) {
-                noteEl.innerHTML = 'Modulo standalone curado. <strong>Fuente:</strong> ' + mod.sourceFile + '. <br><strong>Personalizacion:</strong> ' + (mod.mediaMap || 'editor propio dentro del iframe.') + '<br>Los botones HTML, ZIP y Embed del Lab delegan al pipeline de la V2.2.';
+                noteEl.innerHTML = 'Modulo standalone curado. <strong>Fuente:</strong> ' + mod.sourceFile + '. <br><strong>Personalizacion:</strong> ' + (mod.mediaMap || 'editor propio dentro del iframe.') + '<br>Los botones HTML, ZIP y Embed del Lab delegan al pipeline propio de la pieza.';
             } else {
                 noteEl.innerHTML = 'Modulo premium aislado en iframe. <strong>Referencia:</strong> ' + mod.sourceFile + '. <br><strong>Media:</strong> ' + (mod.mediaMap || 'usa los slots de media disponibles.') + '<br>Export final sin editor.';
             }
@@ -373,20 +374,34 @@
     }
 
     function loadStandaloneModules(done) {
-        var id = '3d-book-collection-showcase-pro';
-        if (EP.WebsiteModules && EP.WebsiteModules.get(id)) {
-            done();
-            return;
+        var modules = [
+            { id: '3d-book-collection-showcase-pro', src: 'js/website-modules-3d-book-collection-showcase-pro.js' },
+            { id: 'sketchbook-pro-v3', src: 'js/website-modules-sketchbook-pro-v3.js' }
+        ];
+        var index = 0;
+
+        function next() {
+            if (index >= modules.length) {
+                done();
+                return;
+            }
+            var item = modules[index++];
+            if (EP.WebsiteModules && EP.WebsiteModules.get(item.id)) {
+                next();
+                return;
+            }
+            var script = document.createElement('script');
+            script.src = item.src;
+            script.async = false;
+            script.onload = next;
+            script.onerror = function() {
+                if (EP.UI && EP.UI.toast) EP.UI.toast('No se pudo registrar ' + item.id);
+                next();
+            };
+            document.head.appendChild(script);
         }
-        var script = document.createElement('script');
-        script.src = 'js/website-modules-3d-book-collection-showcase-pro.js';
-        script.async = false;
-        script.onload = done;
-        script.onerror = function() {
-            if (EP.UI && EP.UI.toast) EP.UI.toast('No se pudo registrar 3D Book Collection Showcase PRO');
-            done();
-        };
-        document.head.appendChild(script);
+
+        next();
     }
 
     function initReady() {
