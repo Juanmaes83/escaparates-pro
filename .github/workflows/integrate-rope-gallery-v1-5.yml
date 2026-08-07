@@ -73,7 +73,7 @@ jobs:
           p = Path('/tmp/rope-gallery-v15.mjs')
           p.write_text(modules[0], encoding='utf-8')
           subprocess.run(['node', '--check', str(p)], check=True)
-          for token in ['downloadFinalHtmlBtn','downloadClientZipBtn','copyEmbedBtn','focusLayer','IndexedDB']:
+          for token in ['downloadFinalHtmlBtn','downloadClientZipBtn','copyEmbedBtn','focusOverlay','IndexedDB']:
               if token not in html:
                   raise SystemExit('Required token missing: ' + token)
           PY
