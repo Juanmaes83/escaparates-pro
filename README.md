@@ -94,7 +94,7 @@ Escaparates Pro permite crear:
 
 Website Modules Lab es un modo independiente para probar, personalizar y exportar secciones web cinematograficas. No usa el motor Three.js de efectos, no toca Scroll Sections y no carga los 30 modulos de golpe en `index.html`.
 
-La version actual incluye 25 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas:
+La version actual incluye 26 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas; 3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:
 
 - Text Mask Reveal.
 - Sticky Stack Narrative.
@@ -121,6 +121,7 @@ La version actual incluye 25 modulos premium. Veintitres estan adaptados desde `
 - Chromatic Brand Universe PRO.
 - Brand Line Manifesto PRO.
 - RGB Motion Triptych PRO.
+- 3D Book Collection Showcase PRO.
 
 Cada modulo se renderiza en un iframe aislado, con controles de headline, subtitle, CTA, URL, colores, fuente, branding textual, velocidad, intensidad, scroll length y media de fondo desde los slots de la plataforma.
 
@@ -133,6 +134,8 @@ El cuarto bloque convierte cinco interacciones visuales en piezas de campana: un
 El quinto bloque suma navegacion espacial, narrativa cromatica y manifiestos de marca: nube 3D con inercia y zoom, canvas editorial de arrastre, cinco capitulos de color por scroll y una linea SVG que dibuja el recorrido de una marca. Los cuatro son viewers aislados, con media imagen/video y salida final sin editor.
 
 RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB sincronizadas que se separan con cursor o gesto tactil. Es una implementacion independiente del patron de interaccion, no exporta ni depende de los videos de la referencia.
+
+**3D Book Collection Showcase PRO** vive en `labs/website-modules-source/3d-book-collection-showcase-pro/` y usa como fuente canonica el `index.html` V2.2 aprobado. El Website Modules Lab lo abre como editor standalone aislado, sin reimplementar su motor Three.js. Incluye tres libros interactivos, portadas y contraportadas con imagen/video, seis paginas editoriales independientes por libro, giro e inercia 3D, navegacion Portada -> interior -> Contraportada, branding y fondo multimedia, persistencia IndexedDB, HTML final cerrado, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.
 
 Exporta resultado final como HTML standalone, ZIP basico y embed iframe. Los modulos adaptados desde `cinematic-site-components` conservan su atribucion MIT; los modulos independientes identifican su referencia sin exportar assets ajenos.
 
@@ -152,6 +155,7 @@ Los assets de los slots se reutilizan en hero, galeria y fichas; cuando el slot 
 - **Captured Panels Narrative PRO** en Scroll Sections: composicion narrativa de cinco paneles con imagen o video, navegacion por indice, lectura sticky en escritorio y secuencia accesible en movil.
 - **Ping Pong Feedback PRO**: shader con buffers de feedback reales, fuente de imagen/video, refraccion hexagonal, deriva y separacion cromatica.
 - **Reflective City PRO**: ciudad procedural raymarched con edificios, calles, profundidad y reflejos; no utiliza media porque el motivo es generativo.
+- **3D Book Collection Showcase PRO** en Website Modules Lab: modulo standalone Three.js ubicado en `labs/website-modules-source/3d-book-collection-showcase-pro/`, con tres libros, portadas/contraportadas imagen-video, seis paginas editables por libro, interaccion 3D completa y pipeline propio de entregables cerrados.
 
 ## Conceptos Clave
 

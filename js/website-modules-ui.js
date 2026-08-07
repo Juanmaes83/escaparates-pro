@@ -88,62 +88,73 @@
         var opts = ensureOptions(mod.id);
         wrap.innerHTML = '';
         if (titleEl) titleEl.textContent = mod.name.toUpperCase();
-        getSchema(mod.id).forEach(function(field) {
-            var row = document.createElement('div');
-            row.className = 'wm-field';
-            var label = document.createElement('label');
-            label.textContent = field.label;
-            row.appendChild(label);
-            var input;
-            if (field.type === 'textarea') {
-                input = document.createElement('textarea');
-                input.value = opts[field.key] || '';
-            } else if (field.type === 'select') {
-                input = document.createElement('select');
-                (field.options || []).forEach(function(opt) {
-                    var option = document.createElement('option');
-                    option.value = opt;
-                    option.textContent = opt;
-                    input.appendChild(option);
-                });
-                input.value = opts[field.key] || field.default;
-            } else {
-                input = document.createElement('input');
-                input.type = field.type === 'url' ? 'url' : field.type;
-                input.value = opts[field.key] || field.default || '';
-            }
-            if (field.type === 'range') {
-                input.min = field.min;
-                input.max = field.max;
-                input.step = field.step;
-                var value = document.createElement('span');
-                value.className = 'wm-range-value';
-                value.textContent = input.value;
-                var rangeWrap = document.createElement('div');
-                rangeWrap.className = 'wm-range-row';
-                rangeWrap.appendChild(input);
-                rangeWrap.appendChild(value);
-                input.addEventListener('input', function() {
-                    opts[field.key] = parseFloat(input.value);
+        if (mod.standalonePath) {
+            var standalone = document.createElement('div');
+            standalone.className = 'wm-field';
+            standalone.innerHTML = '<div style="padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.03);line-height:1.5"><strong>Editor completo dentro del preview.</strong><br><span style="opacity:.72">Portadas, contraportadas, 6 paginas por libro, logo, fondo, textos, video y entregables se editan en el panel propio de la pieza.</span></div>';
+            wrap.appendChild(standalone);
+        } else {
+            getSchema(mod.id).forEach(function(field) {
+                var row = document.createElement('div');
+                row.className = 'wm-field';
+                var label = document.createElement('label');
+                label.textContent = field.label;
+                row.appendChild(label);
+                var input;
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                    input.value = opts[field.key] || '';
+                } else if (field.type === 'select') {
+                    input = document.createElement('select');
+                    (field.options || []).forEach(function(opt) {
+                        var option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        input.appendChild(option);
+                    });
+                    input.value = opts[field.key] || field.default;
+                } else {
+                    input = document.createElement('input');
+                    input.type = field.type === 'url' ? 'url' : field.type;
+                    input.value = opts[field.key] || field.default || '';
+                }
+                if (field.type === 'range') {
+                    input.min = field.min;
+                    input.max = field.max;
+                    input.step = field.step;
+                    var value = document.createElement('span');
+                    value.className = 'wm-range-value';
                     value.textContent = input.value;
-                    scheduleRender();
-                });
-                row.appendChild(rangeWrap);
-            } else {
-                input.addEventListener('input', function() {
-                    opts[field.key] = input.value;
-                    scheduleRender();
-                });
-                input.addEventListener('change', function() {
-                    opts[field.key] = input.value;
-                    scheduleRender();
-                });
-                row.appendChild(input);
-            }
-            wrap.appendChild(row);
-        });
+                    var rangeWrap = document.createElement('div');
+                    rangeWrap.className = 'wm-range-row';
+                    rangeWrap.appendChild(input);
+                    rangeWrap.appendChild(value);
+                    input.addEventListener('input', function() {
+                        opts[field.key] = parseFloat(input.value);
+                        value.textContent = input.value;
+                        scheduleRender();
+                    });
+                    row.appendChild(rangeWrap);
+                } else {
+                    input.addEventListener('input', function() {
+                        opts[field.key] = input.value;
+                        scheduleRender();
+                    });
+                    input.addEventListener('change', function() {
+                        opts[field.key] = input.value;
+                        scheduleRender();
+                    });
+                    row.appendChild(input);
+                }
+                wrap.appendChild(row);
+            });
+        }
         if (noteEl) {
-            noteEl.innerHTML = 'Modulo premium aislado en iframe. <strong>Referencia:</strong> ' + mod.sourceFile + '. <br><strong>Media:</strong> ' + (mod.mediaMap || 'usa los slots de media disponibles.') + '<br>Export final sin editor.';
+            if (mod.standalonePath) {
+                noteEl.innerHTML = 'Modulo standalone curado. <strong>Fuente:</strong> ' + mod.sourceFile + '. <br><strong>Personalizacion:</strong> ' + (mod.mediaMap || 'editor propio dentro del iframe.') + '<br>Los botones HTML, ZIP y Embed del Lab delegan al pipeline de la V2.2.';
+            } else {
+                noteEl.innerHTML = 'Modulo premium aislado en iframe. <strong>Referencia:</strong> ' + mod.sourceFile + '. <br><strong>Media:</strong> ' + (mod.mediaMap || 'usa los slots de media disponibles.') + '<br>Export final sin editor.';
+            }
         }
     }
 
@@ -155,13 +166,20 @@
     function renderPreview() {
         if (!state.active) return;
         var frame = document.getElementById('wm-preview-frame');
-        if (!frame) return;
+        var mod = EP.WebsiteModules && EP.WebsiteModules.get(state.activeId);
+        if (!frame || !mod) return;
         frame.onload = function() {
             try {
                 if (frame.contentWindow) frame.contentWindow.scrollTo(0, 0);
             } catch (err) {}
         };
-        frame.srcdoc = buildCurrentDocument();
+        if (mod.standalonePath) {
+            frame.removeAttribute('srcdoc');
+            if (frame.getAttribute('src') !== mod.standalonePath) frame.setAttribute('src', mod.standalonePath);
+        } else {
+            frame.removeAttribute('src');
+            frame.srcdoc = buildCurrentDocument();
+        }
     }
 
     function selectModule(id) {
@@ -247,11 +265,34 @@
         setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
     }
 
+    function currentStandaloneModule() {
+        var mod = EP.WebsiteModules && EP.WebsiteModules.get(state.activeId);
+        return mod && mod.standalonePath ? mod : null;
+    }
+
+    function runStandaloneAction(action) {
+        var mod = currentStandaloneModule();
+        if (!mod) return false;
+        var buttonId = mod.standaloneActions && mod.standaloneActions[action];
+        var frame = document.getElementById('wm-preview-frame');
+        if (!buttonId || !frame) return false;
+        try {
+            var button = frame.contentDocument && frame.contentDocument.getElementById(buttonId);
+            if (button) {
+                button.click();
+                return true;
+            }
+        } catch (err) {}
+        if (EP.UI && EP.UI.toast) EP.UI.toast('El editor standalone aun no esta listo. Espera a que termine de cargar.');
+        return true;
+    }
+
     function exportHTML() {
         if (!state.activeId) return;
         if (EP.PlanGate && !EP.PlanGate.require('export', {
             title: 'Export Website Module bloqueado'
         })) return;
+        if (runStandaloneAction('html')) return;
         download('website-module-' + state.activeId + '.html', buildCurrentDocument(), 'text/html');
         if (EP.UI && EP.UI.toast) EP.UI.toast('Website module HTML descargado');
     }
@@ -260,6 +301,7 @@
         if (EP.PlanGate && !EP.PlanGate.require('export', {
             title: 'ZIP bloqueado'
         })) return;
+        if (runStandaloneAction('zip')) return;
         if (typeof JSZip === 'undefined') {
             if (EP.UI && EP.UI.toast) EP.UI.toast('ZIP no disponible: JSZip no esta cargado');
             return;
@@ -288,6 +330,7 @@
         if (EP.PlanGate && !EP.PlanGate.require('publish', {
             title: 'Embed bloqueado'
         })) return;
+        if (runStandaloneAction('embed')) return;
         var html = buildCurrentDocument();
         var embed = '<iframe title="Escaparates Pro Website Module" loading="lazy" style="width:100%;min-height:100vh;border:0;display:block;overflow:auto;" srcdoc="' +
             String(html).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;') + '"></iframe>';
@@ -329,7 +372,24 @@
         });
     }
 
-    function init() {
+    function loadStandaloneModules(done) {
+        var id = '3d-book-collection-showcase-pro';
+        if (EP.WebsiteModules && EP.WebsiteModules.get(id)) {
+            done();
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'js/website-modules-3d-book-collection-showcase-pro.js';
+        script.async = false;
+        script.onload = done;
+        script.onerror = function() {
+            if (EP.UI && EP.UI.toast) EP.UI.toast('No se pudo registrar 3D Book Collection Showcase PRO');
+            done();
+        };
+        document.head.appendChild(script);
+    }
+
+    function initReady() {
         renderCatalog();
         renderModulePicker();
         bindSearch();
@@ -349,6 +409,10 @@
         if (embedBtn) embedBtn.addEventListener('click', copyEmbed);
         var picker = document.getElementById('wm-module-picker');
         if (picker) picker.addEventListener('change', function() { selectModule(picker.value); });
+    }
+
+    function init() {
+        loadStandaloneModules(initReady);
     }
 
     EP.WebsiteModulesUI = {
