@@ -378,7 +378,8 @@
             { id: '3d-book-collection-showcase-pro', src: 'js/website-modules-3d-book-collection-showcase-pro.js' },
             { id: 'sketchbook-pro-v3', src: 'js/website-modules-sketchbook-pro-v3.js' },
             { id: 'rope-gallery-pro', src: 'js/website-modules-rope-gallery-pro.js' },
-            { id: 'vinyl-player-pro', src: 'js/website-modules-vinyl-player-pro.js' }
+            { id: 'vinyl-player-pro', src: 'js/website-modules-vinyl-player-pro.js' },
+            { id: 'kinetic-letter-curtain-pro', src: 'js/website-modules-kinetic-letter-curtain-pro.js' }
         ];
         var index = 0;
 
