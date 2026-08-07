@@ -94,7 +94,7 @@ Escaparates Pro permite crear:
 
 Website Modules Lab es un modo independiente para probar, personalizar y exportar secciones web cinematograficas. No usa el motor Three.js de efectos, no toca Scroll Sections y no carga todos los modulos de golpe en `index.html`.
 
-La version actual incluye 30 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas; 3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:
+La version actual incluye 31 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas; 3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:
 
 - Text Mask Reveal.
 - Sticky Stack Narrative.
@@ -126,6 +126,7 @@ La version actual incluye 30 modulos premium. Veintitres estan adaptados desde `
 - Rope Gallery PRO V1.5.
 - Vinyl Player PRO V1.
 - Kinetic Letter Curtain PRO V1.1.
+- Kinetic Letter Curtain PRO V2 — Video Projection.
 
 Cada modulo se renderiza en un iframe aislado, con controles de headline, subtitle, CTA, URL, colores, fuente, branding textual, velocidad, intensidad, scroll length y media de fondo desde los slots de la plataforma.
 
@@ -148,6 +149,8 @@ RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB
 **Vinyl Player PRO V1** vive en `labs/website-modules-source/vinyl-player-pro/` y conserva como fuente canonica el HTML V1 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar el tocadiscos Three.js ni su motor de audio. Incluye seis discos personalizables con portada imagen/video y audio propio, Custom Library para evitar sobrescritura por iTunes, controles mecanicos de brazo/plato/velocidad, branding, paleta, fondo multimedia, persistencia IndexedDB y entregables HTML final, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.
 
 **Kinetic Letter Curtain PRO V1.1** vive en `labs/website-modules-source/kinetic-letter-curtain-pro/` y conserva como fuente canonica el HTML V1.1 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar el solver fisico de las hebras. Incluye cuatro escenas, cortina tipografica alargada, contenido libre, colores y patrones, imagen como mapa de color, logo integrado en las letras, sky/wall/plaster/canopy con imagen-video, textos visibles completamente personalizables, persistencia IndexedDB y entregables HTML final, ZIP cliente, embed, preview, PNG y grabacion de revision.
+
+**Kinetic Letter Curtain PRO V2 — Video Projection** vive en `labs/website-modules-source/kinetic-letter-curtain-pro-v2-video-projection/` como modulo independiente. Conserva la experiencia V1.1 y suma video proyectado dentro de las letras, malla visual de alta densidad desacoplada de la fisica, modos OFF / Static / Balanced / High Quality, control de densidad, escala y peso tipografico, FPS y resolucion de sampling, fit, brillo, contraste, saturacion y limites automaticos en movil.
 
 Exporta resultado final como HTML standalone, ZIP basico y embed iframe. Los modulos adaptados desde `cinematic-site-components` conservan su atribucion MIT; los modulos independientes identifican su referencia sin exportar assets ajenos.
 
@@ -172,6 +175,7 @@ Los assets de los slots se reutilizan en hero, galeria y fichas; cuando el slot 
 - **Rope Gallery PRO V1.5** en Website Modules Lab: modulo standalone Three.js ubicado en `labs/website-modules-source/rope-gallery-pro/`, con cuerda fisica, ocho fichas imagen-video, Focus editorial sin recortes, branding y pipeline propio de entregables cerrados.
 - **Vinyl Player PRO V1** en Website Modules Lab: modulo standalone Three.js + Web Audio ubicado en `labs/website-modules-source/vinyl-player-pro/`, con seis discos imagen-video-audio, tocadiscos mecanico interactivo, Custom Library, branding y pipeline propio de entregables cerrados.
 - **Kinetic Letter Curtain PRO V1.1** en Website Modules Lab: modulo standalone Canvas/Verlet ubicado en `labs/website-modules-source/kinetic-letter-curtain-pro/`, con cuatro escenas, cortina fisica alargada, media de entorno imagen-video, contenido tipografico libre, image color-map, logo integrado y pipeline propio de entregables cerrados.
+- **Kinetic Letter Curtain PRO V2 — Video Projection** en Website Modules Lab: modulo standalone Canvas/Verlet + video sampling ubicado en `labs/website-modules-source/kinetic-letter-curtain-pro-v2-video-projection/`, con video dentro de las letras, malla visual de alta densidad, perfiles Balanced/High Quality y pipeline propio de entregables cerrados.
 
 ## Conceptos Clave
 
