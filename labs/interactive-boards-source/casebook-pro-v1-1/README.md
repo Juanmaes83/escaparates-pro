@@ -7,6 +7,7 @@ Primer módulo de la familia **Interactive Boards** de Escaparates Pro.
 - Module ID: `casebook-pro-v1-1`
 - Familia: `Interactive Boards`
 - Versión aprobada: `V1.1`
+- Estado: **APROBADO / VALIDADO EN PLATAFORMA**
 - Fuente canónica: `index.html`
 - SHA-256 canónico: `96d5da228695c4b0d669e45251469608d4f8676e4c27a462654f6724fd780e63`
 - Preservación: `source.v1.1.html.gz`
@@ -55,6 +56,16 @@ La plataforma registra Casebook mediante `js/interactive-boards-casebook-pro-v1-
 
 `Interactive Boards` es una categoría de primer nivel independiente de Efectos, Scroll Sections, Website Modules Lab, Sector Blueprints, Source Labs y RUBIK SOTA. Website Modules conserva sus 31 módulos actuales sin cambios.
 
+## Registro de validación en plataforma
+
+- PR de integración: **#33** — `feat(interactive-boards): add Casebook PRO V1.1`.
+- Merge commit canónico: `89dc455271cf1cc4f537114f31ed73cf80d19ec0`.
+- GitHub Pages: deploy completado correctamente.
+- Vercel: deploy completado correctamente.
+- Validación visual y funcional integrada: confirmada tras el deploy.
+- URL directa: `https://juanmaes83.github.io/escaparates-pro/labs/interactive-boards-source/casebook-pro-v1-1/index.html`.
+- Plataforma: `https://juanmaes83.github.io/escaparates-pro/` → **Boards** → **Casebook PRO V1.1**.
+
 ## Regla de evolución
 
-V1.1 queda congelada como fuente aprobada. Las ampliaciones posteriores deben entrar como versiones nuevas y no modificar silenciosamente este archivo canónico.
+V1.1 queda congelada como fuente aprobada y baseline canónico de la familia Interactive Boards. Las ampliaciones posteriores deben entrar como versiones nuevas y no modificar silenciosamente este archivo canónico.
