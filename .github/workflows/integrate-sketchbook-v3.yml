@@ -32,7 +32,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/integrate-sketchbook-v3.yml .github/scripts/integrate_sketchbook_v3.py
-          git add README.md js/website-modules-ui.js labs/website-modules-source/sketchbook-pro-v3/index.html
+          git rm .github/workflows/integrate-sketchbook-v3.yml .github/scripts/integrate_sketchbook_v3.py .github/tmp/sketchbook-v3.part*
+          git add README.md js/website-modules-ui.js labs/website-modules-source/sketchbook-pro-v3/index.html labs/website-modules-source/sketchbook-pro-v3/source.v3.html.gz
           git commit -m "feat(web-modules): integrate approved Sketchbook PRO V3"
           git push origin HEAD:feature/sketchbook-pro-v3
