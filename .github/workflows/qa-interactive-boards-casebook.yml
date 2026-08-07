@@ -34,13 +34,21 @@ jobs:
           git diff --check "$BASE"...HEAD
           python3 - <<'PY'
           import subprocess
-          expected={'README.md','css/main.css','index.html','js/interactive-boards.js','js/interactive-boards-casebook-pro-v1-1.js','js/interactive-boards-ui.js','labs/interactive-boards-source/casebook-pro-v1-1/README.md','labs/interactive-boards-source/casebook-pro-v1-1/index.html','labs/interactive-boards-source/casebook-pro-v1-1/source.v1.1.html.gz'}
+          expected_product={'README.md','css/main.css','index.html','js/interactive-boards.js','js/interactive-boards-casebook-pro-v1-1.js','js/interactive-boards-ui.js','labs/interactive-boards-source/casebook-pro-v1-1/README.md','labs/interactive-boards-source/casebook-pro-v1-1/index.html','labs/interactive-boards-source/casebook-pro-v1-1/source.v1.1.html.gz'}
           changed=set(subprocess.check_output(['git','diff','--name-only','41ca26ce788667b9a891b839c44477377af01b8e...HEAD'],text=True).splitlines())
-          assert changed==expected,(changed,expected)
-          print('QA final: 9 archivos exactos')
+          expected_with_qa=expected_product|{'.github/workflows/qa-interactive-boards-casebook.yml'}
+          assert changed==expected_with_qa,(changed,expected_with_qa)
+          print('Pre-clean QA: producto exacto + 1 workflow temporal')
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm .github/workflows/qa-interactive-boards-casebook.yml
           git commit -m "ci: remove temporary Interactive Boards QA"
+          python3 - <<'PY'
+          import subprocess
+          expected={'README.md','css/main.css','index.html','js/interactive-boards.js','js/interactive-boards-casebook-pro-v1-1.js','js/interactive-boards-ui.js','labs/interactive-boards-source/casebook-pro-v1-1/README.md','labs/interactive-boards-source/casebook-pro-v1-1/index.html','labs/interactive-boards-source/casebook-pro-v1-1/source.v1.1.html.gz'}
+          changed=set(subprocess.check_output(['git','diff','--name-only','41ca26ce788667b9a891b839c44477377af01b8e...HEAD'],text=True).splitlines())
+          assert changed==expected,(changed,expected)
+          print('QA final: 9 archivos exactos, workflow temporal eliminado')
+          PY
           git push origin HEAD:feat/interactive-boards-casebook-pro-v1-1
