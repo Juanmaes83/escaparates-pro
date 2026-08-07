@@ -1,4 +1,5 @@
 from pathlib import Path
+import base64
 import gzip
 import hashlib
 import re
@@ -9,10 +10,16 @@ archive = module / 'source.v3.html.gz'
 target = module / 'index.html'
 expected = '837fac4414bbd8b7eb2dbdac8514a5d40429e30e76647b942f7a477da8ed3ee6'
 
-raw = gzip.decompress(archive.read_bytes())
+parts = sorted((root / '.github/tmp').glob('sketchbook-v3.part*'))
+if len(parts) != 8:
+    raise SystemExit(f'Se esperaban 8 partes del Sketchbook V3 y hay {len(parts)}')
+payload = ''.join(p.read_text(encoding='ascii').strip() for p in parts)
+gz_bytes = base64.b64decode(payload, validate=True)
+raw = gzip.decompress(gz_bytes)
 digest = hashlib.sha256(raw).hexdigest()
 if digest != expected:
     raise SystemExit(f'Sketchbook V3 SHA-256 mismatch: {digest}')
+archive.write_bytes(gz_bytes)
 target.write_bytes(raw)
 
 # Website Modules UI: generic standalone copy + curated standalone loader list.
