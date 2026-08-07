@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rope Gallery PRO — Escaparates Pro</title>
+<meta name="description" content="Rope Gallery PRO — editor standalone con galería física 3D personalizable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style id="viewerStyle">
+:root{
+  --ink:#0b0b0b;--ink-2:#2a2a2a;--muted:#6e6e6e;--muted-2:#8a8a8a;
+  --green:#22c24c;--green-deep:#17a93e;--green-text:#1fc24a;--paper:#fff;
+  --hairline:rgba(11,11,11,.075);--pad-x:clamp(18px,3.3vw,44px);--nav-y:clamp(18px,2.2vw,30px);
+  --fs-nav:clamp(13px,1.25vw,15.5px);--fs-badge:clamp(12px,1.13vw,13.5px);
+  --fs-h1:clamp(40px,7.8vw,96px);--fs-sub:clamp(14.5px,1.55vw,19px);--fs-cta:clamp(15px,1.42vw,17.5px);
+}
+*{box-sizing:border-box}html,body{height:100%}html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:"Outfit",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);
+background-color:#faf8f4;background-image:
+radial-gradient(58% 48% at 10% 104%,rgba(240,203,152,.8),rgba(240,203,152,0) 70%),
+radial-gradient(52% 44% at 90% 102%,rgba(243,213,164,.85),rgba(243,213,164,0) 70%),
+radial-gradient(46% 38% at 63% 96%,rgba(203,229,148,.72),rgba(203,229,148,0) 72%),
+radial-gradient(64% 52% at 50% -6%,rgba(255,255,255,.95),rgba(255,255,255,0) 64%);
+background-attachment:fixed;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#epBackgroundMedia{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+#epBackgroundMedia img,#epBackgroundMedia video{width:100%;height:100%;object-fit:cover;display:block}
+#epBackgroundMedia::after{content:"";position:absolute;inset:0;background:rgba(250,248,244,.26)}
+.page{position:relative;z-index:2;min-height:100svh;display:flex;flex-direction:column;pointer-events:none}
+.page a,.page button,.page .interactive{pointer-events:auto}
+.nav{position:relative;display:flex;align-items:center;justify-content:space-between;padding:var(--nav-y) var(--pad-x);z-index:6}
+.logo{font-family:"Anton",Impact,sans-serif;font-size:clamp(20px,2.1vw,26px);letter-spacing:.005em;line-height:1;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.logo img{max-width:150px;max-height:44px;object-fit:contain;display:block}
+.nav-links{display:flex;align-items:center;gap:clamp(18px,2.6vw,34px)}
+.nav-links a,.link-login{font-size:var(--fs-nav);font-weight:400;color:#5f5f5f;text-decoration:none;letter-spacing:.005em}
+.nav-links a:hover,.link-login:hover{color:var(--ink)}.nav-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.nav-right{display:flex;align-items:center;gap:clamp(14px,2vw,26px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;font-family:inherit;border:0;cursor:pointer;text-decoration:none;border-radius:999px;color:#fff;
+background:linear-gradient(180deg,color-mix(in srgb,var(--green) 88%,#fff) 0%,var(--green) 55%,var(--green-deep) 100%);
+transition:transform .18s cubic-bezier(.22,1,.36,1),filter .18s ease;box-shadow:0 8px 24px color-mix(in srgb,var(--green) 28%,transparent)}
+.btn:hover{transform:translateY(-1px);filter:saturate(1.06)}.btn:active{transform:none}
+.btn-sm{font-size:var(--fs-nav);font-weight:500;padding:0 clamp(18px,2.1vw,26px);height:clamp(36px,3.4vw,42px)}
+.btn-lg{font-size:var(--fs-cta);font-weight:600;padding:0 clamp(24px,2.9vw,36px);height:clamp(44px,4.2vw,52px)}
+.menu-toggle{display:none;width:40px;height:40px;border-radius:12px;border:1px solid var(--hairline);background:rgba(255,255,255,.7);align-items:center;justify-content:center;cursor:pointer}
+.menu-toggle span{display:block;width:16px;height:1.5px;background:var(--ink);box-shadow:0 5px 0 var(--ink),0 -5px 0 var(--ink)}
+.hero{padding:clamp(18px,2.4vw,30px) var(--pad-x) 0;text-align:center;display:flex;flex-direction:column;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--hairline);box-shadow:0 6px 18px rgba(11,11,11,.05);border-radius:999px;
+padding:clamp(6px,.7vw,8px) clamp(12px,1.4vw,18px);font-size:var(--fs-badge);font-weight:400;color:#1b1b1b;letter-spacing:.005em}
+h1{margin:clamp(14px,2.1vw,26px) 0 0;font-family:"Anton",Impact,sans-serif;font-weight:400;font-size:var(--fs-h1);line-height:.885;letter-spacing:-.007em;text-transform:uppercase;color:var(--ink)}
+h1 .line{display:block;white-space:nowrap}h1 .hl{color:var(--green-text)}
+.sub{margin:clamp(12px,1.6vw,20px) 0 0;font-size:var(--fs-sub);font-weight:400;color:#2e2e2e;letter-spacing:.004em}
+.cta-wrap{margin-top:clamp(16px,2.2vw,28px);position:relative;z-index:3}
+#ropeZone{--rope-overhang:clamp(56px,7vw,104px);--rope-min-height:clamp(280px,32vw,370px);position:relative;isolation:isolate;flex:1 1 auto;min-height:var(--rope-min-height);margin-top:clamp(18px,2vw,28px)}
+#stage{position:absolute;top:calc(-1 * var(--rope-overhang));right:0;left:0;z-index:0;display:block;width:100%;height:calc(100% + var(--rope-overhang));pointer-events:none}
+#ropeHit{position:absolute;left:0;right:0;top:calc(-1 * var(--rope-overhang));bottom:0;z-index:2;pointer-events:auto;touch-action:pan-y;cursor:grab;outline:none}
+#ropeHit.dragging{cursor:grabbing}#ropeHit:focus-visible{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--green) 65%,transparent);border-radius:14px}
+.hint{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-size:12px;color:var(--muted-2);letter-spacing:.02em;opacity:0;transition:opacity .5s;pointer-events:none;z-index:3}.hint.show{opacity:1}
+.focus-overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:clamp(18px,4vw,56px);background:rgba(18,18,16,.54);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}
+.focus-overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+.focus-shell{position:relative;width:min(1080px,100%);max-height:calc(100vh - clamp(36px,8vw,112px));display:grid;grid-template-columns:minmax(310px,.92fr) minmax(290px,.78fr);gap:clamp(24px,4vw,58px);align-items:center;background:rgba(250,249,245,.985);border:1px solid rgba(11,11,11,.09);border-radius:30px;padding:clamp(22px,3vw,42px);box-shadow:0 34px 100px rgba(0,0,0,.28);overflow:auto}
+.focus-close{position:absolute;right:18px;top:18px;z-index:4;width:42px;height:42px;border-radius:50%;border:1px solid rgba(11,11,11,.1);background:#fff;color:#111;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.focus-card{width:min(430px,100%);justify-self:center;border-radius:22px;background:#e7e7e4;padding:14px;box-shadow:0 26px 56px rgba(0,0,0,.22);transform:rotate(-1.4deg)}
+.focus-media{aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#d7d8d4;display:grid;place-items:center}
+.focus-media img,.focus-media video{display:block;width:100%;height:100%;object-fit:cover;background:#111}
+.focus-media video{cursor:pointer}
+.focus-mini-copy{background:#fff;border-radius:0 0 12px 12px;margin-top:10px;padding:12px 13px 13px}
+.focus-mini-title{font-size:16px;font-weight:700;line-height:1.1;color:#111}
+.focus-mini-sub{font-size:11px;color:#777;margin-top:5px;line-height:1.35}
+.focus-copy{padding:8px 4px 8px 0}
+.focus-kicker{margin:0 0 12px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:700}
+.focus-title{margin:0;padding-right:48px;font-size:clamp(34px,4.2vw,58px);line-height:.93;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+.focus-sub{margin:16px 0 0;font-size:16px;line-height:1.45;color:#2f2f2f;font-weight:600}
+.focus-desc{margin:18px 0 0;font-size:15px;line-height:1.7;color:#555;max-width:46ch}
+.focus-actions{margin-top:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+@media(max-width:780px){.focus-overlay{padding:10px}.focus-shell{grid-template-columns:1fr;gap:18px;max-height:calc(100vh - 20px);border-radius:22px;padding:54px 16px 18px}.focus-card{width:min(330px,88vw);transform:none}.focus-copy{padding:0 6px 6px}.focus-title{font-size:34px}.focus-desc{font-size:14px;line-height:1.55}.focus-media{aspect-ratio:4/3}}
+.logos{display:flex;align-items:center;justify-content:center;gap:clamp(20px,3.6vw,56px);flex-wrap:wrap;padding:0 var(--pad-x) clamp(26px,4vw,52px);opacity:.34}
+.partner-word{font-family:"Outfit",sans-serif;font-weight:600;letter-spacing:.04em;font-size:clamp(11px,1.1vw,14px);white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#fps{position:fixed;z-index:9;left:10px;bottom:10px;font:500 11px/1.3 ui-monospace,monospace;color:#4a4a4a;background:rgba(255,255,255,.72);border:1px solid var(--hairline);border-radius:8px;padding:5px 8px;display:none;pointer-events:none}
+@media(max-width:900px){.nav-center{display:none}.menu-toggle{display:inline-flex}}
+@media(max-width:640px){.link-login{display:none}h1{font-size:clamp(26px,7.8vw,50px);line-height:.92}.hero{padding-top:clamp(24px,6vw,38px)}#ropeZone{--rope-min-height:clamp(255px,66vw,310px)}.logos{gap:22px;row-gap:14px}h1 .line{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+<style id="editorStyle">
+#epGear{position:fixed;right:18px;top:18px;z-index:10020;width:46px;height:46px;border-radius:14px;border:1px solid rgba(0,0,0,.1);background:#111;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+#epPanel{position:fixed;right:0;top:0;bottom:0;width:min(420px,94vw);z-index:10019;background:#111;color:#f5f5f5;transform:translateX(102%);transition:transform .28s cubic-bezier(.22,1,.36,1);box-shadow:-18px 0 55px rgba(0,0,0,.24);overflow:auto;padding:74px 18px 28px;font-family:Inter,Arial,sans-serif}
+#epPanel.open{transform:translateX(0)}#epPanel h2{font-size:19px;margin:0 0 4px}#epPanel .lead{margin:0 0 18px;color:#aaa;font-size:12px;line-height:1.5}
+.ep-section{border:1px solid #292929;border-radius:14px;background:#171717;margin:0 0 12px;overflow:hidden}.ep-section>summary{cursor:pointer;padding:14px 15px;font-size:13px;font-weight:700;list-style:none}.ep-section>summary::-webkit-details-marker{display:none}.ep-inner{padding:0 14px 14px}
+.ep-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ep-field{margin:9px 0}.ep-field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#8e8e8e;margin-bottom:5px}
+.ep-field input,.ep-field textarea,.ep-field select{width:100%;background:#0f0f0f;color:#fff;border:1px solid #303030;border-radius:9px;padding:9px 10px;font:12px/1.35 Inter,Arial,sans-serif;outline:none}.ep-field textarea{min-height:58px;resize:vertical}
+.ep-field input[type=color]{height:38px;padding:4px}.ep-field input[type=file]{padding:7px}
+.ep-btn{border:1px solid #343434;background:#232323;color:#fff;border-radius:10px;padding:9px 11px;cursor:pointer;font:600 11px/1 Inter,Arial,sans-serif}.ep-btn:hover{background:#303030}.ep-btn.primary{background:#fff;color:#111;border-color:#fff}.ep-btn.danger{color:#ffb7b7}
+.ep-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ep-actions .ep-btn{min-height:38px}.ep-card-editor{border-top:1px solid #2a2a2a;padding-top:10px;margin-top:10px}.ep-card-title{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:7px}
+.ep-note{font-size:10px;color:#888;line-height:1.5;margin-top:8px}.ep-output{width:100%;min-height:76px;background:#090909;color:#bbb;border:1px solid #2a2a2a;border-radius:9px;padding:9px;font:10px/1.4 ui-monospace,monospace;margin-top:8px}
+#epToast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);z-index:10050;background:#111;color:#fff;border:1px solid #333;border-radius:12px;padding:10px 14px;font:12px/1.35 Inter,Arial,sans-serif;opacity:0;pointer-events:none;transition:.2s;max-width:min(520px,90vw);text-align:center}#epToast.show{opacity:1;transform:translate(-50%,0)}
+body.ep-panel-open #epGear{right:min(438px,calc(94vw + 18px))}
+@media(max-width:650px){#epPanel{width:94vw}.ep-grid{grid-template-columns:1fr}.ep-actions{grid-template-columns:1fr}body.ep-panel-open #epGear{right:calc(94vw + 6px)}}
+</style>
+</head>
+<body>
+<div id="epBackgroundMedia"></div>
+<div class="page" id="viewerRoot">
+<header class="nav">
+  <a class="logo interactive" id="brandLogo" href="#" aria-label="Home"><span id="brandText">ASTRO°</span></a>
+  <nav class="nav-links nav-center" aria-label="Primary">
+    <a href="#" id="nav1">Kids Browser</a><a href="#" id="nav2">Parent Portal</a><a href="#" id="nav3">Safe Search</a>
+  </nav>
+  <div class="nav-right"><a class="link-login interactive" id="loginLink" href="#">Login</a><a class="btn btn-sm interactive" id="navCta" href="#">Download</a><button class="menu-toggle interactive" aria-label="Open menu"><span></span></button></div>
+</header>
+<main class="hero">
+  <p class="badge" id="badgeText">🎉 Best App for kids education</p>
+  <h1><span class="line"><span id="heroPrefix">Safe web for </span><span class="hl" id="heroHighlight">kids</span></span><span class="line" id="heroLine2">to learn and grow</span></h1>
+  <p class="sub" id="heroSub">With Built In Parental Controls And Monitoring</p>
+  <div class="cta-wrap"><a class="btn btn-lg interactive" id="heroCta" href="#">Download App</a></div>
+</main>
+<div id="ropeZone"><canvas id="stage" aria-hidden="true"></canvas><div id="ropeHit" class="interactive" tabindex="0" role="group" aria-label="Galería colgante. Arrastra la cuerda o usa las flechas izquierda y derecha."></div><p class="hint" id="hint">Arrastra la cuerda · click en una ficha para ampliar</p></div>
+<div class="focus-overlay interactive" id="focusOverlay" aria-hidden="true">
+  <section class="focus-shell" role="dialog" aria-modal="true" aria-labelledby="focusTitle">
+    <button class="focus-close interactive" id="focusClose" type="button" aria-label="Cerrar ficha">×</button>
+    <div class="focus-card">
+      <div class="focus-media" id="focusMedia"></div>
+      <div class="focus-mini-copy"><div class="focus-mini-title" id="focusMiniTitle"></div><div class="focus-mini-sub" id="focusMiniSub"></div></div>
+    </div>
+    <div class="focus-copy">
+      <p class="focus-kicker">Ficha seleccionada</p>
+      <h2 class="focus-title" id="focusTitle"></h2>
+      <p class="focus-sub" id="focusSub"></p>
+      <p class="focus-desc" id="focusDesc"></p>
+      <div class="focus-actions"><a class="btn btn-lg interactive" id="focusCta" href="#">Explorar ficha</a></div>
+    </div>
+  </section>
+</div>
+<ul class="sr-only" id="srList" aria-label="Gallery topics"></ul>
+<div class="logos" aria-label="Featured in"><span class="partner-word">LOGOIPSUM</span><span class="partner-word">NORTH</span><span class="partner-word">ORBIT</span><span class="partner-word">STUDIO</span><span class="partner-word">LOC</span></div>
+</div>
+<div id="fps">–</div>
+
+<button id="epGear" aria-label="Abrir personalización">⚙</button>
+<aside id="epPanel">
+  <h2>ROPE GALLERY PRO</h2>
+  <p class="lead">Escaparates Pro · personaliza marca, textos, colores, fondo y las 8 tarjetas con imagen o vídeo. La física 3D original permanece activa.</p>
+
+  <details class="ep-section" open><summary>01 · Marca y hero</summary><div class="ep-inner">
+    <div class="ep-field"><label>Logo (imagen)</label><input id="logoFile" type="file" accept="image/*"><button class="ep-btn danger" id="removeLogo" type="button">Quitar logo</button></div>
+    <div class="ep-grid">
+      <div class="ep-field"><label>Marca texto</label><input id="brandName"></div>
+      <div class="ep-field"><label>Badge</label><input id="badgeInput"></div>
+    </div>
+    <div class="ep-grid">
+      <div class="ep-field"><label>Hero prefijo</label><input id="heroPrefixInput"></div>
+      <div class="ep-field"><label>Palabra destacada</label><input id="heroHighlightInput"></div>
+    </div>
+    <div class="ep-field"><label>Segunda línea</label><input id="heroLine2Input"></div>
+    <div class="ep-field"><label>Subtítulo</label><input id="heroSubInput"></div>
+    <div class="ep-grid">
+      <div class="ep-field"><label>CTA principal</label><input id="heroCtaText"></div>
+      <div class="ep-field"><label>URL CTA</label><input id="heroCtaUrl"></div>
+    </div>
+  </div></details>
+
+  <details class="ep-section"><summary>02 · Navegación</summary><div class="ep-inner">
+    <div class="ep-grid"><div class="ep-field"><label>Link 1</label><input id="nav1Input"></div><div class="ep-field"><label>Link 2</label><input id="nav2Input"></div></div>
+    <div class="ep-grid"><div class="ep-field"><label>Link 3</label><input id="nav3Input"></div><div class="ep-field"><label>Login</label><input id="loginInput"></div></div>
+    <div class="ep-grid"><div class="ep-field"><label>CTA nav</label><input id="navCtaText"></div><div class="ep-field"><label>URL CTA nav</label><input id="navCtaUrl"></div></div>
+  </div></details>
+
+  <details class="ep-section"><summary>03 · Apariencia y fondo</summary><div class="ep-inner">
+    <div class="ep-grid">
+      <div class="ep-field"><label>Acento</label><input id="accentInput" type="color"></div>
+      <div class="ep-field"><label>Acento oscuro</label><input id="accentDeepInput" type="color"></div>
+    </div>
+    <div class="ep-grid">
+      <div class="ep-field"><label>Tinta</label><input id="inkInput" type="color"></div>
+      <div class="ep-field"><label>Fondo</label><input id="bgColorInput" type="color"></div>
+    </div>
+    <div class="ep-field"><label>Fondo imagen o vídeo</label><input id="backgroundFile" type="file" accept="image/*,video/*"><button class="ep-btn danger" id="removeBackground" type="button">Quitar fondo multimedia</button></div>
+  </div></details>
+
+  <details class="ep-section" open><summary>04 · 8 tarjetas</summary><div class="ep-inner" id="cardsEditor"></div></details>
+
+  <details class="ep-section"><summary>05 · Entregables cliente</summary><div class="ep-inner">
+    <div class="ep-actions">
+      <button class="ep-btn primary" id="downloadFinalHtmlBtn">HTML final cerrado</button>
+      <button class="ep-btn primary" id="downloadClientZipBtn">ZIP cliente + assets</button>
+      <button class="ep-btn" id="copyEmbedBtn">Copiar iframe embed</button>
+      <button class="ep-btn" id="publishPreviewBtn">Preview local</button>
+      <button class="ep-btn" id="capturePngBtn">Captura PNG</button>
+      <button class="ep-btn" id="downloadPngSequenceBtn">PNG sequence ZIP</button>
+      <button class="ep-btn" id="recordWebmBtn">Grabar vídeo final</button>
+      <button class="ep-btn" id="recordClientReviewBtn">Grabar revisión cliente</button>
+    </div>
+    <div class="ep-field"><label>Duración vídeo final (segundos)</label><input id="recordSeconds" type="number" min="2" max="30" step="1" value="6"></div>
+    <p class="ep-note">Los entregables generan un viewer cerrado: sin engranaje, panel ni controles internos. Vídeos e imágenes grandes viven como Blob en IndexedDB y solo se inlinean cuando exportas un HTML único.</p>
+    <textarea id="embedOutput" class="ep-output" readonly placeholder="Aquí aparecerá el iframe final..."></textarea>
+  </div></details>
+
+  <button class="ep-btn danger" id="resetProjectBtn" style="width:100%;margin-top:4px">Restablecer proyecto</button>
+</aside>
+<div id="epToast"></div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const PAGE_TITLE = "Rope Gallery PRO";
+const STATE_KEY = "ep-rope-gallery-pro-state-v1";
+const DB_NAME = "ep-rope-gallery-pro-assets-v1";
+const DB_STORE = "assets";
+const CARD_COUNT = 8;
+const DEFAULT_PHOTOS = [
+  "https://picsum.photos/id/237/640/768","https://picsum.photos/id/318/640/768",
+  "https://picsum.photos/id/1015/640/768","https://picsum.photos/id/250/640/768",
+  "https://picsum.photos/id/180/640/768","https://picsum.photos/id/145/640/768",
+  "https://picsum.photos/id/823/640/768","https://picsum.photos/id/119/640/768"
+];
+const DEFAULT_STATE = {
+  brandName:"ASTRO°",badge:"🎉 Best App for kids education",
+  heroPrefix:"Safe web for ",heroHighlight:"kids",heroLine2:"to learn and grow",
+  heroSub:"With Built In Parental Controls And Monitoring",heroCtaText:"Download App",heroCtaUrl:"#",
+  nav1:"Kids Browser",nav2:"Parent Portal",nav3:"Safe Search",login:"Login",navCtaText:"Download",navCtaUrl:"#",
+  colors:{accent:"#22c24c",accentDeep:"#17a93e",ink:"#0b0b0b",background:"#faf8f4"},
+  cards:[
+    {title:"Animals",subtitle:"Learn about animals for kids",description:"Descubre animales, curiosidades y contenidos visuales pensados para aprender jugando.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"History",subtitle:"Learn about history for kids",description:"Una ficha ampliada para profundizar en acontecimientos, personajes y lugares.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Geography",subtitle:"Learn about geography for kids",description:"Mapas, paisajes y datos clave convertidos en una experiencia visual clara y atractiva.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Entertainment",subtitle:"Learn about entertainment for kids",description:"Espacio perfecto para presentar una recomendación, vídeo, teaser o contenido destacado.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Numbers",subtitle:"Learn about numbers for kids",description:"Refuerza conceptos con imágenes, texto breve y un acceso destacado a más información.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Music",subtitle:"Learn about music for kids",description:"Combina imagen o vídeo con una explicación ampliada de la pieza y una llamada a la acción.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Art",subtitle:"Learn about art for kids",description:"Formato ideal para mostrar una obra, colección o campaña con foco y descripción ampliada.",ctaText:"Explorar ficha",ctaUrl:"#"},
+    {title:"Science",subtitle:"Learn about science for kids",description:"Una ficha interactiva que amplía el contenido sin perder la galería física original.",ctaText:"Explorar ficha",ctaUrl:"#"}
+  ],
+  assets:{logo:null,background:null,cards:Array(CARD_COUNT).fill(null)}
+};
+let state = mergeState(loadState(), DEFAULT_STATE);
+const runtimeAssets = new Map();
+let viewer = null;
+let reviewRecorder = null, reviewStream = null, reviewChunks = [];
+
+function mergeState(saved, fallback){
+  const base = structuredClone(fallback);
+  if(!saved) return base;
+  Object.assign(base,saved);
+  base.colors={...fallback.colors,...(saved.colors||{})};
+  base.cards=Array.from({length:CARD_COUNT},(_,i)=>({...fallback.cards[i],...(saved.cards?.[i]||{})}));
+  base.assets={
+    logo:saved.assets?.logo||null,background:saved.assets?.background||null,
+    cards:Array.from({length:CARD_COUNT},(_,i)=>saved.assets?.cards?.[i]||null)
+  };
+  return base;
+}
+function loadState(){try{return JSON.parse(localStorage.getItem(STATE_KEY)||"null")}catch{return null}}
+function saveState(){localStorage.setItem(STATE_KEY,JSON.stringify(state))}
+function toast(msg,ms=2600){const el=document.getElementById("epToast");el.textContent=msg;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),ms)}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function escapeAttr(s){return escapeHtml(s)}
+function safeUrl(s){const v=String(s||"#").trim();return v||"#"}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function uid(prefix="asset"){return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,9)}`}
+function extFromMime(mime="",name=""){
+  const m=mime.toLowerCase();
+  if(m.includes("png"))return"png";if(m.includes("jpeg")||m.includes("jpg"))return"jpg";if(m.includes("webp"))return"webp";if(m.includes("gif"))return"gif";
+  if(m.includes("mp4"))return"mp4";if(m.includes("webm"))return"webm";if(m.includes("quicktime"))return"mov";if(m.includes("svg"))return"svg";
+  const x=(name.split(".").pop()||"").toLowerCase();return x&&x.length<6?x:"bin";
+}
+function isVideoMime(m=""){return /^video\//i.test(m)}
+function blobToDataURL(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(blob)})}
+function downloadBlob(blob,name){
+  if(!blob||!blob.size)throw new Error("El archivo generado está vacío.");
+  const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)
+}
+function openDB(){return new Promise((res,rej)=>{const q=indexedDB.open(DB_NAME,1);q.onupgradeneeded=()=>{if(!q.result.objectStoreNames.contains(DB_STORE))q.result.createObjectStore(DB_STORE)};q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function idbPut(key,blob){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).put(blob,key);tx.oncomplete=()=>{db.close();res()};tx.onerror=()=>{db.close();rej(tx.error)}})}
+async function idbGet(key){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readonly"),q=tx.objectStore(DB_STORE).get(key);q.onsuccess=()=>{db.close();res(q.result||null)};q.onerror=()=>{db.close();rej(q.error)}})}
+async function idbDelete(key){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).delete(key);tx.oncomplete=()=>{db.close();res()};tx.onerror=()=>{db.close();rej(tx.error)}})}
+function revokeRuntime(key){const rt=runtimeAssets.get(key);if(rt?.url)URL.revokeObjectURL(rt.url);runtimeAssets.delete(key)}
+async function ensureRuntime(desc){
+  if(!desc?.key)return null;
+  if(runtimeAssets.has(desc.key))return runtimeAssets.get(desc.key);
+  const blob=await idbGet(desc.key);if(!blob)return null;
+  const type=isVideoMime(desc.mime||blob.type)?"video":"image";
+  const url=URL.createObjectURL(blob),rt={blob,url,dataUrl:null,mime:desc.mime||blob.type,name:desc.name||desc.key,type};
+  runtimeAssets.set(desc.key,rt);return rt;
+}
+async function runtimeDataUrl(rt){
+  if(!rt?.blob)return null;
+  if(!rt.dataUrl)rt.dataUrl=await blobToDataURL(rt.blob);
+  return rt.dataUrl;
+}
+async function setAsset(slot,file){
+  if(!file)return;
+  const old=getDesc(slot);if(old?.key){revokeRuntime(old.key);await idbDelete(old.key).catch(()=>{})}
+  const key=uid(slot.replace(/[^a-z0-9]+/gi,"-"));await idbPut(key,file);
+  const desc={key,name:file.name||key,mime:file.type||"application/octet-stream",type:isVideoMime(file.type)?"video":"image",size:file.size};
+  putDesc(slot,desc);
+  const url=URL.createObjectURL(file);runtimeAssets.set(key,{blob:file,url,dataUrl:null,mime:desc.mime,name:desc.name,type:desc.type});
+  saveState();await refreshViewer();renderAssetLabels();toast("Media actualizada");
+}
+async function removeAsset(slot){
+  const old=getDesc(slot);if(old?.key){revokeRuntime(old.key);await idbDelete(old.key).catch(()=>{})}
+  putDesc(slot,null);saveState();await refreshViewer();renderAssetLabels();toast("Media eliminada")
+}
+function getDesc(slot){
+  if(slot==="logo")return state.assets.logo;if(slot==="background")return state.assets.background;
+  const m=slot.match(/^card-(\d+)$/);return m?state.assets.cards[+m[1]]:null
+}
+function putDesc(slot,desc){
+  if(slot==="logo")state.assets.logo=desc;else if(slot==="background")state.assets.background=desc;
+  else{const m=slot.match(/^card-(\d+)$/);if(m)state.assets.cards[+m[1]]=desc}
+}
+async function hydrateAssets(){
+  const all=[state.assets.logo,state.assets.background,...state.assets.cards].filter(Boolean);
+  await Promise.all(all.map(d=>ensureRuntime(d).catch(()=>null)))
+}
+async function resolvedConfig(mode="editor",zipFolder=null){
+  const cfg=structuredClone(state);
+  delete cfg.assets;
+  async function material(desc,prefix){
+    if(!desc)return null;
+    const rt=await ensureRuntime(desc);
+    if(!rt?.blob)throw new Error(`No se encuentra el Blob de ${desc.name||prefix}. Vuelve a cargar ese archivo.`);
+    if(mode==="editor"){
+      // Same proven split as the approved modules: images are a stable DataURL in memory;
+      // videos remain Blob/ObjectURL so large files are never base64-encoded while editing.
+      const src=rt.type==="image"?await runtimeDataUrl(rt):rt.url;
+      return{type:rt.type,src,mime:rt.mime,name:rt.name};
+    }
+    if(mode==="inline")return{type:rt.type,src:await runtimeDataUrl(rt),mime:rt.mime,name:rt.name};
+    if(mode==="zip"){
+      const ext=extFromMime(rt.mime,rt.name),filename=`${prefix}.${ext}`;
+      zipFolder.file(filename,rt.blob,isVideoMime(rt.mime)?{compression:"STORE"}:{compression:"DEFLATE"});
+      // Images are also inlined in index.html for reliable file:// opening, while originals
+      // remain in /assets. Videos stay external in the ZIP to avoid huge HTML files.
+      const src=rt.type==="image"?await runtimeDataUrl(rt):`assets/${filename}`;
+      return{type:rt.type,src,mime:rt.mime,name:rt.name};
+    }
+    return null;
+  }
+  cfg.logo=await material(state.assets.logo,"logo");
+  cfg.background=await material(state.assets.background,"background");
+  cfg.cards=await Promise.all(state.cards.map(async(c,i)=>({...c,media:await material(state.assets.cards[i],`card-${String(i+1).padStart(2,"0")}`)})));
+  return cfg;
+}
+
+function ropeRuntime(config,libs){
+  const {THREE,RoomEnvironment,gsap}=libs,root=document.documentElement;
+  const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clamp=THREE.MathUtils.clamp;
+  const safeUrlLocal=v=>{const x=String(v||"#").trim();return x||"#"};
+  const needsCorsLocal=src=>{const x=String(src||"");return /^https?:\/\//i.test(x)&&!x.startsWith(location.origin)};
+  let DATA=config, destroyed=false;
+  const defaultPhotos=DATA.defaultPhotos||[];
+  const CFG={
+    camera:{fov:30,z:12,parallax:.06,damp:5},
+    line:{riseFrac:.105,tiltFrac:.0208,depthArc:.75,spread:.1,radiusPx:1.35,waveSpeed:11,rest:9,damp:3.4,nodes:96,samples:128},
+    card:{ratio:1.2,spacing:1.245,depth:.014,corner:.062,tiltMax:.085,swingGravity:22,swingDamp:1.75,idleAmp:.0085,lagK:44,lagC:7.4,lagAir:2.05,repelK:105,repelGap:1.02,bounceK:150,bounceC:9.5,weight:7},
+    clip:{w:.093,h:.168,drop:.72,depth:.05,z:.05},input:{momentumDamp:3.1,wheelGain:.9,wheelEase:9}
+  };
+  const canvas=document.getElementById("stage"),ropeZone=document.getElementById("ropeZone"),hit=document.getElementById("ropeHit"),hintEl=document.getElementById("hint");
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:"high-performance",preserveDrawingBuffer:true});
+  renderer.setClearAlpha(0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;
+  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(CFG.camera.fov,1,.1,60);camera.position.set(0,0,CFG.camera.z);
+  try{const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;scene.environmentIntensity=.26;pmrem.dispose()}catch{}
+  scene.add(new THREE.HemisphereLight(0xffffff,0xede6d8,.5));const key=new THREE.DirectionalLight(0xffffff,.42);key.position.set(-3,4,6);scene.add(key);
+  const fill=new THREE.DirectionalLight(0xfff4e4,.15);fill.position.set(4,-1.5,3);scene.add(fill);
+  const world=new THREE.Group();scene.add(world);
+  const L={},N=CFG.line.nodes,M=CFG.line.samples,R=6;
+  const rope={dy:new Float32Array(N),vy:new Float32Array(N),ly:new Float32Array(N),dz:new Float32Array(N),vz:new Float32Array(N),lz:new Float32Array(N)};
+  const cards=[];let mediaTextures=[],labelTextures=[],mediaVideos=[],sharedClipGeo=null,sharedDotGeo=null;
+  const raycaster=new THREE.Raycaster(),pointerNdc=new THREE.Vector2(),meshToCard=new Map();
+  const focusEls={overlay:document.getElementById("focusOverlay"),close:document.getElementById("focusClose"),media:document.getElementById("focusMedia"),title:document.getElementById("focusTitle"),sub:document.getElementById("focusSub"),desc:document.getElementById("focusDesc"),cta:document.getElementById("focusCta"),miniTitle:document.getElementById("focusMiniTitle"),miniSub:document.getElementById("focusMiniSub")};
+  const focus={open:false,index:-1};
+  const clipBodyMat=new THREE.MeshPhysicalMaterial({color:DATA.colors?.accent||"#22c24c",roughness:.32,metalness:0,clearcoat:1,clearcoatRoughness:.14,envMapIntensity:.9});
+  const clipDotMat=new THREE.MeshPhysicalMaterial({color:"#fcfcfa",roughness:.42,metalness:0,clearcoat:.6});
+  const ropeMaterial=new THREE.MeshStandardMaterial({color:0xb8b2a7,roughness:.86,metalness:0});
+  const ropeGeo=new THREE.BufferGeometry();
+  {
+    const pos=new Float32Array(M*R*3),nor=new Float32Array(M*R*3),uv=new Float32Array(M*R*2),idx=[];
+    for(let i=0;i<M;i++)for(let j=0;j<R;j++){uv[(i*R+j)*2]=j/R;uv[(i*R+j)*2+1]=i/(M-1)}
+    for(let i=0;i<M-1;i++)for(let j=0;j<R;j++){const a=i*R+j,b=i*R+(j+1)%R,c=(i+1)*R+j,d=(i+1)*R+(j+1)%R;idx.push(a,c,b,b,c,d)}
+    ropeGeo.setAttribute("position",new THREE.BufferAttribute(pos,3));ropeGeo.setAttribute("normal",new THREE.BufferAttribute(nor,3));ropeGeo.setAttribute("uv",new THREE.BufferAttribute(uv,2));ropeGeo.setIndex(idx)
+  }
+  const ropeMesh=new THREE.Mesh(ropeGeo,ropeMaterial);ropeMesh.frustumCulled=false;world.add(ropeMesh);
+  const io={offset:0,vel:0,accel:0,prevVel:0,wheel:0,kb:0,dragging:false,pointerDown:false,downX:0,downY:0,lastX:0,lastT:0},ptr={x:0,y:0,tx:0,ty:0};
+  let time=0,prevKb=0,dpr=Math.min(2,devicePixelRatio||1),showFps=false,frames=0,acc=0,lowered=0;
+  renderer.setPixelRatio(dpr);
+
+  function applyUi(){
+    root.style.setProperty("--green",DATA.colors?.accent||"#22c24c");root.style.setProperty("--green-deep",DATA.colors?.accentDeep||"#17a93e");
+    root.style.setProperty("--green-text",DATA.colors?.accent||"#22c24c");root.style.setProperty("--ink",DATA.colors?.ink||"#0b0b0b");
+    document.body.style.backgroundColor=DATA.colors?.background||"#faf8f4";
+    const set=(id,v)=>{const n=document.getElementById(id);if(n)n.textContent=v??""};
+    set("brandText",DATA.brandName);set("badgeText",DATA.badge);set("heroPrefix",DATA.heroPrefix);set("heroHighlight",DATA.heroHighlight);set("heroLine2",DATA.heroLine2);set("heroSub",DATA.heroSub);
+    set("nav1",DATA.nav1);set("nav2",DATA.nav2);set("nav3",DATA.nav3);set("loginLink",DATA.login);set("navCta",DATA.navCtaText);set("heroCta",DATA.heroCtaText);
+    const hc=document.getElementById("heroCta"),nc=document.getElementById("navCta");if(hc)hc.href=DATA.heroCtaUrl||"#";if(nc)nc.href=DATA.navCtaUrl||"#";
+    const logo=document.getElementById("brandLogo");if(logo){logo.innerHTML=DATA.logo?.src?`<img src="${escapeAttrLocal(DATA.logo.src)}" alt="${escapeAttrLocal(DATA.brandName||"Logo")}">`:`<span id="brandText">${escapeHtmlLocal(DATA.brandName||"")}</span>`}
+    const bg=document.getElementById("epBackgroundMedia");if(bg){bg.innerHTML="";if(DATA.background?.src){const el=document.createElement(DATA.background.type==="video"?"video":"img");el.src=DATA.background.src;if(el.tagName==="VIDEO"){el.autoplay=true;el.muted=true;el.loop=true;el.playsInline=true;el.play().catch(()=>{})}bg.appendChild(el)}}
+    const sr=document.getElementById("srList");if(sr)sr.innerHTML=(DATA.cards||[]).map(c=>`<li>${escapeHtmlLocal(c.title)} — ${escapeHtmlLocal(c.subtitle)}</li>`).join("");
+    clipBodyMat.color.set(DATA.colors?.accent||"#22c24c");
+  }
+  function escapeHtmlLocal(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+  function escapeAttrLocal(s){return escapeHtmlLocal(s)}
+  function roundedPlane(w,h,r,seg=8){const s=new THREE.Shape(),x=-w/2,y=-h/2;r=Math.min(r,w/2,h/2);s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);const g=new THREE.ShapeGeometry(s,seg),p=g.attributes.position,uv=g.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,p.getX(i)/w+.5,p.getY(i)/h+.5);uv.needsUpdate=true;return g}
+  function clipGeometry(w,h,d){const s=new THREE.Shape(),r=w*.44,x=-w/2,y=-h*.8;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);const g=new THREE.ExtrudeGeometry(s,{depth:d*.7,bevelEnabled:true,bevelThickness:d*.15,bevelSize:d*.15,bevelSegments:3,curveSegments:10});g.translate(0,0,-d*.5);g.computeVertexNormals();return g}
+  function fallbackCanvas(i){
+    const cv=document.createElement("canvas");cv.width=640;cv.height=640;const c=cv.getContext("2d"),pal=[["#c7e5af","#245d37"],["#e5d8c4","#5c4d3c"],["#17345d","#5d9a62"],["#53355f","#de7b8f"],["#e6d86d","#3775a4"],["#1b1c22","#b54936"],["#f0a5aa","#6a56a2"],["#0c4850","#72d8cd"]][i%8];
+    const g=c.createLinearGradient(0,0,640,640);g.addColorStop(0,pal[0]);g.addColorStop(1,pal[1]);c.fillStyle=g;c.fillRect(0,0,640,640);
+    c.globalAlpha=.22;c.fillStyle="#fff";for(let k=0;k<24;k++){c.beginPath();c.arc((k*137)%640,(k*83)%640,20+(k%5)*12,0,Math.PI*2);c.fill()}c.globalAlpha=1;
+    c.fillStyle="rgba(255,255,255,.88)";c.font="600 52px Outfit,Arial";c.textAlign="center";c.fillText((DATA.cards?.[i]?.title||"").slice(0,18),320,330);return cv
+  }
+  function labelCanvas(i){
+    const cv=document.createElement("canvas");cv.width=640;cv.height=190;const c=cv.getContext("2d");c.clearRect(0,0,640,190);c.fillStyle="#fff";c.fillRect(0,0,640,190);
+    c.fillStyle="#111";c.font="600 34px Outfit,Arial";c.textAlign="left";c.fillText((DATA.cards?.[i]?.title||"").slice(0,28),22,68);
+    c.fillStyle="#888";c.font="400 22px Outfit,Arial";const txt=(DATA.cards?.[i]?.subtitle||"").slice(0,46);c.fillText(txt,22,116);return cv
+  }
+  function disposeTextures(){
+    mediaTextures.forEach(t=>t?.dispose?.());labelTextures.forEach(t=>t?.dispose?.());mediaVideos.forEach(v=>{try{v.pause();v.src=""}catch{}});
+    mediaTextures=[];labelTextures=[];mediaVideos=[]
+  }
+  function coverCanvas(source,size=1024){
+    const cv=document.createElement("canvas");cv.width=size;cv.height=size;const c=cv.getContext("2d");
+    c.fillStyle="#e9e9e5";c.fillRect(0,0,size,size);
+    const iw=source.naturalWidth||source.videoWidth||source.width||1,ih=source.naturalHeight||source.videoHeight||source.height||1;
+    const scale=Math.max(size/iw,size/ih),dw=iw*scale,dh=ih*scale;c.drawImage(source,(size-dw)/2,(size-dh)/2,dw,dh);return cv
+  }
+  function makeCanvasTexture(canvas){const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.needsUpdate=true;return t}
+  function loadImageElement(src){return new Promise((resolve,reject)=>{const img=new Image();if(needsCorsLocal(src))img.crossOrigin="anonymous";img.decoding="async";img.onload=()=>resolve(img);img.onerror=()=>reject(new Error("No se pudo cargar la imagen"));img.src=src})}
+  async function imageTexture(src,i){try{const img=await loadImageElement(src);return makeCanvasTexture(coverCanvas(img))}catch(err){console.warn("Fallback imagen tarjeta",i+1,err);return makeCanvasTexture(fallbackCanvas(i))}}
+  function videoTexture(media){const v=document.createElement("video");v.src=media.src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.preload="auto";if(needsCorsLocal(media.src))v.crossOrigin="anonymous";v.play().catch(()=>{});const t=new THREE.VideoTexture(v);t.colorSpace=THREE.SRGBColorSpace;t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.generateMipmaps=false;return{texture:t,video:v}}
+  async function buildTextures(){
+    const nextVideos=[];
+    const nextMedia=await Promise.all(Array.from({length:8},async(_,i)=>{
+      const media=DATA.cards?.[i]?.media;
+      if(media?.type==="video"&&media.src){const r=videoTexture(media);nextVideos.push(r.video);return r.texture}
+      return imageTexture(media?.src||defaultPhotos[i],i)
+    }));
+    const nextLabels=Array.from({length:8},(_,i)=>makeCanvasTexture(labelCanvas(i)));
+    mediaTextures.forEach(t=>t?.dispose?.());labelTextures.forEach(t=>t?.dispose?.());mediaVideos.forEach(v=>{try{v.pause();v.removeAttribute("src");v.load()}catch{}});
+    mediaTextures=nextMedia;labelTextures=nextLabels;mediaVideos=nextVideos;
+  }
+  function layout(){
+    const W=canvas.clientWidth;L.halfWpx=W*.5;L.cardWpx=W<640?W*.435:W<1024?W*.245:Math.min(W*.179,236);L.cardHpx=L.cardWpx*CFG.card.ratio;L.spacingPx=L.cardWpx*CFG.card.spacing;
+    L.slots=Math.max(5,Math.ceil((2.75*L.halfWpx)/L.spacingPx));L.halfSpanPx=L.slots*L.spacingPx*.5;const tEdge=Math.min(.92,L.halfWpx/L.halfSpanPx);
+    L.sagPx=(CFG.line.riseFrac*L.halfWpx)/(1-tEdge*tEdge);L.tiltPx=(CFG.line.tiltFrac*W)/(2*tEdge);const topRisePx=L.sagPx*tEdge*tEdge+Math.abs(L.tiltPx*tEdge),clipDropPx=L.cardWpx*CFG.clip.h*CFG.clip.drop;
+    const renderOverhangPx=Math.ceil(topRisePx+18),renderDepthPx=Math.ceil(clipDropPx+L.cardHpx*1.1+28);ropeZone.style.setProperty("--rope-overhang",`${renderOverhangPx}px`);ropeZone.style.setProperty("--rope-min-height",`${renderDepthPx}px`);
+    const H=canvas.clientHeight;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H,false);L.worldH=2*CFG.camera.z*Math.tan(THREE.MathUtils.degToRad(CFG.camera.fov)*.5);L.ppu=H/L.worldH;L.viewH=H;
+    L.anchorPx=ropeZone.getBoundingClientRect().top-canvas.getBoundingClientRect().top;L.cardW=L.cardWpx/L.ppu;L.cardH=L.cardHpx/L.ppu;L.spacing=L.spacingPx/L.ppu;L.halfSpan=L.halfSpanPx/L.ppu;L.span=L.halfSpan*2;
+    L.clipW=L.cardW*CFG.clip.w;L.clipH=L.cardW*CFG.clip.h;L.clipDrop=L.clipH*CFG.clip.drop;L.ropeR=CFG.line.radiusPx/L.ppu;const dx=L.span/(CFG.line.nodes-1);L.tension=(CFG.line.waveSpeed/dx)**2;L.maxDisp=L.cardH*.25
+  }
+  const pxToWorldY=px=>(L.viewH*.5-px)/L.ppu;
+  function sampleWave(arr,t){const f=(t+1)*.5*(N-1),i=clamp(f|0,0,N-2),a=f-i;return arr[i]*(1-a)+arr[i+1]*a}
+  function addLoad(arr,t,v){const f=(t+1)*.5*(N-1),i=clamp(f|0,0,N-2),a=f-i;arr[i]+=v*(1-a);arr[i+1]+=v*a}
+  function stepRope(dt){const T=L.tension,{rest,damp}=CFG.line,sub=clamp(Math.ceil(dt*Math.sqrt(2*T)),2,6),h=dt/sub,lim=L.maxDisp;for(let s=0;s<sub;s++){for(let i=1;i<N-1;i++){rope.vy[i]+=(T*(rope.dy[i-1]+rope.dy[i+1]-2*rope.dy[i])-rest*rope.dy[i]-damp*rope.vy[i]+rope.ly[i])*h;rope.vz[i]+=(T*(rope.dz[i-1]+rope.dz[i+1]-2*rope.dz[i])-rest*rope.dz[i]-damp*rope.vz[i]+rope.lz[i])*h}for(let i=1;i<N-1;i++){rope.dy[i]=clamp(rope.dy[i]+rope.vy[i]*h,-lim,lim);rope.dz[i]=clamp(rope.dz[i]+rope.vz[i]*h,-lim,lim)}}rope.dy[0]=rope.dy[N-1]=rope.dz[0]=rope.dz[N-1]=0}
+  const ap={x:0,y:0,z:0};function lineApparent(t){const sp=CFG.line.spread;ap.x=(L.halfSpan*(t+sp*t*t*t))/(1+sp);ap.y=pxToWorldY(L.anchorPx-L.sagPx*t*t+L.tiltPx*t)+sampleWave(rope.dy,t);ap.z=CFG.line.depthArc*t*t+sampleWave(rope.dz,t);return ap}
+  function lineWorld(t,v){lineApparent(t);const k=(CFG.camera.z-ap.z)/CFG.camera.z;return v.set(ap.x*k,ap.y*k,ap.z)}
+  const p0=new THREE.Vector3(),pA=new THREE.Vector3(),pB=new THREE.Vector3(),tan=new THREE.Vector3(),nrm=new THREE.Vector3(),bin=new THREE.Vector3(),up=new THREE.Vector3(0,0,1);
+  function updateRopeMesh(){const pos=ropeGeo.attributes.position.array,nor=ropeGeo.attributes.normal.array,step=2/(M-1);for(let i=0;i<M;i++){const t=-1+step*i;lineWorld(t,p0);lineWorld(Math.max(-1,t-step),pA);lineWorld(Math.min(1,t+step),pB);tan.subVectors(pB,pA).normalize();nrm.crossVectors(tan,up);if(nrm.lengthSq()<1e-9)nrm.set(0,1,0);nrm.normalize();bin.crossVectors(tan,nrm).normalize();for(let j=0;j<R;j++){const a=(j/R)*Math.PI*2,ca=Math.cos(a),sa=Math.sin(a),nx=nrm.x*ca+bin.x*sa,ny=nrm.y*ca+bin.y*sa,nz=nrm.z*ca+bin.z*sa,o=(i*R+j)*3;pos[o]=p0.x+nx*L.ropeR;pos[o+1]=p0.y+ny*L.ropeR;pos[o+2]=p0.z+nz*L.ropeR;nor[o]=nx;nor[o+1]=ny;nor[o+2]=nz}}ropeGeo.attributes.position.needsUpdate=true;ropeGeo.attributes.normal.needsUpdate=true}
+  function clearCards(){for(const c of cards){world.remove(c.pivot);c.baseGeo.dispose();c.mediaGeo.dispose();c.labelGeo.dispose();c.shadowGeo.dispose();c.baseMat.dispose();c.mediaMat.dispose();c.labelMat.dispose();c.shadow.material.dispose()}cards.length=0;meshToCard.clear();if(sharedClipGeo)sharedClipGeo.dispose();if(sharedDotGeo)sharedDotGeo.dispose()}
+  function buildCards(){
+    clearCards();sharedClipGeo=clipGeometry(L.clipW,L.clipH,CFG.clip.depth);sharedDotGeo=new THREE.CircleGeometry(L.clipW*.2,18);const drop=L.clipDrop+L.cardH*.5;
+    for(let i=0;i<L.slots;i++){
+      const pivot=new THREE.Group(),baseGeo=roundedPlane(L.cardW,L.cardH,L.cardW*CFG.card.corner),baseMat=new THREE.MeshPhysicalMaterial({color:"#fff",roughness:.62,metalness:0,clearcoat:.18,clearcoatRoughness:.6,envMapIntensity:.35,side:THREE.DoubleSide}),base=new THREE.Mesh(baseGeo,baseMat);base.position.set(0,-drop,CFG.card.depth);
+      const mediaW=L.cardW*.895,mediaH=L.cardW*.78,mediaGeo=roundedPlane(mediaW,mediaH,L.cardW*.035),mediaMat=new THREE.MeshBasicMaterial({map:mediaTextures[i%8],side:THREE.DoubleSide,toneMapped:false}),media=new THREE.Mesh(mediaGeo,mediaMat);media.position.set(0,-drop+L.cardH*.135,CFG.card.depth+.004);
+      const labelGeo=new THREE.PlaneGeometry(L.cardW*.9,L.cardH*.235),labelMat=new THREE.MeshBasicMaterial({map:labelTextures[i%8],transparent:false,toneMapped:false,side:THREE.DoubleSide}),label=new THREE.Mesh(labelGeo,labelMat);label.position.set(0,-drop-L.cardH*.355,CFG.card.depth+.005);
+      const shadowGeo=roundedPlane(L.cardW*1.17,L.cardH*1.15,L.cardW*.1,6),shadow=new THREE.Mesh(shadowGeo,new THREE.MeshBasicMaterial({color:0x2a2418,transparent:true,opacity:.14,depthWrite:false}));shadow.position.set(0,-drop-L.cardH*.012,CFG.card.depth-.006);
+      const clip=new THREE.Mesh(sharedClipGeo,clipBodyMat);clip.position.z=CFG.clip.z;const dot=new THREE.Mesh(sharedDotGeo,clipDotMat);dot.position.set(0,-L.clipH*.04,CFG.clip.z+.028);
+      const card={pivot,base,media,label,shadow,clip,dot,baseGeo,mediaGeo,labelGeo,shadowGeo,baseMat,mediaMat,labelMat,drop,slot:i,lag:0,lagV:0,theta:0,thetaV:0,tilt:0,tiltV:0,bounce:0,bounceV:0,prevX:null,vx:0,ax:0,speed:0,prevSpeed:0,mass:.9+((i*.137)%1)*.3,baseRot:(((i*.618)%1)-.5)*.075,phase:i*1.7,along:0,texIndex:i%8,pickables:[base,media,label]};
+      card.pickables.forEach(m=>meshToCard.set(m,card));pivot.add(shadow,base,media,label,clip,dot);world.add(pivot);cards.push(card)
+    }
+  }
+  function applyCurrentTextures(){for(const c of cards){const ti=c.texIndex<0?c.slot%8:c.texIndex;c.mediaMat.map=mediaTextures[ti];c.labelMat.map=labelTextures[ti];c.mediaMat.needsUpdate=c.labelMat.needsUpdate=true}}
+  let hintTimer=setTimeout(()=>hintEl?.classList.add("show"),1800);function hideHint(){clearTimeout(hintTimer);hintEl?.classList.remove("show")}
+  function logicalIndex(card){return ((card?.texIndex??card?.slot??0)%Math.max(1,DATA.cards?.length||8)+8)%8}
+  function closeFocus(){
+    focus.open=false;focus.index=-1;focusEls.overlay?.classList.remove("open");focusEls.overlay?.setAttribute("aria-hidden","true");
+    if(focusEls.media){focusEls.media.querySelectorAll("video").forEach(v=>{try{v.pause();v.removeAttribute("src");v.load()}catch{}});focusEls.media.innerHTML=""}
+  }
+  function openFocus(index){
+    const data=DATA.cards?.[index]||{},media=data.media,src=media?.src||defaultPhotos[index]||"";focus.open=true;focus.index=index;io.vel=0;io.wheel=0;
+    if(focusEls.media){focusEls.media.innerHTML="";const el=document.createElement(media?.type==="video"?"video":"img");el.src=src;if(el.tagName==="VIDEO"){el.muted=true;el.loop=true;el.autoplay=true;el.playsInline=true;el.controls=true;el.preload="auto";if(needsCorsLocal(src))el.crossOrigin="anonymous";el.play().catch(()=>{})}else{el.alt=data.title||"Ficha";if(needsCorsLocal(src))el.crossOrigin="anonymous"}focusEls.media.appendChild(el)}
+    if(focusEls.title)focusEls.title.textContent=data.title||"Ficha";if(focusEls.sub)focusEls.sub.textContent=data.subtitle||"";if(focusEls.desc)focusEls.desc.textContent=data.description||data.subtitle||"";
+    if(focusEls.miniTitle)focusEls.miniTitle.textContent=data.title||"";if(focusEls.miniSub)focusEls.miniSub.textContent=data.subtitle||"";
+    if(focusEls.cta){focusEls.cta.textContent=data.ctaText||"Explorar ficha";focusEls.cta.href=safeUrlLocal(data.ctaUrl||"#")}
+    focusEls.overlay?.classList.add("open");focusEls.overlay?.setAttribute("aria-hidden","false");focusEls.close?.focus?.()
+  }
+  function pointerToNdc(e){const r=canvas.getBoundingClientRect();pointerNdc.x=((e.clientX-r.left)/r.width)*2-1;pointerNdc.y=-((e.clientY-r.top)/r.height)*2+1}
+  function pickCard(e){pointerToNdc(e);raycaster.setFromCamera(pointerNdc,camera);const hits=raycaster.intersectObjects(cards.flatMap(c=>c.pickables),false);if(!hits.length)return false;const card=meshToCard.get(hits[0].object);if(!card)return false;openFocus(logicalIndex(card));return true}
+  function beginDrag(e){io.dragging=true;io.lastX=e.clientX;io.lastT=performance.now();io.vel=0;hit.classList.add("dragging");try{hit.setPointerCapture(e.pointerId)}catch{}}
+  function down(e){if(focus.open)return;hideHint();io.pointerDown=true;io.downX=e.clientX;io.downY=e.clientY;io.lastX=e.clientX;io.lastT=performance.now()}
+  function move(e){if(!io.pointerDown&&!io.dragging)return;const dist=Math.hypot(e.clientX-io.downX,e.clientY-io.downY);if(!io.dragging&&dist>7)beginDrag(e);if(!io.dragging)return;const now=performance.now(),dt=Math.max(8,now-io.lastT)/1000,dx=(e.clientX-io.lastX)/L.ppu;io.offset+=dx;io.vel=io.vel*.55+(dx/dt)*.45;io.lastX=e.clientX;io.lastT=now}
+  function end(e){if(io.dragging){io.dragging=false;io.pointerDown=false;hit.classList.remove("dragging");if(REDUCED)io.vel*=.25;return}if(io.pointerDown){const dist=Math.hypot(e.clientX-io.downX,e.clientY-io.downY);io.pointerDown=false;if(dist<=7)pickCard(e)}}
+  function cancel(){io.pointerDown=false;if(io.dragging){io.dragging=false;hit.classList.remove("dragging")}}
+  function wheel(e){if(focus.open)return;const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;if(!d)return;e.preventDefault();io.wheel+=(-d/L.ppu)*CFG.input.wheelGain;hideHint()}
+  function keydown(e){if(e.key==="p"||e.key==="P"){showFps=!showFps;document.getElementById("fps").style.display=showFps?"block":"none";return}if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight")return;e.preventDefault();const dir=e.key==="ArrowLeft"?-1:1;gsap.to(io,{kb:io.kb+dir*L.spacing,duration:REDUCED?.2:.9,ease:"power3.out",overwrite:true});hideHint()}
+  function globalKey(e){if(e.key==="Escape"&&focus.open){e.preventDefault();closeFocus()}}
+  function globalMove(e){ptr.tx=e.clientX/innerWidth*2-1;ptr.ty=e.clientY/innerHeight*2-1}
+  function focusBackdrop(e){if(e.target===focusEls.overlay)closeFocus()}
+  hit.addEventListener("pointerdown",down);hit.addEventListener("pointermove",move);hit.addEventListener("pointerup",end);hit.addEventListener("pointercancel",cancel);hit.addEventListener("lostpointercapture",cancel);hit.addEventListener("wheel",wheel,{passive:false});hit.addEventListener("keydown",keydown);
+  focusEls.close?.addEventListener("click",closeFocus);focusEls.overlay?.addEventListener("pointerdown",focusBackdrop);addEventListener("keydown",globalKey);addEventListener("pointermove",globalMove);
+  const v=new THREE.Vector3(),order=[];const wrapAlong=a=>a-Math.floor((a+L.halfSpan)/L.span)*L.span;
+  function meter(dt){frames++;acc+=dt;if(acc<.5)return;const fps=frames/acc;frames=0;acc=0;if(showFps)document.getElementById("fps").textContent=`${fps.toFixed(0)} fps · ${cards.length} cards · dpr ${dpr.toFixed(2)}`;if(fps<46&&lowered<2){lowered++;dpr=Math.max(1,dpr-.35);renderer.setPixelRatio(dpr)}}
+  function tick(){
+    if(destroyed)return;const dt=Math.min(1/30,gsap.ticker.deltaRatio(60)/60);time+=dt;const wStep=io.wheel*Math.min(1,dt*CFG.input.wheelEase);io.wheel-=wStep;const kbStep=io.kb-prevKb;prevKb=io.kb;io.offset+=wStep+kbStep;
+    if(!io.dragging){io.offset+=io.vel*dt;io.vel*=Math.exp(-(REDUCED?9:CFG.input.momentumDamp)*dt)}const injected=wStep+kbStep;if(Math.abs(injected)>1e-6)io.vel=injected/dt*.6+io.vel*.4;io.accel=io.accel*.7+((io.vel-io.prevVel)/dt)*.3;io.prevVel=io.vel;
+    const C=CFG.card;for(const c of cards){const a=(-C.lagK*c.lag-C.lagC*c.lagV-C.lagAir*io.vel)/c.mass-io.accel*.32;c.lagV+=a*dt;c.lag=clamp(c.lag+c.lagV*dt,-L.spacing*.7,L.spacing*.7);c.along=wrapAlong(c.slot*L.spacing+io.offset+c.lag)}
+    order.length=0;for(let i=0;i<cards.length;i++)order.push(i);order.sort((a,b)=>cards[a].along-cards[b].along);const minGap=L.cardW*C.repelGap;
+    for(let n=0;n<order.length;n++){const A=cards[order[n]],B=cards[order[(n+1)%order.length]];let gap=B.along-A.along;if(gap<0)gap+=L.span;if(gap<minGap){const f=(minGap-gap)*C.repelK*dt;A.lagV-=f/A.mass;B.lagV+=f/B.mass}}
+    rope.ly.fill(0);rope.lz.fill(0);const ga=clamp(io.accel,-50,50),gv=clamp(io.vel,-10,10);for(const c of cards){const t=c.along/L.halfSpan;addLoad(rope.ly,t,-C.weight*c.mass-ga*.05*c.mass);addLoad(rope.lz,t,-gv*.6)}let mean=0;for(let i=0;i<N;i++)mean+=rope.ly[i];mean/=N;for(let i=0;i<N;i++)rope.ly[i]-=mean;stepRope(dt);
+    for(const c of cards){const t=clamp(c.along/L.halfSpan,-1,1);lineWorld(t,v);c.pivot.position.copy(v);if(c.prevX===null)c.prevX=v.x;const vx=(v.x-c.prevX)/dt;c.ax=c.ax*.65+((vx-c.vx)/dt)*.35;c.vx=c.vx*.4+vx*.6;c.prevX=v.x;
+      let thA=-(C.swingGravity/c.drop)*Math.sin(c.theta)-(c.ax/c.drop)*Math.cos(c.theta)-C.swingDamp*c.thetaV;if(!REDUCED)thA+=Math.sin(time*.63+c.phase)*C.idleAmp+Math.sin(time*1.41+c.phase*2.3)*C.idleAmp*.45;c.thetaV+=thA*dt/c.mass;c.theta=clamp(c.theta+c.thetaV*dt,-.7,.7);
+      c.speed=Math.abs(c.vx);const tiltTarget=-Math.min(C.tiltMax,c.speed*.03);c.tiltV+=((tiltTarget-c.tilt)*190-c.tiltV*17)*dt;c.tilt+=c.tiltV*dt;c.bounceV+=(c.prevSpeed-c.speed)*.014;c.bounceV+=(-C.bounceK*c.bounce-C.bounceC*c.bounceV)*dt;c.bounce=clamp(c.bounce+c.bounceV*dt,-L.cardH*.02,L.cardH*.02);c.prevSpeed=c.speed;
+      c.pivot.rotation.z=c.baseRot+c.theta;c.pivot.rotation.x=c.tilt;c.base.position.y=-c.drop+c.bounce;c.media.position.y=-c.drop+L.cardH*.135+c.bounce;c.label.position.y=-c.drop-L.cardH*.355+c.bounce;c.shadow.position.x=-c.theta*L.cardH*.22;c.shadow.position.y=c.base.position.y-L.cardH*.012-Math.abs(c.theta)*L.cardH*.02;c.shadow.material.opacity=.14-Math.min(.06,c.speed*.01);
+      const wraps=Math.floor((c.slot*L.spacing+io.offset+c.lag+L.halfSpan)/L.span),nt=8,ti=(((c.slot-wraps*L.slots)%nt)+nt*1000)%nt;if(ti!==c.texIndex){c.texIndex=ti;c.mediaMat.map=mediaTextures[ti];c.labelMat.map=labelTextures[ti];c.mediaMat.needsUpdate=c.labelMat.needsUpdate=true}
+    }
+    updateRopeMesh();if(!REDUCED){const k=1-Math.exp(-CFG.camera.damp*dt);ptr.x+=(ptr.tx-ptr.x)*k;ptr.y+=(ptr.ty-ptr.y)*k;camera.position.x=ptr.x*CFG.camera.parallax*4;camera.position.y=-ptr.y*CFG.camera.parallax*2;camera.lookAt(camera.position.x*.55,camera.position.y*.55,0)}
+    renderer.render(scene,camera);meter(dt)
+  }
+  let resizeRaf=0;function resize(){cancelAnimationFrame(resizeRaf);resizeRaf=requestAnimationFrame(()=>{layout();if(mediaTextures.length)buildCards()})}addEventListener("resize",resize);
+  let tickerStarted=false;
+  const ready=(async()=>{applyUi();layout();await buildTextures();if(destroyed)return;buildCards();gsap.ticker.lagSmoothing(500,33);gsap.ticker.add(tick);tickerStarted=true;if(!REDUCED){gsap.from(cards.map(c=>c.pivot.scale),{x:.86,y:.86,z:.86,duration:1.1,ease:"elastic.out(1,.62)",stagger:{each:.05,from:"center"}});gsap.fromTo(io,{vel:2.2},{vel:0,duration:2.2,ease:"power2.out"})}})();
+  return{
+    ready,
+    async setConfig(next){DATA=next;closeFocus();applyUi();await buildTextures();if(!destroyed)buildCards()},
+    closeFocus,
+    nudge(delta=1){io.vel+=delta;io.offset+=delta*.05},
+    canvas,
+    destroy(){destroyed=true;closeFocus();if(tickerStarted)gsap.ticker.remove(tick);removeEventListener("resize",resize);removeEventListener("pointermove",globalMove);removeEventListener("keydown",globalKey);focusEls.close?.removeEventListener("click",closeFocus);focusEls.overlay?.removeEventListener("pointerdown",focusBackdrop);mediaTextures.forEach(t=>t?.dispose?.());labelTextures.forEach(t=>t?.dispose?.());mediaVideos.forEach(v=>{try{v.pause();v.removeAttribute("src");v.load()}catch{}});clearCards();renderer.dispose()}
+  }
+}
+
+async function refreshViewer(){
+  const cfg=await resolvedConfig("editor");cfg.defaultPhotos=DEFAULT_PHOTOS;
+  if(!viewer){viewer=ropeRuntime(cfg,{THREE,RoomEnvironment,gsap});await viewer.ready}
+  else await viewer.setConfig(cfg)
+}
+function bind(id,prop,event="input"){
+  const el=document.getElementById(id);el.value=getByPath(state,prop)??"";el.addEventListener(event,async()=>{setByPath(state,prop,el.value);saveState();await refreshViewer()})
+}
+function getByPath(o,p){return p.split(".").reduce((a,k)=>a?.[k],o)}
+function setByPath(o,p,v){const a=p.split("."),last=a.pop();let cur=o;for(const k of a)cur=cur[k]??=([]);cur[last]=v}
+function buildCardsEditor(){
+  const wrap=document.getElementById("cardsEditor");wrap.innerHTML="";
+  state.cards.forEach((c,i)=>{
+    const div=document.createElement("div");div.className="ep-card-editor";
+    div.innerHTML=`<div class="ep-card-title"><span>Tarjeta ${String(i+1).padStart(2,"0")}</span><span id="assetLabel-${i}"></span></div>
+      <div class="ep-grid"><div class="ep-field"><label>Título</label><input id="cardTitle-${i}"></div><div class="ep-field"><label>Subtítulo</label><input id="cardSub-${i}"></div></div>
+      <div class="ep-field"><label>Descripción ampliada</label><textarea id="cardDesc-${i}"></textarea></div>
+      <div class="ep-grid"><div class="ep-field"><label>Texto CTA</label><input id="cardCtaText-${i}"></div><div class="ep-field"><label>URL CTA</label><input id="cardCtaUrl-${i}"></div></div>
+      <div class="ep-field"><label>Imagen o vídeo</label><input id="cardFile-${i}" type="file" accept="image/*,video/*"><button class="ep-btn danger" id="removeCard-${i}" type="button">Quitar media</button></div>`;
+    wrap.appendChild(div);
+    const t=div.querySelector(`#cardTitle-${i}`),sub=div.querySelector(`#cardSub-${i}`),d=div.querySelector(`#cardDesc-${i}`),ct=div.querySelector(`#cardCtaText-${i}`),cu=div.querySelector(`#cardCtaUrl-${i}`);t.value=c.title;sub.value=c.subtitle;d.value=c.description||"";ct.value=c.ctaText||"Explorar ficha";cu.value=c.ctaUrl||"#";
+    t.addEventListener("input",async()=>{state.cards[i].title=t.value;saveState();await refreshViewer()});
+    sub.addEventListener("input",async()=>{state.cards[i].subtitle=sub.value;saveState();await refreshViewer()});
+    d.addEventListener("input",async()=>{state.cards[i].description=d.value;saveState();await refreshViewer()});
+    ct.addEventListener("input",async()=>{state.cards[i].ctaText=ct.value;saveState();await refreshViewer()});
+    cu.addEventListener("input",async()=>{state.cards[i].ctaUrl=cu.value;saveState();await refreshViewer()});
+    div.querySelector(`#cardFile-${i}`).addEventListener("change",async e=>{await setAsset(`card-${i}`,e.target.files?.[0]);e.target.value=""});
+    div.querySelector(`#removeCard-${i}`).addEventListener("click",()=>removeAsset(`card-${i}`))
+  });
+  renderAssetLabels()
+}
+function renderAssetLabels(){
+  for(let i=0;i<CARD_COUNT;i++){const n=document.getElementById(`assetLabel-${i}`),d=state.assets.cards[i];if(n)n.textContent=d?`${d.type==="video"?"🎬":"🖼"} ${d.name}`:"Original"}
+}
+function wireEditor(){
+  bind("brandName","brandName");bind("badgeInput","badge");bind("heroPrefixInput","heroPrefix");bind("heroHighlightInput","heroHighlight");bind("heroLine2Input","heroLine2");bind("heroSubInput","heroSub");
+  bind("heroCtaText","heroCtaText");bind("heroCtaUrl","heroCtaUrl");bind("nav1Input","nav1");bind("nav2Input","nav2");bind("nav3Input","nav3");bind("loginInput","login");bind("navCtaText","navCtaText");bind("navCtaUrl","navCtaUrl");
+  bind("accentInput","colors.accent");bind("accentDeepInput","colors.accentDeep");bind("inkInput","colors.ink");bind("bgColorInput","colors.background");
+  document.getElementById("logoFile").addEventListener("change",e=>setAsset("logo",e.target.files?.[0]));document.getElementById("backgroundFile").addEventListener("change",e=>setAsset("background",e.target.files?.[0]));
+  document.getElementById("removeLogo").addEventListener("click",()=>removeAsset("logo"));document.getElementById("removeBackground").addEventListener("click",()=>removeAsset("background"));
+  document.getElementById("epGear").addEventListener("click",()=>{viewer?.closeFocus?.();const p=document.getElementById("epPanel"),open=!p.classList.contains("open");p.classList.toggle("open",open);document.body.classList.toggle("ep-panel-open",open)});
+  document.getElementById("resetProjectBtn").addEventListener("click",async()=>{if(!confirm("¿Restablecer textos, colores y referencias multimedia?"))return;for(const d of [state.assets.logo,state.assets.background,...state.assets.cards].filter(Boolean)){revokeRuntime(d.key);await idbDelete(d.key).catch(()=>{})}state=structuredClone(DEFAULT_STATE);saveState();location.reload()});
+  buildCardsEditor()
+}
+function validateFinalHtml(html){
+  if(!html||html.length<5000)throw new Error("Viewer final incompleto.");
+  for(const bad of ["epPanel","epGear","cardsEditor","downloadFinalHtmlBtn","resetProjectBtn"])if(html.includes(`id="${bad}"`))throw new Error(`El viewer final contiene controles internos: ${bad}`);
+  if(!html.includes("data-final-viewer"))throw new Error("Falta marcador de viewer final.");if(!html.includes(`id="focusOverlay"`))throw new Error("Falta el modo Focus del viewer final.");
+  return true
+}
+function finalViewerHtml(cfg){
+  const css=document.getElementById("viewerStyle").textContent;
+  const rootMarkup=document.getElementById("viewerRoot").outerHTML;
+  const runtime=ropeRuntime.toString();
+  const safeCfg=JSON.stringify(cfg).replace(/</g,"\\u003c");
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${escapeHtml(PAGE_TITLE)}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"><\/script><style>${css}</style></head><body data-final-viewer="rope-gallery-pro"><div id="epBackgroundMedia"></div>${rootMarkup}<div id="fps">–</div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}<\/script><script type="module">import * as THREE from "three";import {RoomEnvironment} from "three/addons/environments/RoomEnvironment.js";const CONFIG=${safeCfg};(${runtime})(CONFIG,{THREE,RoomEnvironment,gsap});<\/script></body></html>`
+}
+async function buildInlineFinal(){
+  const cfg=await resolvedConfig("inline");cfg.defaultPhotos=DEFAULT_PHOTOS;const html=finalViewerHtml(cfg);validateFinalHtml(html);return html
+}
+async function downloadFinalHtml(){try{toast("Generando HTML final…");const html=await buildInlineFinal();downloadBlob(new Blob([html],{type:"text/html;charset=utf-8"}),"ROPE_GALLERY_PRO_FINAL.html");toast("HTML final descargado")}catch(e){console.error(e);toast("Error HTML: "+e.message,5000)}}
+async function downloadClientZip(){
+  try{
+    if(!window.JSZip)throw new Error("JSZip no está disponible.");
+    toast("Generando ZIP cliente…");const zip=new JSZip(),root=zip.folder("rope-gallery-pro-client"),assets=root.folder("assets");
+    const cfg=await resolvedConfig("zip",assets);cfg.defaultPhotos=DEFAULT_PHOTOS;const html=finalViewerHtml(cfg);validateFinalHtml(html);
+    root.file("index.html",html);root.file("manifest.json",JSON.stringify({name:"Rope Gallery PRO",version:"1.5",generatedAt:new Date().toISOString(),cards:cfg.cards.map((c,i)=>({index:i+1,title:c.title,subtitle:c.subtitle,media:c.media?.src||null}))},null,2));
+    root.file("README.md","# Rope Gallery PRO — entrega cliente\n\nAbrir `index.html` en un navegador moderno. El viewer está cerrado: no contiene el editor de Escaparates Pro.\n\nInteracción: arrastrar la cuerda, rueda/trackpad, teclas ← → y click/tap sobre una ficha para abrir su vista ampliada.\n");
+    const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:4},streamFiles:true});if(!blob.size)throw new Error("ZIP vacío");
+    downloadBlob(blob,"ROPE_GALLERY_PRO_CLIENTE.zip");toast("ZIP cliente descargado")
+  }catch(e){console.error(e);toast("Error ZIP: "+e.message,5000)}
+}
+async function copyEmbed(){
+  try{toast("Preparando embed…");const html=await buildInlineFinal(),srcdoc=html.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"),code=`<iframe title="Rope Gallery PRO" style="width:100%;min-height:760px;border:0" loading="lazy" allow="autoplay; fullscreen" srcdoc="${srcdoc}"></iframe>`;document.getElementById("embedOutput").value=code;await navigator.clipboard.writeText(code);toast("Iframe copiado")}catch(e){console.error(e);toast("No se pudo copiar: "+e.message,5000)}
+}
+async function publishPreview(){
+  try{
+    toast("Abriendo preview final…");const html=await buildInlineFinal();const url=URL.createObjectURL(new Blob([html],{type:"text/html"}));const w=window.open(url,"_blank");
+    if(w){setTimeout(()=>URL.revokeObjectURL(url),120000);toast("Preview abierto")}
+    else{URL.revokeObjectURL(url);downloadBlob(new Blob([html],{type:"text/html"}),"ROPE_GALLERY_PRO_PREVIEW_LOCAL.html");toast("Popup bloqueado: descargué el preview local")}
+  }catch(e){console.error(e);toast("Error preview: "+e.message,5000)}
+}
+async function captureNode(){
+  if(window.html2canvas)return await window.html2canvas(document.body,{backgroundColor:null,useCORS:true,logging:false,ignoreElements:el=>["epPanel","epGear","epToast"].includes(el.id)});
+  const c=viewer?.canvas;if(!c)throw new Error("Canvas no disponible");const out=document.createElement("canvas");out.width=c.width;out.height=c.height;out.getContext("2d").drawImage(c,0,0);return out
+}
+async function capturePng(){try{toast("Capturando PNG…");const c=await captureNode(),blob=await new Promise(r=>c.toBlob(r,"image/png"));downloadBlob(blob,"ROPE_GALLERY_PRO.png");toast("PNG descargado")}catch(e){console.error(e);toast("Error PNG: "+e.message,5000)}}
+async function pngSequence(){
+  try{if(!window.JSZip)throw new Error("JSZip no disponible");toast("Generando secuencia PNG…");const zip=new JSZip(),folder=zip.folder("rope-gallery-pro-sequence");
+    for(let i=0;i<8;i++){viewer?.nudge(.42);await sleep(180);const c=await captureNode(),blob=await new Promise(r=>c.toBlob(r,"image/png"));folder.file(`frame-${String(i+1).padStart(2,"0")}.png`,blob);toast(`Secuencia ${i+1}/8…`,800)}
+    const out=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:3},streamFiles:true});downloadBlob(out,"ROPE_GALLERY_PRO_PNG_SEQUENCE.zip");toast("Secuencia descargada")
+  }catch(e){console.error(e);toast("Error secuencia: "+e.message,5000)}
+}
+function bestMime(){for(const t of ["video/mp4;codecs=h264","video/webm;codecs=vp9","video/webm"]){if(window.MediaRecorder?.isTypeSupported?.(t))return t}return""}
+async function recordFinal(){
+  try{
+    if(!navigator.mediaDevices?.getDisplayMedia)throw new Error("Tu navegador no permite captura de pantalla.");
+    const sec=Math.max(2,Math.min(30,+document.getElementById("recordSeconds").value||6));toast(`Selecciona esta pestaña/ventana. Grabación: ${sec}s.`);
+    const stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true}),mime=bestMime(),rec=new MediaRecorder(stream,mime?{mimeType:mime}:undefined),chunks=[];rec.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+    const done=new Promise((res,rej)=>{rec.onstop=res;rec.onerror=()=>rej(rec.error||new Error("Error MediaRecorder"))});rec.start(250);const timer=setInterval(()=>viewer?.nudge(.08),450);await sleep(sec*1000);clearInterval(timer);rec.stop();stream.getTracks().forEach(t=>t.stop());await done;
+    const blob=new Blob(chunks,{type:rec.mimeType||"video/webm"}),ext=(rec.mimeType||"").includes("mp4")?"mp4":"webm";downloadBlob(blob,`ROPE_GALLERY_PRO_FINAL.${ext}`);toast("Vídeo final descargado")
+  }catch(e){console.error(e);toast("Error grabación: "+e.message,5000)}
+}
+async function toggleReview(){
+  const btn=document.getElementById("recordClientReviewBtn");
+  try{
+    if(reviewRecorder&&reviewRecorder.state==="recording"){reviewRecorder.stop();reviewStream?.getTracks().forEach(t=>t.stop());btn.textContent="Grabar revisión cliente";return}
+    if(!navigator.mediaDevices?.getDisplayMedia)throw new Error("Captura de pantalla no disponible.");
+    reviewStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true});reviewChunks=[];const mime=bestMime();reviewRecorder=new MediaRecorder(reviewStream,mime?{mimeType:mime}:undefined);
+    reviewRecorder.ondataavailable=e=>{if(e.data?.size)reviewChunks.push(e.data)};reviewRecorder.onstop=()=>{const blob=new Blob(reviewChunks,{type:reviewRecorder.mimeType||"video/webm"}),ext=(reviewRecorder.mimeType||"").includes("mp4")?"mp4":"webm";downloadBlob(blob,`ROPE_GALLERY_PRO_REVISION_CLIENTE.${ext}`);toast("Revisión descargada");reviewRecorder=null;reviewStream=null};
+    reviewRecorder.start(250);btn.textContent="Detener y descargar revisión";toast("Grabando revisión. Pulsa de nuevo para detener.",4000)
+  }catch(e){console.error(e);btn.textContent="Grabar revisión cliente";toast("Error revisión: "+e.message,5000)}
+}
+function wireExports(){
+  document.getElementById("downloadFinalHtmlBtn").addEventListener("click",downloadFinalHtml);
+  document.getElementById("downloadClientZipBtn").addEventListener("click",downloadClientZip);
+  document.getElementById("copyEmbedBtn").addEventListener("click",copyEmbed);
+  document.getElementById("publishPreviewBtn").addEventListener("click",publishPreview);
+  document.getElementById("capturePngBtn").addEventListener("click",capturePng);
+  document.getElementById("downloadPngSequenceBtn").addEventListener("click",pngSequence);
+  document.getElementById("recordWebmBtn").addEventListener("click",recordFinal);
+  document.getElementById("recordClientReviewBtn").addEventListener("click",toggleReview)
+}
+(async function boot(){
+  try{await hydrateAssets();wireEditor();wireExports();await refreshViewer();toast("Rope Gallery PRO listo")}catch(e){console.error(e);toast("Error de arranque: "+e.message,6000)}
+})();
+</script>
+</body>
+</html>
