@@ -1,0 +1,77 @@
+name: Integrate Kinetic Letter Curtain PRO V1.1
+
+on:
+  push:
+    branches:
+      - feat/kinetic-letter-curtain-pro-v1-1
+    paths:
+      - .github/workflows/integrate-kinetic-letter-curtain-pro-v1-1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/kinetic-letter-curtain-pro-v1-1
+          fetch-depth: 0
+      - name: Patch loader and root README
+        shell: python
+        run: |
+          from pathlib import Path
+
+          ui = Path('js/website-modules-ui.js')
+          s = ui.read_text()
+          old = "            { id: 'vinyl-player-pro', src: 'js/website-modules-vinyl-player-pro.js' }"
+          new = old + ",\n            { id: 'kinetic-letter-curtain-pro', src: 'js/website-modules-kinetic-letter-curtain-pro.js' }"
+          assert old in s and 'website-modules-kinetic-letter-curtain-pro.js' not in s
+          ui.write_text(s.replace(old, new, 1))
+
+          readme = Path('README.md')
+          r = readme.read_text()
+          replacements = [
+              ('no carga los 30 modulos de golpe en `index.html`', 'no carga todos los modulos de golpe en `index.html`'),
+              ('La version actual incluye 29 modulos premium.', 'La version actual incluye 30 modulos premium.'),
+              ('- Vinyl Player PRO V1.\n', '- Vinyl Player PRO V1.\n- Kinetic Letter Curtain PRO V1.1.\n'),
+              ('**Vinyl Player PRO V1** vive en `labs/website-modules-source/vinyl-player-pro/` y conserva como fuente canonica el HTML V1 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar el tocadiscos Three.js ni su motor de audio. Incluye seis discos personalizables con portada imagen/video y audio propio, Custom Library para evitar sobrescritura por iTunes, controles mecanicos de brazo/plato/velocidad, branding, paleta, fondo multimedia, persistencia IndexedDB y entregables HTML final, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.\n', '**Vinyl Player PRO V1** vive en `labs/website-modules-source/vinyl-player-pro/` y conserva como fuente canonica el HTML V1 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar el tocadiscos Three.js ni su motor de audio. Incluye seis discos personalizables con portada imagen/video y audio propio, Custom Library para evitar sobrescritura por iTunes, controles mecanicos de brazo/plato/velocidad, branding, paleta, fondo multimedia, persistencia IndexedDB y entregables HTML final, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.\n\n**Kinetic Letter Curtain PRO V1.1** vive en `labs/website-modules-source/kinetic-letter-curtain-pro/` y conserva como fuente canonica el HTML V1.1 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar el solver fisico de las hebras. Incluye cuatro escenas, cortina tipografica alargada, contenido libre, colores y patrones, imagen como mapa de color, logo integrado en las letras, sky/wall/plaster/canopy con imagen-video, textos visibles completamente personalizables, persistencia IndexedDB y entregables HTML final, ZIP cliente, embed, preview, PNG y grabacion de revision.\n'),
+              ('- **Vinyl Player PRO V1** en Website Modules Lab: modulo standalone Three.js + Web Audio ubicado en `labs/website-modules-source/vinyl-player-pro/`, con seis discos imagen-video-audio, tocadiscos mecanico interactivo, Custom Library, branding y pipeline propio de entregables cerrados.\n', '- **Vinyl Player PRO V1** en Website Modules Lab: modulo standalone Three.js + Web Audio ubicado en `labs/website-modules-source/vinyl-player-pro/`, con seis discos imagen-video-audio, tocadiscos mecanico interactivo, Custom Library, branding y pipeline propio de entregables cerrados.\n- **Kinetic Letter Curtain PRO V1.1** en Website Modules Lab: modulo standalone Canvas/Verlet ubicado en `labs/website-modules-source/kinetic-letter-curtain-pro/`, con cuatro escenas, cortina fisica alargada, media de entorno imagen-video, contenido tipografico libre, image color-map, logo integrado y pipeline propio de entregables cerrados.\n')
+          ]
+          for old, new in replacements:
+              assert old in r, old
+              r = r.replace(old, new, 1)
+          assert r.count('Kinetic Letter Curtain PRO V1.1') >= 3
+          readme.write_text(r)
+      - name: Static QA
+        shell: bash
+        run: |
+          node --check js/website-modules-ui.js
+          node --check js/website-modules-kinetic-letter-curtain-pro.js
+          python - <<'PY'
+          from pathlib import Path
+          import re, hashlib
+          p=Path('labs/website-modules-source/kinetic-letter-curtain-pro/index.html')
+          s=p.read_text()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I)
+          Path('/tmp/klc.js').write_text('\n'.join(scripts))
+          assert 'targetBottom=H*(compact?.80:.77)' in s
+          assert 'sceneModeLabelInput' in s and 'infoEyebrowInput' in s
+          assert 'downloadFinalHtmlBtn' in s and 'downloadClientZipBtn' in s and 'copyEmbedBtn' in s
+          expected='96710430513f24770af8c29904d8f74cd0ea941ee4642707b73c0a12db0ec19b'
+          actual=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert actual==expected, (actual, expected)
+          print('HTML SHA-256', actual)
+          PY
+          node --check /tmp/klc.js
+      - name: Commit integration files and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/integrate-kinetic-letter-curtain-pro-v1-1.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md js/website-modules-ui.js .github/workflows/integrate-kinetic-letter-curtain-pro-v1-1.yml
+          git commit -m "feat(web-modules): connect Kinetic Letter Curtain PRO V1.1"
+          git push origin HEAD:feat/kinetic-letter-curtain-pro-v1-1
