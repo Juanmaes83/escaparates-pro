@@ -94,7 +94,7 @@ Escaparates Pro permite crear:
 
 Website Modules Lab es un modo independiente para probar, personalizar y exportar secciones web cinematograficas. No usa el motor Three.js de efectos, no toca Scroll Sections y no carga los 30 modulos de golpe en `index.html`.
 
-La version actual incluye 26 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas; 3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:
+La version actual incluye 27 modulos premium. Veintitres estan adaptados desde `cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son implementaciones independientes inspiradas en interacciones publicas analizadas; 3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:
 
 - Text Mask Reveal.
 - Sticky Stack Narrative.
@@ -122,6 +122,7 @@ La version actual incluye 26 modulos premium. Veintitres estan adaptados desde `
 - Brand Line Manifesto PRO.
 - RGB Motion Triptych PRO.
 - 3D Book Collection Showcase PRO.
+- Sketchbook PRO V3.
 
 Cada modulo se renderiza en un iframe aislado, con controles de headline, subtitle, CTA, URL, colores, fuente, branding textual, velocidad, intensidad, scroll length y media de fondo desde los slots de la plataforma.
 
@@ -136,6 +137,8 @@ El quinto bloque suma navegacion espacial, narrativa cromatica y manifiestos de 
 RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB sincronizadas que se separan con cursor o gesto tactil. Es una implementacion independiente del patron de interaccion, no exporta ni depende de los videos de la referencia.
 
 **3D Book Collection Showcase PRO** vive en `labs/website-modules-source/3d-book-collection-showcase-pro/` y usa como fuente canonica el `index.html` V2.2 aprobado. El Website Modules Lab lo abre como editor standalone aislado, sin reimplementar su motor Three.js. Incluye tres libros interactivos, portadas y contraportadas con imagen/video, seis paginas editoriales independientes por libro, giro e inercia 3D, navegacion Portada -> interior -> Contraportada, branding y fondo multimedia, persistencia IndexedDB, HTML final cerrado, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.
+
+**Sketchbook PRO V3** vive en `labs/website-modules-source/sketchbook-pro-v3/` y conserva como fuente canonica el HTML V3 aprobado. El Lab lo abre como editor standalone aislado, sin reimplementar su motor de paso de pagina. Incluye nueve spreads con imagen/video, drag y gesto de lanzamiento, curvatura fisica de la hoja, lupa arrastrable, parallax, branding, paleta, titulos y contacto editables, persistencia robusta de media y entregables HTML final, ZIP cliente, embed, preview, PNG, PNG sequence, WebM y grabacion de revision cliente.
 
 Exporta resultado final como HTML standalone, ZIP basico y embed iframe. Los modulos adaptados desde `cinematic-site-components` conservan su atribucion MIT; los modulos independientes identifican su referencia sin exportar assets ajenos.
 
@@ -156,6 +159,7 @@ Los assets de los slots se reutilizan en hero, galeria y fichas; cuando el slot 
 - **Ping Pong Feedback PRO**: shader con buffers de feedback reales, fuente de imagen/video, refraccion hexagonal, deriva y separacion cromatica.
 - **Reflective City PRO**: ciudad procedural raymarched con edificios, calles, profundidad y reflejos; no utiliza media porque el motivo es generativo.
 - **3D Book Collection Showcase PRO** en Website Modules Lab: modulo standalone Three.js ubicado en `labs/website-modules-source/3d-book-collection-showcase-pro/`, con tres libros, portadas/contraportadas imagen-video, seis paginas editables por libro, interaccion 3D completa y pipeline propio de entregables cerrados.
+- **Sketchbook PRO V3** en Website Modules Lab: modulo standalone editorial ubicado en `labs/website-modules-source/sketchbook-pro-v3/`, con nueve spreads imagen-video, paso de pagina curvo, lupa, parallax, branding y pipeline propio de entregables cerrados.
 
 ## Conceptos Clave
 
