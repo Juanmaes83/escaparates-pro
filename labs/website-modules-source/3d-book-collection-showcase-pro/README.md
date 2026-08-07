@@ -7,12 +7,12 @@ Modulo standalone de Escaparates Pro para crear una coleccion editorial Three.js
 - Module ID: `3d-book-collection-showcase-pro`
 - Version aprobada: `V2.2`
 - Superficie: `Website Modules Lab`
-- Loader: `labs/website-modules-source/3d-book-collection-showcase-pro/index.html`
-- Fuente canónica preservada: `labs/website-modules-source/3d-book-collection-showcase-pro/source.v2.2.html.gz`
+- HTML canónico aprobado: `labs/website-modules-source/3d-book-collection-showcase-pro/index.html`
+- Archivo de preservación: `labs/website-modules-source/3d-book-collection-showcase-pro/source.v2.2.html.gz`
 - Registro: `js/website-modules-3d-book-collection-showcase-pro.js`
 - SHA-256 del HTML V2.2 descomprimido: `1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0`
 
-La fuente aprobada no se reimplementa dentro del motor generico de Website Modules. Se conserva como bundle canónico y el loader comprueba su SHA-256 antes de ejecutarla. Esto evita que futuras integraciones reconstruyan o simplifiquen accidentalmente la pieza validada.
+El `index.html` es el HTML V2.2 aprobado, materializado byte a byte desde el archivo de preservación y verificado contra su SHA-256. No se reimplementa dentro del motor generico de Website Modules. Esto evita que futuras integraciones reconstruyan o simplifiquen accidentalmente la pieza validada.
 
 ## Experiencia 3D
 
@@ -107,7 +107,7 @@ La fuente V2.2 usa:
 - JSZip 3.10.1 desde CDNJS;
 - APIs de navegador: IndexedDB, Blob/ObjectURL, MediaRecorder, `getDisplayMedia` y WebGL.
 
-El loader de repositorio usa `DecompressionStream('gzip')`, por lo que se recomienda Chrome/Edge actualizado y servir Escaparates Pro mediante HTTP/HTTPS en lugar de abrir esta carpeta directamente con `file://`.
+La pieza se sirve como HTML directo desde Escaparates Pro. Para desarrollo y QA se recomienda HTTP/HTTPS o un servidor estatico local; la fuente conserva sus dependencias CDN de Three.js y JSZip.
 
 ## Regla de mantenimiento
 

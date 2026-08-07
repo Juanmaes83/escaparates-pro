@@ -3,33 +3,495 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>3D Book Collection Showcase PRO — V2.2</title>
+<title>3D Book Collection Showcase PRO — Escaparates Pro</title>
+<meta name="description" content="3D Book Collection Showcase PRO — customizable Escaparates Pro tool">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-html,body{margin:0;width:100%;height:100%;background:#141a32;color:#fdfbf4;font-family:Inter,Arial,sans-serif}body{display:grid;place-items:center}.status{max-width:680px;padding:32px;text-align:center}.status strong{display:block;font-size:22px;margin-bottom:10px}.status span{color:#c9d0ee;line-height:1.55}
+:root{
+  --navy:#141a32;--accent:#f591ac;--cream:#fdfbf4;--lav:#c9d0ee;--peri:#96a2de;
+  --panel:#0e1328;--panel2:#171d39;--line:rgba(255,255,255,.12);--muted:#9099bd;
+}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0}
+body{
+  overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,#1b2246 0%,#141a33 55%,#0f142a 100%);
+  color:#fff;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+#bgMedia{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#bgMedia img,#bgMedia video{width:100%;height:100%;object-fit:cover;display:block;opacity:.54}
+#bgMedia::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,32,.22),rgba(10,14,32,.44))}
+#gl{position:fixed;inset:0;z-index:2;display:block;touch-action:none}
+.hero-word{position:fixed;top:18vh;left:50%;transform:translateX(-50%);z-index:1;pointer-events:none;user-select:none;transition:.5s}
+.hero-word span{display:block;white-space:nowrap;font-size:min(22vw,44vh);font-weight:850;line-height:.84;letter-spacing:-.025em;color:var(--accent);text-shadow:0 18px 55px rgba(0,0,0,.18)}
+body.detail-open .hero-word{opacity:0;transform:translateX(-50%) translateY(-40px)}
+nav{position:fixed;inset:0 0 auto;z-index:40;display:flex;justify-content:space-between;align-items:center;padding:24px 34px;pointer-events:none}
+nav>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:12px;color:var(--accent);font-weight:800;font-size:clamp(18px,2vw,28px)}
+.brand img{display:none;max-height:32px;max-width:120px;object-fit:contain}
+.brand img.on{display:block}
+.nav-r{display:flex;gap:10px;align-items:center}
+.round,.top-cta{border:0;background:var(--cream);color:var(--navy);height:46px}
+.round{width:46px;border-radius:50%;font-weight:900}
+.top-cta{padding:0 22px;border-radius:999px;font-weight:700}
+#openBtn{position:fixed;left:0;top:0;z-index:30;padding:14px 34px;border:0;background:#fffaf0;color:var(--navy);font-weight:850;letter-spacing:.12em;text-transform:uppercase;clip-path:polygon(0 4%,9% 0,18% 5%,27% 1%,36% 6%,45% 2%,55% 5%,64% 0,73% 5%,82% 1%,91% 5%,100% 2%,98% 96%,88% 99%,78% 94%,66% 98%,55% 95%,45% 100%,34% 94%,23% 98%,11% 94%,0 98%);filter:drop-shadow(0 12px 25px rgba(0,0,0,.35));opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.93);transition:.2s}
+#openBtn.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#closeBtn{position:fixed;top:28px;left:50%;transform:translateX(-50%);z-index:42;width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,255,255,.38);background:rgba(8,12,27,.18);backdrop-filter:blur(12px);color:white;opacity:0;pointer-events:none;transition:.25s}
+body.detail-open #closeBtn{opacity:1;pointer-events:auto}
+.dp{position:fixed;right:6vw;top:50%;transform:translateY(-50%);width:min(560px,42vw);z-index:16;pointer-events:none;visibility:hidden}
+body.detail-open .dp{visibility:visible}
+.dp>*{opacity:0;transform:translateY(24px);transition:.35s}
+body.detail-open .dp>*{opacity:1;transform:none}
+.dp h1{margin:0;color:var(--accent);font-size:clamp(46px,5.4vw,86px);line-height:.96;letter-spacing:-.025em}
+.dp .author{margin-top:12px;color:var(--cream);font-size:20px;font-weight:700}
+.dp p{margin:20px 0 0;color:var(--lav);font-size:clamp(15px,1.22vw,19px);line-height:1.62}
+.meta{display:flex;align-items:center;gap:16px;margin-top:26px;color:#9ca7d9}
+.stars{color:var(--accent);letter-spacing:3px;font-size:20px}
+.year{margin-left:auto;font-style:italic}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;pointer-events:auto}
+.pill{height:50px;border:0;border-radius:999px;padding:0 22px;font-weight:750;background:var(--peri);color:#10152c}
+.pill.alt{background:var(--cream)}
+.pill.source{background:#242c50;color:var(--lav)}
+/* editor */
+.editor-toggle{position:fixed;right:22px;bottom:22px;z-index:650;width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:rgba(16,21,43,.92);color:#fff;box-shadow:0 12px 35px rgba(0,0,0,.35);font-size:20px}
+.editor-overlay{position:fixed;inset:0;z-index:620;background:rgba(3,6,17,.46);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.25s}
+.editor-overlay.on{opacity:1;pointer-events:auto}
+.panel{position:fixed;right:0;top:0;bottom:0;z-index:630;width:min(470px,96vw);background:rgba(11,15,34,.98);border-left:1px solid var(--line);box-shadow:-20px 0 60px rgba(0,0,0,.35);transform:translateX(102%);transition:.32s;overflow:auto;padding:24px 22px 44px}
+.panel.on{transform:none}
+.panel h2{margin:0;font-size:24px}
+.panel .eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:5px 0 22px}
+.sec{border-top:1px solid var(--line);padding:18px 0}
+.sec:first-of-type{border-top:0}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#c6cdef;margin:0 0 12px}
+label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:10px 0 5px}
+input[type=text],input[type=url],input[type=number],textarea,select{
+  width:100%;border:1px solid var(--line);background:#171d39;color:#fff;border-radius:9px;padding:9px 10px;outline:none
+}
+textarea{min-height:78px;resize:vertical}
+input[type=color]{width:46px;height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;padding:2px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{border:1px solid var(--line);background:#1a2140;color:#fff;border-radius:9px;padding:10px 12px;font-weight:700}
+.btn:hover{border-color:rgba(255,255,255,.3)}
+.btn.primary{background:var(--accent);color:#141a32;border-color:transparent}
+.btn.warn{background:#3a2430}
+.grid-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.media-slot{min-height:78px;border:1.5px dashed rgba(255,255,255,.18);border-radius:10px;background:#121831;display:flex;align-items:center;gap:10px;padding:8px;cursor:pointer;overflow:hidden}
+.media-slot img,.media-slot video{width:72px;height:60px;object-fit:cover;border-radius:7px;background:#050815}
+.media-slot .mtext{min-width:0;flex:1}
+.media-slot .mtext b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media-slot .mtext small{color:var(--muted)}
+.media-slot .remove{flex:none;width:28px;height:28px;border-radius:50%;background:#252d52;color:#fff;border:0}
+.book-card{background:#11172e;border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.book-card summary{cursor:pointer;font-weight:800;color:#e7eaff}
+.export-note{font-size:11px;line-height:1.5;color:var(--muted);margin:9px 0}
+#embedOutput{font-family:ui-monospace,Consolas,monospace;font-size:10px;display:none}
+#embedOutput.on{display:block}
+.toast{position:fixed;left:50%;bottom:26px;z-index:900;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:#fdfbf4;color:#141a32;border-radius:999px;padding:11px 18px;font-weight:750;box-shadow:0 12px 36px rgba(0,0,0,.35);transition:.25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.review-badge{position:fixed;left:20px;bottom:20px;z-index:900;display:none;background:#d93558;color:white;border-radius:999px;padding:9px 14px;font-size:12px;font-weight:900;letter-spacing:.1em}
+.review-badge.on{display:block}
+html[data-final-viewer="1"] .editor-toggle,html[data-final-viewer="1"] .panel,html[data-final-viewer="1"] .editor-overlay,html[data-final-viewer="1"] .toast{display:none!important}
+@media(max-width:780px){
+  nav{padding:16px 16px}.top-cta{display:none}.hero-word{top:9vh}.hero-word span{font-size:32vw}
+  .dp{right:auto;left:50%;top:auto;bottom:3vh;transform:translateX(-50%);width:92vw}
+  .dp h1{font-size:clamp(34px,10vw,52px)}.dp p{font-size:14px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .panel{width:100vw}.row2,.grid-buttons{grid-template-columns:1fr}.actions{margin-top:16px}.pill{height:44px;padding:0 16px}
+}
+
+/* V2.2 — interior editorial, back-cover editor, clean final cover flow */
+.editor-subhead{margin:16px 0 8px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.12);font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#dbe0ff}
+.editor-subhead.interior{color:var(--accent)}
+.page-tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin:8px 0 10px}
+.page-tab{border:1px solid var(--line);background:#171d39;color:#d7dcfb;border-radius:8px;padding:7px 3px;min-width:0}
+.page-tab span{display:block;font-size:11px;font-weight:900}.page-tab small{display:block;margin-top:2px;font-size:7.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-tab.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:#20284b}
+.page-editor-card{padding:10px;border:1px solid var(--line);border-radius:10px;background:#0d132b}
+.page-editor-title{font-size:12px;font-weight:900;color:#fff;margin-bottom:8px}
+.page-media-slot{min-height:72px}
+.detail-tools{position:fixed;left:50%;bottom:22px;z-index:45;transform:translateX(-50%) translateY(18px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:16px;background:rgba(10,15,34,.8);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:8px 10px 8px 16px;transition:.3s;box-shadow:0 16px 44px rgba(0,0,0,.28)}
+body.detail-open .detail-tools{opacity:1;pointer-events:auto;transform:translateX(-50%)}
+.detail-tools .hint{font-size:10.5px;color:#c9d0ee;white-space:nowrap}.page-controls{display:flex;align-items:center;gap:8px}.page-controls button{width:36px;height:36px;border-radius:50%;border:0;background:var(--cream);color:var(--navy);font-weight:900}.page-controls button:disabled{opacity:.35;cursor:default}.page-controls span{min-width:120px;text-align:center;font-size:10.5px;font-weight:900;color:#fff}
+.preview-modal{position:fixed;inset:0;z-index:1200;background:#070b18;display:none;grid-template-rows:auto 1fr}.preview-modal.on{display:grid}.preview-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#11172e;border-bottom:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:800}.preview-bar button{border:1px solid rgba(255,255,255,.16);background:#20284b;color:#fff;border-radius:8px;padding:8px 12px}.preview-modal iframe{width:100%;height:100%;border:0;background:#141a32}
+@media(max-width:780px){.detail-tools{bottom:10px;width:calc(100vw - 20px);border-radius:18px;justify-content:center;flex-wrap:wrap}.detail-tools .hint{display:none}.page-tabs{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<div class="status" id="status"><strong>3D Book Collection Showcase PRO</strong><span>Cargando la V2.2 aprobada…</span></div>
+<div id="bgMedia"></div>
+<div class="hero-word"><span id="heroWord">BOOKS</span></div>
+<canvas id="gl"></canvas>
+
+<nav>
+  <div class="brand"><img id="brandLogo" alt=""><span id="brandText">Bestsellers</span></div>
+  <div class="nav-r"><button class="round" aria-label="Menu">=</button><button id="topCta" class="top-cta">Get Tickets</button></div>
+</nav>
+
+<button id="openBtn">Open</button>
+<button id="closeBtn" aria-label="Cerrar">✕</button>
+<div class="dp" id="dp">
+  <h1 id="dpTitle"></h1>
+  <div class="author" id="dpAuthor"></div>
+  <p id="dpDesc"></p>
+  <div class="meta"><div class="stars" id="dpStars"></div><div id="dpSource">Goodreads</div><div class="year" id="dpYear"></div></div>
+  <div class="actions">
+    <button class="pill alt" id="primaryAction">Buy Now</button>
+    <button class="pill" id="secondaryAction">Buy Audiobook</button>
+    <button class="pill source" id="closeAction">Close</button>
+  </div>
+</div>
+<div class="detail-tools" id="detailTools">
+  <span class="hint">Arrastra para girar · Shift + arrastra para mover · rueda o flechas para páginas</span>
+  <div class="page-controls"><button id="prevPageBtn" aria-label="Página anterior">←</button><span id="pageIndicator">Página 1 / 6</span><button id="nextPageBtn" aria-label="Página siguiente">→</button></div>
+</div>
+
+<button class="editor-toggle" id="editorToggle" aria-label="Personalizar">⚙</button>
+<div class="editor-overlay" id="editorOverlay"></div>
+<aside class="panel" id="panel">
+  <h2>3D Book Collection Showcase PRO</h2>
+  <div class="eyebrow">Escaparates Pro · Editor local · V2.2</div>
+
+  <section class="sec">
+    <h3>Identidad</h3>
+    <label>Hero</label><input id="fHero" type="text">
+    <label>Nombre / marca</label><input id="fBrand" type="text">
+    <label>Logo</label>
+    <div class="media-slot" id="logoSlot"><div class="mtext"><b>Logo</b><small>Imagen local</small></div></div>
+    <input id="logoInput" type="file" accept="image/*" hidden>
+    <div class="row2">
+      <div><label>CTA superior</label><input id="fTopCta" type="text"></div>
+      <div><label>URL CTA</label><input id="fTopUrl" type="url"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h3>Paleta + fondo</h3>
+    <div class="row3">
+      <div><label>Fondo</label><input id="cBg" type="color"></div>
+      <div><label>Acento</label><input id="cAccent" type="color"></div>
+      <div><label>Crema</label><input id="cCream" type="color"></div>
+      <div><label>Texto</label><input id="cLav" type="color"></div>
+      <div><label>Botón</label><input id="cPeri" type="color"></div>
+    </div>
+    <label>Imagen o vídeo de fondo</label>
+    <div class="media-slot" id="bgSlot"><div class="mtext"><b>Fondo multimedia</b><small>Imagen o vídeo local</small></div></div>
+    <input id="bgInput" type="file" accept="image/*,video/*" hidden>
+  </section>
+
+  <section class="sec">
+    <h3>Libros / objetos</h3>
+    <div id="bookEditors"></div>
+  </section>
+
+  <section class="sec">
+    <h3>Entregables cliente</h3>
+    <div class="grid-buttons">
+      <button class="btn primary" id="downloadHtml">HTML final cerrado</button>
+      <button class="btn primary" id="downloadZip">ZIP cliente + assets</button>
+      <button class="btn" id="copyEmbed">Copiar iframe embed</button>
+      <button class="btn" id="previewLocal">Preview local</button>
+      <button class="btn" id="capturePng">Captura PNG</button>
+      <button class="btn" id="pngSequence">PNG sequence ZIP</button>
+    </div>
+    <label>Vídeo final</label>
+    <div class="row3">
+      <div><label>Duración</label><select id="vidDur"><option>5</option><option selected>8</option><option>12</option><option>15</option></select></div>
+      <div><label>FPS</label><select id="vidFps"><option>24</option><option selected>30</option><option>60</option></select></div>
+      <div><label>Resolución</label><select id="vidRes"><option value="1280x720">720p</option><option value="1920x1080" selected>1080p</option></select></div>
+    </div>
+    <label>Formato preferido</label><select id="vidFmt"><option value="mp4">MP4 si el navegador lo soporta</option><option value="webm">WebM</option></select>
+    <div class="grid-buttons" style="margin-top:8px">
+      <button class="btn" id="exportVideo">Exportar vídeo final</button>
+      <button class="btn" id="reviewRecord">🎥 Grabar revisión cliente</button>
+    </div>
+    <p class="export-note">HTML final y ZIP usan un snapshot congelado. Los vídeos se conservan como assets reales en ZIP. La grabación de revisión captura la pestaña/pantalla real para feedback previo.</p>
+    <textarea id="embedOutput" readonly></textarea>
+  </section>
+
+  <section class="sec">
+    <button class="btn warn" id="resetAll">Restaurar demo</button>
+  </section>
+</aside>
+<div class="toast" id="toast"></div>
+<div class="review-badge" id="reviewBadge">● REC · REVISIÓN CLIENTE</div>
+<div class="preview-modal" id="previewModal">
+  <div class="preview-bar"><span>Preview local · viewer final cerrado</span><button id="closePreview">Cerrar preview</button></div>
+  <iframe id="previewFrame" title="Preview final Escaparates Pro" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"></iframe>
+</div>
+
 <script>
 (function(){
 'use strict';
-var SOURCE='source.v2.2.html.gz';
-var EXPECTED_SHA256='1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0';
-function hex(buffer){return Array.prototype.map.call(new Uint8Array(buffer),function(b){return b.toString(16).padStart(2,'0')}).join('')}
-function fail(error){console.error(error);var node=document.getElementById('status');if(node)node.innerHTML='<strong>No se pudo cargar la V2.2</strong><span>'+String(error&&error.message||error)+'</span>'}
-async function boot(){
- if(!window.DecompressionStream)throw new Error('Este navegador no soporta DecompressionStream. Usa Chrome/Edge actualizado.');
- var response=await fetch(SOURCE,{cache:'no-store'});
- if(!response.ok)throw new Error('No se pudo recuperar '+SOURCE+' ('+response.status+').');
- var stream=response.body.pipeThrough(new DecompressionStream('gzip'));
- var bytes=await new Response(stream).arrayBuffer();
- if(window.crypto&&crypto.subtle){var digest=hex(await crypto.subtle.digest('SHA-256',bytes));if(digest!==EXPECTED_SHA256)throw new Error('La fuente V2.2 no coincide con el SHA-256 aprobado.');}
- var html=new TextDecoder('utf-8').decode(bytes);
- if(html.indexOf('3D Book Collection Showcase PRO')<0||html.indexOf('V2.2')<0)throw new Error('La fuente aprobada no contiene el contrato V2.2 esperado.');
- document.open();document.write(html);document.close();
+const LS_KEY='ep-books-pro-state-v1';
+const DB_NAME='ep-books-pro-assets-v1', STORE='assets';
+const BOOK_COUNT=3, PAGE_COUNT=6, LEAF_COUNT=3;
+function defaultPages(bookIndex){
+  const titles=[
+    ['A way of thinking','Behaviour before numbers','Risk & patience','Stories we inherit','Long-term perspective','One final idea'],
+    ['The journey begins','Signs on the road','Crossing the desert','Listen to your heart','The treasure within','Follow your legend'],
+    ['A childhood in fragments','Language & belonging','Rules and rebellion','A mother’s courage','Comedy as survival','A story worth sharing']
+  ][bookIndex];
+  const bodies=[
+    ['Good decisions often look ordinary. The real advantage is consistency, patience and room for uncertainty.','Money is less a mathematical problem than a behavioural one. Context, emotion and experience shape every choice.','Leave enough margin to survive bad luck. The ability to stay in the game matters more than perfect forecasts.','Every person carries a different history with money. What looks irrational from outside may make perfect sense from inside.','Compounding rewards time more than brilliance. Protect the horizon and let good decisions accumulate.','Build a system you can live with, not one that only works on paper.'],
+    ['A recurring dream pushes Santiago beyond the familiar and into a larger world.','The world speaks through patterns, people and moments that only become visible when we pay attention.','The difficult middle of the journey tests whether desire is strong enough to become commitment.','Intuition is not the opposite of reason. It is often experience speaking before language catches up.','What we search for far away can change the way we see what was always close to us.','A personal legend becomes real through action, sacrifice and the courage to keep moving.'],
+    ['A life can be told through scenes: funny, painful, strange and unexpectedly tender.','Language can open doors, dissolve barriers and create belonging where categories try to divide people.','Growing up under absurd rules teaches a child to notice contradictions—and eventually to turn them into stories.','At the centre is a mother whose faith, humour and stubborn love create a path through impossible circumstances.','Comedy becomes a tool for translating fear, injustice and confusion into something people can face together.','The best memoirs do more than remember. They transform private experience into a mirror for everyone else.']
+  ][bookIndex];
+  return Array.from({length:PAGE_COUNT},(_,i)=>({
+    type:i===4?'quote':i===5?'cta':'media-text',
+    title:titles[i],body:bodies[i],ctaText:i===5?'Discover more':'',ctaUrl:'#',
+    bg:['#f5efdf','#f2ead9','#f8f1e3'][bookIndex],text:'#18203a',accent:['#4cb960','#c44a28','#07a2ba'][bookIndex]
+  }));
 }
-boot().catch(fail);
+function defaultBackCover(bookIndex){
+  return {type:'media',title:'',body:'',ctaText:'',ctaUrl:'#',bg:'',text:'#ffffff',accent:['#4cb960','#c44a28','#07a2ba'][bookIndex]};
+}
+const DEFAULT_STATE={
+  global:{hero:'BOOKS',brand:'Bestsellers',topCta:'Get Tickets',topUrl:'#',bg:'#141a32',accent:'#f591ac',cream:'#fdfbf4',lav:'#c9d0ee',peri:'#96a2de',source:'Goodreads'},
+  assets:{logo:null,background:null,covers:[null,null,null],backCovers:[null,null,null],pages:Array.from({length:BOOK_COUNT},()=>Array(PAGE_COUNT).fill(null))},
+  books:[
+    {title:'The Psychology of Money',author:'Morgan Housel',year:'2020',stars:4,desc:'Nineteen short stories about how people think and behave around wealth, greed, risk and happiness.',primaryText:'Buy Now',primaryUrl:'#',secondaryText:'Buy Audiobook',secondaryUrl:'#',spine:'#4cb960',back:'#315c38',backCover:defaultBackCover(0),pages:defaultPages(0)},
+    {title:'The Alchemist',author:'Paulo Coelho',year:'1988',stars:4,desc:'A shepherd follows a recurring dream toward the pyramids and discovers a fable about courage, purpose and personal legend.',primaryText:'Buy Now',primaryUrl:'#',secondaryText:'Buy Audiobook',secondaryUrl:'#',spine:'#af2024',back:'#7e171b',backCover:defaultBackCover(1),pages:defaultPages(1)},
+    {title:'Born a Crime',author:'Trevor Noah',year:'2016',stars:4,desc:'Trevor Noah’s memoir of growing up mixed-race in apartheid South Africa, told through absurd comedy, hardship and family love.',primaryText:'Buy Now',primaryUrl:'#',secondaryText:'Buy Audiobook',secondaryUrl:'#',spine:'#07b1cb',back:'#057e91',backCover:defaultBackCover(2),pages:defaultPages(2)}
+  ]
+};
+function deepClone(v){return JSON.parse(JSON.stringify(v))}
+function mergeState(base,raw){
+  const out=deepClone(base); if(!raw)return out;
+  if(raw.global)Object.assign(out.global,raw.global);
+  if(raw.assets){
+    if(raw.assets.logo!==undefined)out.assets.logo=raw.assets.logo;
+    if(raw.assets.background!==undefined)out.assets.background=raw.assets.background;
+    if(Array.isArray(raw.assets.covers))out.assets.covers=raw.assets.covers.slice(0,BOOK_COUNT);
+    if(Array.isArray(raw.assets.backCovers))out.assets.backCovers=raw.assets.backCovers.slice(0,BOOK_COUNT).concat(Array(BOOK_COUNT).fill(null)).slice(0,BOOK_COUNT);
+    if(Array.isArray(raw.assets.pages)){
+      for(let b=0;b<BOOK_COUNT;b++)if(Array.isArray(raw.assets.pages[b]))out.assets.pages[b]=raw.assets.pages[b].slice(0,PAGE_COUNT).concat(Array(PAGE_COUNT).fill(null)).slice(0,PAGE_COUNT);
+    }
+  }
+  if(Array.isArray(raw.books))raw.books.slice(0,BOOK_COUNT).forEach((b,i)=>{
+    if(!b)return; const p=b.pages,bc=b.backCover; Object.assign(out.books[i],b); out.books[i].pages=defaultPages(i); out.books[i].backCover=Object.assign(defaultBackCover(i),bc||{});
+    if(Array.isArray(p))p.slice(0,PAGE_COUNT).forEach((pg,pi)=>Object.assign(out.books[i].pages[pi],pg||{}));
+  });
+  return out;
+}
+let state=(()=>{try{return mergeState(DEFAULT_STATE,JSON.parse(localStorage.getItem(LS_KEY)||'null'))}catch(e){return deepClone(DEFAULT_STATE)}})();
+const runtimeAssets=new Map(), editorPageSelection=[0,0,0];
+const $=id=>document.getElementById(id);
+const fHero=$('fHero'),fBrand=$('fBrand'),fTopCta=$('fTopCta'),fTopUrl=$('fTopUrl');
+const cBg=$('cBg'),cAccent=$('cAccent'),cCream=$('cCream'),cLav=$('cLav'),cPeri=$('cPeri');
+const logoInput=$('logoInput'),bgInput=$('bgInput'),heroWord=$('heroWord'),brandText=$('brandText'),topCta=$('topCta');
+const dpSource=$('dpSource'),brandLogo=$('brandLogo'),gl=$('gl'),openBtn=$('openBtn'),closeBtn=$('closeBtn'),closeAction=$('closeAction');
+const dpTitle=$('dpTitle'),dpAuthor=$('dpAuthor'),dpDesc=$('dpDesc'),dpYear=$('dpYear'),dpStars=$('dpStars');
+const primaryAction=$('primaryAction'),secondaryAction=$('secondaryAction'),downloadHtml=$('downloadHtml'),downloadZip=$('downloadZip');
+const copyEmbed=$('copyEmbed'),previewLocal=$('previewLocal'),capturePng=$('capturePng'),pngSequence=$('pngSequence'),exportVideo=$('exportVideo');
+const reviewRecord=$('reviewRecord'),resetAll=$('resetAll'),embedOutput=$('embedOutput'),vidRes=$('vidRes'),vidFps=$('vidFps'),vidDur=$('vidDur'),vidFmt=$('vidFmt'),reviewBadge=$('reviewBadge');
+const detailTools=$('detailTools'),prevPageBtn=$('prevPageBtn'),nextPageBtn=$('nextPageBtn'),pageIndicator=$('pageIndicator');
+const previewModal=$('previewModal'),previewFrame=$('previewFrame'),closePreview=$('closePreview');
+function saveState(){try{localStorage.setItem(LS_KEY,JSON.stringify(state))}catch(e){console.warn(e)}}
+function toast(msg,ms=2600){const t=$('toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),ms)}
+function slug(v){return String(v||'books-pro').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,70)||'books-pro'}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE)};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function dbPut(key,blob){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(blob,key);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+async function dbGet(key){const db=await openDB();return new Promise((res,rej)=>{const r=db.transaction(STORE).objectStore(STORE).get(key);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error)})}
+async function dbDel(key){const db=await openDB();return new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(key);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function extFromMime(mime,name=''){const byName=(name.match(/\.([a-z0-9]{2,5})$/i)||[])[1];if(byName)return byName.toLowerCase();const m={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','video/mp4':'mp4','video/webm':'webm','video/ogg':'ogv'};return m[mime]||'bin'}
+function descriptor(key,file){return{key,name:file.name||key,mime:file.type||'application/octet-stream',type:(file.type||'').startsWith('video/')?'video':'image',size:file.size||0}}
+async function setAsset(key,file){if(!file)return null;if(!(file.type.startsWith('image/')||file.type.startsWith('video/')))throw Error('Formato no compatible: usa imagen o vídeo');await dbPut(key,file);const old=runtimeAssets.get(key);if(old?.url)URL.revokeObjectURL(old.url);const d=descriptor(key,file),url=URL.createObjectURL(file);runtimeAssets.set(key,{...d,blob:file,url});return d}
+async function removeAsset(key){const old=runtimeAssets.get(key);if(old?.url)URL.revokeObjectURL(old.url);runtimeAssets.delete(key);await dbDel(key).catch(()=>{})}
+async function hydrateAssets(){
+  const descs=[]; if(state.assets.logo)descs.push(state.assets.logo);if(state.assets.background)descs.push(state.assets.background);(state.assets.covers||[]).filter(Boolean).forEach(d=>descs.push(d));
+  (state.assets.backCovers||[]).filter(Boolean).forEach(d=>descs.push(d));
+  (state.assets.pages||[]).forEach(row=>(row||[]).filter(Boolean).forEach(d=>descs.push(d)));
+  for(const d of descs){try{const blob=await dbGet(d.key);if(blob)runtimeAssets.set(d.key,{...d,blob,url:URL.createObjectURL(blob)})}catch(e){console.warn('asset restore',d.key,e)}}
+}
+function blobToDataURL(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(blob)})}
+function assetRuntime(desc){return desc?runtimeAssets.get(desc.key)||null:null}
+
+/* editor panel */
+const panel=$('panel'),overlay=$('editorOverlay');
+$('editorToggle').onclick=()=>{panel.classList.add('on');overlay.classList.add('on');syncPanel()};
+overlay.onclick=()=>{panel.classList.remove('on');overlay.classList.remove('on')};
+function syncPanel(){const g=state.global;fHero.value=g.hero;fBrand.value=g.brand;fTopCta.value=g.topCta;fTopUrl.value=g.topUrl;cBg.value=g.bg;cAccent.value=g.accent;cCream.value=g.cream;cLav.value=g.lav;cPeri.value=g.peri;renderMediaSlot('logoSlot',state.assets.logo,'Logo','Imagen local');renderMediaSlot('bgSlot',state.assets.background,'Fondo multimedia','Imagen o vídeo local');buildBookEditors()}
+function bindText(id,path,cb){const el=$(id);el.addEventListener('input',()=>{path(el.value);saveState();cb&&cb()})}
+bindText('fHero',v=>state.global.hero=v,applyDOM);bindText('fBrand',v=>state.global.brand=v,applyDOM);bindText('fTopCta',v=>state.global.topCta=v,applyDOM);bindText('fTopUrl',v=>state.global.topUrl=v,applyDOM);
+[['cBg','bg'],['cAccent','accent'],['cCream','cream'],['cLav','lav'],['cPeri','peri']].forEach(([id,k])=>$(id).addEventListener('input',e=>{state.global[k]=e.target.value;saveState();applyDOM()}));
+function renderMediaSlot(id,desc,title,sub){const el=$(id),rt=assetRuntime(desc);el.innerHTML='';if(rt){const media=document.createElement(rt.type==='video'?'video':'img');media.src=rt.url;if(rt.type==='video'){media.muted=true;media.loop=true;media.playsInline=true;media.autoplay=true;media.play().catch(()=>{})}el.appendChild(media);const tx=document.createElement('div');tx.className='mtext';tx.innerHTML='<b>'+escapeHTML(rt.name)+'</b><small>'+escapeHTML(rt.type+' · '+Math.round((rt.size||0)/1024)+' KB')+'</small>';el.appendChild(tx);const x=document.createElement('button');x.className='remove';x.textContent='×';x.onclick=e=>{e.stopPropagation();removeAssetBySlot(id)};el.appendChild(x)}else el.innerHTML='<div class="mtext"><b>'+escapeHTML(title)+'</b><small>'+escapeHTML(sub)+'</small></div>'}
+async function removeAssetBySlot(slotId){if(slotId==='logoSlot'){const d=state.assets.logo;if(d)await removeAsset(d.key);state.assets.logo=null}if(slotId==='bgSlot'){const d=state.assets.background;if(d)await removeAsset(d.key);state.assets.background=null}saveState();syncPanel();applyDOM()}
+$('logoSlot').onclick=()=>logoInput.click();$('bgSlot').onclick=()=>bgInput.click();
+logoInput.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{if(!f.type.startsWith('image/'))throw Error('El logo debe ser una imagen');state.assets.logo=await setAsset('logo',f);saveState();syncPanel();applyDOM();toast('Logo actualizado')}catch(err){toast(err.message,5000)}e.target.value=''};
+bgInput.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{state.assets.background=await setAsset('background',f);saveState();syncPanel();applyDOM();toast('Fondo actualizado')}catch(err){toast(err.message,5000)}e.target.value=''};
+function buildBookEditors(){
+  const host=$('bookEditors');host.innerHTML='';
+  state.books.forEach((b,i)=>{
+    const d=document.createElement('details');d.className='book-card';d.open=i===0;
+    d.innerHTML='<summary>Libro '+(i+1)+' · '+escapeHTML(b.title)+'</summary>'+ 
+      '<div class="editor-subhead">Portada e información</div>'+ 
+      '<label>Portada — imagen o vídeo</label><div class="media-slot" id="coverSlot'+i+'"><div class="mtext"><b>Portada '+(i+1)+'</b><small>Imagen o vídeo</small></div></div><input hidden type="file" accept="image/*,video/*" id="coverInput'+i+'">'+
+      '<div class="row2"><div><label>Título</label><input type="text" data-k="title"></div><div><label>Autor</label><input type="text" data-k="author"></div></div>'+ 
+      '<div class="row2"><div><label>Año</label><input type="text" data-k="year"></div><div><label>Rating 1–5</label><input type="number" min="1" max="5" data-k="stars"></div></div>'+ 
+      '<label>Descripción</label><textarea data-k="desc"></textarea>'+ 
+      '<div class="row2"><div><label>CTA 1</label><input type="text" data-k="primaryText"></div><div><label>URL CTA 1</label><input type="url" data-k="primaryUrl"></div></div>'+ 
+      '<div class="row2"><div><label>CTA 2</label><input type="text" data-k="secondaryText"></div><div><label>URL CTA 2</label><input type="url" data-k="secondaryUrl"></div></div>'+ 
+      '<div class="row2"><div><label>Color lomo</label><input type="color" data-k="spine"></div><div><label>Color base contraportada</label><input type="color" data-k="back"></div></div>'+ 
+      '<div class="editor-subhead">Contraportada personalizable</div>'+ 
+      '<label>Imagen o vídeo</label><div class="media-slot" id="backCoverSlot'+i+'"><div class="mtext"><b>Contraportada '+(i+1)+'</b><small>Imagen o vídeo opcional</small></div></div><input hidden type="file" accept="image/*,video/*" id="backCoverInput'+i+'">'+
+      '<label>Tipo de composición</label><select data-bc="type"><option value="editorial">Editorial</option><option value="media">Imagen / vídeo full</option><option value="media-text">Imagen / vídeo + texto</option><option value="quote">Quote / claim</option><option value="cta">CTA final</option></select>'+ 
+      '<label>Título</label><input type="text" data-bc="title">'+
+      '<label>Texto editorial</label><textarea data-bc="body"></textarea>'+ 
+      '<div class="row2"><div><label>CTA</label><input type="text" data-bc="ctaText"></div><div><label>URL CTA</label><input type="url" data-bc="ctaUrl"></div></div>'+ 
+      '<div class="row3"><div><label>Fondo</label><input type="color" data-bc="bg"></div><div><label>Texto</label><input type="color" data-bc="text"></div><div><label>Acento</label><input type="color" data-bc="accent"></div></div>'+ 
+      '<div class="editor-subhead interior">Interior editorial · 6 páginas</div><div class="page-tabs" id="pageTabs'+i+'"></div><div id="pageEditor'+i+'"></div>';
+    host.appendChild(d);
+    d.querySelectorAll('[data-k]').forEach(inp=>{const k=inp.dataset.k;inp.value=b[k];inp.oninput=()=>{b[k]=k==='stars'?Math.max(1,Math.min(5,parseInt(inp.value)||1)):inp.value;saveState();if(['title','author','spine','back'].includes(k))refreshBookTexture(i);if(selected===i)renderDetail(i)}});
+    const slot=d.querySelector('#coverSlot'+i),fi=d.querySelector('#coverInput'+i);slot.onclick=()=>fi.click();renderCoverSlot(slot,i);
+    fi.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{state.assets.covers[i]=await setAsset('cover-'+i,f);saveState();renderCoverSlot(slot,i);refreshBookTexture(i);toast('Portada '+(i+1)+' actualizada')}catch(err){toast(err.message,5000)}e.target.value=''};
+    d.querySelectorAll('[data-bc]').forEach(inp=>{const k=inp.dataset.bc,bc=b.backCover||(b.backCover=defaultBackCover(i));inp.value=(k==='bg'?(bc[k]||b.back):bc[k])||'';inp.oninput=()=>{bc[k]=inp.value;saveState();refreshBackCoverTexture(i)}});
+    const backSlot=d.querySelector('#backCoverSlot'+i),backFi=d.querySelector('#backCoverInput'+i);backSlot.onclick=()=>backFi.click();renderBackCoverSlot(backSlot,i);
+    backFi.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{state.assets.backCovers[i]=await setAsset('back-cover-'+i,f);saveState();renderBackCoverSlot(backSlot,i);refreshBackCoverTexture(i);toast('Contraportada '+(i+1)+' actualizada')}catch(err){toast(err.message,5000)}e.target.value=''};
+    renderPageTabs(i,d);renderPageEditor(i,d);
+  });
+}
+function renderCoverSlot(slot,i){const desc=state.assets.covers[i],rt=assetRuntime(desc);slot.innerHTML='';if(rt){const m=document.createElement(rt.type==='video'?'video':'img');m.src=rt.url;if(rt.type==='video'){m.muted=true;m.loop=true;m.playsInline=true;m.autoplay=true;m.play().catch(()=>{})}slot.appendChild(m);const tx=document.createElement('div');tx.className='mtext';tx.innerHTML='<b>'+escapeHTML(rt.name)+'</b><small>'+rt.type+'</small>';slot.appendChild(tx);const x=document.createElement('button');x.className='remove';x.textContent='×';x.onclick=async e=>{e.stopPropagation();await removeAsset(rt.key);state.assets.covers[i]=null;saveState();renderCoverSlot(slot,i);refreshBookTexture(i)};slot.appendChild(x)}else slot.innerHTML='<div class="mtext"><b>Portada '+(i+1)+'</b><small>Imagen o vídeo · fallback procedural</small></div>'}
+function renderBackCoverSlot(slot,i){const desc=state.assets.backCovers[i],rt=assetRuntime(desc);slot.innerHTML='';if(rt){const m=document.createElement(rt.type==='video'?'video':'img');m.src=rt.url;if(rt.type==='video'){m.muted=true;m.loop=true;m.playsInline=true;m.autoplay=true;m.play().catch(()=>{})}slot.appendChild(m);const tx=document.createElement('div');tx.className='mtext';tx.innerHTML='<b>'+escapeHTML(rt.name)+'</b><small>'+rt.type+'</small>';slot.appendChild(tx);const x=document.createElement('button');x.className='remove';x.textContent='×';x.onclick=async e=>{e.stopPropagation();await removeAsset(rt.key);state.assets.backCovers[i]=null;saveState();renderBackCoverSlot(slot,i);refreshBackCoverTexture(i)};slot.appendChild(x)}else slot.innerHTML='<div class="mtext"><b>Contraportada '+(i+1)+'</b><small>Imagen o vídeo · fallback al color base</small></div>'}
+function renderPageTabs(bi,scope){const host=scope.querySelector('#pageTabs'+bi);host.innerHTML='';for(let pi=0;pi<PAGE_COUNT;pi++){const bt=document.createElement('button');bt.type='button';bt.className='page-tab'+(editorPageSelection[bi]===pi?' active':'');bt.innerHTML='<span>'+String(pi+1).padStart(2,'0')+'</span><small>'+escapeHTML(state.books[bi].pages[pi].type)+'</small>';bt.onclick=()=>{editorPageSelection[bi]=pi;renderPageTabs(bi,scope);renderPageEditor(bi,scope)};host.appendChild(bt)}}
+function renderPageEditor(bi,scope){
+  const pi=editorPageSelection[bi],pg=state.books[bi].pages[pi],host=scope.querySelector('#pageEditor'+bi);host.innerHTML='';
+  const wrap=document.createElement('div');wrap.className='page-editor-card';wrap.innerHTML='<div class="page-editor-title">Página '+(pi+1)+'</div>'+ 
+    '<label>Tipo de composición</label><select data-pk="type"><option value="editorial">Editorial</option><option value="media">Imagen / vídeo full</option><option value="media-text">Imagen / vídeo + texto</option><option value="quote">Quote / claim</option><option value="cta">CTA final</option></select>'+ 
+    '<label>Imagen o vídeo</label><div class="media-slot page-media-slot" id="pageMedia'+bi+'-'+pi+'"><div class="mtext"><b>Media página '+(pi+1)+'</b><small>Imagen o vídeo opcional</small></div></div><input hidden type="file" accept="image/*,video/*" id="pageInput'+bi+'-'+pi+'">'+ 
+    '<label>Título</label><input type="text" data-pk="title">'+ 
+    '<label>Texto editorial</label><textarea data-pk="body"></textarea>'+ 
+    '<div class="row2"><div><label>CTA</label><input type="text" data-pk="ctaText"></div><div><label>URL CTA</label><input type="url" data-pk="ctaUrl"></div></div>'+ 
+    '<div class="row3"><div><label>Fondo</label><input type="color" data-pk="bg"></div><div><label>Texto</label><input type="color" data-pk="text"></div><div><label>Acento</label><input type="color" data-pk="accent"></div></div>';
+  host.appendChild(wrap);wrap.querySelectorAll('[data-pk]').forEach(inp=>{const k=inp.dataset.pk;inp.value=pg[k]||'';inp.oninput=()=>{pg[k]=inp.value;saveState();refreshPageTexture(bi,pi);renderPageTabs(bi,scope)}});
+  const slot=wrap.querySelector('#pageMedia'+bi+'-'+pi),fi=wrap.querySelector('#pageInput'+bi+'-'+pi);slot.onclick=()=>fi.click();renderPageMediaSlot(slot,bi,pi);
+  fi.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{state.assets.pages[bi][pi]=await setAsset('book-'+bi+'-page-'+pi,f);saveState();renderPageMediaSlot(slot,bi,pi);refreshPageTexture(bi,pi);toast('Media interior actualizada')}catch(err){toast(err.message,5000)}e.target.value=''};
+}
+function renderPageMediaSlot(slot,bi,pi){const desc=state.assets.pages[bi][pi],rt=assetRuntime(desc);slot.innerHTML='';if(rt){const m=document.createElement(rt.type==='video'?'video':'img');m.src=rt.url;if(rt.type==='video'){m.muted=true;m.loop=true;m.playsInline=true;m.autoplay=true;m.play().catch(()=>{})}slot.appendChild(m);const tx=document.createElement('div');tx.className='mtext';tx.innerHTML='<b>'+escapeHTML(rt.name)+'</b><small>'+rt.type+'</small>';slot.appendChild(tx);const x=document.createElement('button');x.className='remove';x.textContent='×';x.onclick=async e=>{e.stopPropagation();await removeAsset(rt.key);state.assets.pages[bi][pi]=null;saveState();renderPageMediaSlot(slot,bi,pi);refreshPageTexture(bi,pi)};slot.appendChild(x)}else slot.innerHTML='<div class="mtext"><b>Media página '+(pi+1)+'</b><small>Imagen o vídeo opcional</small></div>'}
+function applyDOM(){const g=state.global,root=document.documentElement;root.style.setProperty('--navy',g.bg);root.style.setProperty('--accent',g.accent);root.style.setProperty('--cream',g.cream);root.style.setProperty('--lav',g.lav);root.style.setProperty('--peri',g.peri);document.body.style.background='radial-gradient(120% 100% at 50% 0%, '+shade(g.bg,18)+' 0%, '+g.bg+' 58%, '+shade(g.bg,-22)+' 100%)';heroWord.textContent=g.hero||'BOOKS';brandText.textContent=g.brand||'';topCta.textContent=g.topCta||'';topCta.onclick=()=>{if(g.topUrl&&g.topUrl!=='#')window.open(g.topUrl,'_blank','noopener')};dpSource.textContent=g.source||'';const lr=assetRuntime(state.assets.logo);if(lr){brandLogo.src=lr.url;brandLogo.classList.add('on')}else{brandLogo.removeAttribute('src');brandLogo.classList.remove('on')}const br=assetRuntime(state.assets.background),host=$('bgMedia');host.innerHTML='';if(br){const m=document.createElement(br.type==='video'?'video':'img');m.src=br.url;if(br.type==='video'){m.muted=true;m.loop=true;m.playsInline=true;m.autoplay=true;m.play().catch(()=>{})}host.appendChild(m)}}
+function shade(hex,amt){let h=hex.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');let n=parseInt(h,16),r=Math.max(0,Math.min(255,(n>>16)+amt)),g=Math.max(0,Math.min(255,((n>>8)&255)+amt)),b=Math.max(0,Math.min(255,(n&255)+amt));return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('')}
+
+/* THREE engine — full interaction */
+let renderer,scene,camera,raycaster,mouse,bookRoot,bookObjs=[],hovered=-1,selected=-1;
+const W=1.5,H=2.2,D=.30,C=.035,PW=W-.07,PH=H-.09;
+const pointer={x:0,y:0,lastX:0,lastY:0,down:false,id:null,mode:null,book:null,moved:0,downX:0,downY:0,time:0,shift:false};
+function basicMat(color,opts={}){return new THREE.MeshStandardMaterial(Object.assign({color,roughness:.72,metalness:.02},opts))}
+function makeCoverCanvas(i){const b=state.books[i],c=document.createElement('canvas');c.width=800;c.height=1200;const x=c.getContext('2d'),palettes=[['#4cb960','#102316'],['#af2024','#f2b31c'],['#07b1cb','#f6e400']],p=palettes[i%3];x.fillStyle=p[0];x.fillRect(0,0,800,1200);const g=x.createLinearGradient(0,0,800,1200);g.addColorStop(0,'rgba(255,255,255,.18)');g.addColorStop(.5,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.18)');x.fillStyle=g;x.fillRect(0,0,800,1200);for(let k=0;k<35;k++){x.fillStyle='rgba(255,255,255,'+(0.02+(k%5)*.01)+')';x.beginPath();x.arc((k*137)%800,(k*211)%1200,18+(k%7)*12,0,Math.PI*2);x.fill()}x.fillStyle=i===1?p[1]:'#fff';x.textAlign='center';x.font='800 74px Arial';wrapText(x,b.title.toUpperCase(),400,420,650,86);x.font='600 36px Arial';x.fillText(b.author.toUpperCase(),400,1060);x.font='500 24px Georgia';x.fillText('3D BOOK COLLECTION SHOWCASE PRO',400,1120);return c}
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){const words=String(text||'').split(/\s+/);let line='',yy=y;for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxWidth&&line){ctx.fillText(line,x,yy);line=w;yy+=lineHeight}else line=t}if(line)ctx.fillText(line,x,yy)}
+function textureFromAsset(i,onReady){const desc=state.assets.covers[i],rt=assetRuntime(desc);if(!rt){const t=new THREE.CanvasTexture(makeCoverCanvas(i));t.encoding=THREE.sRGBEncoding;onReady(t);return}if(rt.type==='video'){const v=document.createElement('video');v.src=rt.url;v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=true;v.preload='auto';v.addEventListener('loadeddata',()=>{v.play().catch(()=>{});const t=new THREE.VideoTexture(v);t.minFilter=THREE.LinearFilter;t.magFilter=THREE.LinearFilter;t.encoding=THREE.sRGBEncoding;onReady(t,v)},{once:true});v.load();return}const img=new Image();img.onload=()=>{const t=new THREE.Texture(img);t.needsUpdate=true;t.encoding=THREE.sRGBEncoding;onReady(t)};img.src=rt.url}
+function drawMediaCover(ctx,el,w,h){const sw=el.videoWidth||el.naturalWidth||el.width,sh=el.videoHeight||el.naturalHeight||el.height;if(!sw||!sh)return false;const s=Math.max(w/sw,h/sh),dw=sw*s,dh=sh*s;ctx.drawImage(el,(w-dw)/2,(h-dh)/2,dw,dh);return true}
+function drawTextBlock(ctx,text,x,y,maxWidth,lineHeight,maxLines){const words=String(text||'').split(/\s+/);let line='',yy=y,count=0;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,yy);line=word;yy+=lineHeight;if(++count>=maxLines-1)break}else line=test}if(line&&count<maxLines)ctx.fillText(line,x,yy)}
+function createPageSurface(bi,pi){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1536;const surf={canvas,ctx:canvas.getContext('2d'),texture:new THREE.CanvasTexture(canvas),video:null,image:null,key:null,dirty:true};surf.texture.encoding=THREE.sRGBEncoding;bindPageMedia(surf,bi,pi);paintPageSurface(surf,bi,pi);return surf}
+function bindPageMedia(surf,bi,pi){if(surf.video){surf.video.pause();surf.video.removeAttribute('src');surf.video.load()}surf.video=null;surf.image=null;const desc=state.assets.pages[bi][pi],rt=assetRuntime(desc);surf.key=desc?.key||null;if(!rt){surf.dirty=true;return}if(rt.type==='video'){const v=document.createElement('video');v.src=rt.url;v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=true;v.preload='auto';v.onloadeddata=()=>{surf.dirty=true;v.play().catch(()=>{})};v.load();surf.video=v}else{const img=new Image();img.onload=()=>surf.dirty=true;img.src=rt.url;surf.image=img}surf.dirty=true}
+function paintPageSurface(surf,bi,pi){const pg=state.books[bi].pages[pi],x=surf.ctx,w=surf.canvas.width,h=surf.canvas.height;x.clearRect(0,0,w,h);x.fillStyle=pg.bg||'#f5efdf';x.fillRect(0,0,w,h);const media=surf.video||surf.image,hasMedia=media&&drawMediaCover(x,media,w,h);if(hasMedia&&(pg.type==='media'||pg.type==='media-text'||pg.type==='cta')){const grad=x.createLinearGradient(0,h*.35,0,h);grad.addColorStop(0,'rgba(5,8,20,.04)');grad.addColorStop(1,'rgba(5,8,20,.72)');x.fillStyle=grad;x.fillRect(0,0,w,h)}else if(hasMedia){x.globalAlpha=.18;x.fillStyle=pg.bg||'#f5efdf';x.fillRect(0,0,w,h);x.globalAlpha=1}x.fillStyle=hasMedia&&(pg.type==='media'||pg.type==='media-text'||pg.type==='cta')?'#ffffff':(pg.text||'#18203a');x.textAlign='left';x.font='700 25px Arial';x.globalAlpha=.7;x.fillText('0'+(pi+1),72,92);x.globalAlpha=1;if(pg.type==='quote'){x.font='italic 700 72px Georgia';drawTextBlock(x,'“'+(pg.title||pg.body||'')+'”',90,h*.42,w-180,92,6);x.fillStyle=pg.accent||'#c44a28';x.fillRect(90,h*.74,140,7)}else if(pg.type==='media'&&hasMedia){/* full visual */}else{const title=pg.title||'';x.font='800 68px Arial';drawTextBlock(x,title,86,hasMedia?h*.62:250,w-172,78,4);x.font='400 34px Georgia';drawTextBlock(x,pg.body||'',86,hasMedia?h*.78:520,w-172,52,10);if(pg.type==='cta'&&pg.ctaText){x.fillStyle=pg.accent||'#c44a28';roundRectCanvas(x,86,h-230,360,92,46);x.fill();x.fillStyle='#fff';x.font='700 30px Arial';x.textAlign='center';x.fillText(pg.ctaText,266,h-172);x.textAlign='left'}}x.fillStyle=pg.accent||'#c44a28';x.fillRect(72,h-84,w-144,3);surf.texture.needsUpdate=true;surf.dirty=false}
+function roundRectCanvas(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function createBackCoverSurface(bi){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1536;const surf={canvas,ctx:canvas.getContext('2d'),texture:new THREE.CanvasTexture(canvas),video:null,image:null,key:null,dirty:true};surf.texture.encoding=THREE.sRGBEncoding;bindBackCoverMedia(surf,bi);paintBackCoverSurface(surf,bi);return surf}
+function bindBackCoverMedia(surf,bi){if(surf.video){surf.video.pause();surf.video.removeAttribute('src');surf.video.load()}surf.video=null;surf.image=null;const desc=state.assets.backCovers[bi],rt=assetRuntime(desc);surf.key=desc?.key||null;if(!rt){surf.dirty=true;return}if(rt.type==='video'){const v=document.createElement('video');v.src=rt.url;v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=true;v.preload='auto';v.onloadeddata=()=>{surf.dirty=true;v.play().catch(()=>{})};v.load();surf.video=v}else{const img=new Image();img.onload=()=>surf.dirty=true;img.src=rt.url;surf.image=img}surf.dirty=true}
+function paintBackCoverSurface(surf,bi){const b=state.books[bi],pg=b.backCover||defaultBackCover(bi),x=surf.ctx,w=surf.canvas.width,h=surf.canvas.height;x.clearRect(0,0,w,h);x.fillStyle=pg.bg||b.back||'#18203a';x.fillRect(0,0,w,h);const media=surf.video||surf.image,hasMedia=media&&drawMediaCover(x,media,w,h);if(hasMedia&&(pg.type==='media-text'||pg.type==='cta')){const grad=x.createLinearGradient(0,h*.28,0,h);grad.addColorStop(0,'rgba(5,8,20,.03)');grad.addColorStop(1,'rgba(5,8,20,.76)');x.fillStyle=grad;x.fillRect(0,0,w,h)}else if(hasMedia&&pg.type==='editorial'){x.globalAlpha=.22;x.fillStyle=pg.bg||b.back||'#18203a';x.fillRect(0,0,w,h);x.globalAlpha=1}const textColor=hasMedia&&(pg.type==='media-text'||pg.type==='cta')?'#ffffff':(pg.text||'#ffffff');x.fillStyle=textColor;x.textAlign='left';if(pg.type==='quote'){x.font='italic 700 72px Georgia';drawTextBlock(x,'“'+(pg.title||pg.body||'')+'”',90,h*.42,w-180,92,6);x.fillStyle=pg.accent||state.global.accent;x.fillRect(90,h*.74,140,7)}else if(!(pg.type==='media'&&hasMedia)){x.font='800 68px Arial';drawTextBlock(x,pg.title||'',86,hasMedia?h*.62:250,w-172,78,4);x.font='400 34px Georgia';drawTextBlock(x,pg.body||'',86,hasMedia?h*.78:520,w-172,52,10);if(pg.type==='cta'&&pg.ctaText){x.fillStyle=pg.accent||state.global.accent;roundRectCanvas(x,86,h-230,360,92,46);x.fill();x.fillStyle='#fff';x.font='700 30px Arial';x.textAlign='center';x.fillText(pg.ctaText,266,h-172);x.textAlign='left'}}x.fillStyle=pg.accent||state.global.accent;x.fillRect(72,h-84,w-144,3);surf.texture.needsUpdate=true;surf.dirty=false}
+function initThree(){if(!window.THREE){document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:#10152c">No se pudo cargar Three.js.</div>');return}renderer=new THREE.WebGLRenderer({canvas:gl,antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true;scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(28,innerWidth/innerHeight,.1,100);camera.position.set(0,.05,9.5);scene.add(new THREE.HemisphereLight(0x9aa9e8,0x0d1024,.55));const key=new THREE.DirectionalLight(0xffffff,1.15);key.position.set(3,5,5);key.castShadow=true;scene.add(key);const rim=new THREE.DirectionalLight(0xff8daf,.55);rim.position.set(-4,3,-3);scene.add(rim);bookRoot=new THREE.Group();scene.add(bookRoot);raycaster=new THREE.Raycaster();mouse=new THREE.Vector2();for(let i=0;i<BOOK_COUNT;i++)bookObjs.push(buildBook(i));computeTargets();animate()}
+function buildBook(i){
+  const root=new THREE.Group(),float=new THREE.Group();root.add(float);bookRoot.add(root);const b=state.books[i];
+  const block=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),[basicMat(0xe6dfcd),basicMat(0xe6dfcd),basicMat(0xf2ecdd),basicMat(0xf2ecdd),basicMat(0xf0e8d8),basicMat(0xddd5c4)]);block.castShadow=block.receiveShadow=true;float.add(block);
+  const backPivot=new THREE.Group();backPivot.position.set(-W/2,0,-D/2-C/2);float.add(backPivot);const backSurface=createBackCoverSurface(i);const backMaterials=[basicMat(b.back),basicMat(b.back),basicMat(b.back),basicMat(b.back),basicMat(0xf0e8d8),new THREE.MeshBasicMaterial({map:backSurface.texture,toneMapped:false})];const back=new THREE.Mesh(new THREE.BoxGeometry(W+.08,H+.1,C),backMaterials);back.position.x=(W+.08)/2;back.castShadow=true;backPivot.add(back);
+  const frontPivot=new THREE.Group();frontPivot.position.set(-W/2,0,D/2+C/2);float.add(frontPivot);const frontMaterials=[basicMat(b.spine),basicMat(b.spine),basicMat(b.spine),basicMat(b.spine),basicMat(0xffffff),basicMat(0xf0e8d8)];const front=new THREE.Mesh(new THREE.BoxGeometry(W+.08,H+.1,C),frontMaterials);front.position.x=(W+.08)/2;front.castShadow=true;frontPivot.add(front);
+  const spine=new THREE.Mesh(new THREE.BoxGeometry(.08,H+.1,D+C*2),basicMat(b.spine));spine.position.x=-W/2-.04;float.add(spine);
+  const pageSurfaces=Array.from({length:PAGE_COUNT},(_,pi)=>createPageSurface(i,pi)),leaves=[];
+  for(let li=0;li<LEAF_COUNT;li++){
+    const piv=new THREE.Group();piv.position.set(-W/2+.025,0,D/2+.012-li*.004);float.add(piv);const geo=new THREE.PlaneGeometry(PW,PH);const fm=new THREE.MeshBasicMaterial({map:pageSurfaces[li*2].texture,side:THREE.FrontSide,toneMapped:false});const bm=new THREE.MeshBasicMaterial({map:pageSurfaces[li*2+1].texture,side:THREE.FrontSide,toneMapped:false});const fmesh=new THREE.Mesh(geo,fm);fmesh.position.set(PW/2,0,.002);piv.add(fmesh);const bmesh=new THREE.Mesh(geo,bm);bmesh.position.set(PW/2,0,-.002);bmesh.rotation.y=Math.PI;piv.add(bmesh);leaves.push({pivot:piv,front:fmesh,back:bmesh,target:0})
+  }
+  const hit=new THREE.Mesh(new THREE.BoxGeometry(W*1.15,H*1.14,D*2.4),new THREE.MeshBasicMaterial({visible:false}));float.add(hit);
+  const obj={root,float,block,backPivot,back,backSurface,frontPivot,front,spine,hit,index:i,target:{x:0,y:0,z:0,ry:0,rz:0,s:1,open:0,backOpen:0},phase:Math.random()*6.28,video:null,coverTex:null,pageSurfaces,leaves,pageTurn:0,orbY:0,orbX:0,orbYv:0,orbXv:0,manualX:0,manualY:0,dragOpen:0,navYawTarget:null,transitionToken:0};
+  textureFromAsset(i,(t,v)=>{if(obj.coverTex)obj.coverTex.dispose();obj.coverTex=t;obj.video=v||null;obj.front.material[4].map=t;obj.front.material[4].color.set(0xffffff);obj.front.material[4].needsUpdate=true});return obj
+}
+function refreshBookTexture(i){const o=bookObjs[i];if(!o)return;o.spine.material.color.set(state.books[i].spine);[0,1,2,3].forEach(mi=>o.back.material[mi]?.color?.set(state.books[i].back));textureFromAsset(i,(t,v)=>{if(o.coverTex)o.coverTex.dispose();o.coverTex=t;o.video=v||null;o.front.material[4].map=t;o.front.material[4].needsUpdate=true});o.pageSurfaces.forEach((s,pi)=>{s.dirty=true});refreshBackCoverTexture(i)}
+function refreshBackCoverTexture(bi){const o=bookObjs[bi];if(!o)return;[0,1,2,3].forEach(mi=>o.back.material[mi]?.color?.set(state.books[bi].back));bindBackCoverMedia(o.backSurface,bi);paintBackCoverSurface(o.backSurface,bi);o.back.material[5].map=o.backSurface.texture;o.back.material[5].needsUpdate=true}
+function refreshPageTexture(bi,pi){const o=bookObjs[bi];if(!o)return;const surf=o.pageSurfaces[pi];bindPageMedia(surf,bi,pi);paintPageSurface(surf,bi,pi)}
+function nearestYaw(current,target){const tau=Math.PI*2;return target+Math.round((current-target)/tau)*tau}
+function readingCoverPose(o){const closed=o.pageTurn<0||o.pageTurn>LEAF_COUNT;return{open:closed?0:-2.55,backOpen:closed?0:.15}}
+function computeTargets(){const portrait=innerWidth/Math.max(1,innerHeight)<.85,hero=portrait?[{x:-1.2,y:-.45,z:0,ry:.42,rz:.14,s:1.12},{x:0,y:.1,z:.28,ry:0,rz:0,s:1.18},{x:1.2,y:-.45,z:0,ry:-.42,rz:-.14,s:1.12}]:[{x:-1.75,y:-.25,z:0,ry:.46,rz:.11,s:1.15},{x:0,y:.08,z:.34,ry:0,rz:0,s:1.28},{x:1.75,y:-.25,z:0,ry:-.46,rz:-.11,s:1.15}];bookObjs.forEach((o,i)=>{if(selected<0)Object.assign(o.target,hero[i],{open:0,backOpen:0});else if(i===selected){const pose=readingCoverPose(o),base=portrait?{x:0,y:.58,z:1.2,ry:.12,rz:0,s:1.34}:{x:-1.72,y:0,z:1.2,ry:.18,rz:0,s:1.54};Object.assign(o.target,base,pose)}else Object.assign(o.target,{x:i<selected?-5.2:5.2,y:-1,z:-1,ry:0,rz:0,s:.55,open:0,backOpen:0})})}
+function updatePageIndicator(){if(selected<0){detailTools?.classList.remove('on');return}detailTools?.classList.add('on');const n=bookObjs[selected].pageTurn;pageIndicator.textContent=n<0?'Portada':n===0?'Página 1 / 6':n===1?'Páginas 2–3 / 6':n===2?'Páginas 4–5 / 6':n===3?'Página 6 / 6':'Contraportada';prevPageBtn.disabled=n<=-1;nextPageBtn.disabled=n>=LEAF_COUNT+1;prevPageBtn.title=n===0?'Cerrar y volver a portada':'Anterior';nextPageBtn.title=n===LEAF_COUNT?'Cerrar y mostrar contraportada':'Siguiente'}
+function turnPage(dir){if(selected<0)return;const o=bookObjs[selected],old=o.pageTurn,next=Math.max(-1,Math.min(LEAF_COUNT+1,old+dir));if(next===old)return;const token=++o.transitionToken;o.orbYv=o.orbXv=0;if(next>LEAF_COUNT){o.pageTurn=next;o.navYawTarget=nearestYaw(o.orbY,0);computeTargets();updatePageIndicator();setTimeout(()=>{if(selected===o.index&&o.pageTurn>LEAF_COUNT&&o.transitionToken===token)o.navYawTarget=nearestYaw(o.orbY,Math.PI)},430);return}if(old>LEAF_COUNT&&next===LEAF_COUNT){o.navYawTarget=nearestYaw(o.orbY,0);setTimeout(()=>{if(selected===o.index&&o.pageTurn>LEAF_COUNT&&o.transitionToken===token){o.pageTurn=LEAF_COUNT;computeTargets();updatePageIndicator()}},430);return}o.pageTurn=next;if(next<0)o.navYawTarget=nearestYaw(o.orbY,0);else if(old<0)o.navYawTarget=nearestYaw(o.orbY,0);computeTargets();updatePageIndicator()}
+prevPageBtn.onclick=()=>turnPage(-1);nextPageBtn.onclick=()=>turnPage(1);
+function animate(t=0){requestAnimationFrame(animate);const sec=t*.001,dt=Math.min(.033,(animate._last? (t-animate._last)/1000:.016));animate._last=t;bookObjs.forEach(o=>{o.pageSurfaces.forEach((s,pi)=>{if(s.video||s.dirty)paintPageSurface(s,o.index,pi)});if(o.backSurface&&(o.backSurface.video||o.backSurface.dirty))paintBackCoverSurface(o.backSurface,o.index);if(selected===o.index&&pointer.mode!=='orbit'){if(o.navYawTarget!==null){o.orbY+=(o.navYawTarget-o.orbY)*Math.min(1,dt*3.4);o.orbYv=0;if(Math.abs(o.navYawTarget-o.orbY)<.002){o.orbY=o.navYawTarget;o.navYawTarget=null}}else{o.orbY+=o.orbYv*dt;o.orbYv*=Math.exp(-1.6*dt);if(Math.abs(o.orbYv)<.14){const snap=Math.round(o.orbY/Math.PI)*Math.PI;o.orbY+=(snap-o.orbY)*Math.min(1,dt*2.2)}}o.orbX+=o.orbXv*dt;o.orbXv*=Math.exp(-2.1*dt);if(Math.abs(o.orbXv)<.12)o.orbX+=(0-o.orbX)*Math.min(1,dt*2.6);o.orbX=Math.max(-.62,Math.min(.62,o.orbX))}const k=.085;o.root.position.x+=(o.target.x+o.manualX-o.root.position.x)*k;o.root.position.y+=(o.target.y+o.manualY-o.root.position.y)*k;o.root.position.z+=(o.target.z-o.root.position.z)*k;const baseRy=o.target.ry+(selected===o.index?o.orbY:0),baseRx=selected===o.index?o.orbX:0;o.root.rotation.y+=(baseRy-o.root.rotation.y)*k;o.root.rotation.x+=(baseRx-o.root.rotation.x)*k;o.root.rotation.z+=(o.target.rz-o.root.rotation.z)*k;const sc=o.root.scale.x+(o.target.s-o.root.scale.x)*k;o.root.scale.setScalar(sc);o.frontPivot.rotation.y+=((o.target.open-o.dragOpen)-o.frontPivot.rotation.y)*.11;o.backPivot.rotation.y+=(o.target.backOpen-o.backPivot.rotation.y)*.09;for(let li=0;li<LEAF_COUNT;li++){const target=o.pageTurn>LEAF_COUNT?0:(li<o.pageTurn?-Math.PI:0);o.leaves[li].pivot.rotation.y+=(target-o.leaves[li].pivot.rotation.y)*.13;const rearClosed=o.pageTurn>LEAF_COUNT&&Math.abs(o.frontPivot.rotation.y)<.08&&Math.abs(o.backPivot.rotation.y)<.08;o.leaves[li].pivot.visible=!rearClosed}o.float.position.y=Math.sin(sec*.8+o.phase)*(selected===o.index?.018:.045);if(selected<0&&hovered===o.index){o.float.rotation.x+=(pointer.y*.12-o.float.rotation.x)*.08;o.float.rotation.y+=(-pointer.x*.12-o.float.rotation.y)*.08}else{o.float.rotation.x*=.9;o.float.rotation.y*=.9}});renderer.render(scene,camera)}
+function resize(){renderer?.setSize(innerWidth,innerHeight);if(camera){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()}computeTargets()}
+addEventListener('resize',resize);
+function pointerNDC(e){const r=gl.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width)*2-1;mouse.y=-((e.clientY-r.top)/r.height)*2+1;pointer.x=mouse.x;pointer.y=mouse.y}
+function rayBookAt(e){pointerNDC(e);raycaster.setFromCamera(mouse,camera);const hits=raycaster.intersectObjects(bookObjs.map(b=>b.hit),false);return hits.length?bookObjs.find(b=>b.hit===hits[0].object)||null:null}
+gl.addEventListener('pointermove',e=>{pointerNDC(e);if(pointer.down&&pointer.id===e.pointerId&&pointer.book){const dx=e.clientX-pointer.lastX,dy=e.clientY-pointer.lastY;pointer.lastX=e.clientX;pointer.lastY=e.clientY;pointer.moved+=Math.abs(dx)+Math.abs(dy);if(pointer.mode==='orbit'){pointer.book.orbY+=dx/innerWidth*6.6;pointer.book.orbX+=dy/innerHeight*3.8;pointer.book.orbYv=dx/Math.max(1,innerWidth)*220;pointer.book.orbXv=dy/Math.max(1,innerHeight)*120}else if(pointer.mode==='move'){pointer.book.manualX=Math.max(-1.15,Math.min(1.15,pointer.book.manualX+dx/innerWidth*4));pointer.book.manualY=Math.max(-.8,Math.min(.8,pointer.book.manualY-dy/innerHeight*3))}else if(pointer.mode==='peel'){pointer.book.dragOpen=Math.max(0,Math.min(1.4,(pointer.downX-e.clientX)/innerWidth*4.4))}return}if(selected>=0){openBtn.classList.remove('on');hovered=-1;return}const rb=rayBookAt(e);hovered=rb?rb.index:-1;if(hovered>=0){openBtn.classList.add('on');openBtn.style.left=e.clientX+'px';openBtn.style.top=e.clientY+'px'}else openBtn.classList.remove('on')});
+gl.addEventListener('pointerleave',()=>{if(!pointer.down){hovered=-1;openBtn.classList.remove('on')}});
+gl.addEventListener('pointerdown',e=>{if(pointer.id!==null)return;const rb=rayBookAt(e);if(!rb)return;pointer.id=e.pointerId;pointer.down=true;pointer.book=rb;pointer.downX=pointer.lastX=e.clientX;pointer.downY=pointer.lastY=e.clientY;pointer.moved=0;pointer.time=performance.now();pointer.shift=e.shiftKey;pointer.mode=selected===rb.index?(e.shiftKey?'move':'orbit'):'peel';if(pointer.mode==='orbit')rb.navYawTarget=null;try{gl.setPointerCapture(e.pointerId)}catch(_){};openBtn.classList.remove('on')});
+function releasePointer(e){if(pointer.id!==null&&e.pointerId!==undefined&&e.pointerId!==pointer.id)return;const rb=pointer.book,mode=pointer.mode,moved=pointer.moved,elapsed=performance.now()-pointer.time;if(rb&&mode==='peel'){rb.dragOpen=0;if(moved<18&&elapsed<550&&selected<0)openDetail(rb.index)}pointer.id=null;pointer.down=false;pointer.mode=null;pointer.book=null}
+addEventListener('pointerup',releasePointer);addEventListener('pointercancel',releasePointer);gl.addEventListener('lostpointercapture',releasePointer);
+gl.addEventListener('wheel',e=>{if(selected<0)return;e.preventDefault();const now=performance.now();if(!gl._wheelT||now-gl._wheelT>320){turnPage(e.deltaY>0?1:-1);gl._wheelT=now}},{passive:false});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();if(selected>=0&&(e.key==='ArrowRight'||e.key==='PageDown')){turnPage(1);e.preventDefault()}if(selected>=0&&(e.key==='ArrowLeft'||e.key==='PageUp')){turnPage(-1);e.preventDefault()}});
+function openDetail(i){selected=i;document.body.classList.add('detail-open');renderDetail(i);computeTargets();openBtn.classList.remove('on');updatePageIndicator()}
+function closeDetail(){selected=-1;document.body.classList.remove('detail-open');computeTargets();updatePageIndicator()}
+closeBtn.onclick=closeAction.onclick=closeDetail;
+function renderDetail(i){const b=state.books[i];dpTitle.textContent=b.title;dpAuthor.textContent=b.author;dpDesc.textContent=b.desc;dpYear.textContent=b.year;dpStars.textContent='★'.repeat(Math.max(0,Math.min(5,b.stars)))+'☆'.repeat(5-Math.max(0,Math.min(5,b.stars)));primaryAction.textContent=b.primaryText;secondaryAction.textContent=b.secondaryText;primaryAction.onclick=()=>{if(b.primaryUrl&&b.primaryUrl!=='#')window.open(b.primaryUrl,'_blank','noopener')};secondaryAction.onclick=()=>{if(b.secondaryUrl&&b.secondaryUrl!=='#')window.open(b.secondaryUrl,'_blank','noopener')}}
+
+/* export snapshot + assets */
+function snapshot(){return deepClone(state)}
+async function assetToData(desc){if(!desc)return null;const rt=assetRuntime(desc);if(!rt?.blob)throw Error('No se pudo recuperar el asset '+(desc.name||desc.key));return{type:rt.type,name:rt.name,mime:rt.mime,size:rt.size,src:await blobToDataURL(rt.blob)}}
+async function buildConfigStandalone(){const s=snapshot();s.viewerAssets={logo:await assetToData(s.assets.logo),background:await assetToData(s.assets.background),covers:[],backCovers:[],pages:Array.from({length:BOOK_COUNT},()=>Array(PAGE_COUNT).fill(null))};for(let i=0;i<BOOK_COUNT;i++){s.viewerAssets.covers[i]=await assetToData(s.assets.covers[i]);s.viewerAssets.backCovers[i]=await assetToData(s.assets.backCovers[i]);for(let p=0;p<PAGE_COUNT;p++)s.viewerAssets.pages[i][p]=await assetToData(s.assets.pages[i][p])}return s}
+async function buildZipConfig(zip){const s=snapshot();s.viewerAssets={logo:null,background:null,covers:[],backCovers:[],pages:Array.from({length:BOOK_COUNT},()=>Array(PAGE_COUNT).fill(null))};const folder=zip.folder('assets');async function add(desc,prefix){if(!desc)return null;const rt=assetRuntime(desc);if(!rt?.blob)throw Error('Asset no disponible: '+(desc.name||prefix));const ext=extFromMime(rt.mime,rt.name),file=prefix+'.'+ext,isVideo=rt.type==='video';folder.file(file,rt.blob,{binary:true,compression:isVideo?'STORE':'DEFLATE'});return{type:rt.type,name:rt.name,mime:rt.mime,size:rt.size,src:'assets/'+file}}s.viewerAssets.logo=await add(s.assets.logo,'logo');s.viewerAssets.background=await add(s.assets.background,'background');for(let i=0;i<BOOK_COUNT;i++){s.viewerAssets.covers[i]=await add(s.assets.covers[i],'book-'+(i+1)+'-cover');s.viewerAssets.backCovers[i]=await add(s.assets.backCovers[i],'book-'+(i+1)+'-back-cover');for(let p=0;p<PAGE_COUNT;p++)s.viewerAssets.pages[i][p]=await add(s.assets.pages[i][p],'book-'+(i+1)+'-page-'+String(p+1).padStart(2,'0'))}return s}
+function finalViewerHtml(cfg){const data=JSON.stringify(cfg).replace(/</g,'\\u003c');return '<!doctype html><html lang="es" data-final-viewer="1"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>'+escapeHTML(cfg.global.brand)+' — 3D Book Collection</title><meta name="generator" content="Escaparates Pro"><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script><style>'+viewerCss(cfg)+'</style></head><body><div id="bg"></div><div class="hero" id="hero">'+escapeHTML(cfg.global.hero)+'</div><canvas id="gl"></canvas><div class="nav"><div class="brand" id="brand"></div><button class="cta" id="cta">'+escapeHTML(cfg.global.topCta)+'</button></div><button class="open" id="openBtn">Open</button><button class="close" id="closeBtn">✕</button><div class="dp"><h1 id="ttl"></h1><div class="author" id="aut"></div><p id="desc"></p><div class="meta"><span class="stars" id="stars"></span><span>'+escapeHTML(cfg.global.source||'')+'</span><span class="year" id="year"></span></div><div class="actions"><button id="p1"></button><button id="p2"></button></div></div><div class="detail-tools" id="detailTools"><span class="hint">Arrastra para girar · Shift + arrastra para mover · rueda o flechas para páginas</span><div class="page-controls"><button id="prevPage">←</button><span id="pageIndicator">Página 1 / 6</span><button id="nextPage">→</button></div></div><script>const CFG='+data+';('+viewerRuntimeV2.toString()+')();<\/script></body></html>'}
+function viewerCss(cfg){return 'html,body{margin:0;width:100%;height:100%;overflow:hidden;background:'+cfg.global.bg+';font-family:Arial,sans-serif;color:white}*{box-sizing:border-box}#bg{position:fixed;inset:0}#bg img,#bg video{width:100%;height:100%;object-fit:cover;opacity:.55}#bg:after{content:"";position:absolute;inset:0;background:rgba(5,8,20,.28)}canvas{position:fixed;inset:0;z-index:2;touch-action:none}.hero{position:fixed;z-index:1;top:18vh;left:50%;transform:translateX(-50%);font-size:min(22vw,44vh);font-weight:900;color:'+cfg.global.accent+';line-height:.82;white-space:nowrap;transition:.4s}.nav{position:fixed;z-index:20;left:0;right:0;top:0;padding:24px 34px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:10px;color:'+cfg.global.accent+';font-size:26px;font-weight:800}.brand img{max-height:32px;max-width:120px}.cta{border:0;border-radius:999px;height:46px;padding:0 22px;background:'+cfg.global.cream+';color:'+cfg.global.bg+';font-weight:800}.open{position:fixed;z-index:30;opacity:0;pointer-events:none;background:#fffaf0;color:#141a32;padding:13px 28px;font-weight:900;transform:translate(-50%,-50%)}.open.on{opacity:1}.close{position:fixed;z-index:32;top:26px;left:50%;transform:translateX(-50%);width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(10,15,34,.18);color:white;opacity:0;pointer-events:none}.dp{position:fixed;z-index:16;right:6vw;top:50%;transform:translateY(-50%);width:min(560px,42vw);visibility:hidden}.dp h1{color:'+cfg.global.accent+';font-size:clamp(46px,5.4vw,86px);line-height:.96;margin:0}.dp p{color:'+cfg.global.lav+';font-size:18px;line-height:1.55}.dp .author{font-weight:800;font-size:20px}.dp .meta{display:flex;gap:16px;color:#9ca7d9}.dp .stars{color:'+cfg.global.accent+'}.dp .year{margin-left:auto}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.actions button{border:0;border-radius:999px;height:48px;padding:0 20px;background:'+cfg.global.peri+';color:#10152c;font-weight:800}.detail-tools{position:fixed;left:50%;bottom:24px;z-index:25;transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:18px;background:rgba(10,15,34,.78);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:8px 10px 8px 16px;transition:.3s}.detail-tools .hint{font-size:11px;color:#c9d0ee}.page-controls{display:flex;align-items:center;gap:8px}.page-controls button{width:36px;height:36px;border:0;border-radius:50%;background:#fdfbf4;color:#141a32;font-weight:900}.page-controls button:disabled{opacity:.35}.page-controls span{min-width:120px;text-align:center;font-size:11px;font-weight:800}body.detail .close{opacity:1;pointer-events:auto}body.detail .dp{visibility:visible}body.detail .hero{opacity:0}body.detail .detail-tools{opacity:1;pointer-events:auto;transform:translateX(-50%)}@media(max-width:780px){.hero{top:9vh;font-size:32vw}.dp{right:auto;left:50%;bottom:11vh;top:auto;transform:translateX(-50%);width:92vw}.dp h1{font-size:42px}.dp p{font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.nav{padding:16px}.cta{display:none}.detail-tools{bottom:12px;width:calc(100vw - 24px);border-radius:20px;justify-content:center;flex-wrap:wrap}.detail-tools .hint{display:none}}'}
+function viewerRuntimeV2(){
+  const q=id=>document.getElementById(id),gl=q('gl'),closeBtn=q('closeBtn'),ttl=q('ttl'),aut=q('aut'),desc=q('desc'),year=q('year'),stars=q('stars'),p1=q('p1'),p2=q('p2'),detailTools=q('detailTools'),prev=q('prevPage'),next=q('nextPage'),indicator=q('pageIndicator');
+  const g=CFG.global,va=CFG.viewerAssets||{},BOOK_COUNT=3,PAGE_COUNT=6,LEAF_COUNT=3,W=1.5,H=2.2,D=.30,C=.035,PW=W-.07,PH=H-.09;
+  const bg=q('bg');if(va.background){const m=document.createElement(va.background.type==='video'?'video':'img');m.src=va.background.src;if(va.background.type==='video'){m.muted=true;m.loop=true;m.autoplay=true;m.playsInline=true;m.play().catch(()=>{})}bg.appendChild(m)}
+  const brand=q('brand');if(va.logo){const im=document.createElement('img');im.src=va.logo.src;brand.appendChild(im)}const sp=document.createElement('span');sp.textContent=g.brand;brand.appendChild(sp);q('cta').onclick=()=>{if(g.topUrl&&g.topUrl!=='#')window.open(g.topUrl,'_blank','noopener')};
+  const renderer=new THREE.WebGLRenderer({canvas:gl,antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true;
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(28,innerWidth/innerHeight,.1,100);cam.position.set(0,.05,9.5);scene.add(new THREE.HemisphereLight(0x9aa9e8,0x0d1024,.55));const key=new THREE.DirectionalLight(0xffffff,1.15);key.position.set(3,5,5);key.castShadow=true;scene.add(key);const rim=new THREE.DirectionalLight(0xff8daf,.55);rim.position.set(-4,3,-3);scene.add(rim);const root=new THREE.Group();scene.add(root);const objs=[],ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  function mat(c){return new THREE.MeshStandardMaterial({color:c,roughness:.72,metalness:.02})}
+  function drawWrap(ctx,text,x,y,maxWidth,lineHeight,maxLines){const words=String(text||'').split(/\s+/);let line='',yy=y,count=0;for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,yy);line=word;yy+=lineHeight;if(++count>=maxLines-1)break}else line=test}if(line&&count<maxLines)ctx.fillText(line,x,yy)}
+  function mediaCover(ctx,el,w,h){const sw=el.videoWidth||el.naturalWidth||el.width,sh=el.videoHeight||el.naturalHeight||el.height;if(!sw||!sh)return false;const s=Math.max(w/sw,h/sh),dw=sw*s,dh=sh*s;ctx.drawImage(el,(w-dw)/2,(h-dh)/2,dw,dh);return true}
+  function pageSurface(bi,pi){const pg=CFG.books[bi].pages[pi],asset=va.pages?.[bi]?.[pi],canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1536;const ctx=canvas.getContext('2d'),texture=new THREE.CanvasTexture(canvas);texture.encoding=THREE.sRGBEncoding;const surf={canvas,ctx,texture,video:null,image:null,dirty:true};if(asset){if(asset.type==='video'){const v=document.createElement('video');v.src=asset.src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.preload='auto';v.onloadeddata=()=>{surf.dirty=true;v.play().catch(()=>{})};v.load();surf.video=v}else{const im=new Image();im.onload=()=>surf.dirty=true;im.src=asset.src;surf.image=im}}paint(surf,bi,pi);return surf}
+  function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  function paint(s,bi,pi){const pg=CFG.books[bi].pages[pi],x=s.ctx,w=s.canvas.width,h=s.canvas.height;x.clearRect(0,0,w,h);x.fillStyle=pg.bg||'#f5efdf';x.fillRect(0,0,w,h);const media=s.video||s.image,has=media&&mediaCover(x,media,w,h);if(has&&(pg.type==='media'||pg.type==='media-text'||pg.type==='cta')){const gr=x.createLinearGradient(0,h*.35,0,h);gr.addColorStop(0,'rgba(5,8,20,.04)');gr.addColorStop(1,'rgba(5,8,20,.72)');x.fillStyle=gr;x.fillRect(0,0,w,h)}else if(has){x.globalAlpha=.18;x.fillStyle=pg.bg||'#f5efdf';x.fillRect(0,0,w,h);x.globalAlpha=1}x.fillStyle=has&&(pg.type==='media'||pg.type==='media-text'||pg.type==='cta')?'#fff':(pg.text||'#18203a');x.font='700 25px Arial';x.globalAlpha=.7;x.fillText('0'+(pi+1),72,92);x.globalAlpha=1;if(pg.type==='quote'){x.font='italic 700 72px Georgia';drawWrap(x,'“'+(pg.title||pg.body||'')+'”',90,h*.42,w-180,92,6);x.fillStyle=pg.accent||'#c44a28';x.fillRect(90,h*.74,140,7)}else if(!(pg.type==='media'&&has)){x.font='800 68px Arial';drawWrap(x,pg.title||'',86,has?h*.62:250,w-172,78,4);x.font='400 34px Georgia';drawWrap(x,pg.body||'',86,has?h*.78:520,w-172,52,10);if(pg.type==='cta'&&pg.ctaText){x.fillStyle=pg.accent||'#c44a28';rr(x,86,h-230,360,92,46);x.fill();x.fillStyle='#fff';x.font='700 30px Arial';x.textAlign='center';x.fillText(pg.ctaText,266,h-172);x.textAlign='left'}}x.fillStyle=pg.accent||'#c44a28';x.fillRect(72,h-84,w-144,3);s.texture.needsUpdate=true;s.dirty=false}
+  function backSurface(bi){const b=CFG.books[bi],pg=b.backCover||{type:'media',bg:'',text:'#fff',accent:g.accent},asset=va.backCovers?.[bi],canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1536;const ctx=canvas.getContext('2d'),texture=new THREE.CanvasTexture(canvas);texture.encoding=THREE.sRGBEncoding;const surf={canvas,ctx,texture,video:null,image:null,dirty:true};if(asset){if(asset.type==='video'){const v=document.createElement('video');v.src=asset.src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.preload='auto';v.onloadeddata=()=>{surf.dirty=true;v.play().catch(()=>{})};v.load();surf.video=v}else{const im=new Image();im.onload=()=>surf.dirty=true;im.src=asset.src;surf.image=im}}paintBack(surf,bi);return surf}
+  function paintBack(s,bi){const b=CFG.books[bi],pg=b.backCover||{type:'media',bg:'',text:'#fff',accent:g.accent},x=s.ctx,w=s.canvas.width,h=s.canvas.height;x.clearRect(0,0,w,h);x.fillStyle=pg.bg||b.back||'#18203a';x.fillRect(0,0,w,h);const media=s.video||s.image,has=media&&mediaCover(x,media,w,h);if(has&&(pg.type==='media-text'||pg.type==='cta')){const gr=x.createLinearGradient(0,h*.28,0,h);gr.addColorStop(0,'rgba(5,8,20,.03)');gr.addColorStop(1,'rgba(5,8,20,.76)');x.fillStyle=gr;x.fillRect(0,0,w,h)}else if(has&&pg.type==='editorial'){x.globalAlpha=.22;x.fillStyle=pg.bg||b.back||'#18203a';x.fillRect(0,0,w,h);x.globalAlpha=1}x.fillStyle=has&&(pg.type==='media-text'||pg.type==='cta')?'#fff':(pg.text||'#fff');if(pg.type==='quote'){x.font='italic 700 72px Georgia';drawWrap(x,'“'+(pg.title||pg.body||'')+'”',90,h*.42,w-180,92,6);x.fillStyle=pg.accent||g.accent;x.fillRect(90,h*.74,140,7)}else if(!(pg.type==='media'&&has)){x.font='800 68px Arial';drawWrap(x,pg.title||'',86,has?h*.62:250,w-172,78,4);x.font='400 34px Georgia';drawWrap(x,pg.body||'',86,has?h*.78:520,w-172,52,10);if(pg.type==='cta'&&pg.ctaText){x.fillStyle=pg.accent||g.accent;rr(x,86,h-230,360,92,46);x.fill();x.fillStyle='#fff';x.font='700 30px Arial';x.textAlign='center';x.fillText(pg.ctaText,266,h-172);x.textAlign='left'}}x.fillStyle=pg.accent||g.accent;x.fillRect(72,h-84,w-144,3);s.texture.needsUpdate=true;s.dirty=false}
+  function coverCanvas(i){const b=CFG.books[i],c=document.createElement('canvas');c.width=800;c.height=1200;const x=c.getContext('2d'),p=[['#4cb960','#fff'],['#af2024','#f2b31c'],['#07b1cb','#f6e400']][i];x.fillStyle=p[0];x.fillRect(0,0,800,1200);x.fillStyle=p[1];x.textAlign='center';x.font='800 68px Arial';drawWrap(x,b.title.toUpperCase(),90,420,620,82,5);x.fillStyle='#fff';x.font='600 34px Arial';x.textAlign='center';x.fillText(b.author.toUpperCase(),400,1060);return c}
+  function applyCover(o,i){const a=va.covers?.[i];if(!a){const t=new THREE.CanvasTexture(coverCanvas(i));t.encoding=THREE.sRGBEncoding;o.front.material[4].map=t;o.front.material[4].needsUpdate=true;return}if(a.type==='video'){const v=document.createElement('video');v.src=a.src;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.addEventListener('loadeddata',()=>{v.play().catch(()=>{});const t=new THREE.VideoTexture(v);t.encoding=THREE.sRGBEncoding;o.front.material[4].map=t;o.front.material[4].needsUpdate=true},{once:true});v.load()}else{new THREE.TextureLoader().load(a.src,t=>{t.encoding=THREE.sRGBEncoding;o.front.material[4].map=t;o.front.material[4].needsUpdate=true})}}
+  CFG.books.forEach((b,i)=>{const r=new THREE.Group(),f=new THREE.Group();r.add(f);root.add(r);const block=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),mat(0xf0e8d8));f.add(block);const backP=new THREE.Group();backP.position.set(-W/2,0,-D/2-C/2);f.add(backP);const backSurf=backSurface(i),bm=[mat(b.back),mat(b.back),mat(b.back),mat(b.back),mat(0xf0e8d8),new THREE.MeshBasicMaterial({map:backSurf.texture,toneMapped:false})],back=new THREE.Mesh(new THREE.BoxGeometry(W+.08,H+.1,C),bm);back.position.x=(W+.08)/2;backP.add(back);const frontP=new THREE.Group();frontP.position.set(-W/2,0,D/2+C/2);f.add(frontP);const fm=[mat(b.spine),mat(b.spine),mat(b.spine),mat(b.spine),mat(0xffffff),mat(0xf0e8d8)],front=new THREE.Mesh(new THREE.BoxGeometry(W+.08,H+.1,C),fm);front.position.x=(W+.08)/2;frontP.add(front);const spine=new THREE.Mesh(new THREE.BoxGeometry(.08,H+.1,D+C*2),mat(b.spine));spine.position.x=-W/2-.04;f.add(spine);const surfaces=Array.from({length:PAGE_COUNT},(_,p)=>pageSurface(i,p)),leaves=[];for(let li=0;li<LEAF_COUNT;li++){const piv=new THREE.Group();piv.position.set(-W/2+.025,0,D/2+.012-li*.004);f.add(piv);const geo=new THREE.PlaneGeometry(PW,PH),a=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:surfaces[li*2].texture,side:THREE.FrontSide,toneMapped:false}));a.position.set(PW/2,0,.002);piv.add(a);const bb=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({map:surfaces[li*2+1].texture,side:THREE.FrontSide,toneMapped:false}));bb.position.set(PW/2,0,-.002);bb.rotation.y=Math.PI;piv.add(bb);leaves.push({piv})}const hit=new THREE.Mesh(new THREE.BoxGeometry(W*1.15,H*1.14,D*2.4),new THREE.MeshBasicMaterial({visible:false}));f.add(hit);const o={r,f,frontP,backP,backSurf,front,hit,i,surfaces,leaves,t:{x:0,y:0,z:0,ry:0,rz:0,s:1,open:0,backOpen:0},phase:Math.random()*6.2,pageTurn:0,orbY:0,orbX:0,orbYv:0,orbXv:0,mx:0,my:0,dragOpen:0,navYawTarget:null,transitionToken:0};objs.push(o);applyCover(o,i)});
+  let selected=-1,hover=-1;const open=q('openBtn'),ptr={id:null,down:false,mode:null,obj:null,lastX:0,lastY:0,downX:0,moved:0,time:0};
+  function nearestYaw(current,target){const tau=Math.PI*2;return target+Math.round((current-target)/tau)*tau}
+  function readingCoverPose(o){const closed=o.pageTurn<0||o.pageTurn>LEAF_COUNT;return{open:closed?0:-2.55,backOpen:closed?0:.15}}
+  function targets(){const portrait=innerWidth/innerHeight<.85,hero=portrait?[[-1.2,-.45,0,.42,.14,1.12],[0,.1,.28,0,0,1.18],[1.2,-.45,0,-.42,-.14,1.12]]:[[-1.75,-.25,0,.46,.11,1.15],[0,.08,.34,0,0,1.28],[1.75,-.25,0,-.46,-.11,1.15]];objs.forEach((o,i)=>{if(selected<0){const a=hero[i];Object.assign(o.t,{x:a[0],y:a[1],z:a[2],ry:a[3],rz:a[4],s:a[5],open:0,backOpen:0})}else if(i===selected){const pose=readingCoverPose(o),base=portrait?{x:0,y:.58,z:1.2,ry:.12,rz:0,s:1.34}:{x:-1.72,y:0,z:1.2,ry:.18,rz:0,s:1.54};Object.assign(o.t,base,pose)}else Object.assign(o.t,{x:i<selected?-5.2:5.2,y:-1,z:-1,ry:0,rz:0,s:.55,open:0,backOpen:0})})}
+  function updateIndicator(){if(selected<0)return;const n=objs[selected].pageTurn;indicator.textContent=n<0?'Portada':n===0?'Página 1 / 6':n===1?'Páginas 2–3 / 6':n===2?'Páginas 4–5 / 6':n===3?'Página 6 / 6':'Contraportada';prev.disabled=n<=-1;next.disabled=n>=LEAF_COUNT+1;prev.title=n===0?'Cerrar y volver a portada':'Anterior';next.title=n===LEAF_COUNT?'Cerrar y mostrar contraportada':'Siguiente'}
+  function turn(d){if(selected<0)return;const o=objs[selected],old=o.pageTurn,next=Math.max(-1,Math.min(LEAF_COUNT+1,old+d));if(next===old)return;const token=++o.transitionToken;o.orbYv=o.orbXv=0;if(next>LEAF_COUNT){o.pageTurn=next;o.navYawTarget=nearestYaw(o.orbY,0);targets();updateIndicator();setTimeout(()=>{if(selected===o.i&&o.pageTurn>LEAF_COUNT&&o.transitionToken===token)o.navYawTarget=nearestYaw(o.orbY,Math.PI)},430);return}if(old>LEAF_COUNT&&next===LEAF_COUNT){o.navYawTarget=nearestYaw(o.orbY,0);setTimeout(()=>{if(selected===o.i&&o.pageTurn>LEAF_COUNT&&o.transitionToken===token){o.pageTurn=LEAF_COUNT;targets();updateIndicator()}},430);return}o.pageTurn=next;if(next<0||old<0)o.navYawTarget=nearestYaw(o.orbY,0);targets();updateIndicator()}
+  prev.onclick=()=>turn(-1);next.onclick=()=>turn(1);
+  function detail(i){selected=i;document.body.classList.add('detail');const b=CFG.books[i];ttl.textContent=b.title;aut.textContent=b.author;desc.textContent=b.desc;year.textContent=b.year;stars.textContent='★'.repeat(b.stars)+'☆'.repeat(5-b.stars);p1.textContent=b.primaryText;p2.textContent=b.secondaryText;p1.onclick=()=>{if(b.primaryUrl&&b.primaryUrl!=='#')window.open(b.primaryUrl,'_blank','noopener')};p2.onclick=()=>{if(b.secondaryUrl&&b.secondaryUrl!=='#')window.open(b.secondaryUrl,'_blank','noopener')};targets();updateIndicator()}
+  closeBtn.onclick=()=>{selected=-1;document.body.classList.remove('detail');targets()};
+  function ndc(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight*2-1);ray.setFromCamera(mouse,cam);const h=ray.intersectObjects(objs.map(o=>o.hit),false);return h.length?objs.find(o=>o.hit===h[0].object):null}
+  gl.onpointermove=e=>{if(ptr.down&&ptr.id===e.pointerId&&ptr.obj){const dx=e.clientX-ptr.lastX,dy=e.clientY-ptr.lastY;ptr.lastX=e.clientX;ptr.lastY=e.clientY;ptr.moved+=Math.abs(dx)+Math.abs(dy);if(ptr.mode==='orbit'){ptr.obj.orbY+=dx/innerWidth*6.6;ptr.obj.orbX+=dy/innerHeight*3.8;ptr.obj.orbYv=dx/innerWidth*220;ptr.obj.orbXv=dy/innerHeight*120}else if(ptr.mode==='move'){ptr.obj.mx=Math.max(-1.15,Math.min(1.15,ptr.obj.mx+dx/innerWidth*4));ptr.obj.my=Math.max(-.8,Math.min(.8,ptr.obj.my-dy/innerHeight*3))}else if(ptr.mode==='peel')ptr.obj.dragOpen=Math.max(0,Math.min(1.4,(ptr.downX-e.clientX)/innerWidth*4.4));return}if(selected>=0){open.classList.remove('on');return}const o=ndc(e);hover=o?o.i:-1;if(o){open.classList.add('on');open.style.left=e.clientX+'px';open.style.top=e.clientY+'px'}else open.classList.remove('on')};
+  gl.onpointerdown=e=>{if(ptr.id!==null)return;const o=ndc(e);if(!o)return;ptr.id=e.pointerId;ptr.down=true;ptr.obj=o;ptr.lastX=ptr.downX=e.clientX;ptr.lastY=e.clientY;ptr.moved=0;ptr.time=performance.now();ptr.mode=selected===o.i?(e.shiftKey?'move':'orbit'):'peel';if(ptr.mode==='orbit')o.navYawTarget=null;try{gl.setPointerCapture(e.pointerId)}catch(_){};open.classList.remove('on')};
+  function up(e){if(ptr.id!==null&&e.pointerId!==undefined&&e.pointerId!==ptr.id)return;const o=ptr.obj,mode=ptr.mode,moved=ptr.moved,elapsed=performance.now()-ptr.time;if(o&&mode==='peel'){o.dragOpen=0;if(moved<18&&elapsed<550&&selected<0)detail(o.i)}ptr.id=null;ptr.down=false;ptr.mode=null;ptr.obj=null}
+  addEventListener('pointerup',up);addEventListener('pointercancel',up);gl.addEventListener('wheel',e=>{if(selected<0)return;e.preventDefault();const n=performance.now();if(!gl._w||n-gl._w>320){turn(e.deltaY>0?1:-1);gl._w=n}},{passive:false});addEventListener('keydown',e=>{if(e.key==='Escape'&&selected>=0)closeBtn.click();if(selected>=0&&(e.key==='ArrowRight'||e.key==='PageDown'))turn(1);if(selected>=0&&(e.key==='ArrowLeft'||e.key==='PageUp'))turn(-1)});
+  addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();targets()});targets();
+  let last=performance.now();function loop(now){requestAnimationFrame(loop);const dt=Math.min(.033,(now-last)/1000);last=now;const s=now*.001;objs.forEach(o=>{o.surfaces.forEach((sf,p)=>{if(sf.video||sf.dirty)paint(sf,o.i,p)});if(o.backSurf&&(o.backSurf.video||o.backSurf.dirty))paintBack(o.backSurf,o.i);if(selected===o.i&&ptr.mode!=='orbit'){if(o.navYawTarget!==null){o.orbY+=(o.navYawTarget-o.orbY)*Math.min(1,dt*3.4);o.orbYv=0;if(Math.abs(o.navYawTarget-o.orbY)<.002){o.orbY=o.navYawTarget;o.navYawTarget=null}}else{o.orbY+=o.orbYv*dt;o.orbYv*=Math.exp(-1.6*dt);if(Math.abs(o.orbYv)<.14){const sn=Math.round(o.orbY/Math.PI)*Math.PI;o.orbY+=(sn-o.orbY)*Math.min(1,dt*2.2)}}o.orbX+=o.orbXv*dt;o.orbXv*=Math.exp(-2.1*dt);if(Math.abs(o.orbXv)<.12)o.orbX+=(0-o.orbX)*Math.min(1,dt*2.6);o.orbX=Math.max(-.62,Math.min(.62,o.orbX))}const k=.085;o.r.position.x+=(o.t.x+o.mx-o.r.position.x)*k;o.r.position.y+=(o.t.y+o.my-o.r.position.y)*k;o.r.position.z+=(o.t.z-o.r.position.z)*k;o.r.rotation.y+=(o.t.ry+(selected===o.i?o.orbY:0)-o.r.rotation.y)*k;o.r.rotation.x+=((selected===o.i?o.orbX:0)-o.r.rotation.x)*k;o.r.rotation.z+=(o.t.rz-o.r.rotation.z)*k;const sc=o.r.scale.x+(o.t.s-o.r.scale.x)*k;o.r.scale.setScalar(sc);o.frontP.rotation.y+=((o.t.open-o.dragOpen)-o.frontP.rotation.y)*.11;o.backP.rotation.y+=(o.t.backOpen-o.backP.rotation.y)*.09;o.leaves.forEach((lf,li)=>{const tg=o.pageTurn>LEAF_COUNT?0:(li<o.pageTurn?-Math.PI:0);lf.piv.rotation.y+=(tg-lf.piv.rotation.y)*.13;const rearClosed=o.pageTurn>LEAF_COUNT&&Math.abs(o.frontP.rotation.y)<.08&&Math.abs(o.backP.rotation.y)<.08;lf.piv.visible=!rearClosed});o.f.position.y=Math.sin(s*.8+o.phase)*(selected===o.i?.018:.045)});renderer.render(scene,cam)}requestAnimationFrame(loop)
+}
+function downloadBlob(blob,name){if(!blob||!blob.size)throw Error('El archivo generado está vacío');const a=document.createElement('a'),u=URL.createObjectURL(blob);a.href=u;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},12000)}
+async function handleHtml(){try{toast('Preparando HTML final cerrado…',5000);const cfg=await buildConfigStandalone(),html=finalViewerHtml(cfg);if(!html.includes('data-final-viewer'))throw Error('Viewer final inválido');downloadBlob(new Blob([html],{type:'text/html;charset=utf-8'}),slug(state.global.brand)+'-3d-book-showcase.html');toast('HTML final descargado')}catch(e){console.error(e);toast('Error HTML: '+e.message,6000)}}
+async function handleZip(){try{if(!window.JSZip)throw Error('JSZip no disponible');toast('Preparando assets del ZIP…',5000);const zip=new JSZip(),cfg=await buildZipConfig(zip),html=finalViewerHtml(cfg);zip.file('index.html',html);zip.file('manifest.json',JSON.stringify({generator:'Escaparates Pro',tool:'3D Book Collection Showcase PRO',version:'2.2',exportedAt:new Date().toISOString(),brand:state.global.brand,books:cfg.books.map(b=>({title:b.title,author:b.author,pages:b.pages.length})),assets:cfg.viewerAssets},null,2));zip.file('README.md','# '+state.global.brand+' — 3D Book Collection Showcase PRO\n\nAbre `index.html` desde un hosting estático o servidor local.\n\nEl viewer final conserva interacción 3D, giro, movimiento, paso de páginas, portada y contraportada personalizables, cierre limpio y media interior.\n\nLos assets están en `/assets`. Los vídeos se almacenan sin recomprimir para evitar bloqueos. Three.js se carga desde CDN.');toast('Comprimiendo ZIP…',8000);const blob=await zip.generateAsync({type:'blob',streamFiles:true,compression:'DEFLATE',compressionOptions:{level:3}},m=>{if(Math.round(m.percent)%20===0)toast('ZIP '+Math.round(m.percent)+'%…',2500)});downloadBlob(blob,slug(state.global.brand)+'-3d-book-client-pack.zip');toast('ZIP cliente descargado')}catch(e){console.error(e);toast('Error ZIP: '+e.message,7000)}}
+async function handleEmbed(){try{toast('Generando embed…');const cfg=await buildConfigStandalone(),html=finalViewerHtml(cfg),code='<iframe title="3D Book Collection Showcase" style="width:100%;aspect-ratio:16/9;border:0;display:block" allow="autoplay;fullscreen" srcdoc="'+html.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'"></iframe>';embedOutput.value=code;embedOutput.classList.add('on');if(navigator.clipboard)await navigator.clipboard.writeText(code).catch(()=>{});toast('Embed generado')}catch(e){console.error(e);toast('Error embed: '+e.message,6000)}}
+async function handlePreview(){try{toast('Preparando preview final…',5000);const cfg=await buildConfigStandalone(),html=finalViewerHtml(cfg);previewFrame.srcdoc=html;previewModal.classList.add('on');toast('Preview local lista')}catch(e){console.error(e);toast('Error preview: '+e.message,7000)}}
+closePreview.onclick=()=>{previewModal.classList.remove('on');previewFrame.srcdoc='about:blank'};
+function drawCover(ctx,el,w,h){const sw=el.videoWidth||el.naturalWidth||el.width,sh=el.videoHeight||el.naturalHeight||el.height;if(!sw||!sh)return;const s=Math.max(w/sw,h/sh),dw=sw*s,dh=sh*s;ctx.drawImage(el,(w-dw)/2,(h-dh)/2,dw,dh)}
+function makeCompositeCanvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle=state.global.bg;x.fillRect(0,0,w,h);const br=assetRuntime(state.assets.background);if(br){const el=document.querySelector('#bgMedia img,#bgMedia video');if(el)try{drawCover(x,el,w,h)}catch(e){}}x.drawImage(renderer.domElement,0,0,w,h);const scale=w/1920;x.fillStyle=state.global.accent;x.font='800 '+Math.round(48*scale)+'px Arial';x.fillText(state.global.brand,44*scale,70*scale);x.font='900 '+Math.round(150*scale)+'px Arial';x.globalAlpha=.18;x.textAlign='center';x.fillText(state.global.hero,w/2,230*scale);x.globalAlpha=1;x.textAlign='left';if(selected>=0){const b=state.books[selected];x.fillStyle='rgba(8,12,28,.72)';x.fillRect(w*.62,h*.18,w*.33,h*.64);x.fillStyle=state.global.accent;x.font='800 '+Math.round(52*scale)+'px Arial';wrapCanvas(x,b.title,w*.645,h*.31,w*.28,60*scale);x.fillStyle='#fff';x.font='700 '+Math.round(25*scale)+'px Arial';x.fillText(b.author,w*.645,h*.52);x.fillStyle=state.global.lav;x.font='400 '+Math.round(18*scale)+'px Arial';wrapCanvas(x,b.desc,w*.645,h*.58,w*.27,28*scale)}return c}
+function wrapCanvas(x,text,px,py,mw,lh){const ws=String(text).split(/\s+/);let line='',y=py;for(const w of ws){const t=line?line+' '+w:w;if(x.measureText(t).width>mw&&line){x.fillText(line,px,y);line=w;y+=lh}else line=t}if(line)x.fillText(line,px,y)}
+async function handlePng(){try{const c=makeCompositeCanvas(1920,1080),blob=await new Promise(r=>c.toBlob(r,'image/png'));downloadBlob(blob,slug(state.global.brand)+'-3d-book.png');toast('PNG descargado')}catch(e){toast('Error PNG: '+e.message,5000)}}
+async function handleSequence(){try{if(!window.JSZip)throw Error('JSZip no disponible');toast('Capturando PNG sequence…',5000);const zip=new JSZip(),f=zip.folder('frames'),count=36,old=bookRoot.rotation.y;for(let i=0;i<count;i++){bookRoot.rotation.y=Math.sin(i/count*Math.PI*2)*.18;renderer.render(scene,camera);const c=makeCompositeCanvas(1280,720),blob=await new Promise(r=>c.toBlob(r,'image/png'));f.file('frame_'+String(i).padStart(4,'0')+'.png',blob);await new Promise(r=>setTimeout(r,12))}bookRoot.rotation.y=old;const out=await zip.generateAsync({type:'blob',streamFiles:true});downloadBlob(out,slug(state.global.brand)+'-png-sequence.zip');toast('PNG sequence descargada')}catch(e){console.error(e);toast('Error sequence: '+e.message,5000)}}
+function chooseMime(pref){const candidates=pref==='mp4'?['video/mp4;codecs=avc1.42E01E','video/mp4','video/webm;codecs=vp9','video/webm']:['video/webm;codecs=vp9','video/webm','video/mp4'];return candidates.find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||''}
+async function handleVideo(){try{if(!window.MediaRecorder)throw Error('MediaRecorder no disponible');const [w,h]=vidRes.value.split('x').map(Number),fps=parseInt(vidFps.value),dur=parseInt(vidDur.value)*1000,mime=chooseMime(vidFmt.value);if(!mime)throw Error('No hay codec compatible');toast('Grabando vídeo final…',5000);const out=document.createElement('canvas');out.width=w;out.height=h;const x=out.getContext('2d'),stream=out.captureStream(fps),rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8000000}),chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};const done=new Promise((res,rej)=>{rec.onerror=e=>rej(e.error||e);rec.onstop=()=>res()});rec.start(250);const start=performance.now();await new Promise(resolve=>{function frame(now){const c=makeCompositeCanvas(w,h);x.clearRect(0,0,w,h);x.drawImage(c,0,0);if(now-start<dur)requestAnimationFrame(frame);else resolve()}requestAnimationFrame(frame)});rec.stop();await done;const blob=new Blob(chunks,{type:mime}),ext=mime.includes('mp4')?'mp4':'webm';downloadBlob(blob,slug(state.global.brand)+'-3d-book.'+ext);toast('Vídeo final descargado: '+ext.toUpperCase())}catch(e){console.error(e);toast('Error vídeo: '+e.message,6000)}}
+async function handleReview(){try{if(!navigator.mediaDevices?.getDisplayMedia)throw Error('Captura de pantalla no disponible');const stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true}),mime=chooseMime('mp4');if(!mime)throw Error('MediaRecorder no compatible');const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:7000000}),chunks=[];reviewBadge.classList.add('on');panel.classList.remove('on');overlay.classList.remove('on');toast('Grabando revisión. Detén la captura desde el navegador.',4000);rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onstop=()=>{reviewBadge.classList.remove('on');const blob=new Blob(chunks,{type:mime}),ext=mime.includes('mp4')?'mp4':'webm';downloadBlob(blob,slug(state.global.brand)+'-client-review.'+ext);stream.getTracks().forEach(t=>t.stop());toast('Revisión cliente descargada')};stream.getVideoTracks()[0].addEventListener('ended',()=>{if(rec.state!=='inactive')rec.stop()});rec.start(500)}catch(e){console.error(e);reviewBadge.classList.remove('on');toast('Error revisión: '+e.message,6000)}}
+downloadHtml.onclick=handleHtml;downloadZip.onclick=handleZip;copyEmbed.onclick=handleEmbed;previewLocal.onclick=handlePreview;capturePng.onclick=handlePng;pngSequence.onclick=handleSequence;exportVideo.onclick=handleVideo;reviewRecord.onclick=handleReview;
+resetAll.onclick=async()=>{if(!confirm('¿Restaurar la demo y eliminar assets locales?'))return;for(const k of Array.from(runtimeAssets.keys()))await removeAsset(k);state=deepClone(DEFAULT_STATE);saveState();syncPanel();applyDOM();bookObjs.forEach((o,i)=>{o.spine.material.color.set(state.books[i].spine);[0,1,2,3].forEach(mi=>o.back.material[mi]?.color?.set(state.books[i].back));refreshBookTexture(i);o.pageTurn=0;o.manualX=o.manualY=o.orbX=o.orbY=o.orbXv=o.orbYv=0;for(let p=0;p<PAGE_COUNT;p++)refreshPageTexture(i,p)});if(selected>=0){renderDetail(selected);updatePageIndicator()}toast('Demo restaurada')};
+(async function boot(){await hydrateAssets();applyDOM();syncPanel();initThree()})();
 })();
+
 </script>
 </body>
 </html>
