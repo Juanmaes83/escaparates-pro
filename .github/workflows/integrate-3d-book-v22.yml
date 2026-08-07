@@ -1,0 +1,129 @@
+name: Integrate 3D Book V2.2
+
+on:
+  push:
+    branches:
+      - feat/3d-book-collection-showcase-pro
+    paths:
+      - '.github/workflows/integrate-3d-book-v22.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/3d-book-collection-showcase-pro
+          fetch-depth: 0
+      - name: Materialize approved V2.2 and update docs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import gzip, hashlib
+
+          root = Path('.')
+          module = root / 'labs/website-modules-source/3d-book-collection-showcase-pro'
+          archive = module / 'source.v2.2.html.gz'
+          target = module / 'index.html'
+          expected = '1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0'
+
+          raw = gzip.decompress(archive.read_bytes())
+          digest = hashlib.sha256(raw).hexdigest()
+          if digest != expected:
+              raise SystemExit(f'V2.2 SHA-256 mismatch: {digest}')
+          target.write_bytes(raw)
+
+          readme = root / 'README.md'
+          text = readme.read_text(encoding='utf-8')
+          old = ('La version actual incluye 25 modulos premium. Veintitres estan adaptados desde '
+                 '`cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son '
+                 'implementaciones independientes inspiradas en interacciones publicas analizadas:')
+          new = ('La version actual incluye 26 modulos premium. Veintitres estan adaptados desde '
+                 '`cinematic-site-components`; Image Cloud Canvas PRO y RGB Motion Triptych PRO son '
+                 'implementaciones independientes inspiradas en interacciones publicas analizadas; '
+                 '3D Book Collection Showcase PRO es un modulo standalone Three.js preservado desde su V2.2 aprobada:')
+          if old not in text:
+              raise SystemExit('No se encontro el bloque de conteo de Website Modules Lab')
+          text = text.replace(old, new, 1)
+
+          list_anchor = '- RGB Motion Triptych PRO.\n'
+          book_item = '- 3D Book Collection Showcase PRO.\n'
+          if book_item not in text:
+              if list_anchor not in text:
+                  raise SystemExit('No se encontro el final del listado de Website Modules')
+              text = text.replace(list_anchor, list_anchor + book_item, 1)
+
+          rgb_paragraph = ('RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB sincronizadas '
+                           'que se separan con cursor o gesto tactil. Es una implementacion independiente del patron de '
+                           'interaccion, no exporta ni depende de los videos de la referencia.\n\n')
+          book_paragraph = (
+              '**3D Book Collection Showcase PRO** vive en '
+              '`labs/website-modules-source/3d-book-collection-showcase-pro/` y usa como fuente canonica el '
+              '`index.html` V2.2 aprobado. El Website Modules Lab lo abre como editor standalone aislado, sin '
+              'reimplementar su motor Three.js. Incluye tres libros interactivos, portadas y contraportadas con '
+              'imagen/video, seis paginas editoriales independientes por libro, giro e inercia 3D, navegacion '
+              'Portada -> interior -> Contraportada, branding y fondo multimedia, persistencia IndexedDB, HTML '
+              'final cerrado, ZIP cliente, embed, preview, PNG, PNG sequence, MP4/WebM y grabacion de revision cliente.\n\n'
+          )
+          if book_paragraph not in text:
+              if rgb_paragraph not in text:
+                  raise SystemExit('No se encontro el parrafo RGB Motion Triptych')
+              text = text.replace(rgb_paragraph, rgb_paragraph + book_paragraph, 1)
+
+          approved_anchor = ('- **Reflective City PRO**: ciudad procedural raymarched con edificios, calles, profundidad '
+                             'y reflejos; no utiliza media porque el motivo es generativo.\n')
+          approved_book = ('- **3D Book Collection Showcase PRO** en Website Modules Lab: modulo standalone Three.js '
+                           'ubicado en `labs/website-modules-source/3d-book-collection-showcase-pro/`, con tres libros, '
+                           'portadas/contraportadas imagen-video, seis paginas editables por libro, interaccion 3D completa '
+                           'y pipeline propio de entregables cerrados.\n')
+          if approved_book not in text:
+              if approved_anchor not in text:
+                  raise SystemExit('No se encontro el bloque Nuevas Piezas Aprobadas')
+              text = text.replace(approved_anchor, approved_anchor + approved_book, 1)
+          readme.write_text(text, encoding='utf-8')
+
+          module_readme = module / 'README.md'
+          module_text = module_readme.read_text(encoding='utf-8')
+          module_text = module_text.replace(
+              '- Loader: `labs/website-modules-source/3d-book-collection-showcase-pro/index.html`\n- Fuente canónica preservada: `labs/website-modules-source/3d-book-collection-showcase-pro/source.v2.2.html.gz`',
+              '- HTML canónico aprobado: `labs/website-modules-source/3d-book-collection-showcase-pro/index.html`\n- Archivo de preservación: `labs/website-modules-source/3d-book-collection-showcase-pro/source.v2.2.html.gz`'
+          )
+          module_text = module_text.replace(
+              'La fuente aprobada no se reimplementa dentro del motor generico de Website Modules. Se conserva como bundle canónico y el loader comprueba su SHA-256 antes de ejecutarla. Esto evita que futuras integraciones reconstruyan o simplifiquen accidentalmente la pieza validada.',
+              'El `index.html` es el HTML V2.2 aprobado, materializado byte a byte desde el archivo de preservación y verificado contra su SHA-256. No se reimplementa dentro del motor generico de Website Modules. Esto evita que futuras integraciones reconstruyan o simplifiquen accidentalmente la pieza validada.'
+          )
+          module_text = module_text.replace(
+              'El loader de repositorio usa `DecompressionStream(\'gzip\')`, por lo que se recomienda Chrome/Edge actualizado y servir Escaparates Pro mediante HTTP/HTTPS en lugar de abrir esta carpeta directamente con `file://`.',
+              'La pieza se sirve como HTML directo desde Escaparates Pro. Para desarrollo y QA se recomienda HTTP/HTTPS o un servidor estatico local; la fuente conserva sus dependencias CDN de Three.js y JSZip.'
+          )
+          module_readme.write_text(module_text, encoding='utf-8')
+
+          print('V2.2 SHA-256 OK:', digest)
+          PY
+      - name: Syntax checks
+        run: |
+          node --check js/website-modules-ui.js
+          node --check js/website-modules-3d-book-collection-showcase-pro.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('labs/website-modules-source/3d-book-collection-showcase-pro/index.html')
+          print('index.html bytes:', p.stat().st_size)
+          print('index.html sha256:', hashlib.sha256(p.read_bytes()).hexdigest())
+          PY
+      - name: Commit verified integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md \
+            labs/website-modules-source/3d-book-collection-showcase-pro/index.html \
+            labs/website-modules-source/3d-book-collection-showcase-pro/README.md
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+          else
+            git commit -m "docs(web-modules): finalize approved 3D Book V2.2 integration"
+            git push origin HEAD:feat/3d-book-collection-showcase-pro
+          fi
