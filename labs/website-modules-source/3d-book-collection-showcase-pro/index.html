@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>3D Book Collection Showcase PRO — V2.2</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#141a32;color:#fdfbf4;font-family:Inter,Arial,sans-serif}body{display:grid;place-items:center}.status{max-width:680px;padding:32px;text-align:center}.status strong{display:block;font-size:22px;margin-bottom:10px}.status span{color:#c9d0ee;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="status" id="status"><strong>3D Book Collection Showcase PRO</strong><span>Cargando la V2.2 aprobada…</span></div>
+<script>
+(function(){
+'use strict';
+var SOURCE='source.v2.2.html.gz';
+var EXPECTED_SHA256='1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0';
+function hex(buffer){return Array.prototype.map.call(new Uint8Array(buffer),function(b){return b.toString(16).padStart(2,'0')}).join('')}
+function fail(error){console.error(error);var node=document.getElementById('status');if(node)node.innerHTML='<strong>No se pudo cargar la V2.2</strong><span>'+String(error&&error.message||error)+'</span>'}
+async function boot(){
+ if(!window.DecompressionStream)throw new Error('Este navegador no soporta DecompressionStream. Usa Chrome/Edge actualizado.');
+ var response=await fetch(SOURCE,{cache:'no-store'});
+ if(!response.ok)throw new Error('No se pudo recuperar '+SOURCE+' ('+response.status+').');
+ var stream=response.body.pipeThrough(new DecompressionStream('gzip'));
+ var bytes=await new Response(stream).arrayBuffer();
+ if(window.crypto&&crypto.subtle){var digest=hex(await crypto.subtle.digest('SHA-256',bytes));if(digest!==EXPECTED_SHA256)throw new Error('La fuente V2.2 no coincide con el SHA-256 aprobado.');}
+ var html=new TextDecoder('utf-8').decode(bytes);
+ if(html.indexOf('3D Book Collection Showcase PRO')<0||html.indexOf('V2.2')<0)throw new Error('La fuente aprobada no contiene el contrato V2.2 esperado.');
+ document.open();document.write(html);document.close();
+}
+boot().catch(fail);
+})();
+</script>
+</body>
+</html>
