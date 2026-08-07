@@ -22,18 +22,24 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import gzip, hashlib
+          import base64, gzip, hashlib
 
           root = Path('.')
           module = root / 'labs/website-modules-source/3d-book-collection-showcase-pro'
           archive = module / 'source.v2.2.html.gz'
           target = module / 'index.html'
           expected = '1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0'
-
-          raw = gzip.decompress(archive.read_bytes())
+          chunks = module / '.source-chunks'
+          parts = [chunks/'part1.b64', chunks/'part2.b64', chunks/'p3.b64', chunks/'part4.b64', chunks/'part5.b64']
+          encoded = ''.join(p.read_text(encoding='utf-8').strip() for p in parts)
+          if len(encoded) != 34920:
+              raise SystemExit(f'Base64 source length mismatch: {len(encoded)}')
+          gz_bytes = base64.b64decode(encoded, validate=True)
+          raw = gzip.decompress(gz_bytes)
           digest = hashlib.sha256(raw).hexdigest()
           if digest != expected:
               raise SystemExit(f'V2.2 SHA-256 mismatch: {digest}')
+          archive.write_bytes(gz_bytes)
           target.write_bytes(raw)
 
           readme = root / 'README.md'
@@ -96,11 +102,12 @@ jobs:
               'El `index.html` es el HTML V2.2 aprobado, materializado byte a byte desde el archivo de preservación y verificado contra su SHA-256. No se reimplementa dentro del motor generico de Website Modules. Esto evita que futuras integraciones reconstruyan o simplifiquen accidentalmente la pieza validada.'
           )
           module_text = module_text.replace(
-              'El loader de repositorio usa `DecompressionStream(\'gzip\')`, por lo que se recomienda Chrome/Edge actualizado y servir Escaparates Pro mediante HTTP/HTTPS en lugar de abrir esta carpeta directamente con `file://`.',
+              "El loader de repositorio usa `DecompressionStream('gzip')`, por lo que se recomienda Chrome/Edge actualizado y servir Escaparates Pro mediante HTTP/HTTPS en lugar de abrir esta carpeta directamente con `file://`.",
               'La pieza se sirve como HTML directo desde Escaparates Pro. Para desarrollo y QA se recomienda HTTP/HTTPS o un servidor estatico local; la fuente conserva sus dependencias CDN de Three.js y JSZip.'
           )
           module_readme.write_text(module_text, encoding='utf-8')
 
+          print('V2.2 bytes:', len(raw))
           print('V2.2 SHA-256 OK:', digest)
           PY
       - name: Syntax checks
@@ -111,8 +118,10 @@ jobs:
           from pathlib import Path
           import hashlib
           p=Path('labs/website-modules-source/3d-book-collection-showcase-pro/index.html')
-          print('index.html bytes:', p.stat().st_size)
-          print('index.html sha256:', hashlib.sha256(p.read_bytes()).hexdigest())
+          digest=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert p.stat().st_size == 96275, p.stat().st_size
+          assert digest == '1f8156e5d5d06bb54492151389167dd8e23d358d5b61f300bc3aa0608e3f7cb0', digest
+          print('index.html exact V2.2 verified:', p.stat().st_size, digest)
           PY
       - name: Commit verified integration
         run: |
@@ -120,6 +129,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md \
             labs/website-modules-source/3d-book-collection-showcase-pro/index.html \
+            labs/website-modules-source/3d-book-collection-showcase-pro/source.v2.2.html.gz \
             labs/website-modules-source/3d-book-collection-showcase-pro/README.md
           if git diff --cached --quiet; then
             echo "No generated changes"
