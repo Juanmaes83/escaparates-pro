@@ -21,161 +21,22 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import base64, gzip, hashlib, re
-
+          import base64, gzip, hashlib
           expected = 'e7599acf4ab58a73eaaeabf9740e9a96dbb4efb2d26c063a0d724a9d517ca2b7'
-          parts = [Path(f'tmp/rope-v1.5/part{i:02d}.b64').read_text().strip() for i in range(1,5)]
-          gz = base64.b64decode(''.join(parts))
+          source = ''.join(Path(f'tmp/rope-v1.5/part{i:02d}.b64').read_text().strip() for i in range(1,5))
+          gz = base64.b64decode(source)
           html = gzip.decompress(gz)
           actual = hashlib.sha256(html).hexdigest()
           if actual != expected:
-              raise SystemExit(f'Rope Gallery SHA mismatch: {actual} != {expected}')
-
+              raise SystemExit(f'SHA mismatch: {actual} != {expected}')
           module_dir = Path('labs/website-modules-source/rope-gallery-pro')
           module_dir.mkdir(parents=True, exist_ok=True)
           (module_dir / 'index.html').write_bytes(html)
           (module_dir / 'source.v1.5.html.gz').write_bytes(gz)
-
-          bridge = r'''// Rope Gallery PRO V1.5 — standalone Website Modules bridge.
-          (function() {
-              'use strict';
-              window.EP = window.EP || {};
-              if (!EP.WebsiteModules || !EP.WebsiteModules.register) return;
-
-              var ID = 'rope-gallery-pro';
-              var PATH = 'labs/website-modules-source/rope-gallery-pro/index.html';
-
-              function escapeAttr(value) {
-                  return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-              }
-
-              function buildFallbackDocument() {
-                  var src = escapeAttr(PATH);
-                  return '<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rope Gallery PRO V1.5</title><style>html,body,iframe{margin:0;width:100%;height:100%;border:0;background:#faf8f4}body{overflow:hidden}</style></head><body><iframe title="Rope Gallery PRO V1.5" src="' + src + '" allow="autoplay; fullscreen; display-capture" allowfullscreen></iframe></body></html>';
-              }
-
-              EP.WebsiteModules.register({
-                  id: ID,
-                  name: 'Rope Gallery PRO V1.5',
-                  icon: 'RG',
-                  family: '3D / Interactive Gallery',
-                  description: 'Galeria Three.js sobre cuerda fisica con pinzas, inercia, imagen/video por ficha y Focus editorial independiente.',
-                  sourceFile: PATH + ' · V1.5 aprobada · clean media + focus',
-                  mediaMap: 'Editor propio: logo, hero, navegacion, fondo, 8 fichas imagen/video, descripcion ampliada, CTA y entregables cliente.',
-                  standalonePath: PATH,
-                  standaloneEditorNote: 'Editor completo dentro del preview. Personaliza identidad, colores, fondo y ocho fichas con imagen/video, descripcion y CTA. El Focus final abre cada ficha en primer termino sin recortar el canvas.',
-                  standaloneActions: {
-                      html: 'downloadFinalHtmlBtn',
-                      zip: 'downloadClientZipBtn',
-                      embed: 'copyEmbedBtn'
-                  },
-                  fields: [],
-                  build: function() {
-                      return buildFallbackDocument();
-                  }
-              });
-          })();
-          '''
-          # Remove workflow indentation introduced by the Python heredoc.
-          bridge = '\n'.join(line[10:] if line.startswith('          ') else line for line in bridge.splitlines()) + '\n'
-          Path('js/website-modules-rope-gallery-pro.js').write_text(bridge, encoding='utf-8')
-
-          module_readme = f'''# Rope Gallery PRO V1.5
-
-Modulo standalone de Escaparates Pro para crear una galeria 3D interactiva de tarjetas colgadas sobre una cuerda fisica, con personalizacion completa de identidad, imagen/video y contenido ampliado.
-
-## Identidad
-
-- Module ID: `rope-gallery-pro`
-- Version aprobada: `V1.5 · Clean Media + Focus`
-- Superficie: `Website Modules Lab`
-- HTML canonico: `labs/website-modules-source/rope-gallery-pro/index.html`
-- Copia de preservacion: `labs/website-modules-source/rope-gallery-pro/source.v1.5.html.gz`
-- Registro: `js/website-modules-rope-gallery-pro.js`
-- SHA-256 del HTML aprobado: `{expected}`
-- Fuente de referencia: `Juanmaes83/rope-gallery`
-
-El `index.html` es la version standalone V1.5 aprobada visual y funcionalmente. Se conserva como fuente canonica y no se reimplementa dentro del motor generico de Website Modules.
-
-## Experiencia
-
-La pieza conserva la identidad del proyecto Rope Gallery:
-
-- cuerda fisica 3D con deformacion y respuesta al peso;
-- tarjetas colgantes con pinzas verdes;
-- drag, lanzamiento con inercia, rueda/trackpad y teclado;
-- oscilacion tipo pendulo, rebote y repelencia entre tarjetas;
-- parallax de camara y adaptacion de resolucion por rendimiento;
-- ocho contenidos logicos reutilizados de forma estable sobre las tarjetas fisicas;
-- Focus independiente del canvas al seleccionar una ficha, con media completa a la izquierda e informacion ampliada a la derecha;
-- cierre del Focus mediante X, Escape o click exterior.
-
-## Personalizacion Escaparates Pro
-
-### Identidad y hero
-
-- logo y nombre de marca;
-- badge;
-- titular, palabra destacada y segunda linea;
-- subtitulo;
-- CTA principal y URL;
-- navegacion y CTA de cabecera;
-- colores principales;
-- fondo por color, imagen o video.
-
-### Ocho fichas
-
-Cada ficha permite personalizar de forma independiente:
-
-- titulo;
-- subtitulo;
-- descripcion ampliada;
-- texto CTA;
-- URL CTA;
-- imagen o video.
-
-El pipeline multimedia replica el patron ya validado en otros modulos de Escaparates Pro: configuracion ligera en `localStorage`, Blob en IndexedDB, ObjectURL para video durante la edicion y resolucion segura de imagen/video para el viewer y las exportaciones. No se guardan videos pesados en `localStorage`.
-
-## Entregables
-
-La V1.5 incorpora su propio pipeline de salida:
-
-- HTML final cerrado;
-- ZIP cliente + assets + manifest;
-- iframe/embed;
-- preview local;
-- captura PNG;
-- PNG sequence ZIP;
-- grabacion de video final MP4/WebM segun soporte;
-- grabacion de revision cliente.
-
-El viewer final mantiene cuerda, imagen/video, Focus y CTA, pero no expone el panel de personalizacion.
-
-## Integracion con Website Modules Lab
-
-Website Modules Lab carga directamente el `index.html` aprobado dentro de su iframe. Los botones globales HTML, ZIP y Embed delegan en los botones internos de la pieza:
-
-- HTML -> `downloadFinalHtmlBtn`
-- ZIP -> `downloadClientZipBtn`
-- Embed -> `copyEmbedBtn`
-
-Esto evita duplicar el exportador, recrear la experiencia o simplificar la fisica al incorporarla a Escaparates Pro.
-
-## QA
-
-Antes de modificar esta pieza:
-
-1. Preservar el HTML canonico aprobado y comprobar su SHA-256.
-2. Reutilizar el pipeline multimedia validado: Blob/IndexedDB + ObjectURL/DataURL solo donde corresponda.
-3. Probar varias imagenes y varios videos simultaneamente.
-4. Verificar que el contenido logico se mantiene asociado correctamente cuando las tarjetas fisicas se reciclan.
-5. Probar Focus, X, Escape y click exterior sin recortes del canvas.
-6. Probar HTML final, ZIP y Embed con imagen y video.
-7. Confirmar que el viewer final no muestra el editor.
-8. Revisar desktop y movil antes de dar una nueva version por aprobada.
-'''
-          (module_dir / 'README.md').write_text(module_readme, encoding='utf-8')
-
+          bridge_b64 = 'Ly8gUm9wZSBHYWxsZXJ5IFBSTyBWMS41IOKAlCBzdGFuZGFsb25lIFdlYnNpdGUgTW9kdWxlcyBicmlkZ2UuCihmdW5jdGlvbigpIHsKICAgICd1c2Ugc3RyaWN0JzsKICAgIHdpbmRvdy5FUCA9IHdpbmRvdy5FUCB8fCB7fTsKICAgIGlmICghRVAuV2Vic2l0ZU1vZHVsZXMgfHwgIUVQLldlYnNpdGVNb2R1bGVzLnJlZ2lzdGVyKSByZXR1cm47CgogICAgdmFyIElEID0gJ3JvcGUtZ2FsbGVyeS1wcm8nOwogICAgdmFyIFBBVEggPSAnbGFicy93ZWJzaXRlLW1vZHVsZXMtc291cmNlL3JvcGUtZ2FsbGVyeS1wcm8vaW5kZXguaHRtbCc7CgogICAgZnVuY3Rpb24gZXNjYXBlQXR0cih2YWx1ZSkgewogICAgICAgIHJldHVybiBTdHJpbmcodmFsdWUgfHwgJycpLnJlcGxhY2UoLyYvZywgJyZhbXA7JykucmVwbGFjZSgvIi9nLCAnJnF1b3Q7JykucmVwbGFjZSgvPC9nLCAnJmx0OycpOwogICAgfQoKICAgIGZ1bmN0aW9uIGJ1aWxkRmFsbGJhY2tEb2N1bWVudCgpIHsKICAgICAgICB2YXIgc3JjID0gZXNjYXBlQXR0cihQQVRIKTsKICAgICAgICByZXR1cm4gJzwhZG9jdHlwZSBodG1sPjxodG1sIGxhbmc9ImVzIj48aGVhZD48bWV0YSBjaGFyc2V0PSJ1dGYtOCI+PG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCxpbml0aWFsLXNjYWxlPTEiPjx0aXRsZT5Sb3BlIEdhbGxlcnkgUFJPIFYxLjU8L3RpdGxlPjxzdHlsZT5odG1sLGJvZHksaWZyYW1le21hcmdpbjowO3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7Ym9yZGVyOjA7YmFja2dyb3VuZDojZmFmOGY0fWJvZHl7b3ZlcmZsb3c6aGlkZGVufTwvc3R5bGU+PC9oZWFkPjxib2R5PjxpZnJhbWUgdGl0bGU9IlJvcGUgR2FsbGVyeSBQUk8gVjEuNSIgc3JjPSInICsgc3JjICsgJyIgYWxsb3c9ImF1dG9wbGF5OyBmdWxsc2NyZWVuOyBkaXNwbGF5LWNhcHR1cmUiIGFsbG93ZnVsbHNjcmVlbj48L2lmcmFtZT48L2JvZHk+PC9odG1sPic7CiAgICB9CgogICAgRVAuV2Vic2l0ZU1vZHVsZXMucmVnaXN0ZXIoewogICAgICAgIGlkOiBJRCwKICAgICAgICBuYW1lOiAnUm9wZSBHYWxsZXJ5IFBSTyBWMS41JywKICAgICAgICBpY29uOiAnUkcnLAogICAgICAgIGZhbWlseTogJzNEIC8gSW50ZXJhY3RpdmUgR2FsbGVyeScsCiAgICAgICAgZGVzY3JpcHRpb246ICdHYWxlcmlhIFRocmVlLmpzIHNvYnJlIGN1ZXJkYSBmaXNpY2EgY29uIHBpbnphcywgaW5lcmNpYSwgaW1hZ2VuL3ZpZGVvIHBvciBmaWNoYSB5IEZvY3VzIGVkaXRvcmlhbCBpbmRlcGVuZGllbnRlLicsCiAgICAgICAgc291cmNlRmlsZTogUEFUSCArICcgwrcgVjEuNSBhcHJvYmFkYSDCtyBjbGVhbiBtZWRpYSArIGZvY3VzJywKICAgICAgICBtZWRpYU1hcDogJ0VkaXRvciBwcm9waW86IGxvZ28sIGhlcm8sIG5hdmVnYWNpb24sIGZvbmRvLCA4IGZpY2hhcyBpbWFnZW4vdmlkZW8sIGRlc2NyaXBjaW9uIGFtcGxpYWRhLCBDVEEgeSBlbnRyZWdhYmxlcyBjbGllbnRlLicsCiAgICAgICAgc3RhbmRhbG9uZVBhdGg6IFBBVEgsCiAgICAgICAgc3RhbmRhbG9uZUVkaXRvck5vdGU6ICdFZGl0b3IgY29tcGxldG8gZGVudHJvIGRlbCBwcmV2aWV3LiBQZXJzb25hbGl6YSBpZGVudGlkYWQsIGNvbG9yZXMsIGZvbmRvIHkgb2NobyBmaWNoYXMgY29uIGltYWdlbi92aWRlbywgZGVzY3JpcGNpb24geSBDVEEuIEVsIEZvY3VzIGZpbmFsIGFicmUgY2FkYSBmaWNoYSBlbiBwcmltZXIgdGVybWlubyBzaW4gcmVjb3J0YXIgZWwgY2FudmFzLicsCiAgICAgICAgc3RhbmRhbG9uZUFjdGlvbnM6IHsKICAgICAgICAgICAgaHRtbDogJ2Rvd25sb2FkRmluYWxIdG1sQnRuJywKICAgICAgICAgICAgemlwOiAnZG93bmxvYWRDbGllbnRaaXBCdG4nLAogICAgICAgICAgICBlbWJlZDogJ2NvcHlFbWJlZEJ0bicKICAgICAgICB9LAogICAgICAgIGZpZWxkczogW10sCiAgICAgICAgYnVpbGQ6IGZ1bmN0aW9uKCkgewogICAgICAgICAgICByZXR1cm4gYnVpbGRGYWxsYmFja0RvY3VtZW50KCk7CiAgICAgICAgfQogICAgfSk7Cn0pKCk7Cg=='
+          readme_b64 = 'IyBSb3BlIEdhbGxlcnkgUFJPIFYxLjUKCk1vZHVsbyBzdGFuZGFsb25lIGRlIEVzY2FwYXJhdGVzIFBybyBwYXJhIGNyZWFyIHVuYSBnYWxlcmlhIDNEIGludGVyYWN0aXZhIGRlIHRhcmpldGFzIGNvbGdhZGFzIHNvYnJlIHVuYSBjdWVyZGEgZmlzaWNhLCBjb24gcGVyc29uYWxpemFjaW9uIGNvbXBsZXRhIGRlIGlkZW50aWRhZCwgaW1hZ2VuL3ZpZGVvIHkgY29udGVuaWRvIGFtcGxpYWRvLgoKIyMgSWRlbnRpZGFkCgotIE1vZHVsZSBJRDogYHJvcGUtZ2FsbGVyeS1wcm9gCi0gVmVyc2lvbiBhcHJvYmFkYTogYFYxLjUgwrcgQ2xlYW4gTWVkaWEgKyBGb2N1c2AKLSBTdXBlcmZpY2llOiBgV2Vic2l0ZSBNb2R1bGVzIExhYmAKLSBIVE1MIGNhbm9uaWNvOiBgbGFicy93ZWJzaXRlLW1vZHVsZXMtc291cmNlL3JvcGUtZ2FsbGVyeS1wcm8vaW5kZXguaHRtbGAKLSBDb3BpYSBkZSBwcmVzZXJ2YWNpb246IGBsYWJzL3dlYnNpdGUtbW9kdWxlcy1zb3VyY2Uvcm9wZS1nYWxsZXJ5LXByby9zb3VyY2UudjEuNS5odG1sLmd6YAotIFJlZ2lzdHJvOiBganMvd2Vic2l0ZS1tb2R1bGVzLXJvcGUtZ2FsbGVyeS1wcm8uanNgCi0gU0hBLTI1NiBkZWwgSFRNTCBhcHJvYmFkbzogYGU3NTk5YWNmNGFiNThhNzNlYWFlYWJmOTc0MGU5YTk2ZGJiNGVmYjJkMjZjMDYzYTBkNzI0YTlkNTE3Y2EyYjdgCi0gRnVlbnRlIGRlIHJlZmVyZW5jaWE6IGBKdWFubWFlczgzL3JvcGUtZ2FsbGVyeWAKCkVsIGBpbmRleC5odG1sYCBlcyBsYSB2ZXJzaW9uIHN0YW5kYWxvbmUgVjEuNSBhcHJvYmFkYSB2aXN1YWwgeSBmdW5jaW9uYWxtZW50ZS4gU2UgY29uc2VydmEgY29tbyBmdWVudGUgY2Fub25pY2EgeSBubyBzZSByZWltcGxlbWVudGEgZGVudHJvIGRlbCBtb3RvciBnZW5lcmljbyBkZSBXZWJzaXRlIE1vZHVsZXMuCgojIyBFeHBlcmllbmNpYQoKTGEgcGllemEgY29uc2VydmEgbGEgaWRlbnRpZGFkIGRlbCBwcm95ZWN0byBSb3BlIEdhbGxlcnk6CgotIGN1ZXJkYSBmaXNpY2EgM0QgY29uIGRlZm9ybWFjaW9uIHkgcmVzcHVlc3RhIGFsIHBlc287Ci0gdGFyamV0YXMgY29sZ2FudGVzIGNvbiBwaW56YXMgdmVyZGVzOwotIGRyYWcsIGxhbnphbWllbnRvIGNvbiBpbmVyY2lhLCBydWVkYS90cmFja3BhZCB5IHRlY2xhZG87Ci0gb3NjaWxhY2lvbiB0aXBvIHBlbmR1bG8sIHJlYm90ZSB5IHJlcGVsZW5jaWEgZW50cmUgdGFyamV0YXM7Ci0gcGFyYWxsYXggZGUgY2FtYXJhIHkgYWRhcHRhY2lvbiBkZSByZXNvbHVjaW9uIHBvciByZW5kaW1pZW50bzsKLSBvY2hvIGNvbnRlbmlkb3MgbG9naWNvcyByZXV0aWxpemFkb3MgZGUgZm9ybWEgZXN0YWJsZSBzb2JyZSBsYXMgdGFyamV0YXMgZmlzaWNhczsKLSBGb2N1cyBpbmRlcGVuZGllbnRlIGRlbCBjYW52YXMgYWwgc2VsZWNjaW9uYXIgdW5hIGZpY2hhLCBjb24gbWVkaWEgY29tcGxldGEgYSBsYSBpenF1aWVyZGEgZSBpbmZvcm1hY2lvbiBhbXBsaWFkYSBhIGxhIGRlcmVjaGE7Ci0gY2llcnJlIGRlbCBGb2N1cyBtZWRpYW50ZSBYLCBFc2NhcGUgbyBjbGljayBleHRlcmlvci4KCiMjIFBlcnNvbmFsaXphY2lvbiBFc2NhcGFyYXRlcyBQcm8KCiMjIyBJZGVudGlkYWQgeSBoZXJvCgotIGxvZ28geSBub21icmUgZGUgbWFyY2E7Ci0gYmFkZ2U7Ci0gdGl0dWxhciwgcGFsYWJyYSBkZXN0YWNhZGEgeSBzZWd1bmRhIGxpbmVhOwotIHN1YnRpdHVsbzsKLSBDVEEgcHJpbmNpcGFsIHkgVVJMOwotIG5hdmVnYWNpb24geSBDVEEgZGUgY2FiZWNlcmE7Ci0gY29sb3JlcyBwcmluY2lwYWxlczsKLSBmb25kbyBwb3IgY29sb3IsIGltYWdlbiBvIHZpZGVvLgoKIyMjIE9jaG8gZmljaGFzCgpDYWRhIGZpY2hhIHBlcm1pdGUgcGVyc29uYWxpemFyIGRlIGZvcm1hIGluZGVwZW5kaWVudGU6CgotIHRpdHVsbzsKLSBzdWJ0aXR1bG87Ci0gZGVzY3JpcGNpb24gYW1wbGlhZGE7Ci0gdGV4dG8gQ1RBOwotIFVSTCBDVEE7Ci0gaW1hZ2VuIG8gdmlkZW8uCgpFbCBwaXBlbGluZSBtdWx0aW1lZGlhIHJlcGxpY2EgZWwgcGF0cm9uIHlhIHZhbGlkYWRvIGVuIG90cm9zIG1vZHVsb3MgZGUgRXNjYXBhcmF0ZXMgUHJvOiBjb25maWd1cmFjaW9uIGxpZ2VyYSBlbiBgbG9jYWxTdG9yYWdlYCwgQmxvYiBlbiBJbmRleGVkREIsIE9iamVjdFVSTCBwYXJhIHZpZGVvIGR1cmFudGUgbGEgZWRpY2lvbiB5IHJlc29sdWNpb24gc2VndXJhIGRlIGltYWdlbi92aWRlbyBwYXJhIGVsIHZpZXdlciB5IGxhcyBleHBvcnRhY2lvbmVzLiBObyBzZSBndWFyZGFuIHZpZGVvcyBwZXNhZG9zIGVuIGBsb2NhbFN0b3JhZ2VgLgoKIyMgRW50cmVnYWJsZXMKCkxhIFYxLjUgaW5jb3Jwb3JhIHN1IHByb3BpbyBwaXBlbGluZSBkZSBzYWxpZGE6CgotIEhUTUwgZmluYWwgY2VycmFkbzsKLSBaSVAgY2xpZW50ZSArIGFzc2V0cyArIG1hbmlmZXN0OwotIGlmcmFtZS9lbWJlZDsKLSBwcmV2aWV3IGxvY2FsOwotIGNhcHR1cmEgUE5HOwotIFBORyBzZXF1ZW5jZSBaSVA7Ci0gZ3JhYmFjaW9uIGRlIHZpZGVvIGZpbmFsIE1QNC9XZWJNIHNlZ3VuIHNvcG9ydGU7Ci0gZ3JhYmFjaW9uIGRlIHJldmlzaW9uIGNsaWVudGUuCgpFbCB2aWV3ZXIgZmluYWwgbWFudGllbmUgY3VlcmRhLCBpbWFnZW4vdmlkZW8sIEZvY3VzIHkgQ1RBLCBwZXJvIG5vIGV4cG9uZSBlbCBwYW5lbCBkZSBwZXJzb25hbGl6YWNpb24uCgojIyBJbnRlZ3JhY2lvbiBjb24gV2Vic2l0ZSBNb2R1bGVzIExhYgoKV2Vic2l0ZSBNb2R1bGVzIExhYiBjYXJnYSBkaXJlY3RhbWVudGUgZWwgYGluZGV4Lmh0bWxgIGFwcm9iYWRvIGRlbnRybyBkZSBzdSBpZnJhbWUuIExvcyBib3RvbmVzIGdsb2JhbGVzIEhUTUwsIFpJUCB5IEVtYmVkIGRlbGVnYW4gZW4gbG9zIGJvdG9uZXMgaW50ZXJub3MgZGUgbGEgcGllemE6CgotIEhUTUwgLT4gYGRvd25sb2FkRmluYWxIdG1sQnRuYAotIFpJUCAtPiBgZG93bmxvYWRDbGllbnRaaXBCdG5gCi0gRW1iZWQgLT4gYGNvcHlFbWJlZEJ0bmAKCkVzdG8gZXZpdGEgZHVwbGljYXIgZWwgZXhwb3J0YWRvciwgcmVjcmVhciBsYSBleHBlcmllbmNpYSBvIHNpbXBsaWZpY2FyIGxhIGZpc2ljYSBhbCBpbmNvcnBvcmFybGEgYSBFc2NhcGFyYXRlcyBQcm8uCgojIyBRQQoKQW50ZXMgZGUgbW9kaWZpY2FyIGVzdGEgcGllemE6CgoxLiBQcmVzZXJ2YXIgZWwgSFRNTCBjYW5vbmljbyBhcHJvYmFkbyB5IGNvbXByb2JhciBzdSBTSEEtMjU2LgoyLiBSZXV0aWxpemFyIGVsIHBpcGVsaW5lIG11bHRpbWVkaWEgdmFsaWRhZG86IEJsb2IvSW5kZXhlZERCICsgT2JqZWN0VVJML0RhdGFVUkwgc29sbyBkb25kZSBjb3JyZXNwb25kYS4KMy4gUHJvYmFyIHZhcmlhcyBpbWFnZW5lcyB5IHZhcmlvcyB2aWRlb3Mgc2ltdWx0YW5lYW1lbnRlLgo0LiBWZXJpZmljYXIgcXVlIGVsIGNvbnRlbmlkbyBsb2dpY28gc2UgbWFudGllbmUgYXNvY2lhZG8gY29ycmVjdGFtZW50ZSBjdWFuZG8gbGFzIHRhcmpldGFzIGZpc2ljYXMgc2UgcmVjaWNsYW4uCjUuIFByb2JhciBGb2N1cywgWCwgRXNjYXBlIHkgY2xpY2sgZXh0ZXJpb3Igc2luIHJlY29ydGVzIGRlbCBjYW52YXMuCjYuIFByb2JhciBIVE1MIGZpbmFsLCBaSVAgeSBFbWJlZCBjb24gaW1hZ2VuIHkgdmlkZW8uCjcuIENvbmZpcm1hciBxdWUgZWwgdmlld2VyIGZpbmFsIG5vIG11ZXN0cmEgZWwgZWRpdG9yLgo4LiBSZXZpc2FyIGRlc2t0b3AgeSBtb3ZpbCBhbnRlcyBkZSBkYXIgdW5hIG51ZXZhIHZlcnNpb24gcG9yIGFwcm9iYWRhLgo='
+          Path('js/website-modules-rope-gallery-pro.js').write_bytes(base64.b64decode(bridge_b64))
+          (module_dir / 'README.md').write_bytes(base64.b64decode(readme_b64))
           ui_path = Path('js/website-modules-ui.js')
           ui = ui_path.read_text(encoding='utf-8')
           old = "            { id: 'sketchbook-pro-v3', src: 'js/website-modules-sketchbook-pro-v3.js' }\n        ];"
@@ -183,7 +44,6 @@ Antes de modificar esta pieza:
           if ui.count(old) != 1:
               raise SystemExit('Website Modules loader anchor not found exactly once')
           ui_path.write_text(ui.replace(old, new), encoding='utf-8')
-
           readme_path = Path('README.md')
           readme = readme_path.read_text(encoding='utf-8')
           replacements = [
@@ -197,19 +57,12 @@ Antes de modificar esta pieza:
                   raise SystemExit('README anchor not found exactly once: ' + old_text[:80])
               readme = readme.replace(old_text, new_text)
           readme_path.write_text(readme, encoding='utf-8')
-
-          # Final structural checks before the commit.
           if hashlib.sha256((module_dir / 'index.html').read_bytes()).hexdigest() != expected:
               raise SystemExit('Final canonical HTML hash changed')
-          if 'rope-gallery-pro' not in ui_path.read_text(encoding='utf-8'):
-              raise SystemExit('Rope Gallery loader was not registered')
-          if 'Rope Gallery PRO V1.5' not in readme_path.read_text(encoding='utf-8'):
-              raise SystemExit('Root README was not updated')
           PY
 
           node --check js/website-modules-rope-gallery-pro.js
           node --check js/website-modules-ui.js
-
           python - <<'PY'
           from pathlib import Path
           import re, subprocess
@@ -220,8 +73,9 @@ Antes de modificar esta pieza:
           p = Path('/tmp/rope-gallery-v15.mjs')
           p.write_text(modules[0], encoding='utf-8')
           subprocess.run(['node', '--check', str(p)], check=True)
-          if 'downloadFinalHtmlBtn' not in html or 'downloadClientZipBtn' not in html or 'copyEmbedBtn' not in html:
-              raise SystemExit('Standalone export actions missing')
+          for token in ['downloadFinalHtmlBtn','downloadClientZipBtn','copyEmbedBtn','focusLayer','IndexedDB']:
+              if token not in html:
+                  raise SystemExit('Required token missing: ' + token)
           PY
 
       - name: Commit verified integration only
@@ -231,12 +85,8 @@ Antes de modificar esta pieza:
           rm -f .github/workflows/integrate-rope-gallery-v1-5.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md \
-            js/website-modules-ui.js \
-            js/website-modules-rope-gallery-pro.js \
-            labs/website-modules-source/rope-gallery-pro/index.html \
-            labs/website-modules-source/rope-gallery-pro/README.md \
-            labs/website-modules-source/rope-gallery-pro/source.v1.5.html.gz
+          git add README.md js/website-modules-ui.js js/website-modules-rope-gallery-pro.js
+          git add labs/website-modules-source/rope-gallery-pro/index.html labs/website-modules-source/rope-gallery-pro/README.md labs/website-modules-source/rope-gallery-pro/source.v1.5.html.gz
           git add -u tmp/rope-v1.5 .github/workflows/integrate-rope-gallery-v1-5.yml
           git diff --cached --check
           git status --short
