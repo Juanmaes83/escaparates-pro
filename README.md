@@ -154,6 +154,16 @@ RGB Motion Triptych PRO convierte uno o tres assets de imagen/video en capas RGB
 
 Exporta resultado final como HTML standalone, ZIP basico y embed iframe. Los modulos adaptados desde `cinematic-site-components` conservan su atribucion MIT; los modulos independientes identifican su referencia sin exportar assets ajenos.
 
+## Interactive Boards
+
+Interactive Boards es una familia de primer nivel para experiencias visuales completas basadas en información conectada, relaciones espaciales y presentación interactiva. Se ejecuta en un workspace aislado y no forma parte de Website Modules Lab.
+
+La categoría se inaugura con **Casebook PRO — Creative Campaign Board V1.1**, ubicado en `labs/interactive-boards-source/casebook-pro-v1-1/`. Conserva el motor Three.js/GSAP del board, física de hilos, lasso, minimapa, timeline, Graph View, inspector y Undo/Redo, y añade cinco presets completos: Detective / Investigation, Campaign 360, Fashion Campaign, Project / Tasks y Strategy / Presentation.
+
+Casebook PRO permite branding, board y background con color/imagen/video, tarjetas con imagen/video y metadata, relaciones con label/color/strength, JSON Import/Export y entregables HTML, ZIP, Embed, Preview, PNG y Review Recording. El HTML V1.1 aprobado se mantiene como fuente canónica con SHA-256 `96d5da228695c4b0d669e45251469608d4f8676e4c27a462654f6724fd780e63`.
+
+Arquitectura: `EP.InteractiveBoards` registra los boards; `interactive-boards-ui.js` abre el workspace a ancho completo bajo la barra superior; cada board se ejecuta en iframe aislado para evitar conflictos con el Three.js global del modo Efectos. Website Modules conserva sus 31 módulos sin cambios.
+
 ## Sector Website Blueprints
 
 Sector Website Blueprints es un modo separado para construir webs completas de campana o ecommerce dentro de un iframe aislado. El panel conserva los controles comunes de marca, titular, narrativa, CTA, URL, color y media; el resultado exportado es una web final cerrada, sin paneles de Escaparates Pro.
@@ -176,6 +186,8 @@ Los assets de los slots se reutilizan en hero, galeria y fichas; cuando el slot 
 - **Vinyl Player PRO V1** en Website Modules Lab: modulo standalone Three.js + Web Audio ubicado en `labs/website-modules-source/vinyl-player-pro/`, con seis discos imagen-video-audio, tocadiscos mecanico interactivo, Custom Library, branding y pipeline propio de entregables cerrados.
 - **Kinetic Letter Curtain PRO V1.1** en Website Modules Lab: modulo standalone Canvas/Verlet ubicado en `labs/website-modules-source/kinetic-letter-curtain-pro/`, con cuatro escenas, cortina fisica alargada, media de entorno imagen-video, contenido tipografico libre, image color-map, logo integrado y pipeline propio de entregables cerrados.
 - **Kinetic Letter Curtain PRO V2 — Video Projection** en Website Modules Lab: modulo standalone Canvas/Verlet + video sampling ubicado en `labs/website-modules-source/kinetic-letter-curtain-pro-v2-video-projection/`, con video dentro de las letras, malla visual de alta densidad, perfiles Balanced/High Quality y pipeline propio de entregables cerrados.
+
+- **Casebook PRO — Creative Campaign Board V1.1** en Interactive Boards: primer board de la nueva familia, con cinco demos completas, tarjetas multimedia conectadas, física de hilos, Graph View, timeline, JSON Import/Export y pipeline propio de entregables cerrados.
 
 ## Conceptos Clave
 

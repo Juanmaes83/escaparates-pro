@@ -43,6 +43,14 @@
     <div id="website-modules-stage">
         <iframe id="wm-preview-frame" title="Vista previa Website Module"></iframe>
     </div>
+
+    <!-- Interactive Boards: complete connected visual workspaces, isolated in their own iframe -->
+    <div id="interactive-boards-stage">
+        <div id="interactive-boards-catalog" aria-label="Interactive Boards"></div>
+        <div id="interactive-boards-frame-wrap">
+            <iframe id="interactive-boards-frame" title="Interactive Board" allow="autoplay; fullscreen; display-capture; clipboard-write" allowfullscreen></iframe>
+        </div>
+    </div>
     <div id="sector-blueprints-stage">
         <iframe id="sb-preview-frame" title="Vista previa Sector Website Blueprint"></iframe>
     </div>
@@ -60,6 +68,7 @@
                 <button class="mode-btn" data-mode="website-modules" id="mode-btn-website-modules" title="Modulos web cinematograficos aislados">Web Modules</button>
                 <button class="mode-btn" data-mode="sector-blueprints" id="mode-btn-sector-blueprints" title="Plantillas web completas por sector">Blueprints</button>
                 <button class="mode-btn" data-mode="source-labs" id="mode-btn-source-labs" title="Experiencias fuente completas aisladas">Source Labs</button>
+                <button class="mode-btn" data-mode="interactive-boards" id="mode-btn-interactive-boards" title="Interactive Boards: tableros visuales conectados y presentaciones espaciales">Boards</button>
                 <button class="mode-btn" data-mode="rubik-tools" id="mode-btn-rubik-tools" title="Herramientas RUBIK SOTA (propias, aisladas)">🧬 RUBIK SOTA</button>
             </div>
         </div>
@@ -1067,6 +1076,9 @@
     <script src="js/sector-blueprints-ui.js"></script>
     <script src="js/source-labs.js"></script>
     <script src="js/source-labs-ui.js"></script>
+    <script src="js/interactive-boards.js"></script>
+    <script src="js/interactive-boards-casebook-pro-v1-1.js"></script>
+    <script src="js/interactive-boards-ui.js"></script>
     <!-- FASE G — Kinetic Images + grid -->
     <script src="js/effects/kinetic-images/paper-scroll.js"></script>
     <script src="js/effects/kinetic-images/spiral-ribbon.js"></script>
