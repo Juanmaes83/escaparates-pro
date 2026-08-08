@@ -1,0 +1,207 @@
+/* CASEBOOK PRO V3 — FASHION ART DIRECTION
+   Phase 3F.1/3F.2. Isolated Fashion Lab only.
+   Fashion is an editorial spatial system, not a black theme. */
+
+:root{
+  --f-void:#050505;
+  --f-black:#090909;
+  --f-ink:#111111;
+  --f-paper:#f1efe9;
+  --f-paper-2:#d9d5ce;
+  --f-silver:#a4a6a8;
+  --f-line:rgba(255,255,255,.16);
+  --f-line-strong:rgba(255,255,255,.42);
+  --f-muted:rgba(238,236,230,.57);
+  --f-accent:#e8ff3f;
+  --f-red:#ff3d2e;
+  --f-display:"Arial Narrow","Helvetica Neue Condensed",Impact,Haettenschweiler,sans-serif;
+  --f-ui:Inter,"Helvetica Neue",Arial,sans-serif;
+  --f-serif:Georgia,"Times New Roman",serif;
+  --f-ease:cubic-bezier(.16,1,.3,1);
+}
+
+body.v3-editorial-studio.v3-fashion-lab{
+  --es-bg:var(--f-void);
+  --es-panel:#080808;
+  --es-panel2:#0d0d0d;
+  --es-ink:#f4f2ed;
+  --es-muted:rgba(244,242,237,.48);
+  --es-line:rgba(255,255,255,.12);
+  --es-accent:var(--f-accent);
+  background:var(--f-void);
+  font-family:var(--f-ui);
+}
+body.v3-editorial-studio.v3-fashion-lab[data-es-theme="fashion"]{background:var(--f-void)}
+
+/* --- Editorial chrome: quieter than the canvas --- */
+body.v3-fashion-lab #esShell{background:#050505;color:#f5f3ee}
+body.v3-fashion-lab .esTop,
+body.v3-fashion-lab .esLeft,
+body.v3-fashion-lab .esRight,
+body.v3-fashion-lab .esBottom{
+  background:rgba(6,6,6,.94);
+  backdrop-filter:blur(22px) saturate(.8);
+  -webkit-backdrop-filter:blur(22px) saturate(.8);
+  border-color:rgba(255,255,255,.105);
+}
+body.v3-fashion-lab .esTop{height:58px}
+body.v3-fashion-lab .esBrand{gap:11px}
+body.v3-fashion-lab .esMonogram{
+  width:29px;height:29px;border-radius:0;border:1px solid rgba(255,255,255,.78);
+  background:#f2f0ea;color:#060606;font-family:var(--f-display);font-size:17px;line-height:1;
+  box-shadow:none;
+}
+body.v3-fashion-lab .esBrandCopy b{
+  font-family:var(--f-display);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;
+}
+body.v3-fashion-lab .esBrandCopy span{font-size:8px;letter-spacing:.19em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+body.v3-fashion-lab .esCrumb{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+body.v3-fashion-lab .esCrumb .world,body.v3-fashion-lab .esCrumb .chapter{color:rgba(255,255,255,.68)}
+body.v3-fashion-lab .esCrumb .mode{color:var(--f-accent)}
+
+body.v3-fashion-lab .esBtn{
+  border-radius:0;background:transparent;border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.76);
+  text-transform:uppercase;letter-spacing:.11em;font-size:8px;font-weight:800;min-height:31px;
+  transition:background .22s,color .22s,border-color .22s,transform .22s var(--f-ease);
+}
+body.v3-fashion-lab .esBtn:hover{background:#f0eee8;color:#070707;border-color:#f0eee8;transform:translateY(-1px)}
+body.v3-fashion-lab .esBtn.primary{background:var(--f-paper);border-color:var(--f-paper);color:#070707}
+body.v3-fashion-lab .esBtn.primary:hover{background:var(--f-accent);border-color:var(--f-accent)}
+
+/* --- Navigator becomes fashion issue index --- */
+body.v3-fashion-lab .esLeftHead{padding-top:22px}
+body.v3-fashion-lab .esEyebrow,
+body.v3-fashion-lab .esSectionLabel{
+  font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.38);font-weight:800;
+}
+body.v3-fashion-lab .esWorldTitle{
+  font-family:var(--f-display);font-size:27px;line-height:.91;letter-spacing:-.035em;text-transform:uppercase;
+  margin-top:10px;max-width:210px;
+}
+body.v3-fashion-lab .esWorldMeta{font-size:8px;letter-spacing:.065em;color:rgba(255,255,255,.35);margin-top:10px;line-height:1.55}
+body.v3-fashion-lab .esRule{background:rgba(255,255,255,.11)}
+body.v3-fashion-lab .esChapter{
+  border-radius:0;border:0;border-top:1px solid rgba(255,255,255,.105);background:transparent;
+  min-height:62px;padding:10px 4px;transition:padding .25s var(--f-ease),background .25s;
+}
+body.v3-fashion-lab .esChapter:last-child{border-bottom:1px solid rgba(255,255,255,.105)}
+body.v3-fashion-lab .esChapter:hover{padding-left:9px;background:rgba(255,255,255,.035)}
+body.v3-fashion-lab .esChapter.active{background:#f0eee8;color:#070707;border-color:#f0eee8;padding-left:9px}
+body.v3-fashion-lab .esChapter .num{font-family:var(--f-serif);font-style:italic;font-size:11px;color:rgba(255,255,255,.35)}
+body.v3-fashion-lab .esChapter.active .num{color:rgba(0,0,0,.45)}
+body.v3-fashion-lab .esChapter b{font-family:var(--f-display);font-size:12px;letter-spacing:.045em;text-transform:uppercase}
+body.v3-fashion-lab .esChapter small{font-size:7.5px;letter-spacing:.06em;opacity:.5}
+body.v3-fashion-lab .esChapter .dot{border-radius:0;width:5px;height:5px;background:var(--f-accent)}
+body.v3-fashion-lab .esAddSpace{border-radius:0;border:1px dashed rgba(255,255,255,.17);text-transform:uppercase;letter-spacing:.13em;font-size:8px}
+body.v3-fashion-lab .esRouteStep{border-radius:0;background:transparent;border-left:1px solid rgba(255,255,255,.16);padding-left:11px}
+body.v3-fashion-lab .esRouteStep i{font-family:var(--f-serif);font-size:10px;font-style:italic;color:var(--f-accent)}
+
+/* --- Inspector = art direction sheet --- */
+body.v3-fashion-lab .esRightHead{height:47px;text-transform:uppercase;letter-spacing:.15em;font-size:8px}
+body.v3-fashion-lab .esInspectorHero{padding-top:7px}
+body.v3-fashion-lab .esInspectorHero .type{color:var(--f-accent);letter-spacing:.2em;font-size:7px;text-transform:uppercase}
+body.v3-fashion-lab .esInspectorHero h2{
+  font-family:var(--f-display);font-size:31px;line-height:.9;letter-spacing:-.035em;text-transform:uppercase;margin:9px 0 11px;
+}
+body.v3-fashion-lab .esInspectorHero p{font-size:9px;line-height:1.6;color:rgba(255,255,255,.45)}
+body.v3-fashion-lab .esStatGrid{gap:1px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1)}
+body.v3-fashion-lab .esStat{border:0;border-radius:0;background:#080808}
+body.v3-fashion-lab .esStat b{font-family:var(--f-display);font-size:22px}
+body.v3-fashion-lab .esStat span{font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.38)}
+body.v3-fashion-lab .esField label{font-size:7px;letter-spacing:.16em;text-transform:uppercase}
+body.v3-fashion-lab .esField input,body.v3-fashion-lab .esField textarea,body.v3-fashion-lab .esField select{
+  border-radius:0;background:#050505;border-color:rgba(255,255,255,.16);font-size:9px;
+}
+body.v3-fashion-lab .esDisclosure{border-radius:0;background:transparent;border-color:rgba(255,255,255,.11)}
+
+/* --- Canvas framing: editorial crop marks, issue data --- */
+body.v3-fashion-lab .stage{background:#030303}
+body.v3-fashion-lab .stage::before,
+body.v3-fashion-lab .stage::after{
+  content:"";position:absolute;z-index:19;pointer-events:none;width:30px;height:30px;opacity:.45;
+}
+body.v3-fashion-lab .stage::before{left:17px;top:17px;border-left:1px solid #fff;border-top:1px solid #fff}
+body.v3-fashion-lab .stage::after{right:17px;bottom:17px;border-right:1px solid #fff;border-bottom:1px solid #fff}
+body.v3-fashion-lab .esCanvasLabel{
+  top:20px;left:22px;background:transparent;border:0;border-radius:0;padding:0;pointer-events:none;
+  text-shadow:0 2px 14px rgba(0,0,0,.9);
+}
+body.v3-fashion-lab .esCanvasLabel b{font-family:var(--f-display);font-size:10px;text-transform:uppercase;letter-spacing:.13em}
+body.v3-fashion-lab .esCanvasLabel span{font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+body.v3-fashion-lab .esCanvasLabel::after{
+  content:"FASHION / SPATIAL EDITION 001";display:block;margin-top:6px;font-family:var(--f-serif);font-style:italic;
+  font-size:8px;letter-spacing:.04em;color:var(--f-accent);
+}
+
+/* --- Context actions as art-direction tool strip --- */
+body.v3-fashion-lab .esContext{gap:2px;background:#060606;border:1px solid rgba(255,255,255,.15);border-radius:0;padding:3px}
+body.v3-fashion-lab .esContext button{border-radius:0;text-transform:uppercase;letter-spacing:.12em;font-size:7px}
+
+/* --- Bottom mode rail: runway cue strip --- */
+body.v3-fashion-lab .esBottom{height:52px}
+body.v3-fashion-lab .esBottomCenter{gap:0;border:1px solid rgba(255,255,255,.14);padding:2px}
+body.v3-fashion-lab .esMode{
+  border-radius:0;text-transform:uppercase;letter-spacing:.14em;font-size:7px;min-width:64px;border-right:1px solid rgba(255,255,255,.08);
+}
+body.v3-fashion-lab .esMode:last-child{border-right:0}
+body.v3-fashion-lab .esMode.active{background:var(--f-paper);color:#070707}
+body.v3-fashion-lab .esThemeSelect{display:none}
+body.v3-fashion-lab .esBottomLeft::before{
+  content:"BLACK RUNWAY";font-family:var(--f-display);font-size:9px;letter-spacing:.15em;color:var(--f-accent);
+}
+
+/* --- Fashion Lab controls introduced by scene runtime --- */
+.fashionLabPanel{margin:15px 0 0;border-top:1px solid rgba(255,255,255,.13);padding-top:14px}
+.fashionLabPanel .flKicker{font-size:7px;letter-spacing:.2em;color:var(--f-accent);text-transform:uppercase;margin-bottom:8px}
+.fashionLabPanel .flTitle{font-family:var(--f-display);font-size:17px;line-height:.95;text-transform:uppercase;letter-spacing:-.015em;margin-bottom:10px}
+.flSceneGrid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.flSceneBtn{border:1px solid rgba(255,255,255,.14);background:#080808;color:#ddd;padding:9px 7px;text-align:left;cursor:pointer;min-height:48px;transition:.2s}
+.flSceneBtn b{display:block;font-family:var(--f-display);font-size:9px;text-transform:uppercase;letter-spacing:.07em}
+.flSceneBtn small{display:block;font-size:7px;color:rgba(255,255,255,.36);margin-top:4px;line-height:1.35}
+.flSceneBtn:hover{border-color:rgba(255,255,255,.55)}
+.flSceneBtn.active{background:var(--f-paper);color:#050505;border-color:var(--f-paper)}
+.flSceneBtn.active small{color:rgba(0,0,0,.5)}
+.flControl{margin-top:10px}
+.flControl label{display:flex;justify-content:space-between;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:5px}
+.flControl select,.flControl input[type="range"]{width:100%}
+.flControl select{background:#050505;color:#eee;border:1px solid rgba(255,255,255,.16);border-radius:0;padding:7px;font-size:8px}
+.flToggleRow{display:flex;gap:5px;margin-top:9px}
+.flToggle{flex:1;border:1px solid rgba(255,255,255,.14);background:#080808;color:#aaa;padding:7px 5px;font-size:7px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.flToggle.on{background:var(--f-accent);border-color:var(--f-accent);color:#050505}
+.flQuality{margin-top:10px;padding:9px;border-left:2px solid var(--f-accent);background:rgba(232,255,63,.045);font-size:7.5px;line-height:1.55;color:rgba(255,255,255,.48)}
+.flQuality b{color:#eee;letter-spacing:.09em;text-transform:uppercase}
+
+/* --- Hotspots: no floating candy badges. Registration marks instead. --- */
+body.v3-fashion-lab .v3hot{
+  width:26px;height:26px;margin:-13px;border-radius:0;background:transparent;border:0;box-shadow:none;color:#fff;
+  font-family:var(--f-ui);font-size:0;transform:rotate(0deg);
+}
+body.v3-fashion-lab .v3hot::before,body.v3-fashion-lab .v3hot::after{content:"";position:absolute;left:50%;top:50%;background:rgba(255,255,255,.82);transform:translate(-50%,-50%)}
+body.v3-fashion-lab .v3hot::before{width:18px;height:1px}
+body.v3-fashion-lab .v3hot::after{width:1px;height:18px}
+body.v3-fashion-lab .v3hot.portal::before,body.v3-fashion-lab .v3hot.portal::after{background:var(--f-accent)}
+body.v3-fashion-lab .v3hot:hover{transform:scale(1.2) rotate(45deg)}
+body.v3-fashion-lab .v3hotLabel{
+  top:22px;border-radius:0;background:#f1efe9;color:#070707;font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:4px 6px;
+  opacity:0;transform:translate(-50%,4px);transition:.18s;
+}
+body.v3-fashion-lab .v3hot:hover .v3hotLabel{opacity:1;transform:translate(-50%,0)}
+
+/* --- Overlays: magazine spreads, no generic modal look --- */
+body.v3-fashion-lab .esOverlay{background:rgba(3,3,3,.94);backdrop-filter:blur(28px)}
+body.v3-fashion-lab .esOverlayBar{border-color:rgba(255,255,255,.12)}
+body.v3-fashion-lab .esOverlayTitle{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.06em;font-size:17px}
+body.v3-fashion-lab .esHelpGrid{gap:1px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1)}
+body.v3-fashion-lab .esHelpCard{border:0;border-radius:0;background:#070707;min-height:220px}
+body.v3-fashion-lab .esHelpCard i{font-family:var(--f-serif);font-style:italic;color:var(--f-accent)}
+body.v3-fashion-lab .esHelpCard h3{font-family:var(--f-display);font-size:24px;line-height:.93;text-transform:uppercase}
+
+/* --- Reduced motion remains first-class --- */
+@media (prefers-reduced-motion:reduce){
+  body.v3-fashion-lab *,body.v3-fashion-lab *::before,body.v3-fashion-lab *::after{scroll-behavior:auto!important;transition-duration:.001ms!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
+
+@media(max-width:1100px){
+  body.v3-fashion-lab .esWorldTitle{font-size:22px}
+  body.v3-fashion-lab .esInspectorHero h2{font-size:25px}
+}

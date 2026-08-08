@@ -1,0 +1,79 @@
+/* CASEBOOK PRO V3 — PEARL FASHION ART DIRECTION
+   Author UI remains precise; experience language becomes pearl, editorial, spatial and luminous. */
+:root{
+  --p-bg:#d9d6d0;
+  --p-bg-hi:#f1efe9;
+  --p-bg-lo:#bfc0c0;
+  --p-ink:#181818;
+  --p-muted:rgba(24,24,24,.46);
+  --p-line:rgba(24,24,24,.14);
+  --p-line-strong:rgba(24,24,24,.30);
+  --p-panel:rgba(243,240,233,.88);
+  --p-panel-solid:#ece9e2;
+  --p-pearl:#e8e5de;
+  --p-chrome:#aaa9a5;
+  --p-burgundy:#8d1021;
+  --p-shadow:0 22px 56px rgba(59,55,50,.15);
+}
+body.v3-fashion-lab.v3-fashion-pearl{--es-bg:var(--p-bg);--es-panel:var(--p-panel-solid);--es-panel2:#e4e1da;--es-ink:var(--p-ink);--es-muted:var(--p-muted);--es-line:var(--p-line);--es-accent:var(--p-burgundy);background:linear-gradient(135deg,#d2cfc9 0%,#efede7 48%,#c6c7c7 100%);color:var(--p-ink)}
+body.v3-fashion-pearl #esShell{background:linear-gradient(135deg,#d5d2cc 0%,#f1efe9 52%,#c8c9c9 100%);color:var(--p-ink)}
+body.v3-fashion-pearl .esTop,body.v3-fashion-pearl .esLeft,body.v3-fashion-pearl .esRight,body.v3-fashion-pearl .esBottom{background:rgba(241,239,233,.84);backdrop-filter:blur(24px) saturate(.78);-webkit-backdrop-filter:blur(24px) saturate(.78);border-color:var(--p-line);box-shadow:none}
+body.v3-fashion-pearl .esMonogram{background:#191919!important;color:#f0ede6!important;border-color:#191919!important}
+body.v3-fashion-pearl .esBrandCopy b,body.v3-fashion-pearl .esWorldTitle,body.v3-fashion-pearl .esInspectorHero h2{color:#191919}
+body.v3-fashion-pearl .esBrandCopy span,body.v3-fashion-pearl .esCrumb,body.v3-fashion-pearl .esEyebrow,body.v3-fashion-pearl .esSectionLabel,body.v3-fashion-pearl .esWorldMeta,body.v3-fashion-pearl .esInspectorHero p{color:var(--p-muted)}
+body.v3-fashion-pearl .esCrumb .world,body.v3-fashion-pearl .esCrumb .chapter{color:rgba(24,24,24,.72)}
+body.v3-fashion-pearl .esCrumb .mode,body.v3-fashion-pearl .esInspectorHero .type{color:var(--p-burgundy)}
+body.v3-fashion-pearl .esBtn{border-color:var(--p-line);color:#242424;background:rgba(255,255,255,.12)}
+body.v3-fashion-pearl .esBtn:hover{background:#1a1a1a;color:#f2efe8;border-color:#1a1a1a}
+body.v3-fashion-pearl .esBtn.primary{background:#1a1a1a;border-color:#1a1a1a;color:#f2efe8}
+body.v3-fashion-pearl .esBtn.primary:hover{background:var(--p-burgundy);border-color:var(--p-burgundy)}
+body.v3-fashion-pearl .esRule{background:var(--p-line)}
+body.v3-fashion-pearl .esChapter{border-color:var(--p-line);color:#1b1b1b}
+body.v3-fashion-pearl .esChapter:hover{background:rgba(255,255,255,.32)}
+body.v3-fashion-pearl .esChapter.active{background:#1b1b1b;color:#f4f1ea;border-color:#1b1b1b;box-shadow:0 14px 30px rgba(37,34,31,.10)}
+body.v3-fashion-pearl .esChapter .num{color:rgba(24,24,24,.38)}
+body.v3-fashion-pearl .esChapter.active .num{color:rgba(255,255,255,.45)}
+body.v3-fashion-pearl .esChapter .dot{background:var(--p-burgundy)}
+body.v3-fashion-pearl .esAddSpace{border-color:rgba(24,24,24,.18);color:#242424}
+body.v3-fashion-pearl .esRouteStep{border-color:rgba(24,24,24,.16);color:#2b2b2b}
+body.v3-fashion-pearl .esRouteStep i{color:var(--p-burgundy)}
+body.v3-fashion-pearl .esRightHead{color:rgba(24,24,24,.48)}
+body.v3-fashion-pearl .esStatGrid{background:var(--p-line);border-color:var(--p-line)}
+body.v3-fashion-pearl .esStat{background:rgba(255,255,255,.24);color:#1c1c1c}
+body.v3-fashion-pearl .esStat span{color:var(--p-muted)}
+body.v3-fashion-pearl .esField input,body.v3-fashion-pearl .esField textarea,body.v3-fashion-pearl .esField select{background:rgba(255,255,255,.28);border-color:var(--p-line);color:#1b1b1b}
+body.v3-fashion-pearl .esDisclosure{border-color:var(--p-line);background:rgba(255,255,255,.12)}
+body.v3-fashion-pearl .stage{background:radial-gradient(circle at 48% 35%,#efede7 0%,#d7d4ce 54%,#bfc0c0 100%)}
+body.v3-fashion-pearl .stage::before{border-color:rgba(24,24,24,.45)}
+body.v3-fashion-pearl .stage::after{border-color:rgba(24,24,24,.45)}
+body.v3-fashion-pearl .esCanvasLabel{text-shadow:none;color:#1a1a1a}
+body.v3-fashion-pearl .esCanvasLabel span{color:rgba(24,24,24,.46)}
+body.v3-fashion-pearl .esCanvasLabel::after{content:"PEARL RUNWAY / SPATIAL EDITION 001";color:var(--p-burgundy)}
+body.v3-fashion-pearl .esContext{background:rgba(239,236,229,.9);border-color:var(--p-line);box-shadow:var(--p-shadow)}
+body.v3-fashion-pearl .esContext button{color:#1b1b1b}
+body.v3-fashion-pearl .esBottomCenter{border-color:var(--p-line)}
+body.v3-fashion-pearl .esMode{border-color:rgba(24,24,24,.08);color:rgba(24,24,24,.58)}
+body.v3-fashion-pearl .esMode.active{background:#1b1b1b;color:#f4f1ea}
+body.v3-fashion-pearl .esBottomLeft::before{content:"PEARL RUNWAY";color:var(--p-burgundy)}
+body.v3-fashion-pearl .fashionLabPanel{border-color:var(--p-line)}
+body.v3-fashion-pearl .fashionLabPanel .flKicker{color:var(--p-burgundy)}
+body.v3-fashion-pearl .fashionLabPanel .flTitle{color:#191919}
+body.v3-fashion-pearl .flSceneBtn{background:rgba(255,255,255,.18);border-color:var(--p-line);color:#252525}
+body.v3-fashion-pearl .flSceneBtn small{color:var(--p-muted)}
+body.v3-fashion-pearl .flSceneBtn:hover{border-color:rgba(24,24,24,.42)}
+body.v3-fashion-pearl .flSceneBtn.active{background:#1a1a1a;color:#f3f0e9;border-color:#1a1a1a}
+body.v3-fashion-pearl .flSceneBtn.active small{color:rgba(255,255,255,.55)}
+body.v3-fashion-pearl .flControl label{color:var(--p-muted)}
+body.v3-fashion-pearl .flControl select{background:rgba(255,255,255,.22);color:#1b1b1b;border-color:var(--p-line)}
+body.v3-fashion-pearl .flToggle{background:rgba(255,255,255,.18);border-color:var(--p-line);color:#333}
+body.v3-fashion-pearl .flToggle.on{background:var(--p-burgundy);border-color:var(--p-burgundy);color:white}
+body.v3-fashion-pearl .flQuality{border-left-color:var(--p-burgundy);background:rgba(141,16,33,.035);color:rgba(24,24,24,.52)}
+body.v3-fashion-pearl .flQuality b{color:#1d1d1d}
+body.v3-fashion-pearl .v3hot::before,body.v3-fashion-pearl .v3hot::after{background:rgba(24,24,24,.74)}
+body.v3-fashion-pearl .v3hot.portal::before,body.v3-fashion-pearl .v3hot.portal::after{background:var(--p-burgundy)}
+body.v3-fashion-pearl .v3hotLabel{background:#1a1a1a;color:#f3f0e9}
+/* Experience mode: editorial chrome disappears. Author mode remains available outside Preview. */
+body.v3-fashion-pearl.pearl-experience .esLeft,body.v3-fashion-pearl.pearl-experience .esRight,body.v3-fashion-pearl.pearl-experience .esBottom,body.v3-fashion-pearl.pearl-experience .esTop{opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.16,1,.3,1)}
+body.v3-fashion-pearl.pearl-experience .esMain{grid-template-columns:0 minmax(0,1fr) 0!important}
+body.v3-fashion-pearl.pearl-experience .stage{inset:0!important}
+@media (prefers-reduced-motion:reduce){body.v3-fashion-pearl *{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
