@@ -21,24 +21,27 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html')
           s=p.read_text(encoding='utf-8')
           css='<link rel="stylesheet" href="./v3-fashion-pearl-cinematic.css">'
           js='<script src="./v3-fashion-pearl-cinematic.js"></script>'
           if css not in s:
-              marker='<link rel="stylesheet" href="./v3-fashion-art-direction.css">'
-              assert s.count(marker)==1, f'CSS marker count={s.count(marker)}'
-              s=s.replace(marker, marker+'\n'+css,1)
+              rx=re.compile(r'(<link\b[^>]*v3-fashion-art-direction\.css[^>]*>)',re.I)
+              m=rx.search(s)
+              assert m, 'CSS asset tag not found'
+              s=s[:m.end()]+'\n'+css+s[m.end():]
           if js not in s:
-              marker='<script src="./v3-fashion-scene-system.js"></script>'
-              assert s.count(marker)==1, f'JS marker count={s.count(marker)}'
-              s=s.replace(marker, marker+'\n'+js,1)
+              rx=re.compile(r'(<script\b[^>]*v3-fashion-scene-system\.js[^>]*>\s*</script>)',re.I)
+              m=rx.search(s)
+              assert m, 'JS asset tag not found'
+              s=s[:m.end()]+'\n'+js+s[m.end():]
+          assert s.count('v3-fashion-pearl-cinematic.css')==1
+          assert s.count('v3-fashion-pearl-cinematic.js')==1
           p.write_text(s,encoding='utf-8')
           PY
           node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
           node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js
-          test "$(grep -c 'v3-fashion-pearl-cinematic.css' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html)" -eq 1
-          test "$(grep -c 'v3-fashion-pearl-cinematic.js' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html)" -eq 1
       - name: Commit exact allowlist and self-remove
         run: |
           rm .github/workflows/tmp-wire-v3-fashion-pearl.yml
