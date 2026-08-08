@@ -1,0 +1,117 @@
+name: TEMP QA2 V3 Fashion Black Runway Local
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab]
+    paths: ['.github/workflows/tmp-qa2-v3-fashion-black-runway-local.yml']
+permissions:
+  contents: write
+jobs:
+  visual-qa-local:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
+          fetch-depth: 0
+      - name: Verify protected baselines and product files
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- \
+            labs/interactive-boards-source/casebook-pro-v1-1 \
+            labs/interactive-boards-source/casebook-pro-v2 \
+            js/interactive-boards-casebook-pro-v1-1.js \
+            js/interactive-boards-casebook-pro-v2.js \
+            js/interactive-boards.js js/interactive-boards-ui.js css
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
+          grep -q 'patchFashionSceneBridge(patchV3AnchorBridge' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html
+      - name: Start exact branch locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/fashion-http.log 2>&1 &
+          echo $! >/tmp/fashion-http.pid
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html >/dev/null && exit 0; sleep 1; done
+          cat /tmp/fashion-http.log
+          exit 1
+      - name: Install isolated Chromium
+        run: |
+          mkdir -p /tmp/fashionqa && cd /tmp/fashionqa
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium
+      - name: Run Fashion runtime and visual evidence
+        run: |
+          cd /tmp/fashionqa
+          node <<'JS'
+          const { chromium } = require('playwright');
+          const assert = require('assert');
+          const fs = require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1720,height:980},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
+            page.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE '+m.text())});
+            const response=await page.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+            console.log('HTTP='+response.status()+' TITLE='+await page.title());
+            fs.mkdirSync(process.env.GITHUB_WORKSPACE+'/qa-fashion',{recursive:true});
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/00-boot.png',fullPage:true});
+            await page.waitForSelector('#esShell',{state:'visible',timeout:30000});
+            await page.waitForFunction(()=>document.body.classList.contains('v3-fashion-lab'),null,{timeout:15000});
+            await page.waitForFunction(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.stats,null,{timeout:30000});
+            await page.waitForTimeout(1800);
+            const state=await page.evaluate(()=>{
+              const f=document.querySelector('.stage iframe'),a=f?.contentWindow?.CasebookPro?.fashion;
+              return {
+                lab:document.body.classList.contains('v3-fashion-lab'),shell:!!document.querySelector('#esShell'),panel:!!document.querySelector('.fashionLabPanel'),
+                runtime:a?.getState?.(),stats:a?.stats?.(),world:window.CasebookProV3?.getWorld?.()?.name||null,
+                originalPanel:getComputedStyle(document.querySelector('#app>.panel')).display,
+                bodyTheme:document.body.dataset.esTheme||null,
+                brand:document.querySelector('.esBrandCopy b')?.textContent||null
+              };
+            });
+            console.log('FASHION_STATE='+JSON.stringify(state));
+            assert.equal(state.lab,true);assert.equal(state.shell,true);assert.equal(state.panel,true);
+            assert.equal(state.runtime?.sceneId,'black-runway');
+            assert.ok(state.stats?.meshes>10,'Expected authored 3D meshes');
+            assert.ok(state.stats?.triangles>0,'Expected rendered geometry');
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/01-black-runway-overview.png',fullPage:true});
+
+            await page.selectOption('#flShot','DETAIL');await page.waitForTimeout(900);
+            const shot=await page.evaluate(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.getState?.()?.shot);
+            assert.equal(shot,'DETAIL');
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/02-black-runway-detail.png',fullPage:true});
+
+            await page.click('#flNoPost');await page.waitForTimeout(700);
+            const diagnostic=await page.evaluate(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.getState?.()?.diagnostic);
+            assert.equal(diagnostic,true);
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/03-black-runway-no-post.png',fullPage:true});
+
+            await page.click('#flStructure');await page.waitForTimeout(500);
+            const structure=await page.evaluate(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.getState?.()?.structure);
+            assert.equal(structure,true);
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/04-black-runway-structure.png',fullPage:true});
+
+            const fatal=errors.filter(e=>/ReferenceError|TypeError|SyntaxError|not defined|not a function|Fashion bridge/i.test(e));
+            console.log('BROWSER_ERRORS='+JSON.stringify(errors));
+            assert.equal(fatal.length,0,'Fatal browser errors: '+fatal.join(' | '));
+            fs.writeFileSync(process.env.GITHUB_WORKSPACE+'/qa-fashion/runtime.json',JSON.stringify({state,shot,diagnostic,structure,errors},null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-fashion-black-runway-local-evidence
+          path: qa-fashion/
+          if-no-files-found: warn
+      - name: Self-remove QA2 only
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-qa2-v3-fashion-black-runway-local.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-qa2-v3-fashion-black-runway-local.yml
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          test "$(git diff --cached --name-only)" = '.github/workflows/tmp-qa2-v3-fashion-black-runway-local.yml'
+          git commit -m 'chore(ci): remove temporary local Fashion visual QA' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
