@@ -778,6 +778,7 @@ function dataURLToBlob(data){const [h,b]=data.split(","),mime=(h.match(/data:([^
 function kindOf(file){return file&&file.type&&file.type.startsWith("video/")?"video":"image";}
 function revoke(key){if(objectUrls[key]){URL.revokeObjectURL(objectUrls[key]);delete objectUrls[key];}}
 function api(){return frame.contentWindow&&frame.contentWindow.CasebookPro;}
+window.__CasebookV3Host={api:()=>api(),setMode:(m)=>v2SetMode(m),selected:()=>api()?.getSelected?.()||null};
 
 const __MEM_MEDIA_DB=new Map();
 let __IDB_DISABLED=false;

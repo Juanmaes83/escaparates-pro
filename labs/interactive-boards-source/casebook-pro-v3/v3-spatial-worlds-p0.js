@@ -29,7 +29,7 @@ function q(s,p=document){return p.querySelector(s)}
 function toast(msg,ms=2600){try{showStatus(msg,ms)}catch(_){console.log('[V3]',msg)}}
 function stage(){return q('.stage')}
 function preview(){return q('#preview')}
-function boardApi(){try{return api()}catch(_){return null}}
+function boardApi(){try{return window.__CasebookV3Host?.api?.()||null}catch(_){return null}}
 function activeChapter(){return world.chapters.find(c=>c.id===world.activeChapterId)||null}
 
 function openDb(){
