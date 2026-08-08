@@ -1,0 +1,57 @@
+name: TEMP Wire Casebook PRO V2 one-line loader
+
+on:
+  push:
+    branches:
+      - feat/interactive-boards-casebook-pro-v2
+    paths:
+      - .github/workflows/tmp-wire-casebook-pro-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  wire-and-self-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated V2 branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/interactive-boards-casebook-pro-v2
+          fetch-depth: 0
+
+      - name: Insert exactly one V2 registry loader
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          old = '    <script src="js/interactive-boards-casebook-pro-v1-1.js"></script>\n    <script src="js/interactive-boards-ui.js"></script>'
+          new = '    <script src="js/interactive-boards-casebook-pro-v1-1.js"></script>\n    <script src="js/interactive-boards-casebook-pro-v2.js"></script>\n    <script src="js/interactive-boards-ui.js"></script>'
+          if text.count('js/interactive-boards-casebook-pro-v2.js') != 0:
+              raise SystemExit('V2 loader already exists; refusing duplicate insertion')
+          if text.count(old) != 1:
+              raise SystemExit('Expected V1.1/UI loader adjacency not found exactly once; refusing edit')
+          out = text.replace(old, new, 1)
+          if out.count('js/interactive-boards-casebook-pro-v2.js') != 1:
+              raise SystemExit('Postcondition failed: V2 loader count is not exactly one')
+          p.write_text(out, encoding='utf-8', newline='')
+
+      - name: Verify only intended index line plus workflow deletion
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/tmp-wire-casebook-pro-v2.yml
+          test "$(git diff --numstat -- index.html | awk '{print $1":"$2}')" = '1:0'
+          git diff --check
+          git diff -- index.html
+
+      - name: Commit one-line wiring and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html .github/workflows/tmp-wire-casebook-pro-v2.yml
+          git commit -m 'feat(interactive-boards): wire Casebook PRO V2 loader'
+          git push origin HEAD:feat/interactive-boards-casebook-pro-v2
