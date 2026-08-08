@@ -56,7 +56,7 @@ function __fCanvasTexture(lines,kind='label'){
   x.font=kind==='hero'?'900 84px Arial Narrow,Arial,sans-serif':'700 29px Arial,Helvetica,sans-serif';
   x.textBaseline='top';
   (Array.isArray(lines)?lines:[lines]).slice(0,3).forEach((t,i)=>x.fillText(String(t||'').toUpperCase(),24,20+i*(kind==='hero'?86:48),970));
-  const tx=new THREE.CanvasTexture(c);tx.encoding=THREE.sRGBEncoding;tx.needsUpdate=true;tx.userData.fashionOwnedMap=true;return tx;
+  const tx=new THREE.CanvasTexture(c);tx.encoding=THREE.sRGBEncoding;tx.needsUpdate=true;tx.userData=tx.userData||{};tx.userData.fashionOwnedMap=true;return tx;
 }
 function __fTextPlane(text,w=25,h=5,kind='label'){
   const mat=new THREE.MeshBasicMaterial({map:__fCanvasTexture(text,kind),transparent:true,depthWrite:false,side:THREE.DoubleSide});
