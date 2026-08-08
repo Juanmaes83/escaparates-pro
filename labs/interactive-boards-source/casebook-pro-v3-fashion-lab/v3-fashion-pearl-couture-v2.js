@@ -41,7 +41,7 @@ function __pcHideLegacy(){
   items.forEach(it=>{if(!it?.grp)return;if(it.grp.userData.__pcVisible==null)it.grp.userData.__pcVisible=it.grp.visible;it.grp.visible=false;});
   ropes.forEach(r=>{try{if(!r.meta)r.meta={};if(!r.meta.smart)r.meta.smart={};r.meta.smart.style='physical';r.meta.smart.direction='none';r.meta.smart.animated=false;r.__v2FocusFactor=0;r.opacity=0;if(r.mat){r.mat.transparent=true;r.mat.opacity=0;}}catch(_){}});
   if(typeof __surface!=='undefined'){if(__surface.board)__surface.board.visible=false;if(__surface.boardMedia)__surface.boardMedia.visible=false;if(__surface.wall)__surface.wall.visible=false;}
-  if(typeof __v2!=='undefined'&&Array.isArray(__v2.zones))__v2.zones.forEach(z=>{try{if(z.__mesh)z.__mesh.visible=false}catch(_){}});
+  setTimeout(()=>{try{if(Array.isArray(__v2.zones))__v2.zones.forEach(z=>{if(z.__mesh)z.__mesh.visible=false})}catch(_){}},0);
   ['rail','inspector','avatars','bellBtn','kebabBtn','undoBtn','redoBtn','filtersBtn','timelineBtn','minimap'].forEach(id=>__pcHideElement(document.getElementById(id)));
   document.querySelectorAll('.v2Modebar,.v2StoryRail,.v2Hud').forEach(__pcHideElement);
   __pcHideTopbar();__pcHideBottomZoom();
