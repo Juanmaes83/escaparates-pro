@@ -2,7 +2,7 @@
 // Phase 3F.6. Additive lifecycle fix for the isolated Fashion Pearl branch only.
 (function(){
 'use strict';
-const VERSION='3F.6.1-pearl-stability';
+const VERSION='3F.6.2-pearl-stability';
 const OLD_STARTER_KEY='casebook-v3-fashion-starter-seeded-v2';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,Number(v)||0));
@@ -42,19 +42,18 @@ async function waitFor(fn,tries=80,ms=100){
   return null;
 }
 async function persistWorldName(name){
-  for(let i=0;i<20;i++){
+  const controller=v3();
+  if(controller?.getWorld&&controller?.importState){
+    try{
+      const next=controller.getWorld();
+      next.name=name;
+      await controller.importState(next,{restoreActive:false});
+      if(world()?.name===name)return true;
+    }catch(e){console.warn('[Pearl Stability] direct world rename failed',e)}
+  }
+  for(let i=0;i<12;i++){
     const legacy=document.querySelector('#v3WorldName');
-    if(legacy){
-      legacy.value=name;
-      legacy.dispatchEvent(new Event('input',{bubbles:true}));
-      legacy.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    const shell=document.querySelector('#esWorldNameEdit');
-    if(shell){
-      shell.value=name;
-      shell.dispatchEvent(new Event('input',{bubbles:true}));
-      shell.dispatchEvent(new Event('change',{bubbles:true}));
-    }
+    if(legacy){legacy.value=name;legacy.dispatchEvent(new Event('input',{bubbles:true}));legacy.dispatchEvent(new Event('change',{bubbles:true}))}
     const save=document.querySelector('#v3SaveBtn');
     if(save)save.click();else v3()?.save?.();
     await sleep(120);
@@ -69,12 +68,7 @@ let experience=false,experienceRaf=0,progress=.04,target=.04;
 
 function stopLegacyDirector(){
   if(legacyStopped)return;
-  try{
-    if(window.CasebookPearlDirector?.destroy){
-      window.CasebookPearlDirector.destroy();
-      legacyStopped=true;
-    }
-  }catch(_){}
+  try{if(window.CasebookPearlDirector?.destroy){window.CasebookPearlDirector.destroy();legacyStopped=true}}catch(_){}
 }
 function reconcile(reason='state-change',force=false){
   clearTimeout(reconcileTimer);
@@ -101,27 +95,18 @@ async function seedInitialPearl(){
   const preset=document.querySelector('#preset'),load=document.querySelector('#loadPresetBtn');
   if(!preset||!load)return false;
   localStorage.setItem(key,'loading');
-  preset.value='fashion';
-  preset.dispatchEvent(new Event('change',{bubbles:true}));
-  load.click();
-  const loaded=await waitFor(()=>{
-    const x=api(),n=x?.exportState?.()?.items?.length||0;
-    return x&&n>=8?x:null;
-  },100,100);
+  preset.value='fashion';preset.dispatchEvent(new Event('change',{bubbles:true}));load.click();
+  const loaded=await waitFor(()=>{const x=api(),n=x?.exportState?.()?.items?.length||0;return x&&n>=8?x:null},100,100);
   if(!loaded){localStorage.removeItem(key);return false}
-  await sleep(250);
-  const named=await persistWorldName('AFTER DARK / FW26');
-  if(!named){localStorage.removeItem(key);return false}
+  await sleep(220);
+  if(!(await persistWorldName('AFTER DARK / FW26'))){localStorage.removeItem(key);return false}
   v3()?.save?.();
-  loaded.fashion?.apply?.();
-  loaded.fashion?.setProgress?.(.04);
+  loaded.fashion?.apply?.();loaded.fashion?.setProgress?.(.04);
   await sleep(180);
   await persistWorldName('AFTER DARK / FW26');
   v3()?.save?.();
   localStorage.setItem(key,'ready');
-  lastSig='';
-  reconcile('starter-ready',true);
-  return true;
+  lastSig='';reconcile('starter-ready',true);return true;
 }
 
 function experienceTick(){
@@ -131,69 +116,26 @@ function experienceTick(){
   experienceRaf=requestAnimationFrame(experienceTick);
 }
 function enterExperience(){
-  if(experience)return;
-  experience=true;
-  document.body.classList.add('pearl-experience');
-  stopLegacyDirector();
-  progress=.04;target=.04;
+  if(experience)return;experience=true;document.body.classList.add('pearl-experience');stopLegacyDirector();progress=.04;target=.04;
   try{sceneApi()?.apply?.();sceneApi()?.setProgress?.(progress)}catch(_){}
   if(!experienceRaf)experienceRaf=requestAnimationFrame(experienceTick);
 }
 function exitExperience(){
-  if(!experience)return;
-  experience=false;
-  document.body.classList.remove('pearl-experience');
-  if(experienceRaf)cancelAnimationFrame(experienceRaf);
-  experienceRaf=0;
-  reconcile('exit-experience',true);
+  if(!experience)return;experience=false;document.body.classList.remove('pearl-experience');if(experienceRaf)cancelAnimationFrame(experienceRaf);experienceRaf=0;reconcile('exit-experience',true);
 }
-
 function bindExperience(){
-  document.addEventListener('click',e=>{
-    if(e.target.closest?.('#esPreview'))setTimeout(enterExperience,0);
-  },true);
+  document.addEventListener('click',e=>{if(e.target.closest?.('#esPreview'))setTimeout(enterExperience,0)},true);
   const stage=document.querySelector('.stage');
-  if(stage&&!stage.dataset.pearlStableWheel){
-    stage.dataset.pearlStableWheel='1';
-    stage.addEventListener('wheel',e=>{
-      if(!experience)return;
-      target=clamp(target+e.deltaY*.00055);
-    },{passive:true});
-  }
+  if(stage&&!stage.dataset.pearlStableWheel){stage.dataset.pearlStableWheel='1';stage.addEventListener('wheel',e=>{if(experience)target=clamp(target+e.deltaY*.00055)},{passive:true})}
   window.addEventListener('keydown',e=>{if(e.key==='Escape'&&experience)exitExperience()},true);
 }
-
 function startLifecycle(){
-  stopLegacyDirector();
-  bindExperience();
-  seedInitialPearl().catch(e=>console.warn('[Pearl Stability] starter skipped',e)).finally(()=>{
-    reconcile('v3-ready',true);
-  });
-  if(!pollTimer){
-    pollTimer=setInterval(()=>{
-      stopLegacyDirector();
-      if(currentSignature()!==lastSig)reconcile('revision');
-    },180);
-  }
+  stopLegacyDirector();bindExperience();
+  seedInitialPearl().catch(e=>console.warn('[Pearl Stability] starter skipped',e)).finally(()=>reconcile('v3-ready',true));
+  if(!pollTimer)pollTimer=setInterval(()=>{stopLegacyDirector();if(currentSignature()!==lastSig)reconcile('revision')},180);
 }
-
 window.addEventListener('casebook-pro-v3-ready',startLifecycle,{once:false});
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',()=>{
-    setTimeout(stopLegacyDirector,0);
-    setTimeout(()=>{if(v3())startLifecycle()},250);
-  },{once:true});
-}else{
-  setTimeout(stopLegacyDirector,0);
-  setTimeout(()=>{if(v3())startLifecycle()},250);
-}
-
-window.CasebookFashionStability={
-  version:VERSION,
-  reconcile:()=>reconcile('manual',true),
-  enterExperience,
-  exitExperience,
-  persistWorldName,
-  getState:()=>({version:VERSION,legacyDirectorStopped:legacyStopped,experience,lastSignature:lastSig,worldId:world()?.worldId||null,chapterId:world()?.activeChapterId||null})
-};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{setTimeout(stopLegacyDirector,0);setTimeout(()=>{if(v3())startLifecycle()},250)},{once:true});
+else{setTimeout(stopLegacyDirector,0);setTimeout(()=>{if(v3())startLifecycle()},250)}
+window.CasebookFashionStability={version:VERSION,reconcile:()=>reconcile('manual',true),enterExperience,exitExperience,persistWorldName,getState:()=>({version:VERSION,legacyDirectorStopped:legacyStopped,experience,lastSignature:lastSig,worldId:world()?.worldId||null,chapterId:world()?.activeChapterId||null})};
 })();
