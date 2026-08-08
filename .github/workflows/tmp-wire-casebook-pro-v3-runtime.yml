@@ -1,0 +1,51 @@
+name: TEMP Wire Casebook PRO V3 Spatial Worlds runtime
+
+on:
+  push:
+    branches:
+      - feat/interactive-boards-casebook-pro-v3-clone
+    paths:
+      - .github/workflows/tmp-wire-casebook-pro-v3-runtime.yml
+
+permissions:
+  contents: write
+
+jobs:
+  wire-v3-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/interactive-boards-casebook-pro-v3-clone
+          fetch-depth: 0
+      - name: Wire V3 runtime only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('labs/interactive-boards-source/casebook-pro-v3/index.html')
+          s=p.read_text(encoding='utf-8')
+          needle='</body>'
+          line='<script src="v3-spatial-worlds.js"></script>\n'
+          if line in s:
+              raise SystemExit('V3 runtime already wired')
+          if s.count(needle)!=1:
+              raise SystemExit('Unexpected </body> count')
+          s=s.replace(needle,line+needle)
+          p.write_text(s,encoding='utf-8')
+          PY
+          grep -F '<script src="v3-spatial-worlds.js"></script>' labs/interactive-boards-source/casebook-pro-v3/index.html
+          test "$(grep -Fc '<script src="v3-spatial-worlds.js"></script>' labs/interactive-boards-source/casebook-pro-v3/index.html)" = "1"
+      - name: Syntax check V3 layer
+        run: node --check labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds.js
+      - name: Commit runtime wiring and self-remove workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/tmp-wire-casebook-pro-v3-runtime.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3/index.html .github/workflows/tmp-wire-casebook-pro-v3-runtime.yml
+          git commit -m 'feat(v3): wire Spatial Worlds runtime into isolated V3 clone'
+          git push origin HEAD:feat/interactive-boards-casebook-pro-v3-clone
