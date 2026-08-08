@@ -1,0 +1,69 @@
+name: TEMP Wire V3 P0 Hardening
+on:
+  push:
+    branches: [feat/casebook-pro-v3-p0-technical-hardening]
+    paths: ['.github/workflows/tmp-wire-v3-p0-hardening.yml']
+permissions:
+  contents: write
+jobs:
+  wire-and-self-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated P0 branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-p0-technical-hardening
+          fetch-depth: 0
+      - name: Fetch master baseline
+        run: git fetch origin master:refs/remotes/origin/master
+      - name: Verify forbidden baselines untouched before write
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/master -- \
+            labs/interactive-boards-source/casebook-pro-v1-1 \
+            labs/interactive-boards-source/casebook-pro-v2 \
+            js/interactive-boards-casebook-pro-v1-1.js \
+            js/interactive-boards-casebook-pro-v2.js \
+            js/interactive-boards.js \
+            js/interactive-boards-ui.js \
+            css
+      - name: Wire exact V3 loader and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          HTML='labs/interactive-boards-source/casebook-pro-v3/index.html'
+          OLD='<script src="v3-spatial-worlds.js"></script>'
+          NEW='<script src="v3-spatial-worlds-p0.js"></script>'
+          test "$(grep -Foc "$OLD" "$HTML")" = '1'
+          test "$(grep -Foc "$NEW" "$HTML")" = '0'
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('labs/interactive-boards-source/casebook-pro-v3/index.html')
+          s=p.read_text(encoding='utf-8')
+          old='<script src="v3-spatial-worlds.js"></script>'
+          new='<script src="v3-spatial-worlds-p0.js"></script>'
+          assert s.count(old)==1
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+          test "$(grep -Foc "$NEW" "$HTML")" = '1'
+          test "$(grep -Foc "$OLD" "$HTML")" = '0'
+          node --check labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js
+      - name: Verify final scope and self remove
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/master -- \
+            labs/interactive-boards-source/casebook-pro-v1-1 \
+            labs/interactive-boards-source/casebook-pro-v2 \
+            js/interactive-boards-casebook-pro-v1-1.js \
+            js/interactive-boards-casebook-pro-v2.js \
+            js/interactive-boards.js \
+            js/interactive-boards-ui.js \
+            css
+          rm .github/workflows/tmp-wire-v3-p0-hardening.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3/index.html .github/workflows/tmp-wire-v3-p0-hardening.yml
+          git commit -m 'feat(v3): activate P0 hardened runtime'
+          git push origin HEAD:feat/casebook-pro-v3-p0-technical-hardening
