@@ -847,12 +847,24 @@ function genericizeTemplate(template){
 async function hydrateEditorMedia(){
  for(const key of ["logo","board","background"]){const b=await dbGet(key);if(b){revoke(key);objectUrls[key]=URL.createObjectURL(b);const st=document.getElementById(key==="background"?"bgStatus":key+"Status");if(st)st.textContent=b.name||"Media guardada";if(key==="board"){document.getElementById("boardFile").dataset.kind=kindOf(b);setVal("boardMode","media")}if(key==="background"){document.getElementById("bgFile").dataset.kind=kindOf(b);setVal("bgMode","media")}}}
 }
+
+function patchV3AnchorBridge(source){
+  const marker='window.CasebookPro={';
+  if(!String(source).includes(marker)) throw new Error("V3 anchor bridge: CasebookPro marker not found");
+  const bridge="function __v3AnchorAt(cx,cy){\n  raycaster.setFromCamera({x:(cx/innerWidth)*2-1,y:-(cy/innerHeight)*2+1},camera);\n  const hits=raycaster.intersectObjects(hitMeshes,false);\n  for(const h of hits){\n    const it=h.object&&h.object.userData&&h.object.userData.item;\n    if(it&&it.grp&&it.grp.visible){\n      it.grp.updateWorldMatrix(true,false);\n      const local=it.grp.worldToLocal(h.point.clone());\n      return {type:\"item3d\",itemId:String(it.id),local:[local.x,local.y,local.z],uv:h.uv?[h.uv.x,h.uv.y]:null};\n    }\n  }\n  const p=screenToBoard(cx,cy,0);\n  return p?{type:\"world3d\",world:[p.x,p.y,p.z]}:null;\n}\nfunction __v3ProjectAnchor(a){\n  if(!a)return null;\n  let p=null;\n  if(a.type===\"item3d\"&&a.itemId&&Array.isArray(a.local)){\n    const it=items.find(q=>String(q.id)===String(a.itemId));\n    if(!it||!it.grp)return null;\n    it.grp.updateWorldMatrix(true,false);\n    p=it.grp.localToWorld(new THREE.Vector3(Number(a.local[0])||0,Number(a.local[1])||0,Number(a.local[2])||0));\n  }else if(a.type===\"world3d\"&&Array.isArray(a.world)){\n    p=new THREE.Vector3(Number(a.world[0])||0,Number(a.world[1])||0,Number(a.world[2])||0);\n  }\n  if(!p)return null;\n  const sp=worldToScreen(p);\n  return {x:sp.x,y:sp.y,visible:Number.isFinite(sp.x)&&Number.isFinite(sp.y)};\n}\nfunction __v3AnchorFromScreenPercent(xPct,yPct){\n  return __v3AnchorAt(clamp(Number(xPct)||0,0,100)/100*innerWidth,clamp(Number(yPct)||0,0,100)/100*innerHeight);\n}\n";
+  let out=String(source).replace(marker,bridge+"\n"+marker);
+  const apiMarker='capturePNG:__capturePNG,center:';
+  if(!out.includes(apiMarker)) throw new Error("V3 anchor bridge: API marker not found");
+  out=out.replace(apiMarker,'v3AnchorAt:__v3AnchorAt,v3ProjectAnchor:__v3ProjectAnchor,v3AnchorFromScreenPercent:__v3AnchorFromScreenPercent,'+apiMarker);
+  return out;
+}
+
 async function renderEditor(loadTemplate=true){
  showStatus("Preparando Casebook PRO…",10000);
  const preset=val("preset");
  const boardState=preset==="detective"?null:(loadTemplate?genericizeTemplate(TEMPLATES[preset]):null);
  const boot={skipSeed:preset!=="detective",viewerMode:false,config:currentConfig(),boardState};
- frame.srcdoc=patchSource(originalSource,boot);
+ frame.srcdoc=patchV3AnchorBridge(patchSource(originalSource,boot));
 }
 async function onReady(){
  await hydrateEditorMedia();

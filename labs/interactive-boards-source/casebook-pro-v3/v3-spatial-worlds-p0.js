@@ -253,13 +253,30 @@ function sceneAnchorFromClient(clientX,clientY){
   const fr=preview(),r=fr?.getBoundingClientRect();if(!r||!r.width||!r.height)return{type:'scene',x:.5,y:.5};
   return{type:'scene',x:clamp((clientX-r.left)/r.width,0,1),y:clamp((clientY-r.top)/r.height,0,1)};
 }
-function placementFromEvent(e){const anchor=findItemAnchorFromClient(e.clientX,e.clientY)||sceneAnchorFromClient(e.clientX,e.clientY);return{x:anchor.x*100,y:anchor.y*100,anchor}}
+function placementFromEvent(e){
+  const fr=preview(),rr=fr?.getBoundingClientRect(),a=boardApi();
+  if(rr&&a?.v3AnchorAt){
+    try{
+      const anchor=a.v3AnchorAt(e.clientX-rr.left,e.clientY-rr.top);
+      if(anchor)return{x:clamp((e.clientX-rr.left)/rr.width*100,0,100),y:clamp((e.clientY-rr.top)/rr.height*100,0,100),anchor};
+    }catch(err){console.warn('V3 3D anchor fallback',err)}
+  }
+  const anchor=findItemAnchorFromClient(e.clientX,e.clientY)||sceneAnchorFromClient(e.clientX,e.clientY);
+  return{x:anchor.x*100,y:anchor.y*100,anchor};
+}
 function resolveItemElement(itemId){
   const doc=innerDoc();if(!doc||!itemId)return null;const all=Array.from(doc.querySelectorAll('[data-id],[data-item-id],[data-card-id],[data-key],[id]'));
   return all.find(n=>[n.dataset?.id,n.dataset?.itemId,n.dataset?.cardId,n.getAttribute('data-key'),n.id].some(v=>String(v||'')===String(itemId)))||null;
 }
 function projectAnchor(anchor){
   const st=stage(),sr=st?.getBoundingClientRect(),fr=preview(),rr=fr?.getBoundingClientRect();if(!sr||!rr||!anchor)return null;
+  const a=boardApi();
+  if(a?.v3ProjectAnchor&&(anchor.type==='item3d'||anchor.type==='world3d')){
+    try{
+      const p=a.v3ProjectAnchor(anchor);
+      if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))return{x:clamp((rr.left+p.x-sr.left)/sr.width*100,0,100),y:clamp((rr.top+p.y-sr.top)/sr.height*100,0,100)};
+    }catch(err){console.warn('V3 3D projection fallback',err)}
+  }
   let cx,cy;
   if(anchor.type==='item'){
     const el=resolveItemElement(anchor.itemId);
@@ -288,14 +305,14 @@ function editHotspot(h,isNew=false){
   <label>Portal destination<select id="v3HsTarget"><option value="">— none —</option>${targets}</select></label><label><input id="v3HsVisible" type="checkbox" ${h.visible!==false?'checked':''}> Visible marker in Explore mode</label>
   <div class="row"><button class="btn" id="v3RepositionHs">PLACE VISUALLY</button><button class="btn primary" id="v3SaveHs">SAVE HOTSPOT</button></div></div>`);
   q('#v3HsTrans').value=h.transition||'zoom-in';
-  const commit=()=>{h.type=q('#v3HsType').value;h.transition=q('#v3HsTrans').value;h.title=q('#v3HsTitle').value.trim()||'Hotspot';h.body=q('#v3HsBody').value;h.x=clamp(Number(q('#v3HsX').value)||0,0,100);h.y=clamp(Number(q('#v3HsY').value)||0,0,100);h.anchor=h.anchor||{type:'scene'};h.anchor.x=h.x/100;h.anchor.y=h.y/100;h.targetChapterId=q('#v3HsTarget').value;h.visible=q('#v3HsVisible').checked};
+  const commit=()=>{h.type=q('#v3HsType').value;h.transition=q('#v3HsTrans').value;h.title=q('#v3HsTitle').value.trim()||'Hotspot';h.body=q('#v3HsBody').value;h.x=clamp(Number(q('#v3HsX').value)||0,0,100);h.y=clamp(Number(q('#v3HsY').value)||0,0,100);if(h.anchor?.type==='item3d'||h.anchor?.type==='world3d'){try{h.anchor=boardApi()?.v3AnchorFromScreenPercent?.(h.x,h.y)||h.anchor}catch(_){}}else{h.anchor=h.anchor||{type:'scene'};h.anchor.x=h.x/100;h.anchor.y=h.y/100;}h.targetChapterId=q('#v3HsTarget').value;h.visible=q('#v3HsVisible').checked};
   q('#v3SaveHs').onclick=()=>{commit();const c=activeChapter();if(isNew&&!c.hotspots.some(x=>x.id===h.id))c.hotspots.push(h);saveWorld();closeModal();renderAll();toast('Hotspot guardado')};
   q('#v3RepositionHs').onclick=()=>{commit();closeModal();hotspotDraft=h;placingHotspot=true;q('#v3HotLayer').classList.add('placing');toast('Reposiciona el hotspot haciendo click')};
 }
 function renderHotspots(){
   const c=activeChapter(),layer=q('#v3HotLayer'),list=q('#v3HotspotList');if(!layer||!list||!c)return;layer.innerHTML='';list.innerHTML='';
   c.hotspots.forEach((h,i)=>{normalizeHotspot(h);const m=document.createElement('button');m.dataset.hotspotId=h.id;m.className='v3hot '+h.type+(h.visible===false?' hiddenMarker':'');m.title=h.title;m.innerHTML=`${i+1}<span class="v3hotLabel">${esc(h.title)}</span>`;m.onclick=e=>{e.stopPropagation();activateHotspot(h)};layer.appendChild(m);
-    const anchor=h.anchor?.type==='item'?`ITEM · ${h.anchor.itemId}`:'SCENE';const r=document.createElement('div');r.className='v3row';r.innerHTML=`<div><b>${i+1}. ${esc(h.title)}</b><small>${h.type.toUpperCase()} · ${anchor} · <span class="v3coords">X ${h.x.toFixed(1)} / Y ${h.y.toFixed(1)}</span></small></div><div class="actions"><button class="btn" data-hsedit="${h.id}">EDIT</button><button class="btn ghost" data-hsdel="${h.id}">×</button></div>`;list.appendChild(r);
+    const anchor=h.anchor?.type==='item3d'?`ITEM 3D · ${h.anchor.itemId}`:h.anchor?.type==='world3d'?'WORLD 3D':h.anchor?.type==='item'?`ITEM · ${h.anchor.itemId}`:'SCENE';const r=document.createElement('div');r.className='v3row';r.innerHTML=`<div><b>${i+1}. ${esc(h.title)}</b><small>${h.type.toUpperCase()} · ${anchor} · <span class="v3coords">X ${h.x.toFixed(1)} / Y ${h.y.toFixed(1)}</span></small></div><div class="actions"><button class="btn" data-hsedit="${h.id}">EDIT</button><button class="btn ghost" data-hsdel="${h.id}">×</button></div>`;list.appendChild(r);
   });
   qa('[data-hsedit]',list).forEach(b=>b.onclick=()=>{const h=c.hotspots.find(x=>x.id===b.dataset.hsedit);if(h)editHotspot(h,false)});qa('[data-hsdel]',list).forEach(b=>b.onclick=()=>{c.hotspots=c.hotspots.filter(x=>x.id!==b.dataset.hsdel);saveWorld();renderHotspots()});
 }
