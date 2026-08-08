@@ -74,15 +74,15 @@ function __pPearlArchitecture(){
 }
 function __pPearlLights(){
   renderer.shadowMap.enabled=true;try{renderer.outputEncoding=THREE.sRGBEncoding}catch(_){ }
-  if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=__fashionState.diagnostic?.88:1.08;
+  if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=__fashionState.diagnostic ? .88 : 1.08;
   const add=(l,t)=>{scene.add(l);__fashionState.lights.push(l);if(t){scene.add(t);l.target=t;__fashionState.lights.push(t)}};
   const target=new THREE.Object3D();target.position.set(0,2,0);
   const key=new THREE.SpotLight(0xfff7eb,__fashionState.diagnostic?1.0:2.05,280,Math.PI*.24,.72,1.2);key.position.set(-72,72,76);key.castShadow=!__fashionState.diagnostic;key.shadow.mapSize.set(1536,1536);add(key,target);
   const softTarget=new THREE.Object3D();softTarget.position.set(8,-8,-1);
-  const soft=new THREE.SpotLight(0xdde4ea,__fashionState.diagnostic?.5:1.05,260,Math.PI*.30,.9,1.5);soft.position.set(88,22,62);add(soft,softTarget);
+  const soft=new THREE.SpotLight(0xdde4ea,__fashionState.diagnostic ? .5 : 1.05,260,Math.PI*.30,.9,1.5);soft.position.set(88,22,62);add(soft,softTarget);
   const grazeTarget=new THREE.Object3D();grazeTarget.position.set(-5,14,0);
-  const graze=new THREE.SpotLight(0xf4e7d2,__fashionState.diagnostic?.4:.95,240,Math.PI*.18,.65,1.8);graze.position.set(-108,-20,42);add(graze,grazeTarget);
-  const fill=new THREE.HemisphereLight(0xf6f2eb,0x8f9294,__fashionState.diagnostic?.42:.72);scene.add(fill);__fashionState.lights.push(fill);
+  const graze=new THREE.SpotLight(0xf4e7d2,__fashionState.diagnostic ? .4 : .95,240,Math.PI*.18,.65,1.8);graze.position.set(-108,-20,42);add(graze,grazeTarget);
+  const fill=new THREE.HemisphereLight(0xf6f2eb,0x8f9294,__fashionState.diagnostic ? .42 : .72);scene.add(fill);__fashionState.lights.push(fill);
 }
 function __pPearlDecorateItem(it,index){
   if(!it?.grp||__fashionState.decorByItem.has(it))return;
@@ -90,9 +90,9 @@ function __pPearlDecorateItem(it,index){
   const type=__fSemanticType(it,index);if(!it.pro)it.pro={};it.pro.fashionType=type;
   const g=new THREE.Group();g.name='PEARL_OBJECT_'+String(it.id||index);g.userData={fashionOwned:true,semanticType:type};
   // Real editorial mount: rounded extruded pearl board + shadow gap + brushed registration rail.
-  const mount=__pExtrudedPanel(w,h,.65,.28,type==='material'?0xd1cbc1:0xeeeae2,type==='material'?.76:.62,type==='material'?.02:.06);mount.position.z=-.38;g.add(mount);
+  const mount=__pExtrudedPanel(w,h,.65,.28,type==='material'?0xd1cbc1:0xeeeae2,type==='material' ? .76 : .62,type==='material' ? .02 : .06);mount.position.z=-.38;g.add(mount);
   const shadow=__pExtrudedPanel(w*.96,h*.95,.5,.08,0x8f8c87,.92,0);shadow.position.set(.55,-.58,-.62);shadow.material.transparent=true;shadow.material.opacity=.24;g.add(shadow);
-  const rail=__pExtrudedPanel(.42,h*.78,.2,.18,index%5===0?0x8d1021:0xa9a8a4,.36,index%5===0?.16:.66);rail.position.set(-w/2-.58,0,.1);g.add(rail);
+  const rail=__pExtrudedPanel(.42,h*.78,.2,.18,index%5===0?0x8d1021:0xa9a8a4,.36,index%5===0 ? .16 : .66);rail.position.set(-w/2-.58,0,.1);g.add(rail);
   const label=__fTextPlane([String(index+1).padStart(2,'0')+' / '+type,String(it.title||it.name||'UNTITLED').slice(0,28)],Math.min(w,25),3.8,'label');label.position.set(-Math.max(0,w/2-12),-h/2-2.15,.34);g.add(label);
   g.position.z=.34+(index%4)*.16;g.rotation.z=(index%3-1)*.006;it.grp.add(g);__fashionState.decorByItem.set(it,g);
   it.grp.traverse(n=>{if(n.material&&!n.userData?.fashionOwned){const mats=Array.isArray(n.material)?n.material:[n.material];mats.forEach(m=>{if(m.userData.__fashionOriginalOpacity==null){m.userData.__fashionOriginalOpacity=m.opacity;m.userData.__fashionOriginalTransparent=m.transparent}if('roughness' in m)m.roughness=Math.max(.48,Math.min(.82,m.roughness??.58));if('metalness' in m)m.metalness=Math.min(.14,m.metalness??0);if('emissiveIntensity' in m)m.emissiveIntensity=Math.min(.05,m.emissiveIntensity??0)})}});
