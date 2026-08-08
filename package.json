@@ -1,0 +1,27 @@
+{
+  "name": "escaparates-pro",
+  "version": "1.0.0",
+  "description": "Escaparates Pro es una plataforma visual para crear piezas inmersivas a partir de imagenes y videos, ajustar su movimiento, formato, branding y timing, y entregar al cliente un resultado final listo para publicar.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Juanmaes83/escaparates-pro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Juanmaes83/escaparates-pro/issues"
+  },
+  "homepage": "https://github.com/Juanmaes83/escaparates-pro#readme",
+  "dependencies": {
+    "playwright": "^1.62.1"
+  }
+}
