@@ -19,7 +19,7 @@ function theme(){return localStorage.getItem('casebook-v3-editorial-theme')||'ed
 function setTheme(t){if(!THEMES.includes(t))t='editorial';document.body.dataset.esTheme=t;localStorage.setItem('casebook-v3-editorial-theme',t);const sel=$('#esTheme');if(sel)sel.value=t}
 function shellHtml(){return `<div id="esShell">
   <header class="esTop">
-    <div class="esBrand"><div class="esMonogram">C</div><div class="esBrandCopy"><b>Casebook Pro V3</b><span>Editorial Spatial Studio</span></div></div>
+    <div class="esBrand"><div class="esMonogram">C</div><div class="esBrandCopy"><b>Casebook Pro V4</b><span>Editorial Spatial Studio</span></div></div>
     <div class="esCrumb" id="esCrumb"></div>
     <div class="esTopActions"><button class="esBtn" id="esGuide">Guide</button><button class="esBtn" id="esExport">Export</button><button class="esBtn primary" id="esPreview">Preview</button><button class="esBtn icon" id="esInspectorToggle" aria-label="Toggle inspector">⋯</button></div>
   </header>

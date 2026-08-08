@@ -92,7 +92,7 @@ function __pcArchitecture(){
   const title=__pcText(['AFTER DARK / FW26','PEARL COUTURE STUDY'],48,10,true);title.name='PEARL_COPY_HERO';title.position.set(-57,43,8.2);g.add(title);
   const look=__pcText(['01 / SILHOUETTE',names[0]||'LOOK 01'],28,5.2,false);look.position.set(39,34,7.8);g.add(look);
   const material=__pcText(['02 / MATERIAL',names[1]||'PEARL SATIN'],27,5,false);material.position.set(40,-31,7.7);g.add(material);
-  const index=__pcText(['CASEBOOK PRO V3 / FASHION','SCENE 01 — PEARL RUNWAY'],34,5.4,false);index.position.set(-50,-43,7.5);g.add(index);
+  const index=__pcText(['CASEBOOK PRO V4 / FASHION','SCENE 01 — PEARL RUNWAY'],34,5.4,false);index.position.set(-50,-43,7.5);g.add(index);
   const burgundy=new THREE.Mesh(new THREE.CylinderGeometry(2.9,2.9,.72,72),__fMat(0x6f1723,.34,.26));burgundy.rotation.x=Math.PI/2;burgundy.position.set(41,-22,7.2);burgundy.castShadow=true;g.add(burgundy);
   const chrome=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,18,72),__fMat(0x969590,.17,.88));chrome.position.set(46,-5,6.9);chrome.castShadow=true;g.add(chrome);
 }
