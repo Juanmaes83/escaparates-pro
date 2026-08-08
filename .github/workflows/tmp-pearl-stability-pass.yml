@@ -1,0 +1,63 @@
+name: TEMP Pearl Stability Pass
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-pearl-stability-pass.yml']
+permissions:
+  contents: write
+jobs:
+  stability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Wire stability runtime
+        run: |
+          python3 -c "from pathlib import Path; p=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html'); s=p.read_text(encoding='utf-8'); tag='<script src=\"./v3-fashion-pearl-stability.js\"></script>'; assert '</body>' in s; p.write_text(s if tag in s else s.replace('</body>',tag+'\n</body>',1),encoding='utf-8')"
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-stability.js
+          grep -q 'v3-fashion-pearl-stability.js' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html
+          git diff --check
+      - name: Browser stability QA
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/http.log 2>&1 &
+          sleep 2
+          mkdir -p /tmp/pearlqa qa-stability
+          cp .github/qa-pearl-stability.js /tmp/pearlqa/qa.js
+          cd /tmp/pearlqa
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium >/dev/null
+          timeout 160s node qa.js
+      - name: Upload QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: pearl-stability-pass
+          path: qa-stability/
+      - name: Commit validated wiring
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html
+          git commit -m 'fix(v3-fashion): wire validated Pearl stability runtime'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+      - name: Cleanup temporary QA files
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$JOB_STATUS" != "success" ]; then
+            git restore labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html 2>/dev/null || true
+          fi
+          rm -f .github/workflows/tmp-pearl-stability-pass.yml .github/qa-pearl-stability.js
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A .github/workflows/tmp-pearl-stability-pass.yml .github/qa-pearl-stability.js
+          git commit -m 'chore(ci): remove temporary Pearl stability QA' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic || true
