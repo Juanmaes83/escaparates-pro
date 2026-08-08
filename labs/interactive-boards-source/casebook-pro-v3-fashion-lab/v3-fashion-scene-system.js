@@ -34,6 +34,8 @@ window.patchFashionSceneBridge=function patchFashionSceneBridge(source){
 
   const inner=String.raw`
 /* __CASEBOOK_FASHION_RUNTIME__ ${LAB_VERSION} */
+const SEMANTIC_TYPES=${JSON.stringify(SEMANTIC_TYPES)};
+const RELATION_TYPES=${JSON.stringify(RELATION_TYPES)};
 const __fashionState={
   version:'${LAB_VERSION}',sceneId:'black-runway',enabled:true,diagnostic:false,structure:false,
   group:new THREE.Group(),decorByItem:new Map(),lights:[],original:{},shot:'OVERVIEW',quality:'editorial',
