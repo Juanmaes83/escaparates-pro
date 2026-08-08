@@ -1,0 +1,74 @@
+name: TEMP Diagnose V3 Fashion API
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab]
+    paths: ['.github/workflows/tmp-diagnose-v3-fashion-api.yml']
+permissions:
+  contents: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
+          fetch-depth: 0
+      - name: Start exact branch locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/http.log 2>&1 &
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html >/dev/null && exit 0; sleep 1; done
+          exit 1
+      - name: Install browser
+        run: |
+          mkdir -p /tmp/diag && cd /tmp/diag
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Diagnose API contract
+        run: |
+          cd /tmp/diag
+          node <<'JS'
+          const { chromium }=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1500,height:900}});
+            const events=[];
+            page.on('pageerror',e=>{events.push('PAGEERROR '+e.message);console.log('PAGEERROR',e.message)});
+            page.on('console',m=>{events.push('CONSOLE '+m.type()+' '+m.text());console.log('CONSOLE',m.type(),m.text())});
+            await page.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+            for(const ms of [1000,3000,8000,13000]){
+              await page.waitForTimeout(ms===1000?1000:ms-(ms===3000?1000:ms===8000?3000:8000));
+              const s=await page.evaluate(()=>{
+                const f=document.querySelector('.stage iframe');
+                let cw=null;try{cw=f?.contentWindow}catch(e){}
+                return {
+                  esShell:!!document.querySelector('#esShell'),
+                  v3List:!!document.querySelector('#v3ChapterList'),
+                  v3Api:typeof window.CasebookProV3,
+                  host:typeof window.__CasebookV3Host,
+                  hostApi:!!window.__CasebookV3Host?.api?.(),
+                  frame:!!f,
+                  frameReadyState:cw?.document?.readyState||null,
+                  frameCasebook:typeof cw?.CasebookPro,
+                  frameFashion:typeof cw?.CasebookPro?.fashion,
+                  frameKeys:cw?.CasebookPro?Object.keys(cw.CasebookPro):[],
+                  frameBody:(cw?.document?.body?.innerText||'').slice(0,250),
+                  status:document.querySelector('.status')?.textContent||''
+                };
+              });
+              console.log('SNAPSHOT_'+ms+'='+JSON.stringify(s));
+            }
+            console.log('EVENTS='+JSON.stringify(events));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Self-remove diagnostic workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-diagnose-v3-fashion-api.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-diagnose-v3-fashion-api.yml
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          git commit -m 'chore(ci): remove temporary Fashion API diagnostic' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
