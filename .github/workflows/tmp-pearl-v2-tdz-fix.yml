@@ -1,0 +1,46 @@
+name: TEMP Pearl V2 Init Order Fix
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-pearl-v2-tdz-fix.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Apply one-line deferred zone hide
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js')
+          s=p.read_text(encoding='utf-8')
+          old="if(typeof __v2!=='undefined'&&Array.isArray(__v2.zones))__v2.zones.forEach(z=>{try{if(z.__mesh)z.__mesh.visible=false}catch(_){}});"
+          new="setTimeout(()=>{try{if(Array.isArray(__v2.zones))__v2.zones.forEach(z=>{if(z.__mesh)z.__mesh.visible=false})}catch(_){}},0);"
+          assert old in s, 'expected V2 zone-hide line not found'
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js
+          git diff --check
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js
+          git commit -m 'fix(v3-fashion): defer legacy zone hiding until V2 is ready'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+      - name: Cleanup workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-pearl-v2-tdz-fix.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A .github/workflows/tmp-pearl-v2-tdz-fix.yml
+          git commit -m 'chore(ci): remove temporary Pearl init-order fix' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic || true
