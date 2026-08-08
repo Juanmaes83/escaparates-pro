@@ -1,0 +1,55 @@
+name: TEMP Wire Casebook PRO V3 Clone
+
+on:
+  push:
+    branches:
+      - feat/interactive-boards-casebook-pro-v3-clone
+    paths:
+      - .github/workflows/tmp-wire-casebook-pro-v3-clone.yml
+
+permissions:
+  contents: write
+
+jobs:
+  wire-and-self-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated V3 clone branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/interactive-boards-casebook-pro-v3-clone
+          fetch-depth: 0
+
+      - name: Insert exactly one V3 clone registry loader
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '    <script src="js/interactive-boards-casebook-pro-v2.js"></script>\n    <script src="js/interactive-boards-ui.js"></script>'
+          new = '    <script src="js/interactive-boards-casebook-pro-v2.js"></script>\n    <script src="js/interactive-boards-casebook-pro-v3.js"></script>\n    <script src="js/interactive-boards-ui.js"></script>'
+          if s.count(old) != 1:
+              raise SystemExit(f'Expected loader anchor exactly once, found {s.count(old)}')
+          if 'js/interactive-boards-casebook-pro-v3.js' in s:
+              raise SystemExit('V3 loader already present unexpectedly')
+          p.write_text(s.replace(old, new), encoding='utf-8')
+          PY
+          test "$(git diff --numstat -- index.html)" = $'1\t0\tindex.html'
+          grep -F '<script src="js/interactive-boards-casebook-pro-v1-1.js"></script>' index.html
+          grep -F '<script src="js/interactive-boards-casebook-pro-v2.js"></script>' index.html
+          grep -F '<script src="js/interactive-boards-casebook-pro-v3.js"></script>' index.html
+          grep -F '<script src="js/interactive-boards-ui.js"></script>' index.html
+
+      - name: Commit wiring and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/tmp-wire-casebook-pro-v3-clone.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html .github/workflows/tmp-wire-casebook-pro-v3-clone.yml
+          git diff --cached --stat
+          git commit -m 'chore(interactive-boards): expose isolated V3 clone for visual validation'
+          git push origin HEAD:feat/interactive-boards-casebook-pro-v3-clone
