@@ -1,0 +1,61 @@
+name: TEMP Fix V3 Phase2 Host Bridge
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase2-editorial-spatial-studio]
+    paths: ['.github/workflows/tmp-fix-v3-phase2-host-bridge.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase2-editorial-spatial-studio
+          fetch-depth: 0
+      - name: Verify frozen baselines
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Add V3-only host bridge
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('labs/interactive-boards-source/casebook-pro-v3/index.html')
+          s=html.read_text(encoding='utf-8')
+          needle='function api(){return frame.contentWindow&&frame.contentWindow.CasebookPro;}'
+          assert s.count(needle)==1, s.count(needle)
+          replacement=needle+'\nwindow.__CasebookV3Host={api:()=>api(),setMode:(m)=>v2SetMode(m),selected:()=>api()?.getSelected?.()||null};'
+          s=s.replace(needle,replacement,1)
+          html.write_text(s,encoding='utf-8')
+
+          p0=Path('labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js')
+          r=p0.read_text(encoding='utf-8')
+          old="function boardApi(){try{return api()}catch(_){return null}}"
+          new="function boardApi(){try{return window.__CasebookV3Host?.api?.()||null}catch(_){return null}}"
+          assert r.count(old)==1, r.count(old)
+          r=r.replace(old,new,1)
+          p0.write_text(r,encoding='utf-8')
+
+          shell=Path('labs/interactive-boards-source/casebook-pro-v3/v3-editorial-spatial-shell.js')
+          j=shell.read_text(encoding='utf-8')
+          old="function apiSafe(){try{return typeof api==='function'?api():null}catch(_){return null}}"
+          new="function apiSafe(){try{return window.__CasebookV3Host?.api?.()||null}catch(_){return null}}"
+          assert j.count(old)==1, j.count(old)
+          j=j.replace(old,new,1)
+          j=j.replace("try{v2SetMode('graph')}catch(_){}}","try{window.__CasebookV3Host?.setMode?.('graph')}catch(_){$('[data-v2mode=\"graph\"]')?.click()}}",1)
+          j=j.replace("try{v2SetMode('story')}catch(_){const b=$('[data-v2mode=\"story\"]');b?.click()}","try{window.__CasebookV3Host?.setMode?.('story')}catch(_){const b=$('[data-v2mode=\"story\"]');b?.click()}",1)
+          shell.write_text(j,encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js
+          node --check labs/interactive-boards-source/casebook-pro-v3/v3-editorial-spatial-shell.js
+          grep -q '__CasebookV3Host' labs/interactive-boards-source/casebook-pro-v3/index.html
+      - name: Verify isolation, commit, self remove
+        run: |
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+          rm .github/workflows/tmp-fix-v3-phase2-host-bridge.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix(v3): expose isolated host bridge for P0 and editorial shell'
+          git push origin HEAD:feat/casebook-pro-v3-phase2-editorial-spatial-studio
