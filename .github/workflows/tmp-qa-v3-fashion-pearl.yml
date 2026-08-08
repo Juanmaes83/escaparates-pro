@@ -1,0 +1,85 @@
+name: TEMP QA V3 Fashion Pearl
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-qa-v3-fashion-pearl.yml']
+permissions:
+  contents: write
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Prepare exact local branch and Chromium
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/pearl-http.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html >/dev/null && break; sleep 1; done
+          mkdir -p /tmp/pearlqa && cd /tmp/pearlqa
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Chromium functional and visual QA
+        run: |
+          cd /tmp/pearlqa
+          node <<'JS'
+          const {chromium}=require('playwright');
+          const fs=require('fs'),assert=require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1720,height:980},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>{errors.push('PAGEERROR '+e.message);console.log('PAGEERROR',e.message)});
+            page.on('console',m=>{if(m.type()==='error'){errors.push('CONSOLE '+m.text());console.log('CONSOLE',m.text())}});
+            await page.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+            await page.waitForSelector('#esShell',{state:'visible',timeout:30000});
+            await page.waitForFunction(()=>document.body.classList.contains('v3-fashion-pearl'),{timeout:15000});
+            await page.waitForFunction(()=>{
+              const f=document.querySelector('.stage iframe'),a=f?.contentWindow?.CasebookPro;
+              return !!(a?.fashion?.setProgress && a?.fashion?.getState && a?.fashion?.stats);
+            },{timeout:30000});
+            await page.waitForTimeout(1600);
+            const info=await page.evaluate(()=>{
+              const f=document.querySelector('.stage iframe'),a=f.contentWindow.CasebookPro;
+              return {body:[...document.body.classList],fashion:a.fashion.getState(),stats:a.fashion.stats(),director:!!window.CasebookPearlDirector,world:window.CasebookProV3?.getWorld?.()?.name||null};
+            });
+            console.log('PEARL_INFO='+JSON.stringify(info));
+            assert.ok(info.body.includes('v3-fashion-pearl'));
+            assert.equal(info.director,true);
+            assert.equal(info.fashion.sceneId,'pearl-runway');
+            fs.mkdirSync(process.env.GITHUB_WORKSPACE+'/qa-pearl',{recursive:true});
+            for(const [name,p] of [['01-arrival',.06],['02-hero',.30],['03-craft',.60],['04-portal',.90]]){
+              await page.evaluate(v=>window.CasebookPearlDirector.setProgress(v),p);
+              await page.waitForTimeout(1100);
+              await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-pearl/'+name+'.png',fullPage:true});
+            }
+            const canvas=await page.locator('.stage').screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-pearl/05-stage-only.png'});
+            fs.writeFileSync(process.env.GITHUB_WORKSPACE+'/qa-pearl/runtime.json',JSON.stringify({info,errors},null,2));
+            const fatal=errors.filter(e=>/ReferenceError|TypeError|SyntaxError|Cannot set|not defined|not a function|Pearl Fashion:/i.test(e));
+            assert.equal(fatal.length,0,'Fatal browser errors: '+fatal.join(' | '));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Upload Pearl visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-fashion-pearl-visual-qa
+          path: qa-pearl/
+          if-no-files-found: warn
+      - name: Self-remove QA workflow
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-qa-v3-fashion-pearl.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-qa-v3-fashion-pearl.yml
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          git commit -m 'chore(ci): remove temporary Pearl Fashion QA' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
