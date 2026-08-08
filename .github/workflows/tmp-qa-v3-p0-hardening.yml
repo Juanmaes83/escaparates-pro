@@ -1,0 +1,101 @@
+name: TEMP QA V3 P0 Hardening
+on:
+  push:
+    branches: [feat/casebook-pro-v3-p0-technical-hardening]
+    paths: ['.github/workflows/tmp-qa-v3-p0-hardening.yml']
+permissions:
+  contents: write
+jobs:
+  qa-and-self-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated P0 branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-p0-technical-hardening
+          fetch-depth: 0
+      - name: Fetch master baseline
+        run: git fetch origin master:refs/remotes/origin/master
+      - name: Frozen baselines must be byte untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/master -- \
+            labs/interactive-boards-source/casebook-pro-v1-1 \
+            labs/interactive-boards-source/casebook-pro-v2 \
+            js/interactive-boards-casebook-pro-v1-1.js \
+            js/interactive-boards-casebook-pro-v2.js \
+            js/interactive-boards.js \
+            js/interactive-boards-ui.js \
+            css
+          echo 'P0_FROZEN_BASELINES=OK'
+      - name: Runtime syntax and exact loader
+        shell: bash
+        run: |
+          set -euo pipefail
+          R='labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js'
+          H='labs/interactive-boards-source/casebook-pro-v3/index.html'
+          node --check "$R"
+          test "$(grep -Foc '<script src="v3-spatial-worlds-p0.js"></script>' "$H")" = '1'
+          test "$(grep -Foc '<script src="v3-spatial-worlds.js"></script>' "$H")" = '0'
+          echo 'P0_RUNTIME_SYNTAX=OK'
+          echo 'P0_LOADER_EXACT=OK'
+      - name: P0 persistence schema checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          R='labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js'
+          grep -q "projectId" "$R"
+          grep -q "worldId" "$R"
+          grep -q "indexedDB.open" "$R"
+          grep -q "WORLD_PREFIX" "$R"
+          grep -q "LEGACY_KEY" "$R"
+          grep -q "assetPut" "$R"
+          grep -q "assetGet" "$R"
+          echo 'P0_IDS_AND_INDEXEDDB=OK'
+      - name: P0 export import integration checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          R='labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js'
+          grep -q "s.v3World=exportWorldState" "$R"
+          grep -q "importWorldState(st.v3World" "$R"
+          grep -q "window.CasebookProV3" "$R"
+          grep -q "exportPortableState" "$R"
+          grep -q "delete clean.v3World" "$R"
+          echo 'P0_WORLD_EXPORT_IMPORT=OK'
+      - name: P0 hotspot anchor checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          R='labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js'
+          grep -q "findItemAnchorFromClient" "$R"
+          grep -q "sceneAnchorFromClient" "$R"
+          grep -q "projectAnchor" "$R"
+          grep -q "requestAnimationFrame(syncHotspotPositions)" "$R"
+          grep -q "type:'item'" "$R"
+          grep -q "type:'scene'" "$R"
+          echo 'P0_HOTSPOT_ANCHORS=OK'
+      - name: P0 initialization and recovery checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          R='labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js'
+          grep -q "Chapter 1" "$R"
+          grep -q "renderChapterError" "$R"
+          grep -q "finally{transitionBusy=false}" "$R"
+          grep -q "normalizeWorld" "$R"
+          echo 'P0_CHAPTER_INIT_AND_RECOVERY=OK'
+      - name: Branch scope and self remove
+        shell: bash
+        run: |
+          set -euo pipefail
+          BAD="$(git diff --name-only origin/master...HEAD | grep -Ev '^(index.html|js/interactive-boards-casebook-pro-v3.js|labs/interactive-boards-source/casebook-pro-v3/|\.github/workflows/tmp-qa-v3-p0-hardening.yml$)' || true)"
+          test -z "$BAD" || { echo 'Unexpected paths:'; echo "$BAD"; exit 41; }
+          echo 'P0_BRANCH_SCOPE=OK'
+          rm .github/workflows/tmp-qa-v3-p0-hardening.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore(ci): remove temporary V3 P0 QA workflow'
+          git push origin HEAD:feat/casebook-pro-v3-p0-technical-hardening
