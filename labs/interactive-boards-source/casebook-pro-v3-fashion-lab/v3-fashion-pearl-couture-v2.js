@@ -41,14 +41,15 @@ function __pcDress(){
     }
   }
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.setIndex(idx);geo.computeVertexNormals();
-  const mat=new THREE.MeshPhysicalMaterial({color:0xd8d0c5,roughness:.46,metalness:.015,clearcoat:.10,clearcoatRoughness:.62,side:THREE.DoubleSide});
+  const mat=new THREE.MeshPhysicalMaterial({color:0xeee8de,roughness:.46,metalness:.015,clearcoat:.10,clearcoatRoughness:.62,side:THREE.DoubleSide});
   const mesh=new THREE.Mesh(geo,mat);mesh.name='PEARL_COUTURE_HERO';mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
 }
+function __pcText(lines,w=30,h=6,hero=false){const c=document.createElement('canvas');c.width=1200;c.height=300;const x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.fillStyle='#232220';x.textBaseline='top';x.font=hero?'600 74px Georgia,Times New Roman,serif':'600 28px Arial,Helvetica,sans-serif';(Array.isArray(lines)?lines:[lines]).slice(0,3).forEach((t,i)=>x.fillText(String(t||'').toUpperCase(),26,22+i*(hero?88:52),1140));const tx=new THREE.CanvasTexture(c);tx.needsUpdate=true;const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,depthWrite:false,side:THREE.DoubleSide});const o=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m);o.renderOrder=30;return o;}
 function __pcArchitecture(){
   const g=__fashionState.group;g.name='CASEBOOK_FASHION_PEARL_COUTURE_V2';scene.add(g);
-  const cyc=__pGradientCyclorama();cyc.material.roughness=.98;g.add(cyc);
-  const floor=new THREE.Mesh(new THREE.CircleGeometry(84,160),__fMat(0xb8b4ae,.61,.06));floor.scale.y=.47;floor.position.set(__pcState.center.x,-19,-1.15);floor.receiveShadow=true;g.add(floor);
-  const inner=new THREE.Mesh(new THREE.CircleGeometry(47,144),__fMat(0xd1cdc6,.42,.10));inner.scale.y=.34;inner.position.set(__pcState.center.x,-14,-.76);inner.receiveShadow=true;g.add(inner);
+  const cyc=__pGradientCyclorama();cyc.material.roughness=.98;cyc.material.color.set(0xbab6b0);g.add(cyc);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(84,160),__fMat(0xa9a6a1,.63,.07));floor.scale.y=.47;floor.position.set(__pcState.center.x,-19,-1.15);floor.receiveShadow=true;g.add(floor);
+  const inner=new THREE.Mesh(new THREE.CircleGeometry(47,144),__fMat(0xc4c0b9,.44,.10));inner.scale.y=.34;inner.position.set(__pcState.center.x,-14,-.76);inner.receiveShadow=true;g.add(inner);
 
   const dress=__pcDress();g.add(dress);
   const cx=__pcState.center.x;
@@ -67,16 +68,16 @@ function __pcArchitecture(){
   const scrimR=new THREE.Mesh(new THREE.PlaneGeometry(25,58),glass.clone());scrimR.position.set(34,0,4.5);scrimR.rotation.z=.075;g.add(scrimR);
 
   const names=items.slice(0,3).map((it,i)=>String(it?.title||it?.name||['LOOK 01','MATERIAL','TALENT'][i]).toUpperCase());
-  const title=__fTextPlane(['AFTER DARK / FW26','PEARL COUTURE STUDY'],48,9.5,'hero');title.name='PEARL_COPY_HERO';title.position.set(-61,49,8.2);g.add(title);
-  const look=__fTextPlane(['01 / SILHOUETTE',names[0]||'LOOK 01'],28,5.2,'label');look.position.set(39,34,7.8);g.add(look);
-  const material=__fTextPlane(['02 / MATERIAL',names[1]||'PEARL SATIN'],27,5,'label');material.position.set(40,-31,7.7);g.add(material);
-  const index=__fTextPlane(['CASEBOOK PRO V3 / FASHION','SCENE 01 — PEARL RUNWAY'],34,5.4,'label');index.position.set(-50,-43,7.5);g.add(index);
+  const title=__pcText(['AFTER DARK / FW26','PEARL COUTURE STUDY'],48,10,true);title.name='PEARL_COPY_HERO';title.position.set(-57,43,8.2);g.add(title);
+  const look=__pcText(['01 / SILHOUETTE',names[0]||'LOOK 01'],28,5.2,false);look.position.set(39,34,7.8);g.add(look);
+  const material=__pcText(['02 / MATERIAL',names[1]||'PEARL SATIN'],27,5,false);material.position.set(40,-31,7.7);g.add(material);
+  const index=__pcText(['CASEBOOK PRO V3 / FASHION','SCENE 01 — PEARL RUNWAY'],34,5.4,false);index.position.set(-50,-43,7.5);g.add(index);
 
   const burgundy=new THREE.Mesh(new THREE.CylinderGeometry(2.9,2.9,.72,72),__fMat(0x6f1723,.34,.26));burgundy.rotation.x=Math.PI/2;burgundy.position.set(41,-22,7.2);burgundy.castShadow=true;g.add(burgundy);
   const chrome=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,18,72),__fMat(0x969590,.17,.88));chrome.position.set(46,-5,6.9);chrome.castShadow=true;g.add(chrome);
 }
 function __pcLights(){
-  renderer.shadowMap.enabled=true;if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.82;
+  renderer.shadowMap.enabled=true;if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.77;
   __pcSilenceLegacyLights();
   const add=(l,t)=>{scene.add(l);__fashionState.lights.push(l);if(t){scene.add(t);l.target=t;__fashionState.lights.push(t);}};
   const hero=new THREE.Object3D();hero.position.set(__pcState.center.x,12,6);
@@ -90,13 +91,13 @@ function __pcCamera(x,y,z,lx=__pcState.center.x,ly=9,lz=5){
 }
 function __pcApply(){
   __fashionState.enabled=true;__fClear();__pcBounds();
-  scene.background=new THREE.Color(0xc5c1bb);scene.fog=new THREE.FogExp2(0xc5c1bb,.0013);
-  __pcHideLegacy();__pcArchitecture();__pcLights();__pcCamera(__pcState.center.x,6,132,__pcState.center.x,10,5);renderer.render(scene,camera);__pcState.applied=true;
+  scene.background=new THREE.Color(0xb8b5b0);scene.fog=new THREE.FogExp2(0xb8b5b0,.00115);
+  __pcHideLegacy();__pcArchitecture();__pcLights();__pcCamera(__pcState.center.x,7,165,__pcState.center.x,9,5);renderer.render(scene,camera);__pcState.applied=true;
   return __fashionApi.stats();
 }
 function __pcProgress(p){
   p=Math.max(0,Math.min(1,Number(p)||0));const a=__pSmooth(0,.22,p),b=__pSmooth(.20,.52,p),c=__pSmooth(.50,.79,p),d=__pSmooth(.77,1,p),cx=__pcState.center.x;
-  const x=cx+7*b-11*c+16*d,y=6-3*a+7*b-5*c+4*d,z=132-34*a-17*b+15*c+20*d;
+  const x=cx+4*b-8*c+11*d,y=7-2*a+5*b-3*c+3*d,z=165-35*a-9*b+7*c+18*d;
   __pcCamera(x,y,z,cx+(4*b-3*c),10+4*b-2*c,6);
   const dress=__fashionState.group.getObjectByName('PEARL_COUTURE_HERO');if(dress){dress.rotation.y=-.10+.28*b-.20*c+.14*d;dress.rotation.z=.012*Math.sin(p*Math.PI*2);}
   const halo=__fashionState.group.getObjectByName('PEARL_PORTAL_HALO');if(halo){halo.rotation.z=.05+p*.24;}
