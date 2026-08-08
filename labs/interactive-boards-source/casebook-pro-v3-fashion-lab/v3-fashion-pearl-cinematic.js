@@ -159,7 +159,6 @@ function bindCinematic(){
   stage.addEventListener('wheel',e=>{if(!document.body.classList.contains('v3-fashion-pearl'))return;target=Math.max(0,Math.min(1,target+e.deltaY*.00055));},{passive:true});
   window.CasebookPearlDirector={version:VERSION,get progress(){return p},setProgress(v){target=Math.max(0,Math.min(1,Number(v)||0));return target},destroy(){cancelAnimationFrame(raf)}};
 }
-const obs=new MutationObserver(()=>{renameUi();bindCinematic()});
-function boot(){renameUi();bindCinematic();obs.observe(document.documentElement,{subtree:true,childList:true});setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION};}
+function boot(){renameUi();bindCinematic();const sync=setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION,stopUiSync(){clearInterval(sync)}};}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
