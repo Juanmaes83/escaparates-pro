@@ -1,0 +1,82 @@
+name: TEMP Playwright V3 Phase2 Visual QA
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase2-editorial-spatial-studio]
+    paths: ['.github/workflows/tmp-playwright-v3-phase2-visual-qa.yml']
+permissions:
+  contents: write
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase2-editorial-spatial-studio
+      - name: Install Playwright Chromium
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium
+      - name: Run real browser QA and screenshots
+        env:
+          V3_URL: https://escaparates-djvxv4fs5-juanma-espinosas-projects.vercel.app/labs/interactive-boards-source/casebook-pro-v3/index.html
+        run: |
+          node <<'JS'
+          const { chromium } = require('playwright');
+          const assert = require('assert');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1720,height:980},deviceScaleFactor:1});
+            const errors=[];
+            page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
+            page.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE '+m.text())});
+            await page.goto(process.env.V3_URL,{waitUntil:'networkidle',timeout:120000});
+            await page.waitForSelector('#esShell',{state:'visible',timeout:30000});
+            await page.waitForFunction(()=>document.body.classList.contains('v3-editorial-studio'),null,{timeout:10000});
+            await page.waitForFunction(()=>document.querySelector('#esWorldMeta') && !document.querySelector('#esWorldMeta').textContent.includes('Loading'),null,{timeout:30000});
+            const state=await page.evaluate(()=>({
+              shell:!!document.querySelector('#esShell'),
+              editorial:document.body.classList.contains('v3-editorial-studio'),
+              oldPanelDisplay:getComputedStyle(document.querySelector('#app>.panel')).display,
+              leftVisible:!!document.querySelector('.esLeft'),
+              inspectorVisible:!!document.querySelector('.esRight'),
+              canvas:!!document.querySelector('.stage iframe'),
+              worldTitle:document.querySelector('#esWorldTitle')?.textContent,
+              meta:document.querySelector('#esWorldMeta')?.textContent,
+              initError:[...document.querySelectorAll('*')].some(x=>x.textContent?.includes('Editor V2 no disponible'))
+            }));
+            console.log('V3_PHASE2_STATE='+JSON.stringify(state));
+            assert.equal(state.shell,true);
+            assert.equal(state.editorial,true);
+            assert.equal(state.oldPanelDisplay,'none');
+            assert.equal(state.leftVisible,true);
+            assert.equal(state.inspectorVisible,true);
+            assert.equal(state.canvas,true);
+            assert.equal(state.initError,false);
+            await page.screenshot({path:'v3-phase2-editorial.png',fullPage:true});
+            await page.selectOption('#esTheme','fashion');
+            await page.waitForTimeout(500);
+            assert.equal(await page.evaluate(()=>document.body.dataset.esTheme),'fashion');
+            await page.screenshot({path:'v3-phase2-fashion-brutalist.png',fullPage:true});
+            const fatal=errors.filter(e=>/ReferenceError|TypeError|SyntaxError|not available|timed out/i.test(e));
+            console.log('BROWSER_ERRORS='+JSON.stringify(errors));
+            assert.equal(fatal.length,0,'Fatal browser errors: '+fatal.join(' | '));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-phase2-playwright-screenshots
+          path: |
+            v3-phase2-editorial.png
+            v3-phase2-fashion-brutalist.png
+      - name: Remove temporary QA workflow
+        if: always()
+        run: |
+          rm .github/workflows/tmp-playwright-v3-phase2-visual-qa.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore(ci): remove temporary V3 Playwright visual QA' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase2-editorial-spatial-studio
