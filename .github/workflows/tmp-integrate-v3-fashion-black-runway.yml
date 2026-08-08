@@ -1,0 +1,82 @@
+name: TEMP Integrate V3 Fashion Black Runway
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab]
+    paths: ['.github/workflows/tmp-integrate-v3-fashion-black-runway.yml']
+permissions:
+  contents: write
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
+          fetch-depth: 0
+      - name: Freeze protected baselines
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- \
+            labs/interactive-boards-source/casebook-pro-v1-1 \
+            labs/interactive-boards-source/casebook-pro-v2 \
+            js/interactive-boards-casebook-pro-v1-1.js \
+            js/interactive-boards-casebook-pro-v2.js \
+            js/interactive-boards.js js/interactive-boards-ui.js css
+          test -d labs/interactive-boards-source/casebook-pro-v3-fashion-lab
+      - name: Correct runtime syntax and wire Fashion layer
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          js=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js')
+          s=js.read_text(encoding='utf-8')
+          replacements={
+            "x<0?.58:-.58":"x<0?.58:-.58".replace("?.58", " ? .58"),
+            "__fashionState.diagnostic?.82:1.02":"__fashionState.diagnostic ? .82 : 1.02",
+            "__fashionState.diagnostic?.55:1.25":"__fashionState.diagnostic ? .55 : 1.25",
+            "__fashionState.diagnostic?.25:.42":"__fashionState.diagnostic ? .25 : .42",
+            "type==='material'?.78:.46":"type==='material' ? .78 : .46",
+          }
+          # First replacement is written separately to keep Python dictionary readable.
+          replacements["x<0?.58:-.58"]="x<0 ? .58 : -.58"
+          for old,new in replacements.items():
+            if old in s:
+              s=s.replace(old,new)
+          js.write_text(s,encoding='utf-8')
+
+          html=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html')
+          h=html.read_text(encoding='utf-8')
+          css_old='<link rel="stylesheet" href="v3-editorial-spatial-shell.css">'
+          css_new=css_old+'\n<link rel="stylesheet" href="v3-fashion-art-direction.css">\n<script src="v3-fashion-scene-system.js"></script>'
+          if 'v3-fashion-art-direction.css' not in h:
+            assert h.count(css_old)==1, h.count(css_old)
+            h=h.replace(css_old,css_new,1)
+          old='frame.srcdoc=patchV3AnchorBridge(patchSource(originalSource,boot));'
+          new='frame.srcdoc=patchFashionSceneBridge(patchV3AnchorBridge(patchSource(originalSource,boot)));'
+          if new not in h:
+            assert h.count(old)==1, h.count(old)
+            h=h.replace(old,new,1)
+          html.write_text(h,encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
+          test "$(grep -c 'v3-fashion-art-direction.css' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html)" -eq 1
+          test "$(grep -c 'v3-fashion-scene-system.js' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html)" -eq 1
+          test "$(grep -c 'patchFashionSceneBridge(patchV3AnchorBridge' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html)" -eq 1
+          ! grep -Fq '__fashionState.diagnostic?.' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
+          ! grep -Fq "type==='material'?." labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
+      - name: Commit only Fashion-approved paths and self-remove
+        run: |
+          rm .github/workflows/tmp-integrate-v3-fashion-black-runway.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html \
+            labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js \
+            .github/workflows/tmp-integrate-v3-fashion-black-runway.yml
+          git diff --cached --name-only | sort > /tmp/changed
+          printf '%s\n' \
+            '.github/workflows/tmp-integrate-v3-fashion-black-runway.yml' \
+            'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html' \
+            'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js' | sort > /tmp/allowed
+          diff -u /tmp/allowed /tmp/changed
+          git commit -m 'feat(v3-fashion): integrate Black Runway scene system'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
