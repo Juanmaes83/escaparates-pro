@@ -1,0 +1,108 @@
+name: TEMP Add V3 3D Anchor Bridge
+on:
+  push:
+    branches: [feat/casebook-pro-v3-p0-technical-hardening]
+    paths: ['.github/workflows/tmp-add-v3-3d-anchor-bridge.yml']
+permissions:
+  contents: write
+jobs:
+  patch-qa-self-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-p0-technical-hardening
+          fetch-depth: 0
+      - name: Fetch master and verify frozen files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Add V3-only Three.js anchor bridge and runtime integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          html=Path('labs/interactive-boards-source/casebook-pro-v3/index.html')
+          s=html.read_text(encoding='utf-8')
+          old='frame.srcdoc=patchSource(originalSource,boot);'
+          assert s.count(old)==1, s.count(old)
+          bridge_js=r'''function __v3AnchorAt(cx,cy){
+  raycaster.setFromCamera({x:(cx/innerWidth)*2-1,y:-(cy/innerHeight)*2+1},camera);
+  const hits=raycaster.intersectObjects(hitMeshes,false);
+  for(const h of hits){
+    const it=h.object&&h.object.userData&&h.object.userData.item;
+    if(it&&it.grp&&it.grp.visible){
+      it.grp.updateWorldMatrix(true,false);
+      const local=it.grp.worldToLocal(h.point.clone());
+      return {type:"item3d",itemId:String(it.id),local:[local.x,local.y,local.z],uv:h.uv?[h.uv.x,h.uv.y]:null};
+    }
+  }
+  const p=screenToBoard(cx,cy,0);
+  return p?{type:"world3d",world:[p.x,p.y,p.z]}:null;
+}
+function __v3ProjectAnchor(a){
+  if(!a)return null;
+  let p=null;
+  if(a.type==="item3d"&&a.itemId&&Array.isArray(a.local)){
+    const it=items.find(q=>String(q.id)===String(a.itemId));
+    if(!it||!it.grp)return null;
+    it.grp.updateWorldMatrix(true,false);
+    p=it.grp.localToWorld(new THREE.Vector3(Number(a.local[0])||0,Number(a.local[1])||0,Number(a.local[2])||0));
+  }else if(a.type==="world3d"&&Array.isArray(a.world)){
+    p=new THREE.Vector3(Number(a.world[0])||0,Number(a.world[1])||0,Number(a.world[2])||0);
+  }
+  if(!p)return null;
+  const sp=worldToScreen(p);
+  return {x:sp.x,y:sp.y,visible:Number.isFinite(sp.x)&&Number.isFinite(sp.y)};
+}
+function __v3AnchorFromScreenPercent(xPct,yPct){
+  return __v3AnchorAt(clamp(Number(xPct)||0,0,100)/100*innerWidth,clamp(Number(yPct)||0,0,100)/100*innerHeight);
+}
+'''
+          outer='''\nfunction patchV3AnchorBridge(source){\n  const marker='window.CasebookPro={';\n  if(!String(source).includes(marker)) throw new Error("V3 anchor bridge: CasebookPro marker not found");\n  const bridge='''+json.dumps(bridge_js)+''';\n  let out=String(source).replace(marker,bridge+"\\n"+marker);\n  const apiMarker='capturePNG:__capturePNG,center:';\n  if(!out.includes(apiMarker)) throw new Error("V3 anchor bridge: API marker not found");\n  out=out.replace(apiMarker,'v3AnchorAt:__v3AnchorAt,v3ProjectAnchor:__v3ProjectAnchor,v3AnchorFromScreenPercent:__v3AnchorFromScreenPercent,'+apiMarker);\n  return out;\n}\n'''
+          # Insert the outer patch function immediately before renderEditor.
+          marker='async function renderEditor(loadTemplate=true){'
+          assert s.count(marker)==1
+          s=s.replace(marker,outer+'\n'+marker,1)
+          s=s.replace(old,'frame.srcdoc=patchV3AnchorBridge(patchSource(originalSource,boot));',1)
+          html.write_text(s,encoding='utf-8')
+
+          rt=Path('labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js')
+          r=rt.read_text(encoding='utf-8')
+          old_place="function placementFromEvent(e){const anchor=findItemAnchorFromClient(e.clientX,e.clientY)||sceneAnchorFromClient(e.clientX,e.clientY);return{x:anchor.x*100,y:anchor.y*100,anchor}}"
+          new_place='''function placementFromEvent(e){\n  const fr=preview(),rr=fr?.getBoundingClientRect(),a=boardApi();\n  if(rr&&a?.v3AnchorAt){\n    try{const anchor=a.v3AnchorAt(e.clientX-rr.left,e.clientY-rr.top);if(anchor)return{x:clamp((e.clientX-rr.left)/rr.width*100,0,100),y:clamp((e.clientY-rr.top)/rr.height*100,0,100),anchor}}catch(err){console.warn('V3 3D anchor fallback',err)}\n  }\n  const anchor=findItemAnchorFromClient(e.clientX,e.clientY)||sceneAnchorFromClient(e.clientX,e.clientY);return{x:anchor.x*100,y:anchor.y*100,anchor};\n}'''
+          assert r.count(old_place)==1
+          r=r.replace(old_place,new_place,1)
+          old_proj="function projectAnchor(anchor){\n  const st=stage(),sr=st?.getBoundingClientRect(),fr=preview(),rr=fr?.getBoundingClientRect();if(!sr||!rr||!anchor)return null;\n  let cx,cy;"
+          new_proj="function projectAnchor(anchor){\n  const st=stage(),sr=st?.getBoundingClientRect(),fr=preview(),rr=fr?.getBoundingClientRect();if(!sr||!rr||!anchor)return null;\n  const a=boardApi();if(a?.v3ProjectAnchor&&(anchor.type==='item3d'||anchor.type==='world3d')){try{const p=a.v3ProjectAnchor(anchor);if(p&&Number.isFinite(p.x)&&Number.isFinite(p.y))return{x:clamp((rr.left+p.x-sr.left)/sr.width*100,0,100),y:clamp((rr.top+p.y-sr.top)/sr.height*100,0,100)}}catch(err){console.warn('V3 3D projection fallback',err)}}\n  let cx,cy;"
+          assert r.count(old_proj)==1
+          r=r.replace(old_proj,new_proj,1)
+          old_commit="h.x=clamp(Number(q('#v3HsX').value)||0,0,100);h.y=clamp(Number(q('#v3HsY').value)||0,0,100);h.anchor=h.anchor||{type:'scene'};h.anchor.x=h.x/100;h.anchor.y=h.y/100;h.targetChapterId"
+          new_commit="h.x=clamp(Number(q('#v3HsX').value)||0,0,100);h.y=clamp(Number(q('#v3HsY').value)||0,0,100);if(h.anchor?.type==='item3d'||h.anchor?.type==='world3d'){try{h.anchor=boardApi()?.v3AnchorFromScreenPercent?.(h.x,h.y)||h.anchor}catch(_){}}else{h.anchor=h.anchor||{type:'scene'};h.anchor.x=h.x/100;h.anchor.y=h.y/100;}h.targetChapterId"
+          assert r.count(old_commit)==1
+          r=r.replace(old_commit,new_commit,1)
+          old_anchor="const anchor=h.anchor?.type==='item'?`ITEM · ${h.anchor.itemId}`:'SCENE';"
+          new_anchor="const anchor=h.anchor?.type==='item3d'?`ITEM 3D · ${h.anchor.itemId}`:h.anchor?.type==='world3d'?'WORLD 3D':h.anchor?.type==='item'?`ITEM · ${h.anchor.itemId}`:'SCENE';"
+          assert r.count(old_anchor)==1
+          r=r.replace(old_anchor,new_anchor,1)
+          rt.write_text(r,encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js
+          grep -q 'patchV3AnchorBridge' labs/interactive-boards-source/casebook-pro-v3/index.html
+          grep -q 'v3AnchorAt:__v3AnchorAt' labs/interactive-boards-source/casebook-pro-v3/index.html
+          grep -q "anchor.type==='item3d'||anchor.type==='world3d'" labs/interactive-boards-source/casebook-pro-v3/v3-spatial-worlds-p0.js
+      - name: Verify scope, commit, self remove
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+          rm .github/workflows/tmp-add-v3-3d-anchor-bridge.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix(v3): anchor hotspots to Three.js world and item points'
+          git push origin HEAD:feat/casebook-pro-v3-p0-technical-hardening
