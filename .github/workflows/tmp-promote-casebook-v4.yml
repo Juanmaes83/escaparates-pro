@@ -1,0 +1,55 @@
+name: Temporary Promote Casebook V4
+on:
+  push:
+    branches:
+      - feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+permissions:
+  contents: write
+jobs:
+  promote:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Promote visible V4 labels
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          replacements = {
+            'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-editorial-spatial-shell.js': [
+              ('<b>Casebook Pro V3</b>', '<b>Casebook Pro V4</b>'),
+            ],
+            'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js': [
+              ('CASEBOOK PRO V3 / FASHION', 'CASEBOOK PRO V4 / FASHION'),
+            ],
+            'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html': [
+              ('<title>CASEBOOK PRO V3 — Editorial Spatial Studio</title>', '<title>CASEBOOK PRO V4 — Fashion Pearl Spatial World</title>'),
+            ],
+          }
+          for file, reps in replacements.items():
+              p = Path(file)
+              s = p.read_text(encoding='utf-8')
+              for old, new in reps:
+                  if old not in s:
+                      raise SystemExit(f'Missing expected token in {file}: {old}')
+                  s = s.replace(old, new, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-editorial-spatial-shell.js
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js
+          grep -q 'Casebook Pro V4' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-editorial-spatial-shell.js
+          grep -q 'CASEBOOK PRO V4 / FASHION' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js
+          grep -q 'CASEBOOK PRO V4 — Fashion Pearl Spatial World' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html
+      - name: Commit promotion and cleanup workflow
+        run: |
+          rm -f .github/workflows/tmp-promote-casebook-v4.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-editorial-spatial-shell.js labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html .github/workflows/tmp-promote-casebook-v4.yml
+          git commit -m 'chore(casebook): finalize Casebook PRO V4 product labels'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
