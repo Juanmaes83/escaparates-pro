@@ -1,0 +1,75 @@
+name: TEMP QA3 V3 Fashion Black Runway
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab]
+    paths: ['.github/workflows/tmp-qa3-v3-fashion-black-runway.yml']
+permissions:
+  contents: write
+jobs:
+  black-runway:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
+          fetch-depth: 0
+      - name: Protected baseline + source gates
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-scene-system.js
+      - name: Exact local server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/http.log 2>&1 &
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html >/dev/null && exit 0; sleep 1; done
+          exit 1
+      - name: Browser runtime
+        run: |
+          mkdir -p /tmp/qa && cd /tmp/qa
+          npm init -y >/dev/null 2>&1
+          npm install playwright@latest --silent
+          npx playwright install --with-deps chromium >/dev/null
+      - name: Validate Black Runway end to end
+        run: |
+          cd /tmp/qa
+          node <<'JS'
+          const {chromium}=require('playwright');const assert=require('assert'),fs=require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage({viewport:{width:1720,height:980},deviceScaleFactor:1});
+            const errors=[];page.on('pageerror',e=>{errors.push('PAGEERROR '+e.message);console.log('PAGEERROR',e.message)});page.on('console',m=>{if(m.type()==='error'){errors.push('CONSOLE '+m.text());console.log('CONSOLE ERROR',m.text())}});
+            await page.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:30000});
+            await page.waitForFunction(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.stats,{timeout:30000});
+            await page.waitForSelector('#esShell',{state:'visible',timeout:30000});
+            await page.waitForFunction(()=>window.CasebookProV3?.getWorld?.(),{timeout:15000});
+            await page.waitForTimeout(1600);
+            fs.mkdirSync(process.env.GITHUB_WORKSPACE+'/qa-fashion',{recursive:true});
+            const snap=async()=>page.evaluate(()=>{const f=document.querySelector('.stage iframe'),a=f.contentWindow.CasebookPro.fashion;return {shell:!!document.querySelector('#esShell'),lab:document.body.classList.contains('v3-fashion-lab'),theme:document.body.dataset.esTheme,api:!!f.contentWindow.CasebookPro,v3:!!window.CasebookProV3,fashion:a.getState(),stats:a.stats(),world:window.CasebookProV3.getWorld(),panel:!!document.querySelector('.fashionLabPanel')}});
+            const overview=await snap();console.log('OVERVIEW='+JSON.stringify(overview));
+            assert.equal(overview.shell,true);assert.equal(overview.lab,true);assert.equal(overview.theme,'fashion');assert.equal(overview.api,true);assert.equal(overview.v3,true);assert.equal(overview.panel,true);assert.equal(overview.fashion.sceneId,'black-runway');assert.ok(overview.stats.meshes>10);assert.ok(overview.stats.triangles>0);
+            await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/01-black-runway-overview.png',fullPage:true});
+            await page.selectOption('#flShot','DETAIL');await page.waitForTimeout(900);const detail=await snap();assert.equal(detail.fashion.shot,'DETAIL');await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/02-black-runway-detail.png',fullPage:true});
+            await page.click('#flNoPost');await page.waitForTimeout(650);const noPost=await snap();assert.equal(noPost.fashion.diagnostic,true);await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/03-black-runway-no-post.png',fullPage:true});
+            await page.click('#flStructure');await page.waitForTimeout(500);const structure=await snap();assert.equal(structure.fashion.structure,true);await page.screenshot({path:process.env.GITHUB_WORKSPACE+'/qa-fashion/04-black-runway-structure.png',fullPage:true});
+            const fatal=errors.filter(e=>/ReferenceError|TypeError|SyntaxError|Cannot set|not defined|not a function|Fashion bridge/i.test(e));console.log('ERRORS='+JSON.stringify(errors));assert.equal(fatal.length,0,'Fatal: '+fatal.join(' | '));
+            fs.writeFileSync(process.env.GITHUB_WORKSPACE+'/qa-fashion/runtime.json',JSON.stringify({overview,detail,noPost,structure,errors},null,2));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Upload Black Runway evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v3-fashion-black-runway-qa3
+          path: qa-fashion/
+          if-no-files-found: warn
+      - name: Self-remove QA3 only
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-qa3-v3-fashion-black-runway.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-qa3-v3-fashion-black-runway.yml
+          test "$(git diff --cached --name-only | wc -l)" -eq 1
+          git commit -m 'chore(ci): remove temporary Black Runway QA3' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-spatial-scene-lab
