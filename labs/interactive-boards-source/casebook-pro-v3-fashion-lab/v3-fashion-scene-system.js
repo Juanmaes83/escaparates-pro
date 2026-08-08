@@ -237,6 +237,26 @@ __fApply();
   return String(source).replace(marker,inner+'\n'+marker.replace('{','{fashion:__fashionApi,'));
 };
 
+async function waitFor(fn,tries=80,ms=100){for(let i=0;i<tries;i++){try{const v=fn();if(v)return v}catch(_){ }await new Promise(r=>setTimeout(r,ms))}return null}
+async function seedFashionStarter(force=false){
+  const w=window.CasebookProV3?.getWorld?.();
+  const count=api()?.exportState?.()?.items?.length||0;
+  const pristine=!!w&&w.name==='Untitled Spatial World'&&w.chapters?.length===1&&count===0;
+  const key='casebook-v3-fashion-starter-seeded-v2';
+  if(!force&&(!pristine||localStorage.getItem(key)))return false;
+  const preset=q('#preset'),load=q('#loadPresetBtn');if(!preset||!load)return false;
+  localStorage.setItem(key,'loading');
+  preset.value='fashion';preset.dispatchEvent(new Event('change',{bubbles:true}));load.click();
+  const loaded=await waitFor(()=>{const a=api(),n=a?.exportState?.()?.items?.length||0;return a&&n>=8?a:null},100,120);
+  if(!loaded){localStorage.removeItem(key);return false}
+  const name=q('#v3WorldName');if(name){name.value='AFTER DARK / FW26';name.dispatchEvent(new Event('change',{bubbles:true}))}
+  window.CasebookProV3?.save?.();
+  loaded.fashion?.apply?.();loaded.fashion?.setShot?.('OVERVIEW');
+  localStorage.setItem(key,'ready');
+  setTimeout(()=>{window.CasebookProV3?.save?.();enhanceInspector()},350);
+  return true;
+}
+
 function markLab(){
   document.body.classList.add('v3-fashion-lab');
   try{localStorage.setItem('casebook-v3-editorial-theme','fashion')}catch(_){ }
@@ -255,7 +275,7 @@ function fashionPanel(){
     <div class="flSceneGrid">${Object.entries(SCENES).map(([id,s])=>`<button class="flSceneBtn ${id==='black-runway'?'active':''}" data-fl-scene="${id}" ${s.status==='LOCKED'?'disabled':''}><b>${esc(s.label)}</b><small>${esc(s.note)}${s.status==='LOCKED'?' · after approval':''}</small></button>`).join('')}</div>
     <div class="flControl"><label><span>Camera intent</span><span id="flShotRead">OVERVIEW</span></label><select id="flShot">${SHOTS.map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
     <div class="flToggleRow"><button class="flToggle" id="flNoPost">No-post diagnostic</button><button class="flToggle" id="flStructure">Structure</button></div>
-    <div class="flToggleRow"><button class="flToggle" id="flRefresh">Refresh objects</button><button class="flToggle" id="flFrameSelected">Frame selected</button></div>
+    <div class="flToggleRow"><button class="flToggle" id="flRefresh">Refresh objects</button><button class="flToggle" id="flFrameSelected">Frame selected</button></div><div class="flToggleRow"><button class="flToggle" id="flStarter" style="flex:2">Reload Black Runway Starter</button></div>
     <div class="flQuality" id="flQuality"><b>BLACK RUNWAY / QUALITY GATE</b><br>Form → material → light → interaction. Bloom/particles are not used to carry the scene.</div>
     <div style="display:none" data-fl-context>${esc(c?.name||'')}</div>
   </div>`;
@@ -267,6 +287,7 @@ function bindPanel(root){
   const structure=q('#flStructure',root);if(structure)structure.onclick=()=>{const v=sceneApi()?.setStructure?.(!structure.classList.contains('on'));structure.classList.toggle('on',!!v)};
   const refresh=q('#flRefresh',root);if(refresh)refresh.onclick=()=>{const s=sceneApi()?.refresh?.();if(s)q('#flQuality',root).innerHTML=`<b>RENDERER CHECK</b><br>${s.items} objects · ${s.relationships} relations · ${s.meshes} meshes · ${s.triangles.toLocaleString()} tris`};
   const frame=q('#flFrameSelected',root);if(frame)frame.onclick=()=>{const sel=selected();sceneApi()?.setShot?.('DETAIL',sel?.id||null);if(shot)shot.value='DETAIL';q('#flShotRead',root).textContent='DETAIL'};
+  const starter=q('#flStarter',root);if(starter)starter.onclick=async()=>{starter.disabled=true;starter.textContent='Loading Fashion Starter…';await seedFashionStarter(true);starter.textContent='Reload Black Runway Starter';starter.disabled=false};
   qa('[data-fl-scene]',root).forEach(b=>b.onclick=()=>{if(b.disabled)return;const r=sceneApi()?.setScene?.(b.dataset.flScene);if(r?.ok){qa('[data-fl-scene]',root).forEach(x=>x.classList.toggle('active',x===b))}});
 }
 
@@ -286,6 +307,7 @@ function boot(){
   const observer=new MutationObserver(()=>enhanceInspector());const shell=q('#esShell');if(shell)observer.observe(shell,{subtree:true,childList:true});
   setInterval(syncRuntime,700);
   window.CasebookFashionLab={version:LAB_VERSION,semanticTypes:SEMANTIC_TYPES.slice(),relationshipTypes:RELATION_TYPES.slice(),scenes:{...SCENES},sceneApi};
+  setTimeout(()=>seedFashionStarter(false).catch(e=>console.warn('[Fashion Lab] starter seed skipped',e)),900);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,60));else setTimeout(boot,60);
 })();
