@@ -1,0 +1,39 @@
+name: TEMP Fix Pearl Observer
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-fix-pearl-observer.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Remove observer feedback loop
+        run: |
+          FILE='labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js'
+          grep -Fq "const obs=new MutationObserver(()=>{renameUi();bindCinematic()});" "$FILE"
+          sed -i "/const obs=new MutationObserver(()=>{renameUi();bindCinematic()});/d" "$FILE"
+          OLD="function boot(){renameUi();bindCinematic();obs.observe(document.documentElement,{subtree:true,childList:true});setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION};}"
+          NEW="function boot(){renameUi();bindCinematic();const sync=setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION,stopUiSync(){clearInterval(sync)}};}"
+          grep -Fq "$OLD" "$FILE"
+          sed -i "s|$OLD|$NEW|" "$FILE"
+          node --check "$FILE"
+          ! grep -q 'MutationObserver' "$FILE"
+      - name: Commit exact runtime and self-remove
+        run: |
+          rm .github/workflows/tmp-fix-pearl-observer.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js .github/workflows/tmp-fix-pearl-observer.yml
+          git diff --cached --name-only | sort >/tmp/changed
+          printf '%s\n' '.github/workflows/tmp-fix-pearl-observer.yml' 'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js' | sort >/tmp/allowed
+          diff -u /tmp/allowed /tmp/changed
+          git commit -m 'fix(v3-fashion): remove Pearl observer feedback loop'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
