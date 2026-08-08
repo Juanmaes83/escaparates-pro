@@ -26,16 +26,12 @@ jobs:
           set -euo pipefail
           SOURCE_URL='https://raw.githubusercontent.com/Juanmaes83/CASEBOOK-PRO-V2-Spatial-Storytelling-System/main/CASEBOOK_PRO_V2_SPATIAL_STORYTELLING_STANDALONE%20%282%29.html'
           EXPECTED_GIT_BLOB='abe3674c2bc29f0acdb4866c7a76a0714039a058'
-          EXPECTED_SIZE='1341592'
           curl --fail --location --silent --show-error "$SOURCE_URL" --output /tmp/casebook-pro-v2.html
           ACTUAL_SIZE="$(wc -c < /tmp/casebook-pro-v2.html | tr -d ' ')"
           ACTUAL_BLOB="$(git hash-object /tmp/casebook-pro-v2.html)"
-          echo "Downloaded source: size=$ACTUAL_SIZE git_blob=$ACTUAL_BLOB"
-          echo "API metadata:      size=$EXPECTED_SIZE git_blob=$EXPECTED_GIT_BLOB"
-          if [ "$ACTUAL_SIZE" != "$EXPECTED_SIZE" ] || [ "$ACTUAL_BLOB" != "$EXPECTED_GIT_BLOB" ]; then
-            echo 'IDENTITY_CHECK_FAILED: refusing to copy source.'
-            exit 23
-          fi
+          ACTUAL_SHA256="$(sha256sum /tmp/casebook-pro-v2.html | awk '{print $1}')"
+          echo "Canonical source: size=$ACTUAL_SIZE git_blob=$ACTUAL_BLOB sha256=$ACTUAL_SHA256"
+          test "$ACTUAL_BLOB" = "$EXPECTED_GIT_BLOB"
           mkdir -p labs/interactive-boards-source/casebook-pro-v2
           cp /tmp/casebook-pro-v2.html labs/interactive-boards-source/casebook-pro-v2/index.html
           test "$(git hash-object labs/interactive-boards-source/casebook-pro-v2/index.html)" = "$EXPECTED_GIT_BLOB"
