@@ -1,0 +1,33 @@
+name: TEMP Wire Pearl Couture V2
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-wire-pearl-couture-v2.yml']
+permissions:
+  contents: write
+jobs:
+  wire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected gate and wire
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+          FILE='labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html'
+          grep -n 'v3-fashion-pearl-cinematic.js' "$FILE"
+          python3 -c "from pathlib import Path; p=Path('$FILE'); s=p.read_text(); anchor='<script src=\"./v3-fashion-pearl-cinematic.js\"></script>'; assert anchor in s; line=anchor+'\n<script src=\"./v3-fashion-pearl-couture-v2.js\"></script>'; s=s.replace(anchor,line,1) if 'v3-fashion-pearl-couture-v2.js' not in s else s; p.write_text(s)"
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-couture-v2.js
+          test "$(grep -c 'v3-fashion-pearl-couture-v2.js' "$FILE")" -eq 1
+      - name: Commit product-only wiring and self-remove
+        run: |
+          rm -f .github/workflows/tmp-wire-pearl-couture-v2.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html .github/workflows/tmp-wire-pearl-couture-v2.yml
+          git commit -m 'feat(v3-fashion): wire Pearl Couture V2 candidate'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
