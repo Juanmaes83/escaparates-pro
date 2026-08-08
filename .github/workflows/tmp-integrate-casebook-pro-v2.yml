@@ -20,7 +20,7 @@ jobs:
           ref: feat/interactive-boards-casebook-pro-v2
           fetch-depth: 0
 
-      - name: Download canonical V2 standalone
+      - name: Download and verify canonical V2 standalone
         shell: bash
         run: |
           set -euo pipefail
@@ -30,12 +30,16 @@ jobs:
           curl --fail --location --silent --show-error "$SOURCE_URL" --output /tmp/casebook-pro-v2.html
           ACTUAL_SIZE="$(wc -c < /tmp/casebook-pro-v2.html | tr -d ' ')"
           ACTUAL_BLOB="$(git hash-object /tmp/casebook-pro-v2.html)"
-          test "$ACTUAL_SIZE" = "$EXPECTED_SIZE"
-          test "$ACTUAL_BLOB" = "$EXPECTED_GIT_BLOB"
+          echo "Downloaded source: size=$ACTUAL_SIZE git_blob=$ACTUAL_BLOB"
+          echo "API metadata:      size=$EXPECTED_SIZE git_blob=$EXPECTED_GIT_BLOB"
+          if [ "$ACTUAL_SIZE" != "$EXPECTED_SIZE" ] || [ "$ACTUAL_BLOB" != "$EXPECTED_GIT_BLOB" ]; then
+            echo 'IDENTITY_CHECK_FAILED: refusing to copy source.'
+            exit 23
+          fi
           mkdir -p labs/interactive-boards-source/casebook-pro-v2
           cp /tmp/casebook-pro-v2.html labs/interactive-boards-source/casebook-pro-v2/index.html
           test "$(git hash-object labs/interactive-boards-source/casebook-pro-v2/index.html)" = "$EXPECTED_GIT_BLOB"
-          echo "Exact source verified: $ACTUAL_SIZE bytes / git blob $ACTUAL_BLOB"
+          echo "IDENTITY_CHECK_OK"
 
       - name: Commit exact HTML only
         shell: bash
