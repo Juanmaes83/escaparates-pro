@@ -1,0 +1,61 @@
+name: TEMP Fix V3 Fashion Pearl Host Loop
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-fix-v3-fashion-pearl-host-loop.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Make Pearl host sync idempotent
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js')
+          s=p.read_text(encoding='utf-8')
+          old="""function renameUi(){
+  document.body.classList.add('v3-fashion-pearl');
+  document.querySelectorAll('.flSceneBtn').forEach((b,i)=>{if(i===0){b.dataset.flScene='pearl-runway';const t=b.querySelector('b'),s=b.querySelector('small');if(t)t.textContent='Pearl Runway';if(s)s.textContent='Pearl cyclorama / couture spatial scene';b.classList.add('active')}});
+  const bottom=document.querySelector('.esBottomLeft');if(bottom)bottom.dataset.pearl='PEARL RUNWAY';
+  const q=document.querySelector('#flQuality');if(q)q.innerHTML='<b>PEARL RUNWAY / QUALITY GATE</b><br>Shadow, depth, material response and cinematography carry the scene. No decorative noise.';
+  const starter=document.querySelector('#flStarter');if(starter)starter.textContent='Reload Pearl Fashion Starter';
+}"""
+          new="""function renameUi(){
+  document.body.classList.add('v3-fashion-pearl');
+  document.querySelectorAll('.flSceneBtn').forEach((b,i)=>{if(i===0){if(b.dataset.flScene!=='pearl-runway')b.dataset.flScene='pearl-runway';const t=b.querySelector('b'),sm=b.querySelector('small');if(t&&t.textContent!=='Pearl Runway')t.textContent='Pearl Runway';if(sm&&sm.textContent!=='Pearl cyclorama / couture spatial scene')sm.textContent='Pearl cyclorama / couture spatial scene';b.classList.add('active')}});
+  const bottom=document.querySelector('.esBottomLeft');if(bottom&&bottom.dataset.pearl!=='PEARL RUNWAY')bottom.dataset.pearl='PEARL RUNWAY';
+  const quality=document.querySelector('#flQuality'),qualityHtml='<b>PEARL RUNWAY / QUALITY GATE</b><br>Shadow, depth, material response and cinematography carry the scene. No decorative noise.';if(quality&&quality.innerHTML!==qualityHtml)quality.innerHTML=qualityHtml;
+  const starter=document.querySelector('#flStarter');if(starter&&starter.textContent!=='Reload Pearl Fashion Starter')starter.textContent='Reload Pearl Fashion Starter';
+}"""
+          assert old in s,'renameUi block not found'
+          s=s.replace(old,new,1)
+          old="""const obs=new MutationObserver(()=>{renameUi();bindCinematic()});
+function boot(){renameUi();bindCinematic();obs.observe(document.documentElement,{subtree:true,childList:true});setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION};}"""
+          new="""function boot(){renameUi();bindCinematic();const sync=setInterval(()=>{renameUi();bindCinematic()},800);window.CasebookFashionPearl={version:VERSION,stopUiSync(){clearInterval(sync)}};}"""
+          assert old in s,'observer boot block not found'
+          s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          node --check labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js
+          ! grep -q 'MutationObserver' labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js
+      - name: Commit exact runtime and self-remove
+        run: |
+          rm .github/workflows/tmp-fix-v3-fashion-pearl-host-loop.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js .github/workflows/tmp-fix-v3-fashion-pearl-host-loop.yml
+          git diff --cached --name-only | sort >/tmp/changed
+          printf '%s\n' '.github/workflows/tmp-fix-v3-fashion-pearl-host-loop.yml' 'labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js' | sort >/tmp/allowed
+          diff -u /tmp/allowed /tmp/changed
+          git commit -m 'fix(v3-fashion): remove Pearl UI mutation feedback loop'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
