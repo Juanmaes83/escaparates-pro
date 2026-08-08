@@ -1,0 +1,37 @@
+name: TEMP Probe Pearl Parent
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-probe-pearl-parent.yml']
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+      - name: Inject parent probe
+        run: |
+          FILE='labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js'
+          python3 -c "from pathlib import Path; p=Path('$FILE'); s=p.read_text(); old='function __pPearlProgress(p){'; ins='function __pParentStats(){const it=items[0];const chain=[];let o=it?.grp;while(o){chain.push({name:o.name||o.type,visible:o.visible,uuid:o.uuid});o=o.parent}return {chain,surface:{board:typeof __surface!==\"undefined\"&&__surface.board?{name:__surface.board.name,visible:__surface.board.visible,uuid:__surface.board.uuid}:null,wall:typeof __surface!==\"undefined\"&&__surface.wall?{name:__surface.wall.name,visible:__surface.wall.visible,uuid:__surface.wall.uuid}:null}};}\n'+old; assert old in s; s=s.replace(old,ins,1); old2='stats:__fStats,setProgress:__pPearlProgress,refresh:'; new2='stats:__fStats,parentStats:__pParentStats,setProgress:__pPearlProgress,refresh:'; assert old2 in s; s=s.replace(old2,new2,1); p.write_text(s)"
+      - name: Read parent chain
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/http.log 2>&1 & sleep 2
+          mkdir -p /tmp/q && cd /tmp/q && npm init -y >/dev/null 2>&1 && npm install playwright@latest --silent && npx playwright install --with-deps chromium >/dev/null
+          timeout 70s node - <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true});const p=await b.newPage({viewport:{width:1720,height:980}});await p.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:25000});await p.waitForTimeout(5000);const v=await p.evaluate(()=>document.querySelector('.stage iframe')?.contentWindow?.CasebookPro?.fashion?.parentStats?.());console.log('PEARL_PARENT='+JSON.stringify(v));await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Discard and self-remove
+        if: always()
+        run: |
+          git checkout -- labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js
+          rm -f .github/workflows/tmp-probe-pearl-parent.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-probe-pearl-parent.yml
+          git commit -m 'chore(ci): remove temporary Pearl parent probe' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic || true
