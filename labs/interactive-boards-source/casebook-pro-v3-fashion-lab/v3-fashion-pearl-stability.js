@@ -2,7 +2,7 @@
 // Phase 3F.6. Additive lifecycle fix for the isolated Fashion Pearl branch only.
 (function(){
 'use strict';
-const VERSION='3F.6-pearl-stability';
+const VERSION='3F.6.1-pearl-stability';
 const OLD_STARTER_KEY='casebook-v3-fashion-starter-seeded-v2';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,Number(v)||0));
@@ -40,6 +40,28 @@ function currentSignature(){
 async function waitFor(fn,tries=80,ms=100){
   for(let i=0;i<tries;i++){try{const v=fn();if(v)return v}catch(_){ }await sleep(ms)}
   return null;
+}
+async function persistWorldName(name){
+  for(let i=0;i<20;i++){
+    const legacy=document.querySelector('#v3WorldName');
+    if(legacy){
+      legacy.value=name;
+      legacy.dispatchEvent(new Event('input',{bubbles:true}));
+      legacy.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    const shell=document.querySelector('#esWorldNameEdit');
+    if(shell){
+      shell.value=name;
+      shell.dispatchEvent(new Event('input',{bubbles:true}));
+      shell.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    const save=document.querySelector('#v3SaveBtn');
+    if(save)save.click();else v3()?.save?.();
+    await sleep(120);
+    if(world()?.name===name)return true;
+  }
+  console.warn('[Pearl Stability] world name persistence timed out');
+  return false;
 }
 
 let lastSig='',reconcileTimer=0,pollTimer=0,legacyStopped=false;
@@ -87,15 +109,14 @@ async function seedInitialPearl(){
     return x&&n>=8?x:null;
   },100,100);
   if(!loaded){localStorage.removeItem(key);return false}
-  const input=document.querySelector('#v3WorldName');
-  if(input){
-    input.value='AFTER DARK / FW26';
-    input.dispatchEvent(new Event('change',{bubbles:true}));
-  }
+  await sleep(250);
+  const named=await persistWorldName('AFTER DARK / FW26');
+  if(!named){localStorage.removeItem(key);return false}
   v3()?.save?.();
   loaded.fashion?.apply?.();
   loaded.fashion?.setProgress?.(.04);
-  await sleep(140);
+  await sleep(180);
+  await persistWorldName('AFTER DARK / FW26');
   v3()?.save?.();
   localStorage.setItem(key,'ready');
   lastSig='';
@@ -172,6 +193,7 @@ window.CasebookFashionStability={
   reconcile:()=>reconcile('manual',true),
   enterExperience,
   exitExperience,
+  persistWorldName,
   getState:()=>({version:VERSION,legacyDirectorStopped:legacyStopped,experience,lastSignature:lastSig,worldId:world()?.worldId||null,chapterId:world()?.activeChapterId||null})
 };
 })();
