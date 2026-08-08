@@ -1,0 +1,32 @@
+name: TEMP Probe Pearl Overlay
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-probe-pearl-overlay.yml']
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+      - name: Probe top layers
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/http.log 2>&1 & sleep 2
+          mkdir -p /tmp/q && cd /tmp/q && npm init -y >/dev/null 2>&1 && npm install playwright@latest --silent && npx playwright install --with-deps chromium >/dev/null
+          timeout 70s node - <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{const b=await chromium.launch({headless:true});const p=await b.newPage({viewport:{width:1720,height:980}});await p.goto('http://127.0.0.1:4173/labs/interactive-boards-source/casebook-pro-v3-fashion-lab/index.html',{waitUntil:'domcontentloaded',timeout:25000});await p.waitForTimeout(5000);const v=await p.evaluate(()=>{const f=document.querySelector('.stage iframe'),w=f.contentWindow,d=f.contentDocument;const el=d.elementFromPoint(f.clientWidth/2,f.clientHeight/2);const chain=[];let o=el;while(o){const cs=w.getComputedStyle(o),r=o.getBoundingClientRect();chain.push({tag:o.tagName,id:o.id,cls:o.className,display:cs.display,pos:cs.position,z:cs.zIndex,bg:cs.backgroundColor,opacity:cs.opacity,pe:cs.pointerEvents,rect:[r.x,r.y,r.width,r.height]});o=o.parentElement}const full=[...d.querySelectorAll('body *')].map(o=>{const r=o.getBoundingClientRect(),cs=w.getComputedStyle(o);return {tag:o.tagName,id:o.id,cls:String(o.className||'').slice(0,80),rect:[r.x,r.y,r.width,r.height],display:cs.display,vis:cs.visibility,z:cs.zIndex,bg:cs.backgroundColor,opacity:cs.opacity}}).filter(x=>x.rect[2]>f.clientWidth*.9&&x.rect[3]>f.clientHeight*.9&&x.display!=='none'&&x.vis!=='hidden');return {top:chain,full};});console.log('PEARL_OVERLAY='+JSON.stringify(v));await b.close()})().catch(e=>{console.error(e);process.exit(1)});
+          JS
+      - name: Self-remove
+        if: always()
+        run: |
+          rm -f .github/workflows/tmp-probe-pearl-overlay.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/tmp-probe-pearl-overlay.yml
+          git commit -m 'chore(ci): remove temporary Pearl overlay probe' || true
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic || true
