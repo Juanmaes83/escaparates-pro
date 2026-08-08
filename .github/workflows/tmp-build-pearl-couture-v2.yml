@@ -1,0 +1,158 @@
+name: TEMP Build Pearl Couture V2
+on:
+  push:
+    branches: [feat/casebook-pro-v3-phase3-fashion-pearl-cinematic]
+    paths: ['.github/workflows/tmp-build-pearl-couture-v2.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
+          fetch-depth: 0
+      - name: Protected baseline gate
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git diff --exit-code origin/master -- labs/interactive-boards-source/casebook-pro-v1-1 labs/interactive-boards-source/casebook-pro-v2 js/interactive-boards-casebook-pro-v1-1.js js/interactive-boards-casebook-pro-v2.js js/interactive-boards.js js/interactive-boards-ui.js css
+      - name: Build Pearl Couture scene composer
+        run: |
+          FILE='labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js'
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js')
+          s=p.read_text()
+          s=s.replace("const VERSION='3F.4-pearl-cinematic-alpha';","const VERSION='3F.5-pearl-couture-candidate';")
+          arch=r'''function __pPearlArchitecture(){
+  const g=__fashionState.group;scene.add(g);g.name='CASEBOOK_FASHION_PEARL_COUTURE';
+  const cyc=__pGradientCyclorama();cyc.material.roughness=.96;g.add(cyc);
+  const floor=new THREE.Mesh(new THREE.CircleGeometry(72,128),__fMat(0xc1bdb6,.52,.08));floor.scale.y=.48;floor.position.set(-6,-18,-1.1);floor.receiveShadow=true;g.add(floor);
+  const runway=new THREE.Mesh(new THREE.CapsuleGeometry?new THREE.CapsuleGeometry(11,72,12,36):new THREE.CylinderGeometry(12,12,88,96),__fMat(0xd6d2ca,.38,.11));
+  if(runway.geometry.type==='CapsuleGeometry'){runway.rotation.z=Math.PI/2;runway.scale.y=.42}else{runway.rotation.x=Math.PI/2;runway.scale.x=.72}
+  runway.position.set(-6,-5,-.35);runway.castShadow=true;runway.receiveShadow=true;g.add(runway);
+
+  // HERO: procedural couture silhouette, authored as a pleated drape rather than a primitive.
+  const sy=54,sa=96,pos=[],uv=[],idx=[];const cx=-6,baseY=-10;
+  for(let iy=0;iy<=sy;iy++){
+    const v=iy/sy,y=baseY+v*55;
+    const waist=Math.pow(1-v,1.42),r0=3.6+15.5*waist;
+    for(let ia=0;ia<=sa;ia++){
+      const u=ia/sa,th=u*Math.PI*2;
+      const pleat=1+.11*Math.sin(th*9+v*5.2)+.045*Math.sin(th*17-v*7);
+      const asym=1+.08*Math.sin(th+v*2.8);
+      const r=r0*pleat*asym;
+      const twist=.32*v+.07*Math.sin(v*Math.PI*2);
+      const x=cx+Math.cos(th+twist)*r*.66;
+      const z=5.7+Math.sin(th+twist)*r*.30 + 1.8*Math.sin(v*Math.PI)*Math.cos(th*2);
+      pos.push(x,y,z);uv.push(u,v);
+      if(iy<sy&&ia<sa){const a=iy*(sa+1)+ia,b=a+1,c=a+sa+1,d=c+1;idx.push(a,c,b,b,c,d)}
+    }
+  }
+  const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));dg.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));dg.setIndex(idx);dg.computeVertexNormals();
+  const dm=new THREE.MeshPhysicalMaterial({color:0xe6e0d7,roughness:.44,metalness:.015,clearcoat:.12,clearcoatRoughness:.55,side:THREE.DoubleSide});
+  const dress=new THREE.Mesh(dg,dm);dress.name='PEARL_COUTURE_HERO';dress.castShadow=true;dress.receiveShadow=true;g.add(dress);
+  const collar=new THREE.Mesh(new THREE.TorusGeometry(4.1,.32,20,96),__fMat(0x8b8986,.21,.82));collar.position.set(cx,45.1,5.8);collar.scale.y=.72;collar.castShadow=true;g.add(collar);
+  const spine=__pRibbon([new THREE.Vector3(cx-1,-8,6.1),new THREE.Vector3(cx+3,2,7.2),new THREE.Vector3(cx-2,17,7.7),new THREE.Vector3(cx+1,42,6.4)],1.2,0x9d9b97,.72,.18,.62);g.add(spine);
+
+  // Scenography: two broad, asymmetrical couture ribbons and a floating chrome arc.
+  const left=__pRibbon([new THREE.Vector3(-74,-34,1),new THREE.Vector3(-62,-2,1.8),new THREE.Vector3(-73,35,2),new THREE.Vector3(-49,57,1.2)],9.5,0xb3afa9,.03,.62,.94);g.add(left);
+  const right=__pRibbon([new THREE.Vector3(66,-39,.7),new THREE.Vector3(54,-8,1.6),new THREE.Vector3(68,26,2.1),new THREE.Vector3(46,55,1.3)],7.1,0x706e6b,.68,.26,.88);g.add(right);
+  const halo=new THREE.Mesh(new THREE.TorusGeometry(29,.36,20,160),__fMat(0xa7a6a3,.25,.74));halo.name='PEARL_PORTAL_HALO';halo.position.set(cx,14,1.7);halo.scale.y=1.13;halo.castShadow=true;g.add(halo);
+  const haloSoft=new THREE.Mesh(new THREE.TorusGeometry(34,.10,12,160),__fMat(0xece8e1,.34,.18));haloSoft.position.set(cx,14,1.2);haloSoft.scale.y=1.13;g.add(haloSoft);
+
+  // Frosted architectural planes create depth without becoming UI cards.
+  const glass=new THREE.MeshPhysicalMaterial({color:0xe7e3dc,roughness:.20,metalness:0,transparent:true,opacity:.20,transmission:.25,thickness:.35,side:THREE.DoubleSide,depthWrite:false});
+  const scrimL=new THREE.Mesh(new THREE.PlaneGeometry(28,64),glass.clone());scrimL.position.set(-43,5,3);scrimL.rotation.z=-.10;g.add(scrimL);
+  const scrimR=new THREE.Mesh(new THREE.PlaneGeometry(25,57),glass.clone());scrimR.position.set(35,0,3.5);scrimR.rotation.z=.08;g.add(scrimR);
+
+  // Semantic content becomes spatial typography / product captions, not 20 equal cards.
+  const names=items.slice(0,4).map((it,i)=>String(it.title||it.name||['LOOK 01','MATERIAL','TALENT','CAMPAIGN'][i]).toUpperCase());
+  const title=__fTextPlane(['AFTER DARK / FW26','PEARL COUTURE STUDY'],49,10,'hero');title.name='PEARL_COPY_HERO';title.position.set(-63,48,7);g.add(title);
+  const note=__fTextPlane(['01 / SILHOUETTE',names[0]||'LOOK 01'],29,5.5,'label');note.position.set(41,34,6.5);g.add(note);
+  const material=__fTextPlane(['02 / MATERIAL',names[1]||'PEARL SATIN'],27,5,'label');material.position.set(42,-31,6.3);g.add(material);
+  const index=__fTextPlane(['CASEBOOK PRO V3 / FASHION','SCENE 01 — PEARL RUNWAY'],34,5.5,'label');index.position.set(-51,-43,6.1);g.add(index);
+
+  const accent=new THREE.Mesh(new THREE.CylinderGeometry(2.8,2.8,.65,64),__fMat(0x761926,.36,.25));accent.rotation.x=Math.PI/2;accent.position.set(42,-22,6);accent.castShadow=true;g.add(accent);
+  const chrome=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,18,64),__fMat(0x9f9e9b,.18,.86));chrome.position.set(47,-4,5.5);chrome.castShadow=true;g.add(chrome);
+}'''
+          lights=r'''function __pPearlLights(){
+  renderer.shadowMap.enabled=true;try{renderer.outputEncoding=THREE.sRGBEncoding}catch(_){ }
+  if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=__fashionState.diagnostic?.74:.86;
+  // Silence inherited lights: Pearl owns its photography. Preserve values for restore.
+  if(!__fashionState.original.pearlLegacyLights){__fashionState.original.pearlLegacyLights=[];scene.traverse(o=>{if(o.isLight&&!__fashionState.lights.includes(o)){__fashionState.original.pearlLegacyLights.push([o,o.intensity]);o.intensity*=.12}})}
+  const add=(l,t)=>{scene.add(l);__fashionState.lights.push(l);if(t){scene.add(t);l.target=t;__fashionState.lights.push(t)}};
+  const hero=new THREE.Object3D();hero.position.set(-6,12,5);
+  const key=new THREE.SpotLight(0xfff6e9,__fashionState.diagnostic?.7:1.45,250,Math.PI*.20,.74,1.5);key.position.set(-58,62,82);key.castShadow=!__fashionState.diagnostic;key.shadow.mapSize.set(1536,1536);add(key,hero);
+  const rimT=new THREE.Object3D();rimT.position.set(-4,11,6);const rim=new THREE.SpotLight(0xd7e0e7,__fashionState.diagnostic?.35:.76,230,Math.PI*.18,.68,1.7);rim.position.set(62,35,55);add(rim,rimT);
+  const grazeT=new THREE.Object3D();grazeT.position.set(-12,-7,1);const graze=new THREE.SpotLight(0xe8d5c0,__fashionState.diagnostic?.25:.62,220,Math.PI*.22,.82,1.9);graze.position.set(-83,-27,36);add(graze,grazeT);
+  const fill=new THREE.HemisphereLight(0xe9e6df,0x777878,__fashionState.diagnostic?.20:.34);scene.add(fill);__fashionState.lights.push(fill);
+}'''
+          decorate=r'''function __pPearlDecorateItem(it,index){
+  // Preserve semantic data but suppress inherited board representation in Pearl Experience.
+  if(!it?.grp)return;if(!it.pro)it.pro={};it.pro.fashionType=__fSemanticType(it,index);
+  if(it.grp.userData.__pearlOriginalVisible==null)it.grp.userData.__pearlOriginalVisible=it.grp.visible;
+  it.grp.visible=false;
+}'''
+          surface=r'''function __pPearlSurface(){
+  __fRemember();scene.background=new THREE.Color(__fashionState.diagnostic?0xb7b3ad:0xc9c5bf);scene.fog=__fashionState.diagnostic?null:new THREE.FogExp2(0xc9c5bf,.00155);
+  if(typeof __surface!=='undefined'){if(__surface.board)__surface.board.visible=false;if(__surface.boardMedia)__surface.boardMedia.visible=false;if(__surface.wall)__surface.wall.visible=false;}
+}'''
+          apply=r'''function __pPearlApply(){
+  __fashionState.enabled=true;__fClear();__pPearlSurface();items.forEach(__pPearlDecorateItem);__pPearlArchitecture();__pPearlLights();
+  ropes.forEach(r=>{try{r.opacity=0;r.thick=.01}catch(_){}});
+  rig.tx=-6;rig.ty=8;rig.tz=116;
+  renderer.render(scene,camera);
+}'''
+          progress=r'''function __pPearlProgress(p){
+  p=__pClamp(Number(p)||0);__fashionState.pearlProgress=p;
+  const a=__pSmooth(0,.22,p),b=__pSmooth(.20,.52,p),c=__pSmooth(.50,.79,p),d=__pSmooth(.77,1,p);
+  // Cartier-like editorial choreography: wide arrival → hero → material orbit → portal.
+  rig.tx=-6 + 8*b - 10*c + 12*d;
+  rig.ty=8 - 4*a + 8*b - 6*c + 4*d;
+  rig.tz=116 - 31*a - 17*b + 13*c + 21*d;
+  const dress=__fashionState.group.getObjectByName('PEARL_COUTURE_HERO');if(dress){dress.rotation.y=-.10+.30*b-.22*c+.18*d;dress.rotation.z=.015*Math.sin(p*Math.PI*2)}
+  const halo=__fashionState.group.getObjectByName('PEARL_PORTAL_HALO');if(halo){halo.rotation.z=.06+p*.28;halo.material.opacity=.72+.18*d;halo.material.transparent=true}
+  const copy=__fashionState.group.getObjectByName('PEARL_COPY_HERO');if(copy)copy.material.opacity=Math.max(.12,1-b*.78+c*.15);
+  renderer.render(scene,camera);
+  return {progress:p,camera:{x:rig.tx,y:rig.ty,z:rig.tz}};
+}'''
+          def repl(start,next_name,new):
+              nonlocal_s=None
+          patterns=[
+            (r'function __pPearlArchitecture\(\)\{.*?\n\}\nfunction __pPearlLights\(\)\{',arch+'\n'+lights[:-1]),
+          ]
+          # safer function-by-function regex using next function markers
+          s=re.sub(r'function __pPearlArchitecture\(\)\{.*?\n\}\nfunction __pPearlLights',arch+'\nfunction __pPearlLights',s,flags=re.S)
+          s=re.sub(r'function __pPearlLights\(\)\{.*?\n\}\nfunction __pPearlDecorateItem',lights+'\nfunction __pPearlDecorateItem',s,flags=re.S)
+          s=re.sub(r'function __pPearlDecorateItem\(it,index\)\{.*?\n\}\nfunction __pPearlRelationships',decorate+'\nfunction __pPearlRelationships',s,flags=re.S)
+          s=re.sub(r'function __pPearlSurface\(\)\{.*?\n\}\nfunction __pPearlApply',surface+'\nfunction __pPearlApply',s,flags=re.S)
+          s=re.sub(r'function __pPearlApply\(\)\{.*?\n\}\nfunction __pPearlProgress',apply+'\nfunction __pPearlProgress',s,flags=re.S)
+          s=re.sub(r'function __pPearlProgress\(p\)\{.*?\n\}\n`;',progress+'\n`;',s,flags=re.S)
+          # fix accidental optional-looking compact ternaries in injected string
+          s=s.replace('__fashionState.diagnostic?.74:.86','__fashionState.diagnostic ? .74 : .86').replace('__fashionState.diagnostic?.7:1.45','__fashionState.diagnostic ? .7 : 1.45').replace('__fashionState.diagnostic?.35:.76','__fashionState.diagnostic ? .35 : .76').replace('__fashionState.diagnostic?.25:.62','__fashionState.diagnostic ? .25 : .62').replace('__fashionState.diagnostic?.20:.34','__fashionState.diagnostic ? .20 : .34')
+          s=s.replace('new THREE.CapsuleGeometry?new THREE.CapsuleGeometry(11,72,12,36):new THREE.CylinderGeometry(12,12,88,96)',"('CapsuleGeometry' in THREE)?new THREE.CapsuleGeometry(11,72,12,36):new THREE.CylinderGeometry(12,12,88,96)")
+          p.write_text(s)
+          PY
+          node --check "$FILE"
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js').read_text()
+          a=s.index('const pearlRuntime=String.raw`')+len('const pearlRuntime=String.raw`');b=s.index('\n`;',a)
+          Path('/tmp/pearl-runtime.js').write_text(s[a:b])
+          PY
+          node --check /tmp/pearl-runtime.js
+          grep -q 'PEARL_COUTURE_HERO' "$FILE"
+          grep -q "3F.5-pearl-couture-candidate" "$FILE"
+      - name: Commit exact product file
+        run: |
+          rm -f .github/workflows/tmp-build-pearl-couture-v2.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/interactive-boards-source/casebook-pro-v3-fashion-lab/v3-fashion-pearl-cinematic.js .github/workflows/tmp-build-pearl-couture-v2.yml
+          git diff --cached --name-only
+          git commit -m 'feat(v3-fashion): compose Pearl Couture cinematic scene'
+          git push origin HEAD:feat/casebook-pro-v3-phase3-fashion-pearl-cinematic
