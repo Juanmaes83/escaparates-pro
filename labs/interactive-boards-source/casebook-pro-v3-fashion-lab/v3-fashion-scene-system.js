@@ -104,7 +104,7 @@ function __fRunwayArchitecture(){
   const xs=[-82,-64,-46,46,64,82];
   xs.forEach((x,i)=>{
     const fin=__fBox(1.05,76,.8,finMat.clone());fin.position.set(x,(i%2?6:-3),-2.35-i*.06);g.add(fin);
-    const edge=__fBox(.055,68,.16,edgeMat.clone());edge.position.set(x+(x<0?.58:-.58),(i%2?6:-3),-1.82);g.add(edge);
+    const edge=__fBox(.055,68,.16,edgeMat.clone());edge.position.set(x+(x<0 ? .58 : -.58),(i%2?6:-3),-1.82);g.add(edge);
   });
   // Horizon bars create a photographic studio rhythm and depth scale.
   [-38,0,38].forEach((y,i)=>{const bar=__fBox(194,.18,.25,__fMat(i===1?0x343434:0x181818,.5,.25));bar.position.set(0,y,-2.05);g.add(bar)});
@@ -120,13 +120,13 @@ function __fLights(){
   renderer.shadowMap.enabled=true;
   try{renderer.outputEncoding=THREE.sRGBEncoding}catch(_){ }
   if('ACESFilmicToneMapping' in THREE)renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=__fashionState.diagnostic?.82:1.02;
+  renderer.toneMappingExposure=__fashionState.diagnostic ? .82 : 1.02;
   const add=(l,target)=>{scene.add(l);__fashionState.lights.push(l);if(target){scene.add(target);l.target=target;__fashionState.lights.push(target)}};
   const target=new THREE.Object3D();target.position.set(0,2,0);
   const key=new THREE.SpotLight(0xf5f0e6,__fashionState.diagnostic?1.1:2.25,260,Math.PI*.23,.66,1.3);key.position.set(-88,58,66);key.castShadow=!__fashionState.diagnostic;key.shadow.mapSize.set(1024,1024);add(key,target);
   const rimTarget=new THREE.Object3D();rimTarget.position.set(10,-2,0);
-  const rim=new THREE.SpotLight(0xd7e4ff,__fashionState.diagnostic?.55:1.25,250,Math.PI*.20,.72,1.7);rim.position.set(92,38,38);add(rim,rimTarget);
-  const fill=new THREE.DirectionalLight(0xa9a6a0,__fashionState.diagnostic?.25:.42);fill.position.set(0,-30,70);scene.add(fill);__fashionState.lights.push(fill);
+  const rim=new THREE.SpotLight(0xd7e4ff,__fashionState.diagnostic ? .55 : 1.25,250,Math.PI*.20,.72,1.7);rim.position.set(92,38,38);add(rim,rimTarget);
+  const fill=new THREE.DirectionalLight(0xa9a6a0,__fashionState.diagnostic ? .25 : .42);fill.position.set(0,-30,70);scene.add(fill);__fashionState.lights.push(fill);
 }
 
 function __fSemanticType(it,index){
@@ -147,7 +147,7 @@ function __fDecorateItem(it,index){
   const type=__fSemanticType(it,index);if(!it.pro)it.pro={};it.pro.fashionType=type;
   const g=new THREE.Group();g.name='FASHION_OBJECT_'+String(it.id||index);g.userData={fashionOwned:true,semanticType:type};
   // Shadow gap / physical backing creates an object, not a card skin.
-  const backing=__fPlane(w,h,__fMat(type==='material'?0x171614:0x0b0b0b,type==='material'?.78:.46,type==='material'?0:.11,{transparent:true,opacity:.96}));
+  const backing=__fPlane(w,h,__fMat(type==='material'?0x171614:0x0b0b0b,type==='material' ? .78 : .46,type==='material'?0:.11,{transparent:true,opacity:.96}));
   backing.position.z=-.34;backing.receiveShadow=true;g.add(backing);
   // Editorial frame: asymmetrical, one strong edge and registration ticks.
   const edge=__fBox(.14,h+.7,.18,__fMat(index%4===0?0xe8ff3f:0xe9e6df,.4,.05,{emissive:index%4===0?0x303500:0x111111,emissiveIntensity:.12}));edge.position.set(-w/2-.2,0,.18);g.add(edge);

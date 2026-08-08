@@ -40,6 +40,8 @@ body.v2-presenting .v2Modebar,body.v2-presenting .toggle{opacity:.12;pointer-eve
 
 </style>
 <link rel="stylesheet" href="v3-editorial-spatial-shell.css">
+<link rel="stylesheet" href="v3-fashion-art-direction.css">
+<script src="v3-fashion-scene-system.js"></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -866,7 +868,7 @@ async function renderEditor(loadTemplate=true){
  const preset=val("preset");
  const boardState=preset==="detective"?null:(loadTemplate?genericizeTemplate(TEMPLATES[preset]):null);
  const boot={skipSeed:preset!=="detective",viewerMode:false,config:currentConfig(),boardState};
- frame.srcdoc=patchV3AnchorBridge(patchSource(originalSource,boot));
+ frame.srcdoc=patchFashionSceneBridge(patchV3AnchorBridge(patchSource(originalSource,boot)));
 }
 async function onReady(){
  await hydrateEditorMedia();
