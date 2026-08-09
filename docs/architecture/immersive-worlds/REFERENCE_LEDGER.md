@@ -14,12 +14,23 @@ For every subsystem:
 2. use SECONDARY sources only for complementary patterns;
 3. state exactly what is being extracted;
 4. state what must not be copied/adopted;
-5. identify conflicts before implementation;
+5. resolve conflicts using the authority hierarchy below before implementation;
 6. verify license before any direct code reuse;
 7. verify asset-specific rights separately;
 8. register actual intended reuse before implementation;
 9. if license is absent/unclear, direct reuse is blocked;
-10. visual/UX references may be quality bars without being code sources.
+10. visual/UX references may be quality bars without being code sources;
+11. important entries may declare an explicit **Conflict policy** when two sources could plausibly recommend incompatible patterns.
+
+Reference conflict hierarchy:
+
+```text
+APPROVED IW CONTRACT
+→ PRIMARY REFERENCE
+→ SECONDARY REFERENCES
+```
+
+A reference never silently overwrites an approved IW contract. A PRIMARY source has authority only for the narrow subsystem problem assigned to it. A SECONDARY source complements the PRIMARY source; it does not replace it without an explicit reviewed decision.
 
 Reference category means **authority for a problem**, not dependency status.
 
@@ -73,6 +84,7 @@ At IW-0, all source repositories default to **PATTERNS ONLY / DIRECT REUSE NOT P
 - shooter quality assumptions as Museum requirements;
 - procedural-only asset constraint.
 
+**Conflict policy:** approved IW ownership/canonical-state contracts win. `Claude-of-Duty` is primary for subsystem discipline; `threejs-game-skills` may refine QA/orchestration but must not introduce conflicting ownership.  
 **Reuse status:** PATTERNS ONLY.  
 **License:** must be verified before any direct source reuse.
 
@@ -113,6 +125,7 @@ Portfolio room → generic Scene Kit Space
 - exact cache counts without measurement;
 - exact visual styling.
 
+**Conflict policy:** approved IW Space/Asset lifecycle contracts win. ITom is primary for room/Space warmup and adaptive loading; Claude-of-Duty is secondary for lifecycle/disposal discipline. Numeric cache/window decisions require IW evidence rather than either reference's constants.  
 **Reuse status:** PATTERNS ONLY.  
 **License:** check required before direct reuse.
 
@@ -142,7 +155,7 @@ Artwork-specific camera
 → FocusableEntity camera contract
 ```
 
-Focus must operate on semantic bounds/anchors instead of Museum-only constants where practical.
+Focus must operate on semantic bounds/Anchors instead of Museum-only constants where practical.
 
 **Do not copy/adopt:**
 
@@ -151,6 +164,7 @@ Focus must operate on semantic bounds/anchors instead of Museum-only constants w
 - fixed distances as universal constants;
 - third-party museum assets.
 
+**Conflict policy:** the IW camera invariant — exactly one authoritative camera controller per frame — always wins. `artwork-3D-museum` is primary for Focus framing mechanics; TheVertMenthe is secondary as interaction/quality evidence and cannot redefine camera ownership.  
 **Reuse status:** PATTERNS ONLY.  
 **License:** repo/file license must be checked before any direct code adaptation. TheVertMenthe is treated as UX/interaction reference unless rights explicitly support more.
 
@@ -185,6 +199,7 @@ Use as evidence for safe Museum Scene Kit construction sequence, not as the univ
 - bundled art/assets without rights verification;
 - legacy implementation constraints if they conflict with IW contracts.
 
+**Conflict policy:** IW semantic/runtime contracts win. `3D-art-gallery-threejs` is primary only for Museum construction sequencing; `artwork-3D-museum` may improve component/focus patterns but does not replace the selected construction evidence silently.  
 **Reuse status:** PATTERNS ONLY.  
 **License:** required before direct code reuse; asset rights checked separately.
 
@@ -207,7 +222,7 @@ Use as evidence for safe Museum Scene Kit construction sequence, not as the univ
 
 **Adapt to IW:**
 
-Legacy calls such as directional add helpers become typed semantic placement data and Scene Kit placement helpers.
+Legacy calls such as directional add helpers become typed semantic placement data, Anchor references and Scene Kit placement helpers.
 
 **Do not copy/adopt:**
 
@@ -215,6 +230,7 @@ Legacy calls such as directional add helpers become typed semantic placement dat
 - hardcoded room geometry;
 - legacy browser assumptions.
 
+**Conflict policy:** approved IW schema/canonical-record invariants override the legacy API shape. The repo informs data-driven authoring but cannot create duplicate World/Space Entity ownership.  
 **Reuse status:** PATTERNS ONLY.
 
 ---
@@ -250,6 +266,7 @@ Evidence Node → semantic Space/Entity node where appropriate
 - detective visual language;
 - evidence-board metaphors.
 
+**Conflict policy:** approved IW distinction `World Graph ≠ World Map ≠ Route` and `Hotspot ≠ Portal` wins. Dungeon is primary for connectivity semantics; evidence-graph is secondary for relationship/visual graph considerations.  
 **Reuse status:** PATTERNS ONLY.  
 **Future:** procedural layout remains R&D unless promoted by explicit decision.
 
@@ -277,6 +294,7 @@ Evidence Node → semantic Space/Entity node where appropriate
 - Casebook map implementation as mandatory architecture;
 - thread/pin metaphors.
 
+**Conflict policy:** approved IW World Graph semantics are authoritative. Evidence-graph is primary for map/relationship representation; dungeon connectivity is secondary; Casebook is lessons-only and cannot reintroduce Board state into World state.  
 **Reuse status:** PATTERNS ONLY.
 
 ---
@@ -310,6 +328,7 @@ Use this as a Scene Kit production/QA workflow. Each pass must have an exit crit
 - any reference-specific scene decomposition as universal content schema;
 - automatic assumptions that visual reconstruction equals semantic authoring.
 
+**Conflict policy:** Scene Kit workflow never overrides IW engine semantics, canonical ownership or V1 scope. If a visual reconstruction technique conflicts with semantic authoring, the IW contract wins.  
 **Reuse status:** METHODOLOGY / PATTERNS ONLY.
 
 ---
@@ -343,6 +362,7 @@ Use story/chapter principles above generic World State. Do not encode Kage's vis
 - code without verified license;
 - scroll as mandatory control mode for Museum Explore.
 
+**Conflict policy:** approved IW World State and camera-authority contracts win. Kage is primary for continuous-world/chapter experience; MengTo skills are secondary technique references and cannot introduce a second camera authority or alternate World State.  
 **Reuse status:** PATTERNS / QUALITY REFERENCE.  
 **License:** verify repo/file rights before any code reuse.
 
@@ -375,6 +395,7 @@ V1 uses the minimum transport needed to demonstrate Guided Experience. It must n
 - exact UI;
 - exact timeline structure unless it survives IW schema review.
 
+**Conflict policy:** approved IW Experience Director/Action/Portal/camera contracts win; this reference informs transport and synchronization only.  
 **Reuse status:** PATTERNS ONLY.
 
 ---
@@ -400,6 +421,7 @@ V1 uses the minimum transport needed to demonstrate Guided Experience. It must n
 - scroll hijacking as universal interaction;
 - motion that violates reduced-motion requirements.
 
+**Conflict policy:** IW camera authority, reduced-motion and Portal transition semantics win over motion technique preferences.  
 **Reuse status:** PATTERNS ONLY / LICENSE CHECK REQUIRED BEFORE REUSE.
 
 ---
@@ -424,6 +446,7 @@ V1 uses the minimum transport needed to demonstrate Guided Experience. It must n
 - visual transition owning Portal semantics;
 - exact shaders without license verification.
 
+**Conflict policy:** Portal semantic transition behaviour is authoritative. This reference may realize representation/handoff only; it cannot define whether Spaces are connected or what activates a Portal.  
 **Reuse status:** PATTERNS ONLY.
 
 ---
@@ -545,6 +568,7 @@ V1 uses the minimum transport needed to demonstrate Guided Experience. It must n
 
 - game-specific pass criteria without Museum relevance.
 
+**Conflict policy:** IW Museum quality gates and deterministic named-state contracts win. `threejs-game-skills` is primary for browser/QA orchestration; Claude-of-Duty is secondary for reproducibility/engine discipline.  
 **Reuse status:** PROCESS / PATTERNS ONLY.
 
 ---
@@ -696,10 +720,19 @@ Before implementation adds a direct reuse candidate, create a row containing:
 
 When references disagree:
 
-1. IW Constitution wins over reference implementation.
-2. PRIMARY source wins only inside the narrow subsystem problem it was assigned.
-3. A SECONDARY reference may not silently override a PRIMARY source.
-4. Product requirements and Juanma's explicit current decision override historical reference patterns.
-5. Any material conflict becomes an ADR in `DECISION_LOG.md` before implementation.
+```text
+APPROVED IW CONTRACT
+→ PRIMARY REFERENCE
+→ SECONDARY REFERENCES
+```
 
-This prevents “reference soup”: no agent may combine attractive patterns from unrelated repos without explaining compatibility and ownership.
+Rules:
+
+1. approved IW contracts and explicit current Product Owner decisions are authoritative;
+2. a PRIMARY source wins only inside the narrow subsystem problem it was assigned and only when no approved IW contract decides otherwise;
+3. a SECONDARY reference may complement but not silently override a PRIMARY source;
+4. a reference never silently overwrites an approved IW engine decision;
+5. important Ledger entries may declare a stricter local conflict policy where competing references could plausibly diverge;
+6. any material unresolved conflict becomes an ADR in `DECISION_LOG.md` before implementation.
+
+This prevents “reference soup”: no agent may combine attractive patterns from unrelated repos without explaining compatibility, authority and ownership.
