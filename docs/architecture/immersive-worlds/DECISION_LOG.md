@@ -281,6 +281,185 @@ All proposed capabilities/work packages must be scope-labelled so Museum V1 cann
 
 ---
 
+## IW-DEC-018 — One semantic object has one canonical record
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+The semantic model must enforce this invariant:
+
+```text
+ONE SEMANTIC OBJECT
+ONE CANONICAL RECORD
+MULTIPLE REFERENCES
+```
+
+World, Space, Route, Scene Kit and other systems may reference the same semantic object by stable ID, but must not own divergent duplicate records for it.
+
+**Not decided here**
+
+Maps, arrays, stores, ECS, normalized state and other physical storage techniques remain open.
+
+---
+
+## IW-DEC-019 — Hotspot triggers; Portal connects
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+Hotspot and Portal must not duplicate transition responsibility.
+
+- Hotspot = interaction / trigger semantics.
+- Portal = spatial connection / transition semantics.
+
+A valid relationship is:
+
+```text
+Hotspot
+→ ACTIVATE_PORTAL
+→ Portal
+```
+
+A Portal does not need a Hotspot to exist, and a Hotspot does not become a Portal merely because its Action leads to another Space.
+
+---
+
+## IW-DEC-020 — Scene Kit owns visual realization
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+Semantic Entity/World records may carry presentation intent, representation hints or references when useful, but they must not own:
+
+- mesh implementation;
+- material implementation;
+- shader implementation;
+- Scene Kit implementation;
+- Three.js object identity.
+
+Scene Kit retains ownership of visual realization.
+
+---
+
+## IW-DEC-021 — Portal behaviour is separate from Portal representation
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+Portal spatial-transition behaviour and visual representation are separate concepts.
+
+Conceptually:
+
+```text
+TRANSITION BEHAVIOUR
+continuous / cut / teleport / cinematic / equivalent
+
+REPRESENTATION HINT
+door / screen / artwork / window / none / equivalent
+```
+
+Exact enums and implementation remain open. A visual door is not the semantic definition of a Portal.
+
+---
+
+## IW-DEC-022 — Action is a semantic contract concept
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+IW must include `Action` as a semantic concept so Scene Kits do not invent arbitrary incompatible callbacks for equivalent interactions.
+
+Conceptual actions may include:
+
+- `FOCUS_ENTITY`;
+- `PLAY_MEDIA`;
+- `OPEN_INFO`;
+- `ACTIVATE_PORTAL`;
+- `START_ROUTE`;
+- `TRIGGER_STORY`;
+- `SET_STATE`.
+
+The exact taxonomy and execution mechanism remain open. V1 must not become a giant general-purpose Action Engine.
+
+---
+
+## IW-DEC-023 — Anchor is a generic spatial reference concept
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+IW must include a generic `Anchor` concept for reusable semantic spatial references used by placement, Hotspots, Portals, Focus Camera, labels, lights, spawn points and related spatial relationships.
+
+The exact technical representation remains open. The purpose is to avoid hard-coded absolute coordinates distributed across subsystems.
+
+---
+
+## IW-DEC-024 — Reference conflict hierarchy is explicit
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+Reference conflicts resolve conceptually as:
+
+```text
+APPROVED IW CONTRACT
+→ PRIMARY REFERENCE
+→ SECONDARY REFERENCES
+```
+
+A reference may inform or challenge a contract through review, but may never silently overwrite an approved IW decision. Important Reference Ledger entries should state their conflict policy where competing sources could disagree.
+
+---
+
+## IW-DEC-025 — MUST V1 is grouped for execution, not re-architected
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+MUST V1 should be grouped into execution-friendly buckets such as:
+
+```text
+FOUNDATION
+EXPERIENCE
+QUALITY
+```
+
+or an equivalent minimal grouping.
+
+This grouping exists only to make implementation milestones legible. It does not create a new architecture or expand scope.
+
+---
+
+## IW-DEC-026 — Exactly one authoritative camera controller per frame
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Decision**
+
+At any frame there is exactly one authoritative camera controller.
+
+Conceptual authority states may include:
+
+```text
+AUTHOR
+EXPLORE
+FOCUS
+DIRECTED
+TRANSITION
+```
+
+Two subsystems may never write authoritative camera state simultaneously. Camera ownership handoff must be explicit and testable.
+
+---
+
 # Architecture decisions awaiting review
 
 ## IW-ADR-001 — Semantic data and representation are separate
@@ -294,6 +473,8 @@ Museum content, Fashion content and Real Estate content need different visual tr
 **Proposal**
 
 Generic World/Space/Entity/Hotspot/Portal/Route schemas exist independently from Scene Kit representations.
+
+Each semantic object has one canonical record; other structures reference it by stable identity rather than owning divergent duplicates. Semantic records may express presentation intent but Scene Kit owns meshes/materials/shaders/Three.js realization.
 
 **Alternatives**
 
@@ -319,6 +500,8 @@ Higher initial schema discipline; much stronger reuse across verticals.
 
 Camera has explicit authority states such as AUTHOR / EXPLORE / FOCUS / DIRECTED / TRANSITION. Camera never owns World State.
 
+At any frame exactly one camera controller is authoritative; handoff is explicit and testable.
+
 **Reason**
 
 Avoid the Casebook V4 class of conflicts where multiple camera metaphors and world/board state became entangled.
@@ -339,13 +522,15 @@ Requires clean ownership transitions but prevents divergent content/state.
 
 ---
 
-## IW-ADR-004 — Portal and Hotspot are semantic, visual marker optional
+## IW-ADR-004 — Hotspot triggers, Portal connects; visual markers are optional
 
 **Status:** PROPOSED
 
 **Proposal**
 
-Portal and Hotspot describe interaction/connection semantics. Scene Kit decides whether an icon, door, artwork, screen, transition or no visible marker represents them.
+Hotspot describes interaction/trigger semantics. Portal describes spatial connection/transition semantics. A Hotspot may request an `ACTIVATE_PORTAL` Action targeting a Portal, but the two contracts do not duplicate responsibility.
+
+Portal transition behaviour is separate from Scene Kit visual representation. Neither Hotspot nor Portal requires a visible floating marker.
 
 ---
 
@@ -391,7 +576,7 @@ Exact active/next/previous cache policy and transition timing require prototype 
 
 **Proposal**
 
-The director issues semantic camera/space/audio/story commands through contracts. It does not directly mutate private render/navigation/audio implementation state.
+The director issues semantic camera/space/audio/story/Action commands through contracts. It does not directly mutate private render/navigation/audio implementation state.
 
 ---
 
@@ -401,7 +586,7 @@ The director issues semantic camera/space/audio/story commands through contracts
 
 **Proposal**
 
-Scene Kit owns visual/spatial language and representation adapters, not global World State, route semantics or Experience orchestration.
+Scene Kit owns visual/spatial language and representation adapters, not global World State, canonical semantic identity, route semantics or Experience orchestration.
 
 ---
 
@@ -476,6 +661,18 @@ Requires representative blockout and target-device evidence.
 ## IW-OPEN-007 — Direct source reuse
 
 None planned in IW-0. Any future candidate requires Reference Ledger reuse entry and license review.
+
+## IW-OPEN-008 — Physical canonical-state storage mechanism
+
+The single-canonical-record invariant is fixed, but Maps vs arrays vs normalized stores vs ECS vs another mechanism remains implementation-open.
+
+## IW-OPEN-009 — Exact Action taxonomy/execution mechanism
+
+Action exists as a semantic concept, but the exact enum set, extensibility model and runtime execution mechanism remain open pending V1 needs.
+
+## IW-OPEN-010 — Exact Anchor representation
+
+Anchor exists as a semantic spatial concept, but coordinate basis, transform representation, surface/volume encoding and storage mechanism remain open.
 
 ---
 
