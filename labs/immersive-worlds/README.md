@@ -1,4 +1,4 @@
-# Immersive Worlds — IW-1 (prototipo aislado)
+# Immersive Worlds — IW-2 (prototipo aislado)
 
 > **Estado:** prototipo para revisión. **No aprobado, no integrado, no mergeado.**
 > Este módulo es aditivo y está aislado: no modifica ni depende de ningún otro
@@ -8,8 +8,10 @@ Immersive Worlds es un módulo nuevo de primer nivel dentro de Escaparates Pro:
 un sistema para **construir, explorar, conectar, dirigir, narrar y publicar
 mundos interactivos en web**. No es Casebook V5 y no se construye sobre Boards.
 
-Este primer hito (IW-1) demuestra que la arquitectura aprobada en IW-0 funciona,
-usando como prueba una institución ficticia: la **Fundación Arenas**.
+IW-1 demostró que la arquitectura aprobada en IW-0 funciona. **IW-2** lleva el
+vertical Museum a contenido configurable, arquitectura de galería con lucernarios
+y un modo detalle de nivel producto, usando como prueba una institución ficticia:
+la **Fundación Arenas**.
 
 ---
 
@@ -23,6 +25,7 @@ node tests/static-server.mjs 4180 .
 | Superficie | URL |
 |---|---|
 | Experiencia publicada (visitante) | `http://127.0.0.1:4180/labs/immersive-worlds/index.html` |
+| Segundo mundo, mismo motor | `…/index.html?world=./worlds/institutional-demo.world.json` |
 | Capa de autoría (autor) | `http://127.0.0.1:4180/labs/immersive-worlds/author.html` |
 
 Parámetros útiles: `?tier=LOW|MEDIUM|HIGH`, `?reducedMotion=1`, `?seed=…`,
@@ -31,9 +34,36 @@ Parámetros útiles: `?tier=LOW|MEDIUM|HIGH`, `?reducedMotion=1`, `?seed=…`,
 **Controles:** `W A S D` / flechas para moverse, ratón (o flechas ←→) para mirar,
 `E` o `Enter` para activar lo que tienes cerca, `Esc` para salir del detalle o del
 recorrido, `M` para el mapa de salas, `G` para el recorrido comentado.
+**En modo detalle:** `←` `→` cambian de obra y la rueda del ratón acerca.
 En móvil: mitad izquierda de la pantalla para caminar, mitad derecha para mirar.
 
 ---
+
+## Contenido configurable
+
+Cada obra declara de qué está hecha en el propio archivo del mundo:
+
+```json
+"media": {
+  "kind": "IMAGE",
+  "src": "../assets/collection/horizonte-interrumpido.jpg",
+  "aspect": 1.46,
+  "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+  "rights": "Obra propia. Uso libre dentro del producto."
+}
+```
+
+- `IMAGE`, `VIDEO`, `AUDIO` o `GENERATED`.
+- Las rutas son relativas al archivo del mundo, así que una institución guarda su
+  colección junto a su definición.
+- **Si un archivo falla, la sala no se rompe:** se muestra la lámina generada y se
+  emite `asset:error`.
+- **El validador rechaza un medio sin `rights`.** Quien cuelga un archivo en una
+  pared tiene que poder decir de quién es.
+
+Para cambiar la exposición basta con cambiar los archivos y el JSON. El segundo
+mundo (`worlds/institutional-demo.world.json`) existe justamente para demostrarlo:
+otra institución, otra arquitectura, mismo motor y mismo Scene Kit.
 
 ## Qué demuestra
 
@@ -87,9 +117,10 @@ engine/      Motor semántico. Sin Three.js, sin DOM. Comprobado por QA.
   interaction/ proximidad, despacho de Actions
   experience/  director de experiencia
   scenekit/    el contrato motor ↔ representación
-render/      Host de Three.js: renderer y objeto cámara. Genérico, sin semántica.
+render/      Host de Three.js: renderer, cámara y carga de medios. Genérico, sin semántica.
 scene-kits/  museum/ — el único lugar donde la semántica se hace museo
-worlds/      museum-v1.world.json — datos, no código
+worlds/      museum-v1.world.json + institutional-demo.world.json — datos, no código
+assets/      colección propia (imágenes y vídeo) con su registro de derechos
 app/         shells DOM, UI, entrada, audio
 qa/          estados deterministas + runner de evidencia
 vendor/      three.js r0.185.1 (MIT), con su licencia y su registro
@@ -99,24 +130,30 @@ vendor/      three.js r0.185.1 (MIT), con su licencia y su registro
 
 ## Contenido y derechos
 
-**Todo el contenido es ficticio y se genera en tiempo de ejecución.** La Fundación
-Arenas, sus once obras, sus cinco autores y todos los textos de sala son
-invención propia. No hay ninguna imagen, modelo, vídeo ni audio en el módulo: las
-pinturas, las texturas, las cartelas, el vídeo y el ambiente sonoro se sintetizan
-en el navegador a partir de una semilla determinista.
+**Todo el contenido es ficticio y propio.** La Fundación Arenas, sus obras, sus
+cinco autores y todos los textos de sala son invención nuestra.
 
-No se ha copiado código ni assets de ningún repositorio de referencia. La única
-dependencia externa es three.js (MIT), registrada en `vendor/three/VENDOR.md`.
+Los archivos de `assets/collection/` los generó este mismo módulo con su propio
+generador de láminas y una semilla fija (`qa/tools/make-assets.mjs`); su registro
+de derechos está en `assets/collection/RIGHTS.md`. Texturas de pared, suelo,
+cartelas y ambiente sonoro se siguen sintetizando en el navegador.
+
+**No se ha copiado código ni assets de ningún repositorio de referencia.** La
+auditoría de licencias de la biblioteca está en
+`docs/architecture/immersive-worlds/REFERENCE_REUSE_REGISTER.md`: tres de los
+repos museísticos de referencia son NonCommercial o GPL y quedan bloqueados para
+reutilización directa en un producto comercial. La única dependencia externa es
+three.js (MIT), registrada en `vendor/three/VENDOR.md`.
 
 ---
 
 ## Límites conocidos
 
-La calidad visual está a nivel de **blockout con pase de materiales y luz**, no
-final. No se ha ejecutado todavía el Gauntlet Loop contra una barra nombrada, ni
-una revisión Unslop independiente, ni una auditoría de accesibilidad. La lista
-completa y honesta está en
-`docs/architecture/immersive-worlds/IW-1_IMPLEMENTATION_RECORD.md` §6.
+Sigue **sin ejecutarse el Gauntlet Loop** contra una barra nombrada, sin revisión
+Unslop independiente y sin auditoría de accesibilidad: el paso visual de IW-2 lo
+dio quien construye, que es justo lo que la Constitución dice que no basta.
+La lista completa y honesta está en
+`docs/architecture/immersive-worlds/IW-2_IMPLEMENTATION_RECORD.md` §5.
 
 ---
 
@@ -127,4 +164,7 @@ completa y honesta está en
 - `docs/architecture/immersive-worlds/REFERENCE_LEDGER.md` — referencias y licencias
 - `docs/architecture/immersive-worlds/DECISION_LOG.md` — decisiones y ADRs
 - `docs/architecture/immersive-worlds/GLOSSARY.md` — vocabulario
-- `docs/architecture/immersive-worlds/IW-1_IMPLEMENTATION_RECORD.md` — **este hito**
+- `docs/architecture/immersive-worlds/REFERENCE_REUSE_ACCELERATION_POLICY.md` — doctrina de reutilización
+- `docs/architecture/immersive-worlds/REFERENCE_REUSE_REGISTER.md` — auditoría de licencias y qué se reutilizó
+- `docs/architecture/immersive-worlds/IW-1_IMPLEMENTATION_RECORD.md` — hito anterior
+- `docs/architecture/immersive-worlds/IW-2_IMPLEMENTATION_RECORD.md` — **este hito**

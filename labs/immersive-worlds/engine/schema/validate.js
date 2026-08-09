@@ -31,6 +31,7 @@ import {
   ENTITY_KIND,
   FORBIDDEN_RENDER_KEYS,
   HOTSPOT_TYPE,
+  MEDIA_KIND,
   REPRESENTATION_HINT,
   SCHEMA_VERSION,
   SHOT_INTENT,
@@ -183,6 +184,25 @@ export function validateWorld(world) {
 
     if (entity.interaction?.focusable && !entity.accessibility?.label) {
       errors.push(`INV-9 ${where}: focusable entity has no accessibility label`);
+    }
+
+    // INV-10: declared media must name its rights. An institution loading its
+    // own collection has to say what it is allowed to publish, and a world file
+    // that cannot answer that question should not validate.
+    const media = entity.content?.media;
+    if (media) {
+      if (!MEDIA_KIND[media.kind]) {
+        errors.push(`${where}: unknown media kind "${media.kind}"`);
+      }
+      if (media.kind !== MEDIA_KIND.GENERATED && !media.src) {
+        errors.push(`${where}: media of kind ${media.kind} requires a src`);
+      }
+      if (!media.rights) {
+        errors.push(
+          `INV-10 ${where}: media declares no rights — every file placed in a world ` +
+            'must record who owns it and under what terms'
+        );
+      }
     }
     for (const id of entity.interaction?.hotspotRefs || []) ref(id, hotspotIds, where, 'hotspot');
   }

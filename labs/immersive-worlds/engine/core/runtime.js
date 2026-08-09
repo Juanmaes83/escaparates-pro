@@ -321,6 +321,53 @@ export class Runtime {
     return { spaceId: portal.toSpaceId, waitedMs: activation.waitedMs };
   }
 
+  /**
+   * The works in the active Space a visitor can inspect, in the order they are
+   * authored. This is what "next work" means — it is a property of the World,
+   * not of the UI.
+   */
+  focusableInSpace(spaceId = this.state.activeSpaceId) {
+    return this.store.entitiesOf(spaceId).filter((entity) => entity.interaction?.focusable);
+  }
+
+  /**
+   * Move focus to the next or previous work without walking back into the room.
+   *
+   * It goes through the ordinary FOCUS_ENTITY action, so stepping through a
+   * gallery in detail view leaves exactly the same trace in World State as
+   * walking up to each work would.
+   *
+   * @param {number} delta +1 next, -1 previous
+   */
+  focusNeighbour(delta = 1) {
+    const works = this.focusableInSpace();
+    if (!works.length) return null;
+    const current = works.findIndex((entity) => entity.id === this.state.focusedEntityId);
+    const next = works[(current + delta + works.length) % works.length];
+    if (!next || next.id === this.state.focusedEntityId) return null;
+
+    // Keep the pose the visitor will return to: stepping through five works
+    // must still put them back where they entered the first one.
+    const keepReturn = this._exploreReturnPose;
+    this.sceneKit.setEntityFocused(this.state.focusedEntityId, false);
+    this.actions.dispatch(
+      { type: ACTION.FOCUS_ENTITY, target: next.id },
+      { source: 'HOTSPOT', sourceId: 'detail-navigation' }
+    );
+    this._exploreReturnPose = keepReturn || this._exploreReturnPose;
+    return next.id;
+  }
+
+  /**
+   * How close the detail view is pushed in, 0 = authored framing, 1 = as close
+   * as the work allows. The camera authority is untouched: this only changes
+   * what the FOCUS controller asks for.
+   */
+  setDetailZoom(zoom) {
+    this.focus.setZoom(zoom);
+    return this.focus.zoom;
+  }
+
   /** Activate whichever hotspot the visitor is standing next to. */
   activateNearest() {
     const hotspot = this.proximity.nearestHotspot;

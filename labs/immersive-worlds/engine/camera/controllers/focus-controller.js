@@ -20,6 +20,9 @@ export class FocusController {
 
     this.basePose = null;
     this._current = null;
+    /** 0 = the framing the Scene Kit measured, 1 = pushed all the way in. */
+    this.zoom = 0;
+    this.maxZoom = options.maxZoom ?? 0.55;
     /** @type {{x:number,y:number}} normalised pointer, -1..1 */
     this.pointer = { x: 0, y: 0 };
     this._reducedMotion = false;
@@ -37,6 +40,18 @@ export class FocusController {
       fov: fov ?? this.fov
     };
     this._current = null;
+    this.zoom = 0;
+  }
+
+  /**
+   * Inspection zoom. It dollies along the line the Scene Kit measured rather
+   * than narrowing the lens, so the visitor moves closer to the surface instead
+   * of the work being magnified — the difference between examining a painting
+   * and looking at a photograph of it.
+   */
+  setZoom(zoom) {
+    this.zoom = clamp(zoom, 0, 1);
+    return this.zoom;
   }
 
   onGain(pose) {
@@ -54,11 +69,16 @@ export class FocusController {
 
     const drift = this._reducedMotion ? 0 : this.parallax;
     const right = lateral(this.basePose.position, this.basePose.target);
+
+    // Dolly toward the subject by up to maxZoom of the measured distance.
+    const t = this.zoom * this.maxZoom;
+    const base = vec3.lerp(this.basePose.position, this.basePose.target, t);
+
     const wanted = {
       position: [
-        this.basePose.position[0] + right[0] * this.pointer.x * drift,
-        this.basePose.position[1] - this.pointer.y * drift * 0.6,
-        this.basePose.position[2] + right[2] * this.pointer.x * drift
+        base[0] + right[0] * this.pointer.x * drift,
+        base[1] - this.pointer.y * drift * 0.6,
+        base[2] + right[2] * this.pointer.x * drift
       ],
       target: [...this.basePose.target],
       fov: this.basePose.fov

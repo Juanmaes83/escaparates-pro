@@ -150,29 +150,91 @@ kbd {
   text-overflow: ellipsis;
 }
 
-/* -- detail panel --------------------------------------------------------- */
+/* -- detail view ---------------------------------------------------------- */
+/*
+ * Focus is a *state of the room*, not a sidebar. The scrim darkens the gallery
+ * from the edges inward so the work stays lit and legible while everything
+ * around it recedes — the same thing a museum does with a spotlight.
+ */
 
-.iw-detail {
+.iw-detail { position: absolute; inset: 0; pointer-events: none; }
+.iw-detail > * { pointer-events: auto; }
+
+.iw-detail__scrim {
   position: absolute;
-  right: 1.6rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: min(23rem, 84vw);
-  padding: 1.6rem;
-  border: 1px solid var(--iw-line);
-  border-left: 1px solid var(--iw-line-strong);
-  background: var(--iw-panel);
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 62% 68% at 38% 48%, rgba(8, 7, 6, 0) 38%, rgba(8, 7, 6, 0.62) 100%),
+    linear-gradient(90deg, rgba(8, 7, 6, 0) 52%, rgba(8, 7, 6, 0.66) 100%);
+  animation: iw-fade 0.5s ease both;
+}
+@keyframes iw-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.iw-detail__panel {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: min(26rem, 88vw);
+  padding: 6.5rem 2.2rem 2rem;
+  overflow-y: auto;
+  border-left: 1px solid var(--iw-line);
+  background: linear-gradient(270deg, rgba(12, 11, 10, 0.94) 62%, rgba(12, 11, 10, 0.82));
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 .iw-detail__eyebrow {
-  margin: 0 0 1rem;
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
+  margin: 0 0 1.1rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--iw-ink-dim);
 }
-.iw-detail h2 { margin: 0 0 0.5rem; font: 400 1.4rem/1.25 var(--iw-serif); }
-.iw-detail__meta { margin: 0 0 1.2rem; font-size: 0.8rem; color: var(--iw-ink-dim); font-style: italic; }
-.iw-detail__body { margin: 0 0 1.6rem; font-size: 0.86rem; line-height: 1.65; color: #d8d2c7; }
+.iw-detail h2 { margin: 0 0 0.6rem; font: 400 1.75rem/1.2 var(--iw-serif); text-wrap: balance; }
+.iw-detail__meta { margin: 0 0 1.4rem; font-size: 0.82rem; color: var(--iw-ink-dim); font-style: italic; }
+.iw-detail__body { margin: 0 0 1.6rem; font-size: 0.88rem; line-height: 1.7; color: #d8d2c7; }
+
+.iw-detail__facts {
+  margin: 0 0 1.2rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--iw-line);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.45rem 1.2rem;
+  font-size: 0.75rem;
+}
+.iw-detail__facts dt { color: var(--iw-ink-dim); letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.64rem; align-self: center; }
+.iw-detail__facts dd { margin: 0; color: #cfc9be; }
+.iw-detail__credit { margin: 0 0 1.2rem; font-size: 0.7rem; color: var(--iw-ink-dim); line-height: 1.5; }
+
+.iw-detail__zoom {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--iw-line);
+}
+.iw-detail__zoom label { font-size: 0.64rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--iw-ink-dim); }
+.iw-detail__zoom span { font-size: 0.7rem; color: var(--iw-ink-dim); min-width: 3ch; text-align: right; }
+.iw-detail__zoom input[type=range] { width: 100%; accent-color: #d9c9a5; background: transparent; }
+
+.iw-detail__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--iw-line);
+}
+.iw-detail__count { font-size: 0.7rem; letter-spacing: 0.14em; color: var(--iw-ink-dim); }
+.iw-btn--wide { width: 100%; justify-content: center; margin-top: auto; }
+
+/* During a guided route the camera belongs to the Director: the panel becomes
+   a caption, not a control surface. */
+.iw-detail[data-guided="true"] .iw-detail__panel { background: linear-gradient(270deg, rgba(12, 11, 10, 0.88) 62%, rgba(12, 11, 10, 0.6)); }
 
 /* -- guided transport ----------------------------------------------------- */
 
@@ -260,7 +322,17 @@ kbd {
 @media (max-width: 900px) {
   .iw-topbar { padding: 1rem; flex-direction: column; align-items: stretch; }
   .iw-topbar__tools { justify-content: flex-start; }
-  .iw-detail { right: 0.8rem; left: 0.8rem; width: auto; top: auto; bottom: 8.5rem; transform: none; }
+  .iw-detail__panel {
+    left: 0; right: 0; top: auto;
+    width: auto;
+    max-height: 62vh;
+    padding: 1.4rem 1.2rem 1.2rem;
+    border-left: 0;
+    border-top: 1px solid var(--iw-line-strong);
+    background: rgba(12, 11, 10, 0.95);
+  }
+  .iw-detail__scrim { background: radial-gradient(ellipse 80% 40% at 50% 26%, rgba(8,7,6,0) 40%, rgba(8,7,6,0.66) 100%); }
+  .iw-detail h2 { font-size: 1.32rem; }
   .iw-prompt { bottom: 1.2rem; font-size: 0.76rem; }
   .iw-transport__caption { font-size: 0.9rem; }
 }

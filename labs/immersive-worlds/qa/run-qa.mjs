@@ -137,6 +137,8 @@ async function main() {
     await checkProtectedPaths();
 
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    // Real media decoding under SwiftShader is slow; give every step room.
+    context.setDefaultTimeout(90000);
     const page = await context.newPage();
     const consoleErrors = [];
     page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
@@ -274,6 +276,78 @@ async function main() {
       proximity.awayId === null && proximity.awayState === 'AVAILABLE',
       `${proximity.nearId}/${proximity.nearState} → ${proximity.awayId}/${proximity.awayState}`);
 
+    /* -- media: real files, and a failure that does not break the world ------ */
+    const media = await page.evaluate(async () => {
+      const report = window.__IW.mediaLoader.report();
+      // A deliberately missing file must degrade to the generated plate.
+      const missing = await window.__IW.mediaLoader.load(
+        { kind: 'IMAGE', src: './__does-not-exist__.jpg', rights: 'QA fixture' },
+        { entityId: 'qa.missing' }
+      );
+      return { report, fallback: missing.fallback, kind: missing.kind };
+    });
+    check('MEDIA-LOADED', 'Las obras se cargan desde archivos propios declarados en el mundo',
+      media.report.loaded >= 6 && media.report.failed === 0,
+      `${media.report.loaded} archivos, ${media.report.failed} fallos, más lento ${media.report.slowestMs} ms`);
+    check('MEDIA-FALLBACK', 'Un archivo que falla degrada a lámina generada, sin romper la sala',
+      media.fallback === true && media.kind === 'GENERATED');
+    evidence.performance.media = media.report;
+
+    /* -- warmup actually compiles ------------------------------------------- */
+    const warm = await page.evaluate(() => window.__IW.runtime.sceneKit.renderStats());
+    check('WARMUP-COMPILES', 'El warmup compila programas de verdad, no una escena vacía',
+      warm.programs > 4, `${warm.programs} programas compilados`);
+
+    /* -- premium detail: navigation, zoom, and escape ------------------------ */
+    const detail = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      if (rt.state.focusedEntityId) rt.releaseFocus();
+      await window.__IW.frames(3);
+
+      const standing = JSON.parse(JSON.stringify(rt.camera.pose));
+      rt.actions.dispatch({ type: 'FOCUS_ENTITY', target: 'entity.artwork.horizonte-interrumpido' }, { source: 'QA' });
+      await window.__IW.frames(4);
+      const first = rt.state.focusedEntityId;
+
+      const stepped = rt.focusNeighbour(1);
+      await window.__IW.frames(4);
+      const second = rt.state.focusedEntityId;
+
+      const before = JSON.parse(JSON.stringify(rt.camera.pose));
+      rt.setDetailZoom(1);
+      await window.__IW.frames(30);
+      const zoomed = JSON.parse(JSON.stringify(rt.camera.pose));
+      const distanceBefore = Math.hypot(before.position[0] - before.target[0], before.position[2] - before.target[2]);
+      const distanceAfter = Math.hypot(zoomed.position[0] - zoomed.target[0], zoomed.position[2] - zoomed.target[2]);
+
+      // Escape must work while the camera belongs to the focus controller,
+      // which is exactly when movement input is disabled.
+      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', bubbles: true }));
+      await window.__IW.frames(6);
+
+      return {
+        first, stepped, second,
+        distanceBefore, distanceAfter,
+        releasedByEscape: rt.state.focusedEntityId === null,
+        owner: rt.camera.owner,
+        standing,
+        returned: rt.camera.pose,
+        violations: rt.camera.violations.length
+      };
+    });
+    check('DETAIL-NAVIGATION', 'En detalle se pasa de una obra a la siguiente sin volver a la sala',
+      Boolean(detail.stepped) && detail.second !== detail.first, `${detail.first} → ${detail.second}`);
+    check('DETAIL-ZOOM', 'El zoom de inspección acerca realmente la cámara a la obra',
+      detail.distanceAfter < detail.distanceBefore - 0.15,
+      `${detail.distanceBefore.toFixed(2)} m → ${detail.distanceAfter.toFixed(2)} m`);
+    check('ESCAPE-IN-FOCUS', 'Escape saca del detalle aunque el movimiento esté desactivado',
+      detail.releasedByEscape && detail.owner === 'EXPLORE');
+    check('DETAIL-RETURN', 'Tras recorrer varias obras el visitante vuelve donde estaba de pie',
+      detail.standing.position.every((value, i) => near(value, detail.returned.position[i], 0.05)),
+      JSON.stringify(detail.returned.position.map((v) => Number(v.toFixed(2)))));
+    check('DETAIL-NO-VIOLATIONS', 'La navegación en detalle no rompe la autoridad de cámara',
+      detail.violations === 0, `${detail.violations}`);
+
     /* -- accessibility ------------------------------------------------------ */
     const a11y = await page.evaluate(() => {
       window.__IW.hud.toggleAccessibility(true);
@@ -326,10 +400,14 @@ async function main() {
       `p50 ${perf.frame.p50Ms} ms · p95 ${perf.frame.p95Ms} ms · ${perf.render.drawCalls} draws · ${perf.render.triangles} tris`);
 
     /* -- mobile -------------------------------------------------------------- */
+    // Free the desktop context first. Under software rendering, three live WebGL
+    // contexts plus real image decoding push a cold boot past any sane timeout.
+    await page.close();
+
     const mobile = await context.newPage();
     await mobile.setViewportSize({ width: 390, height: 844 });
     await mobile.goto(`${BASE}/index.html?reducedMotion=1&tier=LOW&state=museum:artwork-horizonte-focus`, { waitUntil: 'load' });
-    await mobile.waitForFunction(() => window.__IW?.ready === true, { timeout: 45000 });
+    await mobile.waitForFunction(() => window.__IW?.ready === true, { timeout: 90000 });
     await mobile.evaluate(() => window.__IW.frames(24));
     await mobile.screenshot({ path: path.join(EVIDENCE, 'mobile_artwork-focus.png') });
     const mobileReport = await mobile.evaluate(() => {
@@ -355,11 +433,39 @@ async function main() {
       `vfov ${mobileReport.vfov}°, distancia ${mobileReport.distance.toFixed(2)} m`);
     check('MOBILE-NO-OVERFLOW', 'Sin desbordamiento horizontal en móvil', !mobileReport.horizontalOverflow);
 
+    /* -- configurability: a second world on the same engine ------------------ */
+    const secondWorld = await context.newPage();
+    const secondErrors = [];
+    secondWorld.on('pageerror', (error) => secondErrors.push(error.message));
+    await secondWorld.goto(
+      `${BASE}/index.html?reducedMotion=1&tier=HIGH&world=./worlds/institutional-demo.world.json`,
+      { waitUntil: 'load' }
+    );
+    await secondWorld.waitForFunction(() => window.__IW?.ready === true, { timeout: 60000 });
+    await secondWorld.evaluate(() => {
+      document.querySelector('.iw-veil').hidden = true;
+      window.__IW.runtime.explore.setPose({ position: [0, 1.62, 2.4], yaw: Math.PI, pitch: -0.03 });
+    });
+    await secondWorld.evaluate(() => window.__IW.frames(24));
+    await secondWorld.screenshot({ path: path.join(EVIDENCE, 'second-world.png') });
+    const second = await secondWorld.evaluate(() => ({
+      title: window.__IW.runtime.store.title,
+      institution: document.querySelector('.iw-topbar__mark b')?.textContent,
+      valid: window.__IW.runtime.store.validation.ok,
+      invariants: window.__IW.assertInvariants().ok,
+      media: window.__IW.mediaLoader.report(),
+      spaces: window.__IW.runtime.store.spaces.length
+    }));
+    await secondWorld.close();
+    check('SECOND-WORLD', 'Un segundo mundo funciona sobre el mismo motor y el mismo Scene Kit',
+      second.valid && second.invariants && secondErrors.length === 0,
+      `${second.title} · ${second.spaces} salas · ${second.media.loaded} archivos`);
+    check('WORLD-DRIVEN-IDENTITY', 'La interfaz toma la identidad del mundo, no de una constante',
+      Boolean(second.institution) && !/Arenas/i.test(second.institution), second.institution);
+    evidence.secondWorld = second;
+
     /* -- authoring ----------------------------------------------------------- */
-    // Three live WebGL contexts under software rendering is enough to make a
-    // cold boot miss a 30 s window. Close what we no longer need first.
     await mobile.close();
-    await page.close();
 
     const authorPage = await context.newPage();
     const authorErrors = [];

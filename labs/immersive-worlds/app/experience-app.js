@@ -17,7 +17,8 @@ import { EVENTS } from '../engine/core/event-bus.js';
 import { EXPERIENCE_MODE } from '../engine/world/world-state.js';
 import { RenderHost } from '../render/render-host.js';
 import { MuseumSceneKit } from '../scene-kits/museum/museum-scene-kit.js';
-import { detectTier, policyForTier } from '../engine/core/device-tier.js';
+import { MediaLoader } from '../render/media-loader.js';
+import { detectTier, isMobileEnv, policyForTier } from '../engine/core/device-tier.js';
 import { AudioDirector } from './audio-director.js';
 import { ExperienceHUD } from './ui/hud.js';
 import { InputSystem } from './ui/input.js';
@@ -50,19 +51,32 @@ export async function boot() {
     return response.json();
   });
 
-  const renderHost = new RenderHost({ canvas, quality: policyForTier(tier) });
-  const sceneKit = new MuseumSceneKit({ renderHost });
+  const renderHost = new RenderHost({ canvas, quality: policyForTier(tier, { mobile: isMobileEnv(env) }) });
+  // Media paths in a world file are relative to that file, so an institution can
+  // keep its collection next to its world definition.
+  const mediaLoader = new MediaLoader({ bus: null, baseUrl: new URL(WORLD_URL, location.href).href });
+  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader });
 
   const runtime = new Runtime({
     world,
     sceneKit,
-    viewport: () => renderHost.viewport(),
+    // The detail panel covers the right of a wide screen, so the framing has to
+    // compose the work into what is left. Without this the panel sits on top of
+    // the painting it is describing.
+    viewport: () => ({
+      ...renderHost.viewport(),
+      insetRight: window.innerWidth >= 900 ? 0.3 : 0
+    }),
     seed,
     tier,
     env,
     reducedMotion,
     mode: 'EXPERIENCE'
   });
+
+  // The loader could not have the bus at construction time; give it one now so
+  // asset failures reach the same event vocabulary as everything else.
+  mediaLoader.bus = runtime.bus;
 
   const audio = new AudioDirector();
   const hud = new ExperienceHUD({ root: uiRoot, runtime, audio });
@@ -96,7 +110,20 @@ export async function boot() {
     },
     onToggleMap: () => hud.toggleMap(),
     onStartRoute: () => {
-      if (runtime.state.mode !== EXPERIENCE_MODE.GUIDED) runtime.startRoute('route.comentado');
+      const route = runtime.store.routes[0];
+      if (route && runtime.state.mode !== EXPERIENCE_MODE.GUIDED) runtime.startRoute(route.id);
+    },
+    // These two only mean something while a work is being inspected, and they
+    // report back whether they consumed the event so the room keeps its own
+    // meaning for the same keys.
+    onZoom: (delta) => {
+      if (!runtime.state.focusedEntityId || runtime.state.mode === EXPERIENCE_MODE.GUIDED) return false;
+      hud.setZoom(hud.zoom + delta);
+      return true;
+    },
+    onStepWork: (delta) => {
+      if (!runtime.state.focusedEntityId || runtime.state.mode === EXPERIENCE_MODE.GUIDED) return false;
+      return Boolean(runtime.focusNeighbour(delta));
     }
   });
 
@@ -119,7 +146,7 @@ export async function boot() {
   runtime.startLoop();
 
   const requestedState = params.get('state');
-  installProbe({ runtime, renderHost, sceneKit, hud, audio, input, tier, seed, reducedMotion });
+  installProbe({ runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion });
 
   if (requestedState && DETERMINISTIC_STATES[requestedState]) {
     // A QA run enters directly, without the human "enter" gesture.
@@ -147,12 +174,12 @@ export async function boot() {
  * invariants actually held during the run.
  */
 function installProbe(context) {
-  const { runtime, renderHost, hud, audio, input, tier, seed, reducedMotion } = context;
+  const { runtime, renderHost, hud, audio, input, mediaLoader, tier, seed, reducedMotion } = context;
 
   window.__IW = {
     ready: false,
     state: null,
-    version: 'IW-1',
+    version: 'IW-2',
     tier,
     seed,
     reducedMotion,
@@ -160,9 +187,10 @@ function installProbe(context) {
     renderHost,
     hud,
     audio,
+    mediaLoader,
 
     /** Full runtime report — the object the QA suite writes into its evidence. */
-    report: () => runtime.report(),
+    report: () => ({ ...runtime.report(), media: mediaLoader.report() }),
 
     /** Apply a named deterministic state at runtime. */
     async applyState(name) {

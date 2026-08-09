@@ -37,21 +37,27 @@ export class ExperienceHUD {
   }
 
   _build() {
+    // Identity comes from the world record. A second world must not show the
+    // first world's institution — that is the whole point of a template.
+    const institution = this.runtime.store.metadata?.institution?.replace(/\s*\(.*\)$/, '') ||
+      this.runtime.store.title;
+    const startSpace = this.runtime.store.require(this.runtime.state.activeSpaceId);
+
     this.root.innerHTML = `
       <div class="iw-veil" data-el="veil" role="status" aria-live="polite">
         <div class="iw-veil__inner">
-          <p class="iw-veil__mark">Fundación Arenas</p>
+          <p class="iw-veil__mark">${escapeHtml(institution)}</p>
           <p class="iw-veil__title" data-el="veilTitle">Preparando la sala…</p>
           <div class="iw-veil__bar"><i data-el="veilBar"></i></div>
-          <button class="iw-btn iw-btn--primary" data-el="enter" hidden>Entrar en el vestíbulo</button>
+          <button class="iw-btn iw-btn--primary" data-el="enter" hidden>Entrar en ${escapeHtml(startSpace.title.toLowerCase())}</button>
           <p class="iw-veil__note">Contenido y obras ficticios, generados en tiempo de ejecución.</p>
         </div>
       </div>
 
       <header class="iw-topbar">
         <div class="iw-topbar__mark">
-          <b>Fundación Arenas</b>
-          <span data-el="spaceTitle">Vestíbulo</span>
+          <b>${escapeHtml(institution)}</b>
+          <span data-el="spaceTitle">${escapeHtml(startSpace.title)}</span>
         </div>
         <div class="iw-topbar__tools">
           <button class="iw-btn" data-el="mapBtn" aria-expanded="false">Salas <kbd>M</kbd></button>
@@ -63,13 +69,31 @@ export class ExperienceHUD {
 
       <div class="iw-prompt" data-el="prompt" hidden></div>
 
-      <aside class="iw-detail" data-el="detail" hidden aria-live="polite">
-        <p class="iw-detail__eyebrow" data-el="detailEyebrow"></p>
-        <h2 data-el="detailTitle"></h2>
-        <p class="iw-detail__meta" data-el="detailMeta"></p>
-        <p class="iw-detail__body" data-el="detailBody"></p>
-        <button class="iw-btn" data-el="detailClose">Volver a la sala <kbd>Esc</kbd></button>
-      </aside>
+      <section class="iw-detail" data-el="detail" hidden aria-live="polite">
+        <div class="iw-detail__scrim"></div>
+        <div class="iw-detail__panel">
+          <p class="iw-detail__eyebrow" data-el="detailEyebrow"></p>
+          <h2 data-el="detailTitle"></h2>
+          <p class="iw-detail__meta" data-el="detailMeta"></p>
+          <p class="iw-detail__body" data-el="detailBody"></p>
+          <dl class="iw-detail__facts" data-el="detailFacts"></dl>
+          <p class="iw-detail__credit" data-el="detailCredit" hidden></p>
+
+          <div class="iw-detail__zoom">
+            <label for="iw-zoom">Acercar</label>
+            <input id="iw-zoom" type="range" min="0" max="100" value="0" data-el="zoom"
+                   aria-label="Acercarse a la obra">
+            <span data-el="zoomValue">0 %</span>
+          </div>
+
+          <nav class="iw-detail__nav">
+            <button class="iw-btn" data-el="detailPrev" aria-label="Obra anterior">← Anterior</button>
+            <span class="iw-detail__count" data-el="detailCount"></span>
+            <button class="iw-btn" data-el="detailNext" aria-label="Obra siguiente">Siguiente →</button>
+          </nav>
+          <button class="iw-btn iw-btn--wide" data-el="detailClose">Volver a la sala <kbd>Esc</kbd></button>
+        </div>
+      </section>
 
       <section class="iw-transport" data-el="transport" hidden>
         <div class="iw-transport__caption" data-el="caption" aria-live="polite"></div>
@@ -115,8 +139,16 @@ export class ExperienceHUD {
     this.el.mapClose.addEventListener('click', () => this.toggleMap(false));
     this.el.a11yBtn.addEventListener('click', () => this.toggleAccessibility());
     this.el.a11yClose.addEventListener('click', () => this.toggleAccessibility(false));
-    this.el.routeBtn.addEventListener('click', () => this.runtime.startRoute('route.comentado'));
+    const route = this.runtime.store.routes[0];
+    this.el.routeBtn.hidden = !route;
+    if (route) {
+      this.el.routeBtn.firstChild.textContent = `${route.title} `;
+      this.el.routeBtn.addEventListener('click', () => this.runtime.startRoute(route.id));
+    }
     this.el.detailClose.addEventListener('click', () => this.runtime.releaseFocus());
+    this.el.detailPrev.addEventListener('click', () => this.runtime.focusNeighbour(-1));
+    this.el.detailNext.addEventListener('click', () => this.runtime.focusNeighbour(1));
+    this.el.zoom.addEventListener('input', (event) => this.setZoom(Number(event.target.value) / 100));
     this.el.pauseBtn.addEventListener('click', () => this._togglePause());
     this.el.nextBtn.addEventListener('click', () => this.runtime.experience.next());
     this.el.exitBtn.addEventListener('click', () => this.runtime.exitRoute());
@@ -197,16 +229,60 @@ export class ExperienceHUD {
   _showDetail(entityId) {
     const entity = this.runtime.store.require(entityId);
     const content = entity.content || {};
+    const guided = this.runtime.state.mode === EXPERIENCE_MODE.GUIDED;
+
     this.el.detail.hidden = false;
-    this.el.detailEyebrow.textContent = `${entity.kind === 'VIDEO' ? 'Vídeo' : entity.kind === 'AUDIO' ? 'Registro sonoro' : entity.kind === 'SCULPTURE' ? 'Escultura' : 'Obra'} · ${this.runtime.store.require(entity.spaceId).title}`;
+    this.el.detail.dataset.guided = String(guided);
+    this.el.detailEyebrow.textContent = `${KIND_LABEL[entity.kind] || 'Obra'} · ${this.runtime.store.require(entity.spaceId).title}`;
     this.el.detailTitle.textContent = content.title || entity.id;
     this.el.detailMeta.textContent = [content.creator, content.year, content.medium].filter(Boolean).join(' · ');
     this.el.detailBody.textContent = content.description || entity.accessibility?.description || '';
-    this.el.detailClose.hidden = this.runtime.state.mode === EXPERIENCE_MODE.GUIDED;
+
+    // Facts come from the record, so an institution that fills in more fields
+    // gets a richer panel without anyone touching the interface.
+    const facts = [
+      ['Dimensiones', entity.size ? `${(entity.size[0] * 100).toFixed(0)} × ${(entity.size[1] * 100).toFixed(0)} cm` : null],
+      ['Sala', this.runtime.store.require(entity.spaceId).title],
+      ['Referencia', entity.id.replace(/^entity\./, '')]
+    ].filter(([, value]) => value);
+    this.el.detailFacts.innerHTML = facts
+      .map(([term, value]) => `<dt>${escapeHtml(term)}</dt><dd>${escapeHtml(value)}</dd>`)
+      .join('');
+
+    const credit = content.media?.credit || content.media?.rights;
+    this.el.detailCredit.hidden = !credit;
+    this.el.detailCredit.textContent = credit ? `Imagen: ${credit}` : '';
+
+    // Stepping through works and zooming belong to the visitor. During a guided
+    // route the camera is the Director's, so they are not offered.
+    const works = this.runtime.focusableInSpace();
+    const index = works.findIndex((work) => work.id === entityId);
+    this.el.detailCount.textContent = works.length > 1 ? `${index + 1} / ${works.length}` : '';
+    for (const key of ['detailPrev', 'detailNext', 'detailClose']) this.el[key].hidden = guided;
+    this.el.detail.querySelector('.iw-detail__zoom').hidden = guided;
+    if (works.length < 2) {
+      this.el.detailPrev.hidden = true;
+      this.el.detailNext.hidden = true;
+    }
+
+    this.setZoom(0);
+  }
+
+  /** @param {number} zoom 0..1 */
+  setZoom(zoom) {
+    const value = Math.max(0, Math.min(1, zoom));
+    this.runtime.setDetailZoom(value);
+    this.el.zoom.value = String(Math.round(value * 100));
+    this.el.zoomValue.textContent = `${Math.round(value * 100)} %`;
+  }
+
+  get zoom() {
+    return this.runtime.focus.zoom;
   }
 
   _hideDetail() {
     this.el.detail.hidden = true;
+    this.setZoom(0);
   }
 
   _togglePause() {
@@ -336,6 +412,15 @@ export class ExperienceHUD {
       .join('');
   }
 }
+
+const KIND_LABEL = {
+  ARTWORK: 'Obra',
+  SCULPTURE: 'Escultura',
+  VIDEO: 'Vídeo',
+  AUDIO: 'Registro sonoro',
+  TEXT: 'Texto de sala',
+  OBJECT_3D: 'Objeto'
+};
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (character) => ({

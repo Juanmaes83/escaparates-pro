@@ -29,7 +29,8 @@ import { EVENTS } from '../engine/core/event-bus.js';
 import { validateWorld } from '../engine/schema/validate.js';
 import { RenderHost } from '../render/render-host.js';
 import { MuseumSceneKit } from '../scene-kits/museum/museum-scene-kit.js';
-import { detectTier, policyForTier } from '../engine/core/device-tier.js';
+import { MediaLoader } from '../render/media-loader.js';
+import { detectTier, isMobileEnv, policyForTier } from '../engine/core/device-tier.js';
 
 const params = new URLSearchParams(location.search);
 const WORLD_URL = params.get('world') || './worlds/museum-v1.world.json';
@@ -104,8 +105,9 @@ export async function boot() {
   const tier = params.get('tier')?.toUpperCase() || detectTier(env);
 
   const world = await fetch(WORLD_URL, { cache: 'no-store' }).then((r) => r.json());
-  const renderHost = new RenderHost({ canvas, quality: policyForTier(tier) });
-  const sceneKit = new MuseumSceneKit({ renderHost });
+  const renderHost = new RenderHost({ canvas, quality: policyForTier(tier, { mobile: isMobileEnv(env) }) });
+  const mediaLoader = new MediaLoader({ bus: null, baseUrl: new URL(WORLD_URL, location.href).href });
+  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader });
 
   const runtime = new Runtime({
     world,
@@ -115,6 +117,8 @@ export async function boot() {
     env,
     mode: 'AUTHOR'
   });
+
+  mediaLoader.bus = runtime.bus;
 
   runtime.onFrame = (pose) => {
     renderHost.applyPose(pose);

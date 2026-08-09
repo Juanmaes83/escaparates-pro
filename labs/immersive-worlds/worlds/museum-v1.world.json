@@ -10,18 +10,30 @@
     "language": "es",
     "note": "Todas las obras, autores y textos de esta colección son ficticios y se generan en tiempo de ejecución. No se referencia ninguna obra, colección ni institución real."
   },
-
   "spaces": [
     {
       "id": "space.lobby",
       "title": "Vestíbulo",
       "type": "LOBBY",
-      "bounds": { "size": [11, 4.4, 9], "origin": [0, 0, 0] },
+      "bounds": {
+        "size": [
+          11,
+          4.4,
+          9
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ]
+      },
       "sceneProfile": "white-cube",
       "lightingProfile": "museum-cove-soft",
       "ambience": "ambience.lobby",
       "defaultSpawnAnchorId": "anchor.lobby.spawn",
-      "entityRefs": ["entity.lobby.bienvenida"],
+      "entityRefs": [
+        "entity.lobby.bienvenida"
+      ],
       "anchorRefs": [
         "anchor.lobby.spawn",
         "anchor.lobby.arrive-from-gallery-a",
@@ -29,15 +41,36 @@
         "anchor.lobby.door-gallery-a",
         "anchor.lobby.route-start"
       ],
-      "hotspotRefs": ["hotspot.lobby.route-start", "hotspot.lobby.to-gallery-a"],
-      "portalRefs": ["portal.lobby-gallery-a"],
-      "metadata": { "bench": [3.4, -2.4] }
+      "hotspotRefs": [
+        "hotspot.lobby.route-start",
+        "hotspot.lobby.to-gallery-a"
+      ],
+      "portalRefs": [
+        "portal.lobby-gallery-a"
+      ],
+      "metadata": {
+        "bench": [
+          3.4,
+          -2.4
+        ]
+      }
     },
     {
       "id": "space.gallery-a",
       "title": "Galería A — Horizontes",
       "type": "GALLERY",
-      "bounds": { "size": [16, 4.8, 11], "origin": [0, 0, -10] },
+      "bounds": {
+        "size": [
+          16,
+          4.8,
+          11
+        ],
+        "origin": [
+          0,
+          0,
+          -10
+        ]
+      },
       "sceneProfile": "white-cube",
       "lightingProfile": "museum-cove-track",
       "ambience": "ambience.gallery",
@@ -72,14 +105,34 @@
         "hotspot.gallery-a.to-gallery-b",
         "hotspot.gallery-a.to-archive"
       ],
-      "portalRefs": ["portal.gallery-a-lobby", "portal.gallery-a-gallery-b", "portal.gallery-a-archive"],
-      "metadata": { "bench": [-1.4, 2.6] }
+      "portalRefs": [
+        "portal.gallery-a-lobby",
+        "portal.gallery-a-gallery-b",
+        "portal.gallery-a-archive"
+      ],
+      "metadata": {
+        "bench": [
+          -1.4,
+          2.6
+        ]
+      }
     },
     {
       "id": "space.gallery-b",
       "title": "Galería B — Cámara oscura",
       "type": "GALLERY",
-      "bounds": { "size": [12, 4.4, 10], "origin": [14, 0, -10] },
+      "bounds": {
+        "size": [
+          12,
+          4.4,
+          10
+        ],
+        "origin": [
+          14,
+          0,
+          -10
+        ]
+      },
       "sceneProfile": "dark-exhibition",
       "lightingProfile": "museum-low-light",
       "ambience": "ambience.dark-room",
@@ -102,62 +155,479 @@
         "hotspot.media.cuaderno-de-luz",
         "hotspot.gallery-b.to-gallery-a"
       ],
-      "portalRefs": ["portal.gallery-b-gallery-a"],
+      "portalRefs": [
+        "portal.gallery-b-gallery-a"
+      ],
       "metadata": {}
     },
     {
       "id": "space.archive",
       "title": "Archivo — Sala de escucha",
       "type": "ARCHIVE",
-      "bounds": { "size": [8, 3.6, 7], "origin": [-12, 0, -10] },
+      "bounds": {
+        "size": [
+          8,
+          3.6,
+          7
+        ],
+        "origin": [
+          -12,
+          0,
+          -10
+        ]
+      },
       "sceneProfile": "heritage",
       "lightingProfile": "archive-warm",
       "ambience": "ambience.archive",
       "defaultSpawnAnchorId": "anchor.archive.arrive-from-gallery-a",
-      "entityRefs": ["entity.audio.sala-de-escucha", "entity.text.nota-de-cierre"],
+      "entityRefs": [
+        "entity.audio.sala-de-escucha",
+        "entity.text.nota-de-cierre"
+      ],
       "anchorRefs": [
         "anchor.archive.arrive-from-gallery-a",
         "anchor.archive.listening",
         "anchor.archive.closing",
         "anchor.archive.door-gallery-a"
       ],
-      "hotspotRefs": ["hotspot.archive.escucha", "hotspot.archive.to-gallery-a"],
-      "portalRefs": ["portal.archive-gallery-a"],
-      "metadata": { "bench": [0, 1.9] }
+      "hotspotRefs": [
+        "hotspot.archive.escucha",
+        "hotspot.archive.to-gallery-a"
+      ],
+      "portalRefs": [
+        "portal.archive-gallery-a"
+      ],
+      "metadata": {
+        "bench": [
+          0,
+          1.9
+        ]
+      }
     }
   ],
-
   "anchors": [
-    { "id": "anchor.lobby.spawn", "spaceId": "space.lobby", "kind": "SPAWN", "position": [0, 0, 3.2], "normal": [0, 0, -1], "label": "Entrada" },
-    { "id": "anchor.lobby.arrive-from-gallery-a", "spaceId": "space.lobby", "kind": "SPAWN", "position": [0, 0, -3.2], "normal": [0, 0, 1], "label": "Regreso desde Galería A" },
-    { "id": "anchor.lobby.bienvenida", "spaceId": "space.lobby", "kind": "WALL", "position": [-3.1, 1.58, -4.35], "normal": [0, 0, 1], "extent": [2.4, 1.6] },
-    { "id": "anchor.lobby.door-gallery-a", "spaceId": "space.lobby", "kind": "WALL", "position": [0, 0, -4.5], "normal": [0, 0, -1], "label": "Puerta a Galería A" },
-    { "id": "anchor.lobby.route-start", "spaceId": "space.lobby", "kind": "FLOOR", "position": [0, 0, 1.1], "normal": [0, 0, -1], "label": "Punto de inicio del recorrido" },
-
-    { "id": "anchor.gallery-a.arrive-from-lobby", "spaceId": "space.gallery-a", "kind": "SPAWN", "position": [0, 0, -5.9], "normal": [0, 0, -1] },
-    { "id": "anchor.gallery-a.arrive-from-gallery-b", "spaceId": "space.gallery-a", "kind": "SPAWN", "position": [6.3, 0, -10], "normal": [-1, 0, 0] },
-    { "id": "anchor.gallery-a.arrive-from-archive", "spaceId": "space.gallery-a", "kind": "SPAWN", "position": [-6.3, 0, -10], "normal": [1, 0, 0] },
-    { "id": "anchor.gallery-a.wall-1", "spaceId": "space.gallery-a", "kind": "WALL", "position": [-4.8, 1.62, -15.35], "normal": [0, 0, 1], "extent": [3.2, 2.4] },
-    { "id": "anchor.gallery-a.wall-2", "spaceId": "space.gallery-a", "kind": "WALL", "position": [-0.4, 1.68, -15.35], "normal": [0, 0, 1], "extent": [2.4, 2.6] },
-    { "id": "anchor.gallery-a.wall-3", "spaceId": "space.gallery-a", "kind": "WALL", "position": [4.6, 1.62, -15.35], "normal": [0, 0, 1], "extent": [3.0, 2.2] },
-    { "id": "anchor.gallery-a.wall-4", "spaceId": "space.gallery-a", "kind": "WALL", "position": [-7.85, 1.55, -13.1], "normal": [1, 0, 0], "extent": [1.6, 1.8] },
-    { "id": "anchor.gallery-a.plinth", "spaceId": "space.gallery-a", "kind": "PLINTH", "position": [3.6, 0, -8.4], "normal": [0, 1, 0] },
-    { "id": "anchor.gallery-a.door-lobby", "spaceId": "space.gallery-a", "kind": "WALL", "position": [0, 0, -4.5], "normal": [0, 0, 1], "label": "Puerta al vestíbulo" },
-    { "id": "anchor.gallery-a.door-gallery-b", "spaceId": "space.gallery-a", "kind": "WALL", "position": [8, 0, -10], "normal": [-1, 0, 0], "label": "Paso a Galería B" },
-    { "id": "anchor.gallery-a.door-archive", "spaceId": "space.gallery-a", "kind": "WALL", "position": [-8, 0, -10], "normal": [1, 0, 0], "label": "Puerta al archivo" },
-
-    { "id": "anchor.gallery-b.arrive-from-gallery-a", "spaceId": "space.gallery-b", "kind": "SPAWN", "position": [9.7, 0, -10], "normal": [1, 0, 0] },
-    { "id": "anchor.gallery-b.wall-5", "spaceId": "space.gallery-b", "kind": "WALL", "position": [12.4, 1.58, -14.85], "normal": [0, 0, 1], "extent": [2.6, 2.0] },
-    { "id": "anchor.gallery-b.wall-6", "spaceId": "space.gallery-b", "kind": "WALL", "position": [19.85, 1.6, -11.4], "normal": [-1, 0, 0], "extent": [2.2, 2.2] },
-    { "id": "anchor.gallery-b.screen", "spaceId": "space.gallery-b", "kind": "WALL", "position": [16.9, 1.72, -14.85], "normal": [0, 0, 1], "extent": [2.2, 1.4] },
-    { "id": "anchor.gallery-b.door-gallery-a", "spaceId": "space.gallery-b", "kind": "WALL", "position": [8, 0, -10], "normal": [1, 0, 0], "label": "Paso a Galería A" },
-
-    { "id": "anchor.archive.arrive-from-gallery-a", "spaceId": "space.archive", "kind": "SPAWN", "position": [-9.5, 0, -10], "normal": [-1, 0, 0] },
-    { "id": "anchor.archive.listening", "spaceId": "space.archive", "kind": "FLOOR", "position": [-12.4, 0, -10], "normal": [0, 1, 0], "label": "Punto de escucha" },
-    { "id": "anchor.archive.closing", "spaceId": "space.archive", "kind": "WALL", "position": [-15.85, 1.5, -10], "normal": [1, 0, 0], "extent": [1.8, 1.2] },
-    { "id": "anchor.archive.door-gallery-a", "spaceId": "space.archive", "kind": "WALL", "position": [-8, 0, -10], "normal": [-1, 0, 0], "label": "Puerta a Galería A" }
+    {
+      "id": "anchor.lobby.spawn",
+      "spaceId": "space.lobby",
+      "kind": "SPAWN",
+      "position": [
+        0,
+        0,
+        3.2
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Entrada"
+    },
+    {
+      "id": "anchor.lobby.arrive-from-gallery-a",
+      "spaceId": "space.lobby",
+      "kind": "SPAWN",
+      "position": [
+        0,
+        0,
+        -3.2
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "label": "Regreso desde Galería A"
+    },
+    {
+      "id": "anchor.lobby.bienvenida",
+      "spaceId": "space.lobby",
+      "kind": "WALL",
+      "position": [
+        -3.1,
+        1.55,
+        -4.35
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        2.4,
+        1.6
+      ]
+    },
+    {
+      "id": "anchor.lobby.door-gallery-a",
+      "spaceId": "space.lobby",
+      "kind": "WALL",
+      "position": [
+        0,
+        0,
+        -4.5
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Puerta a Galería A"
+    },
+    {
+      "id": "anchor.lobby.route-start",
+      "spaceId": "space.lobby",
+      "kind": "FLOOR",
+      "position": [
+        0,
+        0,
+        1.1
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Punto de inicio del recorrido"
+    },
+    {
+      "id": "anchor.gallery-a.arrive-from-lobby",
+      "spaceId": "space.gallery-a",
+      "kind": "SPAWN",
+      "position": [
+        0,
+        0,
+        -5.9
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.arrive-from-gallery-b",
+      "spaceId": "space.gallery-a",
+      "kind": "SPAWN",
+      "position": [
+        6.3,
+        0,
+        -10
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.arrive-from-archive",
+      "spaceId": "space.gallery-a",
+      "kind": "SPAWN",
+      "position": [
+        -6.3,
+        0,
+        -10
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.wall-1",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        -4.8,
+        1.55,
+        -15.35
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        3.2,
+        2.4
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.wall-2",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        -0.4,
+        1.55,
+        -15.35
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        2.4,
+        2.6
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.wall-3",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        4.6,
+        1.55,
+        -15.35
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        3.0,
+        2.2
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.wall-4",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        -7.85,
+        1.55,
+        -13.1
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "extent": [
+        1.6,
+        1.8
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.plinth",
+      "spaceId": "space.gallery-a",
+      "kind": "PLINTH",
+      "position": [
+        3.6,
+        0,
+        -8.4
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.door-lobby",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        0,
+        0,
+        -4.5
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "label": "Puerta al vestíbulo"
+    },
+    {
+      "id": "anchor.gallery-a.door-gallery-b",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        8,
+        0,
+        -10
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "label": "Paso a Galería B"
+    },
+    {
+      "id": "anchor.gallery-a.door-archive",
+      "spaceId": "space.gallery-a",
+      "kind": "WALL",
+      "position": [
+        -8,
+        0,
+        -10
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "label": "Puerta al archivo"
+    },
+    {
+      "id": "anchor.gallery-b.arrive-from-gallery-a",
+      "spaceId": "space.gallery-b",
+      "kind": "SPAWN",
+      "position": [
+        9.7,
+        0,
+        -10
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "anchor.gallery-b.wall-5",
+      "spaceId": "space.gallery-b",
+      "kind": "WALL",
+      "position": [
+        12.4,
+        1.55,
+        -14.85
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        2.6,
+        2.0
+      ]
+    },
+    {
+      "id": "anchor.gallery-b.wall-6",
+      "spaceId": "space.gallery-b",
+      "kind": "WALL",
+      "position": [
+        19.85,
+        1.55,
+        -11.4
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "extent": [
+        2.2,
+        2.2
+      ]
+    },
+    {
+      "id": "anchor.gallery-b.screen",
+      "spaceId": "space.gallery-b",
+      "kind": "WALL",
+      "position": [
+        16.9,
+        1.55,
+        -14.85
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        2.2,
+        1.4
+      ]
+    },
+    {
+      "id": "anchor.gallery-b.door-gallery-a",
+      "spaceId": "space.gallery-b",
+      "kind": "WALL",
+      "position": [
+        8,
+        0,
+        -10
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "label": "Paso a Galería A"
+    },
+    {
+      "id": "anchor.archive.arrive-from-gallery-a",
+      "spaceId": "space.archive",
+      "kind": "SPAWN",
+      "position": [
+        -9.5,
+        0,
+        -10
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "anchor.archive.listening",
+      "spaceId": "space.archive",
+      "kind": "FLOOR",
+      "position": [
+        -12.4,
+        0,
+        -10
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ],
+      "label": "Punto de escucha"
+    },
+    {
+      "id": "anchor.archive.closing",
+      "spaceId": "space.archive",
+      "kind": "WALL",
+      "position": [
+        -15.85,
+        1.55,
+        -10
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "extent": [
+        1.8,
+        1.2
+      ]
+    },
+    {
+      "id": "anchor.archive.door-gallery-a",
+      "spaceId": "space.archive",
+      "kind": "WALL",
+      "position": [
+        -8,
+        0,
+        -10
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "label": "Puerta a Galería A"
+    }
   ],
-
   "entities": [
     {
       "id": "entity.lobby.bienvenida",
@@ -165,7 +635,11 @@
       "subtype": "wall-panel",
       "spaceId": "space.lobby",
       "anchorId": "anchor.lobby.bienvenida",
-      "size": [1.5, 0.95, 0.02],
+      "size": [
+        1.5,
+        0.95,
+        0.02
+      ],
       "content": {
         "title": "Colección permanente",
         "creator": "Fundación Arenas",
@@ -173,30 +647,60 @@
         "medium": "Once obras. Cuatro salas.",
         "description": "La Fundación Arenas reúne pintura, obra sobre papel, escultura y registro sonoro producidos entre 1958 y 1994. El recorrido comentado dura seis minutos."
       },
-      "representation": { "profile": "wall-panel", "hints": { "align": "left" } },
-      "interaction": { "focusable": false },
+      "representation": {
+        "profile": "wall-panel",
+        "hints": {
+          "align": "left"
+        }
+      },
+      "interaction": {
+        "focusable": false
+      },
       "accessibility": {
         "label": "Panel de bienvenida de la colección permanente",
         "description": "Texto introductorio de la Fundación Arenas: once obras distribuidas en cuatro salas, producidas entre 1958 y 1994."
       }
     },
-
     {
       "id": "entity.artwork.horizonte-interrumpido",
       "kind": "ARTWORK",
       "subtype": "painting",
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.wall-1",
-      "size": [2.2, 1.5, 0.06],
+      "size": [
+        2.6,
+        1.78,
+        0.06
+      ],
       "content": {
         "title": "Horizonte interrumpido",
         "creator": "Amalia Serrat",
         "year": "1971",
         "medium": "Óleo sobre lienzo",
-        "description": "Serrat pintó esta serie desde la misma ventana durante catorce meses. La franja inferior, más oscura que en el resto de la serie, corresponde al invierno de 1971."
+        "description": "Serrat pintó esta serie desde la misma ventana durante catorce meses. La franja inferior, más oscura que en el resto de la serie, corresponde al invierno de 1971.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.4607,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-canvas", "hints": { "composition": "horizon-bands", "palette": "umber", "mount": "framed" } },
-      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.art.horizonte-interrumpido"] },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "composition": "horizon-bands",
+          "palette": "umber",
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.art.horizonte-interrumpido"
+        ]
+      },
       "accessibility": {
         "label": "Horizonte interrumpido, Amalia Serrat, 1971",
         "description": "Óleo de 220 por 150 centímetros. Cuatro franjas horizontales de tierras y ocres; la inferior, casi negra, ocupa un tercio del lienzo."
@@ -208,16 +712,40 @@
       "subtype": "painting",
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.wall-2",
-      "size": [1.6, 1.95, 0.06],
+      "size": [
+        1.75,
+        2.15,
+        0.06
+      ],
       "content": {
         "title": "Campo de ceniza",
         "creator": "Amalia Serrat",
         "year": "1974",
         "medium": "Óleo y ceniza sobre lienzo",
-        "description": "La superficie incorpora ceniza tamizada, lo que produce una absorción de luz desigual. Debe observarse en movimiento lateral."
+        "description": "La superficie incorpora ceniza tamizada, lo que produce una absorción de luz desigual. Debe observarse en movimiento lateral.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/campo-de-ceniza.jpg",
+          "aspect": 0.814,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-canvas", "hints": { "composition": "field", "palette": "slate", "mount": "unframed" } },
-      "interaction": { "focusable": true, "focusDistance": 2.6, "hotspotRefs": ["hotspot.art.campo-de-ceniza"] },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "composition": "field",
+          "palette": "slate",
+          "mount": "unframed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.6,
+        "hotspotRefs": [
+          "hotspot.art.campo-de-ceniza"
+        ]
+      },
       "accessibility": {
         "label": "Campo de ceniza, Amalia Serrat, 1974",
         "description": "Lienzo vertical de 160 por 195 centímetros. Un campo gris azulado con un rectángulo interior de bordes difusos."
@@ -229,16 +757,40 @@
       "subtype": "painting",
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.wall-3",
-      "size": [1.95, 1.4, 0.06],
+      "size": [
+        2.1,
+        1.5,
+        0.06
+      ],
       "content": {
         "title": "División tercera",
         "creator": "Bruno Ferrán",
         "year": "1968",
         "medium": "Acrílico sobre tabla",
-        "description": "Tres bandas verticales de anchura desigual. Ferrán calculaba las proporciones con una regla de cálculo que se conserva en el archivo."
+        "description": "Tres bandas verticales de anchura desigual. Ferrán calculaba las proporciones con una regla de cálculo que se conserva en el archivo.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/division-tercera.jpg",
+          "aspect": 1.4,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-panel", "hints": { "composition": "hard-edge", "palette": "oxblood", "mount": "framed" } },
-      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.art.division-tercera"] },
+      "representation": {
+        "profile": "framed-panel",
+        "hints": {
+          "composition": "hard-edge",
+          "palette": "oxblood",
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.art.division-tercera"
+        ]
+      },
       "accessibility": {
         "label": "División tercera, Bruno Ferrán, 1968",
         "description": "Tabla horizontal de 195 por 140 centímetros con tres bandas verticales rojizas de distinta anchura sobre fondo hueso."
@@ -250,16 +802,40 @@
       "subtype": "work-on-paper",
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.wall-4",
-      "size": [0.92, 1.18, 0.04],
+      "size": [
+        0.95,
+        1.22,
+        0.04
+      ],
       "content": {
         "title": "Estudio de figura, IV",
         "creator": "Bruno Ferrán",
         "year": "1963",
         "medium": "Grafito sobre papel",
-        "description": "Cuarto de una serie de once estudios. Los tres primeros se perdieron en el traslado de 1979."
+        "description": "Cuarto de una serie de once estudios. Los tres primeros se perdieron en el traslado de 1979.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/estudio-de-figura.jpg",
+          "aspect": 0.7787,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-paper", "hints": { "composition": "graphite-study", "palette": "umber", "mount": "paper" } },
-      "interaction": { "focusable": true, "focusDistance": 1.6, "hotspotRefs": ["hotspot.art.estudio-de-figura"] },
+      "representation": {
+        "profile": "framed-paper",
+        "hints": {
+          "composition": "graphite-study",
+          "palette": "umber",
+          "mount": "paper"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 1.6,
+        "hotspotRefs": [
+          "hotspot.art.estudio-de-figura"
+        ]
+      },
       "accessibility": {
         "label": "Estudio de figura IV, Bruno Ferrán, 1963",
         "description": "Dibujo a grafito de 92 por 118 centímetros, enmarcado con paspartú. Una masa central construida por acumulación de trazos cortos."
@@ -271,7 +847,11 @@
       "subtype": "vessel",
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.plinth",
-      "size": [0.6, 0.88, 0.6],
+      "size": [
+        0.6,
+        0.88,
+        0.6
+      ],
       "content": {
         "title": "Vasija de arenas",
         "creator": "Teresa Miralles",
@@ -279,30 +859,64 @@
         "medium": "Gres torneado y esmalte mate",
         "description": "Pieza torneada en una sola sesión. El perfil se estrecha dos veces, un gesto que Miralles llamaba «la respiración»."
       },
-      "representation": { "profile": "plinth-vessel", "hints": { "plinthHeight": 1.02 } },
-      "interaction": { "focusable": true, "focusDistance": 2.0, "hotspotRefs": ["hotspot.art.vasija-de-arenas"] },
+      "representation": {
+        "profile": "plinth-vessel",
+        "hints": {
+          "plinthHeight": 1.02
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.0,
+        "hotspotRefs": [
+          "hotspot.art.vasija-de-arenas"
+        ]
+      },
       "accessibility": {
         "label": "Vasija de arenas, Teresa Miralles, 1986",
         "description": "Vasija de gres de 88 centímetros de altura sobre peana, de perfil ensanchado en el centro y cuello estrecho."
       }
     },
-
     {
       "id": "entity.artwork.noche-de-invierno",
       "kind": "ARTWORK",
       "subtype": "photograph",
       "spaceId": "space.gallery-b",
       "anchorId": "anchor.gallery-b.wall-5",
-      "size": [1.8, 1.22, 0.05],
+      "size": [
+        2.0,
+        1.36,
+        0.05
+      ],
       "content": {
         "title": "Noche de invierno",
         "creator": "Jonás Vilar",
         "year": "1959",
         "medium": "Fotograbado sobre papel de algodón",
-        "description": "Expuesto en sala oscura por indicación del autor: la copia original perdió densidad tras seis meses de luz directa."
+        "description": "Expuesto en sala oscura por indicación del autor: la copia original perdió densidad tras seis meses de luz directa.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/noche-de-invierno.jpg",
+          "aspect": 1.4706,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-paper", "hints": { "composition": "photogravure", "palette": "prussian", "mount": "paper" } },
-      "interaction": { "focusable": true, "focusDistance": 2.0, "hotspotRefs": ["hotspot.art.noche-de-invierno"] },
+      "representation": {
+        "profile": "framed-paper",
+        "hints": {
+          "composition": "photogravure",
+          "palette": "prussian",
+          "mount": "paper"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.0,
+        "hotspotRefs": [
+          "hotspot.art.noche-de-invierno"
+        ]
+      },
       "accessibility": {
         "label": "Noche de invierno, Jonás Vilar, 1959",
         "description": "Fotograbado de 180 por 122 centímetros. Una masa oscura ocupa el tercio inferior sobre un fondo de grano azulado."
@@ -314,16 +928,40 @@
       "subtype": "painting",
       "spaceId": "space.gallery-b",
       "anchorId": "anchor.gallery-b.wall-6",
-      "size": [1.45, 1.45, 0.06],
+      "size": [
+        1.6,
+        1.6,
+        0.06
+      ],
       "content": {
         "title": "Marea baja",
         "creator": "Teresa Miralles",
         "year": "1991",
         "medium": "Temple sobre tabla",
-        "description": "Única pintura conservada de Miralles. El verde procede de un pigmento que ella misma preparaba con carbonato de cobre."
+        "description": "Única pintura conservada de Miralles. El verde procede de un pigmento que ella misma preparaba con carbonato de cobre.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/marea-baja.jpg",
+          "aspect": 1.0,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "framed-panel", "hints": { "composition": "field", "palette": "verdigris", "mount": "framed" } },
-      "interaction": { "focusable": true, "focusDistance": 2.2, "hotspotRefs": ["hotspot.art.marea-baja"] },
+      "representation": {
+        "profile": "framed-panel",
+        "hints": {
+          "composition": "field",
+          "palette": "verdigris",
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.2,
+        "hotspotRefs": [
+          "hotspot.art.marea-baja"
+        ]
+      },
       "accessibility": {
         "label": "Marea baja, Teresa Miralles, 1991",
         "description": "Tabla cuadrada de 145 centímetros. Campo verde grisáceo con un rectángulo interior más claro desplazado hacia la izquierda."
@@ -335,31 +973,57 @@
       "subtype": "single-channel",
       "spaceId": "space.gallery-b",
       "anchorId": "anchor.gallery-b.screen",
-      "size": [1.78, 1.0, 0.08],
+      "size": [
+        2.0,
+        1.125,
+        0.08
+      ],
       "content": {
         "title": "Cuaderno de luz",
         "creator": "Jonás Vilar",
         "year": "1994",
         "medium": "Vídeo monocanal, 8 min, en bucle, sin sonido",
         "description": "Registro de la luz que atravesaba el taller de Vilar entre las siete y las nueve de la mañana, filmado durante nueve días.",
-        "mediaRef": "generated:light-notebook"
+        "media": {
+          "kind": "VIDEO",
+          "src": "../assets/collection/cuaderno-de-luz.webm",
+          "aspect": 1.7777777777777777,
+          "loop": true,
+          "muted": true,
+          "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        }
       },
-      "representation": { "profile": "wall-screen", "hints": { "bezel": "dark" } },
-      "interaction": { "focusable": true, "focusDistance": 2.6, "hotspotRefs": ["hotspot.media.cuaderno-de-luz"] },
+      "representation": {
+        "profile": "wall-screen",
+        "hints": {
+          "bezel": "dark"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.6,
+        "hotspotRefs": [
+          "hotspot.media.cuaderno-de-luz"
+        ]
+      },
       "accessibility": {
         "label": "Cuaderno de luz, Jonás Vilar, 1994. Vídeo sin sonido",
         "description": "Vídeo monocanal de ocho minutos en bucle. Bandas de luz cálida atraviesan lentamente el encuadre de arriba abajo.",
         "transcript": "Obra sin sonido ni voz. No requiere transcripción."
       }
     },
-
     {
       "id": "entity.audio.sala-de-escucha",
       "kind": "AUDIO",
       "subtype": "listening-point",
       "spaceId": "space.archive",
       "anchorId": "anchor.archive.listening",
-      "size": [1.0, 1.0, 1.0],
+      "size": [
+        1.0,
+        1.0,
+        1.0
+      ],
       "content": {
         "title": "Cinta 14: taller, tarde",
         "creator": "Archivo Fundación Arenas",
@@ -368,8 +1032,19 @@
         "description": "Grabación ambiental del taller de Miralles realizada durante el traslado de 1979.",
         "mediaRef": "generated:tape-14"
       },
-      "representation": { "profile": "floor-listening-point", "hints": { "radius": 0.5 } },
-      "interaction": { "focusable": true, "focusDistance": 1.4, "hotspotRefs": ["hotspot.archive.escucha"] },
+      "representation": {
+        "profile": "floor-listening-point",
+        "hints": {
+          "radius": 0.5
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 1.4,
+        "hotspotRefs": [
+          "hotspot.archive.escucha"
+        ]
+      },
       "accessibility": {
         "label": "Punto de escucha: Cinta 14, taller, tarde, 1979",
         "description": "Marca circular en el suelo que indica el punto de escucha del registro sonoro.",
@@ -382,7 +1057,11 @@
       "subtype": "wall-panel",
       "spaceId": "space.archive",
       "anchorId": "anchor.archive.closing",
-      "size": [1.4, 0.9, 0.02],
+      "size": [
+        1.4,
+        0.9,
+        0.02
+      ],
       "content": {
         "title": "Nota de cierre",
         "creator": "Fundación Arenas",
@@ -390,25 +1069,37 @@
         "medium": "Sala de archivo",
         "description": "El archivo conserva 340 documentos y 61 registros sonoros. Se consulta con cita previa."
       },
-      "representation": { "profile": "wall-panel", "hints": { "align": "left" } },
-      "interaction": { "focusable": false },
+      "representation": {
+        "profile": "wall-panel",
+        "hints": {
+          "align": "left"
+        }
+      },
+      "interaction": {
+        "focusable": false
+      },
       "accessibility": {
         "label": "Nota de cierre del archivo",
         "description": "El archivo conserva 340 documentos y 61 registros sonoros, consultables con cita previa."
       }
     }
   ],
-
   "hotspots": [
     {
       "id": "hotspot.lobby.route-start",
       "spaceId": "space.lobby",
       "anchorId": "anchor.lobby.route-start",
       "type": "STORY",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.2 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.2
+      },
       "triggerDistance": 2.2,
       "visualPolicy": "NEAR",
-      "action": { "type": "START_ROUTE", "target": "route.comentado" },
+      "action": {
+        "type": "START_ROUTE",
+        "target": "route.comentado"
+      },
       "accessibilityLabel": "Iniciar el recorrido comentado de seis minutos"
     },
     {
@@ -416,22 +1107,33 @@
       "spaceId": "space.lobby",
       "anchorId": "anchor.lobby.door-gallery-a",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.1 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.1
+      },
       "triggerDistance": 2.1,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.lobby-gallery-a" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.lobby-gallery-a"
+      },
       "accessibilityLabel": "Entrar en la Galería A"
     },
-
     {
       "id": "hotspot.art.horizonte-interrumpido",
       "spaceId": "space.gallery-a",
       "entityId": "entity.artwork.horizonte-interrumpido",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.6 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
       "triggerDistance": 2.6,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.horizonte-interrumpido" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.horizonte-interrumpido"
+      },
       "accessibilityLabel": "Observar de cerca Horizonte interrumpido"
     },
     {
@@ -439,10 +1141,16 @@
       "spaceId": "space.gallery-a",
       "entityId": "entity.artwork.campo-de-ceniza",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.6 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
       "triggerDistance": 2.6,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.campo-de-ceniza" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.campo-de-ceniza"
+      },
       "accessibilityLabel": "Observar de cerca Campo de ceniza"
     },
     {
@@ -450,10 +1158,16 @@
       "spaceId": "space.gallery-a",
       "entityId": "entity.artwork.division-tercera",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.6 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
       "triggerDistance": 2.6,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.division-tercera" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.division-tercera"
+      },
       "accessibilityLabel": "Observar de cerca División tercera"
     },
     {
@@ -461,10 +1175,16 @@
       "spaceId": "space.gallery-a",
       "entityId": "entity.artwork.estudio-de-figura",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.2 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.2
+      },
       "triggerDistance": 2.2,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.estudio-de-figura" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.estudio-de-figura"
+      },
       "accessibilityLabel": "Observar de cerca Estudio de figura IV"
     },
     {
@@ -472,10 +1192,16 @@
       "spaceId": "space.gallery-a",
       "entityId": "entity.sculpture.vasija-de-arenas",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.4 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.4
+      },
       "triggerDistance": 2.4,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.sculpture.vasija-de-arenas" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.sculpture.vasija-de-arenas"
+      },
       "accessibilityLabel": "Observar de cerca Vasija de arenas"
     },
     {
@@ -483,10 +1209,16 @@
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.door-lobby",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.1 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.1
+      },
       "triggerDistance": 2.1,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.gallery-a-lobby" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gallery-a-lobby"
+      },
       "accessibilityLabel": "Volver al vestíbulo"
     },
     {
@@ -494,10 +1226,16 @@
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.door-gallery-b",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.3 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.3
+      },
       "triggerDistance": 2.3,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.gallery-a-gallery-b" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gallery-a-gallery-b"
+      },
       "accessibilityLabel": "Pasar a la Galería B, sala oscura"
     },
     {
@@ -505,22 +1243,33 @@
       "spaceId": "space.gallery-a",
       "anchorId": "anchor.gallery-a.door-archive",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.1 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.1
+      },
       "triggerDistance": 2.1,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.gallery-a-archive" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gallery-a-archive"
+      },
       "accessibilityLabel": "Acceder al archivo"
     },
-
     {
       "id": "hotspot.art.noche-de-invierno",
       "spaceId": "space.gallery-b",
       "entityId": "entity.artwork.noche-de-invierno",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.4 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.4
+      },
       "triggerDistance": 2.4,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.noche-de-invierno" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.noche-de-invierno"
+      },
       "accessibilityLabel": "Observar de cerca Noche de invierno"
     },
     {
@@ -528,10 +1277,16 @@
       "spaceId": "space.gallery-b",
       "entityId": "entity.artwork.marea-baja",
       "type": "INFO",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.4 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.4
+      },
       "triggerDistance": 2.4,
       "visualPolicy": "NEAR",
-      "action": { "type": "FOCUS_ENTITY", "target": "entity.artwork.marea-baja" },
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.artwork.marea-baja"
+      },
       "accessibilityLabel": "Observar de cerca Marea baja"
     },
     {
@@ -539,10 +1294,16 @@
       "spaceId": "space.gallery-b",
       "entityId": "entity.video.cuaderno-de-luz",
       "type": "MEDIA",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.8 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.8
+      },
       "triggerDistance": 2.8,
       "visualPolicy": "NEAR",
-      "action": { "type": "PLAY_MEDIA", "target": "entity.video.cuaderno-de-luz" },
+      "action": {
+        "type": "PLAY_MEDIA",
+        "target": "entity.video.cuaderno-de-luz"
+      },
       "accessibilityLabel": "Ver Cuaderno de luz, vídeo sin sonido"
     },
     {
@@ -550,22 +1311,33 @@
       "spaceId": "space.gallery-b",
       "anchorId": "anchor.gallery-b.door-gallery-a",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.3 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.3
+      },
       "triggerDistance": 2.3,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.gallery-b-gallery-a" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gallery-b-gallery-a"
+      },
       "accessibilityLabel": "Volver a la Galería A"
     },
-
     {
       "id": "hotspot.archive.escucha",
       "spaceId": "space.archive",
       "entityId": "entity.audio.sala-de-escucha",
       "type": "MEDIA",
-      "interactionVolume": { "shape": "SPHERE", "radius": 1.6 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 1.6
+      },
       "triggerDistance": 1.6,
       "visualPolicy": "NEAR",
-      "action": { "type": "PLAY_MEDIA", "target": "entity.audio.sala-de-escucha" },
+      "action": {
+        "type": "PLAY_MEDIA",
+        "target": "entity.audio.sala-de-escucha"
+      },
       "accessibilityLabel": "Escuchar la Cinta 14 desde el punto de escucha"
     },
     {
@@ -573,14 +1345,19 @@
       "spaceId": "space.archive",
       "anchorId": "anchor.archive.door-gallery-a",
       "type": "PORTAL",
-      "interactionVolume": { "shape": "SPHERE", "radius": 2.0 },
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.0
+      },
       "triggerDistance": 2.0,
       "visualPolicy": "NEAR",
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.archive-gallery-a" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.archive-gallery-a"
+      },
       "accessibilityLabel": "Volver a la Galería A"
     }
   ],
-
   "portals": [
     {
       "id": "portal.lobby-gallery-a",
@@ -655,23 +1432,37 @@
       "accessibilityLabel": "Puerta del archivo a la Galería A"
     }
   ],
-
   "chapters": [
-    { "id": "chapter.vestibulo", "title": "Vestíbulo", "spaceId": "space.lobby", "stepRefs": ["step.01-entrada"] },
+    {
+      "id": "chapter.vestibulo",
+      "title": "Vestíbulo",
+      "spaceId": "space.lobby",
+      "stepRefs": [
+        "step.01-entrada"
+      ]
+    },
     {
       "id": "chapter.horizontes",
       "title": "Horizontes",
       "spaceId": "space.gallery-a",
-      "stepRefs": ["step.02-paso-galeria-a", "step.03-vista-general", "step.04-horizonte", "step.05-vasija"]
+      "stepRefs": [
+        "step.02-paso-galeria-a",
+        "step.03-vista-general",
+        "step.04-horizonte",
+        "step.05-vasija"
+      ]
     },
     {
       "id": "chapter.camara-oscura",
       "title": "Cámara oscura",
       "spaceId": "space.gallery-b",
-      "stepRefs": ["step.06-paso-galeria-b", "step.07-cuaderno-de-luz", "step.08-cierre"]
+      "stepRefs": [
+        "step.06-paso-galeria-b",
+        "step.07-cuaderno-de-luz",
+        "step.08-cierre"
+      ]
     }
   ],
-
   "storySteps": [
     {
       "id": "step.01-entrada",
@@ -689,7 +1480,10 @@
       "subjectRef": "space.gallery-a",
       "shotIntent": "PORTAL",
       "duration": 3,
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.lobby-gallery-a" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.lobby-gallery-a"
+      },
       "caption": "Cruzamos a la Galería A."
     },
     {
@@ -726,7 +1520,10 @@
       "subjectRef": "space.gallery-b",
       "shotIntent": "PORTAL",
       "duration": 3,
-      "action": { "type": "ACTIVATE_PORTAL", "target": "portal.gallery-a-gallery-b" },
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gallery-a-gallery-b"
+      },
       "audioCue": "ambience.dark-room",
       "caption": "Pasamos a la cámara oscura, con nivel de luz reducido para obra fotográfica."
     },
@@ -749,13 +1546,16 @@
       "caption": "Aquí termina el recorrido comentado. Puede continuar la visita libremente: el archivo se abre desde la Galería A."
     }
   ],
-
   "routes": [
     {
       "id": "route.comentado",
       "title": "Recorrido comentado",
       "description": "Ocho paradas, algo menos de un minuto por sala. Puede interrumpirse en cualquier momento.",
-      "chapterRefs": ["chapter.vestibulo", "chapter.horizontes", "chapter.camara-oscura"]
+      "chapterRefs": [
+        "chapter.vestibulo",
+        "chapter.horizontes",
+        "chapter.camara-oscura"
+      ]
     }
   ]
 }

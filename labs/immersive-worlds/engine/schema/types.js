@@ -183,6 +183,37 @@ export const FORBIDDEN_RENDER_KEYS = Object.freeze([
  */
 
 /**
+ * How a Content Entity gets its pixels.
+ *
+ * This is the boundary between "a world we authored" and "a world a client
+ * filled with their own collection". `IMAGE` and `VIDEO` name a file the
+ * institution owns; `GENERATED` synthesises a placeholder plate from the
+ * deterministic seed.
+ *
+ * The engine never loads anything: it declares *what* the entity is made of and
+ * the Scene Kit's media loader resolves it. A failed load degrades to
+ * GENERATED — a broken URL must never leave a hole in a gallery wall.
+ */
+export const MEDIA_KIND = Object.freeze({
+  IMAGE: 'IMAGE',
+  VIDEO: 'VIDEO',
+  AUDIO: 'AUDIO',
+  GENERATED: 'GENERATED'
+});
+
+/**
+ * @typedef {Object} Media
+ * @property {keyof MEDIA_KIND} kind
+ * @property {string} [src]        URL relative to the world file, or absolute
+ * @property {string} [poster]     still frame for VIDEO, shown before playback
+ * @property {number} [aspect]     width / height, used before the file has loaded
+ * @property {boolean} [loop]
+ * @property {boolean} [muted]
+ * @property {string} [credit]     shown in the detail panel when present
+ * @property {string} rights       who owns this file and under what terms — required
+ */
+
+/**
  * @typedef {Object} Entity
  * @property {string} id
  * @property {keyof ENTITY_KIND} kind
@@ -190,7 +221,8 @@ export const FORBIDDEN_RENDER_KEYS = Object.freeze([
  * @property {string} spaceId              exactly one — a canonical record has one home
  * @property {string} anchorId             placement is *by reference*, never raw coordinates
  * @property {[number,number,number]} size metres (w,h,d) — semantic dimensions, not a mesh
- * @property {Object} content              title, creator, year, medium, description, mediaRef...
+ * @property {Object} content              title, creator, year, medium, description, media...
+ * @property {Media} [content.media]       what this entity is made of
  * @property {{profile?:string, hints?:Object}} representation   intent only, no implementation
  * @property {{focusable?:boolean, focusDistance?:number, hotspotRefs?:string[]}} interaction
  * @property {{label:string, description?:string, transcript?:string}} accessibility

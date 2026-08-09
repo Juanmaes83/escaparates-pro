@@ -28,7 +28,7 @@ export const WALL_THICKNESS = 0.26;
  * @returns {THREE.Group}
  */
 export function buildRoomShell(spec) {
-  const { size, origin, openings = [], materials } = spec;
+  const { size, origin, openings = [], materials, capCeiling = true } = spec;
   const [w, h, d] = size;
   const [ox, oy, oz] = origin;
   const group = new THREE.Group();
@@ -40,24 +40,30 @@ export function buildRoomShell(spec) {
   floor.receiveShadow = true;
   group.add(floor);
 
-  const ceiling = new THREE.Mesh(new THREE.BoxGeometry(w, 0.2, d), materials.ceiling);
-  ceiling.position.set(ox, oy + h + 0.1, oz);
-  ceiling.name = 'ceiling';
-  group.add(ceiling);
+  // A pitched roof supplies its own ceiling; a flat room needs a lid.
+  if (capCeiling) {
+    const ceiling = new THREE.Mesh(new THREE.BoxGeometry(w, 0.2, d), materials.ceiling);
+    ceiling.position.set(ox, oy + h + 0.1, oz);
+    ceiling.name = 'ceiling';
+    group.add(ceiling);
+  }
 
   // -- walls ------------------------------------------------------------------
-  // Walls sit *outside* the room bounds. Two adjacent rooms therefore share a
-  // 52 cm partition made of two touching leaves instead of two coincident
-  // boxes — which is what a building does, and which is also the only way to
-  // avoid z-fighting where a doorway lets you see both rooms at once.
-  // The 4 mm gap keeps the two leaves' touching faces from becoming coplanar,
-  // which would z-fight in exactly the doorway where both rooms are visible.
+  // Each wall sits *inside* its own room's footprint. Two adjacent rooms then
+  // share a partition made of two leaves that meet at the boundary plane
+  // without ever crossing it.
+  //
+  // Placing them outside the footprint instead — which is the intuitive
+  // reading of "the wall is at the edge of the room" — makes each room's wall
+  // stand inside its neighbour. In a two-room world both leaves are white and
+  // nobody notices; the moment a dark room adjoins a light one, the dark room's
+  // wall appears floating in the middle of the light one.
   const half = WALL_THICKNESS / 2 + 0.004;
   const walls = [
-    { id: 'NORTH', length: w, centre: [ox, oy, oz - d / 2 - half], axis: 'x', rotation: 0 },
-    { id: 'SOUTH', length: w, centre: [ox, oy, oz + d / 2 + half], axis: 'x', rotation: 0 },
-    { id: 'WEST', length: d, centre: [ox - w / 2 - half, oy, oz], axis: 'z', rotation: Math.PI / 2 },
-    { id: 'EAST', length: d, centre: [ox + w / 2 + half, oy, oz], axis: 'z', rotation: Math.PI / 2 }
+    { id: 'NORTH', length: w, centre: [ox, oy, oz - d / 2 + half], axis: 'x', rotation: 0 },
+    { id: 'SOUTH', length: w, centre: [ox, oy, oz + d / 2 - half], axis: 'x', rotation: 0 },
+    { id: 'WEST', length: d, centre: [ox - w / 2 + half, oy, oz], axis: 'z', rotation: Math.PI / 2 },
+    { id: 'EAST', length: d, centre: [ox + w / 2 - half, oy, oz], axis: 'z', rotation: Math.PI / 2 }
   ];
 
   for (const wall of walls) {
@@ -127,6 +133,218 @@ function wallSegments(length, height, openings) {
     pieces.push({ offset: cursor + width / 2, width, height, centreY: height / 2 });
   }
   return pieces;
+}
+
+/**
+ * A pitched roof with a run of skylight bays along the ridge.
+ *
+ * This is the single largest quality lever in a gallery. A flat lid reads as a
+ * box; a pitched roof with daylight coming through it reads as a building, and
+ * it is what every serious institutional gallery in the reference set has in
+ * common. The glazing is built as alternating solid ribs and glass bays in the
+ * upper half of each slope, which is how a real roof light is framed — and it
+ * avoids CSG entirely.
+ *
+ * @param {{
+ *   size:[number,number,number], origin:[number,number,number],
+ *   rise?:number, bays?:number, materials:Object, profile:Object
+ * }} spec
+ */
+export function buildPitchedRoof({ size, origin, rise = 1.9, bays = 4, materials, profile }) {
+  const [w, h, d] = size;
+  const [ox, oy, oz] = origin;
+  const group = new THREE.Group();
+  group.name = 'roof';
+
+  const halfWidth = w / 2;
+  const slopeLength = Math.hypot(halfWidth, rise);
+  const angle = Math.atan2(rise, halfWidth);
+  const thickness = 0.16;
+
+  const glass = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(profile.skylight?.color ?? 0xfffaf0)
+      .multiplyScalar(profile.skylight?.intensity ?? 1)
+  });
+
+  // Where the glazing sits on the slope: a band near the ridge, never at the eave.
+  const bandStart = 0.46;
+  const bandEnd = 0.94;
+  const margin = Math.min(1.2, d * 0.12);
+  const runLength = d - margin * 2;
+  const bayPitch = runLength / bays;
+  const ribWidth = Math.min(0.42, bayPitch * 0.3);
+
+  const place = (side, t0, t1, z0, z1, material, inset = 0) => {
+    const mid = (t0 + t1) / 2;
+    const eave = [side * halfWidth, h];
+    const dirX = -side * halfWidth / slopeLength;
+    const dirY = rise / slopeLength;
+    const cx = eave[0] + dirX * slopeLength * mid;
+    const cy = eave[1] + dirY * slopeLength * mid;
+
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(slopeLength * (t1 - t0), thickness, z1 - z0),
+      material
+    );
+    mesh.position.set(ox + cx, oy + cy - inset, oz + (z0 + z1) / 2 - d / 2);
+    mesh.rotation.z = -side * angle;
+    mesh.receiveShadow = true;
+    group.add(mesh);
+  };
+
+  for (const side of [-1, 1]) {
+    // Lower slope: solid, full depth.
+    place(side, 0, bandStart, 0, d, materials.roof);
+    // End returns, so the glazing band does not run into the gable walls.
+    place(side, bandStart, bandEnd, 0, margin, materials.roof);
+    place(side, bandStart, bandEnd, d - margin, d, materials.roof);
+
+    for (let i = 0; i < bays; i += 1) {
+      const z0 = margin + i * bayPitch;
+      const z1 = z0 + bayPitch;
+      // Rib between bays.
+      if (i > 0) place(side, bandStart, bandEnd, z0 - ribWidth / 2, z0 + ribWidth / 2, materials.roof);
+      // The glazing itself, set slightly into the roof plane.
+      place(side, bandStart + 0.015, bandEnd - 0.015, z0 + ribWidth / 2, z1 - ribWidth / 2, glass, 0.02);
+    }
+  }
+
+  // Ridge beam: the line the two slopes meet on.
+  const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.16, d), materials.roof);
+  ridge.position.set(ox, oy + h + rise - 0.04, oz);
+  group.add(ridge);
+
+  // Gable ends, so the room is closed above the wall head.
+  for (const side of [-1, 1]) {
+    const shape = new THREE.Shape();
+    shape.moveTo(-halfWidth, 0);
+    shape.lineTo(halfWidth, 0);
+    shape.lineTo(0, rise);
+    shape.closePath();
+    // Double-sided: from inside the room you look at the back of this face.
+    const gable = new THREE.Mesh(new THREE.ShapeGeometry(shape), materials.gable);
+    gable.position.set(ox, oy + h, oz + side * (d / 2));
+    gable.rotation.y = side > 0 ? 0 : Math.PI;
+    gable.receiveShadow = true;
+    group.add(gable);
+  }
+
+  return group;
+}
+
+/**
+ * Daylight arriving through the roof lights. One soft directional source plus a
+ * faint bounce, aimed to rake across the room rather than fall straight down —
+ * flat overhead light is what makes a render look like a render.
+ */
+export function buildSkylightDaylight({ size, origin, rise, profile }) {
+  const [w, h, d] = size;
+  const [ox, oy, oz] = origin;
+  const group = new THREE.Group();
+  group.name = 'daylight';
+
+  const key = new THREE.DirectionalLight(
+    profile.skylight?.color ?? 0xfff6e6,
+    profile.skylight?.daylight ?? 0.55
+  );
+  key.position.set(ox + w * 0.22, oy + h + rise + 4, oz - d * 0.18);
+  key.target.position.set(ox - w * 0.1, oy + 1.2, oz + d * 0.1);
+  group.add(key);
+  group.add(key.target);
+
+  const fill = new THREE.DirectionalLight(
+    profile.skylight?.color ?? 0xfff6e6,
+    (profile.skylight?.daylight ?? 0.55) * 0.4
+  );
+  fill.position.set(ox - w * 0.3, oy + h + rise + 3, oz + d * 0.3);
+  fill.target.position.set(ox, oy + 1, oz);
+  group.add(fill);
+  group.add(fill.target);
+
+  return group;
+}
+
+/**
+ * Cornice: the shadow line where wall meets roof. Two millimetres of geometry
+ * that stop the junction from looking like two planes intersecting.
+ */
+export function buildCornice({ size, origin, material }) {
+  const [w, h, d] = size;
+  const [ox, oy, oz] = origin;
+  const group = new THREE.Group();
+  group.name = 'cornice';
+  const depth = 0.1;
+  const height = 0.14;
+
+  const pieces = [
+    { size: [w + depth * 2, height, depth], position: [ox, oy + h - height / 2, oz - d / 2 - depth / 2] },
+    { size: [w + depth * 2, height, depth], position: [ox, oy + h - height / 2, oz + d / 2 + depth / 2] },
+    { size: [depth, height, d], position: [ox - w / 2 - depth / 2, oy + h - height / 2, oz] },
+    { size: [depth, height, d], position: [ox + w / 2 + depth / 2, oy + h - height / 2, oz] }
+  ];
+  for (const piece of pieces) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(...piece.size), material);
+    mesh.position.set(...piece.position);
+    group.add(mesh);
+  }
+  return group;
+}
+
+/**
+ * A stanchion-and-rope barrier line: posts with a sagging rope between them,
+ * standing off the hung wall.
+ *
+ * It is museum furniture, and it does three things at once — it sets the
+ * viewing distance, it gives the floor a rhythm, and it tells the visitor
+ * without any UI that the works are not to be touched. The rope sags on a
+ * quadratic curve because a straight rope reads as a fence.
+ *
+ * @param {{from:[number,number,number], to:[number,number,number], material:Object, ropeMaterial:Object, pitch?:number}} spec
+ */
+export function buildBarrierLine({ from, to, material, ropeMaterial, pitch = 2.3 }) {
+  const group = new THREE.Group();
+  group.name = 'barrier';
+
+  const start = new THREE.Vector3(...from);
+  const end = new THREE.Vector3(...to);
+  const length = start.distanceTo(end);
+  if (length < 0.6) return group;
+
+  const count = Math.max(2, Math.round(length / pitch) + 1);
+  const postHeight = 0.92;
+  const points = [];
+
+  for (let i = 0; i < count; i += 1) {
+    const point = start.clone().lerp(end, i / (count - 1));
+    points.push(point);
+
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, postHeight, 10), material);
+    post.position.set(point.x, point.y + postHeight / 2, point.z);
+    post.castShadow = true;
+    group.add(post);
+
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.035, 16), material);
+    base.position.set(point.x, point.y + 0.018, point.z);
+    base.castShadow = true;
+    group.add(base);
+
+    const finial = new THREE.Mesh(new THREE.SphereGeometry(0.032, 14, 10), material);
+    finial.position.set(point.x, point.y + postHeight + 0.02, point.z);
+    group.add(finial);
+  }
+
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const a = points[i].clone().setY(points[i].y + postHeight - 0.06);
+    const b = points[i + 1].clone().setY(points[i + 1].y + postHeight - 0.06);
+    const sag = a.clone().lerp(b, 0.5);
+    sag.y -= a.distanceTo(b) * 0.055;
+    const curve = new THREE.QuadraticBezierCurve3(a, sag, b);
+    const rope = new THREE.Mesh(new THREE.TubeGeometry(curve, 10, 0.014, 6, false), ropeMaterial);
+    rope.castShadow = true;
+    group.add(rope);
+  }
+
+  return group;
 }
 
 /**

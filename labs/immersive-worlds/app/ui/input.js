@@ -14,9 +14,10 @@ export const KEY_BINDINGS = Object.freeze([
   { keys: ['W', '↑'], action: 'Avanzar' },
   { keys: ['S', '↓'], action: 'Retroceder' },
   { keys: ['A', 'D'], action: 'Desplazarse a los lados' },
-  { keys: ['←', '→'], action: 'Girar la vista' },
+  { keys: ['←', '→'], action: 'Girar la vista · en detalle, obra anterior o siguiente' },
   { keys: ['E', 'Enter'], action: 'Activar el punto más cercano' },
   { keys: ['Esc'], action: 'Salir del detalle o del recorrido' },
+  { keys: ['Rueda'], action: 'En detalle: acercarse a la obra' },
   { keys: ['M'], action: 'Abrir el mapa de salas' },
   { keys: ['G'], action: 'Iniciar el recorrido comentado' },
   { keys: ['Shift'], action: 'Caminar más rápido' }
@@ -31,16 +32,20 @@ export class InputSystem {
    *   onActivate: () => void,
    *   onEscape: () => void,
    *   onToggleMap: () => void,
-   *   onStartRoute: () => void
+   *   onStartRoute: () => void,
+   *   onZoom?: (delta:number) => boolean,
+   *   onStepWork?: (delta:number) => boolean
    * }} deps
    */
-  constructor({ element, explore, focus, onActivate, onEscape, onToggleMap, onStartRoute }) {
+  constructor({ element, explore, focus, onActivate, onEscape, onToggleMap, onStartRoute, onZoom, onStepWork }) {
     this.element = element;
     this.explore = explore;
     this.focus = focus;
-    this.callbacks = { onActivate, onEscape, onToggleMap, onStartRoute };
+    this.callbacks = { onActivate, onEscape, onToggleMap, onStartRoute, onZoom, onStepWork };
 
     this._keys = new Set();
+    /** Movement is gated by camera authority; commands never are. */
+    this.movementEnabled = true;
     this._pointerLocked = false;
     this._touch = { id: null, originX: 0, originY: 0, lookId: null, lookX: 0, lookY: 0 };
     this._disposers = [];
@@ -60,7 +65,7 @@ export class InputSystem {
     this._on(window, 'blur', () => this._keys.clear());
 
     this._on(this.element, 'click', () => {
-      if (!this.enabled) return;
+      if (!this.enabled || !this.movementEnabled) return;
       if (!this._pointerLocked && this.element.requestPointerLock) {
         this.element.requestPointerLock();
       }
@@ -71,7 +76,7 @@ export class InputSystem {
     });
     this._on(window, 'mousemove', (event) => {
       if (!this.enabled) return;
-      if (this._pointerLocked) {
+      if (this._pointerLocked && this.movementEnabled) {
         this.explore.input.lookX += event.movementX;
         this.explore.input.lookY += event.movementY;
       }
@@ -82,24 +87,52 @@ export class InputSystem {
       };
     });
 
+    this._on(this.element, 'wheel', (event) => {
+      // The wheel only means anything while inspecting a work; in the room it
+      // is left alone so the page behaves normally.
+      const handled = this.callbacks.onZoom?.(-Math.sign(event.deltaY) * 0.12);
+      if (handled) event.preventDefault();
+    }, { passive: false });
+
     // Touch: left half of the screen walks, right half looks.
     this._on(this.element, 'touchstart', (event) => this._onTouchStart(event), { passive: true });
     this._on(this.element, 'touchmove', (event) => this._onTouchMove(event), { passive: false });
     this._on(this.element, 'touchend', (event) => this._onTouchEnd(event), { passive: true });
   }
 
+  /**
+   * Commands and movement are gated separately.
+   *
+   * Escape has to work when the visitor is *in* focus mode — which is exactly
+   * when the camera belongs to the focus controller and movement is off. Gating
+   * both behind one flag locks the visitor inside the detail view.
+   */
   _onKey(event, down) {
     if (!this.enabled) return;
     const code = event.code;
+
     if (down && !event.repeat) {
       switch (code) {
         case 'KeyE': case 'Enter': this.callbacks.onActivate?.(); break;
         case 'Escape': this.callbacks.onEscape?.(); break;
         case 'KeyM': this.callbacks.onToggleMap?.(); break;
         case 'KeyG': this.callbacks.onStartRoute?.(); break;
+        case 'ArrowLeft':
+          if (this.callbacks.onStepWork?.(-1)) event.preventDefault();
+          break;
+        case 'ArrowRight':
+          if (this.callbacks.onStepWork?.(1)) event.preventDefault();
+          break;
         default: break;
       }
     }
+
+    if (!this.movementEnabled) {
+      this._keys.clear();
+      this._applyKeys();
+      return;
+    }
+
     if (down) this._keys.add(code);
     else this._keys.delete(code);
 
@@ -129,7 +162,7 @@ export class InputSystem {
   }
 
   _onTouchStart(event) {
-    if (!this.enabled) return;
+    if (!this.enabled || !this.movementEnabled) return;
     const rect = this.element.getBoundingClientRect();
     for (const touch of event.changedTouches) {
       const left = touch.clientX - rect.left < rect.width / 2;
@@ -146,7 +179,7 @@ export class InputSystem {
   }
 
   _onTouchMove(event) {
-    if (!this.enabled) return;
+    if (!this.enabled || !this.movementEnabled) return;
     for (const touch of event.changedTouches) {
       if (touch.identifier === this._touch.id) {
         event.preventDefault();
@@ -175,8 +208,9 @@ export class InputSystem {
     }
   }
 
+  /** Gate movement only. Commands (Esc, M, G, arrows in detail) always work. */
   setEnabled(enabled) {
-    this.enabled = enabled;
+    this.movementEnabled = enabled;
     if (!enabled) {
       this._keys.clear();
       this.explore.input.forward = 0;

@@ -1,0 +1,682 @@
+{
+  "id": "world.demo-institucional",
+  "schemaVersion": 1,
+  "title": "Sala de exposiciones — demostración institucional",
+  "sceneKit": "museum",
+  "startSpaceId": "space.sala",
+  "metadata": {
+    "institution": "Institución de demostración (ficticia)",
+    "contentRights": "CONTROLLED / FICTITIOUS / OWNED — ver assets/collection/RIGHTS.md",
+    "language": "es",
+    "note": "Segundo mundo sobre el mismo motor y el mismo Scene Kit. Cambia el contenido y la arquitectura, no el código."
+  },
+  "spaces": [
+    {
+      "id": "space.sala",
+      "title": "Sala principal",
+      "type": "GALLERY",
+      "bounds": {
+        "size": [
+          14,
+          5.2,
+          12
+        ],
+        "origin": [
+          0,
+          0,
+          0
+        ]
+      },
+      "sceneProfile": "white-cube",
+      "lightingProfile": "museum-cove-track",
+      "ambience": "ambience.gallery",
+      "defaultSpawnAnchorId": "anchor.sala.spawn",
+      "entityRefs": [
+        "entity.demo.pieza-1",
+        "entity.demo.pieza-2",
+        "entity.demo.pieza-3",
+        "entity.demo.panel"
+      ],
+      "anchorRefs": [
+        "anchor.sala.spawn",
+        "anchor.sala.arrive-from-gabinete",
+        "anchor.sala.w1",
+        "anchor.sala.w2",
+        "anchor.sala.w3",
+        "anchor.sala.panel",
+        "anchor.sala.door-gabinete"
+      ],
+      "hotspotRefs": [
+        "hotspot.demo.pieza-1",
+        "hotspot.demo.pieza-2",
+        "hotspot.demo.pieza-3",
+        "hotspot.sala.to-gabinete",
+        "hotspot.sala.route"
+      ],
+      "portalRefs": [
+        "portal.sala-gabinete"
+      ],
+      "metadata": {
+        "bench": [
+          0,
+          3.2
+        ],
+        "roof": "pitched-skylight"
+      }
+    },
+    {
+      "id": "space.gabinete",
+      "title": "Gabinete de obra sobre papel",
+      "type": "GALLERY",
+      "bounds": {
+        "size": [
+          8,
+          3.4,
+          7
+        ],
+        "origin": [
+          0,
+          0,
+          -9.5
+        ]
+      },
+      "sceneProfile": "heritage",
+      "lightingProfile": "archive-warm",
+      "ambience": "ambience.archive",
+      "defaultSpawnAnchorId": "anchor.gabinete.arrive-from-sala",
+      "entityRefs": [
+        "entity.demo.pieza-4"
+      ],
+      "anchorRefs": [
+        "anchor.gabinete.arrive-from-sala",
+        "anchor.gabinete.w4",
+        "anchor.gabinete.door-sala"
+      ],
+      "hotspotRefs": [
+        "hotspot.demo.pieza-4",
+        "hotspot.gabinete.to-sala"
+      ],
+      "portalRefs": [
+        "portal.gabinete-sala"
+      ],
+      "metadata": {}
+    }
+  ],
+  "anchors": [
+    {
+      "id": "anchor.sala.spawn",
+      "spaceId": "space.sala",
+      "kind": "SPAWN",
+      "position": [
+        0,
+        0,
+        4.6
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Entrada"
+    },
+    {
+      "id": "anchor.sala.arrive-from-gabinete",
+      "spaceId": "space.sala",
+      "kind": "SPAWN",
+      "position": [
+        0,
+        0,
+        -4.6
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "label": "Regreso"
+    },
+    {
+      "id": "anchor.sala.w1",
+      "spaceId": "space.sala",
+      "kind": "WALL",
+      "position": [
+        -4.2,
+        1.55,
+        -5.85
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        3.4,
+        2.4
+      ]
+    },
+    {
+      "id": "anchor.sala.w2",
+      "spaceId": "space.sala",
+      "kind": "WALL",
+      "position": [
+        0.6,
+        1.55,
+        -5.85
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        2.6,
+        2.6
+      ]
+    },
+    {
+      "id": "anchor.sala.w3",
+      "spaceId": "space.sala",
+      "kind": "WALL",
+      "position": [
+        -6.85,
+        1.55,
+        -1.2
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "extent": [
+        2.4,
+        2.4
+      ]
+    },
+    {
+      "id": "anchor.sala.panel",
+      "spaceId": "space.sala",
+      "kind": "WALL",
+      "position": [
+        6.85,
+        1.5,
+        1.0
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "extent": [
+        2.0,
+        1.4
+      ]
+    },
+    {
+      "id": "anchor.sala.door-gabinete",
+      "spaceId": "space.sala",
+      "kind": "WALL",
+      "position": [
+        3.0,
+        0,
+        -6
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Paso al gabinete"
+    },
+    {
+      "id": "anchor.gabinete.arrive-from-sala",
+      "spaceId": "space.gabinete",
+      "kind": "SPAWN",
+      "position": [
+        3.0,
+        0,
+        -7.3
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ]
+    },
+    {
+      "id": "anchor.gabinete.w4",
+      "spaceId": "space.gabinete",
+      "kind": "WALL",
+      "position": [
+        0,
+        1.5,
+        -12.85
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "extent": [
+        1.6,
+        1.8
+      ]
+    },
+    {
+      "id": "anchor.gabinete.door-sala",
+      "spaceId": "space.gabinete",
+      "kind": "WALL",
+      "position": [
+        3.0,
+        0,
+        -6
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "label": "Vuelta a la sala"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity.demo.pieza-1",
+      "kind": "ARTWORK",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.w1",
+      "size": [
+        2.6,
+        1.78,
+        0.06
+      ],
+      "content": {
+        "title": "Serie horizonte, I",
+        "creator": "Autoría de demostración",
+        "year": "2024",
+        "medium": "Impresión sobre papel de algodón",
+        "description": "Primera pieza de la serie. Este mundo usa exactamente el mismo motor y el mismo Scene Kit que la Fundación Arenas.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.46,
+          "credit": "Colección de demostración (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro. Uso libre dentro del producto."
+        }
+      },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.demo.pieza-1"
+        ]
+      },
+      "accessibility": {
+        "label": "Serie horizonte I, 2024",
+        "description": "Impresión horizontal de 260 por 178 centímetros con bandas de tierras y ocres."
+      }
+    },
+    {
+      "id": "entity.demo.pieza-2",
+      "kind": "ARTWORK",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.w2",
+      "size": [
+        1.75,
+        2.15,
+        0.06
+      ],
+      "content": {
+        "title": "Campo vertical",
+        "creator": "Autoría de demostración",
+        "year": "2023",
+        "medium": "Impresión sobre papel de algodón",
+        "description": "Pieza vertical. Cambiar el archivo de imagen en el JSON del mundo es todo lo necesario para cambiar la exposición.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/campo-de-ceniza.jpg",
+          "aspect": 0.81,
+          "credit": "Colección de demostración (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro. Uso libre dentro del producto."
+        }
+      },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.demo.pieza-2"
+        ]
+      },
+      "accessibility": {
+        "label": "Campo vertical, 2023",
+        "description": "Impresión vertical de 175 por 215 centímetros, campo gris azulado."
+      }
+    },
+    {
+      "id": "entity.demo.pieza-3",
+      "kind": "ARTWORK",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.w3",
+      "size": [
+        2.1,
+        1.5,
+        0.06
+      ],
+      "content": {
+        "title": "División",
+        "creator": "Autoría de demostración",
+        "year": "2022",
+        "medium": "Impresión sobre papel de algodón",
+        "description": "Composición de bandas verticales.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/division-tercera.jpg",
+          "aspect": 1.4,
+          "credit": "Colección de demostración (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro. Uso libre dentro del producto."
+        }
+      },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.demo.pieza-3"
+        ]
+      },
+      "accessibility": {
+        "label": "División, 2022",
+        "description": "Impresión de 210 por 150 centímetros con tres bandas verticales rojizas."
+      }
+    },
+    {
+      "id": "entity.demo.panel",
+      "kind": "TEXT",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.panel",
+      "size": [
+        1.5,
+        0.95,
+        0.02
+      ],
+      "content": {
+        "title": "Sobre esta demostración",
+        "creator": "Escaparates Pro",
+        "year": "2026",
+        "medium": "Immersive Worlds — Museum Scene Kit",
+        "description": "Este mundo existe para demostrar que el motor es configurable: mismo código, distinto contenido y distinta arquitectura."
+      },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": false,
+        "focusDistance": 2.4,
+        "hotspotRefs": []
+      },
+      "accessibility": {
+        "label": "Panel sobre la demostración",
+        "description": "Texto que explica que este segundo mundo usa el mismo motor con contenido distinto."
+      }
+    },
+    {
+      "id": "entity.demo.pieza-4",
+      "kind": "ARTWORK",
+      "spaceId": "space.gabinete",
+      "anchorId": "anchor.gabinete.w4",
+      "size": [
+        0.95,
+        1.22,
+        0.04
+      ],
+      "content": {
+        "title": "Estudio",
+        "creator": "Autoría de demostración",
+        "year": "2021",
+        "medium": "Grafito sobre papel",
+        "description": "Obra sobre papel expuesta en gabinete, con nivel de luz reducido.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/estudio-de-figura.jpg",
+          "aspect": 0.78,
+          "credit": "Colección de demostración (imagen propia)",
+          "rights": "Obra propia. Generada por Escaparates Pro. Uso libre dentro del producto."
+        }
+      },
+      "representation": {
+        "profile": "framed-canvas",
+        "hints": {
+          "mount": "framed"
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.4,
+        "hotspotRefs": [
+          "hotspot.demo.pieza-4"
+        ]
+      },
+      "accessibility": {
+        "label": "Estudio, 2021",
+        "description": "Dibujo a grafito de 95 por 122 centímetros."
+      }
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "hotspot.demo.pieza-1",
+      "spaceId": "space.sala",
+      "entityId": "entity.demo.pieza-1",
+      "type": "INFO",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
+      "triggerDistance": 2.6,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.demo.pieza-1"
+      },
+      "accessibilityLabel": "Observar de cerca Serie horizonte I"
+    },
+    {
+      "id": "hotspot.demo.pieza-2",
+      "spaceId": "space.sala",
+      "entityId": "entity.demo.pieza-2",
+      "type": "INFO",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
+      "triggerDistance": 2.6,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.demo.pieza-2"
+      },
+      "accessibilityLabel": "Observar de cerca Campo vertical"
+    },
+    {
+      "id": "hotspot.demo.pieza-3",
+      "spaceId": "space.sala",
+      "entityId": "entity.demo.pieza-3",
+      "type": "INFO",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
+      "triggerDistance": 2.6,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.demo.pieza-3"
+      },
+      "accessibilityLabel": "Observar de cerca División"
+    },
+    {
+      "id": "hotspot.sala.to-gabinete",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.door-gabinete",
+      "type": "PORTAL",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.2
+      },
+      "triggerDistance": 2.2,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.sala-gabinete"
+      },
+      "accessibilityLabel": "Entrar en el gabinete"
+    },
+    {
+      "id": "hotspot.sala.route",
+      "spaceId": "space.sala",
+      "anchorId": "anchor.sala.spawn",
+      "type": "STORY",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.0
+      },
+      "triggerDistance": 2.0,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "START_ROUTE",
+        "target": "route.demo"
+      },
+      "accessibilityLabel": "Iniciar el recorrido de demostración"
+    },
+    {
+      "id": "hotspot.demo.pieza-4",
+      "spaceId": "space.gabinete",
+      "entityId": "entity.demo.pieza-4",
+      "type": "INFO",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.6
+      },
+      "triggerDistance": 2.6,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.demo.pieza-4"
+      },
+      "accessibilityLabel": "Observar de cerca Estudio"
+    },
+    {
+      "id": "hotspot.gabinete.to-sala",
+      "spaceId": "space.gabinete",
+      "anchorId": "anchor.gabinete.door-sala",
+      "type": "PORTAL",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.2
+      },
+      "triggerDistance": 2.2,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "ACTIVATE_PORTAL",
+        "target": "portal.gabinete-sala"
+      },
+      "accessibilityLabel": "Volver a la sala"
+    }
+  ],
+  "portals": [
+    {
+      "id": "portal.sala-gabinete",
+      "fromSpaceId": "space.sala",
+      "toSpaceId": "space.gabinete",
+      "sourceAnchorId": "anchor.sala.door-gabinete",
+      "destinationSpawnId": "anchor.gabinete.arrive-from-sala",
+      "transitionBehaviour": "CONTINUOUS",
+      "representationHint": "DOOR",
+      "prefetchPolicy": "EAGER",
+      "returnPolicy": "RETURN_TO_SOURCE",
+      "accessibilityLabel": "Puerta de la sala al gabinete"
+    },
+    {
+      "id": "portal.gabinete-sala",
+      "fromSpaceId": "space.gabinete",
+      "toSpaceId": "space.sala",
+      "sourceAnchorId": "anchor.gabinete.door-sala",
+      "destinationSpawnId": "anchor.sala.arrive-from-gabinete",
+      "transitionBehaviour": "CONTINUOUS",
+      "representationHint": "DOOR",
+      "prefetchPolicy": "ON_APPROACH",
+      "returnPolicy": "DEFAULT_SPAWN",
+      "accessibilityLabel": "Puerta del gabinete a la sala"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "chapter.demo",
+      "title": "Recorrido de demostración",
+      "spaceId": "space.sala",
+      "stepRefs": [
+        "step.demo-1",
+        "step.demo-2",
+        "step.demo-3"
+      ]
+    }
+  ],
+  "storySteps": [
+    {
+      "id": "step.demo-1",
+      "chapterId": "chapter.demo",
+      "subjectRef": "space.sala",
+      "shotIntent": "ENTRY",
+      "duration": 6,
+      "narrationCue": "demo.01",
+      "caption": "La misma arquitectura de motor, otra institución y otro contenido."
+    },
+    {
+      "id": "step.demo-2",
+      "chapterId": "chapter.demo",
+      "subjectRef": "entity.demo.pieza-1",
+      "shotIntent": "FOCUS",
+      "duration": 8,
+      "narrationCue": "demo.02",
+      "caption": "Las obras se declaran como datos: imagen, dimensiones, texto y derechos."
+    },
+    {
+      "id": "step.demo-3",
+      "chapterId": "chapter.demo",
+      "subjectRef": "entity.demo.pieza-2",
+      "shotIntent": "DETAIL",
+      "duration": 7,
+      "narrationCue": "demo.03",
+      "caption": "Sustituir el archivo cambia la exposición sin tocar una línea de código."
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.demo",
+      "title": "Recorrido de demostración",
+      "description": "Tres paradas que muestran el mismo motor con contenido distinto.",
+      "chapterRefs": [
+        "chapter.demo"
+      ]
+    }
+  ]
+}
