@@ -156,6 +156,8 @@ VIDEO
 AUDIO
 PORTAL
 HOTSPOT
+ACTION
+ANCHOR
 ROUTE
 SHOT
 ```
@@ -172,7 +174,23 @@ ARTWORK
 **MUST V1:** semantic entities and visual representation remain separable.  
 **MUST V1:** Museum-specific styling must not redefine the generic entity model.
 
-## 5.2 World exists independently from camera
+Semantic records may carry a presentation intent, representation hint or reference when useful, but this never transfers ownership of meshes, materials, shaders, Scene Kit implementation or Three.js objects into World/Entity semantic state.
+
+## 5.2 One semantic object has one canonical record
+
+The semantic model must obey:
+
+```text
+ONE SEMANTIC OBJECT
+ONE CANONICAL RECORD
+MULTIPLE REFERENCES
+```
+
+World, Space, Route, Scene Kit and other systems may reference the same semantic object through stable identity, but must not maintain competing authoritative copies of that object's semantic state.
+
+IW-0 deliberately does **not** decide whether the implementation uses Maps, arrays, normalized stores, ECS or another storage mechanism.
+
+## 5.3 World exists independently from camera
 
 ```text
 WORLD STATE ≠ CAMERA STATE
@@ -180,7 +198,7 @@ WORLD STATE ≠ CAMERA STATE
 
 Camera observes the world. Author Mode may command camera. Experience Director may command camera. Camera never owns World State.
 
-## 5.3 Explore and Guided use the same World State
+## 5.4 Explore and Guided use the same World State
 
 No duplicate “Explore World” and “Guided World”.
 
@@ -190,15 +208,94 @@ WORLD STATE
 └── Experience Director
 ```
 
-## 5.4 Portal is semantic, not necessarily visual
+## 5.5 Hotspot triggers; Portal connects
 
-A portal is a connection/action between spaces or states. Its visual representation may be a door, artwork, screen, cut, teleport, object continuity or transition.
+Hotspot and Portal are distinct semantic responsibilities.
 
-## 5.5 Hotspot is semantic, not necessarily an icon
+```text
+HOTSPOT
+= interaction / trigger
 
-Interaction volume and visual affordance are separate concepts.
+PORTAL
+= spatial connection / transition
+```
 
-## 5.6 Editor and Experience are separate responsibilities
+A Hotspot may request an Action such as:
+
+```text
+Hotspot
+→ ACTIVATE_PORTAL
+→ Portal
+```
+
+but there must not be two independent systems owning the same transition semantics.
+
+A Hotspot does not imply a visible icon. A Portal does not imply a visible door.
+
+## 5.6 Portal transition behaviour is not Portal representation
+
+Portal semantics must separate:
+
+```text
+SEMANTIC TRANSITION BEHAVIOUR
+≠
+VISUAL REPRESENTATION
+```
+
+Conceptual behaviour may include continuous transfer, cut, teleport or cinematic handoff. A Scene Kit representation hint may describe a door, screen, artwork, window or no visible object.
+
+Exact enums and technical realization remain open.
+
+## 5.7 Action is semantic, not an arbitrary callback
+
+Action represents what an interaction or experience step requests from the system.
+
+Conceptual examples:
+
+```text
+FOCUS_ENTITY
+PLAY_MEDIA
+OPEN_INFO
+ACTIVATE_PORTAL
+START_ROUTE
+TRIGGER_STORY
+SET_STATE
+```
+
+V1 must define only the minimal Action vocabulary required by the Museum proof. IW-0 does not authorize a universal Action Engine.
+
+Scene Kits must not invent incompatible arbitrary callback semantics for equivalent product actions.
+
+## 5.8 Anchor is a generic spatial reference
+
+Anchor is a reusable semantic spatial reference for positions, orientations, surfaces, regions or destinations used by systems such as:
+
+- content placement;
+- Hotspots;
+- Portals;
+- Focus Camera;
+- labels;
+- lights;
+- spawn points;
+- other spatial relationships.
+
+The exact technical representation is deliberately open. The invariant exists to avoid hard-coded absolute coordinates scattered across subsystems.
+
+## 5.9 Exactly one authoritative camera controller exists per frame
+
+Conceptual authority states may include:
+
+```text
+AUTHOR
+EXPLORE
+FOCUS
+DIRECTED
+TRANSITION
+```
+
+At any frame **exactly one** controller may write authoritative camera state. Ownership handoffs are explicit and testable. Two subsystems must never simultaneously write the authoritative camera.
+
+## 5.10 Editor and Experience are separate responsibilities
 
 Author controls editing and configuration. Visitor sees the world with minimal experience UI.
 
@@ -212,15 +309,15 @@ The vocabulary below is proposed and must be used consistently during IW-0 revie
 
 ## World
 
-Top-level semantic container containing Spaces, entities, routes, global experience settings and graph relationships.
+Top-level semantic container containing Spaces, semantic object registries/references, routes, global experience settings and graph relationships.
 
 ## Space
 
-A loadable spatial context: gallery, lobby, archive, room, exterior, film room, showroom zone, etc.
+A loadable spatial context: gallery, lobby, archive, room, exterior, film room, showroom zone, etc. A Space references canonical semantic records located/active in that context; it does not own duplicate Entity records.
 
 ## Entity
 
-Any identifiable semantic object that exists in the World.
+Any identifiable semantic object that exists in the World. One Entity identity corresponds to one canonical semantic record.
 
 ## Content Entity
 
@@ -228,15 +325,23 @@ Entity carrying presentable content: Artwork, Sculpture, Image, Video, Audio, Do
 
 ## Representation
 
-Scene Kit-specific visual realization of an Entity.
+Scene Kit-owned visual realization of a semantic object. Semantic data may expose presentation intent but not Scene Kit implementation ownership.
+
+## Action
+
+Semantic effect requested by an interaction or experience step. Exact V1 taxonomy/execution mechanism remains open.
+
+## Anchor
+
+Generic semantic spatial reference used by placement, interactions, portals, camera focus, labels, lights, spawn points and related relationships. Exact storage/transform mechanism remains open.
 
 ## Hotspot
 
-Semantic interaction attached to an entity, region or position.
+Semantic interaction/trigger attached to an Entity, Anchor, region or spatial position. It may request an Action; it does not own spatial connectivity.
 
 ## Portal
 
-Semantic transition/connection from one Space/state to another.
+Semantic spatial connection/transition from one Space/state to another. It owns connectivity/transition semantics, not the interaction trigger and not a mandatory visual form.
 
 ## Route
 
@@ -256,7 +361,7 @@ Camera instruction with semantic target and framing intent.
 
 ## Cue
 
-Time/event-triggered instruction for audio, narration, UI, transition or action.
+Time/event-triggered instruction for audio, narration, UI, transition or Action.
 
 ---
 
@@ -281,10 +386,12 @@ Responsibilities:
 Responsibilities:
 
 - World State;
+- canonical semantic registries/identity;
 - World Graph;
 - Space registry;
-- Entity registry;
-- route references;
+- Entity references;
+- Portal references;
+- Route references;
 - state transitions.
 
 ## Render System — MUST V1
@@ -342,11 +449,12 @@ First Museum profile:
 
 Responsibilities:
 
-- Explore camera;
-- Focus camera;
-- Directed/cinematic camera;
-- transition between camera ownership states;
-- subject framing based on semantic bounds/intent where possible.
+- one authoritative camera controller per frame;
+- Explore camera authority;
+- Focus camera authority;
+- Directed/cinematic camera authority;
+- explicit ownership handoffs including transition state;
+- subject framing based on semantic bounds/Anchors/intent where possible.
 
 ## Interaction — MUST V1
 
@@ -354,10 +462,10 @@ Responsibilities:
 
 - ray/pointer interaction where relevant;
 - proximity volumes;
-- hotspot state;
-- portal activation;
-- focus enter/return;
-- semantic actions.
+- Hotspot state;
+- semantic Action requests;
+- Portal activation through contract;
+- focus enter/return.
 
 ## Content — MUST V1
 
@@ -381,6 +489,7 @@ Responsibilities:
 - shot execution;
 - transition handoff;
 - basic transport;
+- semantic Action/cue orchestration;
 - synchronized narration/audio cues sufficient for prototype.
 
 **SHOULD LATER:** professional timeline authoring UI, branching narrative, advanced scrubbing/editor tooling.
@@ -394,7 +503,8 @@ Must prove editable configuration for:
 - Content;
 - Hotspot;
 - Portal;
-- Route.
+- Route;
+- minimal Anchor/Action references required by those concepts.
 
 This may use schemas + minimal UI. It must not become a universal scene editor in V1.
 
@@ -408,6 +518,7 @@ Responsibilities:
 - visual comparison;
 - performance evidence;
 - mobile evidence;
+- camera-authority conflict detection/testing where practical;
 - Unslop checks;
 - Gauntlet comparison;
 - human visual gate.
@@ -432,6 +543,8 @@ entity:focused
 entity:focus-left
 hotspot:near
 hotspot:activated
+action:requested
+action:completed
 portal:requested
 portal:entered
 route:started
@@ -443,6 +556,7 @@ experience:resumed
 experience:completed
 shot:started
 shot:completed
+camera:authority-changed
 audio:cue
 narration:cue
 quality:tier-changed
@@ -455,7 +569,8 @@ Rules:
 - emitter does not silently mutate another subsystem's private state;
 - payload shape must be documented before cross-subsystem use;
 - events describe facts/requests, not UI implementation;
-- high-frequency per-frame state should not be routed through a general event bus without profiling.
+- high-frequency per-frame state should not be routed through a general event bus without profiling;
+- an event must not become a second source of truth for the semantic object it references.
 
 **MUST V1:** define the minimal canonical set actually required by the Museum prototype before implementation.  
 **SHOULD LATER:** versioned event compatibility if external Scene Kits become independently distributed.
@@ -472,11 +587,12 @@ World {
   version
   title
   sceneKit
-  spaces[]
-  entities[]
-  portals[]
-  routes[]
-  chapters[]
+  spaceRefs[]
+  entityRefs[]
+  hotspotRefs[]
+  portalRefs[]
+  routeRefs[]
+  chapterRefs[]
   experience
   qualityPolicy
   accessibility
@@ -487,7 +603,9 @@ World {
 Rules:
 
 - stable IDs;
-- references by ID, not direct visual object ownership;
+- one canonical record per semantic object;
+- collection fields above represent references/registry membership, not duplicate inline ownership;
+- exact physical registry/store structure is open;
 - schema version present from V1;
 - no Museum-only property at World root unless generic semantics justify it.
 
@@ -502,11 +620,12 @@ Space {
   type
   transform / worldPlacement
   sceneProfile
-  entities[]
+  entityRefs[]
   hotspotRefs[]
   portalRefs[]
+  anchorRefs[]
   bounds
-  spawnPoints[]
+  spawnAnchorRefs[]
   ambience
   lightingProfile
   assetRefs[]
@@ -514,6 +633,8 @@ Space {
   metadata
 }
 ```
+
+`entityRefs[]` references canonical Entity records; it does not duplicate Entity objects already represented in World semantic state.
 
 `sceneProfile` and `lightingProfile` are Scene Kit concerns referencing semantic presets rather than hardcoding visual implementation into World data.
 
@@ -526,12 +647,13 @@ Entity {
   id
   kind
   subtype
-  spaceId
-  transform
+  spaceRef
+  anchorRef?
+  transformIntent?
   bounds
   content
-  representation
-  interaction
+  presentationIntent?
+  interactionRefs[]?
   accessibility
   metadata
 }
@@ -551,28 +673,79 @@ content {
 }
 ```
 
+`presentationIntent` is optional semantic guidance only. It must not own or embed Scene Kit meshes, materials, shaders, Three.js objects or rendering implementation.
+
 The engine must not require these Museum metadata fields for every Entity kind.
 
 ---
 
-# 12. Hotspot schema — proposed minimum
+# 12. Action contract — proposed minimum
+
+Conceptual schema only:
+
+```text
+Action {
+  id?
+  type
+  targetRef?
+  params?
+}
+```
+
+Conceptual V1 candidates include:
+
+```text
+FOCUS_ENTITY
+PLAY_MEDIA
+OPEN_INFO
+ACTIVATE_PORTAL
+START_ROUTE
+TRIGGER_STORY
+SET_STATE
+```
+
+The final taxonomy, whether Actions are inline or canonical records, extensibility mechanism and execution model remain open until Museum V1 needs are validated.
+
+The invariant is semantic consistency: equivalent interactions must not rely on unrelated arbitrary Scene Kit callbacks.
+
+---
+
+# 13. Anchor contract — proposed minimum
+
+Anchor is conceptual and intentionally implementation-neutral.
+
+It must be able to represent or reference reusable spatial intent sufficient for cases such as:
+
+- object/content placement;
+- interaction origin/region;
+- Portal source/destination;
+- focus target/framing assistance;
+- label/light attachment;
+- spawn/return location.
+
+IW-0 does not choose absolute coordinates vs transforms vs object-relative anchors vs surface/volume encodings. Hard-coded coordinates dispersed across independent subsystems are the anti-pattern being prevented.
+
+---
+
+# 14. Hotspot schema — proposed minimum
 
 ```text
 Hotspot {
   id
-  spaceId
-  entityId?
-  type: INFO | MEDIA | PORTAL | ACTION | STORY
+  spaceRef
+  entityRef?
+  anchorRef?
   interactionVolume
   triggerDistance?
   focusDistance?
   visualPolicy
   action
-  target
   accessibilityLabel
   enabled
 }
 ```
+
+`action` requests semantic behaviour. A Portal transition should normally be expressed as an Action targeting a Portal rather than by making Hotspot own Portal connectivity.
 
 Proposed semantic states:
 
@@ -590,28 +763,32 @@ Visual marker is optional.
 
 ---
 
-# 13. Portal schema — proposed minimum
+# 15. Portal schema — proposed minimum
 
 ```text
 Portal {
   id
-  fromSpaceId
-  toSpaceId
-  sourceAnchor
-  destinationSpawn
-  activation
-  transitionIntent
+  fromSpaceRef
+  toSpaceRef
+  sourceAnchorRef
+  destinationAnchorRef
+  transitionBehaviour
+  representationHint?
   prefetchPolicy
   returnPolicy
   accessibilityLabel
 }
 ```
 
-`transitionIntent` expresses semantic intent such as `door`, `cut`, `dive`, `continuity`, `teleport`; Scene Kit / Experience implementation decides exact visual mechanics.
+`transitionBehaviour` is semantic spatial behaviour. Conceptually it may express continuous transfer, cut, teleport, cinematic handoff or an equivalent future vocabulary.
+
+`representationHint` is optional presentation intent for the Scene Kit, conceptually such as door, screen, artwork, window or none. It never defines Portal connectivity or visual implementation ownership.
+
+Exact enums remain open.
 
 ---
 
-# 14. Camera contract — proposed
+# 16. Camera contract — proposed
 
 Camera ownership states:
 
@@ -623,14 +800,19 @@ DIRECTED
 TRANSITION
 ```
 
+Primary invariant:
+
+> **AT ANY FRAME THERE IS EXACTLY ONE AUTHORITATIVE CAMERA CONTROLLER.**
+
 Rules:
 
-1. only one camera authority at a time;
-2. ownership transitions are explicit;
-3. Focus must provide deterministic return behavior;
-4. Directed camera may not permanently corrupt Explore pose unless the experience explicitly chooses a new return/spawn pose;
-5. focus framing should derive from subject semantics/bounds where practical, not one global hard-coded distance;
-6. mobile framing must be validated separately.
+1. exactly one authority writes authoritative camera state per frame;
+2. ownership transitions are explicit and testable;
+3. no two subsystems may simultaneously write authoritative camera state;
+4. Focus must provide deterministic return behavior;
+5. Directed camera may not permanently corrupt Explore pose unless the experience explicitly chooses a new return/spawn pose;
+6. focus framing should derive from subject semantics/bounds/Anchors where practical, not one global hard-coded distance;
+7. mobile framing must be validated separately.
 
 Museum V1 shot intents:
 
@@ -645,15 +827,15 @@ EXIT
 
 ---
 
-# 15. Explore navigation contract — proposed
+# 17. Explore navigation contract — proposed
 
 **MUST V1**
 
 - visitor controls movement/orientation;
 - collision prevents obvious traversal failure;
-- Space transitions preserve valid spawn/orientation;
+- Space transitions preserve valid spawn/orientation through semantic destination references/Anchors;
 - proximity is spatial, not UI-driven;
-- Focus temporarily changes interaction/camera authority and returns safely;
+- Focus explicitly hands camera authority to/from Focus state and returns safely;
 - Escape/back action always has a defined result;
 - keyboard + pointer path on desktop;
 - mobile/touch path appropriate to device tier;
@@ -673,7 +855,7 @@ EXIT
 
 ---
 
-# 16. Experience Director contract — proposed
+# 18. Experience Director contract — proposed
 
 The Experience Director orchestrates existing World/Entity/Camera/Audio capabilities; it does not own their internal implementation.
 
@@ -682,12 +864,13 @@ Minimum Story Step:
 ```text
 StoryStep {
   id
-  chapterId
+  chapterRef
   subjectRef
   shotIntent
   duration / completionRule
   narrationCue?
   audioCue?
+  actionRefs[]?
   transitionIntent?
   next?
 }
@@ -697,8 +880,8 @@ StoryStep {
 
 - start guided route;
 - execute ordered story steps;
-- change camera authority safely;
-- trigger basic cues;
+- acquire/release camera authority safely;
+- trigger basic semantic Actions/cues;
 - move through Spaces using Portal/Space contracts;
 - pause/resume/exit;
 - restore valid Explore state when leaving guided mode.
@@ -718,7 +901,7 @@ StoryStep {
 
 ---
 
-# 17. Timeline / audio contract — proposed
+# 19. Timeline / audio contract — proposed
 
 V1 should avoid building a full DAW/timeline editor.
 
@@ -745,7 +928,7 @@ V1 should avoid building a full DAW/timeline editor.
 
 ---
 
-# 18. Scene Kit contract — proposed
+# 20. Scene Kit contract — proposed
 
 A Scene Kit maps semantic World data to a specific visual/spatial language.
 
@@ -757,14 +940,17 @@ A Scene Kit may define:
 - lighting profiles;
 - environmental treatment;
 - placement helpers;
+- Anchor realization helpers;
 - focus presentation;
-- transition realizations;
+- Portal transition realizations;
 - quality-tier variants.
 
 A Scene Kit must not:
 
 - replace World State;
-- redefine Portal semantics;
+- duplicate canonical semantic records;
+- redefine Portal connectivity semantics;
+- redefine Hotspot/Action semantics arbitrarily;
 - own generic route logic;
 - duplicate Experience Director;
 - mutate another Scene Kit;
@@ -776,7 +962,7 @@ A Scene Kit must not:
 
 ---
 
-# 19. Asset lifecycle contract — proposed
+# 21. Asset lifecycle contract — proposed
 
 Every heavyweight resource must have an owner and release path.
 
@@ -804,7 +990,7 @@ This is a hypothesis to test, not a fixed numerical cache policy.
 
 ---
 
-# 20. Performance / quality budgets — proposed gates
+# 22. Performance / quality budgets — proposed gates
 
 Exact numeric budgets require prototype measurement on representative devices. IW-0 therefore defines **budget categories and evidence gates**, not invented numbers.
 
@@ -829,7 +1015,7 @@ Required measured categories:
 
 ---
 
-# 21. Device tiers — proposed
+# 23. Device tiers — proposed
 
 Do not equate mobile with “desktop but smaller”.
 
@@ -858,7 +1044,7 @@ Tier may control:
 
 ---
 
-# 22. Accessibility contract — proposed
+# 24. Accessibility contract — proposed
 
 Accessibility is part of the architecture because canvas-only information is insufficient for Museum/Institutional use.
 
@@ -887,7 +1073,7 @@ Accessibility is part of the architecture because canvas-only information is ins
 
 ---
 
-# 23. Deterministic QA contract — proposed
+# 25. Deterministic QA contract — proposed
 
 The visual/runtime system must expose named repeatable states.
 
@@ -912,13 +1098,14 @@ museum:mobile-gallery-a
 - baseline screenshots;
 - basic image diff or structured visual comparison;
 - browser console/error capture;
-- performance capture at named states.
+- performance capture at named states;
+- evidence that camera authority is singular at tested ownership handoffs.
 
 No claim of quality based only on successful build.
 
 ---
 
-# 24. Unslop protocol — proposed
+# 26. Unslop protocol — proposed
 
 Unslop is a rejection layer, not an art direction preset.
 
@@ -949,7 +1136,7 @@ Reject by default:
 
 ---
 
-# 25. Gauntlet Loop protocol — proposed
+# 27. Gauntlet Loop protocol — proposed
 
 Each subsystem has a named quality bar from the Reference Ledger.
 
@@ -978,7 +1165,7 @@ Rules:
 
 ---
 
-# 26. Parallel work policy — proposed
+# 28. Parallel work policy — proposed
 
 Parallel agents are useful only when ownership is independent.
 
@@ -1013,7 +1200,7 @@ No fan-out across tightly coupled runtime code merely to increase agent count.
 
 ---
 
-# 27. Reference and licensing policy — proposed
+# 29. Reference and licensing policy — proposed
 
 Reference repositories exist to provide evidence and patterns, not automatic code supply.
 
@@ -1027,9 +1214,19 @@ Rules:
 6. attribution obligations must be carried into final implementation/export where required;
 7. IW-0 authorizes **no direct code or asset copy** from reference repositories.
 
+Reference conflict hierarchy:
+
+```text
+APPROVED IW CONTRACT
+→ PRIMARY REFERENCE
+→ SECONDARY REFERENCES
+```
+
+A reference may challenge an IW contract through explicit review, but may never silently overwrite an approved engine decision. Important Reference Ledger entries should declare conflict handling when sources can disagree.
+
 ---
 
-# 28. Reference authority categories — proposed
+# 30. Reference authority categories — proposed
 
 ## CORE ENGINE
 
@@ -1079,9 +1276,9 @@ Category means authority for a problem, not permission to copy code.
 
 ---
 
-# 29. Museum / Institutional V1 specification
+# 31. Museum / Institutional V1 specification
 
-## 29.1 Purpose
+## 31.1 Purpose
 
 Prove the engine with a small complete world using controlled/licensed/fictitious content while comparing UX/visual quality against real references.
 
@@ -1090,7 +1287,7 @@ CONTENT = CONTROLLED
 QUALITY BAR = REAL
 ```
 
-## 29.2 World
+## 31.2 World
 
 ```text
 Lobby
@@ -1101,7 +1298,7 @@ Lobby
 
 At least one real Portal transition between Spaces.
 
-## 29.3 Content
+## 31.3 Content
 
 Target fixture:
 
@@ -1112,31 +1309,47 @@ Target fixture:
 - labels/metadata;
 - optional narration samples using controlled content.
 
-## 29.4 MUST V1 capabilities
+## 31.4 MUST V1 capabilities — grouped for execution
 
-- semantic World/Space/Entity data;
-- thin authoring for World, Space, Content, Hotspot, Portal, Route;
+The grouping below is for execution clarity only. It does not create a new architecture or add scope.
+
+### FOUNDATION
+
+- semantic World/Space/Entity data with one canonical record per semantic object;
+- stable references/IDs across World/Space/subsystems;
+- thin authoring for World, Space, Content, Hotspot, Portal, Route and the minimal Anchor/Action references they require;
+- Space preload/warm/active/dispose lifecycle;
+- Portal between Spaces with transition semantics separate from representation;
+- device quality tiers;
+- responsive desktop/mobile foundation.
+
+### EXPERIENCE
+
 - free Explore navigation;
 - proximity;
+- Hotspot interaction/trigger semantics;
+- minimal semantic Actions;
 - Focus Mode;
-- Focus Camera with safe return;
-- Portal between Spaces;
-- Space preload/warm/active/dispose lifecycle;
+- Focus Camera with safe return and singular authority;
 - World Map representation of World Graph;
 - one Guided Route;
 - basic Chapters/Story Steps;
 - camera-directed guided sequence;
 - ambient audio + basic narration cue support;
-- responsive desktop/mobile behavior;
-- device quality tiers;
-- accessibility metadata/focus/readable detail mode;
+- accessibility metadata/focus/readable detail mode.
+
+### QUALITY
+
 - deterministic QA states;
 - performance evidence;
+- desktop/mobile evidence;
+- camera authority handoff evidence;
 - Unslop review;
 - Gauntlet comparison;
-- navigable local/preview evidence before any integration.
+- navigable local/preview evidence before any integration;
+- Juanma visual approval as integration/merge gate.
 
-## 29.5 SHOULD LATER
+## 31.5 SHOULD LATER
 
 - rich timeline editor;
 - orbit navigation profile;
@@ -1148,7 +1361,7 @@ Target fixture:
 - reusable visual preset editor;
 - exported standalone viewer pipeline if not required for first proof.
 
-## 29.6 R&D
+## 31.6 R&D
 
 - avatars;
 - AI curator;
@@ -1161,7 +1374,7 @@ Target fixture:
 
 ---
 
-# 30. V1 visual profiles
+# 32. V1 visual profiles
 
 Museum V1 may demonstrate shared semantics through a limited set of profiles:
 
@@ -1177,7 +1390,7 @@ These are Scene Kit visual profiles, not separate engines.
 
 ---
 
-# 31. Proposed phased roadmap
+# 33. Proposed phased roadmap
 
 No phase after IW-0 is authorized merely because it appears here.
 
@@ -1223,11 +1436,12 @@ Exit gate: navigable local proof + performance baseline.
 - content schemas;
 - artwork/sculpture/video/audio;
 - thin authoring;
-- proximity/hotspots;
+- proximity/Hotspots;
+- minimal Action/Anchor use required by interactions/placement;
 - Focus Camera;
 - metadata/accessibility.
 
-Exit gate: content can be changed without rewriting scene logic.
+Exit gate: content can be changed without rewriting scene logic or duplicating canonical records.
 
 ## IW-4 — Guided Experience — MUST V1
 
@@ -1237,7 +1451,7 @@ Exit gate: content can be changed without rewriting scene logic.
 - basic audio/narration cues;
 - enter/exit Guided mode safely.
 
-Exit gate: Explore and Guided share one World State.
+Exit gate: Explore and Guided share one World State and camera authority remains singular through handoffs.
 
 ## IW-5 — Quality / Device / Visual Pass — MUST V1
 
@@ -1274,7 +1488,7 @@ Exit gate: Juanma explicit merge authorization.
 
 ---
 
-# 32. Governance and source of truth
+# 34. Governance and source of truth
 
 Authority order:
 
@@ -1320,7 +1534,7 @@ Evidence generation
 
 ---
 
-# 33. IW-0 approval checklist
+# 35. IW-0 approval checklist
 
 IW-0 remains **PROPOSED** until Juanma explicitly reviews it.
 
@@ -1332,7 +1546,11 @@ Review questions:
 - [ ] SHOULD LATER is correctly deferred.
 - [ ] R&D cannot leak into critical path.
 - [ ] Domain vocabulary is understandable.
+- [ ] One semantic object / one canonical record invariant is correct.
+- [ ] Hotspot / Action / Portal responsibilities are non-duplicative.
+- [ ] Anchor abstraction is sufficient without prematurely fixing implementation.
 - [ ] Engine / Scene Kit / Authoring / Experience boundaries are correct.
+- [ ] Exactly one authoritative camera controller per frame is the correct invariant.
 - [ ] Explore and Guided contracts are correct.
 - [ ] Museum V1 is the right proof.
 - [ ] Accessibility/performance are architecture-level gates.
