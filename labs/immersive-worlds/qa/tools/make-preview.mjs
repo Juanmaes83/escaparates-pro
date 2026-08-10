@@ -55,6 +55,15 @@ for (const name of (await fs.readdir(collectionDir)).filter((f) => MIME[path.ext
 }
 
 const STATES = [
+  ['museum:journey-lead-horizonte', '① La guía lleva → Horizonte'],
+  ['museum:guide-accompanied', '② Acompañado — sobre el hombro'],
+  ['museum:guide-handoff', '③ Cesión — la obra manda'],
+  ['museum:journey-lead-division', '④ La guía lleva → División tercera'],
+  ['museum:journey-division', '⑤ Acompañado — segunda obra'],
+  ['museum:journey-threshold', '⑥ La guía lleva → el umbral'],
+  ['museum:journey-crossed', '⑦ Cruzado — cámara oscura'],
+  ['museum:journey-noche', '⑧ Acompañado — Noche de invierno'],
+  ['museum:guide-released', '⑨ Solo con la obra'],
   ['museum:gallery-a-overview', 'Galería A — eje'],
   ['museum:gallery-a-oblique', 'Galería A — diagonal'],
   ['museum:artwork-horizonte-focus', 'Foco: Horizonte interrumpido'],
@@ -62,9 +71,6 @@ const STATES = [
   ['museum:portal-a-b-before', 'Umbral A → B'],
   ['museum:portal-a-b-after', 'Galería B — cámara oscura'],
   ['museum:archive-teleport', 'Archivo — sala de escucha'],
-  ['museum:guide-accompanied', 'GUÍA — acompañado (sobre el hombro)'],
-  ['museum:guide-handoff', 'GUÍA — cesión'],
-  ['museum:guide-released', 'GUÍA — visitante solo'],
   ['museum:guide-turnaround', 'GUÍA — vuelta de personaje'],
   ['museum:guided-step-04', 'Recorrido comentado — parada 4'],
   ['museum:lobby-entry', 'Vestíbulo']
@@ -105,7 +111,7 @@ body[data-focused="true"] #iw-preview { display: none; }
 <div id="iw-ui"></div>
 
 <aside id="iw-preview" hidden>
-  <h2>Checkpoint IW-3 · saltos de estado</h2>
+  <h2>Visita guiada · pulsa G para recorrerla entera, o salta a un momento</h2>
   <div id="iw-preview-states"></div>
   <p>Andar: <b>W A S D</b> · mirar: ratón (clic para capturar) o <b>←/→</b> · obra: <b>E</b> · salir: <b>Esc</b> · plano: <b>M</b> · recorrido: <b>G</b> · zoom en detalle: rueda · obra siguiente en detalle: <b>←/→</b> · ocultar este panel: <b>P</b></p>
 </aside>

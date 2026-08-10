@@ -291,6 +291,9 @@ function travelForIntent(intent, duration) {
     // Slower than a focus move and never hurried: this shot is the moment the
     // visitor is walked up to something, and it should feel like being walked.
     case SHOT_INTENT.ACCOMPANIED: return Math.min(seconds * 700, 3400);
+    // A lead is a walk. Its duration is the walk's duration, so the camera and
+    // the guide arrive together instead of one waiting for the other.
+    case SHOT_INTENT.LEAD: return Math.min(seconds * 950, 7000);
     case SHOT_INTENT.ENTRY:
     case SHOT_INTENT.OVERVIEW: return Math.min(seconds * 600, 3200);
     default: return Math.min(seconds * 500, 2400);

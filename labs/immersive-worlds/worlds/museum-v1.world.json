@@ -39,7 +39,8 @@
         "anchor.lobby.arrive-from-gallery-a",
         "anchor.lobby.bienvenida",
         "anchor.lobby.door-gallery-a",
-        "anchor.lobby.route-start"
+        "anchor.lobby.route-start",
+        "anchor.lobby.guide-welcome"
       ],
       "hotspotRefs": [
         "hotspot.lobby.route-start",
@@ -94,7 +95,9 @@
         "anchor.gallery-a.door-lobby",
         "anchor.gallery-a.door-gallery-b",
         "anchor.gallery-a.door-archive",
-        "anchor.gallery-a.guide-horizonte"
+        "anchor.gallery-a.guide-horizonte",
+        "anchor.gallery-a.guide-division",
+        "anchor.gallery-a.guide-umbral"
       ],
       "hotspotRefs": [
         "hotspot.art.horizonte-interrumpido",
@@ -149,7 +152,8 @@
         "anchor.gallery-b.wall-5",
         "anchor.gallery-b.wall-6",
         "anchor.gallery-b.screen",
-        "anchor.gallery-b.door-gallery-a"
+        "anchor.gallery-b.door-gallery-a",
+        "anchor.gallery-b.guide-noche"
       ],
       "hotspotRefs": [
         "hotspot.art.noche-de-invierno",
@@ -644,6 +648,70 @@
         0.94
       ],
       "label": "Puesto del guía ante «Horizonte interrumpido»"
+    },
+    {
+      "id": "anchor.lobby.guide-welcome",
+      "spaceId": "space.lobby",
+      "kind": "VIEWPOINT",
+      "position": [
+        -0.9,
+        0,
+        0.4
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — bienvenida"
+    },
+    {
+      "id": "anchor.gallery-a.guide-division",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        4.35,
+        0,
+        -13.0
+      ],
+      "normal": [
+        0.1,
+        0,
+        0.99
+      ],
+      "label": "Guía — ante División tercera"
+    },
+    {
+      "id": "anchor.gallery-a.guide-umbral",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        6.3,
+        0,
+        -10.0
+      ],
+      "normal": [
+        1,
+        0,
+        0
+      ],
+      "label": "Guía — en el umbral hacia la Galería B"
+    },
+    {
+      "id": "anchor.gallery-b.guide-noche",
+      "spaceId": "space.gallery-b",
+      "kind": "VIEWPOINT",
+      "position": [
+        12.4,
+        0,
+        -12.5
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — ante Noche de invierno"
     }
   ],
   "entities": [
@@ -1465,10 +1533,12 @@
       "spaceId": "space.gallery-a",
       "stepRefs": [
         "step.02-paso-galeria-a",
-        "step.03-vista-general",
+        "step.03-lleva-horizonte",
         "step.04-horizonte",
         "step.04b-horizonte-cesion",
-        "step.05-vasija"
+        "step.05-lleva-division",
+        "step.06-division",
+        "step.06b-division-cesion"
       ]
     },
     {
@@ -1476,9 +1546,12 @@
       "title": "Cámara oscura",
       "spaceId": "space.gallery-b",
       "stepRefs": [
-        "step.06-paso-galeria-b",
-        "step.07-cuaderno-de-luz",
-        "step.08-cierre"
+        "step.07-lleva-umbral",
+        "step.08-paso-galeria-b",
+        "step.09-lleva-noche",
+        "step.10-noche",
+        "step.10b-noche-cesion",
+        "step.11-cierre"
       ]
     }
   ],
@@ -1489,9 +1562,12 @@
       "subjectRef": "space.lobby",
       "shotIntent": "ENTRY",
       "duration": 6,
+      "guide": {
+        "anchorId": "anchor.lobby.guide-welcome"
+      },
       "narrationCue": "narracion.01",
       "audioCue": "ambience.lobby",
-      "caption": "Bienvenido a la Fundación Arenas. La colección permanente reúne once obras producidas entre 1958 y 1994."
+      "caption": "Bienvenido a la Fundación Arenas. Once obras producidas entre 1958 y 1994."
     },
     {
       "id": "step.02-paso-galeria-a",
@@ -1503,17 +1579,19 @@
         "type": "ACTIVATE_PORTAL",
         "target": "portal.lobby-gallery-a"
       },
+      "audioCue": "ambience.gallery",
       "caption": "Cruzamos a la Galería A."
     },
     {
-      "id": "step.03-vista-general",
+      "id": "step.03-lleva-horizonte",
       "chapterId": "chapter.horizontes",
-      "subjectRef": "space.gallery-a",
-      "shotIntent": "OVERVIEW",
+      "subjectRef": "entity.artwork.horizonte-interrumpido",
+      "shotIntent": "LEAD",
       "duration": 7,
-      "narrationCue": "narracion.03",
-      "audioCue": "ambience.gallery",
-      "caption": "La sala reúne pintura y obra sobre papel de Amalia Serrat y Bruno Ferrán, junto a una pieza de Teresa Miralles."
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-horizonte"
+      },
+      "caption": "Acompáñeme."
     },
     {
       "id": "step.04-horizonte",
@@ -1521,11 +1599,11 @@
       "subjectRef": "entity.artwork.horizonte-interrumpido",
       "shotIntent": "ACCOMPANIED",
       "duration": 8,
-      "narrationCue": "narracion.04",
-      "caption": "Serrat pintó Horizonte interrumpido desde la misma ventana durante catorce meses. La franja inferior corresponde al invierno de 1971.",
       "guide": {
         "anchorId": "anchor.gallery-a.guide-horizonte"
-      }
+      },
+      "narrationCue": "narracion.04",
+      "caption": "Serrat pintó Horizonte interrumpido desde la misma ventana durante catorce meses. La franja inferior corresponde al invierno de 1971."
     },
     {
       "id": "step.04b-horizonte-cesion",
@@ -1540,16 +1618,52 @@
       "caption": "Quédese con ella el tiempo que quiera."
     },
     {
-      "id": "step.05-vasija",
+      "id": "step.05-lleva-division",
       "chapterId": "chapter.horizontes",
-      "subjectRef": "entity.sculpture.vasija-de-arenas",
-      "shotIntent": "DETAIL",
-      "duration": 8,
-      "narrationCue": "narracion.05",
-      "caption": "La Vasija de arenas se torneó en una sola sesión. El perfil se estrecha dos veces: Miralles lo llamaba «la respiración»."
+      "subjectRef": "entity.artwork.division-tercera",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-division"
+      },
+      "caption": "Seguimos por el mismo paramento."
     },
     {
-      "id": "step.06-paso-galeria-b",
+      "id": "step.06-division",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.division-tercera",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-division"
+      },
+      "caption": "División tercera es de 1969. Ferrán trabajaba el mismo intervalo una y otra vez, siempre en tres partes desiguales."
+    },
+    {
+      "id": "step.06b-division-cesion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.division-tercera",
+      "shotIntent": "FOCUS",
+      "duration": 6,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-division",
+        "aside": true
+      },
+      "caption": "Fíjese en el borde: no está pintado, está dejado."
+    },
+    {
+      "id": "step.07-lleva-umbral",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "space.gallery-a",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-umbral"
+      },
+      "caption": "La sala siguiente está a oscuras. Deje que la vista se acostumbre."
+    },
+    {
+      "id": "step.08-paso-galeria-b",
       "chapterId": "chapter.camara-oscura",
       "subjectRef": "space.gallery-b",
       "shotIntent": "PORTAL",
@@ -1559,19 +1673,45 @@
         "target": "portal.gallery-a-gallery-b"
       },
       "audioCue": "ambience.dark-room",
-      "caption": "Pasamos a la cámara oscura, con nivel de luz reducido para obra fotográfica."
+      "caption": "Pasamos a la cámara oscura."
     },
     {
-      "id": "step.07-cuaderno-de-luz",
+      "id": "step.09-lleva-noche",
       "chapterId": "chapter.camara-oscura",
-      "subjectRef": "entity.video.cuaderno-de-luz",
-      "shotIntent": "FOCUS",
-      "duration": 9,
-      "narrationCue": "narracion.07",
-      "caption": "Cuaderno de luz registra la luz del taller de Vilar entre las siete y las nueve de la mañana, filmada durante nueve días."
+      "subjectRef": "entity.artwork.noche-de-invierno",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-noche"
+      },
+      "caption": "Aquí el nivel de luz es el que la obra fotográfica admite."
     },
     {
-      "id": "step.08-cierre",
+      "id": "step.10-noche",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.artwork.noche-de-invierno",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-noche"
+      },
+      "narrationCue": "narracion.07",
+      "caption": "Noche de invierno es un fotograbado sobre papel, montado en ventana. Vilar lo tiró una sola vez."
+    },
+    {
+      "id": "step.10b-noche-cesion",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.artwork.noche-de-invierno",
+      "shotIntent": "FOCUS",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-noche",
+        "aside": true
+      },
+      "caption": "Le dejo con ella."
+    },
+    {
+      "id": "step.11-cierre",
       "chapterId": "chapter.camara-oscura",
       "subjectRef": "space.gallery-b",
       "shotIntent": "EXIT",

@@ -107,7 +107,10 @@ export const REPRESENTATION_HINT = Object.freeze({
 /**
  * Camera framing intents for Museum V1 (Constitution §14).
  *
- * `ACCOMPANIED` frames a subject from behind whoever is showing it to you. It
+ * `LEAD` is the travelling beat: the guide walks to the next stop and the
+ * camera arrives behind her, so the visitor experiences having followed someone
+ * rather than having been moved. `ACCOMPANIED` frames a subject from behind
+ * whoever is showing it to you. It
  * is an intent, not a mechanism: it says "the visitor is being shown this",
  * and the Scene Kit decides what that composition is in its own vocabulary.
  * The handoff that follows needs no intent of its own — an ACCOMPANIED shot
@@ -117,6 +120,7 @@ export const REPRESENTATION_HINT = Object.freeze({
 export const SHOT_INTENT = Object.freeze({
   ENTRY: 'ENTRY',
   OVERVIEW: 'OVERVIEW',
+  LEAD: 'LEAD',
   ACCOMPANIED: 'ACCOMPANIED',
   FOCUS: 'FOCUS',
   DETAIL: 'DETAIL',

@@ -129,7 +129,7 @@ export class Runtime {
       reducedMotion,
       ports: {
         framingFor: (subjectRef, intent, options) => this.framingFor(subjectRef, intent, options),
-        stageGuide: (staging) => this.sceneKit.setGuideStaging?.(staging),
+        stageGuide: (staging) => this.stageGuide(staging),
         playShot: (pose, opts) => this.directed.playShot(pose, opts),
         snapTo: (pose) => this.directed.snapTo(pose),
         requestAuthority: (authority, opts) => this.camera.request(authority, opts),
@@ -252,11 +252,24 @@ export class Runtime {
    * PRESERVE_OWN means the Explore controller reinstates its own kept pose
    * rather than adopting wherever the focus camera happened to end up.
    */
+  /**
+   * Leave Focus.
+   *
+   * The camera only comes back to the visitor if the visitor is the one who
+   * should have it. During a guided route the Director owns the camera, and a
+   * step that releases focus — every step following a FOCUS beat, including the
+   * portal step at a threshold — was handing it to EXPLORE anyway. The visible
+   * result was that crossing a doorway mid-tour dropped you out of the guided
+   * camera and stood you at the arrival spawn: a doorway that behaved like a
+   * scene reset, which is exactly what this pass exists to remove.
+   */
   releaseFocus() {
     if (!this.state.focusedEntityId) return false;
     const entityId = this.state.focusedEntityId;
     this.sceneKit.setEntityFocused(entityId, false);
     this.state.setFocus(null);
+
+    if (this.state.mode === EXPERIENCE_MODE.GUIDED) return true;
 
     this.camera.request(CAMERA_AUTHORITY.EXPLORE, {
       reason: 'focus:release',
@@ -387,6 +400,20 @@ export class Runtime {
 
   exitRoute() {
     this.experience.exit({ restorePose: true, reason: 'visitor-exit' });
+  }
+
+  /**
+   * Stage the guide, or dismiss it with `null`.
+   *
+   * Presentation, not World State — but it goes through the runtime rather than
+   * letting callers reach into the Scene Kit. A QA state that poked the kit
+   * directly had no owner, so anything that later dismissed the guide silently
+   * emptied that state and its evidence could not be trusted.
+   */
+  stageGuide(staging) {
+    this._guideStaging = staging || null;
+    this.sceneKit.setGuideStaging?.(this._guideStaging);
+    return this._guideStaging;
   }
 
   /**

@@ -31,6 +31,12 @@ import {
 } from './builders.js';
 import { GUIDE_DESIGNS, buildGuideFigure, guideMaterials } from './guide.js';
 
+/**
+ * Metres per second. An unhurried gallery pace — a guide walking a visitor to
+ * the next work is not commuting. Authored step durations are matched to it.
+ */
+const GUIDE_WALK_SPEED = 1.05;
+
 export class MuseumSceneKit extends SceneKit {
   /**
    * @param {{
@@ -780,6 +786,10 @@ export class MuseumSceneKit extends SceneKit {
   }
 
   framingForEntity(entityId, viewport) {
+    if (viewport.intent === 'LEAD') {
+      const lead = this._leadFraming(viewport);
+      if (lead) return lead;
+    }
     const record = this._entityIndex.get(entityId);
     const anchor = record ? this._anchorPoses.get(record.anchorId) : null;
     if (!record || !anchor) {
@@ -817,6 +827,10 @@ export class MuseumSceneKit extends SceneKit {
   }
 
   framingForSpace(spaceId, viewport) {
+    if (viewport.intent === 'LEAD') {
+      const lead = this._leadFraming(viewport);
+      if (lead) return lead;
+    }
     const handle = this._spaces.get(spaceId);
     const space = handle?.space;
     if (!space) return { position: [0, 1.6, 6], target: [0, 1.6, 0], subjectSize: [1, 1, 1] };
@@ -989,6 +1003,51 @@ export class MuseumSceneKit extends SceneKit {
    * people in front of a painting. The guide takes one side of the frame and
    * the work keeps the open side.
    */
+  /**
+   * Following someone across a room.
+   *
+   * The camera does not chase the guide per frame — that would be a second
+   * camera model and it would fight the authority contract. Instead the shot
+   * travels to a pose standing behind where she is *going*, over the same
+   * duration her walk takes, so the two arrive together. From inside it reads as
+   * having followed her; from outside it is one authored move.
+   *
+   * The camera aims past her rather than at her back, so the destination and the
+   * room ahead stay visible while she walks into them.
+   */
+  _leadFraming(viewport) {
+    const destination = this._anchorPoses.get(viewport.guideAnchorId);
+    if (!destination) return null;
+
+    const from = this._guide && this._guide.current.opacity > 0.05
+      ? this._guide.current.position
+      : null;
+    // How she will be travelling as she arrives. Falling back to the anchor's
+    // own normal keeps the first lead of a route sane, before there is any
+    // previous position to have travelled from.
+    const travelled = from
+      ? [destination.position[0] - from[0], 0, destination.position[2] - from[2]]
+      : null;
+    const heading = travelled && Math.hypot(travelled[0], travelled[2]) > 0.4
+      ? vec3.normalize(travelled)
+      : destination.normal;
+
+    const behind = 2.9;
+    return {
+      position: [
+        destination.position[0] - heading[0] * behind,
+        destination.position[1] + 1.62,
+        destination.position[2] - heading[2] * behind
+      ],
+      target: [
+        destination.position[0] + heading[0] * 1.2,
+        destination.position[1] + 1.26,
+        destination.position[2] + heading[2] * 1.2
+      ],
+      subjectSize: [0.6, 1.7, 0.4]
+    };
+  }
+
   _accompaniedFraming(record, anchor, viewport) {
     const guideAnchor = this._anchorPoses.get(viewport.guideAnchorId);
     if (!guideAnchor) return null;
@@ -1057,19 +1116,41 @@ export class MuseumSceneKit extends SceneKit {
   _updateGuide(dt) {
     const guide = this._guide;
     if (!guide) return;
-
-    const k = 1 - Math.exp(-(dt || 0.016) * 3.4);
+    const step = dt || 0.016;
     const current = guide.current;
     const target = guide.target;
-    for (let i = 0; i < 3; i += 1) {
-      current.position[i] += (target.position[i] - current.position[i]) * k;
+
+    // Walk, don't glide.
+    //
+    // An exponential approach settles a step-aside beautifully and is hopeless
+    // over a room: it covers most of six metres in the first second and then
+    // creeps, which reads as a shove followed by a drift. A person crossing a
+    // gallery walks at a roughly constant pace, so travel is speed-limited and
+    // only the last stride eases out. That pace is also what lets a shot and a
+    // walk be authored to the same duration and arrive together.
+    const dx = target.position[0] - current.position[0];
+    const dz = target.position[2] - current.position[2];
+    const remaining = Math.hypot(dx, dz);
+    const walking = remaining > 0.05;
+    if (remaining > 1e-4) {
+      // Ease the final half-metre so she stops rather than halting.
+      const pace = GUIDE_WALK_SPEED * Math.min(1, 0.28 + remaining / 0.5);
+      const travel = Math.min(remaining, pace * step);
+      current.position[0] += (dx / remaining) * travel;
+      current.position[2] += (dz / remaining) * travel;
     }
-    // Shortest way round, so a guide facing north-west never spins the long way.
-    let delta = (target.yaw - current.yaw) % (Math.PI * 2);
+    current.position[1] += (target.position[1] - current.position[1]) * (1 - Math.exp(-step * 4));
+
+    // Face the way you are going while going, and the subject once arrived.
+    // A figure that slides sideways while facing a painting is the single most
+    // obvious tell that nobody is really walking.
+    const heading = walking ? Math.atan2(dx, dz) : target.yaw;
+    let delta = (heading - current.yaw) % (Math.PI * 2);
     if (delta > Math.PI) delta -= Math.PI * 2;
     if (delta < -Math.PI) delta += Math.PI * 2;
-    current.yaw += delta * k;
-    current.opacity += (target.opacity - current.opacity) * (1 - Math.exp(-(dt || 0.016) * 2.6));
+    current.yaw += delta * (1 - Math.exp(-step * 4.6));
+    current.opacity += (target.opacity - current.opacity) * (1 - Math.exp(-step * 2.6));
+    guide.walking = walking;
 
     guide.object.position.set(current.position[0], current.position[1], current.position[2]);
     guide.object.rotation.y = current.yaw;

@@ -298,9 +298,20 @@ async function main() {
     const proximity = await page.evaluate(async () => {
       const rt = window.__IW.runtime;
       await rt.traversePortal('portal.gallery-b-gallery-a', { source: 'QA' });
-      // A work not yet visited in this session: VISITED is deliberately sticky,
-      // so proximity is checked on a hotspot whose state is still AVAILABLE.
-      rt.explore.setPose({ position: [4.6, 1.62, -13.6], yaw: Math.PI, pitch: 0 });
+      // VISITED is deliberately sticky, so proximity has to be checked on a
+      // hotspot this session has not already visited. Which works the guided
+      // route touches is an authoring decision that changes; naming one here
+      // made this check fail the moment the route was extended to reach it. So
+      // it finds an unvisited one and walks to whatever that turns out to be.
+      const candidate = rt.store.hotspotsOf('space.gallery-a')
+        .find((h) => h.entityId && rt.state.hotspotState(h.id) !== 'VISITED');
+      if (!candidate) return { skipped: 'every gallery-A hotspot already visited' };
+      const anchor = rt.sceneKit.poseForAnchor(rt.store.require(candidate.entityId).anchorId);
+      rt.explore.setPose({
+        position: [anchor.position[0] + anchor.normal[0] * 1.1, 1.62, anchor.position[2] + anchor.normal[2] * 1.1],
+        yaw: Math.atan2(-anchor.normal[0], -anchor.normal[2]),
+        pitch: 0
+      });
       for (let i = 0; i < 20; i += 1) { rt.step(1 / 12); }
       const nearId = rt.proximity.nearestHotspot?.id || null;
       const nearState = nearId ? rt.state.hotspotState(nearId) : null;
@@ -308,13 +319,16 @@ async function main() {
       rt.explore.setPose({ position: [-2.0, 1.62, -6.0], yaw: 0, pitch: 0 });
       for (let i = 0; i < 20; i += 1) { rt.step(1 / 12); }
       const awayId = rt.proximity.nearestHotspot?.id || null;
-      const awayState = rt.state.hotspotState('hotspot.art.division-tercera');
-      return { nearId, nearState, awayId, awayState };
+      const awayState = rt.state.hotspotState(candidate.id);
+      return { candidate: candidate.id, nearId, nearState, awayId, awayState };
     });
+    // Asserts the behaviour, not which work happens to be unvisited: standing in
+    // front of one makes it NEAR, walking away makes it the nearest to nothing
+    // and returns it to AVAILABLE.
     check('PROXIMITY-SPATIAL', 'La proximidad es espacial: acercarse y alejarse cambian el estado del hotspot',
-      proximity.nearId === 'hotspot.art.division-tercera' && proximity.nearState === 'NEAR' &&
+      !proximity.skipped && proximity.nearId === proximity.candidate && proximity.nearState === 'NEAR' &&
       proximity.awayId === null && proximity.awayState === 'AVAILABLE',
-      `${proximity.nearId}/${proximity.nearState} → ${proximity.awayId}/${proximity.awayState}`);
+      proximity.skipped || `${proximity.nearId}/${proximity.nearState} → ${proximity.awayId}/${proximity.awayState}`);
 
     /* -- media: real files, and a failure that does not break the world ------ */
     const media = await page.evaluate(async () => {

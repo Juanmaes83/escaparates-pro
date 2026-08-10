@@ -101,28 +101,50 @@ export const DETERMINISTIC_STATES = {
     }
   },
 
+  'museum:journey-lead-horizonte': {
+    description: 'En marcha: la guía camina hacia «Horizonte interrumpido» y la cámara llega detrás de ella.',
+    apply: (runtime) => beat(runtime, 'step.03-lleva-horizonte')
+  },
+
   'museum:guide-accompanied': {
-    description: 'Parada acompañada: el guía presenta «Horizonte interrumpido» y la cámara mira por encima de su hombro.',
-    async apply(runtime) {
-      await runToStep(runtime, 'step.04-horizonte');
-      // The guide moves toward its staging over a few frames; settle it so the
-      // capture is of the composition, not of the guide arriving in it.
-      await settleGuide(runtime);
-    }
+    description: 'Parada acompañada: la guía presenta «Horizonte interrumpido» y la cámara mira por encima de su hombro.',
+    apply: (runtime) => beat(runtime, 'step.04-horizonte')
   },
 
   'museum:guide-handoff': {
-    description: 'Cesión: el guía se aparta, la cámara entra en el punto de vista del visitante y la obra queda sola.',
-    async apply(runtime) {
-      await runToStep(runtime, 'step.04b-horizonte-cesion');
-      await settleGuide(runtime);
-    }
+    description: 'Cesión: la guía se aparta, la cámara entra en el punto de vista del visitante y la obra queda sola.',
+    apply: (runtime) => beat(runtime, 'step.04b-horizonte-cesion')
+  },
+
+  'museum:journey-lead-division': {
+    description: 'Segundo tramo: la guía lleva al visitante por el mismo paramento hasta «División tercera».',
+    apply: (runtime) => beat(runtime, 'step.05-lleva-division')
+  },
+
+  'museum:journey-division': {
+    description: 'Segunda parada acompañada, misma gramática y distinta obra.',
+    apply: (runtime) => beat(runtime, 'step.06-division')
+  },
+
+  'museum:journey-threshold': {
+    description: 'La guía conduce al umbral de la cámara oscura, antes de cruzarlo.',
+    apply: (runtime) => beat(runtime, 'step.07-lleva-umbral')
+  },
+
+  'museum:journey-crossed': {
+    description: 'Ya dentro de la cámara oscura: la guía ha cruzado el umbral y sigue delante.',
+    apply: (runtime) => beat(runtime, 'step.09-lleva-noche')
+  },
+
+  'museum:journey-noche': {
+    description: 'Tercera parada acompañada, en la sala oscura.',
+    apply: (runtime) => beat(runtime, 'step.10-noche')
   },
 
   'museum:guide-released': {
-    description: 'Después de la cesión: recorrido abandonado, el guía se retira y el visitante queda con la obra.',
+    description: 'Después de la cesión: recorrido abandonado, la guía se retira y el visitante queda con la obra.',
     async apply(runtime) {
-      await runToStep(runtime, 'step.04b-horizonte-cesion');
+      await beat(runtime, 'step.10b-noche-cesion');
       runtime.exitRoute();
       await settleGuide(runtime);
     }
@@ -132,7 +154,7 @@ export const DETERMINISTIC_STATES = {
     description: 'Vuelta de personaje: el guía aislado en la sala, para comparar diseños bajo la misma luz.',
     async apply(runtime) {
       await runtime.traversePortal('portal.lobby-gallery-a', { source: 'QA' });
-      runtime.sceneKit.setGuideStaging({
+      runtime.stageGuide({
         anchorId: 'anchor.gallery-a.guide-horizonte',
         subjectRef: 'entity.artwork.horizonte-interrumpido'
       });
@@ -173,6 +195,18 @@ function settleMicrotasks() {
 }
 
 /**
+ * Reach one beat of the journey and hold there, guide settled.
+ *
+ * Every journey state is the same operation with a different step id, so there
+ * is one place where "reach a beat" is defined and no state can drift from the
+ * others.
+ */
+async function beat(runtime, stepId) {
+  await runToStep(runtime, stepId);
+  await settleGuide(runtime);
+}
+
+/**
  * Advance the commented route to a named step and hold there.
  *
  * By step id rather than by counting `next()` calls, so inserting a beat into
@@ -180,7 +214,13 @@ function settleMicrotasks() {
  */
 async function runToStep(runtime, stepId) {
   runtime.startRoute('route.comentado');
-  for (let i = 0; i < 24; i += 1) {
+  // Pause immediately. The route is a timeline: left playing, its own clock
+  // keeps advancing while this loop steps manually, so the beat you asked for
+  // is reached and then walked past before anything can look at it. That is the
+  // "checkpoint appears briefly and is overwritten" failure — the state was
+  // racing the director rather than driving it.
+  runtime.experience.pause();
+  for (let i = 0; i < 40; i += 1) {
     if (runtime.experience.currentStep?.id === stepId) break;
     runtime.experience.next();
     // Real time, not a microtask. A portal step has to build and warm a Space
@@ -190,7 +230,7 @@ async function runToStep(runtime, stepId) {
     // the room you end up looking at is the one you walked into rather than the
     // one the step is about. A visitor waiting out the step durations never
     // races it; a QA state that advances instantly does.
-    await settleStep();
+    await settleStep(runtime.experience.currentStep);
   }
   runtime.experience.pause();
 }
@@ -203,8 +243,12 @@ async function runToStep(runtime, stepId) {
  * READY is not the same event. Polling the lifecycle returned before the
  * arrival landed and the state captured the wrong room.
  */
-function settleStep() {
-  return new Promise((resolve) => setTimeout(resolve, 300));
+function settleStep(step) {
+  // A portal step builds and warms a Space before its shot can be framed, and
+  // on completion the traversal places the camera at the arrival anchor. Under
+  // software rendering that is seconds, not milliseconds.
+  const isPortal = step?.shotIntent === 'PORTAL';
+  return new Promise((resolve) => setTimeout(resolve, isPortal ? 2500 : 320));
 }
 
 /**
@@ -217,7 +261,10 @@ function settleStep() {
  */
 function settleGuide(runtime) {
   return new Promise((resolve) => {
-    for (let i = 0; i < 180; i += 1) runtime.sceneKit.update?.(1 / 60, i / 60);
+    // She walks at about a metre a second, so a room's width is several seconds
+    // of simulated time. Driving the same update the frame loop drives, rather
+    // than waiting in real time, keeps the state fast and exactly repeatable.
+    for (let i = 0; i < 900; i += 1) runtime.sceneKit.update?.(1 / 60, i / 60);
     setTimeout(resolve, 0);
   });
 }
