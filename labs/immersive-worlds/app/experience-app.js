@@ -60,12 +60,13 @@ export async function boot() {
   const runtime = new Runtime({
     world,
     sceneKit,
-    // The detail panel covers the right of a wide screen, so the framing has to
-    // compose the work into what is left. Without this the panel sits on top of
-    // the painting it is describing.
+    // The wall label sits low in the frame on desktop and becomes a sheet on a
+    // phone. Framing composes the work into what is left, so the label never
+    // covers the thing it describes.
     viewport: () => ({
       ...renderHost.viewport(),
-      insetRight: window.innerWidth >= 900 ? 0.3 : 0
+      insetRight: 0,
+      insetBottom: window.innerWidth >= 900 ? 0.16 : 0.34
     }),
     seed,
     tier,

@@ -112,9 +112,10 @@
       ],
       "metadata": {
         "bench": [
-          -1.4,
-          2.6
-        ]
+          -4.4,
+          -1.0
+        ],
+        "benchFacing": "NORTH"
       }
     },
     {
@@ -339,9 +340,9 @@
       "spaceId": "space.gallery-a",
       "kind": "WALL",
       "position": [
-        -4.8,
-        1.55,
-        -15.35
+        -0.9,
+        1.64,
+        -15.5
       ],
       "normal": [
         0,
@@ -358,14 +359,14 @@
       "spaceId": "space.gallery-a",
       "kind": "WALL",
       "position": [
-        -0.4,
+        -8,
         1.55,
-        -15.35
+        -12.4
       ],
       "normal": [
+        1,
         0,
-        0,
-        1
+        0
       ],
       "extent": [
         2.4,
@@ -377,9 +378,9 @@
       "spaceId": "space.gallery-a",
       "kind": "WALL",
       "position": [
-        4.6,
-        1.55,
-        -15.35
+        5.1,
+        1.5,
+        -15.5
       ],
       "normal": [
         0,
@@ -396,12 +397,12 @@
       "spaceId": "space.gallery-a",
       "kind": "WALL",
       "position": [
-        -7.85,
-        1.55,
-        -13.1
+        8,
+        1.5,
+        -13.6
       ],
       "normal": [
-        1,
+        -1,
         0,
         0
       ],
@@ -415,9 +416,9 @@
       "spaceId": "space.gallery-a",
       "kind": "PLINTH",
       "position": [
-        3.6,
+        4.3,
         0,
-        -8.4
+        -7.0
       ],
       "normal": [
         0,

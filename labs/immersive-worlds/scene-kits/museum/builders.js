@@ -398,17 +398,40 @@ export function buildFramedWork({ size, texture, framed = true, mat = 0, frameMa
   // An unframed canvas is a solid body with the image on its *front* face; a
   // framed work sits inside its frame. Getting this wrong buries the painting
   // inside its own stretcher.
-  const plate = new THREE.Mesh(new THREE.PlaneGeometry(w - mat * 2, h - mat * 2), plateMaterial);
-  plate.position.z = framed ? depth / 2 + 0.002 : depth + 0.0015;
+  //
+  // A work on paper sits deeper still: it is held *behind* the window mount, so
+  // its sheet drops back and the board stands in front of it.
+  const plateZ = framed ? (mat > 0 ? depth * 0.42 : depth / 2 + 0.002) : depth + 0.0015;
+  // With a mount, the sheet runs under the board on every side — a print whose
+  // edge stops exactly at the aperture would be a decal, not a sheet of paper.
+  const plate = new THREE.Mesh(
+    new THREE.PlaneGeometry(mat > 0 ? w - mat * 0.8 : w, mat > 0 ? h - mat * 0.8 : h),
+    plateMaterial
+  );
+  plate.position.z = plateZ;
   plate.receiveShadow = true;
   group.add(plate);
 
   if (mat > 0) {
-    const matBoard = new THREE.Mesh(new THREE.BoxGeometry(w, h, depth * 0.7), matMaterial);
-    matBoard.position.z = depth * 0.35;
-    matBoard.castShadow = true;
-    matBoard.receiveShadow = true;
-    group.add(matBoard);
+    // A window mount is an aperture, not a lid. Four bars of board leave the
+    // image visible and standing 3 mm proud of it, which is where the shadow
+    // line along the top of the aperture comes from.
+    const board = 0.006;
+    const z = plateZ + board / 2 + 0.003;
+    const inner = h - mat * 2;
+    const bars = [
+      { size: [w, mat, board], position: [0, h / 2 - mat / 2, z] },
+      { size: [w, mat, board], position: [0, -h / 2 + mat / 2, z] },
+      { size: [mat, inner, board], position: [-w / 2 + mat / 2, 0, z] },
+      { size: [mat, inner, board], position: [w / 2 - mat / 2, 0, z] }
+    ];
+    for (const part of bars) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(...part.size), matMaterial);
+      mesh.position.set(...part.position);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+    }
   }
 
   if (framed) {

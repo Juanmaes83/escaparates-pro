@@ -34,10 +34,12 @@ export const DETERMINISTIC_STATES = {
   },
 
   'museum:gallery-a-overview': {
-    description: 'Galería A en diagonal desde la entrada: dos paramentos, cuatro obras, escultura y banco en un mismo encuadre.',
+    description: 'Galería A desde el eje de entrada: la obra protagonista al fondo, las secundarias en los paramentos laterales.',
     async apply(runtime) {
       await runtime.traversePortal('portal.lobby-gallery-a', { source: 'QA' });
-      runtime.explore.setPose({ position: [-5.6, 1.62, -6.0], yaw: Math.PI - 0.55, pitch: -0.035 });
+      // On the axis, where a visitor actually arrives. If the composition only
+      // works from a chosen diagonal, it is not a composition.
+      runtime.explore.setPose({ position: [-0.9, 1.62, -8.6], yaw: Math.PI, pitch: -0.015 });
     }
   },
 
@@ -62,6 +64,14 @@ export const DETERMINISTIC_STATES = {
         { type: 'FOCUS_ENTITY', target: 'entity.sculpture.vasija-de-arenas' },
         { source: 'QA' }
       );
+    }
+  },
+
+  'museum:gallery-a-oblique': {
+    description: 'Galería A en diagonal: ritmo lateral, escultura y banco en un mismo encuadre.',
+    async apply(runtime) {
+      await runtime.traversePortal('portal.lobby-gallery-a', { source: 'QA' });
+      runtime.explore.setPose({ position: [-5.2, 1.62, -6.4], yaw: Math.PI - 0.62, pitch: -0.03 });
     }
   },
 

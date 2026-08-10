@@ -272,23 +272,35 @@ function hardEdge(ctx, w, h, colors, rng) {
 function graphiteStudy(ctx, w, h, colors, rng) {
   ctx.fillStyle = colors[4];
   ctx.fillRect(0, 0, w, h);
+  const unit = Math.min(w, h);
   const cx = w * rng.range(0.38, 0.6);
   const cy = h * rng.range(0.42, 0.6);
-  const radius = Math.min(w, h) * rng.range(0.22, 0.34);
+  const radius = unit * rng.range(0.24, 0.36);
 
+  // Two passes: a broad build of tone, then a denser core. A fixed number of
+  // hairline marks at a fixed pixel length is a smudge at any real resolution —
+  // it vanished completely on the wall. Marks are sized against the sheet, and
+  // the core is drawn twice, which is how a study actually gets its weight.
   ctx.strokeStyle = colors[0];
-  for (let i = 0; i < 900; i += 1) {
-    const angle = rng.range(0, Math.PI * 2);
-    const distance = radius * Math.sqrt(rng.next());
-    const px = cx + Math.cos(angle) * distance * rng.range(0.9, 1.35);
-    const py = cy + Math.sin(angle) * distance;
-    const length = rng.range(4, 26);
-    ctx.globalAlpha = (1 - distance / radius) * rng.range(0.04, 0.16);
-    ctx.lineWidth = rng.range(0.4, 1.4);
-    ctx.beginPath();
-    ctx.moveTo(px, py);
-    ctx.lineTo(px + length * 0.7, py + length * rng.range(0.4, 1.1));
-    ctx.stroke();
+  const passes = [
+    { count: Math.round(unit * 1.8), reach: 1, alpha: [0.05, 0.2], length: [0.012, 0.055] },
+    { count: Math.round(unit * 0.7), reach: 0.52, alpha: [0.14, 0.4], length: [0.01, 0.035] }
+  ];
+  for (const pass of passes) {
+    const spread = radius * pass.reach;
+    for (let i = 0; i < pass.count; i += 1) {
+      const angle = rng.range(0, Math.PI * 2);
+      const distance = spread * Math.sqrt(rng.next());
+      const px = cx + Math.cos(angle) * distance * rng.range(0.9, 1.35);
+      const py = cy + Math.sin(angle) * distance;
+      const length = unit * rng.range(pass.length[0], pass.length[1]);
+      ctx.globalAlpha = (1 - distance / spread) * rng.range(pass.alpha[0], pass.alpha[1]);
+      ctx.lineWidth = unit * rng.range(0.0008, 0.0026);
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(px + length * 0.7, py + length * rng.range(0.4, 1.1));
+      ctx.stroke();
+    }
   }
   ctx.globalAlpha = 1;
 }

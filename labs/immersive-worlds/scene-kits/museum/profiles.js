@@ -13,6 +13,10 @@
  *     everywhere" is on the reject list.
  *   • No emissive accent colour anywhere. The only saturated colour in the
  *     rooms is the art itself.
+ *   • Floors are dielectric. `metalness` on a stone or timber floor is not a
+ *     subtle polish, it is a mirror at grazing angles: looking down a room the
+ *     whole floor turned into one blown reflection of the ceiling light. The
+ *     sheen a museum floor does have comes from roughness alone.
  *
  * Intensities are tuned for three.js physical lighting: spot values are
  * candela and fall off with distance, so they are small numbers next to the
@@ -24,7 +28,7 @@ export const PROFILES = {
   /** Contemporary white cube. Daylight-neutral cove wash, tight track spots. */
   'white-cube': {
     wall: { color: 0xd6d0c4, roughness: 0.95 },
-    floor: { color: 0xa79e90, roughness: 0.46, metalness: 0.04 },
+    floor: { color: 0xa79e90, roughness: 0.62, metalness: 0 },
     ceiling: { color: 0xdedacf, roughness: 0.97 },
     skirting: { color: 0xb2ab9c, roughness: 0.72 },
     cove: { color: 0xfff2dd, intensity: 2.6, emissive: 0.55 },
@@ -34,7 +38,7 @@ export const PROFILES = {
     // white cube reads as a building rather than as a box.
     roof: { profile: 'pitched-skylight', rise: 1.9, bays: 4 },
     skylight: { color: 0xfffaf2, intensity: 1, daylight: 0.7 },
-    barrier: { enabled: true, standoff: 1.15, post: 0x2b2823, rope: 0x8d8477 },
+    barrier: { enabled: true, mode: 'primary-wall', standoff: 1.95, post: 0x2b2823, rope: 0x8d8477 },
     envIntensity: 0.35,
     exposure: 0.95,
     background: 0x171614,
@@ -44,7 +48,7 @@ export const PROFILES = {
   /** Low-light room for light-sensitive works. Contrast comes from the spots. */
   'dark-exhibition': {
     wall: { color: 0x211e1b, roughness: 0.97 },
-    floor: { color: 0x16140f, roughness: 0.4, metalness: 0.06 },
+    floor: { color: 0x16140f, roughness: 0.58, metalness: 0 },
     ceiling: { color: 0x100f0e, roughness: 0.98 },
     skirting: { color: 0x191714, roughness: 0.8 },
     cove: { color: 0xffe4b8, intensity: 1.5, emissive: 0.3 },
@@ -53,7 +57,13 @@ export const PROFILES = {
     // No daylight: this room exists because the works in it cannot take any.
     roof: { profile: 'flat' },
     skylight: null,
-    barrier: { enabled: true, standoff: 1.05, post: 0x15130f, rope: 0x3a352c },
+    // A dark room is not a black room. Two very low sources make the volume
+    // legible without touching exposure: one washes the circulation floor so a
+    // visitor can read where the room goes, one grazes a wall so the space has
+    // an edge. Neither competes with the works, which stay the brightest thing.
+    floorWash: { color: 0xb6a68c, intensity: 0.3, angle: 1.2 },
+    graze: { color: 0xc4b49a, intensity: 0.45 },
+    barrier: { enabled: true, mode: 'primary-wall', standoff: 1.05, post: 0x15130f, rope: 0x3a352c },
     envIntensity: 0.1,
     exposure: 1.05,
     background: 0x0b0a09,
@@ -63,7 +73,7 @@ export const PROFILES = {
   /** Institutional archive: painted timber, oak floor, warmer and lower. */
   heritage: {
     wall: { color: 0x39402f, roughness: 0.92 },
-    floor: { color: 0x6b573f, roughness: 0.5, metalness: 0.02 },
+    floor: { color: 0x6b573f, roughness: 0.64, metalness: 0 },
     ceiling: { color: 0xc9c2b1, roughness: 0.95 },
     skirting: { color: 0x2b3024, roughness: 0.7 },
     cove: { color: 0xffdcaa, intensity: 1.6, emissive: 0.32 },

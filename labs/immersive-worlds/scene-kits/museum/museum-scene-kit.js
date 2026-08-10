@@ -196,6 +196,34 @@ export class MuseumSceneKit extends SceneKit {
       group.add(coveWash);
     }
 
+    // A low wash across the circulation floor. In a dark room this is what tells
+    // a visitor that there is a floor, where it goes, and where the room ends —
+    // information that raising exposure would destroy along with the darkness.
+    if (profile.floorWash) {
+      const wash = new THREE.SpotLight(
+        profile.floorWash.color, profile.floorWash.intensity,
+        Math.max(w, d) * 1.4, profile.floorWash.angle ?? 0.9, 1, 1.1
+      );
+      // Off-centre and off-axis: a symmetric pool in the middle of a room reads
+      // as a stage light, which is the opposite of ambient orientation.
+      wash.position.set(origin[0] + w * 0.12, origin[1] + h - 0.35, origin[2] - d * 0.1);
+      wash.target.position.set(origin[0] - w * 0.05, origin[1], origin[2] + d * 0.12);
+      group.add(wash);
+      group.add(wash.target);
+    }
+
+    // A grazing light along one wall gives the room an edge, so its far corner
+    // separates from its far wall instead of both dissolving into the same black.
+    if (profile.graze) {
+      const graze = new THREE.SpotLight(
+        profile.graze.color, profile.graze.intensity, d * 1.2, 0.5, 0.9, 1.6
+      );
+      graze.position.set(origin[0] - w / 2 + 0.35, origin[1] + h - 0.3, origin[2] + d / 2 - 0.5);
+      graze.target.position.set(origin[0] - w / 2 + 0.25, origin[1] + 1.4, origin[2] - d / 2 + 0.5);
+      group.add(graze);
+      group.add(graze.target);
+    }
+
     // Doorway reveals get their own soft light so a portal reads as a way through.
     for (const opening of openings) {
       const threshold = buildThreshold({ width: opening.width, material: materials.threshold });
@@ -252,6 +280,10 @@ export class MuseumSceneKit extends SceneKit {
     if (space.metadata?.bench) {
       const bench = buildBench({ length: 1.9, material: materials.timber });
       bench.position.set(origin[0] + (space.metadata.bench[0] || 0), origin[1], origin[2] + (space.metadata.bench[1] || 0));
+      // A bench faces the work it invites you to sit with. Its seat already runs
+      // along X, so facing a north or south wall needs no rotation; facing a
+      // side wall does.
+      if (space.metadata.benchFacing === 'EAST' || space.metadata.benchFacing === 'WEST') bench.rotation.y = Math.PI / 2;
       group.add(bench);
       blockers.push(boxAround([bench.position.x, bench.position.z], 1.0, 0.35));
     }
@@ -268,6 +300,18 @@ export class MuseumSceneKit extends SceneKit {
     }
 
     const hotspotMarks = this._buildHotspotMarks(space, ctx.store, profile, group);
+
+    // A room carries its own response to the environment, on its own materials.
+    //
+    // Leaving this to `scene.environmentIntensity` — one global value taken from
+    // whichever room the visitor is standing in — means a dark chamber seen
+    // through a doorway from a white cube is lit as if it were the white cube.
+    // That is not a subtle tint: environment *specular* is not scaled by albedo,
+    // so at the grazing angles you get looking down a floor, Fresnel approaches
+    // one and the darkest floor in the building turns into a mirror of a bright
+    // studio. The dark room read as a pale grey box, and no amount of roughness
+    // or exposure fixed it, because neither was the cause.
+    applyEnvironmentResponse(group, profile.envIntensity, this._environment);
 
     this.scene.add(group);
     return {
@@ -305,7 +349,10 @@ export class MuseumSceneKit extends SceneKit {
       ? new THREE.Fog(profile.fog.color, profile.fog.near, profile.fog.far)
       : null;
     this.scene.background = new THREE.Color(profile.background);
-    this.scene.environmentIntensity = profile.envIntensity;
+    // Neutral at scene level: every room already carries its own environment
+    // response per material, so that a neighbour seen through a doorway keeps
+    // the light it was designed with.
+    this.scene.environmentIntensity = 1;
     this.renderHost.renderer.toneMappingExposure = profile.exposure;
   }
 
@@ -430,8 +477,16 @@ export class MuseumSceneKit extends SceneKit {
       byWall.set(wall, list);
     }
 
+    // 'primary-wall' guards only the wall carrying the most work. A rope in front
+    // of every wall stops reading as a museum convention and starts reading as a
+    // procedural decoration applied everywhere.
+    let walls = [...byWall.entries()];
+    if ((profile.barrier?.mode ?? 'primary-wall') === 'primary-wall' && walls.length > 1) {
+      walls = [walls.sort((a, b) => span(b[1]) - span(a[1]))[0]];
+    }
+
     const lines = [];
-    for (const [wall, positions] of byWall) {
+    for (const [wall, positions] of walls) {
       const min = Math.min(...positions) - 0.75;
       const max = Math.max(...positions) + 0.75;
       if (max - min < 1.2) continue;
@@ -722,7 +777,10 @@ export class MuseumSceneKit extends SceneKit {
       { position: anchor.position, normal: anchor.normal },
       { width: w * (detail ? 0.45 : 1), height: h * (detail ? 0.45 : 1) },
       viewport,
-      { fill: detail ? 0.82 : 0.68, min: 0.75, max: 9 }
+      // Deliberately loose: a work that fills the frame edge to edge leaves the
+      // wall label nowhere to sit and nothing to breathe against. A gallery hangs
+      // work with margin; so does this.
+      { fill: detail ? 0.72 : 0.58, min: 0.75, max: 9 }
     );
     return { ...offsetForInset(pose, anchor.normal, viewport), subjectSize: record.size };
   }
@@ -843,24 +901,70 @@ export class MuseumSceneKit extends SceneKit {
  * viewport hidden behind the detail panel.
  */
 function offsetForInset(pose, normal, viewport) {
-  const inset = viewport.insetRight || 0;
-  if (inset <= 0.01) return pose;
+  const right = viewport.insetRight || 0;
+  const bottom = viewport.insetBottom || 0;
+  if (right <= 0.01 && bottom <= 0.01) return pose;
 
   const distance = Math.hypot(
     pose.position[0] - pose.target[0],
     pose.position[1] - pose.target[1],
     pose.position[2] - pose.target[2]
   );
-  const halfWidth = Math.tan(((viewport.vfov || 50) * Math.PI) / 360) * (viewport.aspect || 1.6) * distance;
-  const shift = halfWidth * inset;
+  const halfHeight = Math.tan(((viewport.vfov || 50) * Math.PI) / 360) * distance;
+  const halfWidth = halfHeight * (viewport.aspect || 1.6);
+
   // Lateral direction on the horizontal plane, relative to the wall normal.
   const lateral = [normal[2], 0, -normal[0]];
+  const dx = halfWidth * right;
+  // Raising the camera pushes the subject up the frame, clearing the label.
+  const dy = halfHeight * bottom;
 
   return {
     ...pose,
-    position: [pose.position[0] + lateral[0] * shift, pose.position[1], pose.position[2] + lateral[2] * shift],
-    target: [pose.target[0] + lateral[0] * shift, pose.target[1], pose.target[2] + lateral[2] * shift]
+    position: [
+      pose.position[0] + lateral[0] * dx,
+      pose.position[1] + dy,
+      pose.position[2] + lateral[2] * dx
+    ],
+    target: [
+      pose.target[0] + lateral[0] * dx,
+      pose.target[1] + dy,
+      pose.target[2] + lateral[2] * dx
+    ]
   };
+}
+
+/**
+ * Give every material in a room the environment response its profile asks for.
+ *
+ * Applied once, after the room is fully built, so materials created deep inside
+ * an entity builder are covered too — an artwork that ignored its room's light
+ * would be exactly the inconsistency this exists to prevent.
+ *
+ * The `envMap` assignment is not decoration. While a material's `envMap` is
+ * null and the scene has an `environment`, three.js overwrites the material's
+ * `envMapIntensity` with the scene-wide `environmentIntensity` every frame, so
+ * a per-room value set on the material alone is silently discarded. Handing the
+ * room's materials the map explicitly is what makes the room's own value the
+ * one that survives.
+ */
+function applyEnvironmentResponse(group, intensity, envMap) {
+  if (typeof intensity !== 'number' || !envMap) return;
+  const seen = new Set();
+  group.traverse((object) => {
+    const materials = Array.isArray(object.material) ? object.material : [object.material];
+    for (const material of materials) {
+      if (!material || seen.has(material) || !('envMapIntensity' in material)) continue;
+      seen.add(material);
+      // No `needsUpdate` here: these materials are new and have never been
+      // compiled, so the first compile already sees the map. Bumping the
+      // version instead invalidates programs that a warmup's `compileAsync` is
+      // still waiting on, and that warmup then reads a program that no longer
+      // exists.
+      material.envMap = envMap;
+      material.envMapIntensity = intensity;
+    }
+  });
 }
 
 /**
@@ -883,6 +987,11 @@ function projectOntoWallSurface(position, normal, bounds) {
     if (Math.abs(position[2] - face) < 1) out[2] = face + normal[2] * WALL_THICKNESS;
   }
   return out;
+}
+
+/** Total wall length occupied by the work hung on it. */
+function span(positions) {
+  return Math.max(...positions) - Math.min(...positions);
 }
 
 function clampAxis(value, min, max) {

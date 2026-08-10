@@ -71,27 +71,31 @@ export class ExperienceHUD {
 
       <section class="iw-detail" data-el="detail" hidden aria-live="polite">
         <div class="iw-detail__scrim"></div>
-        <div class="iw-detail__panel">
-          <p class="iw-detail__eyebrow" data-el="detailEyebrow"></p>
-          <h2 data-el="detailTitle"></h2>
-          <p class="iw-detail__meta" data-el="detailMeta"></p>
-          <p class="iw-detail__body" data-el="detailBody"></p>
-          <dl class="iw-detail__facts" data-el="detailFacts"></dl>
-          <p class="iw-detail__credit" data-el="detailCredit" hidden></p>
 
+        <button class="iw-detail__step iw-detail__step--prev" data-el="detailPrev" aria-label="Obra anterior">‹</button>
+        <button class="iw-detail__step iw-detail__step--next" data-el="detailNext" aria-label="Obra siguiente">›</button>
+
+        <figure class="iw-label" data-el="labelCard">
+          <figcaption>
+            <h2 data-el="detailTitle"></h2>
+            <p class="iw-label__meta" data-el="detailMeta"></p>
+            <p class="iw-label__dims" data-el="detailDims"></p>
+            <div class="iw-label__more" data-el="labelMore" hidden>
+              <p data-el="detailBody"></p>
+              <p class="iw-label__credit" data-el="detailCredit" hidden></p>
+            </div>
+            <button class="iw-label__toggle" data-el="detailMore" aria-expanded="false">Leer la ficha</button>
+          </figcaption>
+        </figure>
+
+        <div class="iw-detail__foot">
+          <span class="iw-detail__count" data-el="detailCount"></span>
           <div class="iw-detail__zoom">
-            <label for="iw-zoom">Acercar</label>
-            <input id="iw-zoom" type="range" min="0" max="100" value="0" data-el="zoom"
-                   aria-label="Acercarse a la obra">
-            <span data-el="zoomValue">0 %</span>
+            <button class="iw-detail__zoomBtn" data-el="zoomOut" aria-label="Alejarse de la obra">−</button>
+            <span class="iw-detail__zoomBar"><i data-el="zoomBar"></i></span>
+            <button class="iw-detail__zoomBtn" data-el="zoomIn" aria-label="Acercarse a la obra">+</button>
           </div>
-
-          <nav class="iw-detail__nav">
-            <button class="iw-btn" data-el="detailPrev" aria-label="Obra anterior">← Anterior</button>
-            <span class="iw-detail__count" data-el="detailCount"></span>
-            <button class="iw-btn" data-el="detailNext" aria-label="Obra siguiente">Siguiente →</button>
-          </nav>
-          <button class="iw-btn iw-btn--wide" data-el="detailClose">Volver a la sala <kbd>Esc</kbd></button>
+          <button class="iw-detail__close" data-el="detailClose">Volver a la sala <kbd>Esc</kbd></button>
         </div>
       </section>
 
@@ -148,7 +152,9 @@ export class ExperienceHUD {
     this.el.detailClose.addEventListener('click', () => this.runtime.releaseFocus());
     this.el.detailPrev.addEventListener('click', () => this.runtime.focusNeighbour(-1));
     this.el.detailNext.addEventListener('click', () => this.runtime.focusNeighbour(1));
-    this.el.zoom.addEventListener('input', (event) => this.setZoom(Number(event.target.value) / 100));
+    this.el.zoomIn.addEventListener('click', () => this.setZoom(this.zoom + 0.25));
+    this.el.zoomOut.addEventListener('click', () => this.setZoom(this.zoom - 0.25));
+    this.el.detailMore.addEventListener('click', () => this.toggleLabelDetail());
     this.el.pauseBtn.addEventListener('click', () => this._togglePause());
     this.el.nextBtn.addEventListener('click', () => this.runtime.experience.next());
     this.el.exitBtn.addEventListener('click', () => this.runtime.exitRoute());
@@ -226,6 +232,15 @@ export class ExperienceHUD {
     }
   }
 
+  /**
+   * Focus presentation.
+   *
+   * The grammar is an exhibition label, not an application panel: a small card
+   * low in the frame carrying what a wall label carries — title, attribution,
+   * medium, dimensions — with the curatorial text behind one deliberate act of
+   * reading. Everything else recedes so the work is the only thing competing
+   * for attention. (Quality bar §8, §9.)
+   */
   _showDetail(entityId) {
     const entity = this.runtime.store.require(entityId);
     const content = entity.content || {};
@@ -233,47 +248,53 @@ export class ExperienceHUD {
 
     this.el.detail.hidden = false;
     this.el.detail.dataset.guided = String(guided);
-    this.el.detailEyebrow.textContent = `${KIND_LABEL[entity.kind] || 'Obra'} · ${this.runtime.store.require(entity.spaceId).title}`;
+    document.body.dataset.focused = 'true';
     this.el.detailTitle.textContent = content.title || entity.id;
-    this.el.detailMeta.textContent = [content.creator, content.year, content.medium].filter(Boolean).join(' · ');
+    this.el.detailMeta.textContent = [content.creator, content.year].filter(Boolean).join(', ');
+    this.el.detailDims.textContent = [
+      content.medium,
+      entity.size ? `${(entity.size[0] * 100).toFixed(0)} × ${(entity.size[1] * 100).toFixed(0)} cm` : null
+    ].filter(Boolean).join(' · ');
     this.el.detailBody.textContent = content.description || entity.accessibility?.description || '';
 
-    // Facts come from the record, so an institution that fills in more fields
-    // gets a richer panel without anyone touching the interface.
-    const facts = [
-      ['Dimensiones', entity.size ? `${(entity.size[0] * 100).toFixed(0)} × ${(entity.size[1] * 100).toFixed(0)} cm` : null],
-      ['Sala', this.runtime.store.require(entity.spaceId).title],
-      ['Referencia', entity.id.replace(/^entity\./, '')]
-    ].filter(([, value]) => value);
-    this.el.detailFacts.innerHTML = facts
-      .map(([term, value]) => `<dt>${escapeHtml(term)}</dt><dd>${escapeHtml(value)}</dd>`)
-      .join('');
-
-    const credit = content.media?.credit || content.media?.rights;
+    const credit = content.media?.credit;
     this.el.detailCredit.hidden = !credit;
     this.el.detailCredit.textContent = credit ? `Imagen: ${credit}` : '';
 
-    // Stepping through works and zooming belong to the visitor. During a guided
-    // route the camera is the Director's, so they are not offered.
+    // Collapsed by default: the label states what the work is, and reading more
+    // is a choice the visitor makes rather than a wall of text they must dismiss.
+    this.toggleLabelDetail(false);
+
     const works = this.runtime.focusableInSpace();
     const index = works.findIndex((work) => work.id === entityId);
     this.el.detailCount.textContent = works.length > 1 ? `${index + 1} / ${works.length}` : '';
-    for (const key of ['detailPrev', 'detailNext', 'detailClose']) this.el[key].hidden = guided;
+
+    // During a guided route the camera belongs to the Director: the label stays,
+    // the controls go.
+    const soloWork = works.length < 2;
+    this.el.detailPrev.hidden = guided || soloWork;
+    this.el.detailNext.hidden = guided || soloWork;
+    this.el.detailClose.hidden = guided;
     this.el.detail.querySelector('.iw-detail__zoom').hidden = guided;
-    if (works.length < 2) {
-      this.el.detailPrev.hidden = true;
-      this.el.detailNext.hidden = true;
-    }
 
     this.setZoom(0);
+  }
+
+  /** @param {boolean} [force] */
+  toggleLabelDetail(force) {
+    const open = force ?? this.el.labelMore.hidden;
+    this.el.labelMore.hidden = !open;
+    this.el.detailMore.setAttribute('aria-expanded', String(open));
+    this.el.detailMore.textContent = open ? 'Cerrar la ficha' : 'Leer la ficha';
   }
 
   /** @param {number} zoom 0..1 */
   setZoom(zoom) {
     const value = Math.max(0, Math.min(1, zoom));
     this.runtime.setDetailZoom(value);
-    this.el.zoom.value = String(Math.round(value * 100));
-    this.el.zoomValue.textContent = `${Math.round(value * 100)} %`;
+    this.el.zoomBar.style.transform = `scaleX(${value})`;
+    this.el.zoomIn.disabled = value >= 1;
+    this.el.zoomOut.disabled = value <= 0;
   }
 
   get zoom() {
@@ -282,6 +303,7 @@ export class ExperienceHUD {
 
   _hideDetail() {
     this.el.detail.hidden = true;
+    document.body.dataset.focused = 'false';
     this.setZoom(0);
   }
 
