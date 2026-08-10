@@ -14,8 +14,9 @@ Read these documents before making architectural or implementation decisions:
 5. `REFERENCE_REUSE_ACCELERATION_POLICY.md` — **mandatory operating doctrine for ambitious, efficient and legal reuse/adaptation of the repository library.**
 6. `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` — **mandatory creative/experiential quality doctrine for Museum / Institutional work: The Experience Is The Interface, Experience Language, authored Focus, spatial composition, content-first quality tests and quality gates.**
 7. `SCULPTING_AND_GRAFTING_METHOD.md` — **mandatory current working method for Museum / Institutional: preserve capability, sculpt away prototype/generic/noisy representation, graft stronger legal capabilities when a demonstrated gap exists, and stop at visual evidence checkpoints.**
-8. `GLOSSARY.md` — canonical semantic vocabulary.
-9. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
+8. `NEXT_PASSES_MUSEUM_ROADMAP.md` — **mandatory Product Owner-gated execution order for the next Museum passes. Execute one pass only, provide navigable evidence, STOP, and do not start the next pass without Juanma's explicit approval. It also makes the two stored `.webm` navigation recordings mandatory behavioural references for guide/camera/Portal work.**
+9. `GLOSSARY.md` — canonical semantic vocabulary.
+10. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
 
 ## Operating principle
 
@@ -112,6 +113,30 @@ Do not accept a graft that introduces a second competing state, ownership, camer
 
 Do not automatically promote a capability from Museum or Place into shared core merely because it appears reusable; prove genuine cross-vertical value or domain independence first.
 
+## Mandatory Product Owner pass gate
+
+For the Museum next-pass sequence, `NEXT_PASSES_MUSEUM_ROADMAP.md` is mandatory.
+
+The implementation agent must execute **one pass at a time**. Every pass must end in:
+
+```text
+QA
+→ SAVED DETERMINISTIC EVIDENCE
+→ BEFORE / AFTER
+→ NAVIGABLE PREVIEW URL
+→ STOP
+→ JUANMA + CHATGPT REVIEW
+```
+
+Only Juanma's **explicit approval** authorizes the next pass. A successful test suite, commit, PR, preview, critic result or implementation-agent recommendation is not approval.
+
+For guide, camera handoff, locomotion, spatial-anchor behaviour, artwork approach, Focus/return or Portal-transition work, Claude/Fable must inspect the actual stored reference recordings:
+
+- `immersive-worlds-module/145be553-0736-4df6-b639-7f584f392a83.webm`
+- `immersive-worlds-module/video_2026-08-09_10-44-43.webm`
+
+If direct video playback is unavailable in the execution environment, derive and inspect keyframes rather than ignoring the references.
+
 ## Mandatory visual supervision for every material phase
 
 Every perceptually significant Sculpt/Graft phase must end in a state Juanma can actually inspect.
@@ -133,31 +158,6 @@ A preview is **not approval**.
 Saved visual evidence must preserve enough history to compare material changes rather than merely overwriting the only prior capture.
 
 Juanma visual review is required before declaring a major Sculpt Pass approved, and especially when changing Focus, primary spatial composition, major UI layers, lighting/material direction, Experience Language, or a major visual graft.
-
-## Museum / Institutional quality doctrine
-
-For Museum / Institutional, technical correctness is necessary but insufficient.
-
-The governing product direction is:
-
-> **The visitor should not feel that they are using a 3D application. They should feel that they have entered an exhibition.**
-
-IW-1 proves that the system can be built. Museum / Institutional quality work must prove that the system can disappear behind a coherent authored experience.
-
-The Museum Scene Kit must therefore be evaluated not only on geometry or renderer quality, but on:
-
-- art direction;
-- spatial composition;
-- visual rhythm;
-- content hierarchy;
-- authored Focus;
-- signage and navigation language;
-- sound;
-- presence;
-- institutional coherence;
-- the ability for the same semantics to support genuinely different Experience Languages.
-
-Read `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` before any Museum quality pass or IW-2 work.
 
 ## Authority order
 
