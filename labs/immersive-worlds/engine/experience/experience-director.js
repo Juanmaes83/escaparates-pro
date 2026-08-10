@@ -135,6 +135,9 @@ export class ExperienceDirector {
     this.state.setMode(EXPERIENCE_MODE.EXPLORE);
     this.state.setRoute(null, null);
     this.state.setFocus(null);
+    // The guide belongs to the guided experience. Leaving one standing in a
+    // room the visitor is now exploring alone would be a bystander, not a host.
+    this.ports.stageGuide?.(null);
 
     if (restorePose && this._returnPose) {
       this.ports.requestAuthority(CAMERA_AUTHORITY.EXPLORE, {
@@ -220,7 +223,15 @@ export class ExperienceDirector {
     // The visitor may have skipped or exited while a Space was loading.
     if (this.currentStep?.id !== step.id) return;
 
-    const pose = step.subjectRef ? this.ports.framingFor(step.subjectRef, step.shotIntent) : null;
+    // A step may be accompanied. The guide is staged before the shot is
+    // measured, because the composition is derived from where the guide stands
+    // — and dismissed on any step that does not ask for one, so a guide never
+    // lingers into a beat that was authored without them.
+    this.ports.stageGuide?.(step.guide ? { ...step.guide, subjectRef: step.guide.subjectRef || step.subjectRef } : null);
+
+    const pose = step.subjectRef
+      ? this.ports.framingFor(step.subjectRef, step.shotIntent, { guideAnchorId: step.guide?.anchorId })
+      : null;
     if (pose) {
       const travelMs = this.reducedMotion ? 0 : travelForIntent(step.shotIntent, step.duration);
       this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent });
@@ -259,6 +270,9 @@ function travelForIntent(intent, duration) {
     case SHOT_INTENT.PORTAL: return 0;
     case SHOT_INTENT.DETAIL: return Math.min(seconds * 450, 1800);
     case SHOT_INTENT.FOCUS: return Math.min(seconds * 550, 2600);
+    // Slower than a focus move and never hurried: this shot is the moment the
+    // visitor is walked up to something, and it should feel like being walked.
+    case SHOT_INTENT.ACCOMPANIED: return Math.min(seconds * 700, 3400);
     case SHOT_INTENT.ENTRY:
     case SHOT_INTENT.OVERVIEW: return Math.min(seconds * 600, 3200);
     default: return Math.min(seconds * 500, 2400);

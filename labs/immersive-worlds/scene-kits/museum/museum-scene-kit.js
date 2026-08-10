@@ -26,8 +26,8 @@ import {
 } from './textures.js';
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
-  buildLabel, buildPitchedRoof, buildPlinth, buildRoomShell, buildSkylightDaylight,
-  buildThreshold, buildVessel, disposeObject
+  buildGuideFigure, buildLabel, buildPitchedRoof, buildPlinth, buildRoomShell,
+  buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
 
 export class MuseumSceneKit extends SceneKit {
@@ -58,6 +58,14 @@ export class MuseumSceneKit extends SceneKit {
 
     this._environment = null;
     this._focusedEntityId = null;
+
+    /**
+     * The guide. One figure for the whole building, moved between stagings,
+     * because a museum has a guide accompanying you rather than an identical
+     * attendant standing in every room.
+     * @type {{object:THREE.Object3D, target:{position:number[], yaw:number, opacity:number}, current:{position:number[], yaw:number, opacity:number}, staging:object|null}|null}
+     */
+    this._guide = null;
   }
 
   /* == environment ========================================================== */
@@ -699,6 +707,21 @@ export class MuseumSceneKit extends SceneKit {
    * inlay at the viewing position, which is a real museum convention, rather
    * than a floating icon.
    */
+  /**
+   * Floor marks for hotspots, according to the policy the world declares.
+   *
+   * `visualPolicy` was already authored as NEAR on every hotspot in the museum
+   * and the kit only ever tested it against NEVER, so sixteen rings stood
+   * permanently on the floors of a building whose data said to show them on
+   * approach. That is where the room got its videogame grammar: a grid of
+   * waiting circles in front of every work, none of which meant anything until
+   * you were standing on one. The policy is now honoured, so the floor is empty
+   * until the visitor is somewhere a mark can tell them something.
+   *
+   * The mark is not the capability. Proximity still raises the HUD prompt and
+   * every work is still reachable from the text outline, so nothing that made a
+   * hotspot discoverable has been removed along with the ring.
+   */
   _buildHotspotMarks(space, store, profile, group) {
     const marks = new Map();
     for (const hotspot of store.hotspotsOf(space.id)) {
@@ -712,9 +735,10 @@ export class MuseumSceneKit extends SceneKit {
         roughness: 0.5,
         metalness: 0.3,
         transparent: true,
-        opacity: 0.14
+        opacity: hotspot.visualPolicy === 'ALWAYS' ? 0.14 : 0
       });
       const mark = new THREE.Mesh(new THREE.RingGeometry(0.31, 0.335, 48), material);
+      mark.userData.restingOpacity = material.opacity;
       mark.rotation.x = -Math.PI / 2;
       const offset = hotspot.entityId ? 1.15 : 0;
       mark.position.set(
@@ -757,6 +781,10 @@ export class MuseumSceneKit extends SceneKit {
     const anchor = record ? this._anchorPoses.get(record.anchorId) : null;
     if (!record || !anchor) {
       return { position: [0, 1.6, 3], target: [0, 1.6, 0], subjectSize: [1, 1, 1] };
+    }
+    if (viewport.intent === 'ACCOMPANIED') {
+      const accompanied = this._accompaniedFraming(record, anchor, viewport);
+      if (accompanied) return accompanied;
     }
     const [w, h] = record.size;
     const detail = viewport.intent === 'DETAIL';
@@ -814,7 +842,10 @@ export class MuseumSceneKit extends SceneKit {
       const mark = handle.hotspotMarks.get(hotspotId);
       if (!mark) continue;
       const near = state === HOTSPOT_STATE.NEAR || state === HOTSPOT_STATE.ACTIVE;
-      mark.material.opacity = near ? 0.5 : state === HOTSPOT_STATE.VISITED ? 0.08 : 0.14;
+      // A NEAR-policy mark exists only while the visitor is near it. Its resting
+      // opacity is the one it was built with, which for that policy is nothing.
+      const resting = mark.userData.restingOpacity ?? 0.14;
+      mark.material.opacity = near ? 0.5 : state === HOTSPOT_STATE.VISITED ? resting * 0.6 : resting;
       mark.scale.setScalar(near ? 1.04 : 1);
     }
   }
@@ -837,6 +868,137 @@ export class MuseumSceneKit extends SceneKit {
     this._focusedEntityId = focused ? entityId : null;
   }
 
+  /* == guide ================================================================ */
+
+  /**
+   * Stage the guide, or dismiss it.
+   *
+   * `aside` is the whole point of the beat: the guide moves out of the line
+   * between the visitor and the work, and turns to face it alongside them. That
+   * displacement is what motivates the camera change that follows — the view
+   * opens because the person in it moved, not because a transition fired.
+   */
+  setGuideStaging(staging) {
+    if (!staging) {
+      if (this._guide) this._guide.target.opacity = 0;
+      return;
+    }
+    const anchor = this._anchorPoses.get(staging.anchorId);
+    if (!anchor) return;
+
+    const subject = this._subjectPose(staging.subjectRef);
+    const facing = subject
+      ? vec3.normalize([subject[0] - anchor.position[0], 0, subject[2] - anchor.position[2]])
+      : anchor.normal;
+
+    // Stepping aside is lateral, across the visitor's sightline — never
+    // backwards into the wall the work is hanging on.
+    const lateral = [-facing[2], 0, facing[0]];
+    const shift = staging.aside ? 0.92 : 0;
+    const position = [
+      anchor.position[0] + lateral[0] * shift,
+      anchor.position[1],
+      anchor.position[2] + lateral[2] * shift
+    ];
+
+    this._ensureGuide();
+    this._guide.staging = staging;
+    this._guide.target = {
+      position,
+      // Once aside, the guide turns towards the work rather than continuing to
+      // present it. The visitor is the one looking now.
+      yaw: Math.atan2(facing[0], facing[2]) + (staging.aside ? 0.22 : 0),
+      opacity: 1
+    };
+    // A guide that walks in from nowhere is a spawn. The first staging places
+    // it; only later stagings are travelled to.
+    if (this._guide.current.opacity === 0) {
+      this._guide.current = { ...this._guide.target, opacity: 0 };
+    }
+  }
+
+  _ensureGuide() {
+    if (this._guide) return;
+    const object = buildGuideFigure({
+      // Dark, matte, warm enough to belong to the plaster rather than sit on
+      // top of it. No accent colour anywhere: the only saturated thing in the
+      // room is still the art.
+      material: new THREE.MeshStandardMaterial({ color: 0x2e2b27, roughness: 0.86, metalness: 0 }),
+      headMaterial: new THREE.MeshStandardMaterial({ color: 0x4a4139, roughness: 0.92, metalness: 0 })
+    });
+    object.visible = false;
+    object.traverse((node) => {
+      if (!node.material) return;
+      node.material.transparent = true;
+      node.material.opacity = 0;
+    });
+    this.scene.add(object);
+    this._guide = {
+      object,
+      current: { position: [0, 0, 0], yaw: 0, opacity: 0 },
+      target: { position: [0, 0, 0], yaw: 0, opacity: 0 },
+      staging: null
+    };
+  }
+
+  /** What a staging is attending to: an entity's anchor, or a room's centre. */
+  _subjectPose(subjectRef) {
+    if (!subjectRef) return null;
+    const entity = this._entityIndex.get(subjectRef);
+    if (entity) return this._anchorPoses.get(entity.anchorId)?.position || null;
+    const handle = this._spaces.get(subjectRef);
+    return handle ? handle.space.bounds.origin : null;
+  }
+
+  /**
+   * Over the guide's shoulder at the work.
+   *
+   * The camera stands behind and to one side of the guide, at standing eye
+   * height, looking at what they are looking at. The lateral offset is what
+   * makes it read as accompanied rather than as a camera that happens to have a
+   * person in it: dead behind is a following shot, slightly off-axis is two
+   * people in front of a painting. The guide takes one side of the frame and
+   * the work keeps the open side.
+   */
+  _accompaniedFraming(record, anchor, viewport) {
+    const guideAnchor = this._anchorPoses.get(viewport.guideAnchorId);
+    if (!guideAnchor) return null;
+
+    const subject = anchor.position;
+    const toSubject = vec3.normalize([
+      subject[0] - guideAnchor.position[0], 0, subject[2] - guideAnchor.position[2]
+    ]);
+    const lateral = [-toSubject[2], 0, toSubject[0]];
+
+    // A narrow screen cannot hold a figure and a work side by side. The camera
+    // stands further back and closer to the guide's own line, so the meaning
+    // survives the crop even though the composition does not.
+    const narrow = (viewport.aspect || 1.6) < 1;
+    // Close enough that the guide is in the near field and clearly *in front of*
+    // the visitor rather than beside them. At two metres back this composition
+    // read as a person standing in a gallery; at just over one it reads as
+    // standing behind someone. That distance is the whole difference between
+    // observing a figure and being accompanied by one.
+    const behind = narrow ? 1.5 : 1.12;
+    const offset = narrow ? 0.34 : 0.62;
+    // Slightly above the guide's own eyeline, so the look passes over the
+    // shoulder instead of through the back of the head.
+    const eye = 1.73;
+
+    const position = [
+      guideAnchor.position[0] - toSubject[0] * behind + lateral[0] * offset,
+      guideAnchor.position[1] + eye,
+      guideAnchor.position[2] - toSubject[2] * behind + lateral[2] * offset
+    ];
+    // Aim between the guide's shoulder and the work, so neither sits dead centre.
+    const target = [
+      subject[0] - lateral[0] * offset * 0.5,
+      subject[1] * 0.72 + eye * 0.28,
+      subject[2] - lateral[2] * offset * 0.5
+    ];
+    return { position, target, subjectSize: record.size };
+  }
+
   applyQuality(policy) {
     for (const handle of this._spaces.values()) {
       for (const spot of handle.spots) {
@@ -847,7 +1009,45 @@ export class MuseumSceneKit extends SceneKit {
 
   update(dt, elapsed) {
     for (const item of this._animated) item.update(elapsed);
-    void dt;
+    this._updateGuide(dt);
+  }
+
+  /**
+   * Move the guide toward its staging.
+   *
+   * An exponential approach rather than a keyframed walk: it settles without
+   * ever snapping, needs no clock of its own, and cannot drift out of step with
+   * a shot that the visitor skipped. A step aside is under a metre, which at
+   * this rate reads as a person shifting their weight and moving over — which
+   * is all it is.
+   *
+   * There is no idle animation. A figure that sways on a loop is a videogame
+   * telling you it is alive; a person watching someone look at a painting
+   * stands still.
+   */
+  _updateGuide(dt) {
+    const guide = this._guide;
+    if (!guide) return;
+
+    const k = 1 - Math.exp(-(dt || 0.016) * 3.4);
+    const current = guide.current;
+    const target = guide.target;
+    for (let i = 0; i < 3; i += 1) {
+      current.position[i] += (target.position[i] - current.position[i]) * k;
+    }
+    // Shortest way round, so a guide facing north-west never spins the long way.
+    let delta = (target.yaw - current.yaw) % (Math.PI * 2);
+    if (delta > Math.PI) delta -= Math.PI * 2;
+    if (delta < -Math.PI) delta += Math.PI * 2;
+    current.yaw += delta * k;
+    current.opacity += (target.opacity - current.opacity) * (1 - Math.exp(-(dt || 0.016) * 2.6));
+
+    guide.object.position.set(current.position[0], current.position[1], current.position[2]);
+    guide.object.rotation.y = current.yaw;
+    guide.object.visible = current.opacity > 0.01;
+    guide.object.traverse((node) => {
+      if (node.material) node.material.opacity = current.opacity;
+    });
   }
 
   renderStats() {

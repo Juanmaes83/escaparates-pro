@@ -128,7 +128,8 @@ export class Runtime {
       bus: this.bus,
       reducedMotion,
       ports: {
-        framingFor: (subjectRef, intent) => this.framingFor(subjectRef, intent),
+        framingFor: (subjectRef, intent, options) => this.framingFor(subjectRef, intent, options),
+        stageGuide: (staging) => this.sceneKit.setGuideStaging?.(staging),
         playShot: (pose, opts) => this.directed.playShot(pose, opts),
         snapTo: (pose) => this.directed.snapTo(pose),
         requestAuthority: (authority, opts) => this.camera.request(authority, opts),
@@ -388,12 +389,19 @@ export class Runtime {
     this.experience.exit({ restorePose: true, reason: 'visitor-exit' });
   }
 
-  /** Ask the Scene Kit to measure a framing for a subject and intent. */
-  framingFor(subjectRef, intent) {
-    const viewport = this.viewport();
+  /**
+   * Ask the Scene Kit to measure a framing for a subject and intent.
+   *
+   * `options` carries staging the kit may need to compose the shot — an
+   * accompanied shot has to know where the guide is standing. It is passed
+   * alongside the viewport rather than stored anywhere: the engine is asking a
+   * question, not holding presentation state.
+   */
+  framingFor(subjectRef, intent, options = {}) {
+    const viewport = { ...this.viewport(), ...options, intent };
     const kind = this.store.kindOf(subjectRef);
-    if (kind === 'SPACE') return this.sceneKit.framingForSpace(subjectRef, { ...viewport, intent });
-    return this.sceneKit.framingForEntity(subjectRef, { ...viewport, intent });
+    if (kind === 'SPACE') return this.sceneKit.framingForSpace(subjectRef, viewport);
+    return this.sceneKit.framingForEntity(subjectRef, viewport);
   }
 
   /* == frame ================================================================= */

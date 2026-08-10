@@ -93,7 +93,8 @@
         "anchor.gallery-a.plinth",
         "anchor.gallery-a.door-lobby",
         "anchor.gallery-a.door-gallery-b",
-        "anchor.gallery-a.door-archive"
+        "anchor.gallery-a.door-archive",
+        "anchor.gallery-a.guide-horizonte"
       ],
       "hotspotRefs": [
         "hotspot.art.horizonte-interrumpido",
@@ -627,6 +628,22 @@
         0
       ],
       "label": "Puerta a Galería A"
+    },
+    {
+      "id": "anchor.gallery-a.guide-horizonte",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        -2.5,
+        0,
+        -12.95
+      ],
+      "normal": [
+        0.35,
+        0,
+        0.94
+      ],
+      "label": "Puesto del guía ante «Horizonte interrumpido»"
     }
   ],
   "entities": [
@@ -1450,6 +1467,7 @@
         "step.02-paso-galeria-a",
         "step.03-vista-general",
         "step.04-horizonte",
+        "step.04b-horizonte-cesion",
         "step.05-vasija"
       ]
     },
@@ -1501,10 +1519,25 @@
       "id": "step.04-horizonte",
       "chapterId": "chapter.horizontes",
       "subjectRef": "entity.artwork.horizonte-interrumpido",
-      "shotIntent": "FOCUS",
-      "duration": 9,
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
       "narrationCue": "narracion.04",
-      "caption": "Serrat pintó Horizonte interrumpido desde la misma ventana durante catorce meses. La franja inferior corresponde al invierno de 1971."
+      "caption": "Serrat pintó Horizonte interrumpido desde la misma ventana durante catorce meses. La franja inferior corresponde al invierno de 1971.",
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-horizonte"
+      }
+    },
+    {
+      "id": "step.04b-horizonte-cesion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.horizonte-interrumpido",
+      "shotIntent": "FOCUS",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-horizonte",
+        "aside": true
+      },
+      "caption": "Quédese con ella el tiempo que quiera."
     },
     {
       "id": "step.05-vasija",

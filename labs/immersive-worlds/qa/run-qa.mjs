@@ -219,7 +219,13 @@ async function main() {
       const duringOwner = rt.camera.owner;
       const duringMode = rt.state.mode;
 
-      for (let i = 0; i < 4; i += 1) {
+      // Advance until the route has actually marked something, rather than a
+      // fixed number of steps. The claim under test is that a guided step
+      // writes the same World State an Explore focus does — not that it happens
+      // on the fourth step. Authoring a new beat into the route moved that, and
+      // a step-counting check failed on a route that was working correctly.
+      for (let i = 0; i < 8; i += 1) {
+        if (rt.state.visitedEntityIds.size > visitedBefore.length) break;
         rt.experience.next();
         await new Promise((resolve) => setTimeout(resolve, 60));
       }

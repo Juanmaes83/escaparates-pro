@@ -101,6 +101,33 @@ export const DETERMINISTIC_STATES = {
     }
   },
 
+  'museum:guide-accompanied': {
+    description: 'Parada acompañada: el guía presenta «Horizonte interrumpido» y la cámara mira por encima de su hombro.',
+    async apply(runtime) {
+      await runToStep(runtime, 'step.04-horizonte');
+      // The guide moves toward its staging over a few frames; settle it so the
+      // capture is of the composition, not of the guide arriving in it.
+      await settleGuide(runtime);
+    }
+  },
+
+  'museum:guide-handoff': {
+    description: 'Cesión: el guía se aparta, la cámara entra en el punto de vista del visitante y la obra queda sola.',
+    async apply(runtime) {
+      await runToStep(runtime, 'step.04b-horizonte-cesion');
+      await settleGuide(runtime);
+    }
+  },
+
+  'museum:guide-released': {
+    description: 'Después de la cesión: recorrido abandonado, el guía se retira y el visitante queda con la obra.',
+    async apply(runtime) {
+      await runToStep(runtime, 'step.04b-horizonte-cesion');
+      runtime.exitRoute();
+      await settleGuide(runtime);
+    }
+  },
+
   'museum:guided-step-04': {
     description: 'Recorrido comentado detenido en la parada 4: cámara bajo autoridad DIRECTED.',
     async apply(runtime) {
@@ -129,6 +156,56 @@ export const DETERMINISTIC_STATES = {
 /** Portal traversal is async; give queued promises a chance to resolve. */
 function settleMicrotasks() {
   return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/**
+ * Advance the commented route to a named step and hold there.
+ *
+ * By step id rather than by counting `next()` calls, so inserting a beat into
+ * the route does not silently retarget every state that came after it.
+ */
+async function runToStep(runtime, stepId) {
+  runtime.startRoute('route.comentado');
+  for (let i = 0; i < 24; i += 1) {
+    if (runtime.experience.currentStep?.id === stepId) break;
+    runtime.experience.next();
+    // Real time, not a microtask. A portal step has to build and warm a Space
+    // before its shot can be framed, and on completion the traversal places the
+    // camera at the arrival anchor. Skipping ahead within the same tick lets
+    // that arrival land *after* a later step has already framed its shot, and
+    // the room you end up looking at is the one you walked into rather than the
+    // one the step is about. A visitor waiting out the step durations never
+    // races it; a QA state that advances instantly does.
+    await settleStep();
+  }
+  runtime.experience.pause();
+}
+
+/**
+ * Long enough for a portal step to finish arriving.
+ *
+ * A fixed wait rather than a lifecycle poll: the thing being waited on is the
+ * tail of a promise chain that ends in a camera placement, and the Space being
+ * READY is not the same event. Polling the lifecycle returned before the
+ * arrival landed and the state captured the wrong room.
+ */
+function settleStep() {
+  return new Promise((resolve) => setTimeout(resolve, 300));
+}
+
+/**
+ * Let the guide reach its staging.
+ *
+ * It approaches its target exponentially, so it is always strictly *near* the
+ * pose and never exactly on it. A capture taken mid-approach would be evidence
+ * of the wrong thing, so the state drives the same update the frame loop drives
+ * until the remaining distance stops mattering.
+ */
+function settleGuide(runtime) {
+  return new Promise((resolve) => {
+    for (let i = 0; i < 180; i += 1) runtime.sceneKit.update?.(1 / 60, i / 60);
+    setTimeout(resolve, 0);
+  });
 }
 
 export const STATE_NAMES = Object.keys(DETERMINISTIC_STATES);

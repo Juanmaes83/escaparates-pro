@@ -62,6 +62,9 @@ const STATES = [
   ['museum:portal-a-b-before', 'Umbral A → B'],
   ['museum:portal-a-b-after', 'Galería B — cámara oscura'],
   ['museum:archive-teleport', 'Archivo — sala de escucha'],
+  ['museum:guide-accompanied', 'GUÍA — acompañado (sobre el hombro)'],
+  ['museum:guide-handoff', 'GUÍA — cesión'],
+  ['museum:guide-released', 'GUÍA — visitante solo'],
   ['museum:guided-step-04', 'Recorrido comentado — parada 4'],
   ['museum:lobby-entry', 'Vestíbulo']
 ];

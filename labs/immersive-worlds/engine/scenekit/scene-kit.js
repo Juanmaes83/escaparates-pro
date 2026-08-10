@@ -151,6 +151,22 @@ export class SceneKit {
   /** Reflect focus entering/leaving an entity. */
   setEntityFocused(_entityId, _focused) {}
 
+  /**
+   * Where the guide is standing and what it is attending to, or `null` for no
+   * guide at all.
+   *
+   * The engine says only that a guided step is being accompanied from a given
+   * Anchor. Whether a guide is represented, what it looks like, and how it
+   * moves between stagings is entirely the Scene Kit's business — a kit with no
+   * notion of a guide ignores this and loses nothing.
+   *
+   * This is presentation, not state: nothing here belongs in World State, and
+   * it never writes the camera.
+   *
+   * @param {{anchorId:string, subjectRef?:string, aside?:boolean}|null} _staging
+   */
+  setGuideStaging(_staging) {}
+
   /** Apply a new quality policy to already-built representations. */
   applyQuality(_policy) {}
 
