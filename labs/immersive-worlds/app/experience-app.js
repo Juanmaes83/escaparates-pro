@@ -189,6 +189,7 @@ function installProbe(context) {
     hud,
     audio,
     mediaLoader,
+    input,
 
     /** Full runtime report — the object the QA suite writes into its evidence. */
     report: () => ({ ...runtime.report(), media: mediaLoader.report() }),
