@@ -66,6 +66,8 @@ export class ExperienceDirector {
     this.stepElapsed = 0;
     /** Pose the visitor was left in before the tour started, when we choose to restore it. */
     this._returnPose = null;
+    /** The Space that pose was measured in. Outside it, the pose means nothing. */
+    this._returnSpaceId = null;
   }
 
   get currentStep() {
@@ -88,6 +90,10 @@ export class ExperienceDirector {
     if (!this.steps.length) throw new Error(`[IW] route "${routeId}" has no story steps`);
 
     this._returnPose = options.returnPose || null;
+    // A pose is only meaningful in the Space it was measured in. Remember which
+    // one, so exiting can tell "put the visitor back where they were standing"
+    // apart from "put the visitor at coordinates that belong to another room".
+    this._returnSpaceId = this.state.activeSpaceId;
     this.index = -1;
     this.stepElapsed = 0;
     this.transport = TRANSPORT.PLAYING;
@@ -126,6 +132,15 @@ export class ExperienceDirector {
    * pose *unless the experience explicitly chooses a new one*. Exiting early
    * restores where the visitor was standing; finishing the tour deliberately
    * leaves them where the tour ended.
+   *
+   * That restore is only valid while the visitor is still in the room the pose
+   * was taken in. A route that walks them from the lobby into a gallery and is
+   * then left — by pressing Escape, or by the handoff at the end of an
+   * accompanied beat — was placing them at lobby coordinates inside Gallery A,
+   * which put the camera in the middle of a wall and rendered black. Crossing a
+   * Portal invalidates the return pose, and the right place to leave someone is
+   * then exactly where the last shot left them: looking at the thing they were
+   * being shown. That is the handoff, not a fallback.
    */
   exit({ restorePose = true, reason = 'exit' } = {}) {
     if (this.transport === TRANSPORT.IDLE) return;
@@ -139,7 +154,8 @@ export class ExperienceDirector {
     // room the visitor is now exploring alone would be a bystander, not a host.
     this.ports.stageGuide?.(null);
 
-    if (restorePose && this._returnPose) {
+    const returnPoseIsHere = this._returnSpaceId === this.state.activeSpaceId;
+    if (restorePose && this._returnPose && returnPoseIsHere) {
       this.ports.requestAuthority(CAMERA_AUTHORITY.EXPLORE, {
         reason: `route:${reason}`,
         durationMs: this.reducedMotion ? 0 : 900,
@@ -157,6 +173,8 @@ export class ExperienceDirector {
     this.routeId = null;
     this.steps = [];
     this.index = -1;
+    this._returnPose = null;
+    this._returnSpaceId = null;
   }
 
   /** @param {number} dt seconds */

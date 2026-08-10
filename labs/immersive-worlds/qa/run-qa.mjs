@@ -260,6 +260,40 @@ async function main() {
     check('CAMERA-NO-VIOLATIONS', 'Ni una sola escritura de cámara en conflicto en toda la sesión',
       guided.violations === 0, `${guided.violations} violaciones`);
 
+    /* -- leaving a route leaves the visitor inside the room they are in ------ */
+    // The route walks the visitor from the lobby into a gallery. Exiting used to
+    // restore the pose it captured at the start, which is a lobby coordinate,
+    // and dropped the camera inside a Gallery A wall looking at black. Nothing
+    // in the suite noticed, because every existing camera assertion was about
+    // authority rather than about the pose being a place you can stand.
+    const handoff = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      rt.startRoute('route.comentado');
+      for (let i = 0; i < 24; i += 1) {
+        if (rt.experience.currentStep?.id === 'step.04b-horizonte-cesion') break;
+        rt.experience.next();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+      rt.exitRoute();
+      await window.__IW.frames(6);
+      const space = rt.store.require(rt.state.activeSpaceId);
+      const volume = rt.sceneKit.navigationVolume(rt.state.activeSpaceId);
+      const p = window.__IW.renderHost.camera.position;
+      return {
+        activeSpaceId: rt.state.activeSpaceId,
+        spaceTitle: space.title,
+        position: [p.x, p.y, p.z],
+        bounds: volume.bounds,
+        owner: rt.camera.owner
+      };
+    });
+    const inside = handoff.bounds
+      && handoff.position[0] > handoff.bounds.min[0] && handoff.position[0] < handoff.bounds.max[0]
+      && handoff.position[2] > handoff.bounds.min[2] && handoff.position[2] < handoff.bounds.max[2];
+    check('HANDOFF-VALID-POSE', 'Tras la cesión el visitante queda dentro de la sala activa, no dentro de un muro',
+      inside && handoff.owner === 'EXPLORE',
+      `${handoff.spaceTitle} · [${handoff.position.map((n) => n.toFixed(2)).join(', ')}] · ${handoff.owner}`);
+
     /* -- proximity ---------------------------------------------------------- */
     const proximity = await page.evaluate(async () => {
       const rt = window.__IW.runtime;

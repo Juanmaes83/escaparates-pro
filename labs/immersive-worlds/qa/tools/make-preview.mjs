@@ -159,7 +159,44 @@ for (const [id, label] of ${JSON.stringify(STATES)}) {
     // does, so the veil comes down and movement goes back to them. The click is
     // a user gesture, which is also what the audio context needs.
     window.__IW.hud.el.veil.hidden = true;
-    await window.__IW.applyState(id);
+    // Reach every state from the same baseline. These states were written for a
+    // QA run that boots straight into one of them; a reviewer clicks them in
+    // whatever order they like, and a state that calls startRoute while a route
+    // is already running inherits that route's return pose. That is how the
+    // visitor-alone state could end up restoring a pose belonging to a room the
+    // visitor had since left.
+    const rt = window.__IW.runtime;
+    if (rt.state.mode === 'GUIDED') rt.exitRoute();
+    if (rt.state.focusedEntityId) rt.releaseFocus();
+    // Snap, don't travel, while jumping.
+    //
+    // A named state is an authored composition, and it is reached by advancing
+    // the route faster than the shots can travel. QA never saw the difference
+    // because QA runs with reduced motion, where every shot snaps; the preview
+    // does not, so the button handed back a camera still moving between two
+    // poses under TRANSITION authority. That is what made the visitor-alone
+    // state look like it had landed against a wall: it had not landed at all.
+    //
+    // Motion is still reviewable — pressing G plays the route at its authored
+    // pace. This only affects jumping straight to a composition.
+    const director = window.__IW.runtime.experience;
+    const authoredMotion = director.reducedMotion;
+    director.reducedMotion = true;
+    try {
+      await window.__IW.applyState(id);
+    } finally {
+      director.reducedMotion = authoredMotion;
+    }
+    // Wait for the camera to actually arrive.
+    //
+    // A named state is an authored composition, and the QA suite always sees it
+    // because QA runs with reduced motion, where every shot snaps. Here the
+    // shots travel for seconds while the state advances the route in hundreds
+    // of milliseconds, so the button used to hand back a camera that was still
+    // moving, under TRANSITION authority, somewhere between two poses. That is
+    // what made the visitor-alone state look like it had landed against a wall:
+    // it had not landed at all.
+    await settleCamera();
     window.__IW.input.setEnabled(true);
     window.__IW.audio.resume?.().then(() => {
       const space = window.__IW.runtime.store.require(window.__IW.runtime.state.activeSpaceId);
@@ -169,6 +206,18 @@ for (const [id, label] of ${JSON.stringify(STATES)}) {
   };
   list.appendChild(button);
 }
+/** Resolve once the camera has stopped moving and authority has settled. */
+async function settleCamera() {
+  const camera = window.__IW.renderHost.camera;
+  let last = camera.position.clone();
+  for (let i = 0; i < 120; i += 1) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const moved = camera.position.distanceTo(last);
+    last = camera.position.clone();
+    if (i > 4 && moved < 0.0008 && window.__IW.runtime.camera.owner !== 'TRANSITION') return;
+  }
+}
+
 addEventListener('keydown', (event) => {
   if (event.code === 'KeyP') panel.hidden = !panel.hidden;
 });
