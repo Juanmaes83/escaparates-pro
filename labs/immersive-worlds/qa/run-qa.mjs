@@ -487,6 +487,16 @@ async function main() {
       `vfov ${mobileReport.vfov}°, distancia ${mobileReport.distance.toFixed(2)} m`);
     check('MOBILE-NO-OVERFLOW', 'Sin desbordamiento horizontal en móvil', !mobileReport.horizontalOverflow);
 
+    // Everything mobile had to say is in `mobileReport`; the page itself is now
+    // just a live WebGL context. Under software rendering each one costs real
+    // memory and scheduler time, and leaving this one open while the second
+    // world booted put three contexts in flight at once — which is what made
+    // that boot exceed its 90 s budget and take the whole run down, on a page
+    // that boots in about four seconds on its own. The runner already closes
+    // the main page before opening mobile; this is the same rule applied once
+    // more.
+    await mobile.close();
+
     /* -- configurability: a second world on the same engine ------------------ */
     const secondWorld = await context.newPage();
     const secondErrors = [];
@@ -519,8 +529,6 @@ async function main() {
     evidence.secondWorld = second;
 
     /* -- authoring ----------------------------------------------------------- */
-    await mobile.close();
-
     const authorPage = await context.newPage();
     const authorErrors = [];
     authorPage.on('pageerror', (error) => authorErrors.push(error.message));
