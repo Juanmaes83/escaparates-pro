@@ -460,6 +460,45 @@ Two subsystems may never write authoritative camera state simultaneously. Camera
 
 ---
 
+## IW-DEC-027 — PROJECTION is an entity kind, not an effect on one artwork
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Trigger**
+
+GRAFT 01. `entity.video.cuaderno-de-luz` was represented as a bezelled wall panel:
+a flat-screen television in a dark exhibition room. The graft's stated goal was to
+turn "video on a wall" into "light in architecture".
+
+**Decision**
+
+Projected light is a first-class `ENTITY_KIND.PROJECTION`, sitting beside ARTWORK,
+SCULPTURE, VIDEO, AUDIO, TEXT and OBJECT_3D — not a special case bolted onto the
+existing VIDEO representation, and not a hardcoded effect belonging to one work.
+
+Consequences, all enforced by QA:
+
+1. Field size comes from `entity.size`; light behaviour from `content.projection`
+   (`intensity`, `spill`, `reflection`, `keystone`, `feather`, `vignette`, `tint`,
+   optional `text`); the image from `content.media.src` through the normal
+   MediaLoader path — so a projection of a different work, at a different size, in a
+   different colour is authoring, not code. `PROJECTION-FROM-DATA` asserts this by
+   building a second projection from different data and requiring a different result.
+2. A PROJECTION mounts **no object on the wall**: no frame, no bezel, no panel,
+   nothing with thickness. `PROJECTION-NO-PANEL` asserts zero box volumes in the group.
+   VIDEO keeps its bezelled panel — the two kinds mean different things and a world
+   may legitimately contain both.
+3. The keystone is baked into the field's vertices rather than applied as a view-
+   dependent transform, so the projection is correct from every viewpoint. See the
+   reuse register for why the source's `matrix3d` corner-pin was rejected.
+
+**Not decided here**
+
+Flexible Media, projection authoring UI, homography editing, and multi-surface
+mapping remain out of scope.
+
+---
+
 # Architecture decisions awaiting review
 
 ## IW-ADR-001 — Semantic data and representation are separate

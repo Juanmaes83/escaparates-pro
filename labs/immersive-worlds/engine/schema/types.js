@@ -33,6 +33,11 @@ export const ENTITY_KIND = Object.freeze({
   ARTWORK: 'ARTWORK',
   SCULPTURE: 'SCULPTURE',
   VIDEO: 'VIDEO',
+  // Time-based media presented as light on an architectural surface rather than
+  // as an object hung on one. Semantically it is still a work with media and
+  // rights; only its representation differs — which is the whole point of the
+  // kind existing separately from VIDEO.
+  PROJECTION: 'PROJECTION',
   AUDIO: 'AUDIO',
   TEXT: 'TEXT',
   OBJECT_3D: 'OBJECT_3D'

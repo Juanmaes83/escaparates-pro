@@ -153,7 +153,8 @@
         "anchor.gallery-b.wall-6",
         "anchor.gallery-b.screen",
         "anchor.gallery-b.door-gallery-a",
-        "anchor.gallery-b.guide-noche"
+        "anchor.gallery-b.guide-noche",
+        "anchor.gallery-b.guide-cuaderno"
       ],
       "hotspotRefs": [
         "hotspot.art.noche-de-invierno",
@@ -538,7 +539,7 @@
       "kind": "WALL",
       "position": [
         16.9,
-        1.55,
+        1.72,
         -14.85
       ],
       "normal": [
@@ -547,8 +548,8 @@
         1
       ],
       "extent": [
-        2.2,
-        1.4
+        4.6,
+        2.6
       ]
     },
     {
@@ -712,6 +713,22 @@
         -1
       ],
       "label": "Guía — ante Noche de invierno"
+    },
+    {
+      "id": "anchor.gallery-b.guide-cuaderno",
+      "spaceId": "space.gallery-b",
+      "kind": "VIEWPOINT",
+      "position": [
+        15.9,
+        0,
+        -11.6
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — ante la proyección"
     }
   ],
   "entities": [
@@ -1055,20 +1072,20 @@
     },
     {
       "id": "entity.video.cuaderno-de-luz",
-      "kind": "VIDEO",
+      "kind": "PROJECTION",
       "subtype": "single-channel",
       "spaceId": "space.gallery-b",
       "anchorId": "anchor.gallery-b.screen",
       "size": [
-        2.0,
-        1.125,
-        0.08
+        4.6,
+        2.6,
+        0.02
       ],
       "content": {
         "title": "Cuaderno de luz",
         "creator": "Jonás Vilar",
         "year": "1994",
-        "medium": "Vídeo monocanal, 8 min, en bucle, sin sonido",
+        "medium": "Proyección monocanal sobre muro, 8 min, en bucle, sin sonido",
         "description": "Registro de la luz que atravesaba el taller de Vilar entre las siete y las nueve de la mañana, filmado durante nueve días.",
         "media": {
           "kind": "VIDEO",
@@ -1078,24 +1095,33 @@
           "muted": true,
           "credit": "Fundación Arenas — colección ficticia (imagen propia)",
           "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+        },
+        "projection": {
+          "intensity": 0.86,
+          "spill": 0.62,
+          "reflection": 0.46,
+          "keystone": 0.038,
+          "feather": 0.1,
+          "vignette": 0.46,
+          "tint": "#c8bba6"
         }
       },
       "representation": {
-        "profile": "wall-screen",
+        "profile": "projected-light",
         "hints": {
-          "bezel": "dark"
+          "surface": "muro"
         }
       },
       "interaction": {
         "focusable": true,
-        "focusDistance": 2.6,
+        "focusDistance": 4.8,
         "hotspotRefs": [
           "hotspot.media.cuaderno-de-luz"
         ]
       },
       "accessibility": {
-        "label": "Cuaderno de luz, Jonás Vilar, 1994. Vídeo sin sonido",
-        "description": "Vídeo monocanal de ocho minutos en bucle. Bandas de luz cálida atraviesan lentamente el encuadre de arriba abajo.",
+        "label": "Cuaderno de luz, Jonás Vilar, 1994. Proyección sin sonido",
+        "description": "Proyección monocanal de ocho minutos en bucle sobre el muro de la sala. Bandas de luz cálida atraviesan lentamente el encuadre de arriba abajo y se reflejan en el suelo.",
         "transcript": "Obra sin sonido ni voz. No requiere transcripción."
       }
     },
@@ -1551,6 +1577,9 @@
         "step.09-lleva-noche",
         "step.10-noche",
         "step.10b-noche-cesion",
+        "step.10c-lleva-cuaderno",
+        "step.10d-cuaderno",
+        "step.10e-cuaderno-permanencia",
         "step.11-cierre"
       ]
     }
@@ -1709,6 +1738,40 @@
         "aside": true
       },
       "caption": "Le dejo con ella."
+    },
+    {
+      "id": "step.10c-lleva-cuaderno",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.video.cuaderno-de-luz",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-cuaderno"
+      },
+      "caption": "Al fondo hay luz proyectada. Venga hasta aquí."
+    },
+    {
+      "id": "step.10d-cuaderno",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.video.cuaderno-de-luz",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 9,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-cuaderno"
+      },
+      "caption": "Cuaderno de luz no se cuelga: se proyecta sobre el muro. Vilar filmó nueve mañanas seguidas entre las siete y las nueve."
+    },
+    {
+      "id": "step.10e-cuaderno-permanencia",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.video.cuaderno-de-luz",
+      "shotIntent": "FOCUS",
+      "duration": 26,
+      "guide": {
+        "anchorId": "anchor.gallery-b.guide-cuaderno",
+        "aside": true
+      },
+      "caption": "Esta obra dura ocho minutos. No hay nada que mirar de una vez: quédese hasta que la luz cambie."
     },
     {
       "id": "step.11-cierre",

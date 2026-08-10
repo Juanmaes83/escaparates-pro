@@ -141,6 +141,16 @@ export const DETERMINISTIC_STATES = {
     apply: (runtime) => beat(runtime, 'step.10-noche')
   },
 
+  'museum:journey-proyeccion': {
+    description: 'Cuarta parada acompañada: la guía presenta la proyección sobre el muro.',
+    apply: (runtime) => beat(runtime, 'step.10d-cuaderno')
+  },
+
+  'museum:proyeccion-permanencia': {
+    description: 'La parada larga ante la proyección: la guía se aparta y el visitante se queda con la luz.',
+    apply: (runtime) => beat(runtime, 'step.10e-cuaderno-permanencia')
+  },
+
   'museum:guide-released': {
     description: 'Después de la cesión: recorrido abandonado, la guía se retira y el visitante queda con la obra.',
     async apply(runtime) {

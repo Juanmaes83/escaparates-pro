@@ -555,3 +555,128 @@ export function disposeObject(root) {
   for (const texture of textures) texture.dispose();
   root.clear?.();
 }
+
+/**
+ * A projection: media as light thrown onto an architectural surface.
+ *
+ * The source technology solved this in the DOM with one hardcoded `matrix3d`
+ * lifted from a specific photograph, because it had no real wall and no real
+ * camera — it had to fake the perspective. We have both, so the geometry
+ * problem simply does not exist here and none of that transform survives.
+ *
+ * What does survive is the source's compositing recipe, which is the part that
+ * actually made it convincing:
+ *
+ *   media in `screen` blend   →  additive blending onto the wall
+ *   media at low opacity      →  intensity below the wall's own white
+ *   blurred radial spill      →  a halo plane plus one real light
+ *   masked floor reflection   →  a faded, mirrored copy on the floor
+ *   text as its own layer     →  a second additive plane on the same surface
+ *
+ * The one thing the source never needed and we cannot do without is the *edge*.
+ * A CSS element ends where its box ends and nobody questions it; a rectangle of
+ * light in a dark room reads instantly as a screen. The feathered alpha mask is
+ * what makes it read as a beam.
+ *
+ * @param {{
+ *   size:[number,number], texture:THREE.Texture, mask:THREE.Texture,
+ *   textTexture?:THREE.Texture, intensity?:number, spill?:number,
+ *   reflection?:number, keystone?:number, tint?:number
+ * }} spec
+ */
+export function buildProjection(spec) {
+  const {
+    size, texture, mask, floorMask = null, textTexture = null,
+    intensity = 1, spill = 1, reflection = 0.5, keystone = 0.035, tint = 0xffffff
+  } = spec;
+  const [w, h] = size;
+  const group = new THREE.Group();
+  group.name = 'projection';
+
+  // Keystone: a projector is never exactly perpendicular to what it lights, so
+  // the field is slightly wider at the top. Small enough to read as physics
+  // rather than as an effect, and it is geometry on the wall, so it holds from
+  // every viewpoint instead of only from a chosen one.
+  const field = new THREE.PlaneGeometry(w, h, 1, 1);
+  const position = field.attributes.position;
+  for (let i = 0; i < position.count; i += 1) {
+    if (position.getY(i) > 0) position.setX(i, position.getX(i) * (1 + keystone));
+  }
+  position.needsUpdate = true;
+
+  const light = new THREE.Mesh(field, new THREE.MeshBasicMaterial({
+    map: texture,
+    alphaMap: mask,
+    color: new THREE.Color(tint).multiplyScalar(intensity),
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: true
+  }));
+  // Flush with the plaster. There is no object here: nothing stands off the
+  // wall, nothing casts a shadow, nothing has a frame. That absence is the
+  // whole difference between a projection and a screen.
+  light.position.z = 0.006;
+  group.add(light);
+
+  // Halo: the wall around the field picks up scattered light. Wider than the
+  // field, far dimmer, and carrying no image — just the glow. Kept close to the
+  // field on purpose: a halo wide enough to reach the ceiling stops reading as
+  // spill from a beam and starts reading as room lighting, which erases the
+  // only thing that makes this a projection — that the wall is dark and one
+  // part of it is not.
+  const halo = new THREE.Mesh(
+    new THREE.PlaneGeometry(w * 1.42, h * 1.25),
+    new THREE.MeshBasicMaterial({
+      map: mask,
+      color: new THREE.Color(tint).multiplyScalar(0.11 * spill),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      toneMapped: true
+    })
+  );
+  halo.position.z = 0.004;
+  group.add(halo);
+
+  // The floor takes the throw. Mirrored, crushed and feathered — a real
+  // reflection on a matte museum floor is a suggestion, not a copy. It runs
+  // from the skirting outwards and dies before it reaches the visitor, which is
+  // why it uses its own ramp rather than the field's centred mask.
+  if (reflection > 0.01 && floorMask) {
+    const reach = h * 1.15;
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(w * 1.08, reach),
+      new THREE.MeshBasicMaterial({
+        map: texture,
+        alphaMap: floorMask,
+        color: new THREE.Color(tint).multiplyScalar(0.34 * reflection),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        toneMapped: true
+      })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.scale.y = -1;                       // mirrored, as a reflection is
+    floor.position.z = reach / 2;             // starts at the wall, runs outward
+    group.add(floor);
+    group.userData.reflection = floor;
+  }
+
+  // Text on the same surface, sharing its light and its keystone.
+  if (textTexture) {
+    const caption = new THREE.Mesh(field.clone(), new THREE.MeshBasicMaterial({
+      map: textTexture,
+      color: new THREE.Color(tint).multiplyScalar(intensity * 0.85),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      toneMapped: true
+    }));
+    caption.position.z = 0.008;
+    group.add(caption);
+  }
+
+  return group;
+}

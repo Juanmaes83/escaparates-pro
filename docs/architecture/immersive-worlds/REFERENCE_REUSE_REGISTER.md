@@ -171,3 +171,41 @@ pass explicitly forbids.
 
 Since no source is reproduced, the Apache-2.0 attribution obligation is met by this entry
 and by the header of `guide.js`.
+
+---
+
+## projection-video-mapping-experience — projection compositing recipe (GRAFT 01)
+
+| | |
+|---|---|
+| Source | `github.com/juanmaes83/projection-video-mapping-experience` — owned repository, audited in the SOURCE TECHNOLOGY GRAFT audit |
+| Licence | Owned. No third-party licence obligation |
+| Mode | **Recipe only. No code, no assets, no markup reproduced.** |
+| Used in | `scene-kits/museum/builders.js` (`buildProjection`), `scene-kits/museum/textures.js` (`projectionMask`, `projectionFloorMask`, `projectionTextTexture`), `scene-kits/museum/museum-scene-kit.js` (`ENTITY_KIND.PROJECTION`) |
+
+What was taken is the source's **compositing vocabulary** for making video read as
+light rather than as a picture, restated in three dimensions:
+
+1. `mix-blend-mode: screen` at low opacity → `THREE.AdditiveBlending` with
+   `depthWrite: false`, so the wall's own plaster grain survives underneath the image
+   instead of being replaced by it;
+2. its blurred duplicate layer behind the video → a wider, far dimmer **halo plane**
+   carrying the mask and no image, plus **one real `PointLight`**, so the room is
+   actually affected rather than only painted;
+3. its masked, faded floor duplicate → a mirrored **floor bounce** on its own plane;
+4. its `.dc-word` layer → `projectionTextTexture`: caption text living *on* the
+   projection plane, sharing its light and its keystone, rather than burned into the
+   media or floated over the room as UI.
+
+Deliberately **not** taken: the source's hardcoded `matrix3d` corner-pin. That transform
+exists to fake a projection surface onto a flat photograph. Our wall and our camera are
+real, so the same illusion is produced by geometry — a plane flush with the plaster whose
+top edge is widened by `keystone` — which then holds from every viewpoint instead of only
+from the one the matrix was authored for. This is the single most important rejection in
+the graft: importing the corner-pin would have made the projection correct from one angle
+and wrong from all the others.
+
+Added on our side, with no counterpart in the source: the **feathered alpha edge**
+(`projectionMask`). A CSS composite over a photograph never needs one — the source image
+already has soft edges. A rectangle of additive light on a modelled wall does, and it is
+what stops the field reading as a screen.

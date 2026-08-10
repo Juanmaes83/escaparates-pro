@@ -22,11 +22,12 @@ import { ENTITY_KIND, HOTSPOT_STATE, REPRESENTATION_HINT } from '../../engine/sc
 import { framePose, overviewPose, vec3 } from '../../engine/camera/framing.js';
 import { profileFor } from './profiles.js';
 import {
-  artworkTexture, createGeneratedVideoTexture, floorTexture, labelTexture, plasterTexture
+  artworkTexture, createGeneratedVideoTexture, floorTexture, labelTexture, plasterTexture,
+  projectionMask, projectionFloorMask, projectionTextTexture
 } from './textures.js';
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
-  buildLabel, buildPitchedRoof, buildPlinth, buildRoomShell,
+  buildLabel, buildPitchedRoof, buildPlinth, buildProjection, buildRoomShell,
   buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
 import { GUIDE_DESIGNS, buildGuideFigure, guideMaterials } from './guide.js';
@@ -620,6 +621,59 @@ export class MuseumSceneKit extends SceneKit {
 
         const label = buildLabel({ texture: labelTexture(entity.content, { dark, width: 384 }) });
         label.position.set(w / 2 + 0.2, -0.06, 0.004);
+        group.add(label);
+
+        this._orient(group, anchor);
+        return { object: group, lit: false };
+      }
+
+      case ENTITY_KIND.PROJECTION: {
+        const [w, h] = entity.size;
+        const p = entity.content.projection || {};
+        // Authored as "#rrggbb" in the world file; a projector's lamp colour is
+        // something an author picks by eye, not a decimal they compute.
+        const tint = p.tint ? new THREE.Color(p.tint).getHex() : 0xb9c6d8;
+        const loaded = media?.get(entity.id);
+        const source = loaded?.texture
+          ? { texture: loaded.texture, update: () => {}, dispose: () => {} }
+          : createGeneratedVideoTexture(rng.fork(entity.id), { size: 320 });
+        this._animated.push({ ...source, spaceId: space.id, update: source.update, dispose: source.dispose });
+
+        const projection = buildProjection({
+          size: [w, h],
+          texture: source.texture,
+          mask: projectionMask({ aspect: w / h, feather: p.feather ?? 0.16, vignette: p.vignette ?? 0.42 }),
+          floorMask: projectionFloorMask({
+            aspect: (w * 1.08) / (h * 1.15),
+            feather: p.feather ?? 0.16,
+            reach: p.reflectionReach ?? 0.72
+          }),
+          textTexture: p.text ? projectionTextTexture(p.text, { aspect: w / h, scale: p.textScale ?? 0.1 }) : null,
+          intensity: p.intensity ?? 1,
+          spill: p.spill ?? 1,
+          reflection: p.reflection ?? 0.5,
+          keystone: p.keystone ?? 0.035,
+          tint
+        });
+
+        const group = new THREE.Group();
+        group.add(projection);
+
+        // The reflection lies on the floor, so it belongs at floor level. Its
+        // reach into the room is the builder's business; only the drop from the
+        // anchor down to the boards is ours.
+        const floorEcho = projection.userData.reflection;
+        if (floorEcho) floorEcho.position.y = -anchor.position[1] + 0.014;
+
+        // One real light, so the room is genuinely affected rather than just
+        // painted on. Weak and wide: the wall does the work, this only makes
+        // the floor and the return walls acknowledge it.
+        const cast = new THREE.PointLight(tint, (p.spill ?? 1) * 1.6, 7.5, 2);
+        cast.position.set(0, 0, 1.1);
+        group.add(cast);
+
+        const label = buildLabel({ texture: labelTexture(entity.content, { dark, width: 384 }) });
+        label.position.set(w / 2 + 0.32, -h * 0.34, 0.004);
         group.add(label);
 
         this._orient(group, anchor);

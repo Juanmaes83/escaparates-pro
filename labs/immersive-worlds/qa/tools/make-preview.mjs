@@ -64,6 +64,8 @@ const STATES = [
   ['museum:journey-crossed', '⑦ Cruzado — cámara oscura'],
   ['museum:journey-noche', '⑧ Acompañado — Noche de invierno'],
   ['museum:guide-released', '⑨ Solo con la obra'],
+  ['museum:journey-proyeccion', '⑩ Acompañado — la proyección'],
+  ['museum:proyeccion-permanencia', '⑪ Permanencia — quedarse con la luz'],
   ['museum:gallery-a-overview', 'Galería A — eje'],
   ['museum:gallery-a-oblique', 'Galería A — diagonal'],
   ['museum:artwork-horizonte-focus', 'Foco: Horizonte interrumpido'],

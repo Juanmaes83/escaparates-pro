@@ -347,6 +347,88 @@ async function main() {
       media.fallback === true && media.kind === 'GENERATED');
     evidence.performance.media = media.report;
 
+    /* -- projection is a representation, not a fixture ----------------------- */
+    // The whole risk of GRAFT 01 is building "the Cuaderno de luz effect"
+    // instead of PROJECTION as an entity kind. This check refuses that: the
+    // field's geometry has to come from entity.size, its light from
+    // content.projection, and its image from content.media.src — so a second
+    // projection authored with different data has to come out different.
+    const projection = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      const entity = rt.store.get('entity.video.cuaderno-de-luz');
+      let field = null;
+      rt.sceneKit.scene.traverse((object) => {
+        if (object.name === 'projection' && !field) field = object.children[0];
+      });
+      const params = field?.geometry?.parameters ?? {};
+      const src = field?.material?.map?.image?.currentSrc
+        ?? field?.material?.map?.image?.src ?? '';
+
+      const builders = await import('./scene-kits/museum/builders.js');
+      const textures = await import('./scene-kits/museum/textures.js');
+      const make = (size, cfg) => builders.buildProjection({
+        size,
+        texture: field?.material?.map ?? null,
+        mask: textures.projectionMask({ aspect: size[0] / size[1], feather: cfg.feather }),
+        floorMask: textures.projectionFloorMask({ aspect: size[0] / size[1], feather: cfg.feather }),
+        intensity: cfg.intensity,
+        spill: cfg.spill,
+        reflection: cfg.reflection,
+        keystone: cfg.keystone,
+        tint: cfg.tint
+      });
+      const a = make([4.6, 2.6], { intensity: 0.86, spill: 0.62, reflection: 0.46, keystone: 0.038, feather: 0.1, tint: 0xc8bba6 });
+      const b = make([7.2, 3.1], { intensity: 0.4, spill: 0.2, reflection: 0.9, keystone: 0.14, feather: 0.3, tint: 0x4466ff });
+
+      const read = (group) => ({
+        width: group.children[0].geometry.parameters.width,
+        colour: group.children[0].material.color.getHexString(),
+        // the keystone is baked into the vertices, so the widened top edge is
+        // the only place it can be measured
+        topWidth: +(group.children[0].geometry.attributes.position.getX(1) * 2).toFixed(4),
+        reflects: Boolean(group.userData.reflection)
+      });
+      const read_a = read(a);
+      const read_b = read(b);
+      a.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
+      b.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
+
+      return {
+        kind: entity?.kind,
+        declaredSize: entity?.size,
+        declaredSrc: entity?.content?.media?.src ?? '',
+        builtWidth: params.width,
+        builtHeight: params.height,
+        mapSrc: src,
+        // a projection has no object in front of the wall: no frame, no bezel,
+        // nothing with thickness
+        boxes: (() => {
+          let n = 0;
+          rt.sceneKit.scene.traverse((o) => {
+            if (o.name === 'projection') o.traverse((c) => { if (c.geometry?.type === 'BoxGeometry') n += 1; });
+          });
+          return n;
+        })(),
+        variantA: read_a,
+        variantB: read_b
+      };
+    });
+    const fromData = projection.kind === 'PROJECTION'
+      && projection.builtWidth === projection.declaredSize?.[0]
+      && projection.builtHeight === projection.declaredSize?.[1]
+      && projection.mapSrc.endsWith(projection.declaredSrc.replace(/^\.\.\//, ''));
+    const configurable = projection.variantA.width !== projection.variantB.width
+      && projection.variantA.colour !== projection.variantB.colour
+      && projection.variantA.topWidth !== projection.variantB.topWidth;
+    check('PROJECTION-FROM-DATA', 'La proyección toma tamaño, luz e imagen del mundo, no de una constante',
+      fromData && configurable,
+      `${projection.builtWidth}×${projection.builtHeight} m, media ${projection.mapSrc.split('/').pop()}, `
+      + `variantes ${projection.variantA.width}/${projection.variantB.width} m y `
+      + `${projection.variantA.colour}/${projection.variantB.colour}`);
+    check('PROJECTION-NO-PANEL', 'La proyección no monta ningún objeto en el muro: sin marco, sin bisel, sin pantalla',
+      projection.boxes === 0, `${projection.boxes} volúmenes en el grupo`);
+    evidence.performance.projection = projection;
+
     /* -- warmup actually compiles ------------------------------------------- */
     const warm = await page.evaluate(() => window.__IW.runtime.sceneKit.renderStats());
     check('WARMUP-COMPILES', 'El warmup compila programas de verdad, no una escena vacía',

@@ -480,3 +480,143 @@ export function createGeneratedVideoTexture(rng, { size = 256 } = {}) {
     }
   };
 }
+
+/**
+ * Feather mask for a projected field.
+ *
+ * The single thing that separates light thrown onto a wall from a picture stuck
+ * to it is the edge. A projector's field falls off — softly at the sides, more
+ * sharply where the lens is focused — and it never ends in a crisp rectangle.
+ * This is the alpha the projection is drawn through, and without it the graft
+ * fails on the first frame no matter how good the blending is.
+ *
+ * @param {{size?:number, aspect?:number, feather?:number, vignette?:number}} spec
+ */
+export function projectionMask({ size = 512, aspect = 1.78, feather = 0.16, vignette = 0.42 } = {}) {
+  const w = size;
+  const h = Math.max(2, Math.round(size / aspect));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // A soft-edged rectangle: full strength in the middle, falling to nothing at
+  // the border. Built as two gradients rather than a blur so it stays cheap and
+  // deterministic.
+  const inset = feather;
+  const horizontal = ctx.createLinearGradient(0, 0, w, 0);
+  horizontal.addColorStop(0, '#000');
+  horizontal.addColorStop(inset, '#fff');
+  horizontal.addColorStop(1 - inset, '#fff');
+  horizontal.addColorStop(1, '#000');
+  ctx.fillStyle = horizontal;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.globalCompositeOperation = 'multiply';
+  const vertical = ctx.createLinearGradient(0, 0, 0, h);
+  vertical.addColorStop(0, '#000');
+  vertical.addColorStop(inset * aspect * 0.6, '#fff');
+  vertical.addColorStop(1 - inset * aspect * 0.6, '#fff');
+  vertical.addColorStop(1, '#000');
+  ctx.fillStyle = vertical;
+  ctx.fillRect(0, 0, w, h);
+
+  // Lens vignette: the corners of a thrown field are always dimmer than its
+  // centre, and that gradient is most of why the eye reads "beam" and not "panel".
+  const radial = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.hypot(w, h) / 2);
+  radial.addColorStop(0, '#ffffff');
+  radial.addColorStop(0.62, '#ffffff');
+  radial.addColorStop(1, `rgba(0,0,0,${vignette})`);
+  ctx.fillStyle = radial;
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.NoColorSpace;
+  return texture;
+}
+
+/**
+ * The alpha ramp for the light a projection throws onto the floor.
+ *
+ * Deliberately *not* the field mask. The field is brightest in the middle and
+ * dims at every border, which is right for a beam on a wall and wrong for a
+ * bounce on a floor: run the field mask flat and the reflection reads as a
+ * detached puddle a metre out from the skirting, with a dark gap between it and
+ * the wall it is supposed to be coming from. A floor bounce is strongest where
+ * the wall meets the floor and dies out as it travels into the room.
+ *
+ * The V axis runs wall (v=0) to room (v=1) once the plane is laid flat and
+ * mirrored; the U axis keeps the field's own horizontal feather so the bounce
+ * is the same width as the beam above it.
+ */
+export function projectionFloorMask({ size = 512, aspect = 1.78, feather = 0.16, reach = 0.72 } = {}) {
+  const w = size;
+  const h = Math.max(2, Math.round(size / aspect));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const horizontal = ctx.createLinearGradient(0, 0, w, 0);
+  horizontal.addColorStop(0, '#000');
+  horizontal.addColorStop(feather, '#fff');
+  horizontal.addColorStop(1 - feather, '#fff');
+  horizontal.addColorStop(1, '#000');
+  ctx.fillStyle = horizontal;
+  ctx.fillRect(0, 0, w, h);
+
+  // Drawn bottom-to-top because the plane is mirrored and laid flat before it
+  // is sampled: with the default flipY, canvas bottom is v=0, and v=0 is the
+  // edge that ends up against the skirting.
+  ctx.globalCompositeOperation = 'multiply';
+  const away = ctx.createLinearGradient(0, h, 0, 0);
+  away.addColorStop(0, '#ffffff');
+  away.addColorStop(Math.min(0.9, reach * 0.35), 'rgba(255,255,255,0.55)');
+  away.addColorStop(1, '#000000');
+  ctx.fillStyle = away;
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.NoColorSpace;
+  return texture;
+}
+
+/**
+ * A caption carried *inside* the projected field.
+ *
+ * Taken from the source's `.dc-word` layer, which is its best authoring idea:
+ * text that lives on the projection plane shares the surface and its light
+ * rather than being burned into the media or floated over the room as UI.
+ */
+export function projectionTextTexture(text, { size = 1024, aspect = 1.78, color = '#ffffff', scale = 0.12 } = {}) {
+  const w = size;
+  const h = Math.max(2, Math.round(size / aspect));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `300 ${Math.round(h * scale)}px Georgia, 'Times New Roman', serif`;
+  const lines = String(text).split('\n');
+  const lead = h * scale * 1.35;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, w / 2, h / 2 + (i - (lines.length - 1) / 2) * lead);
+  });
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
