@@ -152,6 +152,12 @@ export class SceneKit {
   setEntityFocused(_entityId, _focused) {}
 
   /**
+   * Whether a staged guide has finished travelling. A kit with no guide says
+   * yes, so nothing ever waits on a representation it does not have.
+   */
+  guideSettled() { return true; }
+
+  /**
    * Where the guide is standing and what it is attending to, or `null` for no
    * guide at all.
    *

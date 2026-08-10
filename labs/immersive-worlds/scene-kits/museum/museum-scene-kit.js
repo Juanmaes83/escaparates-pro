@@ -984,6 +984,22 @@ export class MuseumSceneKit extends SceneKit {
     return Object.values(GUIDE_DESIGNS).map(({ id, label, height, heads }) => ({ id, label, height, heads }));
   }
 
+  /**
+   * Has the guide finished travelling to her staging?
+   *
+   * A presentation question with a presentation answer — no new state, just a
+   * reading of where she is against where she was sent. The Director uses it to
+   * avoid starting a composition that assumes she has arrived while she is
+   * still crossing the room.
+   */
+  guideSettled() {
+    const guide = this._guide;
+    if (!guide || guide.target.opacity === 0) return true;
+    const dx = guide.target.position[0] - guide.current.position[0];
+    const dz = guide.target.position[2] - guide.current.position[2];
+    return Math.hypot(dx, dz) < 0.12 && guide.current.opacity > 0.9;
+  }
+
   /** What a staging is attending to: an entity's anchor, or a room's centre. */
   _subjectPose(subjectRef) {
     if (!subjectRef) return null;

@@ -177,13 +177,39 @@ export class ExperienceDirector {
     this._returnSpaceId = null;
   }
 
-  /** @param {number} dt seconds */
+  /**
+   * @param {number} dt seconds
+   *
+   * A lead ends when the guide arrives, not when a number runs out.
+   *
+   * Its authored duration is a floor, because the walk it covers depends on how
+   * far the next stop is — and the composition that follows assumes she is
+   * standing at it. Advancing on the clock alone started the accompanied shot
+   * while she was still crossing the room, so the visitor was shown a
+   * "someone is presenting this to you" framing with nobody in it, and then a
+   * yield framing with her head still crossing the artwork. Waiting for the
+   * arrival is what makes the grammar repeatable rather than lucky.
+   *
+   * The wait is bounded: if a guide can never arrive — no representation, an
+   * unreachable anchor — the route must not stall, so past twice the authored
+   * duration the step advances regardless.
+   */
   update(dt) {
     if (this.transport !== TRANSPORT.PLAYING) return;
     const step = this.currentStep;
     if (!step) return;
     this.stepElapsed += dt;
-    if (this.stepElapsed >= step.duration) this._advance();
+    if (this.stepElapsed < step.duration) return;
+
+    if (this._waitsForGuide(step) && this.stepElapsed < step.duration * 2) {
+      if (this.ports.guideSettled && !this.ports.guideSettled()) return;
+    }
+    this._advance();
+  }
+
+  /** A step whose next composition depends on the guide having got there. */
+  _waitsForGuide(step) {
+    return step.shotIntent === SHOT_INTENT.LEAD && Boolean(step.guide);
   }
 
   _advance() {

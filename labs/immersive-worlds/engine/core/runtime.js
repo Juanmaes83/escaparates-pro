@@ -130,6 +130,7 @@ export class Runtime {
       ports: {
         framingFor: (subjectRef, intent, options) => this.framingFor(subjectRef, intent, options),
         stageGuide: (staging) => this.stageGuide(staging),
+        guideSettled: () => this.sceneKit.guideSettled?.() !== false,
         playShot: (pose, opts) => this.directed.playShot(pose, opts),
         snapTo: (pose) => this.directed.snapTo(pose),
         requestAuthority: (authority, opts) => this.camera.request(authority, opts),
@@ -446,6 +447,13 @@ export class Runtime {
   startLoop() {
     if (this._running) return;
     this._running = true;
+    // A hidden tab stops rendering; the time it was away is not time the
+    // visitor spent in the room, so the clock forgets it rather than charging
+    // the running step for it.
+    if (typeof document !== 'undefined' && !this._visibilityBound) {
+      this._visibilityBound = () => { if (!document.hidden) this.clock.resume(); };
+      document.addEventListener('visibilitychange', this._visibilityBound);
+    }
     const tick = (now) => {
       if (!this._running) return;
       const frameStart = performance.now();
@@ -460,6 +468,10 @@ export class Runtime {
 
   stopLoop() {
     this._running = false;
+    if (this._visibilityBound && typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this._visibilityBound);
+      this._visibilityBound = null;
+    }
     if (this._rafHandle) cancelAnimationFrame(this._rafHandle);
     this._rafHandle = null;
   }
