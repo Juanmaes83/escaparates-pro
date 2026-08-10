@@ -26,9 +26,10 @@ import {
 } from './textures.js';
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
-  buildGuideFigure, buildLabel, buildPitchedRoof, buildPlinth, buildRoomShell,
+  buildLabel, buildPitchedRoof, buildPlinth, buildRoomShell,
   buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
+import { GUIDE_DESIGNS, buildGuideFigure, guideMaterials } from './guide.js';
 
 export class MuseumSceneKit extends SceneKit {
   /**
@@ -66,6 +67,8 @@ export class MuseumSceneKit extends SceneKit {
      * @type {{object:THREE.Object3D, target:{position:number[], yaw:number, opacity:number}, current:{position:number[], yaw:number, opacity:number}, staging:object|null}|null}
      */
     this._guide = null;
+    /** Which guide design language is built. Review-time choice, not product state. */
+    this._guideDesign = 'B';
   }
 
   /* == environment ========================================================== */
@@ -919,19 +922,7 @@ export class MuseumSceneKit extends SceneKit {
 
   _ensureGuide() {
     if (this._guide) return;
-    const object = buildGuideFigure({
-      // Dark, matte, warm enough to belong to the plaster rather than sit on
-      // top of it. No accent colour anywhere: the only saturated thing in the
-      // room is still the art.
-      material: new THREE.MeshStandardMaterial({ color: 0x2e2b27, roughness: 0.86, metalness: 0 }),
-      headMaterial: new THREE.MeshStandardMaterial({ color: 0x4a4139, roughness: 0.92, metalness: 0 })
-    });
-    object.visible = false;
-    object.traverse((node) => {
-      if (!node.material) return;
-      node.material.transparent = true;
-      node.material.opacity = 0;
-    });
+    const object = this._buildGuideObject(this._guideDesign);
     this.scene.add(object);
     this._guide = {
       object,
@@ -939,6 +930,44 @@ export class MuseumSceneKit extends SceneKit {
       target: { position: [0, 0, 0], yaw: 0, opacity: 0 },
       staging: null
     };
+  }
+
+  _buildGuideObject(design) {
+    const object = buildGuideFigure({ design, materials: guideMaterials(design) });
+    object.visible = false;
+    // Every material is cloned per figure, so fading one candidate cannot fade
+    // another, and so a design swap disposes cleanly.
+    object.traverse((node) => {
+      if (!node.material) return;
+      node.material = node.material.clone();
+      node.material.transparent = true;
+      node.material.opacity = 0;
+    });
+    return object;
+  }
+
+  /**
+   * Swap the guide's design language. Review scaffolding only — the visitor
+   * never sees this, and the semantic layer has no idea it exists.
+   */
+  setGuideDesign(design) {
+    if (!GUIDE_DESIGNS[design] || design === this._guideDesign) return this._guideDesign;
+    this._guideDesign = design;
+    if (this._guide) {
+      const previous = this._guide.object;
+      const next = this._buildGuideObject(design);
+      next.position.copy(previous.position);
+      next.rotation.y = previous.rotation.y;
+      this.scene.add(next);
+      this.scene.remove(previous);
+      disposeObject(previous);
+      this._guide.object = next;
+    }
+    return this._guideDesign;
+  }
+
+  guideDesigns() {
+    return Object.values(GUIDE_DESIGNS).map(({ id, label, height, heads }) => ({ id, label, height, heads }));
   }
 
   /** What a staging is attending to: an entity's anchor, or a room's centre. */

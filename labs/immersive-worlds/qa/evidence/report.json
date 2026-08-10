@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-08-10T10:32:59.715Z",
+  "startedAt": "2026-08-10T12:46:47.421Z",
   "states": {
     "museum:lobby-entry": {
       "space": "space.lobby",
@@ -17,11 +17,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 35,
-        "meanMs": 81.55,
-        "p50Ms": 4.2,
-        "p95Ms": 924.9,
-        "maxMs": 1174.8
+        "samples": 36,
+        "meanMs": 89.73,
+        "p50Ms": 5.4,
+        "p95Ms": 978.5,
+        "maxMs": 1107.8
       }
     },
     "museum:lobby-welcome": {
@@ -40,11 +40,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 35,
-        "meanMs": 36.72,
-        "p50Ms": 1.6,
-        "p95Ms": 414.7,
-        "maxMs": 519.4
+        "samples": 36,
+        "meanMs": 38.84,
+        "p50Ms": 1.5,
+        "p95Ms": 462.7,
+        "maxMs": 520
       }
     },
     "museum:gallery-a-overview": {
@@ -64,10 +64,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 130.1,
-        "p50Ms": 1.8,
-        "p95Ms": 1069.5,
-        "maxMs": 1149
+        "meanMs": 285.74,
+        "p50Ms": 2.3,
+        "p95Ms": 1234.8,
+        "maxMs": 6438
       }
     },
     "museum:artwork-horizonte-focus": {
@@ -87,10 +87,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 110.76,
-        "p50Ms": 1.6,
-        "p95Ms": 932.8,
-        "maxMs": 1021.8
+        "meanMs": 113.04,
+        "p50Ms": 1.7,
+        "p95Ms": 954.9,
+        "maxMs": 1033.1
       }
     },
     "museum:sculpture-detail": {
@@ -110,10 +110,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 144.58,
-        "p50Ms": 3.1,
-        "p95Ms": 1198.7,
-        "maxMs": 1424.6
+        "meanMs": 137.42,
+        "p50Ms": 2.7,
+        "p95Ms": 1105.1,
+        "maxMs": 1262.4
       }
     },
     "museum:gallery-a-oblique": {
@@ -133,10 +133,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 144.29,
-        "p50Ms": 12.3,
-        "p95Ms": 1143.9,
-        "maxMs": 1303.9
+        "meanMs": 147.54,
+        "p50Ms": 11.8,
+        "p95Ms": 1101.1,
+        "maxMs": 1398.4
       }
     },
     "museum:portal-a-b-before": {
@@ -156,10 +156,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 155.62,
-        "p50Ms": 16,
-        "p95Ms": 1162.8,
-        "maxMs": 1371.7
+        "meanMs": 135.13,
+        "p50Ms": 11.5,
+        "p95Ms": 1084.3,
+        "maxMs": 1284
       }
     },
     "museum:portal-a-b-after": {
@@ -179,10 +179,10 @@
       },
       "frame": {
         "samples": 44,
-        "meanMs": 126.59,
-        "p50Ms": 10.2,
-        "p95Ms": 862.8,
-        "maxMs": 1472.3
+        "meanMs": 110.08,
+        "p50Ms": 10.1,
+        "p95Ms": 812.4,
+        "maxMs": 1169.2
       }
     },
     "museum:archive-teleport": {
@@ -201,11 +201,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 36,
-        "meanMs": 97.04,
+        "samples": 37,
+        "meanMs": 88.25,
         "p50Ms": 1.2,
-        "p95Ms": 776.2,
-        "maxMs": 1010.2
+        "p95Ms": 681.8,
+        "maxMs": 1019.4
       }
     },
     "museum:guide-accompanied": {
@@ -214,21 +214,21 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.horizonte-interrumpido",
       "render": {
-        "drawCalls": 34,
-        "triangles": 3024,
+        "drawCalls": 41,
+        "triangles": 2992,
         "programs": 39,
-        "textures": 27,
-        "geometries": 176,
+        "textures": 31,
+        "geometries": 172,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 39,
-        "meanMs": 116.97,
-        "p50Ms": 1.7,
-        "p95Ms": 1012,
-        "maxMs": 1213
+        "meanMs": 128.54,
+        "p50Ms": 2.2,
+        "p95Ms": 1171.5,
+        "maxMs": 1248
       }
     },
     "museum:guide-handoff": {
@@ -240,18 +240,18 @@
         "drawCalls": 19,
         "triangles": 402,
         "programs": 38,
-        "textures": 30,
-        "geometries": 180,
+        "textures": 26,
+        "geometries": 181,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 42,
-        "meanMs": 109.17,
-        "p50Ms": 1.6,
-        "p95Ms": 905.3,
-        "maxMs": 1248.8
+        "samples": 41,
+        "meanMs": 125.05,
+        "p50Ms": 1.8,
+        "p95Ms": 1129.7,
+        "maxMs": 1221.7
       }
     },
     "museum:guide-released": {
@@ -263,18 +263,41 @@
         "drawCalls": 21,
         "triangles": 694,
         "programs": 38,
-        "textures": 26,
-        "geometries": 174,
+        "textures": 30,
+        "geometries": 170,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 41,
-        "meanMs": 100.54,
-        "p50Ms": 1.3,
-        "p95Ms": 913.3,
-        "maxMs": 964.6
+        "meanMs": 111.72,
+        "p50Ms": 1.7,
+        "p95Ms": 835.2,
+        "maxMs": 1337.2
+      }
+    },
+    "museum:guide-turnaround": {
+      "space": "space.gallery-a",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 45,
+        "triangles": 3630,
+        "programs": 39,
+        "textures": 30,
+        "geometries": 181,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 37,
+        "meanMs": 140.95,
+        "p50Ms": 2.9,
+        "p95Ms": 1250.9,
+        "maxMs": 1447.6
       }
     },
     "museum:guided-step-04": {
@@ -283,21 +306,21 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.horizonte-interrumpido",
       "render": {
-        "drawCalls": 73,
-        "triangles": 4599,
+        "drawCalls": 89,
+        "triangles": 5151,
         "programs": 39,
         "textures": 31,
-        "geometries": 178,
+        "geometries": 194,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 36,
-        "meanMs": 128,
-        "p50Ms": 2.1,
-        "p95Ms": 1070.8,
-        "maxMs": 1114.4
+        "meanMs": 139.67,
+        "p50Ms": 3.3,
+        "p95Ms": 1177.1,
+        "maxMs": 1257
       }
     },
     "museum:guided-completed": {
@@ -309,37 +332,37 @@
         "drawCalls": 33,
         "triangles": 1380,
         "programs": 29,
-        "textures": 33,
-        "geometries": 155,
+        "textures": 29,
+        "geometries": 159,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 44,
-        "meanMs": 115.12,
-        "p50Ms": 9.7,
-        "p95Ms": 1052.6,
-        "maxMs": 1237.5
+        "samples": 40,
+        "meanMs": 271.96,
+        "p50Ms": 11.6,
+        "p95Ms": 1147.1,
+        "maxMs": 7940
       }
     }
   },
   "performance": {
     "spaceTimings": {
       "space.lobby": {
-        "build": 204,
-        "warm": 3796,
-        "total": 4000
+        "build": 808,
+        "warm": 5086,
+        "total": 5894
       },
       "space.gallery-a": {
-        "build": 1900,
-        "warm": 6465,
-        "total": 8365
+        "build": 2554,
+        "warm": 8118,
+        "total": 10673
       },
       "space.gallery-b": {
-        "build": 4734,
-        "warm": 4015,
-        "total": 8749
+        "build": 5846,
+        "warm": 4383,
+        "total": 10229
       }
     },
     "media": {
@@ -347,16 +370,16 @@
       "loaded": 7,
       "failed": 0,
       "cached": 7,
-      "slowestMs": 4715,
+      "slowestMs": 5818,
       "failures": []
     },
     "desktop": {
       "frame": {
         "samples": 185,
-        "meanMs": 26.41,
+        "meanMs": 29.7,
         "p50Ms": 1.6,
-        "p95Ms": 4.2,
-        "maxMs": 1102.4
+        "p95Ms": 6.6,
+        "maxMs": 1433.5
       },
       "render": {
         "drawCalls": 43,
@@ -386,9 +409,9 @@
               "payload": {
                 "spaceId": "space.lobby",
                 "timings": {
-                  "build": 150,
-                  "warm": 3570,
-                  "total": 3720
+                  "build": 169,
+                  "warm": 3761,
+                  "total": 3929
                 }
               },
               "t": 1
@@ -467,9 +490,9 @@
               "payload": {
                 "spaceId": "space.gallery-a",
                 "timings": {
-                  "build": 1666,
-                  "warm": 4737,
-                  "total": 6403
+                  "build": 1830,
+                  "warm": 6987,
+                  "total": 8817
                 }
               },
               "t": 10
@@ -522,7 +545,7 @@
                 "spaceId": "space.gallery-a",
                 "behaviour": "CONTINUOUS",
                 "preparedOnDemand": true,
-                "waitedMs": 6396,
+                "waitedMs": 8811,
                 "source": "QA"
               },
               "t": 16
@@ -530,8 +553,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.noche-de-invierno",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
+                "entityId": "entity.artwork.marea-baja",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/marea-baja.jpg",
                 "kind": "IMAGE"
               },
               "t": 17
@@ -539,8 +562,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.marea-baja",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/marea-baja.jpg",
+                "entityId": "entity.artwork.noche-de-invierno",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
                 "kind": "IMAGE"
               },
               "t": 18
@@ -559,9 +582,9 @@
               "payload": {
                 "spaceId": "space.gallery-b",
                 "timings": {
-                  "build": 6040,
-                  "warm": 4620,
-                  "total": 10660
+                  "build": 6600,
+                  "warm": 5147,
+                  "total": 11748
                 }
               },
               "t": 20
@@ -658,7 +681,7 @@
       "id": "INV-ONE-CAMERA-WRITER",
       "claim": "Un único controlador de cámara autoritativo por frame",
       "pass": true,
-      "detail": "4 frames, 0 violaciones"
+      "detail": "2 frames, 0 violaciones"
     },
     {
       "id": "INV-HOTSPOT-NOT-PORTAL",
@@ -772,7 +795,7 @@
       "id": "MEDIA-LOADED",
       "claim": "Las obras se cargan desde archivos propios declarados en el mundo",
       "pass": true,
-      "detail": "7 archivos, 0 fallos, más lento 4715 ms"
+      "detail": "7 archivos, 0 fallos, más lento 5818 ms"
     },
     {
       "id": "MEDIA-FALLBACK",
@@ -784,7 +807,7 @@
       "id": "WARMUP-COMPILES",
       "claim": "El warmup compila programas de verdad, no una escena vacía",
       "pass": true,
-      "detail": "50 programas compilados"
+      "detail": "45 programas compilados"
     },
     {
       "id": "DETAIL-NAVIGATION",
@@ -826,13 +849,13 @@
       "id": "STATES-DETERMINISTIC",
       "claim": "Todos los estados nombrados se reproducen y capturan",
       "pass": true,
-      "detail": "14/14 estados"
+      "detail": "15/15 estados"
     },
     {
       "id": "PERF-CAPTURED",
       "claim": "Medición de rendimiento capturada (SwiftShader, sin GPU)",
       "pass": true,
-      "detail": "p50 1.6 ms · p95 4.2 ms · 43 draws · 1821 tris"
+      "detail": "p50 1.6 ms · p95 6.6 ms · 43 draws · 1821 tris"
     },
     {
       "id": "MOBILE-TIER",
@@ -904,7 +927,7 @@
     },
     "spaces": 2
   },
-  "finishedAt": "2026-08-10T10:58:33.557Z",
+  "finishedAt": "2026-08-10T13:14:21.575Z",
   "summary": {
     "total": 46,
     "failed": 0,

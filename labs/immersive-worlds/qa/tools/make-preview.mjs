@@ -65,6 +65,7 @@ const STATES = [
   ['museum:guide-accompanied', 'GUÍA — acompañado (sobre el hombro)'],
   ['museum:guide-handoff', 'GUÍA — cesión'],
   ['museum:guide-released', 'GUÍA — visitante solo'],
+  ['museum:guide-turnaround', 'GUÍA — vuelta de personaje'],
   ['museum:guided-step-04', 'Recorrido comentado — parada 4'],
   ['museum:lobby-entry', 'Vestíbulo']
 ];
@@ -217,6 +218,24 @@ async function settleCamera() {
     if (i > 4 && moved < 0.0008 && window.__IW.runtime.camera.owner !== 'TRANSITION') return;
   }
 }
+
+// Candidate selector — review scaffolding only. The visitor never sees this and
+// nothing semantic knows it exists; it swaps the Scene Kit's guide geometry so
+// three design languages can be judged under identical light and staging.
+const designs = document.createElement('div');
+designs.style.cssText = 'margin-top:8px;padding-top:8px;border-top:1px solid rgba(240,236,228,.14)';
+designs.innerHTML = '<h2>Diseño del guía</h2>';
+for (const d of window.__IW.runtime.sceneKit.guideDesigns()) {
+  const button = document.createElement('button');
+  button.textContent = d.id + ' · ' + d.label + ' · ' + Math.round(d.height * 100) + ' cm';
+  button.onclick = () => {
+    window.__IW.runtime.sceneKit.setGuideDesign(d.id);
+    for (const other of designs.querySelectorAll('button')) other.style.borderColor = 'rgba(240,236,228,.2)';
+    button.style.borderColor = 'rgba(240,236,228,.75)';
+  };
+  designs.appendChild(button);
+}
+panel.appendChild(designs);
 
 addEventListener('keydown', (event) => {
   if (event.code === 'KeyP') panel.hidden = !panel.hidden;

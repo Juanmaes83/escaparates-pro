@@ -138,3 +138,36 @@ The likely next candidates are `gauntlet-loop` and `unslop`, whose value is
 methodology and tooling rather than runtime code, and `Claude-of-Duty` for its
 capture and image-diff harness — where a permissive licence would let us replace
 our hand-rolled QA runner with something more mature.
+
+---
+
+## img2threejs — character construction methodology (Pass 1B)
+
+| | |
+|---|---|
+| Source | `github.com/juanmaes83/img2threejs`, shallow clone, verified `LICENSE` at repo root |
+| Licence | **Apache-2.0** — read from the file, not inferred |
+| Evidence | `LICENSE` line 1 reads "Apache License / Version 2.0, January 2004"; `SKILL.md` front matter declares `license: Apache-2.0` |
+| Conclusion | Compatible with commercial use. Attribution and notice retention required |
+| Mode | **Methodology only. No code, no assets, no text reproduced.** |
+| Used in | `labs/immersive-worlds/scene-kits/museum/guide.js` |
+
+Three ideas were extracted and reimplemented independently:
+
+1. the **head-unit proportion scaffold** — its L-1 "Proportion Scaffold" layer. Every
+   landmark on the guide (chin, shoulder, chest, waist, hip, knee, ankle, shoulder width)
+   derives from a single head-height unit instead of being guessed individually;
+2. its **layer ontology**, reduced to the three layers a standing clothed figure needs:
+   core volume, garment shells offset over that volume, and isolates lying inside one
+   region. This is what put the jacket and apron *over* the torso rather than replacing it;
+3. its **staged pass order** — blockout → structure → form → material → lighting — and its
+   observation that the head is where proportion error is least forgiving, which is why the
+   head is built from a profile rather than a primitive.
+
+Deliberately **not** used: SDF / marching-cubes surface construction, skinning and rig
+weight solving, and the vision-correction loop. A figure that never deforms needs none of
+it, and importing that machinery to solve a silhouette is the architectural overkill the
+pass explicitly forbids.
+
+Since no source is reproduced, the Apache-2.0 attribution obligation is met by this entry
+and by the header of `guide.js`.

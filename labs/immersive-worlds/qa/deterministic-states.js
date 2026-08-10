@@ -128,6 +128,20 @@ export const DETERMINISTIC_STATES = {
     }
   },
 
+  'museum:guide-turnaround': {
+    description: 'Vuelta de personaje: el guía aislado en la sala, para comparar diseños bajo la misma luz.',
+    async apply(runtime) {
+      await runtime.traversePortal('portal.lobby-gallery-a', { source: 'QA' });
+      runtime.sceneKit.setGuideStaging({
+        anchorId: 'anchor.gallery-a.guide-horizonte',
+        subjectRef: 'entity.artwork.horizonte-interrumpido'
+      });
+      await settleGuide(runtime);
+      // Standing distance, eye height, square to the figure.
+      runtime.explore.setPose({ position: [-2.5, 1.5, -10.55], yaw: Math.PI, pitch: -0.04 });
+    }
+  },
+
   'museum:guided-step-04': {
     description: 'Recorrido comentado detenido en la parada 4: cámara bajo autoridad DIRECTED.',
     async apply(runtime) {
