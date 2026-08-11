@@ -124,11 +124,17 @@ async function main() {
       const expectedRef = step.subjectRef || null;
       const expected = expectedRef ? rt.store.entities.find((e) => e.id === expectedRef) : null;
       const anchorPose = expected ? rt.sceneKit._anchorPoses.get(expected.anchorId) : null;
+      // Measure against the subject's optical centre, not its anchor: a plinth
+      // anchor sits on the floor, and comparing to it reported 1.46 m of drift on
+      // sculpture shots that were aimed exactly right.
+      const subjectPoint = anchorPose && expected
+        ? rt.sceneKit._subjectCentre(anchorPose, { size: expected.size })
+        : anchorPose?.position;
       const target = rt.camera.pose.target;
       // Distance from where the camera is aimed to where the beat's own subject
       // actually hangs. A large drift means the shot is framing something else.
-      const targetDrift = anchorPose
-        ? Math.hypot(target[0] - anchorPose.position[0], target[1] - anchorPose.position[1], target[2] - anchorPose.position[2])
+      const targetDrift = subjectPoint
+        ? Math.hypot(target[0] - subjectPoint[0], target[1] - subjectPoint[1], target[2] - subjectPoint[2])
         : null;
 
       const vis = (fig) => (fig?.object?.visible && fig.current.opacity > 0.5 ? 'presente' : 'ausente');

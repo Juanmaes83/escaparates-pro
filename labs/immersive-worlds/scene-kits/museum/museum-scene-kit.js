@@ -889,15 +889,20 @@ export class MuseumSceneKit extends SceneKit {
         -approach[0] * Math.sin(swing) + approach[2] * Math.cos(swing)
       ];
       const centre = this._subjectCentre(anchor, record);
+      // The detail beat inspects the *whole* volume from an angle — it is not a
+      // macro crop. Framing a fraction of the subject, as a wall work's detail
+      // does, put the camera so close that an 88 cm vessel filled the frame and
+      // lost its rim, which destroys the very scale the previous beat just
+      // established.
       const pose = framePose(
         { position: centre, normal: facing },
-        { width: Math.max(w, 0.8) * (detail ? 0.55 : 1), height: h * (detail ? 0.6 : 1.35) },
+        { width: Math.max(w, 0.8) * (detail ? 1.15 : 1), height: h * (detail ? 1.3 : 1.35) },
         viewport,
-        { fill: detail ? 0.8 : 0.6, min: 1.1, max: 7 }
+        { fill: detail ? 0.52 : 0.6, min: 1.4, max: 7 }
       );
-      // Slightly above the rim for the detail beat: a vessel read from eye level
-      // hides its own opening.
-      if (detail) pose.position[1] += h * 0.30;
+      // A little above the rim: a vessel read from dead-on eye level hides its
+      // own opening, and the opening is half of what a vessel is.
+      if (detail) pose.position[1] += h * 0.22;
       return { ...pose, subjectSize: record.size };
     }
 
@@ -1294,7 +1299,15 @@ export class MuseumSceneKit extends SceneKit {
     const need = span / (2 * Math.tan(hfov / 2) * (narrow ? 0.5 : 0.6));
     // Always further out than the guide: the camera watches the arrival, and
     // standing closer than she does would make her a foreground obstruction.
-    const back = Math.min(Math.max(need, guideOut + 2.9, 5), 12);
+    //
+    // A free-standing piece needs its own numbers. Standing off a plinth by the
+    // distance a 2.6 m canvas wants sent the camera clean through the south wall
+    // of the gallery — the work is small, it sits in the middle of the room, and
+    // there is no six metres of floor behind it to retreat into.
+    const freeStanding = isFloorAnchor(anchor);
+    const back = freeStanding
+      ? Math.min(Math.max(need, guideOut + 1.6), 6)
+      : Math.min(Math.max(need, guideOut + 2.9, 5), 12);
 
     // Between the work and the guide, biased to the work, so the two separate in
     // frame instead of stacking along the sightline.
@@ -1402,7 +1415,11 @@ export class MuseumSceneKit extends SceneKit {
     // visitor filled half the frame and read as a giant beside the work; the
     // point of the beat is that a person gives the painting its scale, which
     // only happens when both are seen at comparable depth.
-    const back = Math.min(Math.max(need, outward + 4.2, 4.8), 11);
+    //
+    // Except at a plinth, where the same clamp put the camera outside the room.
+    const back = isFloorAnchor(anchor)
+      ? Math.min(Math.max(need, outward + 1.4), 5.5)
+      : Math.min(Math.max(need, outward + 4.2, 4.8), 11);
 
     // Centred between the work and the figure, so neither is dead centre and the
     // gap between them — which is what "a person looking at this" actually looks
