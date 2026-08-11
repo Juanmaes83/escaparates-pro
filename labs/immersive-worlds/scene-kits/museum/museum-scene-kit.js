@@ -1400,8 +1400,19 @@ export class MuseumSceneKit extends SceneKit {
     if (!figure) return null;
 
     const [w, h] = record.size;
-    const out = this._facingFor(anchor, figure.position);
     const centre = this._subjectCentre(anchor, record);
+    // A hung work is seen from in front of its wall. A free-standing piece has no
+    // front, and standing where the visitor stands puts them between the camera
+    // and the object — which is why a constant sideways nudge only shoved the
+    // whole composition into a corner. The camera instead stands *across* the
+    // line between person and object, so both are broadside at the same depth.
+    // That side-by-side reading is what human scale means for a sculpture.
+    const toFigure = vec3.normalize([
+      figure.position[0] - centre[0], 0, figure.position[2] - centre[2]
+    ]);
+    const out = isFloorAnchor(anchor)
+      ? [-toFigure[2], 0, toFigure[0]]
+      : this._facingFor(anchor, figure.position);
     const lateral = [-out[2], 0, out[0]];
 
     // Frame the pair, not the wall.
@@ -1437,9 +1448,7 @@ export class MuseumSceneKit extends SceneKit {
     // Centred between the work and the figure, so neither is dead centre and the
     // gap between them — which is what "a person looking at this" actually looks
     // like — is the middle of the frame.
-    // Same reasoning as the arrival beat: at a plinth the figure's lateral offset
-    // is zero by construction, so the camera supplies the separation itself.
-    const midSideways = isFloorAnchor(anchor) ? 1.25 : sideways * 0.42;
+    const midSideways = sideways * 0.42;
     const position = [
       centre[0] + out[0] * back + lateral[0] * midSideways,
       1.58,

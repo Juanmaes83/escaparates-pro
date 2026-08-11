@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-11T18:56:04.952Z",
+ "generatedAt": "2026-08-11T19:17:36.864Z",
  "captureType": "CURRENT_CANONICAL",
  "viewport": "1440x900",
  "consoleErrors": [],
@@ -598,16 +598,16 @@
    "visitor": "ausente",
    "authority": "DIRECTED",
    "position": [
-    1.99,
+    1.07,
     1.72,
-    -5.38
+    -6.69
    ],
    "target": [
-    4.3,
+    4.1,
     1.52,
-    -7
+    -7.29
    ],
-   "targetDrift": 0.06,
+   "targetDrift": 0.35,
    "role": "A",
    "file": "stop06_A_lead_06h-lleva-vasija.png",
    "captureType": "CURRENT_CANONICAL"
@@ -662,16 +662,16 @@
    "visitor": "presente",
    "authority": "DIRECTED",
    "position": [
-    1.79,
+    1.35,
     1.58,
-    -6.06
+    -7.23
    ],
    "target": [
-    4.3,
+    3.86,
     1.44,
-    -7
+    -8.17
    ],
-   "targetDrift": 0.02,
+   "targetDrift": 1.25,
    "role": "C",
    "file": "stop06_C_contemplation_06j-vasija-escala.png",
    "captureType": "CURRENT_CANONICAL"
