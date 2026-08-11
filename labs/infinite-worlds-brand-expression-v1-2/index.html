@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Infinite Worlds — Brand Expression Production V1.2.1</title>
+  <title>Infinite Worlds — Brand Expression V1.2.2</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div class="vignette"></div>
 
   <header class="hud-top">
-    <div class="brand">INFINITE WORLDS <span>/ BRAND EXPRESSION V1.2.1</span></div>
+    <div class="brand">INFINITE WORLDS <span>/ BRAND EXPRESSION V1.2.2</span></div>
     <div class="hud-actions">
       <button id="audioToggle" class="ghost-button">SOUND OFF</button>
       <button id="previewToggle" class="ghost-button">PREVIEW MODE</button>
@@ -35,7 +35,7 @@
       <label>City grade<select id="cityGrade"><option value="industrial">Industrial Blue</option><option value="noir">Polluted Noir</option><option value="cold">Cold Steel</option><option value="original">Original V1</option></select></label>
       <label>Nature grade<select id="natureGrade"><option value="living">Living Green</option><option value="golden">Golden Valley</option><option value="emerald">Emerald Dream</option><option value="original">Original V1</option></select></label>
     </section>
-    <section><h3>Brand expression</h3><p>Preparing production-safe world expressions…</p></section>
+    <section><h3>Brand expression</h3><p>Preparing art-directed world expressions…</p></section>
     <section>
       <h3>Portal appearance</h3>
       <label>Preset<select id="portalPreset"><option value="original">Original</option><option value="glass">Clean Glass</option><option value="liquid">Liquid</option><option value="energy">Energy</option><option value="dream">Dream</option><option value="organic">Organic</option></select></label>
@@ -49,7 +49,7 @@
       <label class="check"><input id="spatialAudio" type="checkbox" checked /> Spatial sound</label>
       <label class="check"><input id="portalLeak" type="checkbox" checked /> Portal acoustic leakage</label>
     </section>
-    <button id="resetAll" class="reset-button">RESET V1.2.1 CUSTOMIZATION</button>
+    <button id="resetAll" class="reset-button">RESET V1.2.2 CUSTOMIZATION</button>
     <div style="display:none" aria-hidden="true">
       <select id="brandWorld"><option value="city">city</option><option value="nature">nature</option></select>
       <input id="imageUpload" type="file" /><input id="videoUpload" type="file" /><input id="logoUpload" type="file" />
@@ -59,7 +59,7 @@
   </aside>
 
   <div id="introCurtain" class="intro-curtain"><div><small>INFINITE WORLDS</small><strong>THE GREY CITY</strong><span>One brand. Two worlds. Two expressions.</span><button id="skipIntro">SKIP</button></div></div>
-  <div id="loading"><div class="loading-copy"><strong>BUILDING TWO WORLDS</strong><span>Preparing Brand Expression Production Pass…</span></div></div>
+  <div id="loading"><div class="loading-copy"><strong>BUILDING TWO WORLDS</strong><span>Preparing Brand Expression V1.2.2…</span></div></div>
 
   <script type="x-shader/x-vertex" id="vertexShader">precision highp float;varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}</script>
   <script type="x-shader/x-fragment" id="fragmentShader">
@@ -69,10 +69,10 @@
     void main(){vec2 centered=vUv-.5;float angle=atan(centered.y,centered.x);float l=length(centered);float u=angle*2./TAU+time*.1*portalSpeed;float v=fract(l+time*.2*portalSpeed);vec4 noise=texture2D(noiseMap,vec2(u,v));float noiseDisp=noise.r*noise.g*4.*effectMultiplier;float pnt=sin(2.*l*PI*waveCount+noiseDisp+time*5.*portalSpeed)*l;float dx=pnt*cos(angle),dy=pnt*sin(angle);vec4 color=texture2D(map,vUv+vec2(dx,dy)*l*.3*effectIntensity*effectMultiplier*distortion);color*=1.+pnt*.5*effectIntensity;float highlight=smoothstep(.0,.2,dx*dy);color+=highlight*effectIntensity*edgeGlow;float grey=dot(color.rgb,vec3(.299,.587,.114));color.rgb=mix(color.rgb,vec3(grey),effectIntensity*l*effectMultiplier*.8);color.r+=smoothstep(.1,.7,l)*.5*effectIntensity*fringe;color.rgb=mix(color.rgb,color.rgb*tint,tintAmount*smoothstep(.18,.72,l));gl_FragColor=linearToOutputTexel(color);}
   </script>
   <script>
-    // Deterministic world generation for repeatable art direction across reloads.
     (()=>{let a=0x1a2b3c4d;Math.random=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};})();
   </script>
   <script type="module" src="./brand-expression-production-v1-2-1.js"></script>
+  <script type="module" src="./art-direction-first-cross-v1-2-2.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
