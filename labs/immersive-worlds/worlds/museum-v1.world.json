@@ -1588,6 +1588,9 @@
     {
       "id": "step.01-entrada",
       "chapterId": "chapter.vestibulo",
+      "tourStep": {
+        "title": "Bienvenida"
+      },
       "subjectRef": "space.lobby",
       "shotIntent": "ENTRY",
       "duration": 6,
@@ -1601,6 +1604,9 @@
     {
       "id": "step.02-paso-galeria-a",
       "chapterId": "chapter.horizontes",
+      "tourStep": {
+        "title": "Horizonte interrumpido"
+      },
       "subjectRef": "space.gallery-a",
       "shotIntent": "PORTAL",
       "duration": 3,
@@ -1649,6 +1655,9 @@
     {
       "id": "step.05-lleva-division",
       "chapterId": "chapter.horizontes",
+      "tourStep": {
+        "title": "División tercera"
+      },
       "subjectRef": "entity.artwork.division-tercera",
       "shotIntent": "LEAD",
       "duration": 7,
@@ -1683,6 +1692,9 @@
     {
       "id": "step.07-lleva-umbral",
       "chapterId": "chapter.camara-oscura",
+      "tourStep": {
+        "title": "La cámara oscura"
+      },
       "subjectRef": "space.gallery-a",
       "shotIntent": "LEAD",
       "duration": 7,
@@ -1707,6 +1719,9 @@
     {
       "id": "step.09-lleva-noche",
       "chapterId": "chapter.camara-oscura",
+      "tourStep": {
+        "title": "Noche de invierno"
+      },
       "subjectRef": "entity.artwork.noche-de-invierno",
       "shotIntent": "LEAD",
       "duration": 7,
@@ -1742,6 +1757,9 @@
     {
       "id": "step.10c-lleva-cuaderno",
       "chapterId": "chapter.camara-oscura",
+      "tourStep": {
+        "title": "Cuaderno de luz"
+      },
       "subjectRef": "entity.video.cuaderno-de-luz",
       "shotIntent": "LEAD",
       "duration": 7,
@@ -1776,6 +1794,9 @@
     {
       "id": "step.11-cierre",
       "chapterId": "chapter.camara-oscura",
+      "tourStep": {
+        "title": "Cierre"
+      },
       "subjectRef": "space.gallery-b",
       "shotIntent": "EXIT",
       "duration": 6,

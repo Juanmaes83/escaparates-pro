@@ -175,23 +175,27 @@ export const DETERMINISTIC_STATES = {
   },
 
   'museum:guided-step-04': {
-    description: 'Recorrido comentado detenido en la parada 4: cámara bajo autoridad DIRECTED.',
+    description: 'Recorrido comentado detenido en la parada canónica 04 «La cámara oscura», bajo autoridad DIRECTED.',
+    // By canonical tour step, not by counting next() calls. Counting was a
+    // fourth ordering that silently retargeted whenever a beat was inserted
+    // before it — see TOUR_ORDER_AUDIT_BEFORE.md §5.
     async apply(runtime) {
-      runtime.startRoute('route.comentado');
-      // Advance to the fourth step without waiting out the authored durations.
-      for (let i = 0; i < 3; i += 1) {
-        runtime.experience.next();
-        await settleMicrotasks();
-      }
+      await runtime.goToTourStep('step.07-lleva-umbral');
       runtime.experience.pause();
+      await settleGuide(runtime);
     }
   },
 
   'museum:guided-completed': {
-    description: 'Recorrido terminado: la cámara vuelve al visitante y el estado del mundo conserva lo visitado.',
+    description: 'Recorrido terminado de verdad: se agotan todos los beats, la cámara vuelve al visitante y el mundo conserva lo visitado.',
+    // Previously advanced a hardcoded nine times, which stopped at parada 10 of
+    // 17 while still calling itself "completed". Now it runs until the Director
+    // itself reports the route finished.
     async apply(runtime) {
       runtime.startRoute('route.comentado');
-      for (let i = 0; i < 9; i += 1) {
+      runtime.experience.pause();
+      const total = runtime.experience.steps.length;
+      for (let i = 0; i <= total && runtime.experience.transport !== 'IDLE'; i += 1) {
         runtime.experience.next();
         await settleMicrotasks();
       }

@@ -23,6 +23,7 @@
 import { EVENTS } from '../core/event-bus.js';
 import { ACTION, CAMERA_AUTHORITY, SHOT_INTENT } from '../schema/types.js';
 import { EXPERIENCE_MODE } from '../world/world-state.js';
+import { buildTourManifest } from './tour-manifest.js';
 
 /**
  * @typedef {Object} ExperiencePorts
@@ -68,10 +69,115 @@ export class ExperienceDirector {
     this._returnPose = null;
     /** The Space that pose was measured in. Outside it, the pose means nothing. */
     this._returnSpaceId = null;
+    /** Canonical numbered tour, grouped from the same step array. */
+    this.manifest = null;
+    /** Set while a seek is replaying beats, so `update` does not race it. */
+    this._seeking = false;
   }
 
   get currentStep() {
     return this.steps[this.index] || null;
+  }
+
+  /* == canonical tour ======================================================= */
+
+  /**
+   * The numbered Tour Step the current beat belongs to.
+   *
+   * "Where am I" is answered at the granularity the visitor perceives, not at
+   * the granularity the Director executes. A lead, an accompanied shot and a
+   * yield are three beats of one moment, and reporting them as three positions
+   * is what turns a guided visit into a slide deck.
+   */
+  get currentTourStep() {
+    const beatId = this.currentStep?.id;
+    if (!beatId || !this.manifest) return null;
+    const ownerId = this.manifest.beatOwner.get(beatId);
+    return this.manifest.steps.find((step) => step.id === ownerId) || null;
+  }
+
+  /** 1-based canonical position, or 0 when no route is running. */
+  get tourOrder() {
+    return this.currentTourStep?.order || 0;
+  }
+
+  get tourTotal() {
+    return this.manifest?.steps.length || 0;
+  }
+
+  /**
+   * Go to a canonical Tour Step by its id.
+   *
+   * Truthful about what it is: **reconstruction, not seek.** The route is an
+   * authored forward timeline (Constitution §16 keeps a seekable one as SHOULD
+   * LATER), so reaching step 05 means executing beats 1..n with their dwell
+   * removed — portals really are traversed, spaces really are built, the guide
+   * really walks. Going backwards restarts and replays.
+   *
+   * It awaits each beat's own pending work rather than sleeping a fixed
+   * interval, so it is as fast as the world can actually be rebuilt and it
+   * cannot land a shot against geometry that does not exist yet.
+   *
+   * @param {string} tourStepId
+   * @returns {Promise<boolean>} whether the step was reached
+   */
+  async seekToTourStep(tourStepId) {
+    if (!this.manifest) return false;
+    const target = this.manifest.steps.find((step) => step.id === tourStepId);
+    if (!target) return false;
+
+    const alreadyAhead = this.transport === TRANSPORT.IDLE
+      || this.transport === TRANSPORT.COMPLETED
+      || this.index > target.firstBeatIndex;
+    if (alreadyAhead) {
+      this.start(this.routeId || this._lastRouteId, { returnPose: this._returnPose });
+    }
+
+    this._seeking = true;
+    this.pause();
+    try {
+      // Bounded by the route's own length: a beat that refuses to advance must
+      // not spin here forever.
+      for (let guard = 0; guard <= this.steps.length; guard += 1) {
+        if (this.index >= target.firstBeatIndex) break;
+        await this._advanceAndSettle();
+      }
+    } finally {
+      this._seeking = false;
+    }
+    this.stepElapsed = 0;
+    return this.index === target.firstBeatIndex;
+  }
+
+  /** Next canonical Tour Step. Cheap: it is forward, so it just replays beats. */
+  async nextTourStep() {
+    const next = this.currentTourStep?.nextId;
+    return next ? this.seekToTourStep(next) : false;
+  }
+
+  /** Previous canonical Tour Step. Restarts and replays — see `seekToTourStep`. */
+  async previousTourStep() {
+    const previous = this.currentTourStep?.previousId;
+    return previous ? this.seekToTourStep(previous) : false;
+  }
+
+  /**
+   * Advance one beat and wait for whatever that beat had to build.
+   *
+   * `_advance` fires an Action that may be a Portal traversal; its promise is
+   * the only honest signal that the next shot can be framed. Waiting on it is
+   * what lets a seek run at machine speed without the fixed sleeps the QA
+   * states had to use from outside.
+   */
+  async _advanceAndSettle() {
+    const before = this.index;
+    this._advance();
+    if (this._pendingStep) {
+      try { await this._pendingStep; } catch { /* already reported as ASSET_ERROR */ }
+    }
+    // Yield once so a shot queued in a microtask has landed.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    return this.index !== before;
   }
 
   get progress() {
@@ -86,8 +192,12 @@ export class ExperienceDirector {
   start(routeId, options = {}) {
     const route = this.store.require(routeId);
     this.routeId = routeId;
+    this._lastRouteId = routeId;
     this.steps = this.store.routeSteps(routeId);
     if (!this.steps.length) throw new Error(`[IW] route "${routeId}" has no story steps`);
+    // Grouped from the very array above, so the numbered tour and the executed
+    // timeline cannot be two different sequences.
+    this.manifest = buildTourManifest(this.store, routeId);
 
     this._returnPose = options.returnPose || null;
     // A pose is only meaningful in the Space it was measured in. Remember which
@@ -195,6 +305,7 @@ export class ExperienceDirector {
    * duration the step advances regardless.
    */
   update(dt) {
+    if (this._seeking) return;
     if (this.transport !== TRANSPORT.PLAYING) return;
     const step = this.currentStep;
     if (!step) return;
@@ -255,10 +366,13 @@ export class ExperienceDirector {
     // cannot be framed against geometry that does not exist yet, so a step whose
     // action returns a promise waits for it.
     if (pending && typeof pending.then === 'function') {
-      pending.then(() => this._applyShot(step)).catch((error) => {
+      // Kept on the instance so a seek can await exactly this beat's work instead
+      // of guessing at it with a timer.
+      this._pendingStep = pending.then(() => this._applyShot(step)).catch((error) => {
         this.bus.emit(EVENTS.ASSET_ERROR, { stepId: step.id, message: String(error?.message || error) });
       });
     } else {
+      this._pendingStep = null;
       this._applyShot(step);
     }
   }
@@ -298,7 +412,10 @@ export class ExperienceDirector {
       stepId: this.currentStep?.id || null,
       index: this.index,
       total: this.steps.length,
-      progress: Number(this.progress.toFixed(3))
+      progress: Number(this.progress.toFixed(3)),
+      tourStepId: this.currentTourStep?.id || null,
+      tourOrder: this.tourOrder,
+      tourTotal: this.tourTotal
     };
   }
 }

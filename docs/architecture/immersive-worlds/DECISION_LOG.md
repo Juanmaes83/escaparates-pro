@@ -499,6 +499,59 @@ mapping remain out of scope.
 
 ---
 
+## IW-DEC-028 — The tour has one order, and everything tour-facing derives from it
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Trigger**
+
+The Tour Control Pass. The review panel's ①…⑪ had drifted from the route it claimed
+to represent: the eleven badges landed on paradas 3, 4, 5, 6, 7, 9, 11, 12, 13, 15,
+16, and paradas 1, 2, 8, 10, 14 and 17 were unreachable from the panel at all. Two
+QA states reached a step by counting `next()` calls, and one of them —
+`museum:guided-completed` — had rotted into stopping at parada 10 of 17 while still
+calling itself the end of the tour. Full evidence in `TOUR_ORDER_AUDIT_BEFORE.md`.
+
+**Decision**
+
+1. **One authoritative order: `route.chapterRefs → chapter.stepRefs`.** It already
+   existed and the Experience Director already consumed it. Nothing else may hold a
+   sequence — not the panel, not a manifest file, not a test.
+
+2. **A Tour Step is a narrative moment; a beat is a StoryStep.** A beat opens a Tour
+   Step by carrying `tourStep: { title }`. The marker carries **no number**: the
+   number is its position in the filtered list, which makes contiguity structural
+   rather than maintained. Seven Tour Steps over seventeen beats.
+
+3. **Numbering every internal transition is forbidden.** A lead, an accompanied shot
+   and a yield are one moment. Making them three numbers would be a slide deck.
+
+4. **Direct jump is reconstruction, not seek, and is named that way in the UI and
+   the docs.** A seekable authored timeline stays SHOULD LATER (Constitution §16).
+   Backwards navigation restarts and replays; that cost is stated rather than hidden.
+
+5. **Reaching a step by counting `next()` calls is banned.** `runtime.goToTourStep(id)`
+   is the one door, for the panel, the keyboard and every test.
+
+6. **Tour navigation and QA/debug states are different information architecture.**
+   They may share a panel; they may not share a visual language or a list.
+
+**Consequences**
+
+`engine/experience/tour-manifest.js` groups the order and validates the closed-tour
+invariants. The Director gains `currentTourStep`, `nextTourStep`, `previousTourStep`
+and `seekToTourStep` — the first `previous` the tour has ever had. Twelve QA checks
+fail on any ordering regression, three of them by driving the real prototype end to
+end. The contract is written up in `MUSEUM_GUIDED_TOUR_CONTRACT.md`, including how to
+add Tour Step N+1 without touching anything derived.
+
+**Not decided here**
+
+Seekable timelines, tour branching, multiple routes per world, and any change to the
+shipped visitor HUD beyond what already existed.
+
+---
+
 # Architecture decisions awaiting review
 
 ## IW-ADR-001 — Semantic data and representation are separate

@@ -39,6 +39,7 @@ import { AuthorController } from '../camera/controllers/author-controller.js';
 import { ProximitySystem } from '../interaction/proximity.js';
 import { ActionDispatch } from '../interaction/action-dispatch.js';
 import { ExperienceDirector } from '../experience/experience-director.js';
+import { buildTourManifest } from '../experience/tour-manifest.js';
 import { assertSceneKitContract } from '../scenekit/scene-kit.js';
 import { ACTION, CAMERA_AUTHORITY, HOTSPOT_STATE, TRANSITION_BEHAVIOUR } from '../schema/types.js';
 
@@ -401,6 +402,41 @@ export class Runtime {
 
   exitRoute() {
     this.experience.exit({ restorePose: true, reason: 'visitor-exit' });
+  }
+
+  /** The world's primary route. One today; named rather than indexed by hand. */
+  get defaultRouteId() {
+    return this.store.all('ROUTE')[0]?.id || null;
+  }
+
+  /**
+   * The canonical numbered tour, available before the route has ever run.
+   *
+   * A panel has to draw the sequence at boot, and a test has to assert it
+   * without starting anything. Both read this; neither invents an order.
+   */
+  get tour() {
+    const routeId = this.experience.routeId || this.defaultRouteId;
+    if (!routeId) return null;
+    if (this.experience.manifest?.routeId === routeId) return this.experience.manifest;
+    if (this._tourManifest?.routeId !== routeId) {
+      this._tourManifest = buildTourManifest(this.store, routeId);
+    }
+    return this._tourManifest;
+  }
+
+  /**
+   * Go to a canonical Tour Step, starting the route if it is not running.
+   *
+   * One door for all three navigation intents, so the panel, the keyboard and a
+   * test cannot reach the tour by three different paths.
+   */
+  async goToTourStep(tourStepId) {
+    if (this.experience.transport === 'IDLE') {
+      this.startRoute(this.defaultRouteId);
+      this.experience.pause();
+    }
+    return this.experience.seekToTourStep(tourStepId);
   }
 
   /**

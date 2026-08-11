@@ -43,6 +43,19 @@ function check(id, claim, pass, detail = '') {
   console.log(`${mark} ${id.padEnd(26)} ${claim}${detail ? `  — ${detail}` : ''}`);
 }
 
+/** Spanish claims for the manifest-level invariants, kept beside the runner's other copy. */
+const TOUR_CLAIMS = {
+  'TOUR-ONE-START': 'El recorrido tiene exactamente un inicio canónico',
+  'TOUR-ONE-END': 'El recorrido tiene exactamente un final canónico',
+  'TOUR-ORDER-UNIQUE': 'Ningún número de parada está duplicado',
+  'TOUR-ORDER-CONTIGUOUS': 'La numeración va de 01 a N sin huecos',
+  'TOUR-IDS-UNIQUE': 'Cada parada tiene una identidad técnica única',
+  'TOUR-NO-ORPHANS': 'Todo beat pertenece exactamente a una parada canónica',
+  'TOUR-NEXT-PREV-CONSISTENT': 'Siguiente y anterior son mutuamente consistentes',
+  'TOUR-NO-UNEXPECTED-CYCLES': 'El recorrido no se cierra sobre sí mismo',
+  'TOUR-ALL-REACHABLE': 'Todas las paradas se alcanzan siguiendo «siguiente» desde el inicio'
+};
+
 function near(a, b, epsilon = 1e-6) {
   return Math.abs(a - b) <= epsilon;
 }
@@ -428,6 +441,75 @@ async function main() {
     check('PROJECTION-NO-PANEL', 'La proyección no monta ningún objeto en el muro: sin marco, sin bisel, sin pantalla',
       projection.boxes === 0, `${projection.boxes} volúmenes en el grupo`);
     evidence.performance.projection = projection;
+
+    /* -- tour contract: one order, and everything derives from it ------------ */
+    // The Tour Control Pass exists because a second, hand-written sequence grew
+    // beside the authoritative one and drifted for eleven checkpoints without a
+    // single test noticing. These checks are the thing that would have noticed.
+    const tour = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      const mod = await import('./engine/experience/tour-manifest.js');
+      const manifest = rt.tour;
+      const validation = mod.validateTourManifest(manifest);
+
+      // Automatic traversal: walk the route beat by beat and collect the
+      // canonical step each beat belongs to, in order of first appearance.
+      const d = rt.experience;
+      const authored = d.reducedMotion;
+      d.reducedMotion = true;
+      rt.startRoute(rt.defaultRouteId);
+      d.pause();
+      const traversed = [];
+      for (let i = 0; i <= d.steps.length + 2 && d.transport !== 'IDLE'; i += 1) {
+        const current = d.currentTourStep;
+        if (current && traversed[traversed.length - 1] !== current.order) traversed.push(current.order);
+        await d._advanceAndSettle();
+      }
+
+      // Manual NEXT across the whole tour, then PREVIOUS all the way back.
+      await rt.goToTourStep(manifest.steps[0].id);
+      const forward = [d.currentTourStep.order];
+      while (d.currentTourStep.nextId) { await d.nextTourStep(); forward.push(d.currentTourStep.order); }
+      const backward = [d.currentTourStep.order];
+      while (d.currentTourStep.previousId) { await d.previousTourStep(); backward.push(d.currentTourStep.order); }
+      d.reducedMotion = authored;
+      rt.exitRoute();
+      // The tour ends in Galería B. Every check after this one was written
+      // against Galería A being active, so the precondition is put back
+      // explicitly rather than left to whatever the last beat happened to do.
+      if (rt.state.activeSpaceId !== 'space.gallery-a') {
+        await rt.traversePortal('portal.gallery-b-gallery-a', { source: 'QA' });
+      }
+
+      return {
+        validation,
+        expected: manifest.steps.map((step) => step.order),
+        traversed,
+        forward,
+        backward,
+        titles: manifest.steps.map((step) => step.title),
+        beatCount: manifest.beats.length,
+        restoredSpace: rt.state.activeSpaceId
+      };
+    });
+
+    for (const result of tour.validation.checks) {
+      check(result.id, TOUR_CLAIMS[result.id] || result.id, result.pass, result.detail);
+    }
+    const expectedSeq = tour.expected.join('→');
+    check('TOUR-G-USES-CANONICAL-SEQUENCE',
+      'El recorrido automático atraviesa exactamente la secuencia canónica',
+      tour.traversed.join('→') === expectedSeq,
+      `esperado ${expectedSeq} · observado ${tour.traversed.join('→')}`);
+    check('TOUR-MANUAL-NEXT-USES-CANONICAL-SEQUENCE',
+      'SIGUIENTE recorre la misma secuencia canónica, de principio a fin',
+      tour.forward.join('→') === expectedSeq,
+      `observado ${tour.forward.join('→')}`);
+    check('TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE',
+      'ANTERIOR la recorre en sentido inverso, sin saltarse ninguna parada',
+      tour.backward.join('→') === [...tour.expected].reverse().join('→'),
+      `observado ${tour.backward.join('→')}`);
+    evidence.tour = tour;
 
     /* -- warmup actually compiles ------------------------------------------- */
     const warm = await page.evaluate(() => window.__IW.runtime.sceneKit.renderStats());

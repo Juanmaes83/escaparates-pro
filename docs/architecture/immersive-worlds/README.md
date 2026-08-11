@@ -15,8 +15,9 @@ Read these documents before making architectural or implementation decisions:
 6. `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` — **mandatory creative/experiential quality doctrine for Museum / Institutional work: The Experience Is The Interface, Experience Language, authored Focus, spatial composition, content-first quality tests and quality gates.**
 7. `SCULPTING_AND_GRAFTING_METHOD.md` — **mandatory current working method for Museum / Institutional: preserve capability, sculpt away prototype/generic/noisy representation, graft stronger legal capabilities when a demonstrated gap exists, and stop at visual evidence checkpoints.**
 8. `NEXT_PASSES_MUSEUM_ROADMAP.md` — **mandatory Product Owner-gated execution order for the next Museum passes. Execute one pass only, provide navigable evidence, STOP, and do not start the next pass without Juanma's explicit approval. It also makes the two stored `.webm` navigation recordings mandatory behavioural references for guide/camera/Portal work.**
-9. `GLOSSARY.md` — canonical semantic vocabulary.
-10. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
+9. `MUSEUM_GUIDED_TOUR_CONTRACT.md` — **mandatory before touching the guided tour: the one authoritative order, Tour Step vs beat vs QA state, the semantics of automatic / manual / direct-jump navigation, the integrity invariants, and how to add Tour Step N+1 without breaking the sequence.** Its companion `TOUR_ORDER_AUDIT_BEFORE.md` records the drift that made the contract necessary.
+10. `GLOSSARY.md` — canonical semantic vocabulary.
+11. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
 
 ## Operating principle
 

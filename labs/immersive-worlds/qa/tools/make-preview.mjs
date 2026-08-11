@@ -54,18 +54,15 @@ for (const name of (await fs.readdir(collectionDir)).filter((f) => MIME[path.ext
   media[`assets/collection/${name}`] = await dataUri(path.join(collectionDir, name));
 }
 
-const STATES = [
-  ['museum:journey-lead-horizonte', '① La guía lleva → Horizonte'],
-  ['museum:guide-accompanied', '② Acompañado — sobre el hombro'],
-  ['museum:guide-handoff', '③ Cesión — la obra manda'],
-  ['museum:journey-lead-division', '④ La guía lleva → División tercera'],
-  ['museum:journey-division', '⑤ Acompañado — segunda obra'],
-  ['museum:journey-threshold', '⑥ La guía lleva → el umbral'],
-  ['museum:journey-crossed', '⑦ Cruzado — cámara oscura'],
-  ['museum:journey-noche', '⑧ Acompañado — Noche de invierno'],
-  ['museum:guide-released', '⑨ Solo con la obra'],
-  ['museum:journey-proyeccion', '⑩ Acompañado — la proyección'],
-  ['museum:proyeccion-permanencia', '⑪ Permanencia — quedarse con la luz'],
+// QA / camera-review states only.
+//
+// The numbered tour is NOT listed here. It is derived at runtime from
+// runtime.tour, which is grouped from the one authoritative order in the world
+// file. A hand-written sequence beside that order is exactly what drifted for
+// eleven checkpoints before the Tour Control Pass — see
+// TOUR_ORDER_AUDIT_BEFORE.md.
+const QA_STATES = [
+  ['museum:lobby-entry', 'Vestíbulo'],
   ['museum:gallery-a-overview', 'Galería A — eje'],
   ['museum:gallery-a-oblique', 'Galería A — diagonal'],
   ['museum:artwork-horizonte-focus', 'Foco: Horizonte interrumpido'],
@@ -73,9 +70,8 @@ const STATES = [
   ['museum:portal-a-b-before', 'Umbral A → B'],
   ['museum:portal-a-b-after', 'Galería B — cámara oscura'],
   ['museum:archive-teleport', 'Archivo — sala de escucha'],
-  ['museum:guide-turnaround', 'GUÍA — vuelta de personaje'],
-  ['museum:guided-step-04', 'Recorrido comentado — parada 4'],
-  ['museum:lobby-entry', 'Vestíbulo']
+  ['museum:guide-released', 'Cesión: visitante solo con la obra'],
+  ['museum:guide-turnaround', 'GUÍA — vuelta de personaje']
 ];
 
 const html = `<title>Immersive Worlds — Fundación Arenas (IW-3 visual checkpoint)</title>
@@ -105,6 +101,35 @@ body[data-focused="true"] #iw-preview { display: none; }
 }
 #iw-preview button:hover { border-color: rgba(240, 236, 228, .55); }
 #iw-preview p { margin: 6px 0 0; color: #8d8579; }
+
+/* The numbered tour and the QA states are different kinds of thing, so they are
+   not allowed to look like the same kind of thing. Tour chips carry a number
+   and a progress state; QA chips are quieter, unnumbered and set apart under
+   their own heading. Before this pass they were one undifferentiated wall of
+   twenty-one identical buttons. */
+#iw-tour { display: flex; flex-wrap: wrap; gap: 4px; }
+#iw-tour button {
+  display: inline-flex; align-items: baseline; gap: 7px; margin: 0;
+  border-color: rgba(240, 236, 228, .16); color: #9d968a;
+}
+#iw-tour button .n {
+  font-variant-numeric: tabular-nums; letter-spacing: .08em;
+  font-size: 10px; color: #6f6961;
+}
+#iw-tour button[data-progress="COMPLETED"] { color: #cfc9be; border-color: rgba(240, 236, 228, .26); }
+#iw-tour button[data-progress="COMPLETED"] .n::after { content: ' ✓'; color: #8d8579; }
+#iw-tour button[data-progress="NEXT"] { color: #e8e3d9; border-color: rgba(240, 236, 228, .42); }
+#iw-tour button[data-progress="CURRENT"] {
+  color: #14110d; background: #e8e3d9; border-color: #e8e3d9; font-weight: 600;
+  box-shadow: 0 0 0 2px rgba(232, 227, 217, .28);
+}
+#iw-tour button[data-progress="CURRENT"] .n { color: #14110d; }
+#iw-tour-transport { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+#iw-tour-transport button[disabled] { opacity: .34; cursor: default; }
+#iw-tour-transport button[disabled]:hover { border-color: rgba(240, 236, 228, .2); }
+#iw-tour-where { color: #8d8579; margin-left: 2px; }
+#iw-preview h2.iw-qa-heading { margin-top: 12px; padding-top: 9px; border-top: 1px solid rgba(240, 236, 228, .12); }
+#iw-preview-states button { color: #9d968a; border-style: dashed; }
 </style>
 
 <main id="iw-stage">
@@ -113,7 +138,16 @@ body[data-focused="true"] #iw-preview { display: none; }
 <div id="iw-ui"></div>
 
 <aside id="iw-preview" hidden>
-  <h2>Visita guiada · pulsa G para recorrerla entera, o salta a un momento</h2>
+  <h2>Visita guiada</h2>
+  <div id="iw-tour"></div>
+  <div id="iw-tour-transport">
+    <button id="iw-tour-prev" type="button">&#8592; Anterior</button>
+    <button id="iw-tour-play" type="button">Reproducir desde aqu&iacute;</button>
+    <button id="iw-tour-next" type="button">Siguiente &#8594;</button>
+    <button id="iw-tour-exit" type="button">Salir del recorrido</button>
+    <span id="iw-tour-where"></span>
+  </div>
+  <h2 class="iw-qa-heading">Estados de revisi&oacute;n / QA &middot; fuera del recorrido</h2>
   <div id="iw-preview-states"></div>
   <p>Andar: <b>W A S D</b> · mirar: ratón (clic para capturar) o <b>←/→</b> · obra: <b>E</b> · salir: <b>Esc</b> · plano: <b>M</b> · recorrido: <b>G</b> · zoom en detalle: rueda · obra siguiente en detalle: <b>←/→</b> · ocultar este panel: <b>P</b></p>
 </aside>
@@ -158,8 +192,111 @@ for (const proto of [HTMLImageElement.prototype, HTMLMediaElement.prototype]) {
 ${script}
 
 const panel = document.getElementById('iw-preview');
+
+/* == the numbered tour ======================================================
+ * Drawn from runtime.tour, which is grouped from route.chapterRefs ->
+ * chapter.stepRefs in the world file. This panel holds no sequence of its own,
+ * so it cannot disagree with the tour: reordering the world reorders this, and
+ * a step added to the route appears here without anyone editing this file.
+ * ========================================================================= */
+function buildTourPanel() {
+  const rt = window.__IW.runtime;
+  const tour = rt.tour;
+  const list = document.getElementById('iw-tour');
+  const where = document.getElementById('iw-tour-where');
+  const prevBtn = document.getElementById('iw-tour-prev');
+  const nextBtn = document.getElementById('iw-tour-next');
+  const playBtn = document.getElementById('iw-tour-play');
+  const exitBtn = document.getElementById('iw-tour-exit');
+  if (!tour) return;
+
+  const chips = new Map();
+  for (const step of tour.steps) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    // Visible number is presentation. Identity is the step id, and it is what
+    // every handler and every test uses, so re-titling a step never moves it.
+    button.innerHTML = '<span class="n">' + String(step.order).padStart(2, '0') + '</span><span>' + step.title + '</span>';
+    button.title = step.title + ' — ' + step.beatIds.length + ' beat(s): ' + step.beatIds.join(', ');
+    button.onclick = () => go(() => rt.goToTourStep(step.id));
+    list.appendChild(button);
+    chips.set(step.id, button);
+  }
+
+  /** Progress is read from the Director, never from which button was clicked. */
+  function render() {
+    const current = rt.experience.currentTourStep;
+    const order = current ? current.order : 0;
+    for (const step of tour.steps) {
+      const chip = chips.get(step.id);
+      chip.dataset.progress = !order ? 'UNVISITED'
+        : step.order < order ? 'COMPLETED'
+        : step.order === order ? 'CURRENT'
+        : step.order === order + 1 ? 'NEXT'
+        : 'UNVISITED';
+      chip.setAttribute('aria-current', step.order === order ? 'step' : 'false');
+    }
+    const running = Boolean(current);
+    prevBtn.disabled = !running || !current.previousId;
+    nextBtn.disabled = !running || !current.nextId;
+    playBtn.textContent = rt.experience.transport === 'PLAYING' ? 'Pausar' : 'Reproducir desde aquí';
+    exitBtn.disabled = !running;
+    where.textContent = running
+      ? 'Parada ' + String(current.order).padStart(2, '0') + ' de ' + String(tour.steps.length).padStart(2, '0')
+        + ' · beat ' + (rt.experience.index + 1) + '/' + rt.experience.steps.length
+      : 'Recorrido detenido';
+  }
+
+  /** One door for every tour control, so none of them can drift from the rest. */
+  let busy = false;
+  async function go(action) {
+    if (busy) return;
+    busy = true;
+    window.__IW.hud.el.veil.hidden = true;
+    const director = rt.experience;
+    const authored = director.reducedMotion;
+    director.reducedMotion = true;
+    try {
+      await action();
+    } finally {
+      director.reducedMotion = authored;
+      busy = false;
+    }
+    await settleCamera();
+    render();
+    window.__IW.input.setEnabled(true);
+    window.__IW.audio.resume?.().then(() => {
+      const space = rt.store.require(rt.state.activeSpaceId);
+      window.__IW.audio.setAmbience(space.ambience);
+    }).catch(() => {});
+    document.getElementById('iw-canvas').focus();
+  }
+
+  prevBtn.onclick = () => go(() => rt.experience.previousTourStep());
+  nextBtn.onclick = () => go(() => rt.experience.nextTourStep());
+  exitBtn.onclick = () => { rt.exitRoute(); render(); };
+  playBtn.onclick = () => {
+    const director = rt.experience;
+    if (director.transport === 'PLAYING') director.pause();
+    else if (director.transport === 'PAUSED') director.resume();
+    else rt.startRoute(rt.defaultRouteId);
+    render();
+  };
+
+  // Every path into a step ends in a ROUTE_STEP event — the automatic tour, the
+  // keyboard, these buttons — so subscribing here is what keeps the panel
+  // honest instead of it tracking its own idea of what is selected.
+  rt.bus.on('route:step', render);
+  rt.bus.on('experience:completed', render);
+  rt.bus.on('experience:paused', render);
+  rt.bus.on('experience:resumed', render);
+  rt.bus.on('route:started', render);
+  render();
+}
+
+/* == QA / review states ===================================================== */
 const list = document.getElementById('iw-preview-states');
-for (const [id, label] of ${JSON.stringify(STATES)}) {
+for (const [id, label] of ${JSON.stringify(QA_STATES)}) {
   const button = document.createElement('button');
   button.textContent = label;
   button.onclick = async () => {
@@ -168,27 +305,10 @@ for (const [id, label] of ${JSON.stringify(STATES)}) {
     // does, so the veil comes down and movement goes back to them. The click is
     // a user gesture, which is also what the audio context needs.
     window.__IW.hud.el.veil.hidden = true;
-    // Reach every state from the same baseline. These states were written for a
-    // QA run that boots straight into one of them; a reviewer clicks them in
-    // whatever order they like, and a state that calls startRoute while a route
-    // is already running inherits that route's return pose. That is how the
-    // visitor-alone state could end up restoring a pose belonging to a room the
-    // visitor had since left.
     const rt = window.__IW.runtime;
     if (rt.state.mode === 'GUIDED') rt.exitRoute();
     if (rt.state.focusedEntityId) rt.releaseFocus();
-    // Snap, don't travel, while jumping.
-    //
-    // A named state is an authored composition, and it is reached by advancing
-    // the route faster than the shots can travel. QA never saw the difference
-    // because QA runs with reduced motion, where every shot snaps; the preview
-    // does not, so the button handed back a camera still moving between two
-    // poses under TRANSITION authority. That is what made the visitor-alone
-    // state look like it had landed against a wall: it had not landed at all.
-    //
-    // Motion is still reviewable — pressing G plays the route at its authored
-    // pace. This only affects jumping straight to a composition.
-    const director = window.__IW.runtime.experience;
+    const director = rt.experience;
     const authoredMotion = director.reducedMotion;
     director.reducedMotion = true;
     try {
@@ -196,25 +316,17 @@ for (const [id, label] of ${JSON.stringify(STATES)}) {
     } finally {
       director.reducedMotion = authoredMotion;
     }
-    // Wait for the camera to actually arrive.
-    //
-    // A named state is an authored composition, and the QA suite always sees it
-    // because QA runs with reduced motion, where every shot snaps. Here the
-    // shots travel for seconds while the state advances the route in hundreds
-    // of milliseconds, so the button used to hand back a camera that was still
-    // moving, under TRANSITION authority, somewhere between two poses. That is
-    // what made the visitor-alone state look like it had landed against a wall:
-    // it had not landed at all.
     await settleCamera();
     window.__IW.input.setEnabled(true);
     window.__IW.audio.resume?.().then(() => {
-      const space = window.__IW.runtime.store.require(window.__IW.runtime.state.activeSpaceId);
+      const space = rt.store.require(rt.state.activeSpaceId);
       window.__IW.audio.setAmbience(space.ambience);
     }).catch(() => {});
     document.getElementById('iw-canvas').focus();
   };
   list.appendChild(button);
 }
+
 /** Resolve once the camera has stopped moving and authority has settled. */
 async function settleCamera() {
   const camera = window.__IW.renderHost.camera;
@@ -259,7 +371,7 @@ addEventListener('keydown', (event) => {
 });
 
 IWPreview.boot()
-  .then(() => { buildDesignSelector(); panel.hidden = false; })
+  .then(() => { buildTourPanel(); buildDesignSelector(); panel.hidden = false; })
   .catch((error) => {
     console.error('[IW] boot failed', error);
     document.getElementById('iw-ui').innerHTML =
