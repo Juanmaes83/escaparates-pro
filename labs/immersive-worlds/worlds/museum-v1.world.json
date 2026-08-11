@@ -99,7 +99,13 @@
         "anchor.gallery-a.guide-division",
         "anchor.gallery-a.guide-umbral",
         "anchor.gallery-a.visitor-horizonte",
-        "anchor.gallery-a.visitor-division"
+        "anchor.gallery-a.visitor-division",
+        "anchor.gallery-a.guide-campo",
+        "anchor.gallery-a.visitor-campo",
+        "anchor.gallery-a.guide-estudio",
+        "anchor.gallery-a.visitor-estudio",
+        "anchor.gallery-a.guide-vasija",
+        "anchor.gallery-a.visitor-vasija"
       ],
       "hotspotRefs": [
         "hotspot.art.horizonte-interrumpido",
@@ -797,6 +803,102 @@
         -1
       ],
       "label": "Guía — llegada a Noche de invierno, junto a la obra"
+    },
+    {
+      "id": "anchor.gallery-a.guide-campo",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        -5.5,
+        0,
+        -11.4
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — Campo de ceniza"
+    },
+    {
+      "id": "anchor.gallery-a.visitor-campo",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        -5.8,
+        0,
+        -11.6
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — ante Campo de ceniza"
+    },
+    {
+      "id": "anchor.gallery-a.guide-estudio",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        5.95,
+        0,
+        -14.28
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — Estudio de figura, IV"
+    },
+    {
+      "id": "anchor.gallery-a.visitor-estudio",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        6.25,
+        0,
+        -14.18
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — ante Estudio de figura, IV"
+    },
+    {
+      "id": "anchor.gallery-a.guide-vasija",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        3.3,
+        0,
+        -5.55
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — Vasija de arenas"
+    },
+    {
+      "id": "anchor.gallery-a.visitor-vasija",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        3.05,
+        0,
+        -5.75
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — junto a Vasija de arenas"
     }
   ],
   "entities": [
@@ -1627,6 +1729,10 @@
       "spaceId": "space.gallery-a",
       "stepRefs": [
         "step.02-paso-galeria-a",
+        "step.03a-lleva-campo",
+        "step.03b-campo",
+        "step.03c-campo-contemplacion",
+        "step.03d-campo-cesion",
         "step.03-lleva-horizonte",
         "step.04-horizonte",
         "step.04c-horizonte-contemplacion",
@@ -1634,7 +1740,15 @@
         "step.05-lleva-division",
         "step.06-division",
         "step.06c-division-contemplacion",
-        "step.06b-division-cesion"
+        "step.06b-division-cesion",
+        "step.06d-lleva-estudio",
+        "step.06e-estudio",
+        "step.06f-estudio-contemplacion",
+        "step.06g-estudio-cesion",
+        "step.06h-lleva-vasija",
+        "step.06i-vasija",
+        "step.06j-vasija-escala",
+        "step.06k-vasija-detalle"
       ]
     },
     {
@@ -1677,7 +1791,7 @@
       "id": "step.02-paso-galeria-a",
       "chapterId": "chapter.horizontes",
       "tourStep": {
-        "title": "Horizonte interrumpido"
+        "title": "Campo de ceniza"
       },
       "subjectRef": "space.gallery-a",
       "shotIntent": "PORTAL",
@@ -1698,7 +1812,10 @@
       "guide": {
         "anchorId": "anchor.gallery-a.guide-horizonte"
       },
-      "caption": "Acompáñeme."
+      "caption": "Acompáñeme.",
+      "tourStep": {
+        "title": "Horizonte interrumpido"
+      }
     },
     {
       "id": "step.04-horizonte",
@@ -1915,6 +2032,143 @@
       "shotIntent": "FOCUS",
       "duration": 22,
       "caption": "Esta obra dura ocho minutos. No hay nada que mirar de una vez: quédese hasta que la luz cambie."
+    },
+    {
+      "id": "step.03a-lleva-campo",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.campo-de-ceniza",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-campo"
+      },
+      "caption": "Empecemos por el muro de poniente."
+    },
+    {
+      "id": "step.03b-campo",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.campo-de-ceniza",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-campo"
+      },
+      "caption": "Serrat volvió a este formato vertical tres años después del Horizonte."
+    },
+    {
+      "id": "step.03c-campo-contemplacion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.campo-de-ceniza",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-a.visitor-campo"
+      },
+      "caption": "Más alta que ancha: se mira de abajo arriba, como una figura."
+    },
+    {
+      "id": "step.03d-campo-cesion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.campo-de-ceniza",
+      "shotIntent": "FOCUS",
+      "duration": 9,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-campo",
+        "aside": true
+      },
+      "caption": "La ceniza está mezclada en la pintura. De cerca cambia de color con la luz."
+    },
+    {
+      "id": "step.06d-lleva-estudio",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.estudio-de-figura",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-estudio"
+      },
+      "caption": "Y una obra pequeña, que pide acercarse.",
+      "tourStep": {
+        "title": "Estudio de figura, IV"
+      }
+    },
+    {
+      "id": "step.06e-estudio",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.estudio-de-figura",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-estudio"
+      },
+      "caption": "Ferrán dibujaba a diario. Este es el cuarto de una serie de nueve."
+    },
+    {
+      "id": "step.06f-estudio-contemplacion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.estudio-de-figura",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-a.visitor-estudio"
+      },
+      "caption": "Noventa y cinco centímetros: la distancia de mirada es otra."
+    },
+    {
+      "id": "step.06g-estudio-cesion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.estudio-de-figura",
+      "shotIntent": "FOCUS",
+      "duration": 9,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-estudio",
+        "aside": true
+      },
+      "caption": "Grafito sobre papel. El trazo se ve entero desde aquí."
+    },
+    {
+      "id": "step.06h-lleva-vasija",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.sculpture.vasija-de-arenas",
+      "shotIntent": "LEAD",
+      "duration": 7,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-vasija"
+      },
+      "caption": "Lo último de esta sala no está en la pared.",
+      "tourStep": {
+        "title": "Vasija de arenas"
+      }
+    },
+    {
+      "id": "step.06i-vasija",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.sculpture.vasija-de-arenas",
+      "shotIntent": "ACCOMPANIED",
+      "duration": 8,
+      "guide": {
+        "anchorId": "anchor.gallery-a.guide-vasija"
+      },
+      "caption": "Miralles la torneó en una sola pieza, sin molde."
+    },
+    {
+      "id": "step.06j-vasija-escala",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.sculpture.vasija-de-arenas",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-a.visitor-vasija"
+      },
+      "caption": "Ochenta y ocho centímetros. Hay que rodearla para verla entera."
+    },
+    {
+      "id": "step.06k-vasija-detalle",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.sculpture.vasija-de-arenas",
+      "shotIntent": "DETAIL",
+      "duration": 11,
+      "caption": "El esmalte mate no devuelve brillo: el volumen se lee por la sombra propia."
     }
   ],
   "routes": [

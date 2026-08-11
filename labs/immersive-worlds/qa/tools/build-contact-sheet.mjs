@@ -66,8 +66,15 @@ if (beforeReport) {
 }
 await browser.close();
 
-const ARTWORK_STOPS = [...new Set(report.beats.filter((b) => b.role === 'C' && b.visitor === 'presente').map((b) => b.tourOrder))]
-  .sort((a, b) => a - b);
+// Sculpture takes the same four grammar slots but a different language, so it
+// gets its own sequence rather than a column in the painting matrix. Comparing a
+// vessel against four canvases row by row would invite exactly the "why doesn't it
+// look like the others" reading the grammar exists to prevent.
+const stopsWithVisitorC = [...new Set(report.beats
+  .filter((b) => b.role === 'C' && b.visitor === 'presente').map((b) => b.tourOrder))].sort((a, b) => a - b);
+const kindOfStop = (order) => report.beats.find((b) => b.tourOrder === order && b.expectedKind)?.expectedKind || null;
+const ARTWORK_STOPS = stopsWithVisitorC.filter((o) => kindOfStop(o) === 'ARTWORK');
+const SCULPTURE_STOPS = stopsWithVisitorC.filter((o) => kindOfStop(o) === 'SCULPTURE');
 const ROLES = ['A', 'B', 'C', 'D'];
 const ROLE_NAME = { A: 'A · CONTEXTO / LLEGADA', B: 'B · ATENCIÓN COMPARTIDA', C: 'C · CONTEMPLACIÓN HUMANA', D: 'D · POV PURO DE LA OBRA' };
 
@@ -190,7 +197,7 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
   Las paradas 02 y 03 comparten sala y muro: parecerse es coherencia, no defecto.
   Defecto es ambigüedad, obra equivocada, instancia espacial equivocada o estado caduco.</div>
 
-  <h2>1 · Matriz A/B/C/D — comparación horizontal</h2>
+  <h2>1 · Matriz A/B/C/D — obras de pared</h2>
   <p class="lede">Filas: función. Columnas: obra. Cada celda es una imagen ampliable.</p>
   <div class="scroll">
     <table class="matrix">
@@ -199,12 +206,27 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
     </table>
   </div>
 
-  <h2>2 · Recorrido completo en orden — ritmo y continuidad</h2>
+  ${SCULPTURE_STOPS.length ? `<h2>2 · Escultura — gramática propia</h2>
+  <p class="lede">Misma estructura de cuatro tiempos, lenguaje distinto: la D no es un
+  POV plano sino inspección espacial. Se juzga contra sí misma, no contra los cuadros.</p>
+  <div class="scroll"><table class="matrix">
+    <thead><tr><th></th>${SCULPTURE_STOPS.map((o) => {
+      const any = report.beats.find((b) => b.tourOrder === o);
+      return `<th>PARADA ${String(o).padStart(2, '0')}<span>${esc(any?.tourTitle || '')}</span></th>`;
+    }).join('')}</tr></thead>
+    <tbody>${['A', 'B', 'C', 'D'].map((role) => {
+      const names = { A: 'A · CONTEXTO', B: 'B · ATENCIÓN COMPARTIDA', C: 'C · RELACIÓN HUMANA / ESCALA', D: 'D · DETALLE ESPACIAL' };
+      return `<tr><th class="role">${names[role]}</th>${SCULPTURE_STOPS.map((o) =>
+        cell(report.beats.find((b) => b.tourOrder === o && b.role === role))).join('')}</tr>`;
+    }).join('')}</tbody>
+  </table></div>` : ''}
+
+  <h2>3 · Recorrido completo en orden — ritmo y continuidad</h2>
   <p class="lede">Los ${report.beats.length} beats tal y como se viven, de la bienvenida al cierre.
   Los beats C van recuadrados.</p>
   <div class="tour">${tourCards}</div>
 
-  <h2>3 · Antes y después — los cinco beats corregidos</h2>
+  <h2>4 · Antes y después — los cinco beats corregidos</h2>
   <p class="lede">Izquierda: el estado que la auditoría demostró roto. Derecha: el estado actual.
   Las imágenes de la izquierda son <strong>históricas</strong> y no forman parte de la matriz de arriba.</p>
   <div class="tour">${CORRECTED.map((id) => {
@@ -225,7 +247,7 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
     </figure>`;
   }).join('\n')}</div>
 
-  <h2>4 · Pares perceptualmente próximos</h2>
+  <h2>5 · Pares perceptualmente próximos</h2>
   <p class="lede">Diferencia media por píxel sobre el render (sin HUD), 0 = idénticos.
   Esto <strong>señala dónde mirar</strong>; no dictamina nada.</p>
   <table class="plain">
@@ -233,7 +255,7 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
     <tbody>${suspectRows}</tbody>
   </table>
 
-  <h2>5 · Capturas no asentadas</h2>
+  <h2>6 · Capturas no asentadas</h2>
   <p class="lede">${report.unsettled.length
     ? `Rechazadas por no estabilizarse: <span class="mono">${report.unsettled.map(esc).join(', ')}</span>`
     : 'Ninguna. Todos los beats se estabilizaron antes de capturar.'}</p>

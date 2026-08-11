@@ -53,7 +53,8 @@ function startServer() {
 /** Grammar role, derived from the authored intent rather than from the beat's name. */
 const ROLE = {
   ENTRY: 'A', LEAD: 'A', ACCOMPANIED: 'B', CONTEMPLATION: 'C', FOCUS: 'D',
-  PORTAL: 'TRANSITION', EXIT: 'CLOSE'
+  // Sculpture's D is a spatial-detail beat, not a flat POV — same grammar slot.
+  DETAIL: 'D', PORTAL: 'TRANSITION', EXIT: 'CLOSE'
 };
 
 async function main() {
@@ -143,6 +144,7 @@ async function main() {
         beatIndex: d.index,
         expectedRef,
         expectedTitle: expected?.content?.title || expected?.title || expectedRef || '—',
+        expectedKind: expected?.kind || null,
         spaceId: rt.state.activeSpaceId,
         guide: vis(rt.sceneKit._guide),
         visitor: vis(rt.sceneKit._visitor),

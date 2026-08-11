@@ -38,6 +38,14 @@ import { GUIDE_DESIGNS, buildGuideFigure, buildVisitorFigure, guideMaterials } f
  */
 const GUIDE_WALK_SPEED = 1.05;
 
+/** Plinth height used for sculpture staging and framing. One number, one meaning. */
+const PLINTH_HEIGHT = 1.02;
+
+/** A subject that stands on the floor rather than hanging on a wall. */
+function isFloorAnchor(anchor) {
+  return anchor.normal[1] > 0.5 || (anchor.normal[0] === 0 && anchor.normal[2] === 0);
+}
+
 export class MuseumSceneKit extends SceneKit {
   /**
    * @param {{
@@ -863,16 +871,33 @@ export class MuseumSceneKit extends SceneKit {
     }
     const [w, h] = record.size;
     const detail = viewport.intent === 'DETAIL';
-    const isFloorStanding = anchor.normal[1] > 0.5 || (anchor.normal[0] === 0 && anchor.normal[2] === 0);
 
-    if (isFloorStanding) {
-      // Sculpture: approach from the visitor's side of the room, at eye height.
+    if (isFloorAnchor(anchor)) {
+      // Sculpture.
+      //
+      // A vessel photographed dead-on is a silhouette: the eye gets an outline
+      // and no volume, which is a painting's language applied to an object that
+      // is not flat. Swinging the camera off the approach axis turns the form,
+      // and lifting it slightly puts the shoulder and the rim into the frame.
+      // That is the whole difference between "a picture of a pot" and "a thing
+      // standing in a room".
+      const approach = this._facingFor(anchor, this._anchorPoses.get(viewport.guideAnchorId)?.position);
+      const swing = detail ? 0.62 : 0.26;
+      const facing = [
+        approach[0] * Math.cos(swing) + approach[2] * Math.sin(swing),
+        0,
+        -approach[0] * Math.sin(swing) + approach[2] * Math.cos(swing)
+      ];
+      const centre = this._subjectCentre(anchor, record);
       const pose = framePose(
-        { position: [anchor.position[0], anchor.position[1] + 1.02 + h / 2, anchor.position[2]], normal: [0, 0, 1] },
+        { position: centre, normal: facing },
         { width: Math.max(w, 0.8) * (detail ? 0.55 : 1), height: h * (detail ? 0.6 : 1.35) },
         viewport,
         { fill: detail ? 0.8 : 0.6, min: 1.1, max: 7 }
       );
+      // Slightly above the rim for the detail beat: a vessel read from eye level
+      // hides its own opening.
+      if (detail) pose.position[1] += h * 0.30;
       return { ...pose, subjectSize: record.size };
     }
 
@@ -1179,6 +1204,34 @@ export class MuseumSceneKit extends SceneKit {
    * room ahead stay visible while she walks into them.
    */
   /**
+   * Which way a subject faces, for the purpose of composing a shot.
+   *
+   * A wall work faces along its anchor normal. A free-standing piece has no such
+   * normal — its anchor points at the ceiling — so it faces whoever is looking at
+   * it. Deriving that from the staged figure is what lets sculpture reuse the
+   * artwork framings instead of needing a second set of them, and it is why
+   * `lateral` below never degenerates for a plinth.
+   */
+  _facingFor(anchor, fromPosition = null) {
+    if (!isFloorAnchor(anchor)) return anchor.normal;
+    if (fromPosition) {
+      const away = [fromPosition[0] - anchor.position[0], 0, fromPosition[2] - anchor.position[2]];
+      if (Math.hypot(away[0], away[2]) > 0.3) return vec3.normalize(away);
+    }
+    // Nobody staged: face the side of the room visitors arrive from.
+    return [0, 0, 1];
+  }
+
+  /**
+   * The optical centre of a subject. A hung work is centred on its anchor; a
+   * piece on a plinth is centred a plinth's height above the floor.
+   */
+  _subjectCentre(anchor, record) {
+    if (!isFloorAnchor(anchor)) return anchor.position;
+    return [anchor.position[0], anchor.position[1] + PLINTH_HEIGHT + record.size[1] / 2, anchor.position[2]];
+  }
+
+  /**
    * Beat A — arrival at a work.
    *
    * This used to frame the guide and nothing else: the camera sat 2.9 m behind
@@ -1224,12 +1277,13 @@ export class MuseumSceneKit extends SceneKit {
     }
 
     const [w, h] = record.size;
-    const out = anchor.normal;
+    const out = this._facingFor(anchor, destination.position);
+    const centre = this._subjectCentre(anchor, record);
     const lateral = [-out[2], 0, out[0]];
-    const guideSide = (destination.position[0] - anchor.position[0]) * lateral[0]
-      + (destination.position[2] - anchor.position[2]) * lateral[2];
-    const guideOut = (destination.position[0] - anchor.position[0]) * out[0]
-      + (destination.position[2] - anchor.position[2]) * out[2];
+    const guideSide = (destination.position[0] - centre[0]) * lateral[0]
+      + (destination.position[2] - centre[2]) * lateral[2];
+    const guideOut = (destination.position[0] - centre[0]) * out[0]
+      + (destination.position[2] - centre[2]) * out[2];
 
     // Wide enough for the work, the guide beside it, and room around both — this
     // is the context beat, so it breathes more than the contemplation beat does.
@@ -1248,14 +1302,14 @@ export class MuseumSceneKit extends SceneKit {
     const aimSide = guideSide * 0.24;
     return {
       position: [
-        anchor.position[0] + out[0] * back + lateral[0] * camSide,
+        centre[0] + out[0] * back + lateral[0] * camSide,
         1.72,
-        anchor.position[2] + out[2] * back + lateral[2] * camSide
+        centre[2] + out[2] * back + lateral[2] * camSide
       ],
       target: [
-        anchor.position[0] + lateral[0] * aimSide,
-        anchor.position[1] * 0.86 + 0.26,
-        anchor.position[2] + lateral[2] * aimSide
+        centre[0] + lateral[0] * aimSide,
+        centre[1] * 0.86 + 0.26,
+        centre[2] + lateral[2] * aimSide
       ],
       subjectSize: [span, h, 0.1]
     };
@@ -1320,7 +1374,8 @@ export class MuseumSceneKit extends SceneKit {
     if (!figure) return null;
 
     const [w, h] = record.size;
-    const out = anchor.normal;
+    const out = this._facingFor(anchor, figure.position);
+    const centre = this._subjectCentre(anchor, record);
     const lateral = [-out[2], 0, out[0]];
 
     // Frame the pair, not the wall.
@@ -1330,10 +1385,10 @@ export class MuseumSceneKit extends SceneKit {
     // said it was staged. Deriving the distance from what actually has to fit
     // cannot make that mistake: the span is measured, the field of view is asked
     // for the distance that covers it, and both are in shot by construction.
-    const sideways = (figure.position[0] - anchor.position[0]) * lateral[0]
-      + (figure.position[2] - anchor.position[2]) * lateral[2];
-    const outward = (figure.position[0] - anchor.position[0]) * out[0]
-      + (figure.position[2] - anchor.position[2]) * out[2];
+    const sideways = (figure.position[0] - centre[0]) * lateral[0]
+      + (figure.position[2] - centre[2]) * lateral[2];
+    const outward = (figure.position[0] - centre[0]) * out[0]
+      + (figure.position[2] - centre[2]) * out[2];
 
     // From the far edge of the work to the far side of the figure, plus a
     // shoulder's worth of air so nobody is cropped at the frame edge.
@@ -1354,14 +1409,14 @@ export class MuseumSceneKit extends SceneKit {
     // like — is the middle of the frame.
     const midSideways = sideways * 0.42;
     const position = [
-      anchor.position[0] + out[0] * back + lateral[0] * midSideways,
+      centre[0] + out[0] * back + lateral[0] * midSideways,
       1.58,
-      anchor.position[2] + out[2] * back + lateral[2] * midSideways
+      centre[2] + out[2] * back + lateral[2] * midSideways
     ];
     const target = [
-      anchor.position[0] + lateral[0] * midSideways,
-      anchor.position[1] * 0.82 + 0.24,
-      anchor.position[2] + lateral[2] * midSideways
+      centre[0] + lateral[0] * midSideways,
+      centre[1] * 0.82 + 0.24,
+      centre[2] + lateral[2] * midSideways
     ];
     return { position, target, subjectSize: [span, h, 0.1] };
   }
