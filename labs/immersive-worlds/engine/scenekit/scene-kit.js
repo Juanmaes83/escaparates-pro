@@ -171,6 +171,9 @@ export class SceneKit {
    *
    * @param {{anchorId:string, subjectRef?:string, aside?:boolean}|null} _staging
    */
+  /** @param {{anchorId:string, subjectRef?:string}|null} _staging */
+  setVisitorStaging(_staging) {}
+
   setGuideStaging(_staging) {}
 
   /** Apply a new quality policy to already-built representations. */

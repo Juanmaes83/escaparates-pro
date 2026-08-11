@@ -127,6 +127,8 @@ export const SHOT_INTENT = Object.freeze({
   OVERVIEW: 'OVERVIEW',
   LEAD: 'LEAD',
   ACCOMPANIED: 'ACCOMPANIED',
+  /** A human being with the work, the guide no longer mediating. Beat C. */
+  CONTEMPLATION: 'CONTEMPLATION',
   FOCUS: 'FOCUS',
   DETAIL: 'DETAIL',
   PORTAL: 'PORTAL',

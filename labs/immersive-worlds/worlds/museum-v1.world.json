@@ -97,7 +97,9 @@
         "anchor.gallery-a.door-archive",
         "anchor.gallery-a.guide-horizonte",
         "anchor.gallery-a.guide-division",
-        "anchor.gallery-a.guide-umbral"
+        "anchor.gallery-a.guide-umbral",
+        "anchor.gallery-a.visitor-horizonte",
+        "anchor.gallery-a.visitor-division"
       ],
       "hotspotRefs": [
         "hotspot.art.horizonte-interrumpido",
@@ -154,7 +156,8 @@
         "anchor.gallery-b.screen",
         "anchor.gallery-b.door-gallery-a",
         "anchor.gallery-b.guide-noche",
-        "anchor.gallery-b.guide-cuaderno"
+        "anchor.gallery-b.guide-cuaderno",
+        "anchor.gallery-b.visitor-noche"
       ],
       "hotspotRefs": [
         "hotspot.art.noche-de-invierno",
@@ -729,6 +732,54 @@
         -1
       ],
       "label": "Guía — ante la proyección"
+    },
+    {
+      "id": "anchor.gallery-a.visitor-horizonte",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        -2.05,
+        0,
+        -13.3
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — ante Horizonte interrumpido"
+    },
+    {
+      "id": "anchor.gallery-a.visitor-division",
+      "spaceId": "space.gallery-a",
+      "kind": "VIEWPOINT",
+      "position": [
+        3.95,
+        0,
+        -13.3
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — ante División tercera"
+    },
+    {
+      "id": "anchor.gallery-b.visitor-noche",
+      "spaceId": "space.gallery-b",
+      "kind": "VIEWPOINT",
+      "position": [
+        13.5,
+        0,
+        -12.75
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Visitante — ante Noche de invierno"
     }
   ],
   "entities": [
@@ -1561,9 +1612,11 @@
         "step.02-paso-galeria-a",
         "step.03-lleva-horizonte",
         "step.04-horizonte",
+        "step.04c-horizonte-contemplacion",
         "step.04b-horizonte-cesion",
         "step.05-lleva-division",
         "step.06-division",
+        "step.06c-division-contemplacion",
         "step.06b-division-cesion"
       ]
     },
@@ -1576,10 +1629,12 @@
         "step.08-paso-galeria-b",
         "step.09-lleva-noche",
         "step.10-noche",
+        "step.10f-noche-contemplacion",
         "step.10b-noche-cesion",
         "step.10c-lleva-cuaderno",
         "step.10d-cuaderno",
         "step.10e-cuaderno-permanencia",
+        "step.10g-cuaderno-dwell",
         "step.11-cierre"
       ]
     }
@@ -1783,13 +1838,13 @@
       "id": "step.10e-cuaderno-permanencia",
       "chapterId": "chapter.camara-oscura",
       "subjectRef": "entity.video.cuaderno-de-luz",
-      "shotIntent": "FOCUS",
-      "duration": 26,
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
       "guide": {
         "anchorId": "anchor.gallery-b.guide-cuaderno",
         "aside": true
       },
-      "caption": "Esta obra dura ocho minutos. No hay nada que mirar de una vez: quédese hasta que la luz cambie."
+      "caption": "La guía se aparta. A partir de aquí la obra va sola."
     },
     {
       "id": "step.11-cierre",
@@ -1802,6 +1857,47 @@
       "duration": 6,
       "narrationCue": "narracion.08",
       "caption": "Aquí termina el recorrido comentado. Puede continuar la visita libremente: el archivo se abre desde la Galería A."
+    },
+    {
+      "id": "step.04c-horizonte-contemplacion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.horizonte-interrumpido",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-a.visitor-horizonte"
+      },
+      "caption": "Una persona delante de ella da la medida: dos metros sesenta de lado a lado."
+    },
+    {
+      "id": "step.06c-division-contemplacion",
+      "chapterId": "chapter.horizontes",
+      "subjectRef": "entity.artwork.division-tercera",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-a.visitor-division"
+      },
+      "caption": "Desde aquí se ve el intervalo entero de una vez."
+    },
+    {
+      "id": "step.10f-noche-contemplacion",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.artwork.noche-de-invierno",
+      "shotIntent": "CONTEMPLATION",
+      "duration": 7,
+      "visitor": {
+        "anchorId": "anchor.gallery-b.visitor-noche"
+      },
+      "caption": "A esta distancia el grano del papel todavía se lee."
+    },
+    {
+      "id": "step.10g-cuaderno-dwell",
+      "chapterId": "chapter.camara-oscura",
+      "subjectRef": "entity.video.cuaderno-de-luz",
+      "shotIntent": "FOCUS",
+      "duration": 22,
+      "caption": "Esta obra dura ocho minutos. No hay nada que mirar de una vez: quédese hasta que la luz cambie."
     }
   ],
   "routes": [

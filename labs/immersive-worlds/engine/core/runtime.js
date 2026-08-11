@@ -131,6 +131,7 @@ export class Runtime {
       ports: {
         framingFor: (subjectRef, intent, options) => this.framingFor(subjectRef, intent, options),
         stageGuide: (staging) => this.stageGuide(staging),
+        stageVisitor: (staging) => this.sceneKit.setVisitorStaging?.(staging),
         guideSettled: () => this.sceneKit.guideSettled?.() !== false,
         playShot: (pose, opts) => this.directed.playShot(pose, opts),
         snapTo: (pose) => this.directed.snapTo(pose),

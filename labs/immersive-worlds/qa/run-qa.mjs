@@ -521,6 +521,83 @@ async function main() {
       `esperado ${expectedBack} · observado ${tour.backward.join('→')}`);
     evidence.tour = tour;
 
+    /* -- experience grammar: A/B/C/D per Stop, and who is in frame ----------- */
+    // The grammar is a semantic contract, so it is checked as one: which figure is
+    // staged at which beat, in which order, for the Stops that actually use the
+    // Artwork grammar. Beat C was the one true gap; Projection D was impure.
+    const grammar = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      const d = rt.experience;
+      const authored = d.reducedMotion;
+      d.reducedMotion = true;
+      rt.startRoute(rt.defaultRouteId);
+      d.pause();
+
+      const seen = [];
+      for (let i = 0; i <= d.steps.length + 2 && d.transport !== 'IDLE'; i += 1) {
+        const step = d.currentStep;
+        if (step) {
+          // Settle both figures so opacity reflects the beat rather than a fade.
+          for (let f = 0; f < 900; f += 1) rt.sceneKit.update?.(1 / 60, f / 60);
+          const shown = (fig) => Boolean(fig?.object?.visible && fig.current.opacity > 0.5);
+          seen.push({
+            beatId: step.id,
+            intent: step.shotIntent,
+            tourStepId: d.currentTourStep?.id ?? null,
+            tourOrder: d.currentTourStep?.order ?? 0,
+            guide: shown(rt.sceneKit._guide),
+            visitor: shown(rt.sceneKit._visitor)
+          });
+        }
+        await d._advanceAndSettle();
+      }
+      d.reducedMotion = authored;
+      rt.exitRoute();
+      return seen;
+    });
+
+    // A Stop uses the Artwork grammar when it contains a CONTEMPLATION beat whose
+    // human is the visitor figure. Bienvenida, the threshold Stop and Cierre do
+    // not, and are not held to it.
+    const byStop = new Map();
+    for (const beat of grammar) {
+      if (!beat.tourStepId) continue;
+      if (!byStop.has(beat.tourStepId)) byStop.set(beat.tourStepId, []);
+      byStop.get(beat.tourStepId).push(beat);
+    }
+    const artworkStops = [...byStop.entries()]
+      .filter(([, beats]) => beats.some((b) => b.intent === 'CONTEMPLATION' && b.visitor));
+
+    const abcd = artworkStops.map(([stopId, beats]) => {
+      const roles = beats.map((b) => ({
+        LEAD: 'A', ENTRY: 'A', ACCOMPANIED: 'B', CONTEMPLATION: 'C', FOCUS: 'D'
+      }[b.intent] || '·')).join('');
+      return { stopId, roles, order: beats[0].tourOrder };
+    });
+    check('GRAMMAR-ARTWORK-ABCD',
+      'Cada parada de obra convencional recorre A → B → C → D en ese orden',
+      abcd.length === 3 && abcd.every((s) => /A+BCD$/.test(s.roles)),
+      abcd.map((s) => `${String(s.order).padStart(2, '0')}:${s.roles}`).join(' · '));
+
+    const contemplation = grammar.filter((b) => b.intent === 'CONTEMPLATION' && b.visitor);
+    check('GRAMMAR-C-VISITOR-NOT-GUIDE',
+      'En la contemplación humana hay una figura visitante y la guía ya no media',
+      contemplation.length === 3 && contemplation.every((b) => b.visitor && !b.guide),
+      contemplation.map((b) => `${b.beatId.split('.').pop()} visitante=${b.visitor} guía=${b.guide}`).join(' · '));
+
+    const artworkD = artworkStops.map(([, beats]) => beats[beats.length - 1]);
+    check('GRAMMAR-D-NO-VISITOR-FIGURE',
+      'El POV puro de la obra no contiene la figura visitante',
+      artworkD.length === 3 && artworkD.every((b) => b.intent === 'FOCUS' && !b.visitor),
+      artworkD.map((b) => b.beatId.split('.').pop()).join(' · '));
+
+    const projectionDwell = grammar.find((b) => b.beatId === 'step.10g-cuaderno-dwell');
+    check('GRAMMAR-PROJECTION-D-NO-GUIDE',
+      'En el dwell de la proyección no hay guía ni figura: sólo la obra',
+      Boolean(projectionDwell) && !projectionDwell.guide && !projectionDwell.visitor,
+      projectionDwell ? `guía=${projectionDwell.guide} visitante=${projectionDwell.visitor}` : 'beat ausente');
+    evidence.grammar = grammar;
+
     /* -- experience grammar: Collection Browse and its return contract ------- */
     // The audit found this broken in a specific, invisible way: browsing from a
     // guided beat changed the wall label to the next work while the camera kept

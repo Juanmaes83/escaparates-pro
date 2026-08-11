@@ -331,3 +331,53 @@ export function guideMaterials(design = 'B') {
     shoe: fabric(0x1f1e1d, 0.62)
   };
 }
+
+/**
+ * The provisional visitor figure.
+ *
+ * Beat C asks for a human contemplating the work, and a human contemplating is
+ * not the guide presenting. Rather than build a second character system for one
+ * semantic function, this reuses the guide's geometry, scaffold and rig wholesale
+ * and changes only what the grammar needs to read: **hair**, and a quieter palette
+ * so the figure is a visitor rather than staff.
+ *
+ * Explicitly provisional. Avatar quality is deferred; this exists so the
+ * progression SPACE → GUIDE → HUMAN → ARTWORK becomes perceptible, not to be a
+ * character.
+ */
+export function visitorMaterials() {
+  const fabric = (color, roughness = 0.88) =>
+    new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 });
+  return {
+    skin: new THREE.MeshStandardMaterial({ color: 0xb08f74, roughness: 0.76, metalness: 0 }),
+    // Lighter and warmer than the guide's near-black, which is the whole visual
+    // distinction at the distance Beat C is composed at.
+    hair: fabric(0x6b4a33, 0.84),
+    top: fabric(0x8d8577, 0.92),
+    outer: fabric(0x59503f, 0.88),
+    apron: fabric(0x59503f, 0.9),
+    lower: fabric(0x4a4033, 0.9),
+    shoe: fabric(0x241f1b, 0.62)
+  };
+}
+
+/**
+ * A visitor: the guide's figure with loose hair instead of a gathered bun.
+ *
+ * The bun is the guide's strongest silhouette cue from behind — which is exactly
+ * the view Beat C uses — so removing it and letting the hair mass fall is the
+ * cheapest change that separates the two figures at a glance.
+ */
+export function buildVisitorFigure({ design = 'B' } = {}) {
+  const materials = visitorMaterials();
+  const figure = buildGuideFigure({ design, materials });
+  figure.name = `visitor-${design}`;
+  for (const child of [...figure.children]) {
+    // The bun is the only sphere in the figure; dropping it leaves the hair cap.
+    if (child.geometry?.type === 'SphereGeometry') {
+      figure.remove(child);
+      child.geometry.dispose();
+    }
+  }
+  return figure;
+}

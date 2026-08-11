@@ -30,7 +30,7 @@ import {
   buildLabel, buildPitchedRoof, buildPlinth, buildProjection, buildRoomShell,
   buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
-import { GUIDE_DESIGNS, buildGuideFigure, guideMaterials } from './guide.js';
+import { GUIDE_DESIGNS, buildGuideFigure, buildVisitorFigure, guideMaterials } from './guide.js';
 
 /**
  * Metres per second. An unhurried gallery pace — a guide walking a visitor to
@@ -74,6 +74,7 @@ export class MuseumSceneKit extends SceneKit {
      * @type {{object:THREE.Object3D, target:{position:number[], yaw:number, opacity:number}, current:{position:number[], yaw:number, opacity:number}, staging:object|null}|null}
      */
     this._guide = null;
+    this._visitor = null;
     /** Which guide design language is built. Review-time choice, not product state. */
     this._guideDesign = 'B';
   }
@@ -853,6 +854,10 @@ export class MuseumSceneKit extends SceneKit {
       const accompanied = this._accompaniedFraming(record, anchor, viewport);
       if (accompanied) return accompanied;
     }
+    if (viewport.intent === 'CONTEMPLATION') {
+      const contemplation = this._contemplationFraming(record, anchor, viewport);
+      if (contemplation) return contemplation;
+    }
     const [w, h] = record.size;
     const detail = viewport.intent === 'DETAIL';
     const isFloorStanding = anchor.normal[1] > 0.5 || (anchor.normal[0] === 0 && anchor.normal[2] === 0);
@@ -988,6 +993,59 @@ export class MuseumSceneKit extends SceneKit {
     }
   }
 
+  /**
+   * Stage the visitor figure, or dismiss it.
+   *
+   * Deliberately a near-copy of `setGuideStaging` rather than a shared abstraction:
+   * the two figures mean different things and will diverge (the guide walks between
+   * stops; the visitor only ever stands and looks). Collapsing them now would be
+   * the wrong kind of tidiness.
+   */
+  setVisitorStaging(staging) {
+    if (!staging) {
+      if (this._visitor) this._visitor.target.opacity = 0;
+      return;
+    }
+    const anchor = this._anchorPoses.get(staging.anchorId);
+    if (!anchor) return;
+
+    const subject = this._subjectPose(staging.subjectRef);
+    const facing = subject
+      ? vec3.normalize([subject[0] - anchor.position[0], 0, subject[2] - anchor.position[2]])
+      : anchor.normal;
+
+    this._ensureVisitor();
+    this._visitor.staging = staging;
+    this._visitor.target = {
+      position: [anchor.position[0], anchor.position[1], anchor.position[2]],
+      yaw: Math.atan2(facing[0], facing[2]),
+      opacity: 1
+    };
+    // A visitor does not walk in from the previous stop: they are simply there,
+    // already looking. Placing rather than travelling avoids a figure sliding
+    // across the room between two unrelated beats.
+    this._visitor.current = { ...this._visitor.target, opacity: this._visitor.current.opacity };
+  }
+
+  _ensureVisitor() {
+    if (this._visitor) return;
+    const object = buildVisitorFigure({ design: this._guideDesign });
+    object.visible = false;
+    object.traverse((node) => {
+      if (!node.material) return;
+      node.material = node.material.clone();
+      node.material.transparent = true;
+      node.material.opacity = 0;
+    });
+    this.scene.add(object);
+    this._visitor = {
+      object,
+      current: { position: [0, 0, 0], yaw: 0, opacity: 0 },
+      target: { position: [0, 0, 0], yaw: 0, opacity: 0 },
+      staging: null
+    };
+  }
+
   _ensureGuide() {
     if (this._guide) return;
     const object = this._buildGuideObject(this._guideDesign);
@@ -1046,6 +1104,38 @@ export class MuseumSceneKit extends SceneKit {
    * avoid starting a composition that assumes she has arrived while she is
    * still crossing the room.
    */
+  /**
+   * The visitor figure only fades. It never walks: it is already standing where
+   * the beat wants it, because a visitor who slides into position across the
+   * gallery is a puppet, not a person who was already looking.
+   */
+  _updateVisitor(dt) {
+    const visitor = this._visitor;
+    if (!visitor) return;
+    const step = dt || 0.016;
+    const current = visitor.current;
+    const target = visitor.target;
+    current.position[0] = target.position[0];
+    current.position[1] = target.position[1];
+    current.position[2] = target.position[2];
+    current.yaw = target.yaw;
+    current.opacity += (target.opacity - current.opacity) * (1 - Math.exp(-step * 3.4));
+
+    visitor.object.position.set(current.position[0], current.position[1], current.position[2]);
+    visitor.object.rotation.y = current.yaw;
+    visitor.object.visible = current.opacity > 0.01;
+    visitor.object.traverse((node) => {
+      if (node.material) node.material.opacity = current.opacity;
+    });
+  }
+
+  /** True once the visitor figure has faded in (or is dismissed). */
+  visitorSettled() {
+    const visitor = this._visitor;
+    if (!visitor) return true;
+    return visitor.target.opacity === 0 ? visitor.current.opacity < 0.05 : visitor.current.opacity > 0.9;
+  }
+
   guideSettled() {
     const guide = this._guide;
     if (!guide || guide.target.opacity === 0) return true;
@@ -1157,6 +1247,71 @@ export class MuseumSceneKit extends SceneKit {
     return { position, target, subjectSize: record.size };
   }
 
+  /**
+   * Beat C — human contemplation.
+   *
+   * The one composition this grammar genuinely did not have. A and B are the
+   * guide's shots: she leads, then she presents over your shoulder. D is empty of
+   * people. Between them the encounter needs a view of *a person with the work* —
+   * the moment the visitor stops being escorted and starts looking.
+   *
+   * It is deliberately not another over-the-shoulder. The camera stands off to
+   * the side, roughly square to the wall rather than to the figure, far enough
+   * back to hold both and low enough to read as standing height. The figure sits
+   * to one side of the frame and never crosses the work: a human giving the work
+   * its scale, not a human in front of it.
+   */
+  _contemplationFraming(record, anchor, viewport) {
+    const figure = this._anchorPoses.get(viewport.visitorAnchorId || viewport.guideAnchorId);
+    if (!figure) return null;
+
+    const [w, h] = record.size;
+    const out = anchor.normal;
+    const lateral = [-out[2], 0, out[0]];
+
+    // Frame the pair, not the wall.
+    //
+    // A first attempt placed the camera by hand — so far out along the normal,
+    // so far to the side — and the figure fell outside the frame while the state
+    // said it was staged. Deriving the distance from what actually has to fit
+    // cannot make that mistake: the span is measured, the field of view is asked
+    // for the distance that covers it, and both are in shot by construction.
+    const sideways = (figure.position[0] - anchor.position[0]) * lateral[0]
+      + (figure.position[2] - anchor.position[2]) * lateral[2];
+    const outward = (figure.position[0] - anchor.position[0]) * out[0]
+      + (figure.position[2] - anchor.position[2]) * out[2];
+
+    // From the far edge of the work to the far side of the figure, plus a
+    // shoulder's worth of air so nobody is cropped at the frame edge.
+    const span = Math.max(w, Math.abs(sideways) + w / 2 + 1.3);
+    const narrow = (viewport.aspect || 1.6) < 1;
+    const vfov = ((viewport.vfov || 55) * Math.PI) / 180;
+    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * (viewport.aspect || 1.6));
+    // 0.74 leaves the composition breathing rather than edge to edge.
+    const need = span / (2 * Math.tan(hfov / 2) * (narrow ? 0.62 : 0.74));
+    // Well behind the figure, not just past it. At a stride's clearance the
+    // visitor filled half the frame and read as a giant beside the work; the
+    // point of the beat is that a person gives the painting its scale, which
+    // only happens when both are seen at comparable depth.
+    const back = Math.min(Math.max(need, outward + 4.2, 4.8), 11);
+
+    // Centred between the work and the figure, so neither is dead centre and the
+    // gap between them — which is what "a person looking at this" actually looks
+    // like — is the middle of the frame.
+    const midSideways = sideways * 0.42;
+    const position = [
+      anchor.position[0] + out[0] * back + lateral[0] * midSideways,
+      1.58,
+      anchor.position[2] + out[2] * back + lateral[2] * midSideways
+    ];
+    const target = [
+      anchor.position[0] + lateral[0] * midSideways,
+      anchor.position[1] * 0.82 + 0.24,
+      anchor.position[2] + lateral[2] * midSideways
+    ];
+    return { position, target, subjectSize: [span, h, 0.1] };
+  }
+
   applyQuality(policy) {
     for (const handle of this._spaces.values()) {
       for (const spot of handle.spots) {
@@ -1168,6 +1323,7 @@ export class MuseumSceneKit extends SceneKit {
   update(dt, elapsed) {
     for (const item of this._animated) item.update(elapsed);
     this._updateGuide(dt);
+    this._updateVisitor(dt);
   }
 
   /**

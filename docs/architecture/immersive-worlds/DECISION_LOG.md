@@ -552,6 +552,56 @@ shipped visitor HUD beyond what already existed.
 
 ---
 
+## IW-DEC-029 — Beat C is a visitor figure, and Beat D is empty of people
+
+**Status:** PRODUCT DECISION — EXPLICIT
+
+**Trigger**
+
+The Experience Grammar reconciliation audit. A, B and D already existed under other
+names; C did not exist at all, and Beat D was impure at the Projection, where the
+guide's head stayed in frame during the dwell.
+
+**Decision**
+
+1. **Beat C is absent only in the conventional Artwork Stops** that use the Artwork
+   A/B/C/D grammar — Stops 02, 03 and 05. Bienvenida, the threshold Stop 04 and
+   Cierre do not take it. The Projection has its own specialised C: *guide yields*.
+   The audit's earlier phrasing "absent across the board" was too broad.
+
+2. **The human in Beat C is a visitor, not the guide.** The guide is the mediator;
+   the point of C is that mediation has withdrawn and a person is simply looking.
+   Reusing her would have read as "the guide looking at the work".
+
+3. **The visitor figure is the guide's geometry with the bun removed** and a quieter
+   palette. Explicitly provisional. It is not an avatar system, an NPC, or a
+   character rig — it is one reusable figure that makes the semantic function
+   legible. Avatar quality is deferred.
+
+4. **Beat D contains no human figure at all.** For the Projection this meant
+   splitting the 26 s dwell into a 7 s Beat C where the guide yields and a 22 s
+   Beat D with no guide staged. Dismissing her is robust; widening her step aside
+   would have depended on the aspect ratio.
+
+5. **One new camera composition was required and only one was built.** No artwork
+   image, no geometry, no room, no second rig. `_contemplationFraming` derives the
+   camera from the work's own size and normal and the figure's position, so a
+   fourth Artwork Stop needs an anchor and a beat, not code.
+
+**Consequences**
+
+`SHOT_INTENT.CONTEMPLATION`; `buildVisitorFigure`; a `visitor` field on StoryStep
+authored exactly like `guide`, dismissed on any beat that does not ask for one —
+which is what keeps Beat D empty without a special case. The route grows from 17 to
+21 beats over the same 7 Stops. Four QA checks assert who is in frame at each beat.
+
+**Not decided here**
+
+Avatar quality, multiple visitor figures, visitor movement, and any Beat C for
+Stops that do not use the Artwork grammar.
+
+---
+
 # Architecture decisions awaiting review
 
 ## IW-ADR-001 — Semantic data and representation are separate

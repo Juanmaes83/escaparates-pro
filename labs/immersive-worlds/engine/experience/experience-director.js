@@ -401,9 +401,16 @@ export class ExperienceDirector {
     // — and dismissed on any step that does not ask for one, so a guide never
     // lingers into a beat that was authored without them.
     this.ports.stageGuide?.(step.guide ? { ...step.guide, subjectRef: step.guide.subjectRef || step.subjectRef } : null);
+    // The visitor figure is authored exactly like the guide and dismissed on any
+    // beat that does not ask for one — which is what keeps Beat D empty of people
+    // without a special case for it.
+    this.ports.stageVisitor?.(step.visitor ? { ...step.visitor, subjectRef: step.visitor.subjectRef || step.subjectRef } : null);
 
     const pose = step.subjectRef
-      ? this.ports.framingFor(step.subjectRef, step.shotIntent, { guideAnchorId: step.guide?.anchorId })
+      ? this.ports.framingFor(step.subjectRef, step.shotIntent, {
+        guideAnchorId: step.guide?.anchorId,
+        visitorAnchorId: step.visitor?.anchorId
+      })
       : null;
     if (pose) {
       const travelMs = this.reducedMotion ? 0 : travelForIntent(step.shotIntent, step.duration);
@@ -452,6 +459,8 @@ function travelForIntent(intent, duration) {
     // A lead is a walk. Its duration is the walk's duration, so the camera and
     // the guide arrive together instead of one waiting for the other.
     case SHOT_INTENT.LEAD: return Math.min(seconds * 950, 7000);
+    // Contemplation should arrive slowly and then hold still.
+    case SHOT_INTENT.CONTEMPLATION: return Math.min(seconds * 620, 3000);
     case SHOT_INTENT.ENTRY:
     case SHOT_INTENT.OVERVIEW: return Math.min(seconds * 600, 3200);
     default: return Math.min(seconds * 500, 2400);

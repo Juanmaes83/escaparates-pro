@@ -69,7 +69,7 @@ should not be forced to.
 |---|---|---|---|
 | A context / arrival | LEAD framing: camera behind the guide's destination, room + work + guide in frame | **KEEP + RECLASSIFY** | none |
 | B shared attention | ACCOMPANIED framing, over-the-shoulder | **KEEP + RECLASSIFY** | none |
-| C human contemplation | — | **TRUE GAP** | see §6, stop-gated |
+| C human contemplation | — | **TRUE GAP** → now closed | visitor figure + one framing, §9 |
 | D pure artwork POV (wall works) | FOCUS/cesión beat: guide steps aside 0.92 m and leaves frame, artwork alone, ficha shown | **KEEP** | none |
 | D time-based dwell (projection) | 26 s FOCUS beat | **KEEP** | none |
 | Transition artwork→artwork | LEAD beats already walk the guide between works | **KEEP + RECLASSIFY** | none |
@@ -156,9 +156,15 @@ entered from — the yield beat, `shotIntent === FOCUS` — and while browsing:
 
 ## 6. True gaps — stop-gated, not built
 
-### 6.1 Beat C — human contemplation · TRUE GAP · VISUAL
+### 6.1 Beat C — human contemplation · TRUE GAP · **CLOSED** (approved, see §9)
 
-No beat shows a human contemplating the work. The rhythm currently runs
+Stated precisely: **Beat C was absent in the conventional Artwork Stops that use
+the Artwork A/B/C/D grammar** — Stops 02, 03 and 05. It was never required of
+Bienvenida, of the threshold Stop 04, or of Cierre, and the Projection Stop has
+its own specialised C (guide yields). The earlier phrasing "absent across the
+board" was too broad and is corrected here.
+
+At the time of the audit, no beat showed a human contemplating the work. The rhythm currently runs
 A → B → D: the guide presents, then leaves the frame. The step from "I am being
 guided" to "I am contemplating" happens without the intermediate human view the
 grammar §7 asks for.
@@ -172,8 +178,7 @@ grammar §7 asks for.
   `aside` staging and the existing anchors. One beat inserted per artwork Stop,
   authored in the world file. No new images, no new character work, no new
   geometry.
-- **Not built.** This is a new material camera composition, which the pass's visual
-  stop gate reserves for Juanma + ChatGPT approval.
+- **Approved and built** in the closure pass. See §9.
 
 ### 6.2 Beat D purity at the projection · TRUE GAP · VISUAL, small
 
@@ -182,10 +187,10 @@ frame (`qa/evidence/museum_proyeccion-permanencia.png`). For a 4.6 m projection 
 camera sits further back than for a wall work, so the 0.92 m step aside no longer
 clears the frame.
 
-- **Smallest intervention.** Either dismiss the guide entirely for time-based dwell
-  beats, or widen the aside for large subjects. Both are staging changes, not new
-  assets — but both alter an approved composition, so they wait for the same gate.
-- **Not built.**
+- **Approved and built.** The dwell was split: the existing 26 s beat became a 7 s
+  Beat C where the guide yields (her composition unchanged), followed by a 22 s
+  Beat D with no guide staged at all. Dismissing her is robust in a way that
+  widening the step aside is not — it cannot depend on an aspect ratio.
 
 ---
 
@@ -218,3 +223,68 @@ belongs to the PORTAL rows and was not touched.
 - `SHOT_INTENT` vocabulary — no renaming for semantic neatness;
 - the Projection graft;
 - `master`.
+
+
+---
+
+## 9. Closure pass — Beat C and Projection D
+
+Authorised by the Product Owner after the audit above.
+
+### 9.1 Which Stops needed C
+
+Three, verified against the running tour rather than assumed:
+
+| Stop | Needs C? | Why |
+|---|---|---|
+| 01 Bienvenida | No | arrival address, not an artwork encounter |
+| 02 Horizonte interrumpido | **Yes** | conventional Artwork Stop |
+| 03 División tercera | **Yes** | conventional Artwork Stop |
+| 04 La cámara oscura | No | threshold Stop — two transition beats, no work |
+| 05 Noche de invierno | **Yes** | conventional Artwork Stop |
+| 06 Cuaderno de luz | No | Projection: its C is GUIDE YIELDS, now its own beat |
+| 07 Cierre | No | closing address |
+
+### 9.2 Human representation audit
+
+| Candidate | Verdict |
+|---|---|
+| The guide figure | Present and complete, but she is the mediator — reusing her as the contemplating human would read as "the guide looking at the work", not "a visitor" |
+| A visitor character | Did not exist |
+| Any deterministic state / stored image | None contains a human contemplating a work; `museum:guide-turnaround` is the guide isolated for design review, and every other frame is either guide-mediated or empty of people |
+
+So: nothing existing could fulfil C, and **one new camera composition was genuinely
+required** — the count reported before implementation was 1, and 1 is what was built.
+
+### 9.3 What was created, reused and duplicated
+
+- **Reused wholesale:** the guide's geometry, proportion scaffold, materials system,
+  staging machinery, fade behaviour, anchors, and the entire framing subsystem.
+- **Duplicated:** `buildVisitorFigure` calls `buildGuideFigure` and removes the
+  gathered bun — the guide's strongest silhouette cue from behind, which is the view
+  Beat C uses. Plus a quieter palette and lighter hair. That is the whole distinction.
+- **Created:** one framing function (`_contemplationFraming`), one `SHOT_INTENT`
+  (`CONTEMPLATION`), three VIEWPOINT anchors, three authored beats, one split beat.
+- **Not created:** no artwork image, no new geometry, no avatar architecture, no NPC
+  system, no pathfinding, no animation, no second character rig, no new room.
+
+The visitor figure is explicitly **provisional**. Avatar quality is deferred.
+
+### 9.4 Reusability
+
+The same figure and the same beat shape serve all three Stops by changing only the
+anchor and the caption. `_contemplationFraming` derives the camera from the work's
+own size and normal and the figure's position, so a fourth artwork Stop needs a
+VIEWPOINT anchor and a beat — no code.
+
+### 9.5 Getting the composition right took three iterations, all recorded
+
+1. First attempt placed the camera by hand-tuned offsets: the figure was staged but
+   **fell outside the frame**. State said one thing, the image said another.
+2. Second attempt derived the distance from the span that had to fit. Figure in
+   frame, but only 1.9 m in front of the camera — it read as a giant beside the work.
+3. Third pushed the camera to 4.2 m behind the figure and moved the visitor anchors
+   from 4.35 m out to 2.2 m out, in front of each work rather than beside it.
+
+The lesson is the one the pass insisted on: *code claim ≠ visual truth*. Iteration 1
+would have passed a state-only test.
