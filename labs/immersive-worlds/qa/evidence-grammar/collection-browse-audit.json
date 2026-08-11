@@ -1,0 +1,84 @@
+{
+ "atBeatD": {
+  "label": "guided Stop02 beat D (cesión)",
+  "mode": "GUIDED",
+  "authority": "DIRECTED",
+  "space": "space.gallery-a",
+  "tourOrder": 2,
+  "tourStep": "step.02-paso-galeria-a",
+  "beat": "step.04b-horizonte-cesion",
+  "beatIndex": 4,
+  "transport": "PAUSED",
+  "focused": "entity.artwork.horizonte-interrumpido",
+  "guideStaged": "n/a",
+  "pose": [
+   -0.9,
+   1.89,
+   -12.2
+  ]
+ },
+ "browse1": {
+  "returned": "entity.artwork.campo-de-ceniza"
+ },
+ "afterBrowse1": {
+  "label": "after focusNeighbour(+1)",
+  "mode": "GUIDED",
+  "authority": "DIRECTED",
+  "space": "space.gallery-a",
+  "tourOrder": 2,
+  "tourStep": "step.02-paso-galeria-a",
+  "beat": "step.04b-horizonte-cesion",
+  "beatIndex": 4,
+  "transport": "PAUSED",
+  "focused": "entity.artwork.campo-de-ceniza",
+  "guideStaged": "n/a",
+  "pose": [
+   -0.9,
+   1.89,
+   -12.2
+  ]
+ },
+ "browse2": {
+  "returned": "entity.artwork.division-tercera"
+ },
+ "afterBrowse2": {
+  "label": "after focusNeighbour(+1) again",
+  "mode": "GUIDED",
+  "authority": "DIRECTED",
+  "space": "space.gallery-a",
+  "tourOrder": 2,
+  "tourStep": "step.02-paso-galeria-a",
+  "beat": "step.04b-horizonte-cesion",
+  "beatIndex": 4,
+  "transport": "PAUSED",
+  "focused": "entity.artwork.division-tercera",
+  "guideStaged": "n/a",
+  "pose": [
+   -0.9,
+   1.89,
+   -12.2
+  ]
+ },
+ "released": {
+  "releaseFocusReturned": true
+ },
+ "afterRelease": {
+  "label": "after releaseFocus()",
+  "mode": "GUIDED",
+  "authority": "DIRECTED",
+  "space": "space.gallery-a",
+  "tourOrder": 2,
+  "tourStep": "step.02-paso-galeria-a",
+  "beat": "step.04b-horizonte-cesion",
+  "beatIndex": 4,
+  "transport": "PAUSED",
+  "focused": null,
+  "guideStaged": "n/a",
+  "pose": [
+   -0.9,
+   1.89,
+   -12.2
+  ]
+ },
+ "errors": []
+}

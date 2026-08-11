@@ -149,6 +149,21 @@ export class ExperienceDirector {
     return this.index === target.firstBeatIndex;
   }
 
+  /**
+   * Re-apply the current beat's shot, guide staging and camera authority.
+   *
+   * Used when something borrowed the camera from inside a beat — Collection
+   * Browse — and has to give it back to exactly the composition the visitor
+   * left, rather than to a generic explore pose.
+   */
+  reapplyCurrentShot() {
+    const step = this.currentStep;
+    if (!step) return false;
+    this.ports.requestAuthority(CAMERA_AUTHORITY.DIRECTED, { reason: `route:${this.routeId}:resume` });
+    this._applyShot(step);
+    return true;
+  }
+
   /** Next canonical Tour Step. Cheap: it is forward, so it just replays beats. */
   async nextTourStep() {
     const next = this.currentTourStep?.nextId;

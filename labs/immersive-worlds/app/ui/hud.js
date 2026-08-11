@@ -181,6 +181,7 @@ export class ExperienceHUD {
     bus.on(EVENTS.ROUTE_STEP, ({ caption, index, total }) => {
       this.el.caption.textContent = caption || '';
       this.el.stepCount.textContent = `Parada ${index + 1} de ${total}`;
+      this._stepCountText = this.el.stepCount.textContent;
       this.update();
     });
     bus.on(EVENTS.NARRATION_CUE, ({ caption }) => this.audio.speak(caption));
@@ -218,9 +219,27 @@ export class ExperienceHUD {
     const state = this.runtime.state;
     const guided = state.mode === EXPERIENCE_MODE.GUIDED;
 
+    // Two previous/next meanings exist — beat and artwork — and the visitor has
+    // to be able to tell which one is live. While browsing, the tour transport
+    // says where it will return to instead of implying it is still advancing.
+    const browsing = this.runtime.isBrowsingCollection;
+    document.body.dataset.browsing = browsing ? 'true' : 'false';
+    if (browsing) {
+      const origin = this.runtime.experience.currentTourStep;
+      this.el.stepCount.textContent = origin
+        ? `Colección · vuelve a la parada ${String(origin.order).padStart(2, '0')}`
+        : 'Colección';
+    } else if (this._stepCountText) {
+      this.el.stepCount.textContent = this._stepCountText;
+    }
+
     this.el.transport.hidden = !guided;
     this.el.routeBtn.hidden = guided;
     this.el.pauseBtn.textContent = this.runtime.experience.transport === 'PAUSED' ? 'Reanudar' : 'Pausar';
+    // The tour's own controls stand down while the collection is being browsed:
+    // one arrow pair at a time may be live, or the two meanings blur.
+    this.el.pauseBtn.disabled = browsing;
+    this.el.nextBtn.disabled = browsing;
     this.el.progress.style.width = `${Math.round(this.runtime.experience.progress * 100)}%`;
 
     const nearest = this.runtime.proximity.nearestHotspot;
@@ -269,12 +288,23 @@ export class ExperienceHUD {
     const index = works.findIndex((work) => work.id === entityId);
     this.el.detailCount.textContent = works.length > 1 ? `${index + 1} / ${works.length}` : '';
 
-    // During a guided route the camera belongs to the Director: the label stays,
-    // the controls go.
+    // During a guided route the camera belongs to the Director, so the browse
+    // controls stay out of the way — except at the beat where the work itself is
+    // the protagonist. That beat (SHOT_INTENT FOCUS, the yield at the end of a
+    // Stop) is exactly where the grammar says Collection Browse is entered from,
+    // and hiding the controls there was what made an existing capability
+    // unreachable rather than absent.
     const soloWork = works.length < 2;
-    this.el.detailPrev.hidden = guided || soloWork;
-    this.el.detailNext.hidden = guided || soloWork;
-    this.el.detailClose.hidden = guided;
+    const browsing = this.runtime.isBrowsingCollection;
+    const atYieldBeat = this.runtime.experience.currentStep?.shotIntent === 'FOCUS';
+    const canBrowse = !guided || browsing || atYieldBeat;
+    this.el.detailPrev.hidden = soloWork || !canBrowse;
+    this.el.detailNext.hidden = soloWork || !canBrowse;
+    // Closing means two different things and must not read as one: outside the
+    // tour it returns the visitor to where they stood; inside it returns them to
+    // the stop they left.
+    this.el.detailClose.hidden = guided && !browsing;
+    if (browsing) this.el.detailClose.textContent = 'Volver a la parada';
     this.el.detail.querySelector('.iw-detail__zoom').hidden = guided;
 
     this.setZoom(0);

@@ -232,8 +232,29 @@ export class Runtime {
     }
 
     // A guided shot focuses the *world*, but the camera stays with the Director.
-    if (params.camera === false || this.state.mode === EXPERIENCE_MODE.GUIDED) {
+    // The Director says so explicitly; this used to also refuse the camera for
+    // *any* focus while a route was running, which silently broke the one case
+    // that legitimately wants it — a visitor entering Collection Browse from a
+    // guided beat. The symptom was the label changing to the next work while the
+    // camera kept showing the previous one.
+    if (params.camera === false) {
       return { entityId, camera: this.camera.owner };
+    }
+
+    // Entering Collection Browse from inside the tour. The origin is remembered
+    // once, on the way in, so that stepping through five works still returns to
+    // the beat the visitor left — and the route is paused so the tour cannot
+    // advance underneath someone who is looking at something else.
+    if (this.state.mode === EXPERIENCE_MODE.GUIDED && !this._browseOrigin) {
+      this._browseOrigin = {
+        stepId: this.experience.currentStep?.id || null,
+        tourStepId: this.experience.currentTourStep?.id || null,
+        index: this.experience.index,
+        transport: this.experience.transport
+      };
+      this.experience.pause();
+      // Pure artwork presentation: the guide is not part of it.
+      this.stageGuide(null);
     }
 
     const pose = this.framingFor(entityId, 'FOCUS');
@@ -270,6 +291,19 @@ export class Runtime {
     const entityId = this.state.focusedEntityId;
     this.sceneKit.setEntityFocused(entityId, false);
     this.state.setFocus(null);
+
+    // Leaving Collection Browse: back to the exact beat it was entered from,
+    // with its authored shot and its guide restaged. The browsed work never
+    // became the tour's position, so there is nothing to unwind in World State —
+    // only the camera and the guide to put back.
+    if (this._browseOrigin && this.experience.transport !== 'IDLE') {
+      const origin = this._browseOrigin;
+      this._browseOrigin = null;
+      this._exploreReturnPose = null;
+      this.experience.reapplyCurrentShot();
+      if (origin.transport === 'PLAYING') this.experience.resume();
+      return true;
+    }
 
     if (this.state.mode === EXPERIENCE_MODE.GUIDED) return true;
 
@@ -401,7 +435,24 @@ export class Runtime {
   }
 
   exitRoute() {
+    this._browseOrigin = null;
     this.experience.exit({ restorePose: true, reason: 'visitor-exit' });
+  }
+
+  /**
+   * Whether the visitor is browsing the collection from inside a guided beat.
+   *
+   * The two previous/next controls mean different things — beat vs artwork —
+   * and this is what lets the HUD say which one is live instead of showing the
+   * same arrows for both.
+   */
+  get isBrowsingCollection() {
+    return Boolean(this._browseOrigin);
+  }
+
+  /** Where Collection Browse will return to. Null when not browsing. */
+  get browseOrigin() {
+    return this._browseOrigin ? { ...this._browseOrigin } : null;
   }
 
   /** The world's primary route. One today; named rather than indexed by hand. */

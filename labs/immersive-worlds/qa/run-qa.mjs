@@ -521,6 +521,78 @@ async function main() {
       `esperado ${expectedBack} · observado ${tour.backward.join('→')}`);
     evidence.tour = tour;
 
+    /* -- experience grammar: Collection Browse and its return contract ------- */
+    // The audit found this broken in a specific, invisible way: browsing from a
+    // guided beat changed the wall label to the next work while the camera kept
+    // showing the previous one. These checks assert the three things the product
+    // contract actually promises.
+    const browse = await page.evaluate(async () => {
+      const rt = window.__IW.runtime;
+      const d = rt.experience;
+      const authored = d.reducedMotion;
+      d.reducedMotion = true;
+
+      await rt.goToTourStep('step.02-paso-galeria-a');
+      while (d.currentStep?.id !== 'step.04b-horizonte-cesion') await d._advanceAndSettle();
+      const at = (label) => ({
+        label,
+        authority: rt.camera.owner,
+        focused: rt.state.focusedEntityId,
+        tourStepId: d.currentTourStep?.id ?? null,
+        beatId: d.currentStep?.id ?? null,
+        beatIndex: d.index,
+        transport: d.transport,
+        browsing: rt.isBrowsingCollection,
+        pose: rt.camera.pose.position.map((n) => +n.toFixed(2))
+      });
+
+      const origin = at('origin');
+      const visited = [];
+      rt.focusNeighbour(1); await window.__IW.frames(3); visited.push(at('browse+1'));
+      rt.focusNeighbour(1); await window.__IW.frames(3); visited.push(at('browse+2'));
+      rt.focusNeighbour(-1); await window.__IW.frames(3); visited.push(at('browse-1'));
+      rt.releaseFocus(); await window.__IW.frames(6);
+      const restored = at('restored');
+
+      d.reducedMotion = authored;
+      rt.exitRoute();
+      if (rt.state.activeSpaceId !== 'space.gallery-a') {
+        await rt.traversePortal('portal.gallery-b-gallery-a', { source: 'QA' });
+      }
+      return { origin, visited, restored };
+    });
+
+    const movedCamera = browse.visited.every((v, i) =>
+      v.browsing && v.authority === 'FOCUS'
+      && v.focused !== browse.origin.focused
+      && (i === 0 || v.focused !== browse.visited[i - 1].focused)
+      && Math.hypot(v.pose[0] - browse.origin.pose[0], v.pose[2] - browse.origin.pose[2]) > 0.5);
+    check('BROWSE-MOVES-THE-CAMERA',
+      'Navegar la colección lleva la cámara a la obra que dice la cartela',
+      movedCamera,
+      browse.visited.map((v) => `${v.focused.split('.').pop()}@${v.pose.join(',')}`).join(' · '));
+
+    const tourHeld = browse.visited.every((v) =>
+      v.tourStepId === browse.origin.tourStepId
+      && v.beatId === browse.origin.beatId
+      && v.beatIndex === browse.origin.beatIndex);
+    check('BROWSE-DOES-NOT-MOVE-THE-TOUR',
+      'La obra visitada no reescribe en silencio la posición del recorrido',
+      tourHeld,
+      `parada ${browse.origin.tourStepId} · beat ${browse.origin.beatIndex} durante ${browse.visited.length} saltos`);
+
+    const returned = browse.restored.beatId === browse.origin.beatId
+      && browse.restored.beatIndex === browse.origin.beatIndex
+      && browse.restored.tourStepId === browse.origin.tourStepId
+      && browse.restored.authority === 'DIRECTED'
+      && browse.restored.browsing === false
+      && browse.restored.focused === null;
+    check('BROWSE-RETURNS-TO-ORIGIN',
+      'Salir de la colección devuelve exactamente a la parada y el beat de origen',
+      returned,
+      `${browse.restored.beatId} · ${browse.restored.authority} · pose ${browse.restored.pose.join(',')}`);
+    evidence.browse = browse;
+
     /* -- warmup actually compiles ------------------------------------------- */
     const warm = await page.evaluate(() => window.__IW.runtime.sceneKit.renderStats());
     check('WARMUP-COMPILES', 'El warmup compila programas de verdad, no una escena vacía',
