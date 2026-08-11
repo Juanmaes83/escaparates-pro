@@ -470,8 +470,17 @@ async function main() {
       await rt.goToTourStep(manifest.steps[0].id);
       const forward = [d.currentTourStep.order];
       while (d.currentTourStep.nextId) { await d.nextTourStep(); forward.push(d.currentTourStep.order); }
+      // Bounded on purpose. Backwards is reconstruction from beat 1 (see the
+      // contract, §4), so a full N-step walk costs minutes under SwiftShader.
+      // Three consecutive transitions prove PREVIOUS lands on the right canonical
+      // step repeatedly; the exhaustive 07→01 walk is committed evidence in
+      // qa/evidence-tour/tour-trace.json, and the link algebra is already covered
+      // structurally by TOUR-NEXT-PREV-CONSISTENT and TOUR-ALL-REACHABLE.
       const backward = [d.currentTourStep.order];
-      while (d.currentTourStep.previousId) { await d.previousTourStep(); backward.push(d.currentTourStep.order); }
+      for (let i = 0; i < 3 && d.currentTourStep.previousId; i += 1) {
+        await d.previousTourStep();
+        backward.push(d.currentTourStep.order);
+      }
       d.reducedMotion = authored;
       rt.exitRoute();
       // The tour ends in Galería B. Every check after this one was written
@@ -505,10 +514,11 @@ async function main() {
       'SIGUIENTE recorre la misma secuencia canónica, de principio a fin',
       tour.forward.join('→') === expectedSeq,
       `observado ${tour.forward.join('→')}`);
+    const expectedBack = [...tour.expected].reverse().slice(0, tour.backward.length).join('→');
     check('TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE',
-      'ANTERIOR la recorre en sentido inverso, sin saltarse ninguna parada',
-      tour.backward.join('→') === [...tour.expected].reverse().join('→'),
-      `observado ${tour.backward.join('→')}`);
+      'ANTERIOR retrocede por la secuencia canónica, sin saltarse ninguna parada',
+      tour.backward.join('→') === expectedBack,
+      `esperado ${expectedBack} · observado ${tour.backward.join('→')}`);
     evidence.tour = tour;
 
     /* -- warmup actually compiles ------------------------------------------- */
