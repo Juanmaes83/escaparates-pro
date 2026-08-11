@@ -130,19 +130,6 @@ async function main() {
         ? Math.hypot(target[0] - anchorPose.position[0], target[1] - anchorPose.position[1], target[2] - anchorPose.position[2])
         : null;
 
-      // Perceptual fingerprint from the render surface only: the HUD is DOM and
-      // never reaches this canvas, so captions cannot mask a duplicate shot.
-      const canvas = document.querySelector('canvas');
-      const small = document.createElement('canvas');
-      small.width = 32; small.height = 32;
-      const ctx = small.getContext('2d');
-      ctx.drawImage(canvas, 0, 0, 32, 32);
-      const px = ctx.getImageData(0, 0, 32, 32).data;
-      const hash = [];
-      for (let i = 0; i < px.length; i += 4) {
-        hash.push(Math.round(0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]));
-      }
-
       const vis = (fig) => (fig?.object?.visible && fig.current.opacity > 0.5 ? 'presente' : 'ausente');
       return {
         settled,
@@ -162,8 +149,7 @@ async function main() {
         authority: rt.camera.owner,
         position: rt.camera.pose.position.map((n) => +n.toFixed(2)),
         target: target.map((n) => +n.toFixed(2)),
-        targetDrift: targetDrift === null ? null : +targetDrift.toFixed(2),
-        hash
+        targetDrift: targetDrift === null ? null : +targetDrift.toFixed(2)
       };
     });
     if (!probe) break;
@@ -176,6 +162,30 @@ async function main() {
 
     if (probe.settled) {
       await page.screenshot({ path: path.join(OUT, file) });
+      // Fingerprint the *composited* frame. Reading the WebGL canvas directly
+      // returns an empty buffer — the context is created without
+      // preserveDrawingBuffer, so the drawing buffer is gone by the time script
+      // runs. The first version of this file did exactly that and reported all
+      // 21 beats as pixel-identical, which is the kind of confident nonsense
+      // this audit exists to catch. The HUD is hidden for the hash only.
+      await page.evaluate(() => { window.__IW.hud.root.style.visibility = 'hidden'; });
+      const bare = await page.screenshot({ type: 'png' });
+      await page.evaluate(() => { window.__IW.hud.root.style.visibility = ''; });
+      probe.hash = await page.evaluate(async (b64) => {
+        const img = new Image();
+        img.src = `data:image/png;base64,${b64}`;
+        await img.decode();
+        const small = document.createElement('canvas');
+        small.width = 32; small.height = 32;
+        const ctx = small.getContext('2d');
+        ctx.drawImage(img, 0, 0, 32, 32);
+        const px = ctx.getImageData(0, 0, 32, 32).data;
+        const out = [];
+        for (let i = 0; i < px.length; i += 4) {
+          out.push(Math.round(0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]));
+        }
+        return out;
+      }, bare.toString('base64'));
     } else {
       // Refuse to produce a misleading frame.
       console.log(`  !! NO ASENTADO  ${probe.beatId} — no se captura`);
