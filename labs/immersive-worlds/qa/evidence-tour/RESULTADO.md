@@ -47,12 +47,11 @@ disfraza de salto instantáneo.
 
 ---
 
-## PARTE 2 — QA canónico · 🟡 EN CURSO, sin fallos
+## PARTE 2 — QA canónico · ✅ PASA
 
-Base anterior: 48/48. Base nueva esperada: **60** (48 + 12 invariantes de recorrido).
+**60/60 comprobaciones, exit 0, cero fallos.**
 
-En el momento de escribir esto: **43 comprobaciones, 43 verdes, 0 fallos**, incluidos
-los doce nuevos:
+Base anterior 48 → base nueva **60**: los doce invariantes de recorrido, todos verdes.
 
 ```
 ok  TOUR-ONE-START                            abre en el beat 0 (step.01-entrada)
@@ -69,8 +68,8 @@ ok  TOUR-MANUAL-NEXT-USES-CANONICAL-SEQUENCE  observado 1→…→7
 ok  TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE  esperado 7→6→5→4 · observado 7→6→5→4
 ```
 
-Faltan las fases finales (estados deterministas, rendimiento, móvil, segundo mundo,
-autoría). Ninguna toca el recorrido y todas pasaban en la corrida anterior.
+Ninguna regresión en las 48 anteriores. A partir de ahora, romper el orden del
+recorrido rompe QA.
 
 ---
 
