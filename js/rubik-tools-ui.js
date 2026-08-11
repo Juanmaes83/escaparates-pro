@@ -1,9 +1,6 @@
-// RUBIK SOTA Tools — third app mode. Wires the two verbatim-copied,
-// fully-isolated tools (labs/rubik-sota-tools/*) into their own space via an
-// iframe, without touching Efectos or Scroll Sections state/logic. Those two
-// modes toggle each other through EP.ScrollSectionsUI.setMode(); this module
-// only ever listens for clicks (never calls into that module) and manages
-// its own stage, so it can't regress anything already approved there.
+// RUBIK SOTA Tools — isolated product family.
+// TYPE A tools stay verbatim in iframe. TYPE B tools open an Escaparates authoring host
+// that adapts a preserved engine without moving its visual algorithms into EP.Core.
 (function() {
     var TOOLS = [
         {
@@ -11,11 +8,7 @@
             name: 'Studio RUBIK SOTA Experiences',
             icon: '🎬',
             desc: 'Generador web propio con efectos y carga de video, música e imágenes desde local o URL (YouTube incluido).',
-            // ?edit reveals the tool's own hidden "EDIT" badge (#ebdg), which
-            // toggles its internal editor panel (#rse) — both exist in the
-            // tool's original code but stay hidden without this query param.
-            // Passing it here (not touching the tool's files) is how its own
-            // demo URL (…/index.html?edit) already activated the panel.
+            integrationType: 'type-a',
             src: 'labs/rubik-sota-tools/studio-experiences/?edit'
         },
         {
@@ -23,6 +16,7 @@
             name: 'RUBIK SOTA Particles Engine v5',
             icon: '✨',
             desc: 'Motor de partículas propio que reconstruye imágenes en 3D con alta resolución.',
+            integrationType: 'type-a',
             src: 'labs/rubik-sota-tools/particles-engine-v5/'
         },
         {
@@ -30,6 +24,7 @@
             name: 'RUBIK SOTA Catálogo Inmersivo',
             icon: '🗂️',
             desc: 'Motor de metaverso propio (PixiJS + GSAP) para catálogos de producto inmersivos y navegables.',
+            integrationType: 'type-a',
             src: 'labs/rubik-sota-tools/catalogo-inmersivo/'
         },
         {
@@ -37,7 +32,16 @@
             name: 'Pin Mapping Studio PRO',
             icon: 'PIN',
             desc: 'Herramienta visual de hotspots: compara dos crops, mantiene posicion y escala, permite lupa, arrastre y JSON final.',
+            integrationType: 'type-a',
             src: 'labs/rubik-sota-tools/pin-mapping-studio-pro/'
+        },
+        {
+            id: 'infinite-display-studio-pro',
+            name: 'Infinite Display Studio PRO',
+            icon: '∞',
+            desc: 'Advanced Integrated Tool: 12 modos 3D, media, branding, presentación, proyectos y outputs con motor canónico preservado.',
+            integrationType: 'type-b',
+            src: 'advanced-tool.html?tool=infinite-display-studio-pro'
         }
     ];
 
@@ -48,9 +52,10 @@
         var catalog = document.getElementById('rubik-tools-catalog');
         if (!catalog) return;
         catalog.innerHTML = TOOLS.map(function(t) {
+            var badge = t.integrationType === 'type-b' ? '<span class="ss-family" style="margin-left:7px">ADVANCED</span>' : '';
             return '<div class="ss-template-card' + (t.id === activeToolId ? ' active' : '') + '" data-tool="' + t.id + '">' +
                 '<span class="ss-icon">' + t.icon + '</span>' +
-                '<div><div class="ss-name">' + t.name + '</div><div class="ss-desc">' + t.desc + '</div></div>' +
+                '<div><div class="ss-name">' + t.name + badge + '</div><div class="ss-desc">' + t.desc + '</div></div>' +
                 '</div>';
         }).join('');
         Array.prototype.forEach.call(catalog.querySelectorAll('.ss-template-card'), function(card) {
@@ -74,7 +79,6 @@
     function activate() {
         if (active) return;
         active = true;
-
         var ssStage = document.getElementById('scroll-sections-stage');
         if (ssStage) ssStage.classList.remove('active');
         document.body.classList.remove('mode-scroll-sections');
@@ -83,13 +87,11 @@
         if (btnEffects) btnEffects.classList.remove('active');
         if (btnScroll) btnScroll.classList.remove('active');
         if (EP.Timeline && EP.Timeline.pause) EP.Timeline.pause();
-
         document.body.classList.add('mode-rubik-tools');
         var stage = document.getElementById('rubik-tools-stage');
         var btn = document.getElementById('mode-btn-rubik-tools');
         if (stage) stage.classList.add('active');
         if (btn) btn.classList.add('active');
-
         if (!activeToolId) selectTool(TOOLS[0].id);
         else renderCatalog();
     }
@@ -114,5 +116,5 @@
     }
 
     window.EP = window.EP || {};
-    EP.RubikToolsUI = { init: init };
+    EP.RubikToolsUI = { init: init, getTools: function(){ return TOOLS.slice(); } };
 })();
