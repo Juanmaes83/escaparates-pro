@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Infinite Worlds — Fidelity V1</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <canvas class="webgl"></canvas>
+  <div class="vignette"></div>
+  <header class="hud-top">
+    <div class="brand">INFINITE WORLDS <span>/ FIDELITY V1</span></div>
+    <div class="world-chip"><span>CURRENT WORLD</span><strong id="worldName">THE GREY CITY</strong></div>
+  </header>
+  <div id="instructions">
+    <strong>EXPLORE THE WINDOW</strong>
+    <span>Drag to turn around · Scroll to zoom · Click the portal to cross</span>
+  </div>
+  <div id="portalHint">ENTER THE OTHER WORLD</div>
+  <div id="loading"><div class="loading-copy"><strong>BUILDING TWO WORLDS</strong><span>Preparing the portal…</span></div></div>
+
+  <script type="x-shader/x-vertex" id="vertexShader">
+    precision highp float;
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+      gl_Position = projectionMatrix * modelViewPosition;
+    }
+  </script>
+
+  <script type="x-shader/x-fragment" id="fragmentShader">
+    #define PI 3.1415
+    #define TAU 6.2832
+    uniform sampler2D map;
+    uniform sampler2D noiseMap;
+    uniform float time;
+    uniform float effectIntensity;
+    uniform float effectMultiplier;
+    varying vec2 vUv;
+
+    void main() {
+      vec2 vUv2 = vUv - .5;
+      float angle = atan(vUv2.y, vUv2.x);
+      float l = length(vUv2);
+      float l2 = pow(l, .5);
+
+      float u = angle * 2. / TAU + time * .1;
+      float v = fract(l + time * .2);
+      vec4 noise = texture2D(noiseMap, vec2(u, v));
+
+      float noiseDisp = noise.r * noise.g * 4. * effectMultiplier;
+      float radialMask = l;
+      float wavesCount = 5.0;
+      float wavesSpeed = time * 5.;
+      float pnt = sin(2.0 * l * PI * wavesCount + noiseDisp + wavesSpeed) * radialMask;
+
+      float dx = pnt * cos(angle);
+      float dy = pnt * sin(angle);
+
+      vec4 color = texture2D(map, vUv + vec2(dx, dy) * l * .3 * effectIntensity * effectMultiplier);
+      color *= 1. + pnt * .5 * effectIntensity;
+
+      float highlight = smoothstep(.0, .2, dx * dy);
+      color += highlight * effectIntensity;
+
+      float grey = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+      color.rgb = mix(color.rgb, vec3(grey), effectIntensity * l * effectMultiplier);
+      color.r += smoothstep(.1, .7, l) * .5 * effectIntensity;
+
+      gl_FragColor = linearToOutputTexel(color);
+    }
+  </script>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
