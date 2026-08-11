@@ -68,10 +68,11 @@ function city(r){
     r.video.rotation.set(0,.065,0);
     styleCityFrame(r.video,'video');
     const b=boxes(r.video);
-    // Compress the oversized V1.2.2 façade additions so media remains the hero.
-    if(b[2]){b[2].scale.set(.82,.70,.64); b[2].position.set(0,-2.25,-.62);}
-    if(b[3]){b[3].scale.set(.78,.78,.66); b[3].position.set(0,3.55,-.22);}
-    if(b[4]){b[4].scale.set(.78,.78,.66); b[4].position.set(0,-3.50,-.18);}
+    // Final micro-fix: keep the proven hero-media placement untouched and only
+    // pull back the added left architectural mass so it frames rather than occludes.
+    if(b[2]){b[2].scale.set(.68,.70,.64); b[2].position.set(-1.15,-2.25,-.62);}
+    if(b[3]){b[3].scale.set(.72,.78,.66); b[3].position.set(-.65,3.55,-.22);}
+    if(b[4]){b[4].scale.set(.72,.78,.66); b[4].position.set(-.65,-3.50,-.18);}
   }
   if(r.image){
     r.image.position.set(8.55,.95,3.65);
