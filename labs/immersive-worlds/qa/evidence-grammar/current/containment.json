@@ -1,0 +1,434 @@
+{
+ "slack": 1,
+ "rows": [
+  {
+   "beatId": "step.01-entrada",
+   "tourOrder": 1,
+   "role": "A",
+   "space": "space.lobby",
+   "position": [
+    0,
+    1.62,
+    3.2
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.02-paso-galeria-a",
+   "tourOrder": 2,
+   "role": "TRANSITION",
+   "space": "space.gallery-a",
+   "position": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.03a-lleva-campo",
+   "tourOrder": 2,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    -2.6,
+    1.72,
+    -11.98
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.03b-campo",
+   "tourOrder": 2,
+   "role": "B",
+   "space": "space.gallery-a",
+   "position": [
+    -4.22,
+    1.73,
+    -11.51
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.03c-campo-contemplacion",
+   "tourOrder": 2,
+   "role": "C",
+   "space": "space.gallery-a",
+   "position": [
+    -1.6,
+    1.58,
+    -12.06
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.03d-campo-cesion",
+   "tourOrder": 2,
+   "role": "D",
+   "space": "space.gallery-a",
+   "position": [
+    -4.06,
+    1.85,
+    -12.4
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.03-lleva-horizonte",
+   "tourOrder": 3,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    -1.57,
+    1.72,
+    -10.05
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.04-horizonte",
+   "tourOrder": 3,
+   "role": "B",
+   "space": "space.gallery-a",
+   "position": [
+    -2.63,
+    1.73,
+    -11.68
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.04c-horizonte-contemplacion",
+   "tourOrder": 3,
+   "role": "C",
+   "space": "space.gallery-a",
+   "position": [
+    -1.38,
+    1.58,
+    -9.1
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.04b-horizonte-cesion",
+   "tourOrder": 3,
+   "role": "D",
+   "space": "space.gallery-a",
+   "position": [
+    -0.9,
+    1.89,
+    -12.2
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.05-lleva-division",
+   "tourOrder": 4,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    4.78,
+    1.72,
+    -10.1
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06-division",
+   "tourOrder": 4,
+   "role": "B",
+   "space": "space.gallery-a",
+   "position": [
+    4.58,
+    1.73,
+    -11.74
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06c-division-contemplacion",
+   "tourOrder": 4,
+   "role": "C",
+   "space": "space.gallery-a",
+   "position": [
+    4.62,
+    1.58,
+    -9.1
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06b-division-cesion",
+   "tourOrder": 4,
+   "role": "D",
+   "space": "space.gallery-a",
+   "position": [
+    5.1,
+    1.71,
+    -12.67
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06d-lleva-estudio",
+   "tourOrder": 5,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    2.74,
+    1.72,
+    -13.89
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06e-estudio",
+   "tourOrder": 5,
+   "role": "B",
+   "space": "space.gallery-a",
+   "position": [
+    4.68,
+    1.73,
+    -14.1
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06f-estudio-contemplacion",
+   "tourOrder": 5,
+   "role": "C",
+   "space": "space.gallery-a",
+   "position": [
+    2.05,
+    1.58,
+    -13.84
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06g-estudio-cesion",
+   "tourOrder": 5,
+   "role": "D",
+   "space": "space.gallery-a",
+   "position": [
+    5.65,
+    1.67,
+    -13.6
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06h-lleva-vasija",
+   "tourOrder": 6,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    1.07,
+    1.72,
+    -6.69
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06i-vasija",
+   "tourOrder": 6,
+   "role": "B",
+   "space": "space.gallery-a",
+   "position": [
+    1.83,
+    1.73,
+    -4.09
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06j-vasija-escala",
+   "tourOrder": 6,
+   "role": "C",
+   "space": "space.gallery-a",
+   "position": [
+    1.35,
+    1.58,
+    -7.23
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.06k-vasija-detalle",
+   "tourOrder": 6,
+   "role": "D",
+   "space": "space.gallery-a",
+   "position": [
+    5.57,
+    1.65,
+    -5.22
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.07-lleva-umbral",
+   "tourOrder": 7,
+   "role": "A",
+   "space": "space.gallery-a",
+   "position": [
+    3.4,
+    1.62,
+    -10
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.08-paso-galeria-b",
+   "tourOrder": 7,
+   "role": "TRANSITION",
+   "space": "space.gallery-b",
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.09-lleva-noche",
+   "tourOrder": 8,
+   "role": "A",
+   "space": "space.gallery-b",
+   "position": [
+    11.85,
+    1.72,
+    -9.6
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10-noche",
+   "tourOrder": 8,
+   "role": "B",
+   "space": "space.gallery-b",
+   "position": [
+    13.02,
+    1.73,
+    -11.38
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10f-noche-contemplacion",
+   "tourOrder": 8,
+   "role": "C",
+   "space": "space.gallery-b",
+   "position": [
+    12.01,
+    1.58,
+    -8.55
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10b-noche-cesion",
+   "tourOrder": 8,
+   "role": "D",
+   "space": "space.gallery-b",
+   "position": [
+    12.4,
+    1.74,
+    -12.41
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10c-lleva-cuaderno",
+   "tourOrder": 9,
+   "role": "A",
+   "space": "space.gallery-b",
+   "position": [
+    16.48,
+    1.72,
+    -8.7
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10d-cuaderno",
+   "tourOrder": 9,
+   "role": "B",
+   "space": "space.gallery-b",
+   "position": [
+    16.15,
+    1.73,
+    -10.34
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10e-cuaderno-permanencia",
+   "tourOrder": 9,
+   "role": "C",
+   "space": "space.gallery-b",
+   "position": [
+    16.48,
+    1.58,
+    -7.4
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.10g-cuaderno-dwell",
+   "tourOrder": 9,
+   "role": "D",
+   "space": "space.gallery-b",
+   "position": [
+    16.9,
+    2.12,
+    -9.82
+   ],
+   "inside": true,
+   "why": ""
+  },
+  {
+   "beatId": "step.11-cierre",
+   "tourOrder": 10,
+   "role": "CLOSE",
+   "space": "space.gallery-b",
+   "position": [
+    22.27,
+    1.68,
+    -10
+   ],
+   "inside": false,
+   "why": "x 22.27 fuera de [7.0, 21.0]"
+  }
+ ]
+}

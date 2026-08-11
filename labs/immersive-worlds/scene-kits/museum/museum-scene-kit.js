@@ -941,6 +941,20 @@ export class MuseumSceneKit extends SceneKit {
       };
     }
     const pose = overviewPose(space.bounds, spawn, viewport, { eyeHeight: 1.68, fill: 0.9 });
+    // Keep the observer inside the building.
+    //
+    // The overview retreats far enough to fit the room's width in frame, which for
+    // a twelve-metre gallery is eight metres back from its centre — two metres
+    // past the wall. The closing address had been rendering the *outside* of
+    // Galería B's east wall: a black frame with a caption over it, and nothing in
+    // the state told anyone, because the shot was aimed perfectly at a room it was
+    // standing outside of.
+    const [bw, bh, bd] = space.bounds.size;
+    const [ox, oy, oz] = space.bounds.origin;
+    const inset = 0.8;
+    pose.position[0] = Math.min(Math.max(pose.position[0], ox - bw / 2 + inset), ox + bw / 2 - inset);
+    pose.position[2] = Math.min(Math.max(pose.position[2], oz - bd / 2 + inset), oz + bd / 2 - inset);
+    pose.position[1] = Math.min(pose.position[1], oy + bh - 0.4);
     return { ...pose, subjectSize: space.bounds.size };
   }
 
