@@ -15,9 +15,10 @@ Read these documents before making architectural or implementation decisions:
 6. `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` — **mandatory creative/experiential quality doctrine for Museum / Institutional work: The Experience Is The Interface, Experience Language, authored Focus, spatial composition, content-first quality tests and quality gates.**
 7. `SCULPTING_AND_GRAFTING_METHOD.md` — **mandatory current working method for Museum / Institutional: preserve capability, sculpt away prototype/generic/noisy representation, graft stronger legal capabilities when a demonstrated gap exists, and stop at visual evidence checkpoints.**
 8. `NEXT_PASSES_MUSEUM_ROADMAP.md` — **mandatory Product Owner-gated execution order for the next Museum passes. Execute one pass only, provide navigable evidence, STOP, and do not start the next pass without Juanma's explicit approval. It also makes the two stored `.webm` navigation recordings mandatory behavioural references for guide/camera/Portal work.**
-9. `MUSEUM_GUIDED_TOUR_CONTRACT.md` — **mandatory before touching the guided tour: the one authoritative order, Tour Step vs beat vs QA state, the semantics of automatic / manual / direct-jump navigation, the integrity invariants, and how to add Tour Step N+1 without breaking the sequence.** Its companion `TOUR_ORDER_AUDIT_BEFORE.md` records the drift that made the contract necessary.
-10. `GLOSSARY.md` — canonical semantic vocabulary.
-11. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
+9. `MUSEUM_PRODUCT_ROADMAP_BLOCKS.md` — **canonical strategic Museum / Institutional path from completion of the Main Gallery through transitions, new rooms/technologies, Flexible Media, Experience Points, Authoring, Experience Languages, the merged Sound + Orientation + Map + Progress layer, and Publish/Record/Output. It also makes Visual Boards, contact sheets, current-state evidence and human visual review part of the permanent operating method.**
+10. `MUSEUM_GUIDED_TOUR_CONTRACT.md` — **mandatory before touching the guided tour: the one authoritative order, Tour Step vs beat vs QA state, the semantics of automatic / manual / direct-jump navigation, the integrity invariants, and how to add Tour Step N+1 without breaking the sequence.** Its companion `TOUR_ORDER_AUDIT_BEFORE.md` records the drift that made the contract necessary.
+11. `GLOSSARY.md` — canonical semantic vocabulary.
+12. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
 
 ## Operating principle
 
@@ -118,6 +119,8 @@ Do not automatically promote a capability from Museum or Place into shared core 
 
 For the Museum next-pass sequence, `NEXT_PASSES_MUSEUM_ROADMAP.md` is mandatory.
 
+The strategic product path is additionally defined in `MUSEUM_PRODUCT_ROADMAP_BLOCKS.md`; it does not grant automatic permission to execute future blocks.
+
 The implementation agent must execute **one pass at a time**. Every pass must end in:
 
 ```text
@@ -151,6 +154,8 @@ Required evidence:
 5. browser QA / console state;
 6. relevant performance and regression evidence;
 7. concise explanation of what was sculpted, what capability was preserved, what was grafted and what remains open.
+
+For visual families, sequences and repeated grammars, use the method defined in `MUSEUM_PRODUCT_ROADMAP_BLOCKS.md`: **Visual Board / current-state evidence / contact sheet or storyboard / human comparison**.
 
 Screenshots are evidence but are **not a substitute** for a navigable preview.
 
