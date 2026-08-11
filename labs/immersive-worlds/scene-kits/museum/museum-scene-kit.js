@@ -1292,6 +1292,7 @@ export class MuseumSceneKit extends SceneKit {
 
     // Wide enough for the work, the guide beside it, and room around both — this
     // is the context beat, so it breathes more than the contemplation beat does.
+    const freeStanding = isFloorAnchor(anchor);
     const span = Math.max(w, Math.abs(guideSide) + w / 2 + 1.7);
     const narrow = (viewport.aspect || 1.6) < 1;
     const vfov = ((viewport.vfov || 55) * Math.PI) / 180;
@@ -1304,15 +1305,21 @@ export class MuseumSceneKit extends SceneKit {
     // distance a 2.6 m canvas wants sent the camera clean through the south wall
     // of the gallery — the work is small, it sits in the middle of the room, and
     // there is no six metres of floor behind it to retreat into.
-    const freeStanding = isFloorAnchor(anchor);
     const back = freeStanding
       ? Math.min(Math.max(need, guideOut + 1.6), 6)
       : Math.min(Math.max(need, guideOut + 2.9, 5), 12);
 
     // Between the work and the guide, biased to the work, so the two separate in
     // frame instead of stacking along the sightline.
-    const camSide = guideSide * 0.42;
-    const aimSide = guideSide * 0.24;
+    //
+    // A free-standing piece needs that separation supplied rather than measured.
+    // Its facing is *defined* as the direction towards whoever is looking at it,
+    // which makes the figure's lateral offset identically zero — she is always on
+    // the axis by construction, and the camera behind her always sees her in front
+    // of the work. A wall gives that offset for free; a plinth does not, so the
+    // camera steps off the axis itself.
+    const camSide = freeStanding ? 1.6 : guideSide * 0.42;
+    const aimSide = freeStanding ? 0.35 : guideSide * 0.24;
     return {
       position: [
         centre[0] + out[0] * back + lateral[0] * camSide,
@@ -1333,7 +1340,9 @@ export class MuseumSceneKit extends SceneKit {
     const guideAnchor = this._anchorPoses.get(viewport.guideAnchorId);
     if (!guideAnchor) return null;
 
-    const subject = anchor.position;
+    // The optical centre, not the anchor: a plinth anchor is on the floor, and
+    // aiming at it framed the vessel from below with its rim out of shot.
+    const subject = this._subjectCentre(anchor, record);
     const toSubject = vec3.normalize([
       subject[0] - guideAnchor.position[0], 0, subject[2] - guideAnchor.position[2]
     ]);
@@ -1348,8 +1357,12 @@ export class MuseumSceneKit extends SceneKit {
     // read as a person standing in a gallery; at just over one it reads as
     // standing behind someone. That distance is the whole difference between
     // observing a figure and being accompanied by one.
-    const behind = narrow ? 1.5 : 1.12;
-    const offset = narrow ? 0.34 : 0.62;
+    // A free-standing piece is approached, not faced: the guide stands beside it
+    // rather than in front of a wall, so the camera needs more room behind her or
+    // she fills the frame and crops the work.
+    const freeStanding = isFloorAnchor(anchor);
+    const behind = (narrow ? 1.5 : 1.12) + (freeStanding ? 1.35 : 0);
+    const offset = (narrow ? 0.34 : 0.62) + (freeStanding ? 0.35 : 0);
     // Slightly above the guide's own eyeline, so the look passes over the
     // shoulder instead of through the back of the head.
     const eye = 1.73;
@@ -1424,7 +1437,9 @@ export class MuseumSceneKit extends SceneKit {
     // Centred between the work and the figure, so neither is dead centre and the
     // gap between them — which is what "a person looking at this" actually looks
     // like — is the middle of the frame.
-    const midSideways = sideways * 0.42;
+    // Same reasoning as the arrival beat: at a plinth the figure's lateral offset
+    // is zero by construction, so the camera supplies the separation itself.
+    const midSideways = isFloorAnchor(anchor) ? 1.25 : sideways * 0.42;
     const position = [
       centre[0] + out[0] * back + lateral[0] * midSideways,
       1.58,
