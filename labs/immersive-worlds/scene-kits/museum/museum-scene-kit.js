@@ -841,12 +841,15 @@ export class MuseumSceneKit extends SceneKit {
   }
 
   framingForEntity(entityId, viewport) {
-    if (viewport.intent === 'LEAD') {
-      const lead = this._leadFraming(viewport);
-      if (lead) return lead;
-    }
     const record = this._entityIndex.get(entityId);
     const anchor = record ? this._anchorPoses.get(record.anchorId) : null;
+    if (viewport.intent === 'LEAD') {
+      // The subject is resolved *before* the lead is framed. It used not to be,
+      // and that was the whole defect: the arrival shot was composed on the guide
+      // alone and the work it was arriving at never entered the composition.
+      const lead = this._leadFraming(viewport, record, anchor);
+      if (lead) return lead;
+    }
     if (!record || !anchor) {
       return { position: [0, 1.6, 3], target: [0, 1.6, 0], subjectSize: [1, 1, 1] };
     }
@@ -1175,38 +1178,89 @@ export class MuseumSceneKit extends SceneKit {
    * The camera aims past her rather than at her back, so the destination and the
    * room ahead stay visible while she walks into them.
    */
-  _leadFraming(viewport) {
+  /**
+   * Beat A — arrival at a work.
+   *
+   * This used to frame the guide and nothing else: the camera sat 2.9 m behind
+   * where she would stop, aimed 1.2 m past her along her heading, and declared a
+   * subject size of `[0.6, 1.7, 0.4]` — a human bounding box. Whether the work she
+   * was walking towards appeared in the frame was pure luck, and it ran out: the
+   * arrival at *Horizonte interrumpido* settled on a lit, empty wall, 3.63 m from
+   * where the painting hangs.
+   *
+   * The arrival now holds both the work and the guide. Her walk is untouched —
+   * this changes where the camera stands, not where she goes.
+   */
+  _leadFraming(viewport, record = null, anchor = null) {
     const destination = this._anchorPoses.get(viewport.guideAnchorId);
     if (!destination) return null;
 
-    const from = this._guide && this._guide.current.opacity > 0.05
-      ? this._guide.current.position
-      : null;
-    // How she will be travelling as she arrives. Falling back to the anchor's
-    // own normal keeps the first lead of a route sane, before there is any
-    // previous position to have travelled from.
-    const travelled = from
-      ? [destination.position[0] - from[0], 0, destination.position[2] - from[2]]
-      : null;
-    const heading = travelled && Math.hypot(travelled[0], travelled[2]) > 0.4
-      ? vec3.normalize(travelled)
-      : destination.normal;
+    // A lead toward a Space — the first arrival, the walk to a threshold — has no
+    // work to hold in frame, so it keeps the guide-only shot it always had.
+    if (!record || !anchor) {
+      const from = this._guide && this._guide.current.opacity > 0.05
+        ? this._guide.current.position
+        : null;
+      const travelled = from
+        ? [destination.position[0] - from[0], 0, destination.position[2] - from[2]]
+        : null;
+      const heading = travelled && Math.hypot(travelled[0], travelled[2]) > 0.4
+        ? vec3.normalize(travelled)
+        : destination.normal;
+      const behind = 2.9;
+      return {
+        position: [
+          destination.position[0] - heading[0] * behind,
+          destination.position[1] + 1.62,
+          destination.position[2] - heading[2] * behind
+        ],
+        target: [
+          destination.position[0] + heading[0] * 1.2,
+          destination.position[1] + 1.26,
+          destination.position[2] + heading[2] * 1.2
+        ],
+        subjectSize: [0.6, 1.7, 0.4]
+      };
+    }
 
-    const behind = 2.9;
+    const [w, h] = record.size;
+    const out = anchor.normal;
+    const lateral = [-out[2], 0, out[0]];
+    const guideSide = (destination.position[0] - anchor.position[0]) * lateral[0]
+      + (destination.position[2] - anchor.position[2]) * lateral[2];
+    const guideOut = (destination.position[0] - anchor.position[0]) * out[0]
+      + (destination.position[2] - anchor.position[2]) * out[2];
+
+    // Wide enough for the work, the guide beside it, and room around both — this
+    // is the context beat, so it breathes more than the contemplation beat does.
+    const span = Math.max(w, Math.abs(guideSide) + w / 2 + 1.7);
+    const narrow = (viewport.aspect || 1.6) < 1;
+    const vfov = ((viewport.vfov || 55) * Math.PI) / 180;
+    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * (viewport.aspect || 1.6));
+    const need = span / (2 * Math.tan(hfov / 2) * (narrow ? 0.5 : 0.6));
+    // Always further out than the guide: the camera watches the arrival, and
+    // standing closer than she does would make her a foreground obstruction.
+    const back = Math.min(Math.max(need, guideOut + 2.9, 5), 12);
+
+    // Between the work and the guide, biased to the work, so the two separate in
+    // frame instead of stacking along the sightline.
+    const camSide = guideSide * 0.42;
+    const aimSide = guideSide * 0.24;
     return {
       position: [
-        destination.position[0] - heading[0] * behind,
-        destination.position[1] + 1.62,
-        destination.position[2] - heading[2] * behind
+        anchor.position[0] + out[0] * back + lateral[0] * camSide,
+        1.72,
+        anchor.position[2] + out[2] * back + lateral[2] * camSide
       ],
       target: [
-        destination.position[0] + heading[0] * 1.2,
-        destination.position[1] + 1.26,
-        destination.position[2] + heading[2] * 1.2
+        anchor.position[0] + lateral[0] * aimSide,
+        anchor.position[1] * 0.86 + 0.26,
+        anchor.position[2] + lateral[2] * aimSide
       ],
-      subjectSize: [0.6, 1.7, 0.4]
+      subjectSize: [span, h, 0.1]
     };
   }
+
 
   _accompaniedFraming(record, anchor, viewport) {
     const guideAnchor = this._anchorPoses.get(viewport.guideAnchorId);

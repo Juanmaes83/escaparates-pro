@@ -55,6 +55,17 @@ const ARTWORK_STOPS = [...new Set(report.beats.filter((b) => b.role === 'C' && b
 const ROLES = ['A', 'B', 'C', 'D'];
 const ROLE_NAME = { A: 'A · CONTEXTO / LLEGADA', B: 'B · ATENCIÓN COMPARTIDA', C: 'C · CONTEMPLACIÓN HUMANA', D: 'D · POV PURO DE LA OBRA' };
 
+// Stop 04 is a transition experience, not an artwork encounter. Calling its lead
+// "A" in the ordered sheet would imply Artwork Grammar applies there; it does not.
+// The Projection keeps A/B/C/D because its specialisation is documented.
+const TRANSITION_STOPS = new Set([4]);
+const orderedRole = (beat) => {
+  if (beat.role === 'TRANSITION') return 'TRANSICIÓN DE ESPACIO';
+  if (TRANSITION_STOPS.has(beat.tourOrder)) return 'APROXIMACIÓN / UMBRAL';
+  if (beat.role === 'CLOSE') return 'CIERRE';
+  return beat.role;
+};
+
 function cell(beat) {
   if (!beat) return '<td class="empty">—</td>';
   const uri = uris.get(beat.beatId);
@@ -90,7 +101,7 @@ const tourCards = report.beats.map((beat) => {
     ${uri ? `<a href="${uri}" target="_blank"><img src="${uri}" alt="${esc(beat.beatId)}" loading="lazy"></a>`
       : '<div class="missing">SIN CAPTURA</div>'}
     <figcaption>
-      <span class="tag">${beat.tourOrder ? `P${String(beat.tourOrder).padStart(2, '0')}` : '—'} · ${esc(beat.role)}</span>
+      <span class="tag">${beat.tourOrder ? `P${String(beat.tourOrder).padStart(2, '0')}` : '—'} · ${esc(orderedRole(beat))}</span>
       <strong>${esc(beat.tourTitle || beat.beatId)}</strong>
       <span class="mono">${esc(beat.beatId)}</span>
       <span class="cap">${esc(beat.caption)}</span>

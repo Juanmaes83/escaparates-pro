@@ -157,7 +157,8 @@
         "anchor.gallery-b.door-gallery-a",
         "anchor.gallery-b.guide-noche",
         "anchor.gallery-b.guide-cuaderno",
-        "anchor.gallery-b.visitor-noche"
+        "anchor.gallery-b.visitor-noche",
+        "anchor.gallery-b.guide-noche-llegada"
       ],
       "hotspotRefs": [
         "hotspot.art.noche-de-invierno",
@@ -770,7 +771,7 @@
       "spaceId": "space.gallery-b",
       "kind": "VIEWPOINT",
       "position": [
-        13.5,
+        11.48,
         0,
         -12.75
       ],
@@ -780,6 +781,22 @@
         -1
       ],
       "label": "Visitante — ante Noche de invierno"
+    },
+    {
+      "id": "anchor.gallery-b.guide-noche-llegada",
+      "spaceId": "space.gallery-b",
+      "kind": "VIEWPOINT",
+      "position": [
+        11.1,
+        0,
+        -12.5
+      ],
+      "normal": [
+        0,
+        0,
+        -1
+      ],
+      "label": "Guía — llegada a Noche de invierno, junto a la obra"
     }
   ],
   "entities": [
@@ -1781,7 +1798,7 @@
       "shotIntent": "LEAD",
       "duration": 7,
       "guide": {
-        "anchorId": "anchor.gallery-b.guide-noche"
+        "anchorId": "anchor.gallery-b.guide-noche-llegada"
       },
       "caption": "Aquí el nivel de luz es el que la obra fotográfica admite."
     },
