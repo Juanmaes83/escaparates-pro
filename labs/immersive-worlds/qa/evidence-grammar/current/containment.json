@@ -267,9 +267,9 @@
    "role": "C",
    "space": "space.gallery-a",
    "position": [
-    1.35,
+    2.95,
     1.58,
-    -7.23
+    -9.07
    ],
    "inside": true,
    "why": ""
@@ -423,12 +423,12 @@
    "role": "CLOSE",
    "space": "space.gallery-b",
    "position": [
-    22.27,
+    19.2,
     1.68,
     -10
    ],
-   "inside": false,
-   "why": "x 22.27 fuera de [7.0, 21.0]"
+   "inside": true,
+   "why": ""
   }
  ]
 }
