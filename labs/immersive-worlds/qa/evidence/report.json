@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-08-11T09:19:01.285Z",
+  "startedAt": "2026-08-11T12:15:54.009Z",
   "states": {
     "museum:lobby-entry": {
       "space": "space.lobby",
@@ -17,11 +17,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 34,
-        "meanMs": 79.11,
-        "p50Ms": 2.9,
-        "p95Ms": 975.4,
-        "maxMs": 1077.6
+        "samples": 35,
+        "meanMs": 71.97,
+        "p50Ms": 3,
+        "p95Ms": 851.6,
+        "maxMs": 917.5
       }
     },
     "museum:lobby-welcome": {
@@ -40,11 +40,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 35,
-        "meanMs": 33.16,
-        "p50Ms": 1.3,
-        "p95Ms": 341.3,
-        "maxMs": 537.6
+        "samples": 36,
+        "meanMs": 31.48,
+        "p50Ms": 1.5,
+        "p95Ms": 386.1,
+        "maxMs": 426.2
       }
     },
     "museum:gallery-a-overview": {
@@ -64,10 +64,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 123.87,
-        "p50Ms": 1.6,
-        "p95Ms": 1057.3,
-        "maxMs": 1150.6
+        "meanMs": 128.61,
+        "p50Ms": 2,
+        "p95Ms": 1040.4,
+        "maxMs": 1119.9
       }
     },
     "museum:artwork-horizonte-focus": {
@@ -87,10 +87,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 102.11,
-        "p50Ms": 1.3,
-        "p95Ms": 845.9,
-        "maxMs": 952.6
+        "meanMs": 103.99,
+        "p50Ms": 1.2,
+        "p95Ms": 884.3,
+        "maxMs": 991.7
       }
     },
     "museum:sculpture-detail": {
@@ -110,10 +110,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 127.6,
-        "p50Ms": 2.4,
-        "p95Ms": 1041.7,
-        "maxMs": 1188.2
+        "meanMs": 139.03,
+        "p50Ms": 2.8,
+        "p95Ms": 1258.6,
+        "maxMs": 1264.3
       }
     },
     "museum:gallery-a-oblique": {
@@ -133,10 +133,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 126.31,
-        "p50Ms": 10.8,
-        "p95Ms": 1061.9,
-        "maxMs": 1140.6
+        "meanMs": 139.88,
+        "p50Ms": 12.8,
+        "p95Ms": 1235.2,
+        "maxMs": 1244.2
       }
     },
     "museum:portal-a-b-before": {
@@ -156,10 +156,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 138.59,
-        "p50Ms": 10.6,
-        "p95Ms": 1120.7,
-        "maxMs": 1430.5
+        "meanMs": 149.78,
+        "p50Ms": 10.1,
+        "p95Ms": 1154.6,
+        "maxMs": 1719.5
       }
     },
     "museum:portal-a-b-after": {
@@ -179,10 +179,10 @@
       },
       "frame": {
         "samples": 44,
-        "meanMs": 111.12,
-        "p50Ms": 9.9,
-        "p95Ms": 789.5,
-        "maxMs": 1465.8
+        "meanMs": 99.67,
+        "p50Ms": 9.1,
+        "p95Ms": 736.8,
+        "maxMs": 1170.7
       }
     },
     "museum:archive-teleport": {
@@ -202,10 +202,10 @@
       },
       "frame": {
         "samples": 37,
-        "meanMs": 80.95,
-        "p50Ms": 1.1,
-        "p95Ms": 641,
-        "maxMs": 1023.1
+        "meanMs": 94.49,
+        "p50Ms": 1,
+        "p95Ms": 799.3,
+        "maxMs": 1068.7
       }
     },
     "museum:journey-lead-horizonte": {
@@ -225,10 +225,10 @@
       },
       "frame": {
         "samples": 39,
-        "meanMs": 122.58,
-        "p50Ms": 1.8,
-        "p95Ms": 1117.2,
-        "maxMs": 1213.4
+        "meanMs": 129.94,
+        "p50Ms": 1.7,
+        "p95Ms": 1134.4,
+        "maxMs": 1388.9
       }
     },
     "museum:guide-accompanied": {
@@ -248,10 +248,10 @@
       },
       "frame": {
         "samples": 41,
-        "meanMs": 123.5,
-        "p50Ms": 1.8,
-        "p95Ms": 1033.8,
-        "maxMs": 1421.5
+        "meanMs": 111.25,
+        "p50Ms": 1.7,
+        "p95Ms": 993.3,
+        "maxMs": 1186.6
       }
     },
     "museum:guide-handoff": {
@@ -264,17 +264,17 @@
         "triangles": 402,
         "programs": 39,
         "textures": 30,
-        "geometries": 177,
+        "geometries": 194,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 43,
-        "meanMs": 99.97,
+        "samples": 46,
+        "meanMs": 87.71,
         "p50Ms": 1.3,
-        "p95Ms": 900.7,
-        "maxMs": 1022.8
+        "p95Ms": 717.7,
+        "maxMs": 1224.4
       }
     },
     "museum:journey-lead-division": {
@@ -283,21 +283,21 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.division-tercera",
       "render": {
-        "drawCalls": 83,
-        "triangles": 4576,
-        "programs": 40,
-        "textures": 35,
-        "geometries": 193,
+        "drawCalls": 85,
+        "triangles": 4698,
+        "programs": 43,
+        "textures": 36,
+        "geometries": 211,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 45,
-        "meanMs": 108.02,
-        "p50Ms": 11.1,
-        "p95Ms": 945.3,
-        "maxMs": 1145.9
+        "samples": 46,
+        "meanMs": 112.8,
+        "p50Ms": 10.8,
+        "p95Ms": 1092.3,
+        "maxMs": 1248.5
       }
     },
     "museum:journey-division": {
@@ -308,19 +308,19 @@
       "render": {
         "drawCalls": 43,
         "triangles": 2830,
-        "programs": 40,
-        "textures": 35,
-        "geometries": 191,
+        "programs": 43,
+        "textures": 37,
+        "geometries": 212,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 46,
-        "meanMs": 96.75,
-        "p50Ms": 1.6,
-        "p95Ms": 982,
-        "maxMs": 1131.8
+        "samples": 49,
+        "meanMs": 96.58,
+        "p50Ms": 1.7,
+        "p95Ms": 1065.2,
+        "maxMs": 1138.6
       }
     },
     "museum:journey-threshold": {
@@ -329,21 +329,21 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.division-tercera",
       "render": {
-        "drawCalls": 122,
-        "triangles": 6562,
-        "programs": 40,
+        "drawCalls": 120,
+        "triangles": 6454,
+        "programs": 43,
         "textures": 40,
-        "geometries": 225,
+        "geometries": 242,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 52,
-        "meanMs": 84.75,
+        "samples": 53,
+        "meanMs": 140.34,
         "p50Ms": 9.9,
-        "p95Ms": 799.7,
-        "maxMs": 1012.4
+        "p95Ms": 1054,
+        "maxMs": 2653.1
       }
     },
     "museum:journey-crossed": {
@@ -356,17 +356,17 @@
         "triangles": 5016,
         "programs": 40,
         "textures": 37,
-        "geometries": 189,
+        "geometries": 206,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 55,
-        "meanMs": 106.56,
-        "p50Ms": 10.2,
-        "p95Ms": 978.4,
-        "maxMs": 1142.7
+        "samples": 60,
+        "meanMs": 113.8,
+        "p50Ms": 11.3,
+        "p95Ms": 1190.1,
+        "maxMs": 1321.6
       }
     },
     "museum:journey-noche": {
@@ -377,19 +377,19 @@
       "render": {
         "drawCalls": 49,
         "triangles": 3047,
-        "programs": 37,
+        "programs": 40,
         "textures": 37,
-        "geometries": 187,
+        "geometries": 204,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 58,
-        "meanMs": 102.01,
-        "p50Ms": 10.1,
-        "p95Ms": 958.4,
-        "maxMs": 1164.2
+        "samples": 62,
+        "meanMs": 102.5,
+        "p50Ms": 9.8,
+        "p95Ms": 1006.5,
+        "maxMs": 1185.2
       }
     },
     "museum:journey-proyeccion": {
@@ -400,19 +400,19 @@
       "render": {
         "drawCalls": 45,
         "triangles": 3520,
-        "programs": 37,
+        "programs": 40,
         "textures": 37,
-        "geometries": 187,
+        "geometries": 204,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 64,
-        "meanMs": 92.91,
+        "samples": 69,
+        "meanMs": 92.51,
         "p50Ms": 9.8,
-        "p95Ms": 920,
-        "maxMs": 1237
+        "p95Ms": 991.8,
+        "maxMs": 1252.1
       }
     },
     "museum:proyeccion-permanencia": {
@@ -421,21 +421,21 @@
       "cameraViolations": 0,
       "focus": "entity.video.cuaderno-de-luz",
       "render": {
-        "drawCalls": 43,
-        "triangles": 3264,
-        "programs": 37,
+        "drawCalls": 75,
+        "triangles": 5003,
+        "programs": 40,
         "textures": 37,
-        "geometries": 187,
+        "geometries": 206,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 65,
-        "meanMs": 94.54,
-        "p50Ms": 9,
-        "p95Ms": 976.8,
-        "maxMs": 1195.6
+        "samples": 72,
+        "meanMs": 76.25,
+        "p50Ms": 9.3,
+        "p95Ms": 858.9,
+        "maxMs": 983.7
       }
     },
     "museum:guide-released": {
@@ -446,19 +446,19 @@
       "render": {
         "drawCalls": 29,
         "triangles": 809,
-        "programs": 37,
+        "programs": 40,
         "textures": 37,
-        "geometries": 187,
+        "geometries": 204,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 63,
-        "meanMs": 97.69,
-        "p50Ms": 8.9,
-        "p95Ms": 1003,
-        "maxMs": 1221.5
+        "samples": 68,
+        "meanMs": 74.22,
+        "p50Ms": 8.2,
+        "p95Ms": 839.1,
+        "maxMs": 881.9
       }
     },
     "museum:guide-turnaround": {
@@ -478,10 +478,10 @@
       },
       "frame": {
         "samples": 37,
-        "meanMs": 119.59,
-        "p50Ms": 1.7,
-        "p95Ms": 1011.8,
-        "maxMs": 1132
+        "meanMs": 99.96,
+        "p50Ms": 1.8,
+        "p95Ms": 857.4,
+        "maxMs": 877.5
       }
     },
     "museum:guided-step-04": {
@@ -490,21 +490,21 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.division-tercera",
       "render": {
-        "drawCalls": 125,
-        "triangles": 6688,
-        "programs": 40,
-        "textures": 39,
-        "geometries": 224,
+        "drawCalls": 123,
+        "triangles": 6602,
+        "programs": 42,
+        "textures": 40,
+        "geometries": 242,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 45,
-        "meanMs": 102.08,
-        "p50Ms": 11.1,
-        "p95Ms": 897.2,
-        "maxMs": 1072
+        "samples": 48,
+        "meanMs": 104.17,
+        "p50Ms": 10.6,
+        "p95Ms": 982.2,
+        "maxMs": 1224.9
       }
     },
     "museum:guided-completed": {
@@ -515,38 +515,38 @@
       "render": {
         "drawCalls": 151,
         "triangles": 6950,
-        "programs": 32,
+        "programs": 39,
         "textures": 37,
-        "geometries": 189,
+        "geometries": 206,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 59,
-        "meanMs": 81.39,
-        "p50Ms": 9.4,
-        "p95Ms": 961,
-        "maxMs": 1226.7
+        "samples": 67,
+        "meanMs": 100.66,
+        "p50Ms": 11.2,
+        "p95Ms": 900.1,
+        "maxMs": 1273.4
       }
     }
   },
   "performance": {
     "spaceTimings": {
       "space.lobby": {
-        "build": 205,
-        "warm": 3776,
-        "total": 3982
+        "build": 223,
+        "warm": 6840,
+        "total": 7063
       },
       "space.gallery-a": {
-        "build": 2681,
-        "warm": 6043,
-        "total": 8724
+        "build": 2607,
+        "warm": 6141,
+        "total": 8748
       },
       "space.gallery-b": {
-        "build": 5404,
-        "warm": 3927,
-        "total": 9332
+        "build": 10764,
+        "warm": 6605,
+        "total": 17369
       }
     },
     "media": {
@@ -554,7 +554,7 @@
       "loaded": 7,
       "failed": 0,
       "cached": 7,
-      "slowestMs": 5373,
+      "slowestMs": 10742,
       "failures": []
     },
     "projection": {
@@ -567,7 +567,7 @@
       "declaredSrc": "../assets/collection/cuaderno-de-luz.webm",
       "builtWidth": 4.6,
       "builtHeight": 2.6,
-      "mapSrc": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
+      "mapSrc": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
       "boxes": 0,
       "variantA": {
         "width": 4.6,
@@ -585,10 +585,10 @@
     "desktop": {
       "frame": {
         "samples": 185,
-        "meanMs": 26.24,
+        "meanMs": 29.03,
         "p50Ms": 1.3,
-        "p95Ms": 3,
-        "maxMs": 1183
+        "p95Ms": 5,
+        "maxMs": 1308.7
       },
       "render": {
         "drawCalls": 43,
@@ -618,9 +618,9 @@
               "payload": {
                 "spaceId": "space.lobby",
                 "timings": {
-                  "build": 142,
-                  "warm": 3215,
-                  "total": 3357
+                  "build": 162,
+                  "warm": 3361,
+                  "total": 3524
                 }
               },
               "t": 1
@@ -662,7 +662,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.horizonte-interrumpido",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
                 "kind": "IMAGE"
               },
               "t": 6
@@ -670,8 +670,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.division-tercera",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/division-tercera.jpg",
+                "entityId": "entity.artwork.campo-de-ceniza",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
                 "kind": "IMAGE"
               },
               "t": 7
@@ -679,8 +679,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.estudio-de-figura",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
+                "entityId": "entity.artwork.division-tercera",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/division-tercera.jpg",
                 "kind": "IMAGE"
               },
               "t": 8
@@ -688,8 +688,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.campo-de-ceniza",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
+                "entityId": "entity.artwork.estudio-de-figura",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
                 "kind": "IMAGE"
               },
               "t": 9
@@ -699,9 +699,9 @@
               "payload": {
                 "spaceId": "space.gallery-a",
                 "timings": {
-                  "build": 1706,
-                  "warm": 6138,
-                  "total": 7844
+                  "build": 1696,
+                  "warm": 6729,
+                  "total": 8425
                 }
               },
               "t": 10
@@ -754,7 +754,7 @@
                 "spaceId": "space.gallery-a",
                 "behaviour": "CONTINUOUS",
                 "preparedOnDemand": true,
-                "waitedMs": 7838,
+                "waitedMs": 8418,
                 "source": "QA"
               },
               "t": 16
@@ -762,8 +762,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.marea-baja",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/marea-baja.jpg",
+                "entityId": "entity.artwork.noche-de-invierno",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
                 "kind": "IMAGE"
               },
               "t": 17
@@ -771,8 +771,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.noche-de-invierno",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
+                "entityId": "entity.artwork.marea-baja",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/marea-baja.jpg",
                 "kind": "IMAGE"
               },
               "t": 18
@@ -781,7 +781,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.video.cuaderno-de-luz",
-                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
+                "url": "http://127.0.0.1:4201/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
                 "kind": "VIDEO"
               },
               "t": 19
@@ -791,9 +791,9 @@
               "payload": {
                 "spaceId": "space.gallery-b",
                 "timings": {
-                  "build": 5848,
-                  "warm": 4472,
-                  "total": 10321
+                  "build": 6674,
+                  "warm": 4701,
+                  "total": 11376
                 }
               },
               "t": 20
@@ -866,13 +866,13 @@
       "id": "SCHEMA-VALID",
       "claim": "El mundo cumple todas las invariantes del esquema",
       "pass": true,
-      "detail": "0 errores, 0 avisos, {\"spaces\":4,\"anchors\":31,\"entities\":11,\"hotspots\":16,\"portals\":6,\"chapters\":3,\"storySteps\":17,\"routes\":1}"
+      "detail": "0 errores, 0 avisos, {\"spaces\":4,\"anchors\":34,\"entities\":11,\"hotspots\":16,\"portals\":6,\"chapters\":3,\"storySteps\":21,\"routes\":1}"
     },
     {
       "id": "INV-CANONICAL",
       "claim": "Cada id resuelve a exactamente un registro canónico",
       "pass": true,
-      "detail": "89 registros; 0 violaciones"
+      "detail": "96 registros; 0 violaciones"
     },
     {
       "id": "INV-BY-REFERENCE",
@@ -890,7 +890,7 @@
       "id": "INV-ONE-CAMERA-WRITER",
       "claim": "Un único controlador de cámara autoritativo por frame",
       "pass": true,
-      "detail": "3 frames, 0 violaciones"
+      "detail": "5 frames, 0 violaciones"
     },
     {
       "id": "INV-HOTSPOT-NOT-PORTAL",
@@ -974,7 +974,7 @@
       "id": "SHARED-ACTION-PATH",
       "claim": "Hotspot y Experiencia despachan las mismas Actions",
       "pass": true,
-      "detail": "{\"QA\":{\"FOCUS_ENTITY\":1},\"EXPERIENCE\":{\"ACTIVATE_PORTAL\":1,\"FOCUS_ENTITY\":4}}"
+      "detail": "{\"QA\":{\"FOCUS_ENTITY\":1},\"EXPERIENCE\":{\"ACTIVATE_PORTAL\":1,\"FOCUS_ENTITY\":5}}"
     },
     {
       "id": "GUIDED-RETURN",
@@ -992,7 +992,7 @@
       "id": "HANDOFF-VALID-POSE",
       "claim": "Tras la cesión el visitante queda dentro de la sala activa, no dentro de un muro",
       "pass": true,
-      "detail": "Galería A — Horizontes · [2.97, 1.62, -10.45] · EXPLORE"
+      "detail": "Galería A — Horizontes · [2.90, 1.62, -10.49] · EXPLORE"
     },
     {
       "id": "PROXIMITY-SPATIAL",
@@ -1004,7 +1004,7 @@
       "id": "MEDIA-LOADED",
       "claim": "Las obras se cargan desde archivos propios declarados en el mundo",
       "pass": true,
-      "detail": "7 archivos, 0 fallos, más lento 5373 ms"
+      "detail": "7 archivos, 0 fallos, más lento 10742 ms"
     },
     {
       "id": "MEDIA-FALLBACK",
@@ -1034,7 +1034,7 @@
       "id": "TOUR-ONE-END",
       "claim": "El recorrido tiene exactamente un final canónico",
       "pass": true,
-      "detail": "cierra en el beat 16 de 16"
+      "detail": "cierra en el beat 20 de 20"
     },
     {
       "id": "TOUR-ORDER-UNIQUE",
@@ -1058,7 +1058,7 @@
       "id": "TOUR-NO-ORPHANS",
       "claim": "Todo beat pertenece exactamente a una parada canónica",
       "pass": true,
-      "detail": "17 beats asignados"
+      "detail": "21 beats asignados"
     },
     {
       "id": "TOUR-NEXT-PREV-CONSISTENT",
@@ -1097,10 +1097,52 @@
       "detail": "esperado 7→6→5→4 · observado 7→6→5→4"
     },
     {
+      "id": "GRAMMAR-ARTWORK-ABCD",
+      "claim": "Cada parada de obra convencional recorre A → B → C → D en ese orden",
+      "pass": true,
+      "detail": "02:·ABCD · 03:ABCD · 05:ABCD"
+    },
+    {
+      "id": "GRAMMAR-C-VISITOR-NOT-GUIDE",
+      "claim": "En la contemplación humana hay una figura visitante y la guía ya no media",
+      "pass": true,
+      "detail": "04c-horizonte-contemplacion visitante=true guía=false · 06c-division-contemplacion visitante=true guía=false · 10f-noche-contemplacion visitante=true guía=false"
+    },
+    {
+      "id": "GRAMMAR-D-NO-VISITOR-FIGURE",
+      "claim": "El POV puro de la obra no contiene la figura visitante",
+      "pass": true,
+      "detail": "04b-horizonte-cesion · 06b-division-cesion · 10b-noche-cesion"
+    },
+    {
+      "id": "GRAMMAR-PROJECTION-D-NO-GUIDE",
+      "claim": "En el dwell de la proyección no hay guía ni figura: sólo la obra",
+      "pass": true,
+      "detail": "guía=false visitante=false"
+    },
+    {
+      "id": "BROWSE-MOVES-THE-CAMERA",
+      "claim": "Navegar la colección lleva la cámara a la obra que dice la cartela",
+      "pass": true,
+      "detail": "campo-de-ceniza@-4.06,1.85,-12.4 · division-tercera@5.1,1.71,-12.59 · campo-de-ceniza@-3.94,1.85,-12.4"
+    },
+    {
+      "id": "BROWSE-DOES-NOT-MOVE-THE-TOUR",
+      "claim": "La obra visitada no reescribe en silencio la posición del recorrido",
+      "pass": true,
+      "detail": "parada step.02-paso-galeria-a · beat 5 durante 3 saltos"
+    },
+    {
+      "id": "BROWSE-RETURNS-TO-ORIGIN",
+      "claim": "Salir de la colección devuelve exactamente a la parada y el beat de origen",
+      "pass": true,
+      "detail": "step.04b-horizonte-cesion · DIRECTED · pose -0.9,1.89,-12.09"
+    },
+    {
       "id": "WARMUP-COMPILES",
       "claim": "El warmup compila programas de verdad, no una escena vacía",
       "pass": true,
-      "detail": "170 programas compilados"
+      "detail": "207 programas compilados"
     },
     {
       "id": "DETAIL-NAVIGATION",
@@ -1124,7 +1166,7 @@
       "id": "DETAIL-RETURN",
       "claim": "Tras recorrer varias obras el visitante vuelve donde estaba de pie",
       "pass": true,
-      "detail": "[5.01,1.62,-12.6]"
+      "detail": "[-0.9,1.62,-12.09]"
     },
     {
       "id": "DETAIL-NO-VIOLATIONS",
@@ -1148,7 +1190,7 @@
       "id": "PERF-CAPTURED",
       "claim": "Medición de rendimiento capturada (SwiftShader, sin GPU)",
       "pass": true,
-      "detail": "p50 1.3 ms · p95 3 ms · 43 draws · 1821 tris"
+      "detail": "p50 1.3 ms · p95 5 ms · 43 draws · 1821 tris"
     },
     {
       "id": "MOBILE-TIER",
@@ -1217,7 +1259,7 @@
         {
           "id": "TOUR-ONE-END",
           "pass": true,
-          "detail": "cierra en el beat 16 de 16"
+          "detail": "cierra en el beat 20 de 20"
         },
         {
           "id": "TOUR-ORDER-UNIQUE",
@@ -1237,7 +1279,7 @@
         {
           "id": "TOUR-NO-ORPHANS",
           "pass": true,
-          "detail": "17 beats asignados"
+          "detail": "21 beats asignados"
         },
         {
           "id": "TOUR-NEXT-PREV-CONSISTENT",
@@ -1298,8 +1340,257 @@
       "Cuaderno de luz",
       "Cierre"
     ],
-    "beatCount": 17,
+    "beatCount": 21,
     "restoredSpace": "space.gallery-a"
+  },
+  "grammar": [
+    {
+      "beatId": "step.01-entrada",
+      "intent": "ENTRY",
+      "tourStepId": "step.01-entrada",
+      "tourOrder": 1,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.02-paso-galeria-a",
+      "intent": "PORTAL",
+      "tourStepId": "step.02-paso-galeria-a",
+      "tourOrder": 2,
+      "guide": false,
+      "visitor": false
+    },
+    {
+      "beatId": "step.03-lleva-horizonte",
+      "intent": "LEAD",
+      "tourStepId": "step.02-paso-galeria-a",
+      "tourOrder": 2,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.04-horizonte",
+      "intent": "ACCOMPANIED",
+      "tourStepId": "step.02-paso-galeria-a",
+      "tourOrder": 2,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.04c-horizonte-contemplacion",
+      "intent": "CONTEMPLATION",
+      "tourStepId": "step.02-paso-galeria-a",
+      "tourOrder": 2,
+      "guide": false,
+      "visitor": true
+    },
+    {
+      "beatId": "step.04b-horizonte-cesion",
+      "intent": "FOCUS",
+      "tourStepId": "step.02-paso-galeria-a",
+      "tourOrder": 2,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.05-lleva-division",
+      "intent": "LEAD",
+      "tourStepId": "step.05-lleva-division",
+      "tourOrder": 3,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.06-division",
+      "intent": "ACCOMPANIED",
+      "tourStepId": "step.05-lleva-division",
+      "tourOrder": 3,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.06c-division-contemplacion",
+      "intent": "CONTEMPLATION",
+      "tourStepId": "step.05-lleva-division",
+      "tourOrder": 3,
+      "guide": false,
+      "visitor": true
+    },
+    {
+      "beatId": "step.06b-division-cesion",
+      "intent": "FOCUS",
+      "tourStepId": "step.05-lleva-division",
+      "tourOrder": 3,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.07-lleva-umbral",
+      "intent": "LEAD",
+      "tourStepId": "step.07-lleva-umbral",
+      "tourOrder": 4,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.08-paso-galeria-b",
+      "intent": "PORTAL",
+      "tourStepId": "step.07-lleva-umbral",
+      "tourOrder": 4,
+      "guide": false,
+      "visitor": false
+    },
+    {
+      "beatId": "step.09-lleva-noche",
+      "intent": "LEAD",
+      "tourStepId": "step.09-lleva-noche",
+      "tourOrder": 5,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10-noche",
+      "intent": "ACCOMPANIED",
+      "tourStepId": "step.09-lleva-noche",
+      "tourOrder": 5,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10f-noche-contemplacion",
+      "intent": "CONTEMPLATION",
+      "tourStepId": "step.09-lleva-noche",
+      "tourOrder": 5,
+      "guide": false,
+      "visitor": true
+    },
+    {
+      "beatId": "step.10b-noche-cesion",
+      "intent": "FOCUS",
+      "tourStepId": "step.09-lleva-noche",
+      "tourOrder": 5,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10c-lleva-cuaderno",
+      "intent": "LEAD",
+      "tourStepId": "step.10c-lleva-cuaderno",
+      "tourOrder": 6,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10d-cuaderno",
+      "intent": "ACCOMPANIED",
+      "tourStepId": "step.10c-lleva-cuaderno",
+      "tourOrder": 6,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10e-cuaderno-permanencia",
+      "intent": "CONTEMPLATION",
+      "tourStepId": "step.10c-lleva-cuaderno",
+      "tourOrder": 6,
+      "guide": true,
+      "visitor": false
+    },
+    {
+      "beatId": "step.10g-cuaderno-dwell",
+      "intent": "FOCUS",
+      "tourStepId": "step.10c-lleva-cuaderno",
+      "tourOrder": 6,
+      "guide": false,
+      "visitor": false
+    },
+    {
+      "beatId": "step.11-cierre",
+      "intent": "EXIT",
+      "tourStepId": "step.11-cierre",
+      "tourOrder": 7,
+      "guide": false,
+      "visitor": false
+    }
+  ],
+  "browse": {
+    "origin": {
+      "label": "origin",
+      "authority": "DIRECTED",
+      "focused": "entity.artwork.horizonte-interrumpido",
+      "tourStepId": "step.02-paso-galeria-a",
+      "beatId": "step.04b-horizonte-cesion",
+      "beatIndex": 5,
+      "transport": "PAUSED",
+      "browsing": false,
+      "pose": [
+        -2.63,
+        1.73,
+        -11.68
+      ]
+    },
+    "visited": [
+      {
+        "label": "browse+1",
+        "authority": "FOCUS",
+        "focused": "entity.artwork.campo-de-ceniza",
+        "tourStepId": "step.02-paso-galeria-a",
+        "beatId": "step.04b-horizonte-cesion",
+        "beatIndex": 5,
+        "transport": "PAUSED",
+        "browsing": true,
+        "pose": [
+          -4.06,
+          1.85,
+          -12.4
+        ]
+      },
+      {
+        "label": "browse+2",
+        "authority": "FOCUS",
+        "focused": "entity.artwork.division-tercera",
+        "tourStepId": "step.02-paso-galeria-a",
+        "beatId": "step.04b-horizonte-cesion",
+        "beatIndex": 5,
+        "transport": "PAUSED",
+        "browsing": true,
+        "pose": [
+          5.1,
+          1.71,
+          -12.59
+        ]
+      },
+      {
+        "label": "browse-1",
+        "authority": "FOCUS",
+        "focused": "entity.artwork.campo-de-ceniza",
+        "tourStepId": "step.02-paso-galeria-a",
+        "beatId": "step.04b-horizonte-cesion",
+        "beatIndex": 5,
+        "transport": "PAUSED",
+        "browsing": true,
+        "pose": [
+          -3.94,
+          1.85,
+          -12.4
+        ]
+      }
+    ],
+    "restored": {
+      "label": "restored",
+      "authority": "DIRECTED",
+      "focused": null,
+      "tourStepId": "step.02-paso-galeria-a",
+      "beatId": "step.04b-horizonte-cesion",
+      "beatIndex": 5,
+      "transport": "PAUSED",
+      "browsing": false,
+      "pose": [
+        -0.9,
+        1.89,
+        -12.09
+      ]
+    }
   },
   "secondWorld": {
     "title": "Sala de exposiciones — demostración institucional",
@@ -1311,15 +1602,15 @@
       "loaded": 4,
       "failed": 0,
       "cached": 4,
-      "slowestMs": 3396,
+      "slowestMs": 3349,
       "failures": []
     },
     "spaces": 2
   },
-  "finishedAt": "2026-08-11T10:38:56.114Z",
+  "finishedAt": "2026-08-11T14:35:24.493Z",
   "summary": {
-    "total": 60,
+    "total": 67,
     "failed": 0,
-    "passed": 60
+    "passed": 67
   }
 }
