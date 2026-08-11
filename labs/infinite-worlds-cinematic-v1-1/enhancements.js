@@ -85,7 +85,7 @@ export class BrandMediaManager{
   constructor(worlds){
     this.worlds=worlds;this.urls=[];this.videos=[];
     window.__IW_BRAND_MANAGER__=this;
-    window.dispatchEvent(new CustomEvent('iw:brand-ready',{detail:{manager:this}}));
+    setTimeout(()=>window.dispatchEvent(new CustomEvent('iw:brand-ready',{detail:{manager:this}})),0);
   }
   getSlot(worldName){return this.worlds[worldName].brandSlot;}
   clearMaterial(slot){if(slot.material.map){slot.material.map.dispose?.();slot.material.map=null;}slot.material.color.setHex(0x10151a);slot.material.needsUpdate=true;}
