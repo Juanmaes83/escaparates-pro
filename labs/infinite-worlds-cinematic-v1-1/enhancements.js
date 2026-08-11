@@ -82,7 +82,11 @@ function makeCanvasTexture(title,subtitle,accent='#dbe9e0'){const c=document.cre
 function wrapText(ctx,text,x,y,maxWidth,lineHeight){const words=(text||'').split(' ');let line='';for(let i=0;i<words.length;i++){const test=line+words[i]+' ';if(ctx.measureText(test).width>maxWidth&&i>0){ctx.fillText(line,x,y);line=words[i]+' ';y+=lineHeight;}else line=test;}ctx.fillText(line,x,y);}
 
 export class BrandMediaManager{
-  constructor(worlds){this.worlds=worlds;this.urls=[];this.videos=[];}
+  constructor(worlds){
+    this.worlds=worlds;this.urls=[];this.videos=[];
+    window.__IW_BRAND_MANAGER__=this;
+    window.dispatchEvent(new CustomEvent('iw:brand-ready',{detail:{manager:this}}));
+  }
   getSlot(worldName){return this.worlds[worldName].brandSlot;}
   clearMaterial(slot){if(slot.material.map){slot.material.map.dispose?.();slot.material.map=null;}slot.material.color.setHex(0x10151a);slot.material.needsUpdate=true;}
   reset(worldName){const slot=this.getSlot(worldName);this.clearMaterial(slot);slot.scale.set(1,1,1);slot.material.map=makeCanvasTexture(worldName==='city'?'YOUR CAMPAIGN':'YOUR STORY',worldName==='city'?'A message inside the city.':'A message inside the landscape.',worldName==='city'?'#9fb3c1':'#b9df9f');slot.material.needsUpdate=true;}
