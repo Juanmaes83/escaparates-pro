@@ -26,10 +26,10 @@ const browser = await chromium.launch({ headless: true });
 const shrinker = await browser.newPage();
 await shrinker.setContent('<html><body></body></html>');
 
-async function dataUri(file, width = 760, quality = 0.74) {
+async function dataUri(file, width = 760, quality = 0.74, dir = CURRENT) {
   if (!file) return null;
   try {
-    const buf = await fs.readFile(path.join(CURRENT, file));
+    const buf = await fs.readFile(path.join(dir, file));
     return await shrinker.evaluate(async ({ b64, width, quality }) => {
       const img = new Image();
       img.src = `data:image/png;base64,${b64}`;
@@ -45,9 +45,25 @@ async function dataUri(file, width = 760, quality = 0.74) {
   } catch { return null; }
 }
 
+const BEFORE = path.resolve(HERE, '..', 'evidence-grammar', 'before-passb');
 const report = JSON.parse(await fs.readFile(path.join(CURRENT, 'audit.json'), 'utf8'));
+let beforeReport = null;
+try { beforeReport = JSON.parse(await fs.readFile(path.join(BEFORE, 'audit.json'), 'utf8')); } catch { /* first run */ }
 const uris = new Map();
 for (const beat of report.beats) uris.set(beat.beatId, await dataUri(beat.file));
+
+// The five beats PASS B corrected, shown side by side with the state that proved
+// them broken. Kept in their own section so no historical frame can be mistaken
+// for the current canonical state.
+const CORRECTED = ['step.03-lleva-horizonte', 'step.05-lleva-division', 'step.09-lleva-noche',
+  'step.10c-lleva-cuaderno', 'step.10f-noche-contemplacion'];
+const beforeUris = new Map();
+if (beforeReport) {
+  for (const id of CORRECTED) {
+    const b = beforeReport.beats.find((x) => x.beatId === id);
+    if (b?.file) beforeUris.set(id, await dataUri(b.file, 620, 0.74, BEFORE));
+  }
+}
 await browser.close();
 
 const ARTWORK_STOPS = [...new Set(report.beats.filter((b) => b.role === 'C' && b.visitor === 'presente').map((b) => b.tourOrder))]
@@ -188,7 +204,28 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
   Los beats C van recuadrados.</p>
   <div class="tour">${tourCards}</div>
 
-  <h2>3 · Pares perceptualmente próximos</h2>
+  <h2>3 · Antes y después — los cinco beats corregidos</h2>
+  <p class="lede">Izquierda: el estado que la auditoría demostró roto. Derecha: el estado actual.
+  Las imágenes de la izquierda son <strong>históricas</strong> y no forman parte de la matriz de arriba.</p>
+  <div class="tour">${CORRECTED.map((id) => {
+    const beat = report.beats.find((b) => b.beatId === id);
+    const before = beforeUris.get(id);
+    const after = uris.get(id);
+    const prev = beforeReport?.beats.find((b) => b.beatId === id);
+    if (!beat) return '';
+    return `<figure class="shot" style="grid-column:span 2">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div>${before ? `<a href="${before}" target="_blank"><img src="${before}"></a>` : '<div class="missing">—</div>'}
+          <div class="tag" style="padding:4px 6px">ANTES · deriva ${prev?.targetDrift ?? '—'} m</div></div>
+        <div>${after ? `<a href="${after}" target="_blank"><img src="${after}"></a>` : '<div class="missing">—</div>'}
+          <div class="tag" style="padding:4px 6px">DESPUÉS · deriva ${beat.targetDrift ?? '—'} m</div></div>
+      </div>
+      <figcaption><strong>P${String(beat.tourOrder).padStart(2, '0')} · ${esc(beat.role)} — ${esc(beat.tourTitle)}</strong>
+      <span class="mono">${esc(beat.beatId)}</span></figcaption>
+    </figure>`;
+  }).join('\n')}</div>
+
+  <h2>4 · Pares perceptualmente próximos</h2>
   <p class="lede">Diferencia media por píxel sobre el render (sin HUD), 0 = idénticos.
   Esto <strong>señala dónde mirar</strong>; no dictamina nada.</p>
   <table class="plain">
@@ -196,7 +233,7 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
     <tbody>${suspectRows}</tbody>
   </table>
 
-  <h2>4 · Capturas no asentadas</h2>
+  <h2>5 · Capturas no asentadas</h2>
   <p class="lede">${report.unsettled.length
     ? `Rechazadas por no estabilizarse: <span class="mono">${report.unsettled.map(esc).join(', ')}</span>`
     : 'Ninguna. Todos los beats se estabilizaron antes de capturar.'}</p>

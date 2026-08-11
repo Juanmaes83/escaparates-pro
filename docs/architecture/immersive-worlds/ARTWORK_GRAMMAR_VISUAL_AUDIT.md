@@ -187,3 +187,99 @@ and relative offset as the other two. Data change only, no code.
 
 Everything. This pass mutated no product code, no world data, no composition and no
 approved shot. Recommendations above wait for explicit approval.
+
+
+---
+
+# PASS B — the defects closed
+
+Corrective pass. Evidence from before the fixes is preserved under
+`qa/evidence-grammar/before-passb/` and shown side by side in §3 of the contact
+sheet; it is never mixed into the current matrix.
+
+## 10. Root cause, confirmed against HEAD
+
+The PASS A diagnosis said the lead shot "composes from the guide's position at beat
+start". Reading the code at HEAD made it sharper, and the sharper version is the
+one that matters:
+
+**`_leadFraming` composed on the guide and nothing else.** Its own declared subject
+size was `[0.6, 1.7, 0.4]` — a human bounding box — and it aimed 1.2 m *past* her
+along her heading. The work was never an input. Whether it appeared in frame was
+luck, and the luck scaled with how far she had to walk.
+
+**A05 had a second, independent cause.** `anchor.gallery-b.guide-noche` sits at
+lateral **+0.00** — exactly on the work's centre axis. Any camera behind her sees
+her covering the print. The other leads sit at +0.75 and +1.60.
+
+## 11. The three corrections
+
+**11.1 The arrival holds the work** — `_leadFraming` now receives the resolved
+subject and composes on the pair, wider and higher than the contemplation beat so
+the two read differently. The no-subject branch — the first arrival, the walk to a
+threshold — keeps the guide-only shot it always had. **Locomotion is untouched:**
+this changes where the camera stands, not where she walks.
+
+**11.2 A05 gets its own arrival anchor** — the guide had to leave the work's axis,
+but her anchor is shared with B05 and D05, which are correct and protected. Rather
+than move theirs, the lead beat takes a new `anchor.gallery-b.guide-noche-llegada`
+at lateral +1.30. B05 and D05 are provably unchanged.
+
+**11.3 C05 rejoins the family** — the visitor stood on the opposite side to C02/C03
+and at the edge of the work. All three now stand on the same side with the offset
+scaled to each work rather than copied:
+
+| Beat | Work width | Visitor offset | As fraction | Distance out |
+|---|---|---|---|---|
+| C02 Horizonte | 2.60 m | +1.15 m | 0.44 × w | 2.20 m |
+| C03 División | 2.10 m | +1.15 m | 0.55 × w | 2.20 m |
+| C05 Noche | 2.00 m | **+0.92 m** | 0.46 × w | 2.10 m |
+
+Equivalent, not cloned: Noche is the smallest work and takes the smallest offset.
+
+## 12. Target drift, before and after
+
+| Beat | Before | After |
+|---|---|---|
+| A02 Horizonte | 3.63 m | **0.39 m** |
+| A03 División | 2.19 m | **0.19 m** |
+| A05 Noche | 1.08 m | **0.31 m** |
+| A06 Cuaderno | 3.57 m | **0.24 m** |
+| B02 / B03 / B05 | 0.31 / 0.32 / 0.31 | unchanged |
+| C02 / C03 | 0.49 / 0.48 | unchanged |
+| C05 | 0.46 | 0.39 |
+| D02 / D03 / D05 | 0.25 / 0.21 / 0.19 | unchanged |
+
+Every A beat now sits in the same 0.19–0.39 m band as the beats that were already
+correct. The protected keeps are numerically identical.
+
+## 13. Visual verdicts
+
+Judged from the rendered frames, not from the numbers.
+
+| Beat | Verdict | What the frame shows |
+|---|---|---|
+| **A02** | **PASS** | room, *Horizonte* fully legible, guide at left facing the work, stanchion line — an arrival |
+| **A03** | **PASS** | same language, División's own position in the room |
+| **A05** | **PASS** | guide beside the work, print fully legible, dark-room context intact |
+| **A06** | **PASS** | guide at left, projection wall with its light band, *Noche* at frame edge as room context |
+| **C05** | **PASS** | visitor at left at contemplation distance, work legible, figure gives scale without dominating |
+
+## 14. Preserved and untouched
+
+Unchanged, and verified unchanged: B02, B03, B05, C02, C03, D02, D03, D05, the
+Projection's specialised C and D, Collection Browse and its return contract, the
+visitor figure, the guide representation, transition architecture, rooms, and the
+content inventory. No artwork was added to the tour — Campo de ceniza, Estudio de
+figura IV and Vasija de arenas remain outside it, as PASS B requires.
+
+## 15. Known limitations
+
+- The Projection's A shows a dim wall because the work itself is dim in a dark
+  room. It is legible and correctly framed; it is simply a quiet image.
+- The visitor figure remains provisional (IW-DEC-029). Unchanged here.
+- Beat A and Beat C now share a family of composition — both hold a figure beside a
+  work. They are distinguishable by figure (guide with gathered bun and blue coat
+  versus visitor with loose hair and olive coat), by width and by camera height,
+  but they are closer to each other than either is to B or D. Recorded as an
+  observation for review rather than defended as ideal.
