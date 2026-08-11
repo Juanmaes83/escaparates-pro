@@ -8,6 +8,7 @@
  * Images are embedded so the page is self-contained and can be published.
  */
 
+import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,17 +19,36 @@ const OUTFILE = path.resolve(HERE, '..', 'evidence-grammar', 'contact-sheet.html
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-async function dataUri(file) {
+// Full-resolution PNGs of 21 beats come to ~62 MB embedded, far past what a
+// published page may weigh. They are downscaled through a headless canvas — no
+// image tooling is installed here and none is worth adding for this.
+const browser = await chromium.launch({ headless: true });
+const shrinker = await browser.newPage();
+await shrinker.setContent('<html><body></body></html>');
+
+async function dataUri(file, width = 760, quality = 0.74) {
   if (!file) return null;
   try {
     const buf = await fs.readFile(path.join(CURRENT, file));
-    return `data:image/png;base64,${buf.toString('base64')}`;
+    return await shrinker.evaluate(async ({ b64, width, quality }) => {
+      const img = new Image();
+      img.src = `data:image/png;base64,${b64}`;
+      await img.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = Math.round((img.height / img.width) * width);
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg', quality);
+    }, { b64: buf.toString('base64'), width, quality });
   } catch { return null; }
 }
 
 const report = JSON.parse(await fs.readFile(path.join(CURRENT, 'audit.json'), 'utf8'));
 const uris = new Map();
 for (const beat of report.beats) uris.set(beat.beatId, await dataUri(beat.file));
+await browser.close();
 
 const ARTWORK_STOPS = [...new Set(report.beats.filter((b) => b.role === 'C' && b.visitor === 'presente').map((b) => b.tourOrder))]
   .sort((a, b) => a - b);
@@ -136,7 +156,7 @@ const html = `<title>Museo — Auditoría visual de la gramática de obra</title
 <div class="wrap">
   <h1>Museo — auditoría visual de la gramática de obra</h1>
   <p class="lede">Capturas del recorrido en ejecución, todas del estado canónico actual.
-  Ninguna imagen histórica se mezcla aquí. Generado ${esc(report.generatedAt)} · ${esc(report.viewport)}.</p>
+  Ninguna imagen histórica se mezcla aquí. Generado ${esc(report.generatedAt)} · render ${esc(report.viewport)} · imágenes reescaladas para la web; los PNG a resolución completa están en <span class="mono">qa/evidence-grammar/current/</span>.</p>
 
   <div class="note"><strong>Cómo juzgar.</strong> El criterio no es «¿se parecen?» sino
   «¿es la instancia espacial correcta y legible de esta función para <em>esta</em> obra?».
