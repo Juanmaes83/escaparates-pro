@@ -277,6 +277,8 @@ figura IV and Vasija de arenas remain outside it, as PASS B requires.
 
 - The Projection's A shows a dim wall because the work itself is dim in a dark
   room. It is legible and correctly framed; it is simply a quiet image.
+  **Product Owner decision: A06 is KEEP.** Reviewed visually and accepted as it
+  stands; no further composition work on it in this pass.
 - The visitor figure remains provisional (IW-DEC-029). Unchanged here.
 - Beat A and Beat C now share a family of composition — both hold a figure beside a
   work. They are distinguishable by figure (guide with gathered bun and blue coat
