@@ -540,9 +540,13 @@ async function main() {
           // Settle both figures so opacity reflects the beat rather than a fade.
           for (let f = 0; f < 900; f += 1) rt.sceneKit.update?.(1 / 60, f / 60);
           const shown = (fig) => Boolean(fig?.object?.visible && fig.current.opacity > 0.5);
+          const subject = step.subjectRef
+            ? rt.store.entities.find((e) => e.id === step.subjectRef)
+            : null;
           seen.push({
             beatId: step.id,
             intent: step.shotIntent,
+            kind: subject?.kind ?? null,
             tourStepId: d.currentTourStep?.id ?? null,
             tourOrder: d.currentTourStep?.order ?? 0,
             guide: shown(rt.sceneKit._guide),
@@ -565,31 +569,53 @@ async function main() {
       if (!byStop.has(beat.tourStepId)) byStop.set(beat.tourStepId, []);
       byStop.get(beat.tourStepId).push(beat);
     }
-    const artworkStops = [...byStop.entries()]
+    const stopKind = (beats) => beats.find((b) => b.kind)?.kind || null;
+    const humanStops = [...byStop.entries()]
       .filter(([, beats]) => beats.some((b) => b.intent === 'CONTEMPLATION' && b.visitor));
+    // A sculpture takes the same four slots in a different language, so it is held
+    // to its own expectations rather than to the wall works'.
+    const artworkStops = humanStops.filter(([, beats]) => stopKind(beats) === 'ARTWORK');
+    const sculptureStops = humanStops.filter(([, beats]) => stopKind(beats) === 'SCULPTURE');
 
     const abcd = artworkStops.map(([stopId, beats]) => {
       const roles = beats.map((b) => ({
-        LEAD: 'A', ENTRY: 'A', ACCOMPANIED: 'B', CONTEMPLATION: 'C', FOCUS: 'D'
+        LEAD: 'A', ENTRY: 'A', ACCOMPANIED: 'B', CONTEMPLATION: 'C', FOCUS: 'D',
+        // Sculpture's D is a spatial-detail beat. Same grammar slot, other language.
+        DETAIL: 'D'
       }[b.intent] || '·')).join('');
       return { stopId, roles, order: beats[0].tourOrder };
     });
     check('GRAMMAR-ARTWORK-ABCD',
       'Cada parada de obra convencional recorre A → B → C → D en ese orden',
-      abcd.length === 3 && abcd.every((s) => /A+BCD$/.test(s.roles)),
+      abcd.length >= 1 && abcd.every((s) => /A+BCD$/.test(s.roles)),
       abcd.map((s) => `${String(s.order).padStart(2, '0')}:${s.roles}`).join(' · '));
 
     const contemplation = grammar.filter((b) => b.intent === 'CONTEMPLATION' && b.visitor);
     check('GRAMMAR-C-VISITOR-NOT-GUIDE',
       'En la contemplación humana hay una figura visitante y la guía ya no media',
-      contemplation.length === 3 && contemplation.every((b) => b.visitor && !b.guide),
+      contemplation.length === humanStops.length && contemplation.every((b) => b.visitor && !b.guide),
       contemplation.map((b) => `${b.beatId.split('.').pop()} visitante=${b.visitor} guía=${b.guide}`).join(' · '));
 
     const artworkD = artworkStops.map(([, beats]) => beats[beats.length - 1]);
     check('GRAMMAR-D-NO-VISITOR-FIGURE',
       'El POV puro de la obra no contiene la figura visitante',
-      artworkD.length === 3 && artworkD.every((b) => b.intent === 'FOCUS' && !b.visitor),
+      artworkD.length === artworkStops.length
+        && artworkD.every((b) => b.intent === 'FOCUS' && !b.visitor),
       artworkD.map((b) => b.beatId.split('.').pop()).join(' · '));
+
+    const sculptureAbcd = sculptureStops.map(([stopId, beats]) => ({
+      stopId,
+      roles: beats.map((b) => ({
+        LEAD: 'A', ACCOMPANIED: 'B', CONTEMPLATION: 'C', DETAIL: 'D'
+      }[b.intent] || '·')).join(''),
+      lastIsDetail: beats[beats.length - 1].intent === 'DETAIL',
+      lastHasNobody: !beats[beats.length - 1].visitor && !beats[beats.length - 1].guide
+    }));
+    check('GRAMMAR-SCULPTURE-ABCD',
+      'La escultura recorre contexto → atención → escala → detalle espacial, y su detalle queda sin figuras',
+      sculptureAbcd.length >= 1
+        && sculptureAbcd.every((s) => /ABCD$/.test(s.roles) && s.lastIsDetail && s.lastHasNobody),
+      sculptureAbcd.map((s) => `${s.stopId.split('.').pop()}:${s.roles}`).join(' · '));
 
     const projectionDwell = grammar.find((b) => b.beatId === 'step.10g-cuaderno-dwell');
     check('GRAMMAR-PROJECTION-D-NO-GUIDE',
