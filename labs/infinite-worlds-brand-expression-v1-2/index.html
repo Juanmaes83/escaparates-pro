@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Infinite Worlds — Brand Expression V1.2.2</title>
+  <title>Infinite Worlds — World-Native Brand Expression V1.3</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -12,7 +12,7 @@
   <div class="vignette"></div>
 
   <header class="hud-top">
-    <div class="brand">INFINITE WORLDS <span>/ BRAND EXPRESSION V1.2.2</span></div>
+    <div class="brand">INFINITE WORLDS <span>/ WORLD-NATIVE BRAND EXPRESSION V1.3</span></div>
     <div class="hud-actions">
       <button id="audioToggle" class="ghost-button">SOUND OFF</button>
       <button id="previewToggle" class="ghost-button">PREVIEW MODE</button>
@@ -35,7 +35,7 @@
       <label>City grade<select id="cityGrade"><option value="industrial">Industrial Blue</option><option value="noir">Polluted Noir</option><option value="cold">Cold Steel</option><option value="original">Original V1</option></select></label>
       <label>Nature grade<select id="natureGrade"><option value="living">Living Green</option><option value="golden">Golden Valley</option><option value="emerald">Emerald Dream</option><option value="original">Original V1</option></select></label>
     </section>
-    <section><h3>Brand expression</h3><p>Preparing art-directed world expressions…</p></section>
+    <section><h3>Brand expression</h3><p>Preparing world-native brand expressions…</p></section>
     <section>
       <h3>Portal appearance</h3>
       <label>Preset<select id="portalPreset"><option value="original">Original</option><option value="glass">Clean Glass</option><option value="liquid">Liquid</option><option value="energy">Energy</option><option value="dream">Dream</option><option value="organic">Organic</option></select></label>
@@ -49,7 +49,7 @@
       <label class="check"><input id="spatialAudio" type="checkbox" checked /> Spatial sound</label>
       <label class="check"><input id="portalLeak" type="checkbox" checked /> Portal acoustic leakage</label>
     </section>
-    <button id="resetAll" class="reset-button">RESET V1.2.2 CUSTOMIZATION</button>
+    <button id="resetAll" class="reset-button">RESET V1.3 CUSTOMIZATION</button>
     <div style="display:none" aria-hidden="true">
       <select id="brandWorld"><option value="city">city</option><option value="nature">nature</option></select>
       <input id="imageUpload" type="file" /><input id="videoUpload" type="file" /><input id="logoUpload" type="file" />
@@ -58,8 +58,8 @@
     </div>
   </aside>
 
-  <div id="introCurtain" class="intro-curtain"><div><small>INFINITE WORLDS</small><strong>THE GREY CITY</strong><span>One brand. Two worlds. Two expressions.</span><button id="skipIntro">SKIP</button></div></div>
-  <div id="loading"><div class="loading-copy"><strong>BUILDING TWO WORLDS</strong><span>Preparing Brand Expression V1.2.2…</span></div></div>
+  <div id="introCurtain" class="intro-curtain"><div><small>INFINITE WORLDS</small><strong>THE GREY CITY</strong><span>One brand. Two worlds. Two native expressions.</span><button id="skipIntro">SKIP</button></div></div>
+  <div id="loading"><div class="loading-copy"><strong>BUILDING TWO WORLDS</strong><span>Preparing World-Native Brand Expression V1.3…</span></div></div>
 
   <script type="x-shader/x-vertex" id="vertexShader">precision highp float;varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}</script>
   <script type="x-shader/x-fragment" id="fragmentShader">
@@ -73,6 +73,7 @@
   </script>
   <script type="module" src="./brand-expression-production-v1-2-1.js"></script>
   <script type="module" src="./art-direction-first-cross-v1-2-2.js"></script>
+  <script type="module" src="./world-native-brand-expression-v1-3.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
