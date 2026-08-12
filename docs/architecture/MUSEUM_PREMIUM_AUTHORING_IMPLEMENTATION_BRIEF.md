@@ -109,9 +109,13 @@ The published experience consumes those layers without becoming a bespoke fork.
 
 # 3. VISUAL REFERENCES — WHAT THEY MEAN
 
-Two approved support images accompany this document:
+Two approved support images accompany this document and are now stored canonically in the repository.
 
 ## Visual Reference A — System Blueprint
+
+Canonical file:
+
+`docs/visuals/museum-authoring/museum-authoring-system-blueprint-v1.png`
 
 Purpose:
 
@@ -126,6 +130,10 @@ Purpose:
 - explain personalization and scalability.
 
 ## Visual Reference B — Real Authoring UI
+
+Canonical file:
+
+`docs/visuals/museum-authoring/museum-authoring-ui-reference-v1.png`
 
 Purpose:
 
@@ -161,15 +169,16 @@ Do **not** blindly copy:
 
 The final UI may differ substantially if a better solution preserves the intended product behavior and premium quality.
 
-Suggested repository destinations once the image files are available:
+Canonical repository location:
 
 ```text
 docs/visuals/museum-authoring/
-  system-blueprint-v1.png
-  authoring-ui-reference-v1.png
+  museum-authoring-system-blueprint-v1.png
+  museum-authoring-ui-reference-v1.png
+  README.md
 ```
 
-Until those binaries are actually present, do not claim they are stored in GitHub.
+These two images are approved support references for this authoring track. Treat them as part of the implementation context whenever this brief is referenced.
 
 ---
 
@@ -1177,7 +1186,7 @@ First:
 1. read the global Safe Autonomous Engineering skill and repo entry instructions;
 2. read this brief and `MUSEUM_PREMIUM_PERSONALIZATION_PLATFORM.md` completely;
 3. read the current Museum/Immersive Worlds contracts and current state;
-4. inspect the approved visual references if they are available in the repo/mandate;
+4. inspect the approved visual references at the canonical repository paths in section 3;
 5. audit relevant first-party panel(s) and donor capabilities;
 6. verify repo/branch/HEAD/status/rollback;
 7. identify active protected work and boundaries;
