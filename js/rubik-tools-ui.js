@@ -33,6 +33,13 @@
             src: 'labs/rubik-sota-tools/catalogo-inmersivo/'
         },
         {
+            id: 'projection-video-mapping-v0-4',
+            name: 'Projection / Video Mapping Experience V0.4',
+            icon: 'PM',
+            desc: 'Herramienta de autoría de projection mapping con geometría Rubik Sota, fondo/media, vídeo/imagen, beam, dust, texto, transform y outputs.',
+            src: 'labs/rubik-sota-tools/projection-video-mapping-v0-4/index-v0-4.html'
+        },
+        {
             id: 'pin-mapping-studio-pro',
             name: 'Pin Mapping Studio PRO',
             icon: 'PIN',
