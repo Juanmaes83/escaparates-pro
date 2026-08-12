@@ -42,11 +42,12 @@ const BASE = new Map(baseline.beats.map((b) => [b.beatId, b]));
 const world = JSON.parse(await fs.readFile(path.join(MODULE_ROOT, 'worlds', 'museum-v1.world.json'), 'utf8'));
 const SPACES = new Map(world.spaces.map((s) => [s.id, s.bounds]));
 
-const CASES = [
+const SLICE_ONLY = process.argv.includes('--slice');
+const CASES = SLICE_ONLY ? [
   { id: 'CASE1_micro', to: 'step.03b-campo', label: 'T1 micro — Campo A→B' },
   { id: 'CASE2_traverse', to: 'step.03-lleva-horizonte', label: 'T3 traverse — Campo D→Horizonte A' },
   { id: 'CASE3_traverse', to: 'step.06h-lleva-vasija', label: 'T3 traverse — Estudio D→Vasija A' }
-];
+] : null;
 
 const browser = await chromium.launch({ headless: true, args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--disable-gpu-sandbox'] });
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -58,8 +59,22 @@ await page.goto(`http://127.0.0.1:${PORT}/labs/immersive-worlds/index.html?tier=
 await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 600000 });
 await page.evaluate(() => { window.__IW.hud.el.veil.hidden = true; });
 
+// Every consecutive pair on the route, so the map is measured rather than asserted.
+const routeBeats = await page.evaluate(() => {
+  const rt = window.__IW.runtime;
+  rt.startRoute(rt.defaultRouteId);
+  const ids = rt.experience.steps.map((s) => s.id);
+  rt.exitRoute();
+  return ids;
+});
+const cases = CASES || routeBeats.slice(1).map((id, i) => ({
+  id: `${String(i + 2).padStart(2, '0')}_${id.replace(/^step\./, '')}`,
+  to: id,
+  label: `${routeBeats[i]} → ${id}`
+}));
+
 const results = [];
-for (const c of CASES) {
+for (const c of cases) {
   const r = await page.evaluate(async ({ to }) => {
     const rt = window.__IW.runtime;
     const d = rt.experience;
