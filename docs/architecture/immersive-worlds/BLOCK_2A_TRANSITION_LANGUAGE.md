@@ -73,6 +73,23 @@ path travelled, identical destination.** Shorter and calmer, not a teleport.
 Previously it resolved to a cut, which removed the spatial continuity an
 accommodation is supposed to protect.
 
+### QA closure
+
+**68 contracts covered, zero failures**, across two runs whose union is exact:
+
+| Run | Checks | Result |
+|---|---|---|
+| `qa-partial-run.log` — killed by a container restart at `WARMUP-COMPILES` | 51 unique | 51 ok, 0 fail |
+| `qa-tail-run.log` — resumed with `IW_QA_TAIL=1` | 19 unique | 19 ok, 0 fail |
+| **Union** | **68 unique, no gap** | two static file checks overlap and agree |
+
+Both logs are committed rather than summarised: a partial run's evidence is only
+usable if the reader can see where it stopped.
+
+`STATES-DETERMINISTIC` is the one that mattered — 23 deterministic states, every
+guided one among them, zero camera violations. Those states drive the Director and
+the DirectedController this block changed.
+
 ---
 
 ## 4. Lessons
