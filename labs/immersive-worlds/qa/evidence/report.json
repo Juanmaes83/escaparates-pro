@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-08-11T22:06:28.844Z",
+  "startedAt": "2026-08-12T13:23:00.624Z",
   "states": {
     "museum:lobby-entry": {
       "space": "space.lobby",
@@ -17,11 +17,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 36,
-        "meanMs": 52.48,
-        "p50Ms": 2.6,
-        "p95Ms": 649,
-        "maxMs": 690.9
+        "samples": 35,
+        "meanMs": 54.8,
+        "p50Ms": 3.7,
+        "p95Ms": 655.5,
+        "maxMs": 712.3
       }
     },
     "museum:lobby-welcome": {
@@ -40,11 +40,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 36,
-        "meanMs": 25.57,
-        "p50Ms": 1.2,
-        "p95Ms": 328.1,
-        "maxMs": 353.5
+        "samples": 35,
+        "meanMs": 27.47,
+        "p50Ms": 1.1,
+        "p95Ms": 331,
+        "maxMs": 375.9
       }
     },
     "museum:gallery-a-overview": {
@@ -63,11 +63,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 36,
-        "meanMs": 94.3,
-        "p50Ms": 1.4,
-        "p95Ms": 781.5,
-        "maxMs": 812.9
+        "samples": 37,
+        "meanMs": 90.99,
+        "p50Ms": 1.8,
+        "p95Ms": 800.3,
+        "maxMs": 830
       }
     },
     "museum:artwork-horizonte-focus": {
@@ -87,10 +87,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 81.52,
-        "p50Ms": 1.2,
-        "p95Ms": 661.4,
-        "maxMs": 753.9
+        "meanMs": 84.38,
+        "p50Ms": 1.5,
+        "p95Ms": 640.5,
+        "maxMs": 746.7
       }
     },
     "museum:sculpture-detail": {
@@ -110,10 +110,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 95.77,
-        "p50Ms": 2.5,
-        "p95Ms": 788.6,
-        "maxMs": 905.1
+        "meanMs": 99.09,
+        "p50Ms": 2.3,
+        "p95Ms": 837.8,
+        "maxMs": 874.9
       }
     },
     "museum:gallery-a-oblique": {
@@ -133,10 +133,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 101.42,
-        "p50Ms": 8.8,
-        "p95Ms": 793.6,
-        "maxMs": 886.1
+        "meanMs": 104.59,
+        "p50Ms": 12.5,
+        "p95Ms": 782.7,
+        "maxMs": 870.2
       }
     },
     "museum:portal-a-b-before": {
@@ -156,10 +156,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 103.53,
-        "p50Ms": 9.5,
-        "p95Ms": 801,
-        "maxMs": 1101.5
+        "meanMs": 107.79,
+        "p50Ms": 9.7,
+        "p95Ms": 795.9,
+        "maxMs": 1185.8
       }
     },
     "museum:portal-a-b-after": {
@@ -179,10 +179,10 @@
       },
       "frame": {
         "samples": 44,
-        "meanMs": 74.97,
-        "p50Ms": 7.3,
-        "p95Ms": 597.4,
-        "maxMs": 834.4
+        "meanMs": 86.29,
+        "p50Ms": 9.7,
+        "p95Ms": 693.7,
+        "maxMs": 899.3
       }
     },
     "museum:archive-teleport": {
@@ -201,11 +201,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 37,
-        "meanMs": 66.85,
-        "p50Ms": 1.1,
-        "p95Ms": 543.8,
-        "maxMs": 728.7
+        "samples": 38,
+        "meanMs": 88.49,
+        "p50Ms": 1.8,
+        "p95Ms": 820.2,
+        "maxMs": 871.1
       }
     },
     "museum:journey-lead-horizonte": {
@@ -218,17 +218,17 @@
         "triangles": 3850,
         "programs": 40,
         "textures": 30,
-        "geometries": 194,
+        "geometries": 199,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 48,
-        "meanMs": 72.52,
-        "p50Ms": 1.6,
-        "p95Ms": 749.4,
-        "maxMs": 841.9
+        "meanMs": 73.71,
+        "p50Ms": 2.4,
+        "p95Ms": 732,
+        "maxMs": 896.3
       }
     },
     "museum:guide-accompanied": {
@@ -241,17 +241,17 @@
         "triangles": 2992,
         "programs": 40,
         "textures": 31,
-        "geometries": 196,
+        "geometries": 201,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 50,
-        "meanMs": 69.13,
-        "p50Ms": 1.9,
-        "p95Ms": 710.8,
-        "maxMs": 851.7
+        "meanMs": 70.56,
+        "p50Ms": 2,
+        "p95Ms": 771,
+        "maxMs": 924.3
       }
     },
     "museum:guide-handoff": {
@@ -264,17 +264,17 @@
         "triangles": 402,
         "programs": 40,
         "textures": 31,
-        "geometries": 196,
+        "geometries": 201,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 54,
-        "meanMs": 65.46,
-        "p50Ms": 1.2,
-        "p95Ms": 791.5,
-        "maxMs": 849.3
+        "samples": 53,
+        "meanMs": 73.53,
+        "p50Ms": 1.7,
+        "p95Ms": 799.5,
+        "maxMs": 1058.9
       }
     },
     "museum:journey-lead-division": {
@@ -287,17 +287,17 @@
         "triangles": 4182,
         "programs": 41,
         "textures": 32,
-        "geometries": 202,
+        "geometries": 207,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 55,
-        "meanMs": 64.32,
-        "p50Ms": 1.9,
-        "p95Ms": 760.8,
-        "maxMs": 825.1
+        "samples": 53,
+        "meanMs": 69.84,
+        "p50Ms": 2.2,
+        "p95Ms": 796.2,
+        "maxMs": 888.9
       }
     },
     "museum:journey-division": {
@@ -310,17 +310,17 @@
         "triangles": 2830,
         "programs": 41,
         "textures": 32,
-        "geometries": 202,
+        "geometries": 207,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
         "samples": 58,
-        "meanMs": 64.32,
+        "meanMs": 57.69,
         "p50Ms": 1.6,
-        "p95Ms": 798.6,
-        "maxMs": 864.5
+        "p95Ms": 711.9,
+        "maxMs": 831.2
       }
     },
     "museum:journey-threshold": {
@@ -333,17 +333,17 @@
         "triangles": 5842,
         "programs": 43,
         "textures": 40,
-        "geometries": 254,
+        "geometries": 256,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 80,
-        "meanMs": 49.74,
-        "p50Ms": 8.4,
-        "p95Ms": 588,
-        "maxMs": 862.3
+        "samples": 77,
+        "meanMs": 50.06,
+        "p50Ms": 7.7,
+        "p95Ms": 612.6,
+        "maxMs": 795.4
       }
     },
     "museum:journey-crossed": {
@@ -362,11 +362,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 84,
-        "meanMs": 58.46,
-        "p50Ms": 7.6,
-        "p95Ms": 595.1,
-        "maxMs": 907
+        "samples": 82,
+        "meanMs": 56.62,
+        "p50Ms": 7.1,
+        "p95Ms": 598.1,
+        "maxMs": 854.9
       }
     },
     "museum:journey-noche": {
@@ -385,11 +385,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 84,
-        "meanMs": 56.03,
-        "p50Ms": 8,
-        "p95Ms": 556.6,
-        "maxMs": 835.7
+        "samples": 86,
+        "meanMs": 54.75,
+        "p50Ms": 7.2,
+        "p95Ms": 575,
+        "maxMs": 934.7
       }
     },
     "museum:journey-proyeccion": {
@@ -408,11 +408,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 92,
-        "meanMs": 55,
-        "p50Ms": 7.5,
-        "p95Ms": 576.4,
-        "maxMs": 992.2
+        "samples": 90,
+        "meanMs": 53.8,
+        "p50Ms": 6.8,
+        "p95Ms": 600.6,
+        "maxMs": 820.9
       }
     },
     "museum:proyeccion-permanencia": {
@@ -431,11 +431,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 95,
-        "meanMs": 55.04,
-        "p50Ms": 8.1,
-        "p95Ms": 651.4,
-        "maxMs": 886.6
+        "samples": 97,
+        "meanMs": 54.17,
+        "p50Ms": 7.3,
+        "p95Ms": 640.7,
+        "maxMs": 847.4
       }
     },
     "museum:guide-released": {
@@ -454,11 +454,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 89,
-        "meanMs": 61.51,
-        "p50Ms": 7.2,
-        "p95Ms": 766.1,
-        "maxMs": 930.4
+        "samples": 90,
+        "meanMs": 52.82,
+        "p50Ms": 6.9,
+        "p95Ms": 550.5,
+        "maxMs": 859.6
       }
     },
     "museum:guide-turnaround": {
@@ -478,10 +478,10 @@
       },
       "frame": {
         "samples": 37,
-        "meanMs": 100.8,
-        "p50Ms": 1.7,
-        "p95Ms": 873.8,
-        "maxMs": 882.2
+        "meanMs": 89.49,
+        "p50Ms": 1.8,
+        "p95Ms": 766.1,
+        "maxMs": 843.9
       }
     },
     "museum:guided-step-04": {
@@ -494,17 +494,17 @@
         "triangles": 5842,
         "programs": 43,
         "textures": 40,
-        "geometries": 254,
+        "geometries": 256,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 75,
-        "meanMs": 57.25,
-        "p50Ms": 9.2,
-        "p95Ms": 599.6,
-        "maxMs": 953.5
+        "samples": 74,
+        "meanMs": 52.46,
+        "p50Ms": 8,
+        "p95Ms": 556.4,
+        "maxMs": 806.9
       }
     },
     "museum:guided-completed": {
@@ -524,71 +524,21 @@
       },
       "frame": {
         "samples": 91,
-        "meanMs": 57.01,
+        "meanMs": 53.69,
         "p50Ms": 8.3,
-        "p95Ms": 613.8,
-        "maxMs": 889
+        "p95Ms": 540.5,
+        "maxMs": 820.6
       }
     }
   },
   "performance": {
-    "spaceTimings": {
-      "space.lobby": {
-        "build": 190,
-        "warm": 2840,
-        "total": 3031
-      },
-      "space.gallery-a": {
-        "build": 1585,
-        "warm": 5322,
-        "total": 6908
-      },
-      "space.gallery-b": {
-        "build": 4694,
-        "warm": 3205,
-        "total": 7899
-      }
-    },
-    "media": {
-      "attempts": 7,
-      "loaded": 7,
-      "failed": 0,
-      "cached": 7,
-      "slowestMs": 4678,
-      "failures": []
-    },
-    "projection": {
-      "kind": "PROJECTION",
-      "declaredSize": [
-        4.6,
-        2.6,
-        0.02
-      ],
-      "declaredSrc": "../assets/collection/cuaderno-de-luz.webm",
-      "builtWidth": 4.6,
-      "builtHeight": 2.6,
-      "mapSrc": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
-      "boxes": 0,
-      "variantA": {
-        "width": 4.6,
-        "colour": "bbaf9b",
-        "topWidth": 4.7748,
-        "reflects": true
-      },
-      "variantB": {
-        "width": 7.2,
-        "colour": "2a41aa",
-        "topWidth": 8.208,
-        "reflects": true
-      }
-    },
     "desktop": {
       "frame": {
         "samples": 185,
-        "meanMs": 20.3,
-        "p50Ms": 1.2,
-        "p95Ms": 4.2,
-        "maxMs": 937.8
+        "meanMs": 19.43,
+        "p50Ms": 1.3,
+        "p95Ms": 3.6,
+        "maxMs": 877.9
       },
       "render": {
         "drawCalls": 43,
@@ -618,9 +568,9 @@
               "payload": {
                 "spaceId": "space.lobby",
                 "timings": {
-                  "build": 145,
-                  "warm": 2635,
-                  "total": 2780
+                  "build": 116,
+                  "warm": 2251,
+                  "total": 2367
                 }
               },
               "t": 1
@@ -662,7 +612,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.horizonte-interrumpido",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
                 "kind": "IMAGE"
               },
               "t": 6
@@ -670,8 +620,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.division-tercera",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/division-tercera.jpg",
+                "entityId": "entity.artwork.campo-de-ceniza",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
                 "kind": "IMAGE"
               },
               "t": 7
@@ -679,8 +629,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.campo-de-ceniza",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
+                "entityId": "entity.artwork.division-tercera",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/division-tercera.jpg",
                 "kind": "IMAGE"
               },
               "t": 8
@@ -689,7 +639,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.estudio-de-figura",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
                 "kind": "IMAGE"
               },
               "t": 9
@@ -699,9 +649,9 @@
               "payload": {
                 "spaceId": "space.gallery-a",
                 "timings": {
-                  "build": 1332,
-                  "warm": 5237,
-                  "total": 6570
+                  "build": 1255,
+                  "warm": 4840,
+                  "total": 6095
                 }
               },
               "t": 10
@@ -754,7 +704,7 @@
                 "spaceId": "space.gallery-a",
                 "behaviour": "CONTINUOUS",
                 "preparedOnDemand": true,
-                "waitedMs": 6563,
+                "waitedMs": 6088,
                 "source": "QA"
               },
               "t": 16
@@ -763,7 +713,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.noche-de-invierno",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
                 "kind": "IMAGE"
               },
               "t": 17
@@ -772,7 +722,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.marea-baja",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/marea-baja.jpg",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/marea-baja.jpg",
                 "kind": "IMAGE"
               },
               "t": 18
@@ -781,7 +731,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.video.cuaderno-de-luz",
-                "url": "http://127.0.0.1:4420/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
+                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
                 "kind": "VIDEO"
               },
               "t": 19
@@ -791,9 +741,9 @@
               "payload": {
                 "spaceId": "space.gallery-b",
                 "timings": {
-                  "build": 5272,
-                  "warm": 3750,
-                  "total": 9021
+                  "build": 4353,
+                  "warm": 3395,
+                  "total": 7749
                 }
               },
               "t": 20
@@ -857,300 +807,6 @@
       "detail": ""
     },
     {
-      "id": "BOOT",
-      "claim": "El prototipo arranca sin errores de consola",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "SCHEMA-VALID",
-      "claim": "El mundo cumple todas las invariantes del esquema",
-      "pass": true,
-      "detail": "0 errores, 0 avisos, {\"spaces\":4,\"anchors\":41,\"entities\":11,\"hotspots\":16,\"portals\":6,\"chapters\":3,\"storySteps\":33,\"routes\":1}"
-    },
-    {
-      "id": "INV-CANONICAL",
-      "claim": "Cada id resuelve a exactamente un registro canónico",
-      "pass": true,
-      "detail": "115 registros; 0 violaciones"
-    },
-    {
-      "id": "INV-BY-REFERENCE",
-      "claim": "Las Spaces referencian entidades, no copias",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "INV-WORLD-NOT-CAMERA",
-      "claim": "World State no contiene estado de cámara",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "INV-ONE-CAMERA-WRITER",
-      "claim": "Un único controlador de cámara autoritativo por frame",
-      "pass": true,
-      "detail": "5 frames, 0 violaciones"
-    },
-    {
-      "id": "INV-HOTSPOT-NOT-PORTAL",
-      "claim": "Hotspot dispara, Portal conecta: sin solape de responsabilidad",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "INV-SEMANTIC-NOT-VISUAL",
-      "claim": "Ningún registro semántico contiene implementación de render",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "INV-SHARED-ACTIONS",
-      "claim": "Hotspots y pasos guiados usan el mismo vocabulario declarado de Action",
-      "pass": true,
-      "detail": "4 acciones en uso: START_ROUTE, ACTIVATE_PORTAL, FOCUS_ENTITY, PLAY_MEDIA"
-    },
-    {
-      "id": "INV-SCENEKIT-CONTRACT",
-      "claim": "El motor sólo habla con el Scene Kit por contrato",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "INV-GRAPH-CONNECTED",
-      "claim": "Todas las salas son alcanzables desde el inicio",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "FOCUS-AUTHORITY",
-      "claim": "Al enfocar, la autoridad de cámara pasa a FOCUS",
-      "pass": true,
-      "detail": "FOCUS"
-    },
-    {
-      "id": "FOCUS-MOVED",
-      "claim": "El encuadre de foco mueve realmente la cámara",
-      "pass": true,
-      "detail": "z -12.40 → -12.20"
-    },
-    {
-      "id": "FOCUS-RETURN",
-      "claim": "Al salir del foco el visitante vuelve exactamente donde estaba",
-      "pass": true,
-      "detail": "[-4.8,1.62,-12.4]"
-    },
-    {
-      "id": "PORTAL-TRAVERSE",
-      "claim": "Un Portal cambia la Space activa",
-      "pass": true,
-      "detail": "space.gallery-b"
-    },
-    {
-      "id": "PORTAL-PREWARMED",
-      "claim": "La sala vecina ya estaba precargada al cruzar",
-      "pass": true,
-      "detail": "0 ms de espera"
-    },
-    {
-      "id": "LIFECYCLE-COOLING",
-      "claim": "La sala anterior queda en COOLING, no destruida ni activa",
-      "pass": true,
-      "detail": "space.gallery-a:COOLING, space.gallery-b:ACTIVE"
-    },
-    {
-      "id": "GUIDED-AUTHORITY",
-      "claim": "El recorrido guiado toma la cámara como DIRECTED",
-      "pass": true,
-      "detail": "DIRECTED/GUIDED"
-    },
-    {
-      "id": "SHARED-WORLD-STATE",
-      "claim": "Explore y Guided operan sobre el mismo World State",
-      "pass": true,
-      "detail": "visitadas 1 → 2"
-    },
-    {
-      "id": "SHARED-ACTION-PATH",
-      "claim": "Hotspot y Experiencia despachan las mismas Actions",
-      "pass": true,
-      "detail": "{\"QA\":{\"FOCUS_ENTITY\":1},\"EXPERIENCE\":{\"ACTIVATE_PORTAL\":1,\"FOCUS_ENTITY\":1}}"
-    },
-    {
-      "id": "GUIDED-RETURN",
-      "claim": "Al salir del recorrido la cámara vuelve al visitante",
-      "pass": true,
-      "detail": "EXPLORE/EXPLORE"
-    },
-    {
-      "id": "CAMERA-NO-VIOLATIONS",
-      "claim": "Ni una sola escritura de cámara en conflicto en toda la sesión",
-      "pass": true,
-      "detail": "0 violaciones"
-    },
-    {
-      "id": "HANDOFF-VALID-POSE",
-      "claim": "Tras la cesión el visitante queda dentro de la sala activa, no dentro de un muro",
-      "pass": true,
-      "detail": "Galería A — Horizontes · [-2.60, 1.62, -11.98] · EXPLORE"
-    },
-    {
-      "id": "PROXIMITY-SPATIAL",
-      "claim": "La proximidad es espacial: acercarse y alejarse cambian el estado del hotspot",
-      "pass": true,
-      "detail": "hotspot.art.division-tercera/NEAR → null/AVAILABLE"
-    },
-    {
-      "id": "MEDIA-LOADED",
-      "claim": "Las obras se cargan desde archivos propios declarados en el mundo",
-      "pass": true,
-      "detail": "7 archivos, 0 fallos, más lento 4678 ms"
-    },
-    {
-      "id": "MEDIA-FALLBACK",
-      "claim": "Un archivo que falla degrada a lámina generada, sin romper la sala",
-      "pass": true,
-      "detail": ""
-    },
-    {
-      "id": "PROJECTION-FROM-DATA",
-      "claim": "La proyección toma tamaño, luz e imagen del mundo, no de una constante",
-      "pass": true,
-      "detail": "4.6×2.6 m, media cuaderno-de-luz.webm, variantes 4.6/7.2 m y bbaf9b/2a41aa"
-    },
-    {
-      "id": "PROJECTION-NO-PANEL",
-      "claim": "La proyección no monta ningún objeto en el muro: sin marco, sin bisel, sin pantalla",
-      "pass": true,
-      "detail": "0 volúmenes en el grupo"
-    },
-    {
-      "id": "TOUR-ONE-START",
-      "claim": "El recorrido tiene exactamente un inicio canónico",
-      "pass": true,
-      "detail": "abre en el beat 0 (step.01-entrada)"
-    },
-    {
-      "id": "TOUR-ONE-END",
-      "claim": "El recorrido tiene exactamente un final canónico",
-      "pass": true,
-      "detail": "cierra en el beat 32 de 32"
-    },
-    {
-      "id": "TOUR-ORDER-UNIQUE",
-      "claim": "Ningún número de parada está duplicado",
-      "pass": true,
-      "detail": "10 pasos"
-    },
-    {
-      "id": "TOUR-ORDER-CONTIGUOUS",
-      "claim": "La numeración va de 01 a N sin huecos",
-      "pass": true,
-      "detail": "1,2,3,4,5,6,7,8,9,10"
-    },
-    {
-      "id": "TOUR-IDS-UNIQUE",
-      "claim": "Cada parada tiene una identidad técnica única",
-      "pass": true,
-      "detail": "10 identidades"
-    },
-    {
-      "id": "TOUR-NO-ORPHANS",
-      "claim": "Todo beat pertenece exactamente a una parada canónica",
-      "pass": true,
-      "detail": "33 beats asignados"
-    },
-    {
-      "id": "TOUR-NEXT-PREV-CONSISTENT",
-      "claim": "Siguiente y anterior son mutuamente consistentes",
-      "pass": true,
-      "detail": "10 enlaces"
-    },
-    {
-      "id": "TOUR-NO-UNEXPECTED-CYCLES",
-      "claim": "El recorrido no se cierra sobre sí mismo",
-      "pass": true,
-      "detail": "inicio.previous=—, fin.next=—"
-    },
-    {
-      "id": "TOUR-ALL-REACHABLE",
-      "claim": "Todas las paradas se alcanzan siguiendo «siguiente» desde el inicio",
-      "pass": true,
-      "detail": "10/10 alcanzables desde el inicio"
-    },
-    {
-      "id": "TOUR-G-USES-CANONICAL-SEQUENCE",
-      "claim": "El recorrido automático atraviesa exactamente la secuencia canónica",
-      "pass": true,
-      "detail": "esperado 1→2→3→4→5→6→7→8→9→10 · observado 1→2→3→4→5→6→7→8→9→10"
-    },
-    {
-      "id": "TOUR-MANUAL-NEXT-USES-CANONICAL-SEQUENCE",
-      "claim": "SIGUIENTE recorre la misma secuencia canónica, de principio a fin",
-      "pass": true,
-      "detail": "observado 1→2→3→4→5→6→7→8→9→10"
-    },
-    {
-      "id": "TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE",
-      "claim": "ANTERIOR retrocede por la secuencia canónica, sin saltarse ninguna parada",
-      "pass": true,
-      "detail": "esperado 10→9→8→7 · observado 10→9→8→7"
-    },
-    {
-      "id": "GRAMMAR-ARTWORK-ABCD",
-      "claim": "Cada parada de obra convencional recorre A → B → C → D en ese orden",
-      "pass": true,
-      "detail": "02:·ABCD · 03:ABCD · 04:ABCD · 05:ABCD · 08:ABCD"
-    },
-    {
-      "id": "GRAMMAR-C-VISITOR-NOT-GUIDE",
-      "claim": "En la contemplación humana hay una figura visitante y la guía ya no media",
-      "pass": true,
-      "detail": "03c-campo-contemplacion visitante=true guía=false · 04c-horizonte-contemplacion visitante=true guía=false · 06c-division-contemplacion visitante=true guía=false · 06f-estudio-contemplacion visitante=true guía=false · 06j-vasija-escala visitante=true guía=false · 10f-noche-contemplacion visitante=true guía=false"
-    },
-    {
-      "id": "GRAMMAR-D-NO-VISITOR-FIGURE",
-      "claim": "El POV puro de la obra no contiene la figura visitante",
-      "pass": true,
-      "detail": "03d-campo-cesion · 04b-horizonte-cesion · 06b-division-cesion · 06g-estudio-cesion · 10b-noche-cesion"
-    },
-    {
-      "id": "GRAMMAR-SCULPTURE-ABCD",
-      "claim": "La escultura recorre contexto → atención → escala → detalle espacial, y su detalle queda sin figuras",
-      "pass": true,
-      "detail": "06h-lleva-vasija:ABCD"
-    },
-    {
-      "id": "GRAMMAR-PROJECTION-D-NO-GUIDE",
-      "claim": "En el dwell de la proyección no hay guía ni figura: sólo la obra",
-      "pass": true,
-      "detail": "guía=false visitante=false"
-    },
-    {
-      "id": "BROWSE-MOVES-THE-CAMERA",
-      "claim": "Navegar la colección lleva la cámara a la obra que dice la cartela",
-      "pass": true,
-      "detail": "campo-de-ceniza@-4.06,1.85,-12.4 · division-tercera@5.1,1.71,-12.59 · campo-de-ceniza@-3.94,1.85,-12.4"
-    },
-    {
-      "id": "BROWSE-DOES-NOT-MOVE-THE-TOUR",
-      "claim": "La obra visitada no reescribe en silencio la posición del recorrido",
-      "pass": true,
-      "detail": "parada step.03-lleva-horizonte · beat 9 durante 3 saltos"
-    },
-    {
-      "id": "BROWSE-RETURNS-TO-ORIGIN",
-      "claim": "Salir de la colección devuelve exactamente a la parada y el beat de origen",
-      "pass": true,
-      "detail": "step.04b-horizonte-cesion · DIRECTED · pose -0.9,1.89,-12.09"
-    },
-    {
-      "id": "WARMUP-COMPILES",
-      "claim": "El warmup compila programas de verdad, no una escena vacía",
-      "pass": true,
-      "detail": "213 programas compilados"
-    },
-    {
       "id": "DETAIL-NAVIGATION",
       "claim": "En detalle se pasa de una obra a la siguiente sin volver a la sala",
       "pass": true,
@@ -1172,7 +828,7 @@
       "id": "DETAIL-RETURN",
       "claim": "Tras recorrer varias obras el visitante vuelve donde estaba de pie",
       "pass": true,
-      "detail": "[-0.9,1.62,-12.09]"
+      "detail": "[-0.9,1.62,-8.6]"
     },
     {
       "id": "DETAIL-NO-VIOLATIONS",
@@ -1196,7 +852,7 @@
       "id": "PERF-CAPTURED",
       "claim": "Medición de rendimiento capturada (SwiftShader, sin GPU)",
       "pass": true,
-      "detail": "p50 1.2 ms · p95 4.2 ms · 43 draws · 1821 tris"
+      "detail": "p50 1.3 ms · p95 3.6 ms · 43 draws · 1821 tris"
     },
     {
       "id": "MOBILE-TIER",
@@ -1253,492 +909,6 @@
       "detail": ""
     }
   ],
-  "tour": {
-    "validation": {
-      "ok": true,
-      "checks": [
-        {
-          "id": "TOUR-ONE-START",
-          "pass": true,
-          "detail": "abre en el beat 0 (step.01-entrada)"
-        },
-        {
-          "id": "TOUR-ONE-END",
-          "pass": true,
-          "detail": "cierra en el beat 32 de 32"
-        },
-        {
-          "id": "TOUR-ORDER-UNIQUE",
-          "pass": true,
-          "detail": "10 pasos"
-        },
-        {
-          "id": "TOUR-ORDER-CONTIGUOUS",
-          "pass": true,
-          "detail": "1,2,3,4,5,6,7,8,9,10"
-        },
-        {
-          "id": "TOUR-IDS-UNIQUE",
-          "pass": true,
-          "detail": "10 identidades"
-        },
-        {
-          "id": "TOUR-NO-ORPHANS",
-          "pass": true,
-          "detail": "33 beats asignados"
-        },
-        {
-          "id": "TOUR-NEXT-PREV-CONSISTENT",
-          "pass": true,
-          "detail": "10 enlaces"
-        },
-        {
-          "id": "TOUR-NO-UNEXPECTED-CYCLES",
-          "pass": true,
-          "detail": "inicio.previous=—, fin.next=—"
-        },
-        {
-          "id": "TOUR-ALL-REACHABLE",
-          "pass": true,
-          "detail": "10/10 alcanzables desde el inicio"
-        }
-      ]
-    },
-    "expected": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10
-    ],
-    "traversed": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10
-    ],
-    "forward": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10
-    ],
-    "backward": [
-      10,
-      9,
-      8,
-      7
-    ],
-    "titles": [
-      "Bienvenida",
-      "Campo de ceniza",
-      "Horizonte interrumpido",
-      "División tercera",
-      "Estudio de figura, IV",
-      "Vasija de arenas",
-      "La cámara oscura",
-      "Noche de invierno",
-      "Cuaderno de luz",
-      "Cierre"
-    ],
-    "beatCount": 33,
-    "restoredSpace": "space.gallery-a"
-  },
-  "grammar": [
-    {
-      "beatId": "step.01-entrada",
-      "intent": "ENTRY",
-      "kind": null,
-      "tourStepId": "step.01-entrada",
-      "tourOrder": 1,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.02-paso-galeria-a",
-      "intent": "PORTAL",
-      "kind": null,
-      "tourStepId": "step.02-paso-galeria-a",
-      "tourOrder": 2,
-      "guide": false,
-      "visitor": false
-    },
-    {
-      "beatId": "step.03a-lleva-campo",
-      "intent": "LEAD",
-      "kind": "ARTWORK",
-      "tourStepId": "step.02-paso-galeria-a",
-      "tourOrder": 2,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.03b-campo",
-      "intent": "ACCOMPANIED",
-      "kind": "ARTWORK",
-      "tourStepId": "step.02-paso-galeria-a",
-      "tourOrder": 2,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.03c-campo-contemplacion",
-      "intent": "CONTEMPLATION",
-      "kind": "ARTWORK",
-      "tourStepId": "step.02-paso-galeria-a",
-      "tourOrder": 2,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.03d-campo-cesion",
-      "intent": "FOCUS",
-      "kind": "ARTWORK",
-      "tourStepId": "step.02-paso-galeria-a",
-      "tourOrder": 2,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.03-lleva-horizonte",
-      "intent": "LEAD",
-      "kind": "ARTWORK",
-      "tourStepId": "step.03-lleva-horizonte",
-      "tourOrder": 3,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.04-horizonte",
-      "intent": "ACCOMPANIED",
-      "kind": "ARTWORK",
-      "tourStepId": "step.03-lleva-horizonte",
-      "tourOrder": 3,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.04c-horizonte-contemplacion",
-      "intent": "CONTEMPLATION",
-      "kind": "ARTWORK",
-      "tourStepId": "step.03-lleva-horizonte",
-      "tourOrder": 3,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.04b-horizonte-cesion",
-      "intent": "FOCUS",
-      "kind": "ARTWORK",
-      "tourStepId": "step.03-lleva-horizonte",
-      "tourOrder": 3,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.05-lleva-division",
-      "intent": "LEAD",
-      "kind": "ARTWORK",
-      "tourStepId": "step.05-lleva-division",
-      "tourOrder": 4,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06-division",
-      "intent": "ACCOMPANIED",
-      "kind": "ARTWORK",
-      "tourStepId": "step.05-lleva-division",
-      "tourOrder": 4,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06c-division-contemplacion",
-      "intent": "CONTEMPLATION",
-      "kind": "ARTWORK",
-      "tourStepId": "step.05-lleva-division",
-      "tourOrder": 4,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.06b-division-cesion",
-      "intent": "FOCUS",
-      "kind": "ARTWORK",
-      "tourStepId": "step.05-lleva-division",
-      "tourOrder": 4,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06d-lleva-estudio",
-      "intent": "LEAD",
-      "kind": "ARTWORK",
-      "tourStepId": "step.06d-lleva-estudio",
-      "tourOrder": 5,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06e-estudio",
-      "intent": "ACCOMPANIED",
-      "kind": "ARTWORK",
-      "tourStepId": "step.06d-lleva-estudio",
-      "tourOrder": 5,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06f-estudio-contemplacion",
-      "intent": "CONTEMPLATION",
-      "kind": "ARTWORK",
-      "tourStepId": "step.06d-lleva-estudio",
-      "tourOrder": 5,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.06g-estudio-cesion",
-      "intent": "FOCUS",
-      "kind": "ARTWORK",
-      "tourStepId": "step.06d-lleva-estudio",
-      "tourOrder": 5,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06h-lleva-vasija",
-      "intent": "LEAD",
-      "kind": "SCULPTURE",
-      "tourStepId": "step.06h-lleva-vasija",
-      "tourOrder": 6,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06i-vasija",
-      "intent": "ACCOMPANIED",
-      "kind": "SCULPTURE",
-      "tourStepId": "step.06h-lleva-vasija",
-      "tourOrder": 6,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.06j-vasija-escala",
-      "intent": "CONTEMPLATION",
-      "kind": "SCULPTURE",
-      "tourStepId": "step.06h-lleva-vasija",
-      "tourOrder": 6,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.06k-vasija-detalle",
-      "intent": "DETAIL",
-      "kind": "SCULPTURE",
-      "tourStepId": "step.06h-lleva-vasija",
-      "tourOrder": 6,
-      "guide": false,
-      "visitor": false
-    },
-    {
-      "beatId": "step.07-lleva-umbral",
-      "intent": "LEAD",
-      "kind": null,
-      "tourStepId": "step.07-lleva-umbral",
-      "tourOrder": 7,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.08-paso-galeria-b",
-      "intent": "PORTAL",
-      "kind": null,
-      "tourStepId": "step.07-lleva-umbral",
-      "tourOrder": 7,
-      "guide": false,
-      "visitor": false
-    },
-    {
-      "beatId": "step.09-lleva-noche",
-      "intent": "LEAD",
-      "kind": "ARTWORK",
-      "tourStepId": "step.09-lleva-noche",
-      "tourOrder": 8,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10-noche",
-      "intent": "ACCOMPANIED",
-      "kind": "ARTWORK",
-      "tourStepId": "step.09-lleva-noche",
-      "tourOrder": 8,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10f-noche-contemplacion",
-      "intent": "CONTEMPLATION",
-      "kind": "ARTWORK",
-      "tourStepId": "step.09-lleva-noche",
-      "tourOrder": 8,
-      "guide": false,
-      "visitor": true
-    },
-    {
-      "beatId": "step.10b-noche-cesion",
-      "intent": "FOCUS",
-      "kind": "ARTWORK",
-      "tourStepId": "step.09-lleva-noche",
-      "tourOrder": 8,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10c-lleva-cuaderno",
-      "intent": "LEAD",
-      "kind": "PROJECTION",
-      "tourStepId": "step.10c-lleva-cuaderno",
-      "tourOrder": 9,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10d-cuaderno",
-      "intent": "ACCOMPANIED",
-      "kind": "PROJECTION",
-      "tourStepId": "step.10c-lleva-cuaderno",
-      "tourOrder": 9,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10e-cuaderno-permanencia",
-      "intent": "CONTEMPLATION",
-      "kind": "PROJECTION",
-      "tourStepId": "step.10c-lleva-cuaderno",
-      "tourOrder": 9,
-      "guide": true,
-      "visitor": false
-    },
-    {
-      "beatId": "step.10g-cuaderno-dwell",
-      "intent": "FOCUS",
-      "kind": "PROJECTION",
-      "tourStepId": "step.10c-lleva-cuaderno",
-      "tourOrder": 9,
-      "guide": false,
-      "visitor": false
-    },
-    {
-      "beatId": "step.11-cierre",
-      "intent": "EXIT",
-      "kind": null,
-      "tourStepId": "step.11-cierre",
-      "tourOrder": 10,
-      "guide": false,
-      "visitor": false
-    }
-  ],
-  "browse": {
-    "origin": {
-      "label": "origin",
-      "authority": "DIRECTED",
-      "focused": "entity.artwork.horizonte-interrumpido",
-      "tourStepId": "step.03-lleva-horizonte",
-      "beatId": "step.04b-horizonte-cesion",
-      "beatIndex": 9,
-      "transport": "PAUSED",
-      "browsing": false,
-      "pose": [
-        -0.9,
-        1.89,
-        -12.2
-      ]
-    },
-    "visited": [
-      {
-        "label": "browse+1",
-        "authority": "FOCUS",
-        "focused": "entity.artwork.campo-de-ceniza",
-        "tourStepId": "step.03-lleva-horizonte",
-        "beatId": "step.04b-horizonte-cesion",
-        "beatIndex": 9,
-        "transport": "PAUSED",
-        "browsing": true,
-        "pose": [
-          -4.06,
-          1.85,
-          -12.4
-        ]
-      },
-      {
-        "label": "browse+2",
-        "authority": "FOCUS",
-        "focused": "entity.artwork.division-tercera",
-        "tourStepId": "step.03-lleva-horizonte",
-        "beatId": "step.04b-horizonte-cesion",
-        "beatIndex": 9,
-        "transport": "PAUSED",
-        "browsing": true,
-        "pose": [
-          5.1,
-          1.71,
-          -12.59
-        ]
-      },
-      {
-        "label": "browse-1",
-        "authority": "FOCUS",
-        "focused": "entity.artwork.campo-de-ceniza",
-        "tourStepId": "step.03-lleva-horizonte",
-        "beatId": "step.04b-horizonte-cesion",
-        "beatIndex": 9,
-        "transport": "PAUSED",
-        "browsing": true,
-        "pose": [
-          -3.94,
-          1.85,
-          -12.4
-        ]
-      }
-    ],
-    "restored": {
-      "label": "restored",
-      "authority": "DIRECTED",
-      "focused": null,
-      "tourStepId": "step.03-lleva-horizonte",
-      "beatId": "step.04b-horizonte-cesion",
-      "beatIndex": 9,
-      "transport": "PAUSED",
-      "browsing": false,
-      "pose": [
-        -0.9,
-        1.89,
-        -12.09
-      ]
-    }
-  },
   "secondWorld": {
     "title": "Sala de exposiciones — demostración institucional",
     "institution": "Institución de demostración",
@@ -1749,15 +919,15 @@
       "loaded": 4,
       "failed": 0,
       "cached": 4,
-      "slowestMs": 2657,
+      "slowestMs": 2280,
       "failures": []
     },
     "spaces": 2
   },
-  "finishedAt": "2026-08-12T00:27:08.246Z",
+  "finishedAt": "2026-08-12T13:58:17.086Z",
   "summary": {
-    "total": 68,
+    "total": 19,
     "failed": 0,
-    "passed": 68
+    "passed": 19
   }
 }
