@@ -15,4 +15,4 @@ Preserved byte-for-byte by GitHub Actions:
 
 Integration rule: `PRESERVE LOCAL SOURCE → ADAPTER → PANEL → QA → APPROVAL`.
 
-The preserved source is never rewritten to connect Escaparates Pro. The Type B adapter is external and same-origin.
+The preserved source is never rewritten to connect Escaparates Pro. The outer Type B panel delegates to the preserved Output V2 controls through a same-origin DOM adapter.
