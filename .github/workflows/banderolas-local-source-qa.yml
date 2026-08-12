@@ -1,0 +1,103 @@
+name: Banderolas Local Source QA
+
+on:
+  push:
+    branches:
+      - feature/type-b-banderolas-studio-pro
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  preserve-local-source:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Escaparates Pro branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/type-b-banderolas-studio-pro
+          fetch-depth: 0
+          path: target
+
+      - name: Checkout canonical Banderolas source
+        uses: actions/checkout@v4
+        with:
+          repository: Juanmaes83/BANDEROLAS-DINAMICAS
+          ref: 538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83
+          fetch-depth: 1
+          path: source
+
+      - name: Verify canonical Git blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C source hash-object index.html)" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372"
+          test "$(git -C source hash-object output-enhancer-v2.js)" = "e496e414b5ae7d77c82583ad1a071c1ee42c52f5"
+          test "$(git -C source hash-object index-output-v2.html)" = "4cb27137abba038d87d025db48b4967ba1185a84"
+
+      - name: Preserve source locally byte-for-byte
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEST="target/labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source"
+          mkdir -p "$DEST"
+          cp source/index.html "$DEST/index.html"
+          cp source/output-enhancer-v2.js "$DEST/output-enhancer-v2.js"
+          cp source/index-output-v2.html "$DEST/index-output-v2.html"
+          cp source/OUTPUT-V2-NOTES.md "$DEST/OUTPUT-V2-NOTES.md"
+          test "$(git -C target hash-object "$DEST/index.html" 2>/dev/null || git hash-object "$DEST/index.html")" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372" || test "$(git hash-object "$DEST/index.html")" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372"
+          test "$(git hash-object "$DEST/output-enhancer-v2.js")" = "e496e414b5ae7d77c82583ad1a071c1ee42c52f5"
+          test "$(git hash-object "$DEST/index-output-v2.html")" = "4cb27137abba038d87d025db48b4967ba1185a84"
+
+      - name: Write preservation manifest
+        shell: bash
+        run: |
+          cat > target/labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/SOURCE-MANIFEST.md <<'EOF'
+          # Banderolas — Preserved Source Manifest
+
+          Source repository: `Juanmaes83/BANDEROLAS-DINAMICAS`
+
+          Approved candidate branch: `preview-output-v2`
+
+          Pinned commit: `538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83`
+
+          Preserved byte-for-byte by GitHub Actions:
+
+          - `source/index.html` — Git blob `9fc683b9e988a56a8426d094bde3c4bcaa25e372`
+          - `source/output-enhancer-v2.js` — Git blob `e496e414b5ae7d77c82583ad1a071c1ee42c52f5`
+          - `source/index-output-v2.html` — Git blob `4cb27137abba038d87d025db48b4967ba1185a84`
+          - `source/OUTPUT-V2-NOTES.md` — source documentation
+
+          Integration rule: `PRESERVE LOCAL SOURCE → ADAPTER → PANEL → QA → APPROVAL`.
+
+          The preserved source is never rewritten to connect Escaparates Pro. The Type B adapter is external and same-origin.
+          EOF
+
+      - name: Static Type B QA
+        shell: bash
+        working-directory: target
+        run: |
+          set -euo pipefail
+          node --check js/advanced-tools/banderolas-host.js
+          node --check js/advanced-tools/registry.js
+          node tests/banderolas-type-b-contract.spec.mjs
+          ! grep -E "raw\.githubusercontent|cdn\.jsdelivr|frame\.srcdoc|fetch\(tool\.source" js/advanced-tools/banderolas-host.js
+          grep -F "labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index.html" js/advanced-tools/registry.js
+
+      - name: Commit exact preservation artifacts
+        shell: bash
+        working-directory: target
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source \
+                  labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/SOURCE-MANIFEST.md
+          if git diff --cached --quiet; then
+            echo "Canonical local source already exact; nothing to commit."
+          else
+            git commit -m "fix(banderolas): preserve Output V2 source byte-for-byte"
+            git push origin HEAD:feature/type-b-banderolas-studio-pro
+          fi
