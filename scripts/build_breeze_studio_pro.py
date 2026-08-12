@@ -248,5 +248,7 @@ if 'mountStudioPanel' not in s:
 p.write_text(s, encoding='utf-8')
 
 p = root / 'index.html'
-s = p.read_text(encoding='utf-8').replace('<title>Breeze - ThreeJS WebGPU Experiment - holtsetio.com</title>', '<title>Breeze Studio PRO — Escaparates Pro</title>')
+s = p.read_text(encoding='utf-8')
+s = s.replace('<title>Breeze - ThreeJS WebGPU Experiment - holtsetio.com</title>', '<title>Breeze Studio PRO — Escaparates Pro</title>')
+s = s.replace('  <script defer src="https://s.holtsetio.com/script.js" data-website-id="cb36fa92-2381-4031-8f81-f430a473156d"></script>\n', '')
 p.write_text(s, encoding='utf-8')
