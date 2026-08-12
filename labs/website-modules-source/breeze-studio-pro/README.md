@@ -25,5 +25,7 @@ V4.1 authoring model:
 - replacement geometry rebuilds the real BVH cloth collider;
 - PNG, WebM and clean preview.
 
+V4.1 QA includes a real Chrome dual-video stress test using the renderer's available browser backend: one looping video as background plus another looping video on the cloth for multiple loops, asserting both media streams continue advancing and the browser render heartbeat remains responsive.
+
 Banderolas Dinamicas remains untouched and is not a runtime dependency.
 Its proven media-state pattern plus Infinite Worlds V1.3.1 direct video-resource pattern informed V4.1.
