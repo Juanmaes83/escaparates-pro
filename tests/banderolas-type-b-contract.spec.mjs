@@ -46,7 +46,6 @@ must('js/advanced-tools/banderolas-host.js', [
   "getElementById('outputStatus')",
   "getElementById('mediaScale')",
   "getElementById('downloadHtml')",
-  "getElementById('copyEmbed')",
   'DataTransfer',
   'captureStream',
   'ProjectStoreLocal',
