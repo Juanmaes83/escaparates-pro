@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/build-breeze-studio-pro.yml
       - scripts/build_breeze_studio_pro.py
+      - scripts/build_breeze_studio_pro_v2.py
   workflow_dispatch:
 
 permissions:
@@ -29,8 +30,11 @@ jobs:
           ref: 0ab82342f9169f20e32b0e90babcc4707e694906
           path: breeze-source
 
-      - name: Add derivative authoring layer
+      - name: Add derivative authoring layer V1
         run: python scripts/build_breeze_studio_pro.py
+
+      - name: Add derivative authoring layer V2
+        run: python scripts/build_breeze_studio_pro_v2.py
 
       - name: Build Breeze Studio PRO
         working-directory: breeze-source
@@ -59,12 +63,16 @@ jobs:
 
           Derivative additions only:
           - custom authoring panel;
-          - image/video mapped onto the simulated cloth;
-          - media Scale/X/Y;
+          - robust image/video mapped onto the simulated cloth;
+          - cloth media Scale/X/Y;
+          - custom background image/video while preserving HDRI lighting;
+          - replaceable GLB/GLTF/OBJ 3D object with auto-normalization;
+          - uploaded 3D geometry becomes the real BVH cloth collider after scene rebuild;
           - scene, camera, simulation, stiffness and friction controls;
           - PNG, WebM and clean preview.
 
           Banderolas Dinamicas remains untouched and is not a runtime dependency.
+          Its proven non-blocking video-loading pattern informed the V2 implementation.
           EOF
 
       - name: Register Website Module
@@ -80,11 +88,11 @@ jobs:
                   name: 'Breeze Studio PRO',
                   icon: 'BR',
                   family: 'Interactive Media / Dynamic Fabric',
-                  description: 'Escultura y tela WebGPU con fisica Verlet, escenas premium y mapeo de imagen/video sobre la tela.',
-                  sourceFile: 'Juanmaes83/breeze · 0ab82342f9169f20e32b0e90babcc4707e694906 · additive derivative',
-                  mediaMap: 'Imagen/video sobre tela + Scale/X/Y + Scene/Camera/Physics + PNG/WebM/Preview Clean.',
+                  description: 'Escultura y tela WebGPU con fisica Verlet, media en tela, fondos personalizados y objeto 3D reemplazable.',
+                  sourceFile: 'Juanmaes83/breeze · 0ab82342f9169f20e32b0e90babcc4707e694906 · additive derivative V2',
+                  mediaMap: 'Imagen/video en tela + fondo imagen/video + GLB/GLTF/OBJ + Scale/X/Y + Scene/Camera/Physics + PNG/WebM/Preview Clean.',
                   standalonePath: PATH,
-                  standaloneEditorNote: 'Modulo nuevo e independiente. Breeze preservado como motor; Banderolas no se modifica ni se usa como dependencia.',
+                  standaloneEditorNote: 'Modulo nuevo e independiente. Breeze preservado como motor; Banderolas permanece intacto y no es dependencia runtime.',
                   fields: [],
                   build: function() {
                       return '<!doctype html><html><body style="margin:0;background:#000"><iframe src="' + PATH + '" style="position:fixed;inset:0;width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe></body></html>';
@@ -113,6 +121,8 @@ jobs:
           test -f labs/website-modules-source/breeze-studio-pro/CREDITS.md
           grep -R -q 'Breeze Studio PRO' labs/website-modules-source/breeze-studio-pro
           grep -q 'website-modules-breeze-studio-pro.js' index.html
+          grep -R -q 'Background' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'Restore Venus' labs/website-modules-source/breeze-studio-pro/assets
           node --check js/website-modules-breeze-studio-pro.js
           git diff --check
 
@@ -124,5 +134,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html js/website-modules-breeze-studio-pro.js labs/website-modules-source/breeze-studio-pro
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "feat(web-modules): add Breeze Studio PRO candidate"
+          git commit -m "feat(web-modules): upgrade Breeze Studio PRO V2"
           git push origin HEAD:feature/breeze-studio-pro
