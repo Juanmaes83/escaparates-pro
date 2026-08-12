@@ -55,7 +55,10 @@ jobs:
             echo "FAIL: Chrome/Chromium not available for real runtime QA"
             exit 1
           fi
-          command -v ffmpeg >/dev/null || { echo "FAIL: ffmpeg unavailable"; exit 1; }
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
 
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/bg.webm
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc2=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/cloth.webm
