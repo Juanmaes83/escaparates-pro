@@ -75,6 +75,8 @@ Do not create a second complete `SAFE_AUTONOMOUS_ENGINEERING` skill under Museum
 
 Museum-specific documentation should continue to contain only Museum/Immersive Worlds product contracts, baselines, transition language, scene-kit architecture, roadmap, QA and local lessons.
 
+When Claude resumes Museum, it must read the repository-level skill first and then the Museum-specific canonical documents/current mandate. The global skill must not be copied into the Museum directory.
+
 ## Repository safety model
 
 Agents may autonomously:
