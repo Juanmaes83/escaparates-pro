@@ -1,0 +1,2 @@
+@import url('../premium-v2/styles.css');
+.portal-debug{position:absolute;left:18px;bottom:18px;z-index:8;padding:7px 10px;border:1px solid rgba(242,184,75,.28);background:rgba(0,0,0,.48);color:#f2cf86;font:10px/1.2 monospace;letter-spacing:.12em;pointer-events:none}.preview .portal-debug{display:none}.panel .card{box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}.field input[type=range]{accent-color:#f2b84b}.asset code{font-size:10px;color:#e6cc81}.recording.on{display:block}.pill.active{border-color:#f2b84b;color:#f7dc8c;box-shadow:0 0 22px rgba(242,184,75,.18)}

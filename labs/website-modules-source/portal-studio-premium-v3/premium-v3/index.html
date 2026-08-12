@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Portal Studio V3 — Lucy Live AI</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <iframe id="studio" src="../premium-v2-1-1/index.html" allow="camera; microphone; display-capture; autoplay; fullscreen" title="Portal Studio V2.1.1"></iframe>
+
+  <aside id="aiDock" class="ai-dock">
+    <div class="dock-head">
+      <div><strong>AI LIVE</strong><span> / LUCY 2.5</span></div>
+      <div id="aiState" class="state off">OFFLINE</div>
+    </div>
+
+    <div class="field">
+      <label>Portal source</label>
+      <div class="segmented">
+        <button class="seg" data-source="original">ORIGINAL</button>
+        <button class="seg active" data-source="ai">AI</button>
+        <button class="seg" data-source="split">SPLIT</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Style</label>
+      <select id="styleSelect">
+        <option value="movie3d">3D Movie</option>
+        <option value="anime">Anime</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="watercolor">Watercolor</option>
+        <option value="lego">LEGO</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
+
+    <div class="field custom hidden" id="customBox">
+      <label>Custom prompt</label>
+      <textarea id="customPrompt" rows="4" placeholder="Change the style of the video to..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Decart API key</label>
+      <input id="apiKey" type="password" autocomplete="off" placeholder="Paste Decart key" />
+      <label class="check"><input id="rememberKey" type="checkbox" /> Remember on this browser</label>
+    </div>
+
+    <div class="row">
+      <button id="connectLucy" class="btn primary">CONNECT AI</button>
+      <button id="disconnectLucy" class="btn">DISCONNECT</button>
+    </div>
+
+    <div class="row">
+      <button id="pushPrompt" class="btn">UPDATE STYLE</button>
+      <button id="collapseDock" class="btn">HIDE PANEL</button>
+    </div>
+
+    <div class="telemetry">
+      <div><span>CAMERA</span><strong id="cameraState">WAITING</strong></div>
+      <div><span>LUCY</span><strong id="lucyState">OFFLINE</strong></div>
+      <div><span>OUTPUT</span><strong id="outputSource">AI</strong></div>
+      <div><span>REMOTE</span><strong id="remoteState">NO STREAM</strong></div>
+    </div>
+
+    <p id="aiMessage" class="message">Start the camera in Portal Studio, then connect Lucy.</p>
+  </aside>
+
+  <button id="showDock" class="show-dock hidden">AI LIVE</button>
+  <video id="lucyVideo" playsinline muted></video>
+  <canvas id="bridgeCanvas"></canvas>
+  <script type="module" src="./lucy-adapter.js"></script>
+</body>
+</html>
