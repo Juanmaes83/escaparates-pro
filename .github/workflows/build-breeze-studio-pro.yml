@@ -1,0 +1,202 @@
+name: Build Breeze Studio PRO
+
+on:
+  push:
+    branches:
+      - feature/breeze-studio-pro
+    paths:
+      - .github/workflows/build-breeze-studio-pro.yml
+      - scripts/build_breeze_studio_pro_v3.py
+      - scripts/build_breeze_studio_pro_v4.py
+      - scripts/build_breeze_studio_pro_v4_1.py
+      - scripts/test_breeze_dual_video_runtime.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Escaparates Pro
+        uses: actions/checkout@v4
+        with:
+          ref: feature/breeze-studio-pro
+          fetch-depth: 0
+
+      - name: Checkout preserved Breeze source
+        uses: actions/checkout@v4
+        with:
+          repository: Juanmaes83/breeze
+          ref: 0ab82342f9169f20e32b0e90babcc4707e694906
+          path: breeze-source
+
+      - name: Add Breeze Studio PRO V3 asset pipeline
+        run: python scripts/build_breeze_studio_pro_v3.py
+
+      - name: Add Breeze Studio PRO V4 UX and library
+        run: python scripts/build_breeze_studio_pro_v4.py
+
+      - name: Add Breeze Studio PRO V4.1 dual-video fix
+        run: python scripts/build_breeze_studio_pro_v4_1.py
+
+      - name: Build Breeze Studio PRO
+        working-directory: breeze-source
+        run: |
+          npm ci
+          npm run build
+
+      - name: Dual-video browser stress test
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then
+            echo "FAIL: Chrome/Chromium not available for real runtime QA"
+            exit 1
+          fi
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/bg.webm
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc2=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/cloth.webm
+
+          (cd breeze-source/dist && python -m http.server 8765 >/tmp/breeze-http.log 2>&1) &
+          HTTP_PID=$!
+          "$CHROME" --headless=new --remote-debugging-port=9222 --no-sandbox --disable-dev-shm-usage --enable-unsafe-webgpu --use-angle=swiftshader --disable-gpu-sandbox about:blank >/tmp/breeze-chrome.log 2>&1 &
+          CHROME_PID=$!
+          cleanup() { kill "$HTTP_PID" "$CHROME_PID" 2>/dev/null || true; }
+          trap cleanup EXIT
+
+          set +e
+          node scripts/test_breeze_dual_video_runtime.mjs | tee /tmp/breeze-dual-video-result.log
+          RC=${PIPESTATUS[0]}
+          set -e
+          if [ "$RC" -ne 0 ]; then
+            echo "FAIL: dual-video runtime stress test failed"
+            cat /tmp/breeze-dual-video-result.log || true
+            cat /tmp/breeze-chrome.log || true
+            exit "$RC"
+          fi
+          grep -q '"status":"PASS"' /tmp/breeze-dual-video-result.log
+
+      - name: Install built module
+        run: |
+          set -euo pipefail
+          DEST="labs/website-modules-source/breeze-studio-pro"
+          rm -rf "$DEST"
+          mkdir -p "$DEST"
+          cp -R breeze-source/dist/. "$DEST/"
+          rm -f "$DEST/bg.webm" "$DEST/cloth.webm"
+          cp breeze-source/LICENSE "$DEST/LICENSE"
+          cp breeze-source/CREDITS.md "$DEST/CREDITS.md"
+          cat > "$DEST/README.md" <<'EOF'
+          # Breeze Studio PRO V4.1
+
+          Independent Escaparates Pro module built additively from the preserved Breeze engine.
+
+          Source engine:
+          - Juanmaes83/breeze
+          - pinned commit 0ab82342f9169f20e32b0e90babcc4707e694906
+
+          V4.1 authoring model:
+          - explicit SUBIR -> CARGADO -> START -> APPLIED state;
+          - image/video background with transform controls;
+          - image/video mapped to simulated cloth;
+          - cloth opacity, brightness, contrast and saturation;
+          - dual-video hardening: cloth grading canvas updates only on decoded video frames, never on every WebGPU render tick;
+          - requestVideoFrameCallback scheduling with capped CPU grading uploads and legacy timer fallback;
+          - grading working surface capped at 1024 px to reduce CPU/GPU bandwidth;
+          - cleanup cancels video-frame callback/timer before disposing old media;
+          - Scale / Position X / Position Y;
+          - original Experience modes preserved: Prairie Cloth, Autumn Leaves, Sakura Petals;
+          - additive Experience presets: Museum Cloth, Gallery Wind, Fashion Drapery, Product Reveal;
+          - original Venus de Milo preserved;
+          - generated templates preserved: Torus Knot, Abstract Orbit, Museum Plinth;
+          - real local CC0 templates from Khronos glTF Sample Assets: Corset mannequin, Lantern, BoomBox;
+          - uploaded GLB/GLTF/OBJ object support;
+          - replacement geometry rebuilds the real BVH cloth collider;
+          - PNG, WebM and clean preview.
+
+          V4.1 QA includes a real Chrome dual-video stress test using the renderer's available browser backend: one looping video as background plus another looping video on the cloth for multiple loops, asserting both media streams continue advancing and the browser render heartbeat remains responsive.
+
+          Banderolas Dinamicas remains untouched and is not a runtime dependency.
+          Its proven media-state pattern plus Infinite Worlds V1.3.1 direct video-resource pattern informed V4.1.
+          EOF
+
+      - name: Register Website Module
+        run: |
+          cat > js/website-modules-breeze-studio-pro.js <<'EOF'
+          (function() {
+              'use strict';
+              window.EP = window.EP || {};
+              if (!EP.WebsiteModules || !EP.WebsiteModules.register) return;
+              var PATH = 'labs/website-modules-source/breeze-studio-pro/index.html';
+              EP.WebsiteModules.register({
+                  id: 'breeze-studio-pro',
+                  name: 'Breeze Studio PRO',
+                  icon: 'BR',
+                  family: 'Interactive Media / Dynamic Fabric',
+                  description: 'Escultura y tela WebGPU con Experiences, fondos, media en tela, grading visual y biblioteca 3D reemplazable.',
+                  sourceFile: 'Juanmaes83/breeze · 0ab82342f9169f20e32b0e90babcc4707e694906 · additive derivative V4.1',
+                  mediaMap: 'SUBIR > CARGADO > START; dual-video hardened; fondo image/video; cloth image/video + opacity/brightness/contrast/saturation; CC0 3D library; GLB/GLTF/OBJ; Physics; PNG/WebM.',
+                  standalonePath: PATH,
+                  standaloneEditorNote: 'Modulo nuevo e independiente. Breeze preservado como motor; Banderolas permanece intacto y solo sirve como patron funcional probado.',
+                  fields: [],
+                  build: function() {
+                      return '<!doctype html><html><body style="margin:0;background:#000"><iframe src="' + PATH + '" style="position:fixed;inset:0;width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe></body></html>';
+                  }
+              });
+          })();
+          EOF
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '<script src="js/website-modules-breeze-studio-pro.js"></script>'
+          if tag not in s:
+              anchor = '<script src="js/website-modules-banderolas-output-v2.js"></script>'
+              if anchor not in s:
+                  raise SystemExit('Website Modules anchor not found')
+              s = s.replace(anchor, anchor + '\n' + tag, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: QA V4.1 static contract
+        run: |
+          set -euo pipefail
+          test -f labs/website-modules-source/breeze-studio-pro/index.html
+          test -f labs/website-modules-source/breeze-studio-pro/LICENSE
+          test -f labs/website-modules-source/breeze-studio-pro/CREDITS.md
+          grep -R -q 'Breeze Studio PRO' labs/website-modules-source/breeze-studio-pro
+          grep -R -q 'CARGADO' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'START' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'Brightness' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'Contrast' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'Saturation' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'requestVideoFrameCallback' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'userMediaFrameLoopActive' labs/website-modules-source/breeze-studio-pro/assets
+          if grep -R -q 'updateUserMediaFrame?.();' labs/website-modules-source/breeze-studio-pro/assets; then
+            echo 'FAIL: per-render cloth video upload regression detected'
+            exit 1
+          fi
+          grep -R -q 'Fashion Drapery' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'CC0 · Fashion Mannequin' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'CC0 · Museum Lantern' labs/website-modules-source/breeze-studio-pro/assets
+          grep -R -q 'CC0 · BoomBox' labs/website-modules-source/breeze-studio-pro/assets
+          grep -q 'website-modules-breeze-studio-pro.js' index.html
+          node --check js/website-modules-breeze-studio-pro.js
+          git diff --check
+
+      - name: Commit candidate
+        run: |
+          set -euo pipefail
+          rm -rf breeze-source
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html js/website-modules-breeze-studio-pro.js labs/website-modules-source/breeze-studio-pro
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "fix(web-modules): harden Breeze Studio PRO V4.1 dual video"
+          git push origin HEAD:feature/breeze-studio-pro
