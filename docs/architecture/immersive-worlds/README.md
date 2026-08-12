@@ -7,18 +7,36 @@
 
 Read these documents before making architectural or implementation decisions:
 
-1. `../IMMERSIVE_WORLDS_MODULE_CONTEXT.md` — global Escaparates Pro / Immersive Worlds context and protected-baseline rules.
-2. `CONSTITUTION.md` — product boundaries, invariants, subsystem contracts, scope and quality gates.
-3. `DECISION_LOG.md` — explicit Product Owner decisions, proposed/approved ADRs and unresolved decisions.
-4. `REFERENCE_LEDGER.md` — which repositories/references are authoritative for each subsystem and their conflict/licensing constraints.
-5. `REFERENCE_REUSE_ACCELERATION_POLICY.md` — **mandatory operating doctrine for ambitious, efficient and legal reuse/adaptation of the repository library.**
-6. `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` — **mandatory creative/experiential quality doctrine for Museum / Institutional work: The Experience Is The Interface, Experience Language, authored Focus, spatial composition, content-first quality tests and quality gates.**
-7. `SCULPTING_AND_GRAFTING_METHOD.md` — **mandatory current working method for Museum / Institutional: preserve capability, sculpt away prototype/generic/noisy representation, graft stronger legal capabilities when a demonstrated gap exists, and stop at visual evidence checkpoints.**
-8. `NEXT_PASSES_MUSEUM_ROADMAP.md` — **mandatory Product Owner-gated execution order for the next Museum passes. Execute one pass only, provide navigable evidence, STOP, and do not start the next pass without Juanma's explicit approval. It also makes the two stored `.webm` navigation recordings mandatory behavioural references for guide/camera/Portal work.**
-9. `MUSEUM_PRODUCT_ROADMAP_BLOCKS.md` — **canonical strategic Museum / Institutional path from completion of the Main Gallery through transitions, new rooms/technologies, Flexible Media, Experience Points, Authoring, Experience Languages, the merged Sound + Orientation + Map + Progress layer, and Publish/Record/Output. It also makes Visual Boards, contact sheets, current-state evidence and human visual review part of the permanent operating method.**
-10. `MUSEUM_GUIDED_TOUR_CONTRACT.md` — **mandatory before touching the guided tour: the one authoritative order, Tour Step vs beat vs QA state, the semantics of automatic / manual / direct-jump navigation, the integrity invariants, and how to add Tour Step N+1 without breaking the sequence.** Its companion `TOUR_ORDER_AUDIT_BEFORE.md` records the drift that made the contract necessary.
-11. `GLOSSARY.md` — canonical semantic vocabulary.
-12. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
+1. `MUSEUM_CURRENT_STATE.md` — **mandatory current-state entry point for Museum / Institutional. Read this first for the active block, latest human decision, protected completed work, current source authority and scope boundary. Update it at every major human gate.**
+2. `../IMMERSIVE_WORLDS_MODULE_CONTEXT.md` — global Escaparates Pro / Immersive Worlds context and protected-baseline rules.
+3. `CONSTITUTION.md` — product boundaries, invariants, subsystem contracts, scope and quality gates.
+4. `DECISION_LOG.md` — explicit Product Owner decisions, proposed/approved ADRs and unresolved decisions.
+5. `REFERENCE_LEDGER.md` — which repositories/references are authoritative for each subsystem and their conflict/licensing constraints.
+6. `REFERENCE_REUSE_ACCELERATION_POLICY.md` — **mandatory operating doctrine for ambitious, efficient and legal reuse/adaptation of the repository library.**
+7. `MUSEUM_INSTITUTIONAL_EXPERIENCE_QUALITY_BAR.md` — **mandatory creative/experiential quality doctrine for Museum / Institutional work: The Experience Is The Interface, Experience Language, authored Focus, spatial composition, content-first quality tests and quality gates.**
+8. `SCULPTING_AND_GRAFTING_METHOD.md` — **mandatory current working method for Museum / Institutional: preserve capability, sculpt away prototype/generic/noisy representation, graft stronger legal capabilities when a demonstrated gap exists, and stop at visual evidence checkpoints.**
+9. `NEXT_PASSES_MUSEUM_ROADMAP.md` — **mandatory Product Owner-gated execution order for the next Museum passes. Execute one pass only, provide navigable evidence, STOP, and do not start the next pass without Juanma's explicit approval. It also makes the two stored `.webm` navigation recordings mandatory behavioural references for guide/camera/Portal work.**
+10. `MUSEUM_PRODUCT_ROADMAP_BLOCKS.md` — **canonical strategic Museum / Institutional path. Block 2 is explicitly split into 2A intra-room transition language and 2B room-to-room / world transition. Visual Boards, contact sheets, current-state evidence and human visual review are permanent operating requirements.**
+11. `MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md` — **mandatory before Block 2B or later Museum media-authoring reuse. Registers Infinite Worlds V1.2.3 as FIRST-PARTY OWNED implementation, identifies the exact canonical source snapshot, and authorizes direct inspection/reuse/adaptation of proven portal, crossing, warmup, media, video-readiness, adaptive-support and spatial-audio capabilities. Do not reimplement these capabilities before inspecting the source.**
+12. `BLOCK_2A_TRANSITION_LANGUAGE.md` — **canonical closure record for the approved intra-room transition language and its evidence/lessons.**
+13. `MUSEUM_GUIDED_TOUR_CONTRACT.md` — **mandatory before touching the guided tour: the one authoritative order, Tour Step vs beat vs QA state, the semantics of automatic / manual / direct-jump navigation, the integrity invariants, and how to add Tour Step N+1 without breaking the sequence.** Its companion `TOUR_ORDER_AUDIT_BEFORE.md` records the drift that made the contract necessary.
+14. `GLOSSARY.md` — canonical semantic vocabulary.
+15. `IW-1_IMPLEMENTATION_RECORD.md` and later implementation records, when present on the working branch — actual implementation decisions and evidence.
+
+## Current-state discipline
+
+`MUSEUM_CURRENT_STATE.md` exists specifically to prevent a critical approved contract from living only in chat or in an unmerged side branch.
+
+At every major human gate:
+
+```text
+VERIFY JUANMA'S LATEST DECISION
+→ UPDATE MUSEUM_CURRENT_STATE.md
+→ INTEGRATE APPROVED PRODUCT MEMORY INTO THE CURRENT WORKING BRANCH
+→ THEN START THE NEXT MAJOR BLOCK
+```
+
+Do not begin a major Museum block until the current-state file and the current working branch agree on what is complete, what is protected, what is currently authorized, and which first-party source is mandatory.
 
 ## Operating principle
 
@@ -52,6 +70,8 @@ At the same time:
 - clean reimplementation must derive requirements/behaviour and produce an IW-native solution rather than mechanically reproducing protected source expression;
 - IW contracts remain sovereign over implementation convenience;
 - references solve demonstrated problems; they must not become reference soup.
+
+For explicitly registered FIRST-PARTY OWNED sources such as the Infinite Worlds V1.2.3 snapshot documented in `MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md`, follow the direct-reuse authority recorded there rather than treating the source as external inspiration.
 
 ## Museum / Institutional quality doctrine
 
