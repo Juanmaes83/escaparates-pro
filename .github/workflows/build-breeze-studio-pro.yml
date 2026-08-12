@@ -9,6 +9,7 @@ on:
       - scripts/build_breeze_studio_pro_v3.py
       - scripts/build_breeze_studio_pro_v4.py
       - scripts/build_breeze_studio_pro_v4_1.py
+      - scripts/test_breeze_dual_video_runtime.mjs
   workflow_dispatch:
 
 permissions:
@@ -46,6 +47,43 @@ jobs:
           npm ci
           npm run build
 
+      - name: Dual-video browser stress test
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then
+            echo "FAIL: Chrome/Chromium not available for real runtime QA"
+            exit 1
+          fi
+          command -v ffmpeg >/dev/null || { echo "FAIL: ffmpeg unavailable"; exit 1; }
+
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/bg.webm
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "testsrc2=size=640x360:rate=30" -t 3 -c:v libvpx-vp9 -pix_fmt yuv420p -an breeze-source/dist/cloth.webm
+
+          (cd breeze-source/dist && python -m http.server 8765 >/tmp/breeze-http.log 2>&1) &
+          HTTP_PID=$!
+          "$CHROME" --headless=new --remote-debugging-port=9222 --no-sandbox --disable-dev-shm-usage --enable-unsafe-webgpu --use-angle=swiftshader --enable-features=Vulkan,UseSkiaRenderer --disable-gpu-sandbox about:blank >/tmp/breeze-chrome.log 2>&1 &
+          CHROME_PID=$!
+          cleanup() { kill "$HTTP_PID" "$CHROME_PID" 2>/dev/null || true; }
+          trap cleanup EXIT
+
+          set +e
+          node scripts/test_breeze_dual_video_runtime.mjs | tee /tmp/breeze-dual-video-result.log
+          RC=${PIPESTATUS[0]}
+          set -e
+          if [ "$RC" -eq 3 ]; then
+            echo "FAIL: CI browser did not expose WebGPU; runtime QA is not proven"
+            cat /tmp/breeze-chrome.log || true
+            exit 1
+          fi
+          if [ "$RC" -ne 0 ]; then
+            echo "FAIL: dual-video runtime stress test failed"
+            cat /tmp/breeze-dual-video-result.log || true
+            cat /tmp/breeze-chrome.log || true
+            exit "$RC"
+          fi
+          grep -q '"status":"PASS"' /tmp/breeze-dual-video-result.log
+
       - name: Install built module
         run: |
           set -euo pipefail
@@ -53,6 +91,7 @@ jobs:
           rm -rf "$DEST"
           mkdir -p "$DEST"
           cp -R breeze-source/dist/. "$DEST/"
+          rm -f "$DEST/bg.webm" "$DEST/cloth.webm"
           cp breeze-source/LICENSE "$DEST/LICENSE"
           cp breeze-source/CREDITS.md "$DEST/CREDITS.md"
           cat > "$DEST/README.md" <<'EOF'
@@ -82,6 +121,8 @@ jobs:
           - uploaded GLB/GLTF/OBJ object support;
           - replacement geometry rebuilds the real BVH cloth collider;
           - PNG, WebM and clean preview.
+
+          V4.1 QA includes a real Chrome/WebGPU dual-video stress test: one looping video as background plus another looping video on the cloth for multiple loops, asserting both media streams continue advancing and the browser render heartbeat remains responsive.
 
           Banderolas Dinamicas remains untouched and is not a runtime dependency.
           Its proven media-state pattern plus Infinite Worlds V1.3.1 direct video-resource pattern informed V4.1.
