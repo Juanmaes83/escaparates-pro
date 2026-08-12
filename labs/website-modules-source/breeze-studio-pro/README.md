@@ -1,21 +1,23 @@
-# Breeze Studio PRO
+# Breeze Studio PRO V3
 
-Independent Escaparates Pro module built additively from the Breeze engine.
+Independent Escaparates Pro module built additively from the preserved Breeze engine.
 
 Source engine:
 - Juanmaes83/breeze
 - commit 0ab82342f9169f20e32b0e90babcc4707e694906
-- upstream lineage: holtsetio/breeze
 
-Derivative additions only:
-- custom authoring panel;
-- robust image/video mapped onto the simulated cloth;
-- cloth media Scale/X/Y;
-- custom background image/video while preserving HDRI lighting;
-- replaceable GLB/GLTF/OBJ 3D object with auto-normalization;
-- uploaded 3D geometry becomes the real BVH cloth collider after scene rebuild;
-- scene, camera, simulation, stiffness and friction controls;
+V3 authoring model:
+- explicit Upload -> Saved -> Apply -> Applied state for every asset;
+- image/video mapped onto the simulated cloth;
+- cloth Scale / Position X / Position Y;
+- background image/video with Scale / Position X / Position Y;
+- original Breeze HDRI preserved as lighting while a custom visual background is active;
+- original Venus de Milo preserved;
+- uploaded GLB/GLTF/OBJ object can replace the sculpture;
+- applied replacement geometry rebuilds the real BVH cloth collider;
+- built-in object templates: Venus, Abstract Torus Knot, Abstract Orbit, Museum Plinth;
+- original Breeze scene, camera and physics controls preserved;
 - PNG, WebM and clean preview.
 
 Banderolas Dinamicas remains untouched and is not a runtime dependency.
-Its proven non-blocking video-loading pattern informed the V2 implementation.
+The proven Banderolas asset/video pattern informed this independent implementation.

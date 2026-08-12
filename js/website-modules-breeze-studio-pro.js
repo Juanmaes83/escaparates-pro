@@ -8,11 +8,11 @@
         name: 'Breeze Studio PRO',
         icon: 'BR',
         family: 'Interactive Media / Dynamic Fabric',
-        description: 'Escultura y tela WebGPU con fisica Verlet, media en tela, fondos personalizados y objeto 3D reemplazable.',
-        sourceFile: 'Juanmaes83/breeze · 0ab82342f9169f20e32b0e90babcc4707e694906 · additive derivative V2',
-        mediaMap: 'Imagen/video en tela + fondo imagen/video + GLB/GLTF/OBJ + Scale/X/Y + Scene/Camera/Physics + PNG/WebM/Preview Clean.',
+        description: 'Escultura y tela WebGPU con authoring por assets: fondo, media en tela y objeto 3D reemplazable.',
+        sourceFile: 'Juanmaes83/breeze · 0ab82342f9169f20e32b0e90babcc4707e694906 · additive derivative V3',
+        mediaMap: 'Upload > Saved > Apply > Applied para fondo imagen/video, tela imagen/video y GLB/GLTF/OBJ; templates 3D; Scene/Physics; PNG/WebM.',
         standalonePath: PATH,
-        standaloneEditorNote: 'Modulo nuevo e independiente. Breeze preservado como motor; Banderolas permanece intacto y no es dependencia runtime.',
+        standaloneEditorNote: 'Modulo nuevo e independiente. Breeze preservado como motor; Banderolas permanece intacto y solo sirve como patron funcional probado.',
         fields: [],
         build: function() {
             return '<!doctype html><html><body style="margin:0;background:#000"><iframe src="' + PATH + '" style="position:fixed;inset:0;width:100%;height:100%;border:0" allow="autoplay;fullscreen" allowfullscreen></iframe></body></html>';
