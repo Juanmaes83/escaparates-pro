@@ -88,7 +88,8 @@
       entrypoint:'index.html',
       outputReference:'index-output-v2.html',
       enhancerReference:'output-enhancer-v2.js',
-      url:'https://cdn.jsdelivr.net/gh/Juanmaes83/BANDEROLAS-DINAMICAS@538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index.html',
+      url:'https://raw.githubusercontent.com/Juanmaes83/BANDEROLAS-DINAMICAS/538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index.html',
+      cdnUrl:'https://cdn.jsdelivr.net/gh/Juanmaes83/BANDEROLAS-DINAMICAS@538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index.html',
       fallbackUrl:'https://cdn.jsdelivr.net/gh/Juanmaes83/BANDEROLAS-DINAMICAS@538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index-output-v2.html'
     },
     capabilities:{localEditing:true,localSave:true,versions:true,pngExport:true,videoExport:true,jsonExport:true,htmlExport:true,embedExport:true,publish:false},
