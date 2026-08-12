@@ -72,5 +72,29 @@
     presentation:{modes:['spiral','curl','galaxy','dna','vortex','kaleidoscope','fallingrain','mobius','explodedgrid','bands','drift','parallax'],intervalMs:15000}
   });
 
+  register({
+    id:'banderolas-studio-pro',
+    name:'Banderolas Studio PRO',
+    shortName:'Banderolas',
+    family:'RUBIK SOTA',
+    icon:'〰',
+    version:'1.0.0-type-b',
+    status:'visual-review',
+    description:'Authoring Type B para banderolas/tela dinámica con motor WebGL + Verlet/cloth preservado, media, composición, proyectos y outputs.',
+    source:{
+      repository:'Juanmaes83/BANDEROLAS-DINAMICAS',
+      branch:'preview-output-v2',
+      commit:'538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83',
+      entrypoint:'index.html',
+      outputReference:'index-output-v2.html',
+      enhancerReference:'output-enhancer-v2.js',
+      url:'https://cdn.jsdelivr.net/gh/Juanmaes83/BANDEROLAS-DINAMICAS@538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index.html',
+      fallbackUrl:'https://cdn.jsdelivr.net/gh/Juanmaes83/BANDEROLAS-DINAMICAS@538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83/index-output-v2.html'
+    },
+    capabilities:{localEditing:true,localSave:true,versions:true,pngExport:true,videoExport:true,jsonExport:true,htmlExport:true,embedExport:true,publish:false},
+    media:{mode:'single',max:1,accept:['image/*','video/*'],preserveSourceDefaults:true},
+    projectSchemaVersion:1
+  });
+
   EP.AdvancedTools={register:register,get:get,getAll:getAll,clone:clone};
 })();
