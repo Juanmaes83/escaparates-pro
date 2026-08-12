@@ -326,30 +326,120 @@ Only then call Galería A **canonical room complete**.
 
 ---
 
-# 5. BLOCK 2 — Spatial transitions / World Transition
+# 5. BLOCK 2 — Transition Language + World Transition
 
-## Objective
+## Governing contract
 
-Create a compelling, coherent transition language between spaces/worlds.
+From this block onward:
 
-Two transition families remain distinct:
+> **Transitions may change how the camera travels, but never where an approved beat ends.**
 
-### Artwork → Artwork
+The final `position + target + FOV` of an approved destination beat is locked.
 
-Current lighter authored movement:
+If a settled capture changes relative to the approved baseline, transition work has invaded the framing system.
+
+This block is deliberately split into two stages.
+
+---
+
+## BLOCK 2A — Intra-room Transition Language
+
+### Objective
+
+Replace generic camera tweening with a coherent spatial movement language inside the canonical room while preserving every approved endpoint.
+
+Canonical transition families:
 
 ```text
-D CURRENT ARTWORK
-→ Guide resumes presence
-→ locomotion / reorientation
-→ A NEXT ARTWORK
+T1 — MICRO REFRAMING
+T2 — LOCAL WALK
+T3 — GALLERY TRAVERSE
+T4 — OBJECT ORBIT
+T5 — THRESHOLD APPROACH
 ```
 
-This family should remain lighter and should not automatically become a Portal effect.
+Room-to-room crossing is **not** part of Block 2A.
 
-### Space → Space
+### Implementation priority
 
-This is the major transition family:
+1. `MICRO REFRAMING` — dominant family; twelve of sixteen current internal transitions.
+2. `LOCAL WALK` — neighbouring works / nearby zones.
+3. `GALLERY TRAVERSE` — long spatial movement across the room.
+4. `OBJECT ORBIT` — free-standing sculpture / volume reading.
+5. `THRESHOLD APPROACH` — orientation and arrival at the room exit.
+6. reduced-motion equivalent that preserves spatial continuity rather than defaulting to teleport.
+
+### Three iron rules
+
+#### Endpoint lock
+
+The destination beat's final:
+
+```text
+position
++ target
++ FOV
+```
+
+must be exactly the approved endpoint.
+
+#### Path containment
+
+The **entire trajectory** must remain in valid navigable / view space.
+
+Endpoint containment alone is insufficient.
+
+#### No target flip / no corner cutting
+
+Orientation should anticipate the destination coherently instead of sweeping arbitrarily across the room.
+
+When a straight segment intersects architecture, plinths, balaustrades or other protected geometry, use a safe path / authored waypoint strategy rather than clipping through it.
+
+### Recommended acceptance slice
+
+Before scaling across the complete room, prove the language on three representative cases:
+
+```text
+1. one simple MICRO REFRAMING
+2. Campo de ceniza → Horizonte — difficult GALLERY TRAVERSE
+3. Estudio de figura → Vasija de arenas — difficult GALLERY TRAVERSE
+```
+
+The two difficult traverses are deliberate acceptance cases because the current straight-line system cuts protected geometry there.
+
+Success means the path improves while endpoint delta remains `0.0000` against the approved beat baseline.
+
+### Behaviours that must survive
+
+- one authoritative camera controller per frame;
+- LEAD travel remains synchronised with the guide's walk;
+- Director requests intent and does not become the camera writer;
+- explicit cut / snap remains a separate verb when intentionally used;
+- Collection Browse remains independent and returns to the exact Guided origin;
+- reduced motion remains first-class but should preserve orientation and continuity where possible.
+
+### QA gate
+
+Block 2A must prove:
+
+- all approved settled end poses unchanged;
+- sampled path containment across the full motion, not only endpoints;
+- no target discontinuity / flip above accepted threshold;
+- no roll;
+- guide/camera arrival synchronisation preserved on accompanied travel;
+- Collection Browse and return-to-origin unaffected;
+- deterministic evidence;
+- transition sequence / storyboard review, not only isolated endpoint screenshots;
+- navigable preview and browser/console QA;
+- Juanma + ChatGPT human review.
+
+---
+
+## BLOCK 2B — Room-to-room / World Transition
+
+### Objective
+
+Create the major `Space → Space` transition family:
 
 ```text
 CURRENT SPACE
@@ -360,13 +450,9 @@ CURRENT SPACE
 → DESTINATION ACTIVE
 ```
 
-The future Live Two-World Portal / World Transition belongs primarily here.
+This may be spectacular.
 
-## Product direction
-
-This transition may be spectacular.
-
-The quality target is:
+Quality target:
 
 ```text
 SPECTACULAR
@@ -378,17 +464,72 @@ CONTROLLED
 
 not spectacle that breaks camera authority, World State, continuity or orientation.
 
-## Architectural invariant
+### First-party owned implementation already exists
+
+Do **not** approach Block 2B as an unsolved problem.
+
+Museum has a canonical first-party capability source:
+
+```text
+MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md
+```
+
+Source project:
+
+```text
+Infinite Worlds V1.2.3 — Visual Closure
+branch: feat/infinite-worlds-v1-2-2-visual-closure
+commit: 453ed40008f838d6187a7e85d93872f7866ad5cb
+path: labs/infinite-worlds-brand-expression-v1-2/
+```
+
+Infinite Worlds and Museum are different products. The source project is not a reference-only implementation and is not `PATTERNS ONLY`: it is first-party owned code that Museum may directly inspect, copy, extract, port, adapt, compose or refactor where useful.
+
+Before implementing Block 2B, Claude/Fable must inspect the complete canonical source snapshot.
+
+Relevant proven capabilities include:
+
+- live destination rendering via `WebGLRenderTarget`;
+- `CameraUtils.frameCorners(...)` perspective matching;
+- current/destination camera synchronisation;
+- GSAP crossing choreography;
+- world / room handoff;
+- bidirectional traversal;
+- portal shader / appearance layer;
+- first-cross warmup / render-target priming;
+- spatial/environmental audio behaviours.
+
+### Museum target adaptation
+
+First canonical target:
+
+```text
+GALERÍA A ROUTE END
+→ TRANSITION ANCHOR A
+→ adapt / align with proven crossing entry
+→ LIVE DESTINATION ROOM
+→ CROSSING
+→ proven destination crossing state
+→ TRANSITION ANCHOR B
+→ GALERÍA B ENTRY
+→ normal Museum authority resumes
+```
+
+Prefer a stable anchor / spatial-adapter solution for the first integration rather than rewriting the proven crossing mechanism around arbitrary coordinates before one canonical Museum crossing is proven.
+
+### Camera invariant
 
 During normal experience there is one authoritative visitor camera/controller.
 
-During the transition, `TRANSITION` owns the choreography. Temporary destination render cameras may be used as optical instruments, but they do not become competing navigation authorities.
+During the crossing, `TRANSITION` owns the choreography.
 
-## Visual method
+Temporary destination render cameras are allowed as optical instruments for live destination rendering; they do not become competing visitor-navigation authorities.
 
-This block requires a dedicated visual/reference board before material implementation whenever Juanma provides one.
+### Visual method
 
-The final transition must be reviewed as a sequence, not only as isolated screenshots.
+Block 2B must be reviewed as a moving sequence, not merely as start/end screenshots.
+
+First-cross quality must be compared against later crossings, and destination readiness must be demonstrated before human approval.
 
 ---
 
@@ -516,6 +657,8 @@ Turn the proven Museum experience semantics into a thin no-code/low-code authori
 Do not design the panel from imagination.
 
 Extract it from what the completed Museum actually proves is configurable.
+
+Before building Museum media-authoring from scratch, inspect the first-party authoring/media pipelines documented in `MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md`. Infinite Worlds already proves real IMAGE / VIDEO / LOGO / TEXT loading and application behaviour, video readiness, adaptive support/aspect handling, and an EMPTY → LOADED → SAVED → APPLIED / ERROR state flow. Museum is a different product, so reuse the proven capability rather than the City/Nature product identity.
 
 The future flow may conceptually become:
 
@@ -704,7 +847,15 @@ BLOCK 1 — COMPLETE MAIN GALLERY
   ├─ 1A remaining Artwork coverage
   └─ 1B Sculpture Grammar
 ↓
-BLOCK 2 — SPACE / WORLD TRANSITIONS
+BLOCK 2A — INTRA-ROOM TRANSITION LANGUAGE
+  ├─ T1 Micro Reframing
+  ├─ T2 Local Walk
+  ├─ T3 Gallery Traverse
+  ├─ T4 Object Orbit
+  └─ T5 Threshold Approach
+↓
+BLOCK 2B — ROOM-TO-ROOM / WORLD TRANSITION
+  └─ adapt owned Infinite Worlds V1.2.3 capabilities
 ↓
 BLOCK 3 — NEW ROOMS + NEW TECHNOLOGIES
 ↓
@@ -761,7 +912,7 @@ Before inventing a meaningful capability:
 ```text
 UNDERSTAND THE PRODUCT GAP
 → VERIFY WHAT ALREADY EXISTS
-→ SEARCH CURRENT SYSTEM + REFERENCE LIBRARY
+→ SEARCH CURRENT SYSTEM + OWNED CAPABILITY SOURCES + REFERENCE LIBRARY
 → IDENTIFY STRONGEST LEGAL FIT
 → REUSE / PORT / ADAPT / COMPOSE WHEN STRONGER
 → INTEGRATE INTO IW CONTRACTS
@@ -774,7 +925,9 @@ Guiding rule:
 
 > **PRESERVE BEFORE YOU BUILD. REUSE BEFORE YOU CREATE.**
 
-Do not confuse reuse with cloning a screenshot or copying a reference's identity.
+First-party owned product sources are not `PATTERNS ONLY`. When Juanma has established ownership and direct reuse authority, implementation agents may use the actual code directly.
+
+Do not confuse reuse with cloning a screenshot or transplanting another product's identity.
 
 Reuse the strongest mechanism that serves the Museum product contract.
 
