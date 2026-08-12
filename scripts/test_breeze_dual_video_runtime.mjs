@@ -4,7 +4,7 @@ const PAGE = 'http://127.0.0.1:8765/index.html';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function waitForChrome() {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 100; i++) {
     try {
       const r = await fetch(`${CDP}/json/version`);
       if (r.ok) return;
@@ -16,8 +16,8 @@ async function waitForChrome() {
 
 await waitForChrome();
 
-let pages = await (await fetch(`${CDP}/json`)).json();
-let page = pages.find(p => p.type === 'page');
+const pages = await (await fetch(`${CDP}/json`)).json();
+const page = pages.find(p => p.type === 'page');
 if (!page) throw new Error('No Chrome page target');
 
 const ws = new WebSocket(page.webSocketDebuggerUrl);
@@ -49,8 +49,7 @@ const expression = String.raw`
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const deadline = Date.now() + 20000;
   while (!window.__BREEZE_STUDIO_PRO__ && Date.now() < deadline) await sleep(250);
-  if (!window.__BREEZE_STUDIO_PRO__) return { status: 'FAIL', reason: 'Breeze API not mounted' };
-  if (!navigator.gpu) return { status: 'SKIP_NO_WEBGPU', reason: 'navigator.gpu unavailable in CI Chrome' };
+  if (!window.__BREEZE_STUDIO_PRO__) return { status: 'FAIL', reason: 'Breeze API not mounted; renderer could not initialize in CI browser' };
 
   const { app } = window.__BREEZE_STUDIO_PRO__;
   const makeFile = async (url, name) => {
@@ -77,12 +76,13 @@ const expression = String.raw`
     const beat = () => { if (!alive) return; frames++; requestAnimationFrame(beat); };
     requestAnimationFrame(beat);
 
-    // Run long enough for the 3-second fixtures to loop several times.
+    // 3-second fixtures loop about eight times during this window.
     await sleep(24000);
     alive = false;
 
     const result = {
       status: 'PASS',
+      navigatorGpu: !!navigator.gpu,
       bgUpdates,
       clothUpdates,
       frames,
@@ -101,7 +101,7 @@ const expression = String.raw`
     if (!result.clothFrameLoopActive) result.status = 'FAIL';
     return result;
   } catch (err) {
-    return { status: 'FAIL', reason: String(err?.stack || err) };
+    return { status: 'FAIL', reason: String(err?.stack || err), navigatorGpu: !!navigator.gpu };
   }
 })()
 `;
@@ -116,6 +116,4 @@ const value = evaluated?.result?.value;
 console.log('BREEZE_DUAL_VIDEO_RESULT=' + JSON.stringify(value));
 ws.close();
 
-if (!value) process.exit(2);
-if (value.status === 'SKIP_NO_WEBGPU') process.exit(3);
-if (value.status !== 'PASS') process.exit(1);
+if (!value || value.status !== 'PASS') process.exit(1);
