@@ -1,4 +1,4 @@
-# Breeze Studio PRO V4
+# Breeze Studio PRO V4.1
 
 Independent Escaparates Pro module built additively from the preserved Breeze engine.
 
@@ -6,11 +6,15 @@ Source engine:
 - Juanmaes83/breeze
 - pinned commit 0ab82342f9169f20e32b0e90babcc4707e694906
 
-V4 authoring model:
+V4.1 authoring model:
 - explicit SUBIR -> CARGADO -> START -> APPLIED state;
 - image/video background with transform controls;
 - image/video mapped to simulated cloth;
-- cloth opacity, brightness, contrast and saturation via a cloth-only CanvasTexture pipeline;
+- cloth opacity, brightness, contrast and saturation;
+- dual-video hardening: cloth grading canvas updates only on decoded video frames, never on every WebGPU render tick;
+- requestVideoFrameCallback scheduling with capped CPU grading uploads and legacy timer fallback;
+- grading working surface capped at 1024 px to reduce CPU/GPU bandwidth;
+- cleanup cancels video-frame callback/timer before disposing old media;
 - Scale / Position X / Position Y;
 - original Experience modes preserved: Prairie Cloth, Autumn Leaves, Sakura Petals;
 - additive Experience presets: Museum Cloth, Gallery Wind, Fashion Drapery, Product Reveal;
@@ -22,4 +26,4 @@ V4 authoring model:
 - PNG, WebM and clean preview.
 
 Banderolas Dinamicas remains untouched and is not a runtime dependency.
-Its proven media-state pattern informed this independent implementation.
+Its proven media-state pattern plus Infinite Worlds V1.3.1 direct video-resource pattern informed V4.1.
