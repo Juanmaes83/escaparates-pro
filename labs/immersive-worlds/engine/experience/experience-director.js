@@ -183,8 +183,13 @@ export class ExperienceDirector {
     if (sameSubject) {
       // Inspecting a free-standing piece is the one same-subject move that is
       // about turning the object rather than reframing it.
-      const kind = this.store.kindOf(step.subjectRef);
-      const inspecting = kind === 'SCULPTURE'
+      //
+      // `kindOf` answers the *category* — ENTITY, SPACE — not the entity's own
+      // kind, so asking it for 'SCULPTURE' silently never matched and every
+      // sculpture beat classified as a micro reframing. The measured family map
+      // is what caught it: zero orbits on a route that plainly contains one.
+      const entity = this.store.entities.find((e) => e.id === step.subjectRef);
+      const inspecting = entity?.kind === 'SCULPTURE'
         && (step.shotIntent === SHOT_INTENT.DETAIL || step.shotIntent === SHOT_INTENT.CONTEMPLATION);
       return inspecting ? TRANSITION.ORBIT : TRANSITION.MICRO;
     }
