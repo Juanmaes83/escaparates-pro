@@ -1,0 +1,413 @@
+{
+ "generatedAt": "2026-08-12T09:48:59.043Z",
+ "manifest": [
+  {
+   "to": "step.03b-campo",
+   "tag": "T1_micro_campo-A-B",
+   "family": "T1_MICRO_REFRAMING",
+   "caption": "Serrat volvió a este formato vertical tres años después del Horizonte.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 83,
+     "pose": [
+      -1.66,
+      1.68,
+      -9.79
+     ],
+     "file": "T1_micro_campo-A-B_00.png"
+    },
+    {
+     "frame": 17,
+     "of": 83,
+     "pose": [
+      -1.82,
+      1.69,
+      -9.9
+     ],
+     "file": "T1_micro_campo-A-B_01.png"
+    },
+    {
+     "frame": 33,
+     "of": 83,
+     "pose": [
+      -2.47,
+      1.7,
+      -10.33
+     ],
+     "file": "T1_micro_campo-A-B_02.png"
+    },
+    {
+     "frame": 50,
+     "of": 83,
+     "pose": [
+      -3.47,
+      1.72,
+      -11
+     ],
+     "file": "T1_micro_campo-A-B_03.png"
+    },
+    {
+     "frame": 66,
+     "of": 83,
+     "pose": [
+      -4.09,
+      1.73,
+      -11.42
+     ],
+     "file": "T1_micro_campo-A-B_04.png"
+    },
+    {
+     "frame": 83,
+     "of": 83,
+     "pose": [
+      -4.22,
+      1.73,
+      -11.51
+     ],
+     "file": "T1_micro_campo-A-B_05.png"
+    }
+   ]
+  },
+  {
+   "to": "step.03-lleva-horizonte",
+   "tag": "T3_traverse_campo-horizonte",
+   "family": "T3_GALLERY_TRAVERSE",
+   "caption": "Acompáñeme.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 399,
+     "pose": [
+      -4.06,
+      1.85,
+      -12.4
+     ],
+     "file": "T3_traverse_campo-horizonte_00.png"
+    },
+    {
+     "frame": 80,
+     "of": 399,
+     "pose": [
+      -3.69,
+      1.85,
+      -12.05
+     ],
+     "file": "T3_traverse_campo-horizonte_01.png"
+    },
+    {
+     "frame": 160,
+     "of": 399,
+     "pose": [
+      -3.1,
+      1.85,
+      -11.49
+     ],
+     "file": "T3_traverse_campo-horizonte_02.png"
+    },
+    {
+     "frame": 239,
+     "of": 399,
+     "pose": [
+      -2.52,
+      1.85,
+      -10.94
+     ],
+     "file": "T3_traverse_campo-horizonte_03.png"
+    },
+    {
+     "frame": 319,
+     "of": 399,
+     "pose": [
+      -1.93,
+      1.77,
+      -10.39
+     ],
+     "file": "T3_traverse_campo-horizonte_04.png"
+    },
+    {
+     "frame": 399,
+     "of": 399,
+     "pose": [
+      -1.57,
+      1.72,
+      -10.05
+     ],
+     "file": "T3_traverse_campo-horizonte_05.png"
+    }
+   ]
+  },
+  {
+   "to": "step.06h-lleva-vasija",
+   "tag": "T3_traverse_estudio-vasija",
+   "family": "T3_GALLERY_TRAVERSE",
+   "caption": "Lo último de esta sala no está en la pared.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 399,
+     "pose": [
+      5.65,
+      1.67,
+      -13.6
+     ],
+     "file": "T3_traverse_estudio-vasija_00.png"
+    },
+    {
+     "frame": 80,
+     "of": 399,
+     "pose": [
+      4.96,
+      1.67,
+      -12.56
+     ],
+     "file": "T3_traverse_estudio-vasija_01.png"
+    },
+    {
+     "frame": 160,
+     "of": 399,
+     "pose": [
+      3.88,
+      1.67,
+      -10.93
+     ],
+     "file": "T3_traverse_estudio-vasija_02.png"
+    },
+    {
+     "frame": 239,
+     "of": 399,
+     "pose": [
+      2.82,
+      1.67,
+      -9.32
+     ],
+     "file": "T3_traverse_estudio-vasija_03.png"
+    },
+    {
+     "frame": 319,
+     "of": 399,
+     "pose": [
+      1.73,
+      1.7,
+      -7.69
+     ],
+     "file": "T3_traverse_estudio-vasija_04.png"
+    },
+    {
+     "frame": 399,
+     "of": 399,
+     "pose": [
+      1.07,
+      1.72,
+      -6.69
+     ],
+     "file": "T3_traverse_estudio-vasija_05.png"
+    }
+   ]
+  },
+  {
+   "to": "step.06k-vasija-detalle",
+   "tag": "T4_orbit_vasija-C-D",
+   "family": "T4_OBJECT_ORBIT",
+   "caption": "El esmalte mate no devuelve brillo: el volumen se lee por la sombra propia.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 180,
+     "pose": [
+      2.95,
+      1.58,
+      -9.07
+     ],
+     "file": "T4_orbit_vasija-C-D_00.png"
+    },
+    {
+     "frame": 36,
+     "of": 180,
+     "pose": [
+      3.62,
+      1.59,
+      -9.17
+     ],
+     "file": "T4_orbit_vasija-C-D_01.png"
+    },
+    {
+     "frame": 72,
+     "of": 180,
+     "pose": [
+      5.25,
+      1.61,
+      -8.95
+     ],
+     "file": "T4_orbit_vasija-C-D_02.png"
+    },
+    {
+     "frame": 108,
+     "of": 180,
+     "pose": [
+      5.99,
+      1.63,
+      -7.78
+     ],
+     "file": "T4_orbit_vasija-C-D_03.png"
+    },
+    {
+     "frame": 144,
+     "of": 180,
+     "pose": [
+      5.77,
+      1.65,
+      -5.87
+     ],
+     "file": "T4_orbit_vasija-C-D_04.png"
+    },
+    {
+     "frame": 180,
+     "of": 180,
+     "pose": [
+      5.57,
+      1.65,
+      -5.22
+     ],
+     "file": "T4_orbit_vasija-C-D_05.png"
+    }
+   ]
+  },
+  {
+   "to": "step.07-lleva-umbral",
+   "tag": "T5_threshold_vasija-umbral",
+   "family": "T5_THRESHOLD_APPROACH",
+   "caption": "La sala siguiente está a oscuras. Deje que la vista se acostumbre.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 399,
+     "pose": [
+      5.57,
+      1.65,
+      -5.22
+     ],
+     "file": "T5_threshold_vasija-umbral_00.png"
+    },
+    {
+     "frame": 80,
+     "of": 399,
+     "pose": [
+      4.86,
+      1.65,
+      -4.97
+     ],
+     "file": "T5_threshold_vasija-umbral_01.png"
+    },
+    {
+     "frame": 160,
+     "of": 399,
+     "pose": [
+      3.73,
+      1.65,
+      -5.18
+     ],
+     "file": "T5_threshold_vasija-umbral_02.png"
+    },
+    {
+     "frame": 239,
+     "of": 399,
+     "pose": [
+      3.18,
+      1.65,
+      -6.42
+     ],
+     "file": "T5_threshold_vasija-umbral_03.png"
+    },
+    {
+     "frame": 319,
+     "of": 399,
+     "pose": [
+      3.21,
+      1.63,
+      -8.7
+     ],
+     "file": "T5_threshold_vasija-umbral_04.png"
+    },
+    {
+     "frame": 399,
+     "of": 399,
+     "pose": [
+      3.4,
+      1.62,
+      -10
+     ],
+     "file": "T5_threshold_vasija-umbral_05.png"
+    }
+   ]
+  },
+  {
+   "to": "step.06d-lleva-estudio",
+   "tag": "T2_local_division-estudio",
+   "family": "T2_LOCAL_WALK",
+   "caption": "Y una obra pequeña, que pide acercarse.",
+   "shots": [
+    {
+     "frame": 0,
+     "of": 399,
+     "pose": [
+      5.1,
+      1.71,
+      -12.67
+     ],
+     "file": "T2_local_division-estudio_00.png"
+    },
+    {
+     "frame": 80,
+     "of": 399,
+     "pose": [
+      4.87,
+      1.71,
+      -12.79
+     ],
+     "file": "T2_local_division-estudio_01.png"
+    },
+    {
+     "frame": 160,
+     "of": 399,
+     "pose": [
+      4.23,
+      1.71,
+      -13.12
+     ],
+     "file": "T2_local_division-estudio_02.png"
+    },
+    {
+     "frame": 239,
+     "of": 399,
+     "pose": [
+      3.59,
+      1.72,
+      -13.45
+     ],
+     "file": "T2_local_division-estudio_03.png"
+    },
+    {
+     "frame": 319,
+     "of": 399,
+     "pose": [
+      2.95,
+      1.72,
+      -13.78
+     ],
+     "file": "T2_local_division-estudio_04.png"
+    },
+    {
+     "frame": 399,
+     "of": 399,
+     "pose": [
+      2.74,
+      1.72,
+      -13.89
+     ],
+     "file": "T2_local_division-estudio_05.png"
+    }
+   ]
+  }
+ ]
+}
