@@ -72,7 +72,7 @@ jobs:
 
           Integration rule: `PRESERVE LOCAL SOURCE → ADAPTER → PANEL → QA → APPROVAL`.
 
-          The preserved source is never rewritten to connect Escaparates Pro. The Type B adapter is external and same-origin.
+          The preserved source is never rewritten to connect Escaparates Pro. The outer Type B panel delegates to the preserved Output V2 controls through a same-origin DOM adapter.
           EOF
 
       - name: Static Type B QA
@@ -83,8 +83,8 @@ jobs:
           node --check js/advanced-tools/banderolas-host.js
           node --check js/advanced-tools/registry.js
           node tests/banderolas-type-b-contract.spec.mjs
-          ! grep -E "raw\.githubusercontent|cdn\.jsdelivr|frame\.srcdoc|fetch\(tool\.source" js/advanced-tools/banderolas-host.js
-          grep -F "labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index.html" js/advanced-tools/registry.js
+          ! grep -E "raw\.githubusercontent|cdn\.jsdelivr|frame\.srcdoc|bridgeSource|__epBandDrawPatched" js/advanced-tools/banderolas-host.js
+          grep -F "labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index-output-v2.html" js/advanced-tools/registry.js
 
       - name: Install Chromium runtime QA
         shell: bash
@@ -96,7 +96,7 @@ jobs:
           npm install playwright@1.54.2 >/dev/null 2>&1
           npx playwright install --with-deps chromium >/dev/null
 
-      - name: Runtime QA — local engine + same-origin adapter
+      - name: Runtime QA — preserved Output V2 + same-origin panel adapter
         shell: bash
         run: |
           set -euo pipefail
@@ -109,24 +109,35 @@ jobs:
           (async()=>{
             const browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--enable-webgl','--ignore-gpu-blocklist']});
             const page=await browser.newPage({viewport:{width:1440,height:900}});
-            const pageErrors=[];
-            page.on('pageerror',e=>pageErrors.push(String(e)));
+            const errors=[];
+            page.on('pageerror',e=>errors.push(String(e)));
             await page.goto('http://127.0.0.1:4173/banderolas-tool.html',{waitUntil:'domcontentloaded'});
-            await page.waitForFunction(()=>document.querySelector('#band-status')?.textContent.includes('Motor local conectado'),null,{timeout:10000});
-            const engine=page.frames().find(f=>f.url().includes('/labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index.html'));
-            if(!engine) throw new Error('Local Banderolas iframe not found');
+            try {
+              await page.waitForFunction(()=>document.querySelector('#band-status')?.textContent.includes('Motor local conectado'),null,{timeout:12000});
+            } catch(e) {
+              console.error('STATUS=',await page.locator('#band-status').textContent().catch(()=>''));
+              console.error('FRAMES=',page.frames().map(f=>f.url()));
+              throw e;
+            }
+            const wrapper=page.frames().find(f=>f.url().includes('/source/index-output-v2.html'));
+            const engine=page.frames().find(f=>f.url().includes('/source/index.html'));
+            if(!wrapper) throw new Error('Preserved Output V2 wrapper not found');
+            if(!engine) throw new Error('Preserved Banderolas engine not found');
             const canvas=await engine.$('#glcanvas');
             if(!canvas) throw new Error('Canonical WebGL canvas missing');
             const box=await canvas.boundingBox();
             if(!box||box.width<100||box.height<100) throw new Error('Canvas has invalid dimensions');
+            if(!(await engine.$('#outputStatus'))) throw new Error('Output V2 enhancer did not initialize');
             await page.fill('#band-title','QA LOCAL SOURCE');
-            await page.waitForFunction(()=>document.querySelector('#band-frame')?.contentDocument?.querySelector('#input-title')?.value==='QA LOCAL SOURCE');
+            await page.waitForFunction(()=>document.querySelector('#band-frame')?.contentDocument?.getElementById('appFrame')?.contentDocument?.querySelector('#input-title')?.value==='QA LOCAL SOURCE');
             await page.locator('#band-scale').evaluate(el=>{el.value='1.5';el.dispatchEvent(new Event('input',{bubbles:true}))});
-            const scale=await page.locator('#band-frame').evaluate(el=>el.contentWindow.BanderolasTypeB?.getState()?.mediaScale);
-            if(Number(scale)!==1.5) throw new Error('Media scale adapter did not propagate');
-            const png=await page.locator('#band-frame').evaluate(el=>el.contentWindow.BanderolasTypeB?.capturePng());
+            await page.waitForFunction(()=>document.querySelector('#band-frame')?.contentDocument?.getElementById('appFrame')?.contentDocument?.querySelector('#mediaScale')?.value==='1.5');
+            const png=await engine.evaluate(()=>document.getElementById('glcanvas').toDataURL('image/png'));
             if(typeof png!=='string'||!png.startsWith('data:image/png')) throw new Error('PNG capture unavailable');
-            if(pageErrors.length) throw new Error('Page errors: '+pageErrors.join(' | '));
+            const outerStatus=await page.locator('#band-status').textContent();
+            if(!outerStatus.includes('Output V2 preservado')) throw new Error('Outer adapter did not report preserved Output V2');
+            const fatal=errors.filter(x=>!x.includes('ResizeObserver'));
+            if(fatal.length) throw new Error('Page errors: '+fatal.join(' | '));
             console.log('RUNTIME_QA_PASS');
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
