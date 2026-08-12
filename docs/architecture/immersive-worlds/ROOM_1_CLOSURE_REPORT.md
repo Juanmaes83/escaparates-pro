@@ -155,6 +155,7 @@ of, with every state variable agreeing it was fine.
 | Contact sheets | PASS |
 | Visual review completed | PASS |
 | Unresolved blockers | none |
+| QA suite | **68 / 68** |
 
 ### Visual verdicts
 
@@ -189,6 +190,37 @@ a free-standing object is read broadside and then turned.
   worth a Product Owner eye.
 - **Transitions between beats are single eased lerps** — see `TRANSITIONS_AUDIT.md`.
   This is the subject of the next block and is not a Room 1 defect.
+
+---
+
+## 9b. QA
+
+**68 / 68, exit 0.** Baseline raised from 67 to 68 by a sculpture-specific check.
+
+The closure run first reported 64/67 with three failures, and all three were stale
+assertions of mine rather than product defects: the messages printed six correct
+contemplation beats and six correct D beats while failing a literal `=== 3`
+written when the gallery held three artwork stops. Two related repairs came with
+the fix — `DETAIL` was missing from the role map, so the sculpture's D read as a
+gap, and the sculpture was being measured against the painting matrix.
+
+The counts now derive from the route. The lesson is worth keeping: the
+tour-integrity checks scaled from seven stops to ten by themselves because they
+read the manifest; these did not, because they carried a number by hand.
+
+```
+ok  GRAMMAR-ARTWORK-ABCD        02:·ABCD · 03:ABCD · 04:ABCD · 05:ABCD · 08:ABCD
+ok  GRAMMAR-SCULPTURE-ABCD      06h-lleva-vasija:ABCD
+ok  GRAMMAR-C-VISITOR-NOT-GUIDE 6 beats, visitor present, guide absent
+ok  GRAMMAR-D-NO-VISITOR-FIGURE 5 artwork beats, no figure
+ok  GRAMMAR-PROJECTION-D-NO-GUIDE
+ok  BROWSE-MOVES-THE-CAMERA · BROWSE-DOES-NOT-MOVE-THE-TOUR · BROWSE-RETURNS-TO-ORIGIN
+ok  STATES-DETERMINISTIC        23/23 states, zero camera violations
+ok  TOUR forward 1→…→10 · backward 10→9→8→7
+```
+
+Collection Browse and its exact return to origin survive the route being
+reordered and the stops renumbered, which was the regression that mattered most.
 
 ---
 
