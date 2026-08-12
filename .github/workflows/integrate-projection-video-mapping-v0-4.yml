@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   integrate:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Escaparates Pro
@@ -27,7 +26,6 @@ jobs:
           path: projection-source
 
       - name: Preserve approved V0.4 package
-        shell: bash
         run: |
           set -euo pipefail
           DEST="labs/rubik-sota-tools/projection-video-mapping-v0-4"
@@ -40,8 +38,8 @@ jobs:
           cp projection-source/FINAL-V0.4-NOTES.md "$DEST/FINAL-V0.4-NOTES.md"
 
       - name: Register RUBIK SOTA tool
-        shell: python
         run: |
+          python - <<'PY'
           from pathlib import Path
           p = Path('js/rubik-tools-ui.js')
           s = p.read_text(encoding='utf-8')
@@ -51,17 +49,16 @@ jobs:
             id: 'projection-video-mapping-v0-4',
             name: 'Projection / Video Mapping Experience V0.4',
             icon: 'PM',
-            desc: 'Herramienta de autoría de projection mapping con geometría Rubik Sota, fondo/media, video/imagen, beam, dust, texto, transform y outputs.',
+            desc: 'Herramienta de autoria de projection mapping con geometria Rubik Sota, fondo/media, video/imagen, beam, dust, texto, transform y outputs.',
             src: 'labs/rubik-sota-tools/projection-video-mapping-v0-4/index-v0-4.html'
         },
 """
               if marker not in s:
                   raise SystemExit('Rubik tools insertion marker not found')
-              s = s.replace(marker, block + marker, 1)
-              p.write_text(s, encoding='utf-8')
+              p.write_text(s.replace(marker, block + marker, 1), encoding='utf-8')
+          PY
 
       - name: Static QA
-        shell: bash
         run: |
           set -euo pipefail
           test -f labs/rubik-sota-tools/projection-video-mapping-v0-4/index-v0-4.html
@@ -75,7 +72,6 @@ jobs:
           git diff --check
 
       - name: Commit integration candidate
-        shell: bash
         run: |
           set -euo pipefail
           rm -rf projection-source
