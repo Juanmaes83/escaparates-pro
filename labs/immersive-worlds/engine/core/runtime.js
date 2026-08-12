@@ -135,6 +135,9 @@ export class Runtime {
         guideSettled: () => this.sceneKit.guideSettled?.() !== false,
         playShot: (pose, opts) => this.directed.playShot(pose, opts),
         snapTo: (pose) => this.directed.snapTo(pose),
+        currentPose: () => clonePose(this.camera.pose),
+        subjectPoint: (subjectRef) => this.sceneKit.subjectPoint?.(subjectRef) ?? null,
+        pathWaypoint: (from, to, context) => this.sceneKit.pathWaypoint?.(from, to, context) ?? null,
         requestAuthority: (authority, opts) => this.camera.request(authority, opts),
         dispatch: (action, context) => this.actions.dispatch(action, context),
         viewport: () => this.viewport()

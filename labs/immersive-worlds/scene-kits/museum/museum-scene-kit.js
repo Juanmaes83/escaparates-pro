@@ -1476,6 +1476,101 @@ export class MuseumSceneKit extends SceneKit {
     return { position, target, subjectSize: [span, h, 0.1] };
   }
 
+  /* == transitions: WHERE ==================================================== */
+
+  /**
+   * The optical centre of a subject, in world space. Spatial fact, no opinion
+   * about what any move between two of them means.
+   */
+  subjectPoint(subjectRef) {
+    const record = this._entityIndex.get(subjectRef);
+    const anchor = record ? this._anchorPoses.get(record.anchorId) : null;
+    if (!record || !anchor) return null;
+    return this._subjectCentre(anchor, record);
+  }
+
+  /**
+   * A point to bend a camera path through, or null when the straight line is fine.
+   *
+   * The Scene Kit knows where the walls and the plinths are; it is asked only
+   * whether a segment is passable and, if not, where to go instead. It is never
+   * asked what kind of transition this is — that is the Director's to know.
+   *
+   * Deliberately not a pathfinder. Two failure modes actually occur in this room:
+   * a straight line between perpendicular walls clips the corner, and a line to or
+   * from the plinth passes through the vessel. One control point pulled toward open
+   * floor fixes both, and a general solver would be a much larger answer to a much
+   * smaller question.
+   */
+  pathWaypoint(from, to, context = {}) {
+    const spaceId = this._spaceContaining(from) || this._spaceContaining(to);
+    const handle = spaceId ? this._spaces.get(spaceId) : null;
+    if (!handle) return null;
+    const bounds = handle.space.bounds;
+    const [bw, , bd] = bounds.size;
+    const [ox, , oz] = bounds.origin;
+
+    const mid = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2];
+    const clearance = this._clearanceAt(mid, bounds, context.subjectRef);
+    // An orbit always bends: its whole point is that the camera travels around the
+    // piece rather than across it.
+    const orbiting = context.family === 'T4_OBJECT_ORBIT';
+    if (!orbiting && clearance.ok) return null;
+
+    // Pull the midpoint toward open floor: the room's centre for a corner, and
+    // away from the obstacle when there is one.
+    const toCentre = [ox - mid[0], 0, oz - mid[2]];
+    const len = Math.hypot(toCentre[0], toCentre[2]) || 1;
+    const pullBy = orbiting ? Math.max(clearance.push, 1.1) : clearance.push;
+    const via = [
+      mid[0] + (toCentre[0] / len) * pullBy,
+      mid[1],
+      mid[2] + (toCentre[2] / len) * pullBy
+    ];
+    // Never bend the path outside the room it is crossing.
+    const inset = 0.8;
+    via[0] = Math.min(Math.max(via[0], ox - bw / 2 + inset), ox + bw / 2 - inset);
+    via[2] = Math.min(Math.max(via[2], oz - bd / 2 + inset), oz + bd / 2 - inset);
+    return via;
+  }
+
+  /** Which built space contains a point, if any. */
+  _spaceContaining(point) {
+    for (const [id, handle] of this._spaces) {
+      const { size, origin } = handle.space.bounds;
+      if (Math.abs(point[0] - origin[0]) <= size[0] / 2 + 1
+        && Math.abs(point[2] - origin[2]) <= size[2] / 2 + 1) return id;
+    }
+    return null;
+  }
+
+  /**
+   * How much room a point has: distance to the nearest wall, and to any
+   * floor-standing piece that is not the subject of the move.
+   */
+  _clearanceAt(point, bounds, subjectRef) {
+    const [bw, , bd] = bounds.size;
+    const [ox, , oz] = bounds.origin;
+    const toWall = Math.min(
+      bw / 2 - Math.abs(point[0] - ox),
+      bd / 2 - Math.abs(point[2] - oz)
+    );
+    let push = 0;
+    // A corner is where both walls are close at once; 1.2 m is roughly a body plus
+    // the stanchion line that runs in front of the works.
+    if (toWall < 1.2) push = 1.2 - toWall;
+
+    for (const [id, record] of this._entityIndex) {
+      if (id === subjectRef) continue;
+      const anchor = this._anchorPoses.get(record.anchorId);
+      if (!anchor || !isFloorAnchor(anchor)) continue;
+      const radius = Math.max(record.size[0], record.size[2]) / 2 + 0.9;
+      const d = Math.hypot(point[0] - anchor.position[0], point[2] - anchor.position[2]);
+      if (d < radius) push = Math.max(push, radius - d);
+    }
+    return { ok: push <= 0, push };
+  }
+
   applyQuality(policy) {
     for (const handle of this._spaces.values()) {
       for (const spot of handle.spots) {

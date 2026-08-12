@@ -174,6 +174,15 @@ export class SceneKit {
   /** @param {{anchorId:string, subjectRef?:string}|null} _staging */
   setVisitorStaging(_staging) {}
 
+  /** Optical centre of a subject in world space, or null. */
+  subjectPoint(_subjectRef) { return null; }
+
+  /**
+   * A point to bend a camera path through, or null when the straight line is
+   * passable. Spatial constraint only: the kit is never asked what a move means.
+   */
+  pathWaypoint(_from, _to, _context) { return null; }
+
   setGuideStaging(_staging) {}
 
   /** Apply a new quality policy to already-built representations. */

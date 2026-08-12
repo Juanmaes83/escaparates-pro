@@ -164,6 +164,39 @@ export class ExperienceDirector {
     return true;
   }
 
+  /**
+   * Which transition family carries us from the previous beat to this one.
+   *
+   * Semantics first. Only the last case consults geometry, and only to separate a
+   * neighbouring encounter from a cross-zone one — a distinction the world does not
+   * currently declare, so distance stands in as evidence for it until it does.
+   */
+  _transitionFamily(previous, step) {
+    if (!previous) return null;
+
+    // A threshold destination is a threshold approach, whatever the distance.
+    if (!step.subjectRef || this.store.kindOf(step.subjectRef) === 'SPACE') {
+      return TRANSITION.THRESHOLD;
+    }
+
+    const sameSubject = previous.subjectRef === step.subjectRef;
+    if (sameSubject) {
+      // Inspecting a free-standing piece is the one same-subject move that is
+      // about turning the object rather than reframing it.
+      const kind = this.store.kindOf(step.subjectRef);
+      const inspecting = kind === 'SCULPTURE'
+        && (step.shotIntent === SHOT_INTENT.DETAIL || step.shotIntent === SHOT_INTENT.CONTEMPLATION);
+      return inspecting ? TRANSITION.ORBIT : TRANSITION.MICRO;
+    }
+
+    // Different subject: neighbouring encounter, or a crossing of the room.
+    const from = this.ports.subjectPoint?.(previous.subjectRef);
+    const to = this.ports.subjectPoint?.(step.subjectRef);
+    if (!from || !to) return TRANSITION.LOCAL;
+    const apart = Math.hypot(to[0] - from[0], to[2] - from[2]);
+    return apart > 5 ? TRANSITION.TRAVERSE : TRANSITION.LOCAL;
+  }
+
   /** Next canonical Tour Step. Cheap: it is forward, so it just replays beats. */
   async nextTourStep() {
     const next = this.currentTourStep?.nextId;
@@ -413,10 +446,48 @@ export class ExperienceDirector {
       })
       : null;
     if (pose) {
-      const travelMs = this.reducedMotion ? 0 : travelForIntent(step.shotIntent, step.duration);
-      this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent });
+      // WHY: the family comes from what this move means. HOW: its shape. WHERE:
+      // the Scene Kit says whether the straight line is walkable and, if not,
+      // hands back a point to bend it through. It is never asked what the move is.
+      const family = this._transitionFamily(this.steps[this.index - 1] || null, step);
+      const shape = family ? TRANSITION_SHAPE[family] : null;
+      const previousPose = this.ports.currentPose?.();
+
+      let travelMs = travelForIntent(step.shotIntent, step.duration);
+      if (shape && previousPose) {
+        // Distance sets duration; the family sets the character. A lead is the
+        // exception: its travel is the guide's walk, and the two must still arrive
+        // together.
+        if (shape.speed && step.shotIntent !== SHOT_INTENT.LEAD) {
+          const d = Math.hypot(
+            pose.position[0] - previousPose.position[0],
+            pose.position[2] - previousPose.position[2]
+          );
+          travelMs = Math.min(Math.max((d / shape.speed) * 1000, shape.min), shape.max);
+        } else if (!shape.speed) {
+          travelMs = Math.min(Math.max(travelMs, shape.min), shape.max);
+        }
+      }
+
+      let via = null;
+      if (shape?.waypoint && previousPose) {
+        via = this.ports.pathWaypoint?.(previousPose.position, pose.position, {
+          family, subjectRef: step.subjectRef
+        }) || null;
+      }
+
+      this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent, transition: family });
       if (step.shotIntent === SHOT_INTENT.PORTAL || travelMs === 0) this.ports.snapTo(pose);
-      else this.ports.playShot(pose, { travelMs });
+      else {
+        this.ports.playShot(pose, {
+          travelMs,
+          flat: shape?.flat ?? 0,
+          lead: shape?.lead ?? 0,
+          holdHeight: shape?.holdHeight ?? false,
+          via
+        });
+      }
+      this._lastTransition = family;
     }
 
     if (step.narrationCue) {
@@ -447,6 +518,34 @@ export class ExperienceDirector {
  * duration — a detail shot arrives quickly and dwells, an overview drifts.
  * The camera never spends the whole step travelling.
  */
+/**
+ * Transition families.
+ *
+ * The family expresses what the move *means*, so it is chosen from the relationship
+ * between two beats — same subject, an inspection of a free-standing piece, a
+ * destination threshold — and not from how far apart they happen to be. Geometry
+ * then decides how that intent is executed: duration, curve, waypoint.
+ *
+ * Distance is evidence and tie-breaker, never the meaning. A short hop between two
+ * zones is still a traverse.
+ */
+export const TRANSITION = Object.freeze({
+  MICRO: 'T1_MICRO_REFRAMING',
+  LOCAL: 'T2_LOCAL_WALK',
+  TRAVERSE: 'T3_GALLERY_TRAVERSE',
+  ORBIT: 'T4_OBJECT_ORBIT',
+  THRESHOLD: 'T5_THRESHOLD_APPROACH'
+});
+
+/** Shaping per family. Distance scales duration; these set the character. */
+const TRANSITION_SHAPE = {
+  [TRANSITION.MICRO]: { flat: 0.0, lead: 0.0, holdHeight: false, waypoint: false, speed: null, min: 420, max: 1400 },
+  [TRANSITION.LOCAL]: { flat: 0.45, lead: 0.18, holdHeight: false, waypoint: true, speed: 1.4, min: 900, max: 3200 },
+  [TRANSITION.TRAVERSE]: { flat: 0.7, lead: 0.4, holdHeight: true, waypoint: true, speed: 1.6, min: 1600, max: 5200 },
+  [TRANSITION.ORBIT]: { flat: 0.35, lead: 0.0, holdHeight: false, waypoint: true, speed: 1.1, min: 1100, max: 3000 },
+  [TRANSITION.THRESHOLD]: { flat: 0.55, lead: 0.5, holdHeight: true, waypoint: true, speed: 1.4, min: 1400, max: 4200 }
+};
+
 function travelForIntent(intent, duration) {
   const seconds = Math.max(duration || 4, 1);
   switch (intent) {
