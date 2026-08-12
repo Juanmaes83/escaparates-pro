@@ -42,6 +42,14 @@
             desc: 'Advanced Integrated Tool: 12 modos 3D, media, branding, presentación, proyectos y outputs con motor canónico preservado.',
             integrationType: 'type-b',
             src: 'advanced-tool.html?tool=infinite-display-studio-pro'
+        },
+        {
+            id: 'banderolas-studio-pro',
+            name: 'Banderolas Studio PRO',
+            icon: '〰',
+            desc: 'Advanced Integrated Tool: tela/banderola WebGL con física Verlet preservada, imagen/vídeo, composición, proyectos, PNG, WEBM y standalone.',
+            integrationType: 'type-b',
+            src: 'banderolas-tool.html'
         }
     ];
 
