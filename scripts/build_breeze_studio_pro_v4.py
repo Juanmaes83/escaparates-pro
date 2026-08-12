@@ -3,7 +3,7 @@ import re
 import urllib.request
 
 root = Path('breeze-source')
-assets = root / 'src' / 'assets'
+assets = root / 'assets'
 assets.mkdir(parents=True, exist_ok=True)
 
 # Breeze Studio PRO V4
@@ -146,7 +146,6 @@ new_method = r'''    redrawUserMedia() {
     restoreOriginalFabric'''
 s = s[:old_method.start()] + new_method + s[old_method.end():]
 
-# Extend cleanup and defaults.
 s = s.replace(
     '        this.userMediaTexture = null;\n    }',
     '        this.userMediaTexture = null;\n        this.userMediaSource = null;\n        this.userMediaCanvas = null;\n        this.userMediaCtx = null;\n    }',
@@ -265,7 +264,6 @@ p.write_text(s, encoding='utf-8')
 p = root / 'src' / 'studioPanel.js'
 s = p.read_text(encoding='utf-8')
 
-# Wording / visual hierarchy.
 s = s.replace('Dynamic Fabric · staged asset authoring', 'Dynamic Fabric · LOAD → START → CREATE')
 s = s.replace('1. Upload image / video', 'SUBIR imagen / vídeo')
 s = s.replace('2. Apply background', 'START')
@@ -282,14 +280,12 @@ s = s.replace('Background saved.', 'Fondo CARGADO ✓.')
 s = s.replace('Cloth media saved.', 'Media de tela CARGADA ✓.')
 s = s.replace('3D object saved.', 'Objeto 3D CARGADO ✓.')
 
-# Expand Experiences without deleting original Breeze modes.
 s = s.replace(
     '<option value="sakura">Sakura Petals</option>',
     '<option value="sakura">Sakura Petals</option><option value="museum-cloth">Museum Cloth</option><option value="gallery-wind">Gallery Wind</option><option value="fashion-drapery">Fashion Drapery</option><option value="product-reveal">Product Reveal</option>',
     1
 )
 
-# Real local CC0 templates alongside existing generated templates.
 s = s.replace(
     '<option value="museum-plinth">Museum Plinth</option>',
     '<option value="museum-plinth">Museum Plinth</option><option value="cc0-corset">CC0 · Fashion Mannequin / Corset</option><option value="cc0-lantern">CC0 · Museum Lantern</option><option value="cc0-boombox">CC0 · BoomBox / Product</option>',
@@ -301,7 +297,6 @@ s = s.replace(
     1
 )
 
-# Add cloth LOOK sliders after Position Y.
 look_html = '''        <div class="sectionTitle" style="margin-top:10px">Look / grading</div>
         <label class="row">Opacity <span><input id="bsOpacity" type="range" min="0.05" max="1" value="1" step="0.01"><span class="value" id="bsOpacityV">1.00</span></span></label>
         <label class="row">Brightness <span><input id="bsBrightness" type="range" min="0.25" max="2" value="1" step="0.01"><span class="value" id="bsBrightnessV">1.00</span></span></label>
@@ -312,7 +307,6 @@ anchor = '        <button id="bsResetMedia" type="button">Restore original fabri
 if 'id="bsOpacity"' not in s:
     s = s.replace(anchor, look_html + anchor, 1)
 
-# Add look state and wiring.
 s = s.replace(
     '    const clothTransform = { scale: 1, x: 0, y: 0 };',
     '    const clothTransform = { scale: 1, x: 0, y: 0 };\n    const clothLook = { opacity: 1, brightness: 1, contrast: 1, saturation: 1 };',
@@ -327,14 +321,12 @@ look_wiring = """    range('bsOpacity','bsOpacityV',clothLook,'opacity',0.05,1,t
 if "range('bsOpacity'" not in s:
     s = s.replace(range_anchor, range_anchor + look_wiring, 1)
 
-# Ensure look is applied when START is pressed.
 s = s.replace(
     '            app.setClothMediaTransform(clothTransform);\n            await app.applyClothFile(staged.cloth);',
     '            app.setClothMediaTransform(clothTransform);\n            app.setClothLook(clothLook);\n            await app.applyClothFile(staged.cloth);\n            app.setClothLook(clothLook);',
     1
 )
 
-# Experience presets: original three remain 1:1. New presets are additive.
 old_scene_handler = re.search(r"    \$\('bsScene'\)\.value = conf\.sceneName;\n    \$\('bsScene'\)\.addEventListener\('change', async e => \{.*?\n    \}\);", s, re.S)
 if not old_scene_handler:
     raise SystemExit('V4: Experience handler not found')
@@ -370,7 +362,6 @@ new_scene_handler = r'''    const experiencePresets = {
     });'''
 s = s[:old_scene_handler.start()] + new_scene_handler + s[old_scene_handler.end():]
 
-# Reset LOOK UI too.
 s = s.replace(
     "            app.restoreOriginalBackground(); app.restoreOriginalFabric(); await app.restoreVenus(); await app.selectScene('cloth');",
     "            app.restoreOriginalBackground(); app.restoreOriginalFabric(); app.setClothLook({opacity:1,brightness:1,contrast:1,saturation:1}); await app.restoreVenus(); await app.selectScene('cloth');",
