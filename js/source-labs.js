@@ -63,6 +63,12 @@ EP.SourceLabs = (function() {
             note: 'Fuente V1.2.3 aprobada preservada como experiencia completa aislada. Mantiene su panel y runtime originales; Escaparates Pro solo la registra dentro de Source Labs.'
         },
         {
+            id: 'central-distric-rubik-sota', icon: 'CD', name: 'CENTRAL DISTRIC RUBIK SOTA', family: '3D / Immersive Worlds',
+            description: 'Mundo 3D explorable local-first con personalizacion, navegacion espacial, POIs, media local, movilidad y presets de identidad.',
+            path: 'labs/source-experiences/central-distric-rubik-sota/',
+            note: 'Modulo independiente conectado al build publico aprobado de central-distric-rubik-sota-web. El repositorio fuente privado permanece separado y preservado.'
+        },
+        {
             id: 'vits-narration-lab', icon: 'VO', name: 'VITS Narration Lab', family: 'Optional narration engine',
             description: 'Motor de voz local bajo demanda con ONNX/OPFS. No se carga ni participa en el render de efectos o Scroll Sections.',
             path: 'labs/narration/vits-web-lab/',
