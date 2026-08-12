@@ -59,7 +59,7 @@ EP.SourceLabs = (function() {
         {
             id: 'infinite-worlds-brand-expression-v1-2-3', icon: 'IW', name: 'Infinite Worlds — Brand Expression V1.2.3', family: '3D / Immersive Worlds',
             description: 'Experiencia Three.js inmersiva de brand expression con escenas, media imagen/video, objetos GLTF y recorrido narrativo.',
-            path: 'labs/infinite-worlds-brand-expression-v1-2/',
+            path: 'labs/source-experiences/infinite-worlds-brand-expression-v1-2-3/',
             note: 'Fuente V1.2.3 aprobada preservada como experiencia completa aislada. Mantiene su panel y runtime originales; Escaparates Pro solo la registra dentro de Source Labs.'
         },
         {
