@@ -13,3 +13,14 @@
 [Cherry petal texture](https://www.vecteezy.com/png/55531046-beautiful-cherry-blossom-petal-clipart-with-soft-elegance) by [Pram Samnak](https://www.vecteezy.com/members/pram106) on [Vecteezy](https://www.vecteezy.com/).
 
 [Maple leaf texture](https://sketchfab.com/3d-models/low-poly-leaves-25c6b8f79b204be388ed4ea00f74f9a1) by [kaiinness](https://sketchfab.com/kaiinness).
+
+
+## Breeze Studio PRO V4 · CC0 object library
+
+The following optional local templates are vendored from `KhronosGroup/glTF-Sample-Assets` and are CC0 1.0 Universal:
+
+- **Corset** — female fabric mannequin with corset/collar. © 2017 UX3D / Microsoft. CC0 1.0 Universal.
+- **BoomBox** — common product object. © 2017 Public / Microsoft. CC0 1.0 Universal.
+- **Lantern** — old wooden street light. © 2017 Microsoft; Draco conversion © 2018 Frank Galligan. CC0 1.0 Universal.
+
+Source: https://github.com/KhronosGroup/glTF-Sample-Assets
