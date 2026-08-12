@@ -9,9 +9,13 @@ Source engine:
 
 Derivative additions only:
 - custom authoring panel;
-- image/video mapped onto the simulated cloth;
-- media Scale/X/Y;
+- robust image/video mapped onto the simulated cloth;
+- cloth media Scale/X/Y;
+- custom background image/video while preserving HDRI lighting;
+- replaceable GLB/GLTF/OBJ 3D object with auto-normalization;
+- uploaded 3D geometry becomes the real BVH cloth collider after scene rebuild;
 - scene, camera, simulation, stiffness and friction controls;
 - PNG, WebM and clean preview.
 
 Banderolas Dinamicas remains untouched and is not a runtime dependency.
+Its proven non-blocking video-loading pattern informed the V2 implementation.
