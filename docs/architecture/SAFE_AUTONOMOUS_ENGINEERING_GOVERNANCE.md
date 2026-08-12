@@ -120,6 +120,8 @@ Juanma remains final authority for:
 
 Technical closure does not imply product approval.
 
+Passing new work never grants an agent authority to rewrite a protected baseline.
+
 ## Autonomous continuation
 
 An internal checkpoint is not a human gate.
@@ -134,6 +136,46 @@ Required end status for long-run mandates:
 - `MANDATE_ABORTED`.
 
 This prevents a successful subphase from being mistaken for completion of the full mandate.
+
+## Incremental validation and evidence preservation
+
+Safe Autonomous Engineering is intentionally rigorous, but it must not become ritualistically repetitive.
+
+Canonical repository-wide policy:
+
+```text
+PRESERVE VERIFIED EVIDENCE.
+RESUME FROM THE LAST TRUSTWORTHY CHECKPOINT.
+A FAILURE INVALIDATES ONLY WHAT IT CAN REASONABLY AFFECT.
+VALIDATION SCOPE SHOULD MATCH CHANGE IMPACT SCOPE.
+```
+
+A late local failure does not automatically invalidate every earlier successful step.
+
+Agents classify changes by impact:
+
+```text
+LOCAL FIX
+→ local + direct-dependency validation
+
+SHARED-MECHANISM FIX
+→ affected families/dependents + representative hard cases
+
+CORE / BASELINE / CANONICAL-CONTRACT FIX
+→ broad appropriate revalidation
+```
+
+At a human gate, closure means **full appropriate validation of the affected product contracts**, not blindly rerunning every test or every step from zero.
+
+Still-valid evidence may be retained when its dependencies and protected contract are unchanged and provenance is known.
+
+A fresh end-to-end rerun is required when the mandate explicitly requires it, impact cannot be bounded, a shared/core change can affect most prior evidence, provenance is ambiguous, the environment/baseline changed materially, or important cross-component interactions remain untested.
+
+```text
+RIGOUR DOES NOT MEAN REPETITION.
+RIGOUR MEANS VALIDATING THE RIGHT THINGS
+AFTER THE RIGHT CHANGES.
+```
 
 ## Learning objective
 
