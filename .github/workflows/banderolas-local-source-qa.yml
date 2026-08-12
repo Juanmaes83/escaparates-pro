@@ -47,7 +47,7 @@ jobs:
           cp source/output-enhancer-v2.js "$DEST/output-enhancer-v2.js"
           cp source/index-output-v2.html "$DEST/index-output-v2.html"
           cp source/OUTPUT-V2-NOTES.md "$DEST/OUTPUT-V2-NOTES.md"
-          test "$(git -C target hash-object "$DEST/index.html" 2>/dev/null || git hash-object "$DEST/index.html")" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372" || test "$(git hash-object "$DEST/index.html")" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372"
+          test "$(git hash-object "$DEST/index.html")" = "9fc683b9e988a56a8426d094bde3c4bcaa25e372"
           test "$(git hash-object "$DEST/output-enhancer-v2.js")" = "e496e414b5ae7d77c82583ad1a071c1ee42c52f5"
           test "$(git hash-object "$DEST/index-output-v2.html")" = "4cb27137abba038d87d025db48b4967ba1185a84"
 
@@ -85,6 +85,53 @@ jobs:
           node tests/banderolas-type-b-contract.spec.mjs
           ! grep -E "raw\.githubusercontent|cdn\.jsdelivr|frame\.srcdoc|fetch\(tool\.source" js/advanced-tools/banderolas-host.js
           grep -F "labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index.html" js/advanced-tools/registry.js
+
+      - name: Install Chromium runtime QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/epqa
+          cd /tmp/epqa
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.54.2 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null
+
+      - name: Runtime QA — local engine + same-origin adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory target >/tmp/banderolas-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          sleep 1
+          cat >/tmp/epqa/runtime.js <<'NODE'
+          const { chromium } = require('/tmp/epqa/node_modules/playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,args:['--use-gl=swiftshader','--enable-webgl','--ignore-gpu-blocklist']});
+            const page=await browser.newPage({viewport:{width:1440,height:900}});
+            const pageErrors=[];
+            page.on('pageerror',e=>pageErrors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/banderolas-tool.html',{waitUntil:'domcontentloaded'});
+            await page.waitForFunction(()=>document.querySelector('#band-status')?.textContent.includes('Motor local conectado'),null,{timeout:10000});
+            const engine=page.frames().find(f=>f.url().includes('/labs/immersive-worlds/shared-capabilities/flexible-media/banderolas/source/index.html'));
+            if(!engine) throw new Error('Local Banderolas iframe not found');
+            const canvas=await engine.$('#glcanvas');
+            if(!canvas) throw new Error('Canonical WebGL canvas missing');
+            const box=await canvas.boundingBox();
+            if(!box||box.width<100||box.height<100) throw new Error('Canvas has invalid dimensions');
+            await page.fill('#band-title','QA LOCAL SOURCE');
+            await page.waitForFunction(()=>document.querySelector('#band-frame')?.contentDocument?.querySelector('#input-title')?.value==='QA LOCAL SOURCE');
+            await page.locator('#band-scale').evaluate(el=>{el.value='1.5';el.dispatchEvent(new Event('input',{bubbles:true}))});
+            const scale=await page.locator('#band-frame').evaluate(el=>el.contentWindow.BanderolasTypeB?.getState()?.mediaScale);
+            if(Number(scale)!==1.5) throw new Error('Media scale adapter did not propagate');
+            const png=await page.locator('#band-frame').evaluate(el=>el.contentWindow.BanderolasTypeB?.capturePng());
+            if(typeof png!=='string'||!png.startsWith('data:image/png')) throw new Error('PNG capture unavailable');
+            if(pageErrors.length) throw new Error('Page errors: '+pageErrors.join(' | '));
+            console.log('RUNTIME_QA_PASS');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node /tmp/epqa/runtime.js
 
       - name: Commit exact preservation artifacts
         shell: bash
