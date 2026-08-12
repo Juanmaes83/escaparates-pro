@@ -59,89 +59,77 @@ await page.goto(`http://127.0.0.1:${PORT}/labs/immersive-worlds/index.html?tier=
 await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 600000 });
 await page.evaluate(() => { window.__IW.hud.el.veil.hidden = true; });
 
-// Every consecutive pair on the route, so the map is measured rather than asserted.
-const routeBeats = await page.evaluate(() => {
-  const rt = window.__IW.runtime;
-  rt.startRoute(rt.defaultRouteId);
-  const ids = rt.experience.steps.map((s) => s.id);
-  rt.exitRoute();
-  return ids;
-});
-const cases = CASES || routeBeats.slice(1).map((id, i) => ({
-  id: `${String(i + 2).padStart(2, '0')}_${id.replace(/^step\./, '')}`,
-  to: id,
-  label: `${routeBeats[i]} → ${id}`
-}));
-
+// One pass down the route, measuring each transition as it happens.
+//
+// The first version reconstructed from the start for every case, which is
+// quadratic — forty minutes for thirty-three beats — and also less faithful: a
+// transition in the real experience begins from wherever the previous beat left
+// the camera, which is exactly what a single pass reproduces.
 const results = [];
-for (const c of cases) {
-  const r = await page.evaluate(async ({ to }) => {
-    const rt = window.__IW.runtime;
-    const d = rt.experience;
-    // Reconstruct to the beat *before* the one under test, with motion off so the
-    // approach is deterministic, then re-enable motion for the transition itself.
-    d.reducedMotion = true;
-    rt.directed.setReducedMotion(true);
-    rt.startRoute(rt.defaultRouteId);
-    d.pause();
-    let guard = 0;
-    while (d.steps[d.index + 1] && d.steps[d.index + 1].id !== to && guard++ < 60) {
-      await d._advanceAndSettle();
-    }
-    const fromBeat = d.currentStep?.id ?? null;
-    for (let i = 0; i < 600; i += 1) rt.sceneKit.update?.(1 / 60, i / 60);
+const raw = await page.evaluate(async () => {
+  const rt = window.__IW.runtime;
+  const d = rt.experience;
+  const out = [];
 
-    d.reducedMotion = false;
-    rt.directed.setReducedMotion(false);
+  d.reducedMotion = false;
+  rt.directed.setReducedMotion(false);
+  rt.startRoute(rt.defaultRouteId);
+  d.pause();
+
+  for (let n = 0; n < 40; n += 1) {
+    const fromBeat = d.currentStep?.id ?? null;
+    const fromSpace = rt.state.activeSpaceId;
+    if (!d.steps[d.index + 1]) break;
+
     d._advance();
-    // The pose the Director actually asked for. Comparing the landing against this
-    // is the real endpoint-lock question; the stored baseline is rounded to
-    // centimetres and cannot resolve better than 5 mm.
+    if (d._pendingStep) { try { await d._pendingStep; } catch { /* reported elsewhere */ } }
+    const step = d.currentStep;
     const requested = rt.directed._to
       ? { position: [...rt.directed._to.position], target: [...rt.directed._to.target] }
       : null;
-    if (d._pendingStep) { try { await d._pendingStep; } catch { /* reported elsewhere */ } }
 
-    // Step the clock through the move, sampling as we go.
     const samples = [];
     let settledAt = -1;
-    for (let i = 0; i < 1200; i += 1) {
+    for (let i = 0; i < 900; i += 1) {
       rt.clock.tick?.(1 / 60);
       rt.camera.update(1 / 60);
       rt.sceneKit.update?.(1 / 60, i / 60);
-      samples.push({
-        position: [...rt.camera.pose.position],
-        target: [...rt.camera.pose.target],
-        travelling: rt.directed.isTravelling
-      });
-      // Keep going a little past completion: a residual must not be the harness
-      // stopping the clock before the move lands.
+      samples.push({ position: [...rt.camera.pose.position], target: [...rt.camera.pose.target] });
       if (!rt.directed.isTravelling && i > 3) {
         if (settledAt < 0) settledAt = i;
         if (i - settledAt > 8) break;
       }
     }
-    return {
-      fromBeat, toBeat: d.currentStep?.id ?? null, family: d._lastTransition ?? null,
-      space: rt.state.activeSpaceId,
-      samples, settledAt, completed: !rt.directed.isTravelling, requested,
-      directedHold: rt.directed._holdPose ? [...rt.directed._holdPose.position] : null,
-      final: { position: [...rt.camera.pose.position], target: [...rt.camera.pose.target] }
-    };
-  }, { to: c.to });
+    // Let the figures finish arriving before the next beat is composed.
+    for (let i = 0; i < 400; i += 1) rt.sceneKit.update?.(1 / 60, i / 60);
 
-  // --- endpoint lock ---------------------------------------------------------
-  const base = BASE.get(c.to);
+    out.push({
+      fromBeat, toBeat: step?.id ?? null, intent: step?.shotIntent ?? null,
+      family: d._lastTransition ?? null,
+      crossedSpace: fromSpace !== rt.state.activeSpaceId,
+      space: rt.state.activeSpaceId,
+      requested, samples, settledAt,
+      final: { position: [...rt.camera.pose.position], target: [...rt.camera.pose.target] }
+    });
+  }
+  return out;
+});
+
+for (const r of raw) {
+  const base = BASE.get(r.toBeat);
+  // A portal is an authored cut across a space boundary. Measuring it as an
+  // in-room move compares samples from two rooms against one room's bounds, which
+  // is meaningless rather than failing. Block 2A ends at the threshold.
+  const isCut = r.intent === 'PORTAL' || r.crossedSpace;
+
   const dPos = base ? Math.max(...r.final.position.map((v, i) => Math.abs(v - base.position[i]))) : null;
   const dTgt = base ? Math.max(...r.final.target.map((v, i) => Math.abs(v - base.target[i]))) : null;
-  // Exactness against what was requested — full precision, no rounding floor.
   const lockPos = r.requested ? Math.max(...r.final.position.map((v, i) => Math.abs(v - r.requested.position[i]))) : null;
   const lockTgt = r.requested ? Math.max(...r.final.target.map((v, i) => Math.abs(v - r.requested.target[i]))) : null;
 
-  // --- path containment ------------------------------------------------------
-  const bounds = SPACES.get(r.space);
   let outside = 0;
-  if (bounds) {
+  const bounds = SPACES.get(r.space);
+  if (bounds && !isCut) {
     const [bw, bh, bd] = bounds.size; const [ox, oy, oz] = bounds.origin;
     for (const s of r.samples) {
       const [x, y, z] = s.position;
@@ -151,34 +139,41 @@ for (const c of cases) {
     }
   }
 
-  // --- orientation -----------------------------------------------------------
   let maxTurn = 0;
-  for (let i = 1; i < r.samples.length; i += 1) {
-    const a = r.samples[i - 1]; const b = r.samples[i];
-    const da = Math.atan2(a.target[0] - a.position[0], a.target[2] - a.position[2]);
-    const db = Math.atan2(b.target[0] - b.position[0], b.target[2] - b.position[2]);
-    let turn = Math.abs(db - da);
-    if (turn > Math.PI) turn = 2 * Math.PI - turn;
-    maxTurn = Math.max(maxTurn, turn);
+  if (!isCut) {
+    for (let i = 1; i < r.samples.length; i += 1) {
+      const a = r.samples[i - 1]; const b = r.samples[i];
+      const da = Math.atan2(a.target[0] - a.position[0], a.target[2] - a.position[2]);
+      const db = Math.atan2(b.target[0] - b.position[0], b.target[2] - b.position[2]);
+      let t = Math.abs(db - da);
+      if (t > Math.PI) t = 2 * Math.PI - t;
+      maxTurn = Math.max(maxTurn, t);
+    }
   }
 
+  const exact = isCut || (lockPos !== null && lockPos < 1e-9 && lockTgt < 1e-9);
+  const withinBase = isCut || (dPos !== null && dPos <= 0.005 && dTgt <= 0.005);
+  const pass = exact && withinBase && outside === 0;
   results.push({
-    ...c, family: r.family, fromBeat: r.fromBeat, toBeat: r.toBeat,
-    frames: r.samples.length, settledAt: r.settledAt, completed: r.completed,
-    directedVsBaseline: base && r.directedHold
-      ? +Math.max(...r.directedHold.map((v, i) => Math.abs(v - base.position[i]))).toFixed(5) : null,
-    endpointDeltaPosition: dPos, endpointDeltaTarget: dTgt,
+    beat: r.toBeat, from: r.fromBeat, intent: r.intent, family: r.family, cut: isCut,
     lockPosition: lockPos, lockTarget: lockTgt,
-    withinBaselineRounding: dPos !== null && dPos <= 0.005 && dTgt <= 0.005,
-    pathSamplesOutside: outside,
-    maxTurnPerFrameDeg: +(maxTurn * 180 / Math.PI).toFixed(2),
+    baselineDeltaPosition: dPos, baselineDeltaTarget: dTgt, withinBaselineRounding: withinBase,
+    pathSamplesOutside: outside, maxTurnPerFrameDeg: +(maxTurn * 180 / Math.PI).toFixed(2),
+    frames: r.samples.length, pass,
     path: r.samples.map((s) => s.position.map((n) => +n.toFixed(3)))
   });
-  const exact = lockPos !== null && lockPos < 1e-9 && lockTgt < 1e-9;
-  const withinBase = dPos !== null && dPos <= 0.005 && dTgt <= 0.005;
-  console.log(`  ${exact && withinBase && outside === 0 ? 'ok' : '!!'} ${c.id.padEnd(16)} ${String(r.family).padEnd(22)} ` +
-    `lock=${lockPos?.toExponential(1)}/${lockTgt?.toExponential(1)} · vs baseline(1cm) Δ=${dPos?.toFixed(4)} ${withinBase ? 'dentro' : 'FUERA'} · fuera de sala=${outside} · giro máx=${(maxTurn * 180 / Math.PI).toFixed(1)}°`);
+  console.log(`  ${isCut ? '··' : pass ? 'ok' : '!!'} ${String(r.toBeat).replace(/^step\./, '').padEnd(30)} ` +
+    `${String(isCut ? 'CORTE (fuera de 2A)' : r.family).padEnd(22)} ` +
+    (isCut ? 'portal — no medido' :
+      `lock=${lockPos?.toExponential(1)} · baseline Δ=${dPos?.toFixed(4)} ${withinBase ? 'dentro' : 'FUERA'} · fuera=${outside} · giro=${(maxTurn * 180 / Math.PI).toFixed(1)}°`));
 }
+
+const measured = results.filter((r) => !r.cut);
+const families = {};
+for (const r of measured) families[r.family] = (families[r.family] || 0) + 1;
+console.log('\n  medidas:', measured.length, '· cortes fuera de alcance:', results.length - measured.length,
+  '· fallos:', measured.filter((r) => !r.pass).length);
+console.log('  familias:', JSON.stringify(families));
 
 await fs.writeFile(path.join(OUT, 'slice.json'), JSON.stringify({ generatedAt: new Date().toISOString(), results, errors }, null, 1));
 console.log('errores de consola:', errors.length ? errors.slice(0, 3) : 'ninguno');

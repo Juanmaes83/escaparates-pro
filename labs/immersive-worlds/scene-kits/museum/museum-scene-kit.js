@@ -1510,28 +1510,64 @@ export class MuseumSceneKit extends SceneKit {
     const [bw, , bd] = bounds.size;
     const [ox, , oz] = bounds.origin;
 
+    // An orbit is an arc, not a detour. Pulling its midpoint toward open floor —
+    // right for rounding a corner — let the curve pass 0.67 m from the centre of an
+    // 88 cm vessel, and at that distance the look direction swings 40° in a single
+    // frame. Travelling *around* the subject means holding the radius.
+    if (context.family === 'T4_OBJECT_ORBIT') {
+      const centre = context.subjectRef ? this.subjectPoint(context.subjectRef) : null;
+      if (!centre) return null;
+      const a = [from[0] - centre[0], 0, from[2] - centre[2]];
+      const b = [to[0] - centre[0], 0, to[2] - centre[2]];
+      const ra = Math.hypot(a[0], a[2]); const rb = Math.hypot(b[0], b[2]);
+      if (ra < 0.2 || rb < 0.2) return null;
+      const ua = [a[0] / ra, 0, a[2] / ra]; const ub = [b[0] / rb, 0, b[2] / rb];
+      const bisector = [ua[0] + ub[0], 0, ua[2] + ub[2]];
+      const bl = Math.hypot(bisector[0], bisector[2]);
+      // Start and end diametrically opposed: no bisector to travel along.
+      if (bl < 1e-3) return null;
+      const cosHalf = Math.min(Math.max(bl / 2, 0.05), 1);
+      // A quadratic Bézier follows an arc of half-angle θ when its control point
+      // sits at r / cos θ along the bisector. Past about a third of a turn that
+      // ratio runs away — a wide arc flung the control point eight metres out and
+      // the camera left the gallery. One curve cannot describe a half-circle
+      // faithfully, and a flatter arc that stays in the room is the better failure.
+      const r = (ra + rb) / 2;
+      const reach = Math.min(r / cosHalf, r * 2.2);
+      const via = [
+        centre[0] + (bisector[0] / bl) * reach,
+        (from[1] + to[1]) / 2,
+        centre[2] + (bisector[2] / bl) * reach
+      ];
+      return this._clampInside(via, bounds);
+    }
+
     const mid = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2, (from[2] + to[2]) / 2];
     const clearance = this._clearanceAt(mid, bounds, context.subjectRef);
-    // An orbit always bends: its whole point is that the camera travels around the
-    // piece rather than across it.
-    const orbiting = context.family === 'T4_OBJECT_ORBIT';
-    if (!orbiting && clearance.ok) return null;
+    if (clearance.ok) return null;
 
     // Pull the midpoint toward open floor: the room's centre for a corner, and
     // away from the obstacle when there is one.
     const toCentre = [ox - mid[0], 0, oz - mid[2]];
     const len = Math.hypot(toCentre[0], toCentre[2]) || 1;
-    const pullBy = orbiting ? Math.max(clearance.push, 1.1) : clearance.push;
     const via = [
-      mid[0] + (toCentre[0] / len) * pullBy,
+      mid[0] + (toCentre[0] / len) * clearance.push,
       mid[1],
-      mid[2] + (toCentre[2] / len) * pullBy
+      mid[2] + (toCentre[2] / len) * clearance.push
     ];
-    // Never bend the path outside the room it is crossing.
+    return this._clampInside(via, bounds);
+  }
+
+  /** Never bend a path outside the room it is crossing. */
+  _clampInside(point, bounds) {
+    const [bw, , bd] = bounds.size;
+    const [ox, , oz] = bounds.origin;
     const inset = 0.8;
-    via[0] = Math.min(Math.max(via[0], ox - bw / 2 + inset), ox + bw / 2 - inset);
-    via[2] = Math.min(Math.max(via[2], oz - bd / 2 + inset), oz + bd / 2 - inset);
-    return via;
+    return [
+      Math.min(Math.max(point[0], ox - bw / 2 + inset), ox + bw / 2 - inset),
+      point[1],
+      Math.min(Math.max(point[2], oz - bd / 2 + inset), oz + bd / 2 - inset)
+    ];
   }
 
   /** Which built space contains a point, if any. */
