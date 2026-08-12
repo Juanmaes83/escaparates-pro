@@ -27,7 +27,18 @@ const st=document.createElement('style');st.textContent='#ui-panel{display:none!
 parent.postMessage({type:'EP_BANDEROLAS_BRIDGE_READY',toolId:'banderolas-studio-pro',sourceCommit:'538146f7ec2ddbd056b55da0ed0eb8a1cf96ef83'},'*');
 `}
 function buildRuntimeSource(source){var marker='        // --- WEBGL Y FÍSICAS SETUP ---';if(source.indexOf(marker)<0)throw new Error('No se encontró el marcador canónico de WebGL.');return source.replace(marker,bridgeInjection()+'\n'+marker).replace('<title>L.A.P.D. Evidence Creator Platform</title>','<title>Banderolas Studio PRO · Engine</title>')}
-async function loadRuntime(){if(!tool)throw new Error('Tool no registrado');status('Cargando motor canónico '+tool.source.commit.slice(0,8)+'…');var r=await fetch(tool.source.url,{cache:'no-store'});if(!r.ok)throw new Error('Source '+r.status);var src=await r.text();runtimeSource=buildRuntimeSource(src);frame.srcdoc=runtimeSource}
+async function fetchTextWithTimeout(url,timeoutMs){var ctl=new AbortController(),timer=setTimeout(function(){ctl.abort()},timeoutMs);try{var r=await fetch(url,{cache:'no-store',signal:ctl.signal});if(!r.ok)throw new Error('Source '+r.status);return await r.text()}finally{clearTimeout(timer)}}
+async function loadRuntime(){
+  if(!tool)throw new Error('Tool no registrado');
+  var urls=[tool.source.url,tool.source.cdnUrl].filter(Boolean),src=null,lastErr=null;
+  for(var i=0;i<urls.length;i++){
+    status((i===0?'Cargando motor canónico ':'Reintentando fuente canónica ')+tool.source.commit.slice(0,8)+'…');
+    try{src=await fetchTextWithTimeout(urls[i],4500);break}catch(e){lastErr=e;console.warn('[Banderolas Type B] source attempt failed',urls[i],e)}
+  }
+  if(!src)throw lastErr||new Error('Source canónico no disponible');
+  runtimeSource=buildRuntimeSource(src);frame.srcdoc=runtimeSource;
+  setTimeout(function(){if(!runtime){status('El motor no terminó de inicializar',true);loading.querySelector('.at-loading-card').innerHTML='<strong>El motor no terminó de inicializar.</strong><br><span style="color:#999">Recarga la preview o abre Output V2 original.</span><br><br><a target="_blank" style="color:#d3ad68" href="'+(tool.source.fallbackUrl||'#')+'">Abrir Output V2 original</a>'}},6000);
+}
 function connectBridge(){var w=frame.contentWindow;if(!w||!w.BanderolasTypeB)return false;runtime=w.BanderolasTypeB;renderAdapter=EP.AdvancedToolRenderAdapter.create(runtime);loading.classList.add('hidden');status('Motor conectado · cloth preservado · '+tool.source.commit.slice(0,8));pushConfig();pushMedia();return true}
 window.addEventListener('message',function(e){if(e.source===frame.contentWindow&&e.data&&e.data.type==='EP_BANDEROLAS_BRIDGE_READY')setTimeout(connectBridge,20)});frame.addEventListener('load',function(){setTimeout(connectBridge,80)});
 
@@ -56,6 +67,6 @@ $('band-html').onclick=function(){if(!runtime)return toast('Motor no listo');rea
 $('band-embed').onclick=async function(){if(!runtime)return toast('Motor no listo');readUi();var html=runtime.standalone({config:clone(state.config),media:state.media?clone(state.media):null}),u=URL.createObjectURL(new Blob([html],{type:'text/html'})),code='<iframe src="'+u+'" style="width:100%;aspect-ratio:16/9;border:0" allow="autoplay;fullscreen"></iframe>';try{await navigator.clipboard.writeText(code);toast('Embed temporal copiado')}catch(e){toast('Clipboard bloqueado')}};
 $('band-preview-clean').onclick=function(){document.body.classList.toggle('band-clean');this.textContent=document.body.classList.contains('band-clean')?'Salir Preview':'Preview Clean'};$('band-fullscreen').onclick=function(){if(shell.requestFullscreen)shell.requestFullscreen()};
 
-async function init(){writeUi();try{await loadRuntime()}catch(e){status('No se pudo cargar el motor canónico',e);loading.querySelector('.at-loading-card').innerHTML='<strong>Motor no disponible.</strong><br><a target="_blank" style="color:#d3ad68" href="'+(tool&&tool.source.fallbackUrl||'#')+'">Abrir Output V2 original</a>'}}
+async function init(){writeUi();try{await loadRuntime()}catch(e){status('No se pudo cargar el motor canónico',e);loading.querySelector('.at-loading-card').innerHTML='<strong>Motor no disponible.</strong><br><span style="color:#999">La fuente remota no respondió a tiempo.</span><br><br><a target="_blank" style="color:#d3ad68" href="'+(tool&&tool.source.fallbackUrl||'#')+'">Abrir Output V2 original</a>'}}
 window.addEventListener('beforeunload',function(){if(renderAdapter)renderAdapter.dispose()});init();
 })();
