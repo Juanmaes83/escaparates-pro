@@ -36,7 +36,7 @@ const headed = process.argv.includes('--headed');
  * had to rescue died in the middle, and a tail that starts after the middle cannot
  * cover it. The stages are ordered, and a run starts at the named one.
  */
-const STAGES = ['boot', 'tour', 'detail'];
+const STAGES = ['boot', 'tour', 'grammar', 'detail'];
 const FROM = process.env.IW_QA_FROM || (process.env.IW_QA_TAIL === '1' ? 'detail' : 'boot');
 if (!STAGES.includes(FROM)) throw new Error(`[IW QA] IW_QA_FROM debe ser uno de ${STAGES.join(', ')}`);
 const runs = (stage) => STAGES.indexOf(stage) >= STAGES.indexOf(FROM);
@@ -553,6 +553,9 @@ async function main() {
         `esperado ${expectedBack} · observado ${tour.backward.join('→')}`);
       evidence.tour = tour;
 
+    }
+
+    if (runs('grammar')) {
       /* -- experience grammar: A/B/C/D per Stop, and who is in frame ----------- */
       // The grammar is a semantic contract, so it is checked as one: which figure is
       // staged at which beat, in which order, for the Stops that actually use the

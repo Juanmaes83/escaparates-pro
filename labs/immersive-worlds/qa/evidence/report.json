@@ -1,5 +1,5 @@
 {
-  "startedAt": "2026-08-12T13:23:00.624Z",
+  "startedAt": "2026-08-13T09:50:26.256Z",
   "states": {
     "museum:lobby-entry": {
       "space": "space.lobby",
@@ -18,10 +18,10 @@
       },
       "frame": {
         "samples": 35,
-        "meanMs": 54.8,
-        "p50Ms": 3.7,
-        "p95Ms": 655.5,
-        "maxMs": 712.3
+        "meanMs": 72.39,
+        "p50Ms": 3.2,
+        "p95Ms": 886.2,
+        "maxMs": 1028.1
       }
     },
     "museum:lobby-welcome": {
@@ -40,11 +40,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 35,
-        "meanMs": 27.47,
-        "p50Ms": 1.1,
-        "p95Ms": 331,
-        "maxMs": 375.9
+        "samples": 36,
+        "meanMs": 33.22,
+        "p50Ms": 1.4,
+        "p95Ms": 427.5,
+        "maxMs": 460.1
       }
     },
     "museum:gallery-a-overview": {
@@ -63,11 +63,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 37,
-        "meanMs": 90.99,
+        "samples": 36,
+        "meanMs": 124.05,
         "p50Ms": 1.8,
-        "p95Ms": 800.3,
-        "maxMs": 830
+        "p95Ms": 1040.2,
+        "maxMs": 1113.2
       }
     },
     "museum:artwork-horizonte-focus": {
@@ -87,10 +87,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 84.38,
-        "p50Ms": 1.5,
-        "p95Ms": 640.5,
-        "maxMs": 746.7
+        "meanMs": 105.02,
+        "p50Ms": 1.4,
+        "p95Ms": 829.1,
+        "maxMs": 1032.7
       }
     },
     "museum:sculpture-detail": {
@@ -110,10 +110,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 99.09,
-        "p50Ms": 2.3,
-        "p95Ms": 837.8,
-        "maxMs": 874.9
+        "meanMs": 138.45,
+        "p50Ms": 2.5,
+        "p95Ms": 1220.4,
+        "maxMs": 1240
       }
     },
     "museum:gallery-a-oblique": {
@@ -132,11 +132,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 36,
-        "meanMs": 104.59,
-        "p50Ms": 12.5,
-        "p95Ms": 782.7,
-        "maxMs": 870.2
+        "samples": 37,
+        "meanMs": 130.38,
+        "p50Ms": 11.8,
+        "p95Ms": 997.9,
+        "maxMs": 1142.2
       }
     },
     "museum:portal-a-b-before": {
@@ -156,10 +156,10 @@
       },
       "frame": {
         "samples": 36,
-        "meanMs": 107.79,
-        "p50Ms": 9.7,
-        "p95Ms": 795.9,
-        "maxMs": 1185.8
+        "meanMs": 142.03,
+        "p50Ms": 11.6,
+        "p95Ms": 1082.3,
+        "maxMs": 1535.9
       }
     },
     "museum:portal-a-b-after": {
@@ -179,10 +179,10 @@
       },
       "frame": {
         "samples": 44,
-        "meanMs": 86.29,
-        "p50Ms": 9.7,
-        "p95Ms": 693.7,
-        "maxMs": 899.3
+        "meanMs": 113.9,
+        "p50Ms": 10.7,
+        "p95Ms": 897.8,
+        "maxMs": 1433.3
       }
     },
     "museum:archive-teleport": {
@@ -201,11 +201,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 38,
-        "meanMs": 88.49,
-        "p50Ms": 1.8,
-        "p95Ms": 820.2,
-        "maxMs": 871.1
+        "samples": 37,
+        "meanMs": 97.48,
+        "p50Ms": 1.3,
+        "p95Ms": 846.6,
+        "maxMs": 1062.5
       }
     },
     "museum:journey-lead-horizonte": {
@@ -214,9 +214,9 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.horizonte-interrumpido",
       "render": {
-        "drawCalls": 52,
-        "triangles": 3850,
-        "programs": 40,
+        "drawCalls": 48,
+        "triangles": 3694,
+        "programs": 45,
         "textures": 30,
         "geometries": 199,
         "pixelRatio": 1,
@@ -225,10 +225,10 @@
       },
       "frame": {
         "samples": 48,
-        "meanMs": 73.71,
-        "p50Ms": 2.4,
-        "p95Ms": 732,
-        "maxMs": 896.3
+        "meanMs": 120.3,
+        "p50Ms": 2.5,
+        "p95Ms": 1063.1,
+        "maxMs": 1234.1
       }
     },
     "museum:guide-accompanied": {
@@ -237,9 +237,9 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.horizonte-interrumpido",
       "render": {
-        "drawCalls": 41,
-        "triangles": 2992,
-        "programs": 40,
+        "drawCalls": 40,
+        "triangles": 2936,
+        "programs": 45,
         "textures": 31,
         "geometries": 201,
         "pixelRatio": 1,
@@ -248,10 +248,10 @@
       },
       "frame": {
         "samples": 50,
-        "meanMs": 70.56,
-        "p50Ms": 2,
-        "p95Ms": 771,
-        "maxMs": 924.3
+        "meanMs": 111.68,
+        "p50Ms": 2.1,
+        "p95Ms": 967.2,
+        "maxMs": 1159.7
       }
     },
     "museum:guide-handoff": {
@@ -262,7 +262,7 @@
       "render": {
         "drawCalls": 19,
         "triangles": 402,
-        "programs": 40,
+        "programs": 45,
         "textures": 31,
         "geometries": 201,
         "pixelRatio": 1,
@@ -270,11 +270,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 53,
-        "meanMs": 73.53,
-        "p50Ms": 1.7,
-        "p95Ms": 799.5,
-        "maxMs": 1058.9
+        "samples": 54,
+        "meanMs": 106.53,
+        "p50Ms": 1.5,
+        "p95Ms": 1031.5,
+        "maxMs": 1193.6
       }
     },
     "museum:journey-lead-division": {
@@ -283,9 +283,9 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.division-tercera",
       "render": {
-        "drawCalls": 70,
-        "triangles": 4182,
-        "programs": 41,
+        "drawCalls": 66,
+        "triangles": 3984,
+        "programs": 46,
         "textures": 32,
         "geometries": 207,
         "pixelRatio": 1,
@@ -293,11 +293,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 53,
-        "meanMs": 69.84,
-        "p50Ms": 2.2,
-        "p95Ms": 796.2,
-        "maxMs": 888.9
+        "samples": 56,
+        "meanMs": 109.89,
+        "p50Ms": 2.4,
+        "p95Ms": 1050.1,
+        "maxMs": 1542.9
       }
     },
     "museum:journey-division": {
@@ -306,9 +306,9 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.division-tercera",
       "render": {
-        "drawCalls": 43,
-        "triangles": 2830,
-        "programs": 41,
+        "drawCalls": 40,
+        "triangles": 2638,
+        "programs": 46,
         "textures": 32,
         "geometries": 207,
         "pixelRatio": 1,
@@ -317,10 +317,10 @@
       },
       "frame": {
         "samples": 58,
-        "meanMs": 57.69,
-        "p50Ms": 1.6,
-        "p95Ms": 711.9,
-        "maxMs": 831.2
+        "meanMs": 96.28,
+        "p50Ms": 2.1,
+        "p95Ms": 911.7,
+        "maxMs": 1297.9
       }
     },
     "museum:journey-threshold": {
@@ -329,21 +329,21 @@
       "cameraViolations": 0,
       "focus": "entity.sculpture.vasija-de-arenas",
       "render": {
-        "drawCalls": 110,
-        "triangles": 5842,
-        "programs": 43,
+        "drawCalls": 108,
+        "triangles": 5818,
+        "programs": 48,
         "textures": 40,
-        "geometries": 256,
+        "geometries": 255,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 77,
-        "meanMs": 50.06,
-        "p50Ms": 7.7,
-        "p95Ms": 612.6,
-        "maxMs": 795.4
+        "samples": 79,
+        "meanMs": 81.52,
+        "p50Ms": 11.4,
+        "p95Ms": 876.7,
+        "maxMs": 1334.7
       }
     },
     "museum:journey-crossed": {
@@ -352,9 +352,9 @@
       "cameraViolations": 0,
       "focus": "entity.artwork.noche-de-invierno",
       "render": {
-        "drawCalls": 64,
-        "triangles": 4267,
-        "programs": 40,
+        "drawCalls": 63,
+        "triangles": 4255,
+        "programs": 53,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -362,11 +362,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 82,
-        "meanMs": 56.62,
-        "p50Ms": 7.1,
-        "p95Ms": 598.1,
-        "maxMs": 854.9
+        "samples": 84,
+        "meanMs": 106.25,
+        "p50Ms": 10.4,
+        "p95Ms": 924,
+        "maxMs": 1625.3
       }
     },
     "museum:journey-noche": {
@@ -377,7 +377,7 @@
       "render": {
         "drawCalls": 49,
         "triangles": 3047,
-        "programs": 40,
+        "programs": 53,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -386,10 +386,10 @@
       },
       "frame": {
         "samples": 86,
-        "meanMs": 54.75,
-        "p50Ms": 7.2,
-        "p95Ms": 575,
-        "maxMs": 934.7
+        "meanMs": 101.77,
+        "p50Ms": 11.1,
+        "p95Ms": 976.7,
+        "maxMs": 1306.4
       }
     },
     "museum:journey-proyeccion": {
@@ -398,9 +398,9 @@
       "cameraViolations": 0,
       "focus": "entity.video.cuaderno-de-luz",
       "render": {
-        "drawCalls": 45,
-        "triangles": 3520,
-        "programs": 40,
+        "drawCalls": 43,
+        "triangles": 3204,
+        "programs": 53,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -408,11 +408,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 90,
-        "meanMs": 53.8,
-        "p50Ms": 6.8,
-        "p95Ms": 600.6,
-        "maxMs": 820.9
+        "samples": 94,
+        "meanMs": 92.44,
+        "p50Ms": 10.2,
+        "p95Ms": 974.8,
+        "maxMs": 1444.6
       }
     },
     "museum:proyeccion-permanencia": {
@@ -421,9 +421,9 @@
       "cameraViolations": 0,
       "focus": "entity.video.cuaderno-de-luz",
       "render": {
-        "drawCalls": 75,
-        "triangles": 5003,
-        "programs": 40,
+        "drawCalls": 70,
+        "triangles": 4926,
+        "programs": 53,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -431,11 +431,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 97,
-        "meanMs": 54.17,
-        "p50Ms": 7.3,
-        "p95Ms": 640.7,
-        "maxMs": 847.4
+        "samples": 94,
+        "meanMs": 93.04,
+        "p50Ms": 10.6,
+        "p95Ms": 989.2,
+        "maxMs": 1369.8
       }
     },
     "museum:guide-released": {
@@ -444,9 +444,9 @@
       "cameraViolations": 0,
       "focus": null,
       "render": {
-        "drawCalls": 29,
-        "triangles": 809,
-        "programs": 40,
+        "drawCalls": 30,
+        "triangles": 821,
+        "programs": 53,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -454,11 +454,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 90,
-        "meanMs": 52.82,
-        "p50Ms": 6.9,
-        "p95Ms": 550.5,
-        "maxMs": 859.6
+        "samples": 92,
+        "meanMs": 104.73,
+        "p50Ms": 10.1,
+        "p95Ms": 1147.7,
+        "maxMs": 1405.5
       }
     },
     "museum:guide-turnaround": {
@@ -478,10 +478,10 @@
       },
       "frame": {
         "samples": 37,
-        "meanMs": 89.49,
-        "p50Ms": 1.8,
-        "p95Ms": 766.1,
-        "maxMs": 843.9
+        "meanMs": 133.44,
+        "p50Ms": 2.2,
+        "p95Ms": 1106.4,
+        "maxMs": 1202.5
       }
     },
     "museum:guided-step-04": {
@@ -490,21 +490,21 @@
       "cameraViolations": 0,
       "focus": "entity.sculpture.vasija-de-arenas",
       "render": {
-        "drawCalls": 110,
-        "triangles": 5842,
-        "programs": 43,
+        "drawCalls": 108,
+        "triangles": 5818,
+        "programs": 48,
         "textures": 40,
-        "geometries": 256,
+        "geometries": 255,
         "pixelRatio": 1,
         "width": 1440,
         "height": 900
       },
       "frame": {
-        "samples": 74,
-        "meanMs": 52.46,
-        "p50Ms": 8,
-        "p95Ms": 556.4,
-        "maxMs": 806.9
+        "samples": 72,
+        "meanMs": 88.92,
+        "p50Ms": 13,
+        "p95Ms": 816.5,
+        "maxMs": 1185
       }
     },
     "museum:guided-completed": {
@@ -515,7 +515,7 @@
       "render": {
         "drawCalls": 150,
         "triangles": 6948,
-        "programs": 40,
+        "programs": 52,
         "textures": 37,
         "geometries": 206,
         "pixelRatio": 1,
@@ -523,11 +523,11 @@
         "height": 900
       },
       "frame": {
-        "samples": 91,
-        "meanMs": 53.69,
-        "p50Ms": 8.3,
-        "p95Ms": 540.5,
-        "maxMs": 820.6
+        "samples": 92,
+        "meanMs": 97.09,
+        "p50Ms": 11.2,
+        "p95Ms": 1062.9,
+        "maxMs": 1411.7
       }
     }
   },
@@ -535,10 +535,10 @@
     "desktop": {
       "frame": {
         "samples": 185,
-        "meanMs": 19.43,
-        "p50Ms": 1.3,
-        "p95Ms": 3.6,
-        "maxMs": 877.9
+        "meanMs": 27.63,
+        "p50Ms": 1.7,
+        "p95Ms": 4,
+        "maxMs": 1160.9
       },
       "render": {
         "drawCalls": 43,
@@ -568,9 +568,9 @@
               "payload": {
                 "spaceId": "space.lobby",
                 "timings": {
-                  "build": 116,
-                  "warm": 2251,
-                  "total": 2367
+                  "build": 191,
+                  "warm": 3598,
+                  "total": 3789
                 }
               },
               "t": 1
@@ -612,7 +612,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.horizonte-interrumpido",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
                 "kind": "IMAGE"
               },
               "t": 6
@@ -621,7 +621,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.campo-de-ceniza",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
                 "kind": "IMAGE"
               },
               "t": 7
@@ -630,7 +630,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.division-tercera",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/division-tercera.jpg",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/division-tercera.jpg",
                 "kind": "IMAGE"
               },
               "t": 8
@@ -639,7 +639,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.artwork.estudio-de-figura",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
                 "kind": "IMAGE"
               },
               "t": 9
@@ -649,9 +649,9 @@
               "payload": {
                 "spaceId": "space.gallery-a",
                 "timings": {
-                  "build": 1255,
-                  "warm": 4840,
-                  "total": 6095
+                  "build": 1734,
+                  "warm": 6714,
+                  "total": 8448
                 }
               },
               "t": 10
@@ -704,7 +704,7 @@
                 "spaceId": "space.gallery-a",
                 "behaviour": "CONTINUOUS",
                 "preparedOnDemand": true,
-                "waitedMs": 6088,
+                "waitedMs": 8438,
                 "source": "QA"
               },
               "t": 16
@@ -712,8 +712,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.noche-de-invierno",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
+                "entityId": "entity.artwork.marea-baja",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/marea-baja.jpg",
                 "kind": "IMAGE"
               },
               "t": 17
@@ -721,8 +721,8 @@
             {
               "name": "asset:ready",
               "payload": {
-                "entityId": "entity.artwork.marea-baja",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/marea-baja.jpg",
+                "entityId": "entity.artwork.noche-de-invierno",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
                 "kind": "IMAGE"
               },
               "t": 18
@@ -731,7 +731,7 @@
               "name": "asset:ready",
               "payload": {
                 "entityId": "entity.video.cuaderno-de-luz",
-                "url": "http://127.0.0.1:4470/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
                 "kind": "VIDEO"
               },
               "t": 19
@@ -741,9 +741,9 @@
               "payload": {
                 "spaceId": "space.gallery-b",
                 "timings": {
-                  "build": 4353,
-                  "warm": 3395,
-                  "total": 7749
+                  "build": 6400,
+                  "warm": 4822,
+                  "total": 11221
                 }
               },
               "t": 20
@@ -798,7 +798,7 @@
       "id": "ENGINE-PURITY",
       "claim": "engine/ no importa Three.js ni toca el DOM",
       "pass": true,
-      "detail": "22 archivos revisados"
+      "detail": "23 archivos revisados"
     },
     {
       "id": "PROTECTED-PATHS",
@@ -852,7 +852,7 @@
       "id": "PERF-CAPTURED",
       "claim": "Medición de rendimiento capturada (SwiftShader, sin GPU)",
       "pass": true,
-      "detail": "p50 1.3 ms · p95 3.6 ms · 43 draws · 1821 tris"
+      "detail": "p50 1.7 ms · p95 4 ms · 43 draws · 1821 tris"
     },
     {
       "id": "MOBILE-TIER",
@@ -919,12 +919,12 @@
       "loaded": 4,
       "failed": 0,
       "cached": 4,
-      "slowestMs": 2280,
+      "slowestMs": 3484,
       "failures": []
     },
     "spaces": 2
   },
-  "finishedAt": "2026-08-12T13:58:17.086Z",
+  "finishedAt": "2026-08-13T10:30:33.521Z",
   "summary": {
     "total": 19,
     "failed": 0,
