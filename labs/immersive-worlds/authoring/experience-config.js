@@ -36,9 +36,21 @@ function normaliseMedia(media) {
     assetId: media.assetId || null,
     name: String(media.name || ''),
     mimeType: media.mimeType || null,
-    bytes: Number(media.bytes || 0) || 0
+    bytes: Number(media.bytes || 0) || 0,
+    // The author's file has its own proportions. Carrying them means the world
+    // can be told the real aspect instead of drawing a new image inside the
+    // frame the previous one happened to need.
+    width: Number(media.width || 0) || 0,
+    height: Number(media.height || 0) || 0
   };
 }
+
+/**
+ * The world speaks a different vocabulary than the config: `IMAGE` / `VIDEO`,
+ * not `image` / `video`. Translating here — at the one boundary that crosses —
+ * is what keeps the config a document and the world a world.
+ */
+const WORLD_MEDIA_KIND = { image: 'IMAGE', video: 'VIDEO' };
 
 /**
  * Fill every field, so a partial config from an author, an import or an older
@@ -57,6 +69,9 @@ export function normaliseConfig(input = {}) {
     institution: {
       name: String(institution.name || '').slice(0, 120),
       claim: String(institution.claim || '').slice(0, 200),
+      // Free text, because "1958 — 1994" and "desde 1902" are both things an
+      // institution says about itself and neither is a date the product parses.
+      dates: String(institution.dates || '').slice(0, 60),
       introduction: String(institution.introduction || '').slice(0, 900),
       logo: normaliseMedia(institution.logo)
     },
@@ -87,14 +102,31 @@ export function normaliseConfig(input = {}) {
   };
 }
 
-/** The config that reproduces the Museum as it ships, so "reset" has a meaning. */
+/** The entry wall: the institution's own voice, already written into the world. */
+function welcomePanelOf(world) {
+  return (world?.entities || []).find(
+    (e) => e.kind === 'TEXT' && e.subtype === 'wall-panel' && e.spaceId === world?.startSpaceId
+  ) || null;
+}
+
+/**
+ * The config that reproduces the Museum as it ships, so "reset" has a meaning.
+ *
+ * The institution fields are read from the entry wall rather than invented from
+ * the world's title, because the wall is where they are going to be written
+ * back. Anything else would make the default Museum change the first time it
+ * booted through the authoring path — a personalisation layer that alters the
+ * thing it is supposed to leave alone.
+ */
 export function baseConfigFromWorld(world) {
+  const welcome = welcomePanelOf(world);
   return normaliseConfig({
     label: world?.title || 'Configuración base',
     institution: {
       name: world?.metadata?.institution || world?.title || '',
-      claim: world?.title || '',
-      introduction: world?.metadata?.description || ''
+      claim: welcome?.content?.title || world?.title || '',
+      dates: welcome?.content?.year || '',
+      introduction: welcome?.content?.description || world?.metadata?.description || ''
     },
     exhibition: { title: world?.title || '' },
     artworks: {},
@@ -130,6 +162,8 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
     next.metadata = { ...(next.metadata || {}), description: c.institution.introduction };
   }
 
+  applyInstitutionSignage(next, c);
+
   for (const entity of next.entities || []) {
     const authored = c.artworks[entity.id];
     if (!authored) continue;
@@ -141,12 +175,64 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
     }
     if (authored.media) {
       const live = resolveMedia(authored.media.src) || authored.media.src;
-      content.media = { ...(content.media || {}), src: live, kind: authored.media.kind };
+      const aspect = authored.media.width && authored.media.height
+        ? authored.media.width / authored.media.height
+        : content.media?.aspect;
+      content.media = {
+        ...(content.media || {}),
+        src: live,
+        kind: WORLD_MEDIA_KIND[authored.media.kind] || 'IMAGE',
+        aspect,
+        // Rights travel with the file, and an authored file does not inherit the
+        // previous owner's credit line. Saying so is not decoration: INV-10 asks
+        // every medium in a world to name who owns it.
+        credit: `${c.institution.name || 'La institución autora'} — medio aportado en la configuración`,
+        rights: 'Medio aportado por la institución que firma esta configuración. ' +
+          'Los derechos son suyos y no derivan de la colección de demostración.'
+      };
     }
     entity.content = content;
   }
 
   return next;
+}
+
+/**
+ * Institutional signage is not an artwork: the welcome panel in the entry space
+ * *is* the institution's own voice on the wall, so it is written from the
+ * institution record rather than left carrying the previous tenant's name.
+ *
+ * The visitor reads that wall before anything else. A header that says one
+ * institution while the wall says another is the single most visible way a
+ * personalisable museum can look unpersonalised.
+ */
+function applyInstitutionSignage(world, config) {
+  const { name, claim, dates, introduction } = config.institution;
+  if (!name && !claim && !introduction) return;
+
+  // On a wall, an institution signs itself the way it is called, not the way its
+  // metadata qualifies it. The HUD already strips this parenthetical for the
+  // same reason; doing it in one more place keeps the two headers agreeing.
+  const signature = name.replace(/\s*\(.*\)$/, '');
+
+  for (const entity of world.entities || []) {
+    if (entity.kind !== 'TEXT' || entity.subtype !== 'wall-panel') continue;
+    const content = { ...(entity.content || {}) };
+
+    // Every institutional panel is signed by the institution.
+    if (signature) content.creator = signature;
+
+    // Only the welcome panel carries the claim and the introduction; the notes
+    // in other rooms are about those rooms.
+    if (entity.spaceId === world.startSpaceId) {
+      if (claim) content.title = claim;
+      // Written even when empty: a second institution that states no dates must
+      // not inherit the previous one's, which is exactly what silence would do.
+      if (claim || dates) content.year = dates;
+      if (introduction) content.description = introduction;
+    }
+    entity.content = content;
+  }
 }
 
 export function exportConfigJSON(config) {

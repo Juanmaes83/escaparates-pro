@@ -182,12 +182,24 @@ export async function boot() {
       link.id = 'au-css'; link.rel = 'stylesheet'; link.href = './authoring/authoring.css';
       document.head.appendChild(link);
     }
+    // Works, not signage. The wall panels are the institution's own voice and are
+    // edited in the INSTITUCIÓN section; listing them here put a wall at the top
+    // of the "obra en edición" picker, so the field an author typed a title into
+    // first was not an artwork at all.
+    const WORK_KINDS = new Set(['ARTWORK', 'SCULPTURE', 'PROJECTION', 'AUDIO']);
     const artworks = authoredWorld.entities
-      .filter((e) => e.content?.title)
+      .filter((e) => e.content?.title && WORK_KINDS.has(e.kind))
       .map((e) => ({
-        id: e.id, title: e.content.title, creator: e.content.creator,
+        id: e.id, kind: e.kind, title: e.content.title, creator: e.content.creator,
         year: e.content.year, medium: e.content.medium, description: e.content.description
       }));
+
+    // Applying re-boots, and a re-boot runs this block again. Without clearing
+    // the previous mount, every apply left another editor stacked on top of the
+    // last one — duplicate `id="au"` nodes, so closing the editor closed the one
+    // underneath and the visible panel never went away.
+    document.getElementById('au')?.remove();
+    document.getElementById('au-open')?.remove();
 
     const openBtn = document.createElement('button');
     openBtn.id = 'au-open'; openBtn.textContent = 'Editar';

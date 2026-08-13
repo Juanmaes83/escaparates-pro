@@ -26,6 +26,10 @@ export class AuthoringPanel {
     this.artworks = artworks;
     this.onApply = onApply;
     this.selectedArtworkId = artworks[0]?.id || null;
+    // The room's screen, wherever the world put it. Discovered from the record,
+    // not hard-coded, so a second museum's projection works the same way.
+    this.videoTarget = artworks.find((x) => x.kind === 'PROJECTION') || null;
+    this.videoTargetId = this.videoTarget?.id || null;
     this.dirty = false;
     this.root = document.createElement('aside');
     this.root.id = 'au';
@@ -44,6 +48,7 @@ export class AuthoringPanel {
   _render() {
     const a = this._artwork();
     const source = this.artworks.find((x) => x.id === this.selectedArtworkId) || {};
+    const video = this.videoTargetId ? this.config.artworks[this.videoTargetId]?.media : null;
     const logo = this.config.institution.logo;
     this.root.innerHTML = `
       <header class="au-top">
@@ -56,9 +61,10 @@ export class AuthoringPanel {
 
       <section class="au-s">
         <h2>Institución</h2>
-        <p class="au-note">Aparece en la cabecera de la sala y en la ficha institucional.</p>
+        <p class="au-note">Aparece en la cabecera de la sala y en la cartela de entrada del vestíbulo.</p>
         ${FIELD('Nombre')}<input data-bind="institution.name" value="${esc(this.config.institution.name)}"></label>
         ${FIELD('Claim')}<input data-bind="institution.claim" value="${esc(this.config.institution.claim)}"></label>
+        ${FIELD('Fechas de la colección', 'Aparece bajo el claim en la cartela de entrada')}<input data-bind="institution.dates" value="${esc(this.config.institution.dates)}"></label>
         ${FIELD('Introducción')}<textarea rows="3" data-bind="institution.introduction">${esc(this.config.institution.introduction)}</textarea></label>
         ${FIELD('Logotipo', 'PNG, JPG o WebP')}
           <input type="file" accept="image/png,image/jpeg,image/webp" data-media="logo">
@@ -87,10 +93,12 @@ export class AuthoringPanel {
           <input type="file" accept="image/jpeg,image/png,image/webp" data-media="artworkImage">
         </label>
         <p class="au-state" data-state="artworkImage">${a.media?.kind === 'image' ? `Aplicada · ${esc(a.media.name)}` : 'Imagen original'}</p>
-        ${FIELD('Vídeo de la obra', 'MP4 o WebM · se aplica a la proyección')}
-          <input type="file" accept="video/mp4,video/webm" data-media="artworkVideo">
+        ${FIELD('Vídeo de la sala', this.videoTarget
+          ? `MP4 o WebM · se aplica a «${esc(this.videoTarget.title)}»`
+          : 'Esta sala no tiene proyección')}
+          <input type="file" accept="video/mp4,video/webm" data-media="artworkVideo"${this.videoTarget ? '' : ' disabled'}>
         </label>
-        <p class="au-state" data-state="artworkVideo">${a.media?.kind === 'video' ? `Aplicado · ${esc(a.media.name)}` : 'Sin vídeo autorizado'}</p>
+        <p class="au-state" data-state="artworkVideo">${video?.kind === 'video' ? `Aplicado · ${esc(video.name)}` : 'Sin vídeo autorizado'}</p>
       </section>
 
       <section class="au-s">
@@ -147,9 +155,17 @@ export class AuthoringPanel {
         state.textContent = 'Cargando…';
         state.className = 'au-state au-state--busy';
 
+        // Each medium lands on the entity that can actually show it. A video
+        // belongs to the projection, not to a framed canvas, and an image and a
+        // video must not share one slot — choosing one would silently discard
+        // the other, which is what the label already promised would not happen.
+        const targetId = slot === 'artworkVideo'
+          ? (this.videoTargetId || this.selectedArtworkId)
+          : this.selectedArtworkId;
+
         // Replacing releases the previous asset: an object URL that is dropped
         // rather than revoked is a leak that never announces itself.
-        const previous = slot === 'logo' ? this.config.institution.logo : this._artwork().media;
+        const previous = slot === 'logo' ? this.config.institution.logo : this._artwork(targetId).media;
         if (previous?.assetId) this.vault.release(previous.assetId);
 
         const asset = await this.vault.accept(file, { kind });
@@ -160,10 +176,11 @@ export class AuthoringPanel {
         }
         const ref = {
           kind, src: asset.reference, assetId: asset.id,
-          name: asset.name, mimeType: asset.mimeType, bytes: asset.bytes
+          name: asset.name, mimeType: asset.mimeType, bytes: asset.bytes,
+          width: asset.width, height: asset.height
         };
         if (slot === 'logo') this.config.institution.logo = ref;
-        else this._artwork().media = ref;
+        else this._artwork(targetId).media = ref;
 
         state.textContent = kind === 'video'
           ? `Listo · ${asset.name} · ${asset.width}×${asset.height} · ${asset.duration.toFixed(1)} s`

@@ -40,6 +40,13 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 page.setDefaultTimeout(300000);
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
+// A world that fails validation does not throw — it logs and carries on with the
+// entity it could not accept. Listening only for pageerror is how an authored
+// image was rejected for six checks in a row without a single one going red.
+page.on('console', (m) => {
+  const text = m.text();
+  if (m.type() === 'error' || /failed validation|INV-\d/.test(text)) errors.push(text);
+});
 
 const checks = [];
 const check = (name, ok, detail = '') => {
@@ -131,6 +138,54 @@ check('la referencia autorizada resuelve a un URL vivo', media.resolved);
 check('liberar revoca y olvida el asset', media.releasedTo === media.releasedFrom - 1,
   `${media.releasedFrom} → ${media.releasedTo}`);
 
+/* -- the signage, and the file the author actually chose -------------------- */
+// The previous pass of this tool asked whether the *data* changed and answered
+// yes, while the room still said "Fundación Arenas" on the wall and still showed
+// the original painting. Both were true at once because nothing asked what the
+// visitor sees. These do.
+const applied = await page.evaluate(async (base) => {
+  const vault = window.__IW_VAULT;
+  const png = Uint8Array.from(atob(
+    'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR4nGP8z8Dwn4GBgYGJAQkAAB0BAglHM8gAAAAASUVORK5CYII='
+  ), (c) => c.charCodeAt(0));
+  const asset = await vault.accept(new File([png], 'obra-autorizada.png', { type: 'image/png' }), { kind: 'image' });
+
+  // The second museum's own config, plus the file it chose — so this measures
+  // authored media on top of a real institution rather than in isolation, and
+  // leaves the config the later persistence checks read intact.
+  const config = structuredClone(base);
+  config.artworks['entity.artwork.horizonte-interrumpido'].media = {
+    kind: 'image', src: asset.reference, assetId: asset.id,
+    name: asset.name, width: asset.width, height: asset.height
+  };
+  await window.__IW_PANEL.onApply(config);
+  await new Promise((r) => setTimeout(r, 400));
+
+  const rt = window.__IW.runtime;
+  const artwork = rt.store.entities.find((x) => x.id === 'entity.artwork.horizonte-interrumpido');
+  const welcome = rt.store.entities.find((x) => x.id === 'entity.lobby.bienvenida');
+  return {
+    kind: artwork?.content?.media?.kind,
+    aspect: artwork?.content?.media?.aspect,
+    rights: Boolean(artwork?.content?.media?.rights),
+    credit: artwork?.content?.media?.credit,
+    welcomeTitle: welcome?.content?.title,
+    welcomeCreator: welcome?.content?.creator,
+    welcomeYear: welcome?.content?.year
+  };
+}, museumB);
+
+check('el medio autorizado habla el vocabulario del mundo', applied.kind === 'IMAGE',
+  `kind="${applied.kind}" (el config dice "image", el mundo exige "IMAGE")`);
+check('la obra toma las proporciones del archivo del autor', applied.aspect === 1,
+  `aspect ${applied.aspect}`);
+check('el medio autorizado declara sus propios derechos', applied.rights, applied.credit);
+check('la cartela institucional del vestíbulo cambia de institución',
+  applied.welcomeCreator === 'Museo de la Bruma',
+  `«${applied.welcomeTitle}» · ${applied.welcomeCreator}`);
+check('el vestíbulo no conserva la datación de la institución anterior',
+  applied.welcomeYear === '', `year="${applied.welcomeYear}"`);
+
 /* -- save / restore -------------------------------------------------------- */
 const persistence = await page.evaluate(async () => {
   const { ConfigStore } = await import('./authoring/config-store.js');
@@ -158,14 +213,28 @@ await page.evaluate(async () => {
   await window.__IW_PANEL.onApply(baseConfigFromWorld(world));
 });
 await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 300000 });
-const restored = await page.evaluate(() => ({
-  institution: window.__IW.runtime.store.metadata?.institution,
-  title: window.__IW.runtime.store.entities.find((e) => e.id === 'entity.artwork.horizonte-interrumpido')?.content?.title,
-  guided: Boolean(window.__IW.runtime.defaultRouteId),
-  violations: window.__IW.runtime.camera.report().violations
-}));
+const restored = await page.evaluate(async () => {
+  // The shipped Museum boots through this same path on every plain load. If the
+  // base config does not reproduce the entry wall exactly, personalisation has
+  // quietly rewritten the room it was supposed to leave alone.
+  const world = await fetch('./worlds/museum-v1.world.json').then((r) => r.json());
+  const before = world.entities.find((e) => e.id === 'entity.lobby.bienvenida').content;
+  const after = window.__IW.runtime.store.entities.find((e) => e.id === 'entity.lobby.bienvenida')?.content;
+  const fields = ['title', 'creator', 'year', 'medium', 'description'];
+  return {
+    institution: window.__IW.runtime.store.metadata?.institution,
+    title: window.__IW.runtime.store.entities.find((e) => e.id === 'entity.artwork.horizonte-interrumpido')?.content?.title,
+    guided: Boolean(window.__IW.runtime.defaultRouteId),
+    violations: window.__IW.runtime.camera.report().violations,
+    welcomeDrift: fields.filter((f) => (before[f] || '') !== (after?.[f] || '')),
+    welcome: `${after?.title} · ${after?.creator} · ${after?.year}`
+  };
+});
 check('Fundación Arenas vuelve intacta', restored.title === 'Horizonte interrumpido',
   `${restored.institution} · ${restored.title}`);
+check('la cartela de entrada del Museo original vuelve palabra por palabra',
+  restored.welcomeDrift.length === 0,
+  restored.welcomeDrift.length ? `difieren: ${restored.welcomeDrift.join(', ')}` : restored.welcome);
 check('el recorrido guiado sigue disponible', restored.guided);
 check('sin violaciones de autoridad de cámara', restored.violations === 0);
 check('sin errores de consola', errors.length === 0, errors.slice(0, 2).join(' | ') || 'ninguno');

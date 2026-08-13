@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-13T17:02:28.122Z",
+ "generatedAt": "2026-08-13T19:06:05.625Z",
  "original": {
   "institution": "Fundación Arenas — Colección permanente",
   "artwork": {
@@ -43,7 +43,7 @@
   "releasedTo": 1
  },
  "persistence": {
-  "bytes": 1091,
+  "bytes": 1243,
   "version": 1,
   "institution": "Museo de la Bruma",
   "artworkTitle": "Marea de septiembre",
@@ -53,7 +53,9 @@
   "institution": "Fundación Arenas (institución ficticia)",
   "title": "Horizonte interrumpido",
   "guided": true,
-  "violations": 0
+  "violations": 0,
+  "welcomeDrift": [],
+  "welcome": "Colección permanente · Fundación Arenas · 1958 — 1994"
  },
  "checks": [
   {
@@ -112,9 +114,34 @@
    "detail": "2 → 1"
   },
   {
+   "name": "el medio autorizado habla el vocabulario del mundo",
+   "ok": true,
+   "detail": "kind=\"IMAGE\" (el config dice \"image\", el mundo exige \"IMAGE\")"
+  },
+  {
+   "name": "la obra toma las proporciones del archivo del autor",
+   "ok": true,
+   "detail": "aspect 1"
+  },
+  {
+   "name": "el medio autorizado declara sus propios derechos",
+   "ok": true,
+   "detail": "Museo de la Bruma — medio aportado en la configuración"
+  },
+  {
+   "name": "la cartela institucional del vestíbulo cambia de institución",
+   "ok": true,
+   "detail": "«Colección de paisaje atlántico, 1902 — 1968» · Museo de la Bruma"
+  },
+  {
+   "name": "el vestíbulo no conserva la datación de la institución anterior",
+   "ok": true,
+   "detail": "year=\"\""
+  },
+  {
    "name": "la configuración se serializa",
    "ok": true,
-   "detail": "1091 bytes · esquema v1"
+   "detail": "1243 bytes · esquema v1"
   },
   {
    "name": "la configuración se restaura íntegra",
@@ -130,6 +157,11 @@
    "name": "Fundación Arenas vuelve intacta",
    "ok": true,
    "detail": "Fundación Arenas (institución ficticia) · Horizonte interrumpido"
+  },
+  {
+   "name": "la cartela de entrada del Museo original vuelve palabra por palabra",
+   "ok": true,
+   "detail": "Colección permanente · Fundación Arenas · 1958 — 1994"
   },
   {
    "name": "el recorrido guiado sigue disponible",

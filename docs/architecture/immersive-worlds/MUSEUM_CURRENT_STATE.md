@@ -449,6 +449,50 @@ and the second-museum test:
 
 Do not begin Authoring, AI Guide or premium-personalization implementation during Block 2B unless Juanma explicitly changes scope.
 
+## 11b. Scope change — Authoring Vertical Slice 01 (authorized)
+
+Juanma changed that scope with `MUSEUM-PREMIUM-AUTHORING-PERSONALIZATION-VERTICAL-SLICE-01`. Authoring
+is now implemented as an additive, opt-in layer (`?authoring=1`) and the second-museum test is run on
+every pass:
+
+- `labs/immersive-worlds/authoring/` — experience config, media vault, config store, panel;
+- `labs/immersive-worlds/authoring/museum-b.config.json` — the second institution, Museo de la Bruma;
+- `qa/tools/authoring-slice.mjs` — functional contract;
+- `qa/tools/authoring-visual.mjs` + `qa/tools/build-authoring-board.mjs` — visual contract.
+
+The layer edits **data**, and the Museum is built from that data. Nothing in `engine/` knows an
+authoring layer exists, which is the whole reason a second institution needs no engine change.
+
+## 11c. Visual review contract (process, binding)
+
+Added by the addendum `MUSEUM AUTHORING VISUAL QA + REVIEW CONTRACT`, after a pass that reported
+18/18 functional checks green while the room still showed the previous institution's name on the wall
+and the author's image never reached the world at all.
+
+```text
+IMPLEMENTATION
+→ REAL BROWSER EXECUTION
+→ AUTOMATED VISUAL CAPTURE
+→ VISUAL SELF-REVIEW
+→ HUMAN REVIEW SURFACE
+→ JUANMA + CHATGPT GATE
+```
+
+```text
+TECHNICAL GREEN DOES NOT OVERRULE VISUAL TRUTH
+```
+
+Rules that follow from it, and that cost real defects to learn:
+
+- a pass is not finished until the captures have been **looked at**, defect by defect, and the
+  findings written down with severity, frame and proposed correction;
+- a world that fails validation **logs and carries on**, so a test that listens only for exceptions
+  will report green while the authored entity is silently discarded — QA listens to the console;
+- a wait that can return before the thing it waits for has started is not a wait: after a re-boot,
+  lower the readiness flag first, or the evidence photographs the loading screen on a slow machine;
+- an evidence frame that does not show what its caption claims is a defect in the instrument, and is
+  reported alongside the product defects rather than quietly re-shot.
+
 ---
 
 # 12. Current explicit scope boundary
@@ -472,8 +516,7 @@ Not authorized by this current state:
 
 - Block 3;
 - new rooms beyond what Block 2B needs to prove the crossing;
-- Authoring implementation;
-- premium personalization implementation;
+- premium personalization beyond Vertical Slice 01 (see §11b — VS01 itself is authorized);
 - AI Guide implementation;
 - replacing Projection;
 - rewriting Block 2A;

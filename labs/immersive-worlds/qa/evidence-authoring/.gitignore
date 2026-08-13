@@ -1,0 +1,3 @@
+# Regenerable: the same board with every capture inlined, for publishing.
+# 6 MB of base64 that git does not need to carry — `node qa/tools/build-authoring-board.mjs` rebuilds it.
+board-inline.html
