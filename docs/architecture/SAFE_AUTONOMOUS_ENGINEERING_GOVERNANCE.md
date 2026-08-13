@@ -165,6 +165,49 @@ CORE / BASELINE / CANONICAL-CONTRACT FIX
 → broad appropriate revalidation
 ```
 
+### Contextual backtrack / validation runway
+
+`RESUME FROM THE LAST TRUSTWORTHY CHECKPOINT` does **not** mean restarting at the exact failed step with no context.
+
+For sequence-dependent systems, the agent must normally re-enter through a bounded window of already-verified predecessor states so the corrected point is exercised with its real preconditions and immediate lead-in.
+
+Canonical rule:
+
+```text
+DO NOT RESTART FROM ZERO.
+DO NOT RESUME BLINDLY AT THE FAILURE POINT.
+RE-ENTER THROUGH A BOUNDED TRUSTED CONTEXT WINDOW.
+```
+
+Example:
+
+```text
+01–08 verified
+09 fails
+
+wrong extremes:
+01 → ... → 09     unnecessary full replay
+09 only           insufficient context when state-dependent
+
+preferred:
+preserve 01–08 as verified evidence
+→ fix 09
+→ replay a few meaningful predecessor moments, e.g. 05/06 → 07 → 08 → 09
+→ verify the fix and immediate handoff
+→ continue
+```
+
+The replayed predecessor states are a **validation runway**, not invalidated evidence.
+
+`2–4` meaningful predecessor moments is a useful default for sequential flows, but it is not a rigid number. The agent chooses the smallest window that reconstructs the relevant state, preconditions and interaction boundary. Stateless isolated fixes may be validated directly; shared/core changes require a broader runway according to impact.
+
+This rule applies to QA stages, guided sequences, camera transitions, runtime lifecycle, import/export pipelines, authoring workflows, builds/deploys and other multi-step processes.
+
+```text
+EVIDENCE PRESERVATION ≠ ZERO-CONTEXT RESUME
+TARGETED REVALIDATION ≠ VALIDATE ONLY THE FAILED LINE
+```
+
 At a human gate, closure means **full appropriate validation of the affected product contracts**, not blindly rerunning every test or every step from zero.
 
 Still-valid evidence may be retained when its dependencies and protected contract are unchanged and provenance is known.
