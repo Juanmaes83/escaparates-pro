@@ -159,6 +159,16 @@ export class Runtime {
     this._frameTimes = [];
     this.onFrame = null;
 
+    // A crossing holds two things it must give back: the Scene Kit's atmosphere,
+    // and the lifecycle's deferred working-set reconcile. Losing the camera is the
+    // definitive end of a crossing, whether it landed or was abandoned, so that is
+    // where they are released. The frame loop checks too, but a release that only
+    // happens if someone keeps stepping frames is a release that fails in exactly
+    // the situation it exists for.
+    this.bus.on(EVENTS.CAMERA_AUTHORITY_CHANGED, ({ from }) => {
+      if (from === CAMERA_AUTHORITY.TRANSITION) this._releaseCrossingHolds();
+    });
+
     this.bus.on(EVENTS.QUALITY_TIER_CHANGED, ({ policy }) => {
       this.sceneKitContext.quality = policy;
       this.sceneKit.applyQuality(policy);
@@ -502,10 +512,10 @@ export class Runtime {
       // 5 — land, release the atmosphere onto the destination exactly, give the
       // camera back.
       onComplete: () => {
-        this._crossingHolds = false;
-        this.sceneKit.setAtmosphereLock?.(false);
+        // Exact, not almost: the blend is applied at 1 before the holds go, so the
+        // destination's own atmosphere is what the room is left with.
         this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, 1);
-        this.spaces.settle();
+        this._releaseCrossingHolds();
         this.camera.request(resumeAuthority, {
           reason: `crossing:${portal.id}:landed`, restore: 'ADOPT_INCOMING'
         });
@@ -522,6 +532,20 @@ export class Runtime {
       cameraHandled: true,
       crossing: { ...plan, travelMs, warmedMs, crossedAt, threshold: threshold.portalId }
     };
+  }
+
+  /**
+   * Give back what a crossing held, whether it landed or was abandoned.
+   *
+   * Idempotent on purpose: it is reached from the crossing's own completion, from
+   * the authority handing the camera on, and from the frame loop, and none of
+   * those can know which of the others got there first.
+   */
+  _releaseCrossingHolds() {
+    if (!this._crossingHolds) return;
+    this._crossingHolds = false;
+    this.sceneKit.setAtmosphereLock?.(false);
+    this.spaces.settle();
   }
 
   /**
@@ -682,11 +706,7 @@ export class Runtime {
     // Escape halfway through a doorway — never runs its own completion, and the
     // two things it holds are both things that stay wrong silently: the
     // atmosphere would freeze mid-blend, and two rooms would stay resident.
-    if (this._crossingHolds && !this.crossing.isCrossing) {
-      this._crossingHolds = false;
-      this.sceneKit.setAtmosphereLock?.(false);
-      this.spaces.settle();
-    }
+    if (this._crossingHolds && !this.crossing.isCrossing) this._releaseCrossingHolds();
     this.proximity.update(dt, pose.position);
     this.sceneKit.update(dt, this.clock.elapsed);
     this.onFrame?.(pose, dt);
