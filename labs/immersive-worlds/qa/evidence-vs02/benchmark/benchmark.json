@@ -1,0 +1,7 @@
+{
+ "url": "https://thevertmenthe.dault-lafon.fr/",
+ "capturedAt": "2026-08-13T22:20:10.204Z",
+ "unreachable": "page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://thevertmenthe.dault-lafon.fr/\nCall log:\n\u001b[2m  - navigating to \"https://thevertmenthe.dault-lafon.fr/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+ "notes": [],
+ "errors": []
+}
