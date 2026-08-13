@@ -7,7 +7,7 @@ description: Repository-wide Escaparates Pro operating contract for long-running
 
 ## Long-run, additive, isolated, reversible, evidence-driven and learning execution
 
-**Version:** 1.2 FINAL CANDIDATE  
+**Version:** 1.3 FINAL CANDIDATE  
 **Status:** Canonical Skill Candidate  
 **Scope:** GLOBAL — entire `Juanmaes83/escaparates-pro` repository  
 **Owner / Product Authority:** Juanma  
@@ -274,6 +274,99 @@ KEEP 01–37 AS VERIFIED EVIDENCE
 ```
 
 Do not replay 01–37 for procedural purity.
+
+### Contextual backtrack / validation runway
+
+Resuming from the last trustworthy checkpoint does **not** mean blindly restarting at the exact failed step.
+
+For sequence-dependent work, a fix must normally be re-entered through a bounded amount of already-verified context so that the preconditions, approach, state handoff and immediate lead-in to the corrected point are exercised again.
+
+Canonical rule:
+
+```text
+DO NOT RESTART FROM ZERO.
+DO NOT RESUME BLINDLY AT THE FAILURE POINT.
+RE-ENTER THROUGH A BOUNDED TRUSTED CONTEXT WINDOW.
+```
+
+Example:
+
+```text
+01 ✅
+02 ✅
+03 ✅
+04 ✅
+05 ✅
+06 ✅
+07 ✅
+08 ✅
+09 ❌
+10 pending
+```
+
+If `09` has a simple local fix and `01–08` remain valid, do **not** normally replay from `01`, but also do not validate only `09` when `09` depends on the state produced by the preceding sequence.
+
+Prefer a contextual replay such as:
+
+```text
+KEEP 01–08 AS VERIFIED EVIDENCE
+→ FIX 09
+→ RE-ENTER A FEW MEANINGFUL STEPS BEFORE THE FIX
+   e.g. 05/06 → 07 → 08 → 09
+→ VERIFY THE APPROACH + FIX + IMMEDIATE HANDOFF
+→ CONTINUE 10
+```
+
+The previous steps replayed inside this window are a **validation runway**, not newly invalid evidence. Their purpose is to rebuild realistic context and detect regressions at the boundary around the fix.
+
+Do not use a rigid universal number of steps. `2–4` meaningful predecessor moments is a useful default when the workflow has sequential state, but the correct window is the smallest one that faithfully reconstructs the relevant preconditions and interaction context.
+
+Choose the runway using dependency and state boundaries:
+
+```text
+STATELESS / ISOLATED UNIT
+→ exact-step validation may be sufficient
+
+LOCAL SEQUENCE-DEPENDENT FIX
+→ re-enter from a few meaningful predecessor steps/checkpoints
+→ validate the lead-in, corrected step and immediate handoff
+
+SHARED-MECHANISM FIX
+→ re-enter representative affected sequences before the changed mechanism
+→ exercise affected families/dependents
+
+CORE / BASELINE / CANONICAL-CONTRACT FIX
+→ broader re-entry/revalidation is justified by impact
+```
+
+The runway should begin **before the earliest state transition that materially establishes the corrected step's preconditions**, not merely an arbitrary number of lines/checks earlier.
+
+If step boundaries are expensive, choose the nearest trustworthy checkpoint that reconstructs the same context rather than paying for unrelated history.
+
+This rule applies equally to:
+
+- QA stages;
+- guided sequences;
+- render/runtime state transitions;
+- camera/transition choreography;
+- import/export pipelines;
+- build/deploy workflows;
+- multi-step authoring flows;
+- long data-processing jobs.
+
+Canonical distinction:
+
+```text
+EVIDENCE PRESERVATION
+≠
+ZERO-CONTEXT RESUME
+
+TARGETED REVALIDATION
+≠
+VALIDATE ONLY THE LINE THAT FAILED
+```
+
+The goal is confidence with bounded replay: preserve what is still proven, but retest enough preceding context to prove the correction works in the real sequence.
 
 ### Change-impact classes
 
@@ -643,6 +736,8 @@ VERIFY REPO
 
 Never assume a started action completed. Never discard completed evidence merely because the session restarted.
 
+When the interrupted workflow is sequence-dependent, apply the **contextual backtrack / validation runway** rule: resume from a bounded trustworthy predecessor window that reconstructs the relevant state, not necessarily from the exact failed step and not from zero.
+
 ## HANDOFF
 
 At a human gate or autonomous stop, report at minimum:
@@ -726,6 +821,11 @@ PRESERVE VERIFIED EVIDENCE.
 RESUME FROM THE LAST TRUSTWORTHY CHECKPOINT.
 A FAILURE INVALIDATES ONLY WHAT IT CAN REASONABLY AFFECT.
 VALIDATION SCOPE SHOULD MATCH CHANGE IMPACT SCOPE.
+
+DO NOT RESTART FROM ZERO.
+DO NOT RESUME BLINDLY AT THE FAILURE POINT.
+RE-ENTER THROUGH A BOUNDED TRUSTED CONTEXT WINDOW.
+PRESERVE EARLIER EVIDENCE; REPLAY A FEW MEANINGFUL PREDECESSOR STEPS WHEN SEQUENCE STATE MATTERS.
 
 LOCAL FIX → LOCAL + DIRECT-DEPENDENCY VALIDATION.
 SHARED FIX → AFFECTED-FAMILY / DEPENDENCY VALIDATION.
