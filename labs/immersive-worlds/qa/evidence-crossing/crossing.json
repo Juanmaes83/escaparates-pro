@@ -1,7 +1,7 @@
 {
- "runId": "crossing-2026-08-13T06-35-33-292Z",
+ "runId": "crossing-2026-08-13T08-25-32-008Z",
  "prefetchWaitedMs": 0,
- "generatedAt": "2026-08-13T06:36:13.481Z",
+ "generatedAt": "2026-08-13T08:26:10.105Z",
  "portal": "portal.gallery-a-gallery-b",
  "threshold": {
   "portalId": "portal.gallery-a-gallery-b",
@@ -154,35 +154,35 @@
     "to": "DIRECTED",
     "reason": "route:route.comentado",
     "durationMs": 0,
-    "frame": 4
+    "frame": 2
    },
    {
     "from": "DIRECTED",
     "to": "TRANSITION",
     "reason": "crossing:portal.lobby-gallery-a",
     "durationMs": 0,
-    "frame": 4
+    "frame": 2
    },
    {
     "from": "TRANSITION",
     "to": "DIRECTED",
     "reason": "crossing:portal.lobby-gallery-a:landed",
     "durationMs": 0,
-    "frame": 305
+    "frame": 303
    },
    {
     "from": "DIRECTED",
     "to": "TRANSITION",
     "reason": "crossing:portal.gallery-a-gallery-b",
     "durationMs": 0,
-    "frame": 2639
+    "frame": 2637
    },
    {
     "from": "TRANSITION",
     "to": "DIRECTED",
     "reason": "crossing:portal.gallery-a-gallery-b:landed",
     "durationMs": 0,
-    "frame": 2920
+    "frame": 2918
    }
   ],
   "events": [
@@ -225,12 +225,12 @@
   {
    "portalId": "portal.gallery-b-gallery-a",
    "cameraHandled": true,
-   "warmedMs": 130,
-   "planningMs": 129.8,
+   "warmedMs": 129,
+   "planningMs": 129.3,
    "travelMs": 5000,
    "frames": 301,
    "medianFrameMs": 0,
-   "worstFrameMs": 0.8,
+   "worstFrameMs": 2.3,
    "landedAt": [
     0,
     1.62,
@@ -246,12 +246,12 @@
   {
    "portalId": "portal.gallery-a-gallery-b",
    "cameraHandled": true,
-   "warmedMs": 101,
-   "planningMs": 101.1,
+   "warmedMs": 114,
+   "planningMs": 114.7,
    "travelMs": 5000,
    "frames": 301,
    "medianFrameMs": 0,
-   "worstFrameMs": 0.6,
+   "worstFrameMs": 1.8,
    "landedAt": [
     9.7,
     1.62,
@@ -366,7 +366,7 @@
   {
    "name": "a repeated crossing is not faster than the first",
    "ok": true,
-   "detail": "5000ms/0.8ms worst · 5000ms/0.6ms worst"
+   "detail": "5000ms/2.3ms worst · 5000ms/1.8ms worst"
   },
   {
    "name": "no console errors",
