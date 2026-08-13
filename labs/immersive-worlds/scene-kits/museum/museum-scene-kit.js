@@ -1030,6 +1030,126 @@ export class MuseumSceneKit extends SceneKit {
    * @param {number} t 0 = origin room, 1 = destination room
    */
   /**
+   * Threshold treatment — the portal-appearance experiment, as a visual layer.
+   *
+   * Three candidates for the same doorway, switched by configuration so the
+   * approved behaviour is the default and nothing here can alter it:
+   *
+   *   NONE      the architecture is the frame. Current Museum direction.
+   *   ADAPTED   the transition quality the first-party source gets from its
+   *             portal surface — refraction through the aperture and a response
+   *             at its edge — without the identity that surface carries there.
+   *   SUBTLE    the same phenomenon held down to something institutional: a pane
+   *             of disturbed air in a doorway, not an effect announcing itself.
+   *
+   * It is a plane in the opening and nothing else. No camera term, no endpoint,
+   * no authority, no handoff, no world data. Whichever is chosen, the crossing
+   * flies the identical path to the identical pose, which is what makes these
+   * comparable rather than three different crossings.
+   *
+   * The destination is a real room through a real hole, so unlike the source
+   * this surface has nothing to *show* — it only modulates what is already
+   * visible. That is why transmission does the work here and a render target
+   * would be answering a question the Museum does not ask.
+   *
+   * @param {'NONE'|'ADAPTED'|'SUBTLE'} preset
+   */
+  setThresholdTreatment(preset = 'NONE') {
+    this._thresholdPreset = preset;
+    if (preset === 'NONE') {
+      this._disposeThresholdPane();
+      return preset;
+    }
+    return preset;
+  }
+
+  /** Build (once) and position the treatment pane inside a portal's opening. */
+  _ensureThresholdPane(threshold) {
+    if (!threshold) return null;
+    const preset = this._thresholdPreset || 'NONE';
+    if (preset === 'NONE') return null;
+    if (this._thresholdPane && this._thresholdPane.portalId === threshold.portalId) return this._thresholdPane;
+    this._disposeThresholdPane();
+
+    // Tuned apart deliberately: ADAPTED is the source's character carried over,
+    // SUBTLE is the restrained reading of the same optics.
+    const tuning = preset === 'ADAPTED'
+      ? { roughness: 0.34, thickness: 0.85, ior: 1.28, rim: 0.5, rimColour: 0xbfae8e, tint: 0xe8e2d4 }
+      : { roughness: 0.14, thickness: 0.3, ior: 1.08, rim: 0.16, rimColour: 0xd8cfbc, tint: 0xf2ede3 };
+
+    const group = new THREE.Group();
+    group.name = `threshold-treatment:${threshold.portalId}`;
+
+    const material = new THREE.MeshPhysicalMaterial({
+      color: tuning.tint,
+      transparent: true,
+      opacity: 0,
+      transmission: 1,
+      roughness: tuning.roughness,
+      thickness: tuning.thickness,
+      ior: tuning.ior,
+      metalness: 0,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    const pane = new THREE.Mesh(
+      new THREE.PlaneGeometry(threshold.width * 0.995, threshold.height * 0.995),
+      material
+    );
+    // Standing in the plane of the wall, facing along the crossing axis.
+    pane.position.set(threshold.centre[0], threshold.centre[1] + threshold.height / 2, threshold.centre[2]);
+    if (Math.abs(threshold.axis[0]) > 0.5) pane.rotation.y = Math.PI / 2;
+    group.add(pane);
+
+    // A response at the edge, not a ring around it: the jamb is already the
+    // frame, so this only lets the aperture catch light as you pass through.
+    const rimMaterial = new THREE.MeshBasicMaterial({
+      color: tuning.rimColour, transparent: true, opacity: 0, depthWrite: false,
+      blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+    });
+    const rim = new THREE.Mesh(
+      new THREE.RingGeometry(Math.min(threshold.width, threshold.height) * 0.46,
+        Math.min(threshold.width, threshold.height) * 0.5, 4, 1),
+      rimMaterial
+    );
+    rim.position.copy(pane.position);
+    rim.rotation.copy(pane.rotation);
+    rim.rotation.z = Math.PI / 4;
+    rim.scale.set(threshold.width / Math.min(threshold.width, threshold.height), threshold.height / Math.min(threshold.width, threshold.height), 1);
+    group.add(rim);
+
+    this.scene.add(group);
+    this._thresholdPane = { portalId: threshold.portalId, group, material, rimMaterial, tuning, preset };
+    return this._thresholdPane;
+  }
+
+  _disposeThresholdPane() {
+    const pane = this._thresholdPane;
+    if (!pane) return;
+    this.scene.remove(pane.group);
+    disposeObject(pane.group);
+    this._thresholdPane = null;
+  }
+
+  /**
+   * Drive the treatment across a crossing. `t` is the crossing's own progress,
+   * so the surface is strongest as the aperture is passed and gone by the time
+   * the camera lands — nothing survives to the endpoint.
+   */
+  setThresholdProgress(threshold, t) {
+    if ((this._thresholdPreset || 'NONE') === 'NONE') return;
+    const pane = this._ensureThresholdPane(threshold);
+    if (!pane) return;
+    const k = Math.min(Math.max(t, 0), 1);
+    // Peaks in the aperture, zero at both ends, zero slope at the ends.
+    const a = 1 - Math.min(Math.abs(k - 0.5) / 0.5, 1);
+    const bump = a * a * (3 - 2 * a);
+    pane.material.opacity = bump * (pane.preset === 'ADAPTED' ? 0.62 : 0.26);
+    pane.rimMaterial.opacity = bump * pane.tuning.rim * 0.5;
+    pane.group.visible = bump > 0.001;
+  }
+
+  /**
    * While locked, `activateSpace` places the room but does not touch the
    * atmosphere. Owned by whoever is blending it — today, a crossing.
    */

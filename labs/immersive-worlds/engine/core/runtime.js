@@ -483,8 +483,12 @@ export class Runtime {
       holdHeight: intent.holdHeight,
       apertureFov: intent.apertureFov,
       pin: intent.pin,
-      onProgress: ({ atmosphere }) => {
+      onProgress: ({ atmosphere, e }) => {
         this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, atmosphere);
+        // The threshold treatment rides the same clock. It is a visual layer and
+        // cannot reach the camera, the endpoint or the handoff — it only decides
+        // what the aperture looks like while it is being passed.
+        this.sceneKit.setThresholdProgress?.(threshold, e);
       },
       // 4 — the handoff. Which room you are in changes when you pass through the
       // opening, which is both the truthful moment and the invisible one.
@@ -512,6 +516,7 @@ export class Runtime {
       // 5 — land, release the atmosphere onto the destination exactly, give the
       // camera back.
       onComplete: () => {
+        this.sceneKit.setThresholdProgress?.(threshold, 1);
         // Exact, not almost: the blend is applied at 1 before the holds go, so the
         // destination's own atmosphere is what the room is left with.
         this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, 1);

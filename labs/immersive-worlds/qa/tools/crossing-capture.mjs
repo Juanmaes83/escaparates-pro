@@ -22,6 +22,7 @@ const arg = (name, fallback = null) => {
 const BEAT = arg('beat', 'step.08-paso-galeria-b');
 const LABEL = arg('label', 'crossing');
 const FRAMES = Number(arg('frames', '7'));
+const VARIANT = arg('variant', 'A');
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const MODULE_ROOT = path.resolve(HERE, '..', '..');
@@ -49,7 +50,7 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 page.setDefaultTimeout(900000);
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
-await page.goto(`${BASE}/index.html?tier=HIGH`, { waitUntil: 'load' });
+await page.goto(`${BASE}/index.html?tier=HIGH&portalVariant=${VARIANT}`, { waitUntil: 'load' });
 await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 900000 });
 await page.evaluate(() => { window.__IW.hud.el.veil.hidden = true; });
 
@@ -187,7 +188,7 @@ const owners = [...new Set(crossingFrames.map((t) => t.owner))];
 const handoffIndex = trace.findIndex((t) => t.space === arrival.toSpace);
 
 const report = {
-  label: LABEL, beat: BEAT, generatedAt: new Date().toISOString(), ...arrival,
+  label: LABEL, variant: VARIANT, beat: BEAT, generatedAt: new Date().toISOString(), ...arrival,
   frames: crossingFrames.length,
   owners,
   handoffIndex,

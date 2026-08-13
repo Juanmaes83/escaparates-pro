@@ -146,6 +146,12 @@ export async function boot() {
   hud.setLoadingProgress(1, 'La sala está preparada');
   runtime.startLoop();
 
+  // Portal treatment variant, for the Block 2B visual comparison. Default is the
+  // approved architectural crossing; the others exist to be looked at, and
+  // nothing about them survives a page load that does not ask for one.
+  const portalVariant = (params.get('portalVariant') || 'A').toUpperCase();
+  sceneKit.setThresholdTreatment?.({ A: 'NONE', B: 'ADAPTED', C: 'SUBTLE' }[portalVariant] || 'NONE');
+
   const requestedState = params.get('state');
   installProbe({ runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion });
 
