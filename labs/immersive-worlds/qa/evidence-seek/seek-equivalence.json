@@ -1,6 +1,6 @@
 {
- "runId": "seek-2026-08-13T11-48-30-105Z",
- "generatedAt": "2026-08-13T11:54:09.107Z",
+ "runId": "seek-2026-08-13T11-59-58-315Z",
+ "generatedAt": "2026-08-13T12:03:14.733Z",
  "stops": [
   {
    "id": "step.01-entrada",
@@ -47,8 +47,8 @@
   {
    "label": "early",
    "tourStepId": "step.03-lleva-horizonte",
-   "playbackMs": 20380,
-   "seekMs": 5906,
+   "playbackMs": 24459,
+   "seekMs": 1656,
    "playback": {
     "step": "step.03-lleva-horizonte",
     "tourStep": "step.03-lleva-horizonte",
@@ -134,8 +134,8 @@
   {
    "label": "mid",
    "tourStepId": "step.06h-lleva-vasija",
-   "playbackMs": 42261,
-   "seekMs": 38319,
+   "playbackMs": 43253,
+   "seekMs": 3227,
    "playback": {
     "step": "step.06h-lleva-vasija",
     "tourStep": "step.06h-lleva-vasija",
@@ -221,8 +221,8 @@
   {
    "label": "late",
    "tourStepId": "step.10c-lleva-cuaderno",
-   "playbackMs": 75126,
-   "seekMs": 124607,
+   "playbackMs": 72365,
+   "seekMs": 19740,
    "playback": {
     "step": "step.10c-lleva-cuaderno",
     "tourStep": "step.10c-lleva-cuaderno",
