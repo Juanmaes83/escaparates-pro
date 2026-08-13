@@ -202,6 +202,19 @@ labs/immersive-worlds/qa/evidence-crossing/crossing-review.html
 labs/immersive-worlds/qa/evidence-crossing/crossing.json
 ```
 
+Measured closure:
+
+- 19/19 crossing checks; one camera authority throughout, 0 violations;
+- 21/21 curve properties proved without a browser;
+- 7/7 abandoned-crossing hold/leak checks;
+- handoff `0.022 m` from the wall plane, mid-flight at frame 192 of 281;
+- endpoint lock and join to the next beat both exactly `0.0`;
+- 0 path frames outside the aperture;
+- reduced motion `1100 ms` over the same `5.28 m` path, not a teleport;
+- **68 QA contracts covered, 0 failures**, across three resumed runs whose union is exact and was computed against the runner's declared check ids rather than by summing green summaries.
+
+The QA resume gate is now `boot | tour | grammar | detail`. It was split twice during this block because three runs that each reported clean still left nine contracts uncovered between stage boundaries.
+
 First-party inspection outcome — the source was read in full before any code, and §6's authorisation was **partially declined on evidence**: the `WebGLRenderTarget` / `frameCorners` / synced-camera machinery exists to see one scene from another at the same coordinates, and Museum's rooms genuinely share a wall with a real opening in it. Reused instead: crossing choreography, warmup/readiness discipline, and plane-accurate room handoff. Recorded as `IW-DEC-030`.
 
 Open for the human gate:

@@ -176,9 +176,17 @@ restart" — it is "map first".** Cheap validation still came first: 21 curve
 properties and 19 crossing checks, both of which found real defects (§4.1, §4.2),
 ran before the expensive suite.
 
-The suite is covered by two runs whose union is complete, the same shape as Block
-2A's closure and for the same reason — the first run's browser was lost mid-flight.
-See §5.
+**68 contracts covered, zero failures**, across three runs whose union is exact:
+
+| Run | Checks | Result |
+|---|---|---|
+| `IW_QA_FROM=boot` — browser lost after `PROJECTION-NO-PANEL` | 30 | 30 ok |
+| `IW_QA_FROM=tour` — browser lost inside the grammar section | 14 | 14 ok |
+| `IW_QA_FROM=grammar` — ran to the end | 28 | 28 ok |
+| **Union** | **68 unique, no gap** | only the two static file checks overlap |
+
+The union was computed against the runner's declared check ids, not by adding up
+three green summaries — see §4.6.
 
 ## 4. What was found by measuring
 
@@ -242,6 +250,36 @@ was never exercised at all.
 **Correction:** an oblique-departure case alongside the real one. **A property that
 holds trivially for the geometry you have proves nothing about the mechanism**, and
 a green result is the easiest place in the world to stop looking.
+
+### 4.6 Three green runs can still leave a hole
+
+**Symptom:** three QA runs each reported clean, and their union covered 59 of 68
+contracts. The nine missing were the grammar, Collection Browse and warmup checks
+— including the ones that assert *who is in frame at each beat*, which is exactly
+what this block's two reported defects are about.
+**Cause:** a run that dies mid-stage leaves a gap between two stage boundaries, and
+no single run's summary can show it. Each run truthfully reported everything it
+ran.
+**Correction:** compute the union against the runner's declared check ids and
+subtract, rather than adding up "ok" lines. Then split the stage that was lost, so
+the resume granularity matches the unit of work actually being lost — which is the
+same correction as §4.8 of Block 2A, needed twice more here because each time the
+gate was still coarser than the thing going missing. **A partial run's headline
+number is a claim about that run, never about the suite.**
+
+### 4.7 An option the library ignores is not a setting
+
+**Symptom:** the states-section timeout was raised from 45 s to 240 s and the next
+run failed at the same line, still reporting 90 s.
+**Cause:** in Playwright 1.56, `context.setDefaultTimeout()` overrides a per-call
+`timeout` for `waitForFunction` — the reverse of the usual precedence. Verified in
+isolation: an explicit 6000 ms failed after 2005 ms under a context default of
+2000.
+**Correction:** set it where the library reads it, and restore it afterwards so one
+slow section does not give the whole suite four minutes of rope. The wider finding
+is that **every inline timeout in that file is decorative**, which is a trap for
+whoever next reaches for one — so the note lives at the line, not in a commit
+message.
 
 ## 5. What was not changed
 

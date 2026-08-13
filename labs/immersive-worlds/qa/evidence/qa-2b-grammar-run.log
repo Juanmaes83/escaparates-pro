@@ -1,0 +1,32 @@
+  ok   ENGINE-PURITY              engine/ no importa Three.js ni toca el DOM  — 23 archivos revisados
+  ok   PROTECTED-PATHS            Las rutas protegidas siguen presentes
+  ·· reanudación desde «grammar»: se omiten las secciones ya verificadas en la corrida previa
+  ok   GRAMMAR-ARTWORK-ABCD       Cada parada de obra convencional recorre A → B → C → D en ese orden  — 02:·ABCD · 03:ABCD · 04:ABCD · 05:ABCD · 08:ABCD
+  ok   GRAMMAR-C-VISITOR-NOT-GUIDE En la contemplación humana hay una figura visitante y la guía ya no media  — 03c-campo-contemplacion visitante=true guía=false · 04c-horizonte-contemplacion visitante=true guía=false · 06c-division-contemplacion visitante=true guía=false · 06f-estudio-contemplacion visitante=true guía=false · 06j-vasija-escala visitante=true guía=false · 10f-noche-contemplacion visitante=true guía=false
+  ok   GRAMMAR-D-NO-VISITOR-FIGURE El POV puro de la obra no contiene la figura visitante  — 03d-campo-cesion · 04b-horizonte-cesion · 06b-division-cesion · 06g-estudio-cesion · 10b-noche-cesion
+  ok   GRAMMAR-SCULPTURE-ABCD     La escultura recorre contexto → atención → escala → detalle espacial, y su detalle queda sin figuras  — 06h-lleva-vasija:ABCD
+  ok   GRAMMAR-PROJECTION-D-NO-GUIDE En el dwell de la proyección no hay guía ni figura: sólo la obra  — guía=false visitante=false
+  ok   BROWSE-MOVES-THE-CAMERA    Navegar la colección lleva la cámara a la obra que dice la cartela  — campo-de-ceniza@-4.06,1.85,-12.4 · division-tercera@5.1,1.71,-12.59 · campo-de-ceniza@-3.94,1.85,-12.4
+  ok   BROWSE-DOES-NOT-MOVE-THE-TOUR La obra visitada no reescribe en silencio la posición del recorrido  — parada step.03-lleva-horizonte · beat 9 durante 3 saltos
+  ok   BROWSE-RETURNS-TO-ORIGIN   Salir de la colección devuelve exactamente a la parada y el beat de origen  — step.04b-horizonte-cesion · DIRECTED · pose -0.9,1.89,-12.09
+  ok   WARMUP-COMPILES            El warmup compila programas de verdad, no una escena vacía  — 61 programas compilados
+  ok   DETAIL-NAVIGATION          En detalle se pasa de una obra a la siguiente sin volver a la sala  — entity.artwork.horizonte-interrumpido → entity.artwork.campo-de-ceniza
+  ok   DETAIL-ZOOM                El zoom de inspección acerca realmente la cámara a la obra  — 3.80 m → 1.71 m
+  ok   ESCAPE-IN-FOCUS            Escape saca del detalle aunque el movimiento esté desactivado
+  ok   DETAIL-RETURN              Tras recorrer varias obras el visitante vuelve donde estaba de pie  — [-0.9,1.62,-12.09]
+  ok   DETAIL-NO-VIOLATIONS       La navegación en detalle no rompe la autoridad de cámara  — 0
+  ok   A11Y-OUTLINE               Todo el contenido existe como texto fuera del canvas  — 21 obras en 4 salas (11 entidades)
+  ok   STATES-DETERMINISTIC       Todos los estados nombrados se reproducen y capturan  — 23/23 estados
+  ok   PERF-CAPTURED              Medición de rendimiento capturada (SwiftShader, sin GPU)  — p50 1.6 ms · p95 4.4 ms · 43 draws · 1821 tris
+  ok   MOBILE-TIER                El tier LOW desactiva realmente sombras y limita el DPR  — dpr 0.85, sombras false
+  ok   MOBILE-FRAMING             El encuadre se recalcula para pantalla vertical  — vfov 66°, distancia 8.32 m
+  ok   MOBILE-NO-OVERFLOW         Sin desbordamiento horizontal en móvil
+  ok   SECOND-WORLD               Un segundo mundo funciona sobre el mismo motor y el mismo Scene Kit  — Sala de exposiciones — demostración institucional · 2 salas · 4 archivos
+  ok   WORLD-DRIVEN-IDENTITY      La interfaz toma la identidad del mundo, no de una constante  — Institución de demostración
+  ok   AUTHOR-EDITS-DATA          La autoría edita el registro canónico y reconstruye la sala
+  ok   AUTHOR-SEPARATE-CAMERA     Author Mode usa su propia autoridad de cámara  — AUTHOR
+  ok   AUTHOR-NOT-EXPERIENCE      La superficie de autoría no contiene la UI del visitante
+  ok   AUTHOR-NO-ERRORS           La autoría arranca sin errores
+
+28/28 comprobaciones superadas (PARCIAL desde «grammar» — léase junto a la corrida que continúa)
+Evidencia: labs/immersive-worlds/qa/evidence
