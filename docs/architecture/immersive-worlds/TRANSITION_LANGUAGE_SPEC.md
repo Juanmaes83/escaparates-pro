@@ -62,6 +62,28 @@ replace it.
 **Not a family:** the portal crossing itself. That stays an explicit cut until the
 room-transition block says otherwise, and it stays a separate verb.
 
+> **Superseded by T6 in Block 2B.** The room-transition block said otherwise. The
+> crossing is now a family and a separate verb both: it extends T5 rather than
+> replacing it — T5 still delivers the camera to the doorway, on the endpoint it
+> always had, and T6 takes it from there. See `BLOCK_2B_ROOM_CROSSING.md`.
+
+### T6 · ROOM CROSSING
+*Doorway → the next room.* Umbral → Galería B.
+
+The one relationship the in-room families cannot express: the next beat is
+somewhere the visitor is not yet standing. Decided by the beat's intent — a
+`PORTAL` shot — never by distance, and executed by a dedicated camera authority
+rather than by the Directed controller, because a crossing outlives the beat that
+starts it and belongs to neither room.
+
+Three legs on one clock: square up to the aperture, pass exactly through it, settle
+onto the authored arrival pose. The room handoff fires on the frame the camera
+passes the threshold plane, and the two rooms' atmospheres resolve across the
+opening instead of switching on one frame.
+
+**Still not a family:** a `TELEPORT` portal. There is no line of sight to fly
+through, so a crossing would be a lie about the building. Those stay cuts.
+
 ---
 
 ## 3. Shared principles

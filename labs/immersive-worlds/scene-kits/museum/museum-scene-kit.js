@@ -342,7 +342,7 @@ export class MuseumSceneKit extends SceneKit {
 
     this.scene.add(group);
     return {
-      spaceId: space.id, group, space, profile, spots, entities, hotspotMarks, blockers,
+      spaceId: space.id, group, space, profile, spots, entities, hotspotMarks, blockers, openings,
       materials, mediaSrcs: [...this._mediaRefs.entries()].filter(([id]) => entities.has(id)).map(([, src]) => src)
     };
   }
@@ -371,6 +371,11 @@ export class MuseumSceneKit extends SceneKit {
 
   activateSpace(handle) {
     handle.group.visible = true;
+    // A crossing is already interpolating fog, background and exposure across
+    // the doorway. Activation happens in the middle of that, so letting it stamp
+    // the destination's atmosphere would put back exactly the one-frame cut the
+    // crossing exists to remove.
+    if (this._atmosphereLock) return;
     const profile = handle.profile;
     this.scene.fog = profile.fog
       ? new THREE.Fog(profile.fog.color, profile.fog.near, profile.fog.far)
@@ -956,6 +961,106 @@ export class MuseumSceneKit extends SceneKit {
     pose.position[2] = Math.min(Math.max(pose.position[2], oz - bd / 2 + inset), oz + bd / 2 - inset);
     pose.position[1] = Math.min(pose.position[1], oy + bh - 0.4);
     return { ...pose, subjectSize: space.bounds.size };
+  }
+
+  /**
+   * The spatial facts of a doorway, for whoever has to fly a camera through it.
+   *
+   * This is a WHERE answer and nothing more: the hole in the wall, how wide and
+   * how tall it is, which way is *out*, and the one point a camera has to pass
+   * through to be inside it. It says nothing about what a crossing means or how
+   * fast it should be — those belong to the Director and to the crossing
+   * mechanism respectively.
+   *
+   * The outward axis is derived from which wall the opening was cut into, not
+   * from the source anchor's normal: anchor normals in the world file point into
+   * whichever room the author was thinking about at the time, and half of them
+   * point the other way. The wall cannot be ambiguous.
+   *
+   * @param {string} portalId
+   * @param {{eyeHeight?:number}} [options]
+   * @returns {{portalId:string, spaceId:string, centre:number[], gate:number[],
+   *            axis:number[], lateral:number[], width:number, height:number}|null}
+   */
+  thresholdFor(portalId, options = {}) {
+    const eyeHeight = options.eyeHeight ?? 1.62;
+    for (const handle of this._spaces.values()) {
+      const opening = (handle.openings || []).find((candidate) => candidate.portalId === portalId);
+      if (!opening) continue;
+
+      const axis = {
+        NORTH: [0, 0, -1], SOUTH: [0, 0, 1], WEST: [-1, 0, 0], EAST: [1, 0, 0]
+      }[opening.wall];
+      if (!axis) return null;
+
+      const [ax, oy, az] = opening.worldPosition;
+      return {
+        portalId,
+        spaceId: handle.spaceId,
+        wall: opening.wall,
+        centre: [ax, oy, az],
+        // The camera passes through the middle of the opening at eye height —
+        // the same point a walking visitor's eyes would.
+        gate: [ax, oy + eyeHeight, az],
+        axis,
+        // Sideways in the plane of the opening; a containment check needs it.
+        lateral: [axis[2], 0, -axis[0]],
+        width: opening.width,
+        height: opening.height
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Hold the camera between two rooms' atmospheres.
+   *
+   * Every room owns its fog, its background and its exposure, and `activateSpace`
+   * applies them in one frame. That is right for arriving somewhere, and wrong
+   * for *walking* somewhere: crossing into the dark chamber, the whole image used
+   * to change on a single frame while the camera was still mid-stride. The move
+   * was continuous and the light was a cut, which reads as a worse artefact than
+   * the cut it replaced.
+   *
+   * At t=1 this is byte-for-byte what `activateSpace(to)` would have set, so the
+   * blend can only decide *when* the room changes, never *what* it changes to.
+   *
+   * @param {string} fromSpaceId
+   * @param {string} toSpaceId
+   * @param {number} t 0 = origin room, 1 = destination room
+   */
+  /**
+   * While locked, `activateSpace` places the room but does not touch the
+   * atmosphere. Owned by whoever is blending it — today, a crossing.
+   */
+  setAtmosphereLock(locked) {
+    this._atmosphereLock = Boolean(locked);
+  }
+
+  blendAtmosphere(fromSpaceId, toSpaceId, t) {
+    const from = this._spaces.get(fromSpaceId)?.profile;
+    const to = this._spaces.get(toSpaceId)?.profile;
+    if (!from || !to) return;
+    const k = Math.min(Math.max(t, 0), 1);
+    const mix = (a, b) => a + (b - a) * k;
+
+    this.renderHost.renderer.toneMappingExposure = mix(from.exposure, to.exposure);
+    this.scene.background = new THREE.Color(from.background).lerp(new THREE.Color(to.background), k);
+
+    // A room without fog is a room whose fog is infinitely far away. Treating it
+    // that way lets one expression cover fog→fog, none→fog and fog→none.
+    const CLEAR = { color: null, near: 60, far: 4000 };
+    const a = from.fog || { ...CLEAR, color: from.background };
+    const b = to.fog || { ...CLEAR, color: to.background };
+    if (!from.fog && !to.fog) {
+      this.scene.fog = null;
+      return;
+    }
+    this.scene.fog = new THREE.Fog(
+      new THREE.Color(a.color).lerp(new THREE.Color(b.color), k).getHex(),
+      mix(a.near, b.near),
+      mix(a.far, b.far)
+    );
   }
 
   /* == presentation state =================================================== */

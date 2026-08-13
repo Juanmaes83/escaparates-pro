@@ -174,6 +174,11 @@ export class ExperienceDirector {
   _transitionFamily(previous, step) {
     if (!previous) return null;
 
+    // Leaving the room is not a kind of moving around it. A portal beat is the
+    // only beat whose destination is somewhere the visitor is not yet standing,
+    // and that is a difference in meaning, not in distance.
+    if (step.shotIntent === SHOT_INTENT.PORTAL) return TRANSITION.CROSSING;
+
     // A threshold destination is a threshold approach, whatever the distance.
     if (!step.subjectRef || this.store.kindOf(step.subjectRef) === 'SPACE') {
       return TRANSITION.THRESHOLD;
@@ -365,8 +370,13 @@ export class ExperienceDirector {
     this.stepElapsed += dt;
     if (this.stepElapsed < step.duration) return;
 
-    if (this._waitsForGuide(step) && this.stepElapsed < step.duration * 2) {
-      if (this.ports.guideSettled && !this.ports.guideSettled()) return;
+    if (this.stepElapsed < step.duration * 2) {
+      if (this._waitsForGuide(step) && this.ports.guideSettled && !this.ports.guideSettled()) return;
+      // Same discipline, same bound, one room further out: a crossing ends when
+      // the visitor is through the door, not when a number runs out. Advancing on
+      // the clock alone would cut the move off mid-doorway and hand the next beat
+      // a camera standing inside a wall.
+      if (this._waitsForCrossing(step) && this.ports.crossingActive?.()) return;
     }
     this._advance();
   }
@@ -374,6 +384,11 @@ export class ExperienceDirector {
   /** A step whose next composition depends on the guide having got there. */
   _waitsForGuide(step) {
     return step.shotIntent === SHOT_INTENT.LEAD && Boolean(step.guide);
+  }
+
+  /** A step that is still flying the visitor into the next room. */
+  _waitsForCrossing(step) {
+    return step.shotIntent === SHOT_INTENT.PORTAL;
   }
 
   _advance() {
@@ -405,7 +420,17 @@ export class ExperienceDirector {
     // through the same Action vocabulary an Explore hotspot would use.
     let pending = null;
     if (step.action) {
-      pending = this.ports.dispatch(step.action, { source: 'EXPERIENCE', sourceId: step.id });
+      // A portal action is the one action whose *camera* consequence the Director
+      // has to decide up front, because the room handoff happens in the middle of
+      // the move rather than before it. So the intent travels with the action:
+      // the Director says this is a crossing and what character it has, the
+      // runtime executes it, and the Scene Kit is asked only where the hole in
+      // the wall is.
+      pending = this.ports.dispatch(step.action, {
+        source: 'EXPERIENCE',
+        sourceId: step.id,
+        crossing: this._crossingIntent(previous, step)
+      });
     } else if (step.subjectRef && this.store.kindOf(step.subjectRef) === 'ENTITY') {
       // A shot about a work is also a focus of that work: Guided and Explore
       // leave the same trace in World State.
@@ -421,16 +446,34 @@ export class ExperienceDirector {
     if (pending && typeof pending.then === 'function') {
       // Kept on the instance so a seek can await exactly this beat's work instead
       // of guessing at it with a timer.
-      this._pendingStep = pending.then(() => this._applyShot(step)).catch((error) => {
+      this._pendingStep = pending.then((result) => this._applyShot(step, result)).catch((error) => {
         this.bus.emit(EVENTS.ASSET_ERROR, { stepId: step.id, message: String(error?.message || error) });
       });
     } else {
       this._pendingStep = null;
-      this._applyShot(step);
+      this._applyShot(step, pending);
     }
   }
 
-  _applyShot(step) {
+  /**
+   * The crossing this portal beat is, if it is one.
+   *
+   * Character only. Duration is left to be derived from the distance the camera
+   * actually has to cover, which is not knowable here — the destination room may
+   * not be built yet.
+   */
+  _crossingIntent(previous, step) {
+    if (step.shotIntent !== SHOT_INTENT.PORTAL) return null;
+    if (this._transitionFamily(previous, step) !== TRANSITION.CROSSING) return null;
+    // A crossing may not outrun the beat that contains it. The beat waits for the
+    // move the way a lead waits for the guide, but that wait is bounded, so the
+    // move has to fit inside the bound rather than rely on it.
+    const budget = Math.max(step.duration || 3, 1) * 2000 * 0.85;
+    const shape = TRANSITION_SHAPE[TRANSITION.CROSSING];
+    return { family: TRANSITION.CROSSING, ...shape, max: Math.min(shape.max, budget) };
+  }
+
+  _applyShot(step, actionResult = null) {
     // The visitor may have skipped or exited while a Space was loading.
     if (this.currentStep?.id !== step.id) return;
 
@@ -482,7 +525,10 @@ export class ExperienceDirector {
       }
 
       this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent, transition: family });
-      if (step.shotIntent === SHOT_INTENT.PORTAL || travelMs === 0) this.ports.snapTo(pose);
+      if (actionResult?.cameraHandled) {
+        // The crossing owns the camera until it lands, and it lands on this same
+        // pose. Writing here would be a second authority for the same beat.
+      } else if (step.shotIntent === SHOT_INTENT.PORTAL || travelMs === 0) this.ports.snapTo(pose);
       else {
         this.ports.playShot(pose, {
           travelMs,
@@ -539,7 +585,11 @@ export const TRANSITION = Object.freeze({
   LOCAL: 'T2_LOCAL_WALK',
   TRAVERSE: 'T3_GALLERY_TRAVERSE',
   ORBIT: 'T4_OBJECT_ORBIT',
-  THRESHOLD: 'T5_THRESHOLD_APPROACH'
+  THRESHOLD: 'T5_THRESHOLD_APPROACH',
+  // The one relationship the in-room families cannot express: the next beat is
+  // in a different room. Block 2A stopped at the threshold on purpose and
+  // recorded that portals were still cuts; this is that limitation closed.
+  CROSSING: 'T6_ROOM_CROSSING'
 });
 
 /** Shaping per family. Distance scales duration; these set the character. */
@@ -548,7 +598,17 @@ const TRANSITION_SHAPE = {
   [TRANSITION.LOCAL]: { flat: 0.45, lead: 0.18, holdHeight: false, waypoint: true, speed: 1.4, min: 900, max: 3200 },
   [TRANSITION.TRAVERSE]: { flat: 0.7, lead: 0.4, holdHeight: true, waypoint: true, speed: 1.6, min: 1600, max: 5200 },
   [TRANSITION.ORBIT]: { flat: 0.35, lead: 0.0, holdHeight: false, waypoint: true, speed: 1.1, min: 1100, max: 3000 },
-  [TRANSITION.THRESHOLD]: { flat: 0.55, lead: 0.5, holdHeight: true, waypoint: true, speed: 1.4, min: 1400, max: 4200 }
+  [TRANSITION.THRESHOLD]: { flat: 0.55, lead: 0.5, holdHeight: true, waypoint: true, speed: 1.4, min: 1400, max: 4200 },
+  // Slower than a gallery traverse. You do not stride through a doorway you are
+  // being shown; the pace is the point, and it is also what gives the eye time
+  // to adapt to a room lit for light-sensitive work.
+  [TRANSITION.CROSSING]: {
+    flat: 0.62, lead: 0.42, holdHeight: true, waypoint: false, speed: 1.35, min: 2000, max: 5000,
+    // Degrees of fov breath at the aperture, and how hard the look is held
+    // through it. Both vanish before the move ends, so neither can shift the
+    // pose the beat was authored to land on.
+    apertureFov: 2.5, pin: 0.55
+  }
 };
 
 function travelForIntent(intent, duration) {

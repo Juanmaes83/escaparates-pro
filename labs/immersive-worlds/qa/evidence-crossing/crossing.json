@@ -1,0 +1,5756 @@
+{
+ "runId": "crossing-2026-08-13T06-35-33-292Z",
+ "prefetchWaitedMs": 0,
+ "generatedAt": "2026-08-13T06:36:13.481Z",
+ "portal": "portal.gallery-a-gallery-b",
+ "threshold": {
+  "portalId": "portal.gallery-a-gallery-b",
+  "spaceId": "space.gallery-a",
+  "wall": "EAST",
+  "centre": [
+   8,
+   0,
+   -10
+  ],
+  "gate": [
+   8,
+   1.62,
+   -10
+  ],
+  "axis": [
+   1,
+   0,
+   0
+  ],
+  "lateral": [
+   0,
+   0,
+   -1
+  ],
+  "width": 2.6,
+  "height": 3
+ },
+ "arrivalPose": {
+  "position": [
+   9.7,
+   1.62,
+   -10
+  ],
+  "target": [
+   13.7,
+   1.5,
+   -10
+  ],
+  "subjectSize": [
+   12,
+   4.4,
+   10
+  ]
+ },
+ "before": {
+  "pose": {
+   "position": [
+    3.4,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.5,
+    1.26,
+    -10
+   ],
+   "fov": 55
+  },
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "destinationState": "READY",
+  "destinationVisible": true,
+  "exposure": 0.95,
+  "threshold": {
+   "portalId": "portal.gallery-a-gallery-b",
+   "spaceId": "space.gallery-a",
+   "wall": "EAST",
+   "centre": [
+    8,
+    0,
+    -10
+   ],
+   "gate": [
+    8,
+    1.62,
+    -10
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "lateral": [
+    0,
+    0,
+    -1
+   ],
+   "width": 2.6,
+   "height": 3
+  },
+  "arrivalPose": {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "subjectSize": [
+    12,
+    4.4,
+    10
+   ]
+  }
+ },
+ "landing": {
+  "pose": {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55
+  },
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "step": "step.08-paso-galeria-b",
+  "exposure": 1.05
+ },
+ "after": {
+  "pose": {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55
+  },
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "exposure": 1.05,
+  "violations": 0,
+  "authorityHistory": [
+   {
+    "from": "EXPLORE",
+    "to": "DIRECTED",
+    "reason": "route:route.comentado",
+    "durationMs": 0,
+    "frame": 4
+   },
+   {
+    "from": "DIRECTED",
+    "to": "TRANSITION",
+    "reason": "crossing:portal.lobby-gallery-a",
+    "durationMs": 0,
+    "frame": 4
+   },
+   {
+    "from": "TRANSITION",
+    "to": "DIRECTED",
+    "reason": "crossing:portal.lobby-gallery-a:landed",
+    "durationMs": 0,
+    "frame": 305
+   },
+   {
+    "from": "DIRECTED",
+    "to": "TRANSITION",
+    "reason": "crossing:portal.gallery-a-gallery-b",
+    "durationMs": 0,
+    "frame": 2639
+   },
+   {
+    "from": "TRANSITION",
+    "to": "DIRECTED",
+    "reason": "crossing:portal.gallery-a-gallery-b:landed",
+    "durationMs": 0,
+    "frame": 2920
+   }
+  ],
+  "events": [
+   {
+    "at": 192,
+    "portalId": "portal.gallery-a-gallery-b",
+    "spaceId": "space.gallery-b",
+    "behaviour": "CONTINUOUS",
+    "preparedOnDemand": false,
+    "waitedMs": 0,
+    "crossing": true,
+    "source": "EXPERIENCE"
+   },
+   {
+    "at": 280,
+    "portalId": "portal.gallery-a-gallery-b",
+    "spaceId": "space.gallery-b",
+    "phase": "LANDED",
+    "crossing": true
+   }
+  ],
+  "workingSet": [
+   {
+    "spaceId": "space.gallery-a",
+    "state": "COOLING"
+   },
+   {
+    "spaceId": "space.gallery-b",
+    "state": "ACTIVE"
+   }
+  ]
+ },
+ "continuation": {
+  "step": "step.09-lleva-noche",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "joinDelta": 0
+ },
+ "repeat": [
+  {
+   "portalId": "portal.gallery-b-gallery-a",
+   "cameraHandled": true,
+   "warmedMs": 130,
+   "planningMs": 129.8,
+   "travelMs": 5000,
+   "frames": 301,
+   "medianFrameMs": 0,
+   "worstFrameMs": 0.8,
+   "landedAt": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "arrival": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "space": "space.gallery-a"
+  },
+  {
+   "portalId": "portal.gallery-a-gallery-b",
+   "cameraHandled": true,
+   "warmedMs": 101,
+   "planningMs": 101.1,
+   "travelMs": 5000,
+   "frames": 301,
+   "medianFrameMs": 0,
+   "worstFrameMs": 0.6,
+   "landedAt": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "arrival": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "space": "space.gallery-b"
+  }
+ ],
+ "metrics": {
+  "crossingFrames": 280,
+  "handoffFrame": 192,
+  "handoffDistanceFromWall": 0.0222,
+  "endpointDelta": 0,
+  "endpointTargetDelta": 0,
+  "maxTurnPerFrameDeg": 0,
+  "worstExposureJump": 0.0013,
+  "exposureFrom": 0.95,
+  "exposureTo": 1.05,
+  "apertureFramesOutside": 0
+ },
+ "checks": [
+  {
+   "name": "one camera authority for the whole crossing",
+   "ok": true,
+   "detail": "TRANSITION"
+  },
+  {
+   "name": "no camera authority violations",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "the crossing is a move, not a cut",
+   "ok": true,
+   "detail": "280 frames"
+  },
+  {
+   "name": "handoff happens inside the doorway",
+   "ok": true,
+   "detail": "0.022 m from the wall plane"
+  },
+  {
+   "name": "handoff happens mid-flight, not before",
+   "ok": true,
+   "detail": "frame 192 of 281"
+  },
+  {
+   "name": "destination built and visible before the camera moves",
+   "ok": true,
+   "detail": "READY, visible=true, prefetch took 0 ms"
+  },
+  {
+   "name": "camera stays inside the aperture",
+   "ok": true,
+   "detail": "0 of 36 wall frames outside"
+  },
+  {
+   "name": "lands on the authored arrival pose",
+   "ok": true,
+   "detail": "Δ 0.0e+0 m / 0.0e+0 m"
+  },
+  {
+   "name": "the look never whips",
+   "ok": true,
+   "detail": "max 0.00 °/frame"
+  },
+  {
+   "name": "atmosphere resolves gradually",
+   "ok": true,
+   "detail": "largest single-frame exposure step 0.00130"
+  },
+  {
+   "name": "atmosphere lands on the destination room",
+   "ok": true,
+   "detail": "exposure 1.05"
+  },
+  {
+   "name": "authority returns to the Director",
+   "ok": true,
+   "detail": "DIRECTED"
+  },
+  {
+   "name": "the crossing lands on the portal beat, not past it",
+   "ok": true,
+   "detail": "step.08-paso-galeria-b"
+  },
+  {
+   "name": "the tour continues in Galería B",
+   "ok": true,
+   "detail": "step.09-lleva-noche in space.gallery-b"
+  },
+  {
+   "name": "the next beat starts from where the crossing landed",
+   "ok": true,
+   "detail": "join Δ 0"
+  },
+  {
+   "name": "the beat waited for the crossing instead of cutting it off",
+   "ok": true,
+   "detail": "281 frames on the portal beat"
+  },
+  {
+   "name": "a repeated crossing lands where its own room says it should",
+   "ok": true,
+   "detail": "gallery-a · gallery-b"
+  },
+  {
+   "name": "a repeated crossing is not faster than the first",
+   "ok": true,
+   "detail": "5000ms/0.8ms worst · 5000ms/0.6ms worst"
+  },
+  {
+   "name": "no console errors",
+   "ok": true,
+   "detail": "none"
+  }
+ ],
+ "shots": [
+  {
+   "id": "01_departure",
+   "file": "01_departure.png",
+   "caption": "Galería A — the threshold approach begins (T5)"
+  },
+  {
+   "id": "02_threshold",
+   "file": "02_threshold.png",
+   "caption": "T5 settled at the threshold — Galería B visible through the opening"
+  },
+  {
+   "id": "04_portal_active",
+   "file": "04_portal_active.png",
+   "caption": "Crossing under TRANSITION authority — the opening ahead"
+  },
+  {
+   "id": "05_middle",
+   "file": "05_middle.png",
+   "caption": "Mid-crossing — inside the aperture"
+  },
+  {
+   "id": "06_handoff",
+   "file": "06_handoff.png",
+   "caption": "Room handoff — the active Space changes while the camera is in the doorway"
+  },
+  {
+   "id": "07_arrival",
+   "file": "07_arrival.png",
+   "caption": "Arrival — Galería B, on the pose the beat was authored to end on"
+  },
+  {
+   "id": "08_continuation",
+   "file": "08_continuation.png",
+   "caption": "Galería B — the next beat continues from where the crossing left the camera"
+  }
+ ],
+ "trace": [
+  {
+   "position": [
+    3.400009722394015,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.500048701945718,
+    1.2600018852366084,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4000770412095016,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.500383198126591,
+    1.260014833475868,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.400257523525729,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    7.501271634820109,
+    1.2600492245736816,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4006045225941026,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.50296290598631,
+    1.260114693134954,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4011691778381734,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.505686653267777,
+    1.2602201285135914,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4020004148536303,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.509653265989638,
+    1.260373674812502,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4031449454083034,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.51505388115957,
+    1.2605827308835962,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4046472674421655,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.522060383467799,
+    1.2608539503277858,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.406549665067327,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    7.530825405287092,
+    1.2611932414949842,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4088922085680404,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.541482326672767,
+    1.261605767484107,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4117127544006998,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.554145275362687,
+    1.2620959461430719,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4150469451938403,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.568909126777262,
+    1.2626674500687973,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.418928209748135,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.585849504019449,
+    1.2633232066072044,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4233877630363994,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.605022777874751,
+    1.2640653978532161,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.428454606203592,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.6264660668112185,
+    1.2648954606507568,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4341555265668076,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.650197236979447,
+    1.2658140865927527,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4405150976152856,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    7.676214902212581,
+    1.2668212220211321,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4475556790104043,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.70449842402631,
+    1.2679160680268249,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.455297416585682,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.7350079116188715,
+    1.2690970804497628,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.463758242346779,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.767684221871048,
+    1.2703619698788793,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4729538744714974,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.80244895934617,
+    1.27170770165211,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4828978173097767,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.839204476290114,
+    1.2731304958563916,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4936013613837007,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    7.877833872631302,
+    1.2746258273276634,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5050735833874924,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.9182009959807065,
+    1.276188425650866,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.517321346187514,
+    1.62,
+    -10
+   ],
+   "target": [
+    7.960150441631844,
+    1.2778122751599423,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.530349298822272,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.003507552560777,
+    1.2794906149378364,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5441598765024103,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.048078419426115,
+    1.2812159388164948,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.558753300610715,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.093649880569016,
+    1.2829799953768652,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5741275787021114,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.139989522013183,
+    1.2847737879488974,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.590278504503669,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    8.186845677464866,
+    1.2865875746115432,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.6071996579145966,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.233947576476313,
+    1.2884108739281153,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.62488240500624,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.281080094873198,
+    1.2902353585112205,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.6433158980220917,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.328212613270084,
+    1.292059843094326,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.6624870753777805,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.375345131666972,
+    1.2938843276774312,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.6823806616610777,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.422477650063858,
+    1.2957088122605365,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.702979167631896,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.469610168460743,
+    1.2975332968436417,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7242628902222865,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.51674268685763,
+    1.299357781426747,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.746209912536443,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    8.563875205254517,
+    1.3011822660098522,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7687961038507005,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    8.611007723651403,
+    1.3030067505929575,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7919951196135333,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.65814024204829,
+    1.304831235176063,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.8157784014455562,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.705272760445176,
+    1.3066557197591682,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.840115177139525,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.752405278842062,
+    1.3084802043422734,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.8649724606603386,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.799537797238948,
+    1.3103046889253787,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.890315052145034,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    8.846670315635835,
+    1.312129173508484,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.9161055379027885,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.893802834032721,
+    1.3139536580915891,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.942304290414922,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    8.940935352429607,
+    1.3157781426746944,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.968869468334895,
+    1.62,
+    -10
+   ],
+   "target": [
+    8.988067870826494,
+    1.3176026272577999,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.9957570164883074,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.03520038922338,
+    1.319427111840905,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.022920665872902,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.082332907620266,
+    1.3212515964240104,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.050311933658558,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.129465426017154,
+    1.3230760810071156,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.077880123187302,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    9.17659794441404,
+    1.3249005655902208,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.105572323973295,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.223730462810925,
+    1.326725050173326,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.133333411702842,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.270862981207813,
+    1.3285495347564313,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.161111111111113,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.317995499604699,
+    1.3303740193395368,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.188888888888891,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.365128018001585,
+    1.332198503922642,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.216666666666669,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.41226053639847,
+    1.3340229885057473,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.244444444444446,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.459393054795358,
+    1.3358474730888525,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.272222222222225,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.506525573192244,
+    1.3376719576719578,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.3000000000000025,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.55365809158913,
+    1.339496442255063,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.32777777777778,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.600790609986017,
+    1.3413209268381685,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.355555555555558,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.647923128382901,
+    1.3431454114212735,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.3833333333333355,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.695055646779789,
+    1.344969896004379,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.411111111111113,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.742188165176675,
+    1.3467943805874842,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.438888888888891,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.78932068357356,
+    1.3486188651705895,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.466666666666669,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.836453201970446,
+    1.3504433497536947,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.494444444444447,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.883585720367332,
+    1.3522678343368,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.522222222222223,
+    1.62,
+    -10
+   ],
+   "target": [
+    9.930718238764218,
+    1.3540923189199052,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.550000000000002,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    9.977850757161104,
+    1.3559168035030105,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.577777777777779,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.024983275557991,
+    1.3577412880861157,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.605555555555557,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.072115793954877,
+    1.359565772669221,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.633333333333335,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.119248312351763,
+    1.3613902572523262,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.661111111111112,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.166380830748649,
+    1.3632147418354315,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.68888888888889,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.213513349145535,
+    1.365039226418537,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.716666666666668,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.26064586754242,
+    1.3668637110016422,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.744444444444446,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.307778385939306,
+    1.3686881955847474,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.772222222222223,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.354910904336194,
+    1.3705126801678527,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.800000000000001,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.402043422733078,
+    1.372337164750958,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.8277777777777775,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    10.449175941129965,
+    1.3741616493340632,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.855555555555556,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.496308459526851,
+    1.3759861339171684,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.883333333333333,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.543440977923737,
+    1.3778106185002736,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.9111111111111105,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.590573496320623,
+    1.379635103083379,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.938888888888889,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.637706014717509,
+    1.3814595876664844,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.966666666666667,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.684838533114396,
+    1.3832840722495896,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.9944444444444445,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.731971051511282,
+    1.3851085568326948,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.022222222222222,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.779103569908168,
+    1.3869330414158,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.05,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.826236088305054,
+    1.3887575259989053,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.0777777777777775,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.873368606701941,
+    1.3905820105820106,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.105555555555555,
+    1.62,
+    -10
+   ],
+   "target": [
+    10.920501125098825,
+    1.3924064951651158,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.133333333333334,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    10.967633643495713,
+    1.394230979748221,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.16111111111111,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.014766161892599,
+    1.3960554643313263,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.188888888888888,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.061898680289485,
+    1.3978799489144316,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.216666666666665,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.10903119868637,
+    1.399704433497537,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.244444444444444,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.156163717083256,
+    1.401528918080642,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.272222222222221,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.203296235480142,
+    1.4033534026637475,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.299999999999999,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.250428753877028,
+    1.4051778872468528,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.327777777777777,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.297561272273914,
+    1.407002371829958,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.355555555555554,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.344693790670801,
+    1.4088268564130633,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.383333333333332,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.391826309067685,
+    1.4106513409961685,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.41111111111111,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.438958827464573,
+    1.4124758255792738,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.438888888888888,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.486091345861459,
+    1.414300310162379,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.466666666666665,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.533223864258344,
+    1.4161247947454842,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.494444444444443,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.580356382655232,
+    1.4179492793285897,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.522222222222219,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.627488901052116,
+    1.4197737639116947,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.549999999999999,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.674621419449004,
+    1.4215982484948002,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.577777777777775,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.72175393784589,
+    1.4234227330779055,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.605555555555553,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.768886456242775,
+    1.4252472176610107,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.633333333333331,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.816018974639661,
+    1.427071702244116,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.661111111111108,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    11.863151493036547,
+    1.4288961868272212,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.688888888888887,
+    1.62,
+    -10.000000000000004
+   ],
+   "target": [
+    11.910284011433433,
+    1.4307206714103264,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.716666666666663,
+    1.62,
+    -10
+   ],
+   "target": [
+    11.957416529830319,
+    1.4325451559934317,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.744444444444442,
+    1.62,
+    -10.000000000000004
+   ],
+   "target": [
+    12.004549048227204,
+    1.434369640576537,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.772222222222219,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    12.05168156662409,
+    1.4361941251596422,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.799999999999997,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.098814085020976,
+    1.4380186097427474,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.827777777777776,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.145946603417862,
+    1.4398430943258527,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.855555555555552,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.193079121814748,
+    1.441667578908958,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.88333333333333,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.240211640211633,
+    1.4434920634920632,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.911111111111107,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.287344158608521,
+    1.4453165480751686,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.938888888888885,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.334476677005405,
+    1.4471410326582739,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.966666666666662,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.38160919540229,
+    1.4489655172413791,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.994444444444441,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.42874171379918,
+    1.4507900018244844,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.022222222222217,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.475874232196066,
+    1.4526144864075896,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.049999999999996,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.52300675059295,
+    1.4544389709906949,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.077777777777774,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.570139268989838,
+    1.4562634555738,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.1055555555555525,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.617271787386724,
+    1.4580879401569053,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.133333333333329,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.66440430578361,
+    1.4599124247400106,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.161111111111106,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.711536824180495,
+    1.4617369093231158,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.188888888888884,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.758669342577381,
+    1.4635613939062213,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.2166666666666615,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.805801860974267,
+    1.4653858784893266,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.24444444444444,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.852934379371153,
+    1.4672103630724318,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.272222222222218,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.900066897768038,
+    1.469034847655537,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.299999999999997,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.947199416164924,
+    1.4708593322386423,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.327777777777774,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.994327275323393,
+    1.4726836364641314,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.95,
+   "fogFar": 3999.21,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.355555555555552,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.041315257296722,
+    1.4745025260889053,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9501,
+   "fogFar": 3996.87,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.383333333333329,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.087892782428924,
+    1.4763055270617649,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9502,
+   "fogFar": 3992.99,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.411111111111107,
+    1.62,
+    -10.000000000000004
+   ],
+   "target": [
+    13.133800483499263,
+    1.4780825993612619,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9503,
+   "fogFar": 3987.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.438888888888884,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.178798245604465,
+    1.479824448216947,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9505,
+   "fogFar": 3980.74,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.466666666666663,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.222665206158704,
+    1.4815225241093692,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9507,
+   "fogFar": 3972.41,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.494444444444438,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.26519975489361,
+    1.4831690227700753,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9509,
+   "fogFar": 3962.66,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.522222222222217,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.306219533858261,
+    1.4847568851816102,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9512,
+   "fogFar": 3951.51,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.549999999999995,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.3455614374192,
+    1.4862797975775175,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9515,
+   "fogFar": 3938.98,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.577777777777772,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.383081612260408,
+    1.4877321914423383,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9519,
+   "fogFar": 3925.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.605555555555551,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.41865545738333,
+    1.489109243511613,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9523,
+   "fogFar": 3909.89,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.6333333333333275,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.451353581202193,
+    1.4904615789367934,
+    -10
+   ],
+   "fov": 55.001918703257545,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9527,
+   "fogFar": 3893.38,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.661111111111104,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.478690099503707,
+    1.4919370710852484,
+    -10
+   ],
+   "fov": 55.011164296911275,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9531,
+   "fogFar": 3875.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.688888888888883,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.50050323031102,
+    1.4935250360300145,
+    -10
+   ],
+   "fov": 55.027638822582354,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9536,
+   "fogFar": 3856.58,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.7166666666666615,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.516837870933378,
+    1.495206370431315,
+    -10
+   ],
+   "fov": 55.05088053048221,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9541,
+   "fogFar": 3836.33,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.744444444444438,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.52778577364837,
+    1.4969642216146146,
+    -10
+   ],
+   "fov": 55.08043735111136,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9547,
+   "fogFar": 3814.88,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.772222222222217,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.533482930425698,
+    1.4987838863341203,
+    -10
+   ],
+   "fov": 55.11586689525935,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9553,
+   "fogFar": 3792.26,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.7999999999999945,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.534106591848069,
+    1.5006526953761696,
+    -10
+   ],
+   "fov": 55.15673645400484,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9559,
+   "fogFar": 3768.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.827777777777772,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.529871986487551,
+    1.5025598865673493,
+    -10
+   ],
+   "fov": 55.202622998715526,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9565,
+   "fogFar": 3743.62,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.855555555555549,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.521028804125729,
+    1.5044964686410807,
+    -10
+   ],
+   "fov": 55.253113181048185,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9571,
+   "fogFar": 3717.65,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.8833333333333275,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.507857503335869,
+    1.5064550783053166,
+    -10
+   ],
+   "fov": 55.307803332948666,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9578,
+   "fogFar": 3690.61,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.911111111111104,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.490665501075258,
+    1.5084298327428904,
+    -10
+   ],
+   "fov": 55.36629946665187,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9585,
+   "fogFar": 3662.53,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.938888888888883,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.469783299065863,
+    1.5104161796649607,
+    -10
+   ],
+   "fov": 55.42821727468178,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9593,
+   "fogFar": 3633.44,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.96666666666666,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.445560598871278,
+    1.512410746926893,
+    -10
+   ],
+   "fov": 55.493182129851455,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.96,
+   "fogFar": 3603.36,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.994444444444438,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.41836245470799,
+    1.514411193604825,
+    -10
+   ],
+   "fov": 55.560829085262995,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9608,
+   "fogFar": 3572.31,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.022222222222215,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.388565510158829,
+    1.516416064320058,
+    -10
+   ],
+   "fov": 55.630802874307605,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9616,
+   "fogFar": 3540.33,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.049999999999994,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.356554362086433,
+    1.5184246484873203,
+    -10
+   ],
+   "fov": 55.702757910665525,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9625,
+   "fogFar": 3507.44,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.07777777777777,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.322718092174526,
+    1.5204368460518487,
+    -10
+   ],
+   "fov": 55.77635828830609,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9633,
+   "fogFar": 3473.66,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.105555555555549,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.287447003654664,
+    1.5224530411691344,
+    -10
+   ],
+   "fov": 55.85127778148768,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9642,
+   "fogFar": 3439.02,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.133333333333326,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.251129597906132,
+    1.5244739851700781,
+    -10
+   ],
+   "fov": 55.92719984475776,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9651,
+   "fogFar": 3403.55,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.161111111111104,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.21414982274649,
+    1.5265006900432077,
+    -10
+   ],
+   "fov": 56.003817612952865,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.966,
+   "fogFar": 3367.27,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.188888888888881,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.176876391819887,
+    1.5285340149916424,
+    -10
+   ],
+   "fov": 56.08083390119858,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9669,
+   "fogFar": 3330.21,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.21666666666666,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.139546776823764,
+    1.5305701758096129,
+    -10
+   ],
+   "fov": 56.157961204909576,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9679,
+   "fogFar": 3292.39,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.244444444444437,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.102297897301836,
+    1.5326019328744453,
+    -10
+   ],
+   "fov": 56.234921699789595,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9689,
+   "fogFar": 3253.84,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.272222222222215,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.06525953495359,
+    1.5346222071843496,
+    -10
+   ],
+   "fov": 56.311447241831424,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9699,
+   "fogFar": 3214.59,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.299999999999992,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.028556786218598,
+    1.5366241752971674,
+    -10
+   ],
+   "fov": 56.38727936731694,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9709,
+   "fogFar": 3174.66,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.3277777777777695,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.992310062276527,
+    1.5386012693303712,
+    -10
+   ],
+   "fov": 56.462169292817094,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9719,
+   "fogFar": 3134.08,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.355555555555547,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.956635089047131,
+    1.5405471769610657,
+    -10
+   ],
+   "fov": 56.535877915191875,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9729,
+   "fogFar": 3092.87,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.383333333333325,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.921642907190257,
+    1.542455841425986,
+    -10
+   ],
+   "fov": 56.60817581159038,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.974,
+   "fogFar": 3051.06,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.4111111111111025,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.887439872105846,
+    1.5443214615214993,
+    -10
+   ],
+   "fov": 56.67884323945073,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9751,
+   "fogFar": 3008.67,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.43888888888888,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.854127653933922,
+    1.5461384916036043,
+    -10
+   ],
+   "fov": 56.74767013650016,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9761,
+   "fogFar": 2965.74,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.466666666666658,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.821803237554608,
+    1.5479016415879305,
+    -10
+   ],
+   "fov": 56.81445612075494,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9772,
+   "fogFar": 2922.29,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.4944444444444365,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.790558922588113,
+    1.5496058769497394,
+    -10
+   ],
+   "fov": 56.87901049052043,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9784,
+   "fogFar": 2878.33,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.522222222222214,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.760482323394738,
+    1.5512464187239234,
+    -10
+   ],
+   "fov": 56.94115222439103,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9795,
+   "fogFar": 2833.91,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.549999999999992,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.731656369074877,
+    1.5528187435050067,
+    -10
+   ],
+   "fov": 57.00070998125025,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9806,
+   "fogFar": 2789.04,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.577777777777769,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.70415930346901,
+    1.554318583447145,
+    -10
+   ],
+   "fov": 57.05752210027064,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9818,
+   "fogFar": 2743.75,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.605555555555547,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.678064685157713,
+    1.5557419262641248,
+    -10
+   ],
+   "fov": 57.11143660091381,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9829,
+   "fogFar": 2698.07,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.633333333333324,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.65344138746165,
+    1.5570850152293647,
+    -10
+   ],
+   "fov": 57.16231118293047,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9841,
+   "fogFar": 2652.02,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.661111111111102,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.630353598441575,
+    1.5583443491759141,
+    -10
+   ],
+   "fov": 57.21001322636038,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9852,
+   "fogFar": 2605.63,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.688888888888879,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.608860820898336,
+    1.5595166824964546,
+    -10
+   ],
+   "fov": 57.254419791532364,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9864,
+   "fogFar": 2558.92,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.716666666666656,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.589017872372867,
+    1.5605990251432982,
+    -10
+   ],
+   "fov": 57.295417619064324,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9876,
+   "fogFar": 2511.92,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.744444444444436,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.570874885146202,
+    1.5615886426283891,
+    -10
+   ],
+   "fov": 57.33290312986322,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9888,
+   "fogFar": 2464.66,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.772222222222213,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.554477306239454,
+    1.5624830560233025,
+    -10
+   ],
+   "fov": 57.366782425125095,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.99,
+   "fogFar": 2417.16,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.799999999999991,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.539865897413835,
+    1.5632800419592454,
+    -10
+   ],
+   "fov": 57.39697128633505,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9912,
+   "fogFar": 2369.45,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.827777777777768,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.527076735170645,
+    1.5639776326270558,
+    -10
+   ],
+   "fov": 57.42339517526726,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9924,
+   "fogFar": 2321.55,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.855555555555545,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.516141210751277,
+    1.564574115777203,
+    -10
+   ],
+   "fov": 57.44598923398496,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9936,
+   "fogFar": 2273.49,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.883333333333322,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.507086030137213,
+    1.5650680347197885,
+    -10
+   ],
+   "fov": 57.46469828484047,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9949,
+   "fogFar": 2225.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.911111111111101,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.499933214050023,
+    1.5654581883245442,
+    -10
+   ],
+   "fov": 57.47947683047516,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9961,
+   "fogFar": 2177,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.938888888888879,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.494700097951373,
+    1.5657436310208344,
+    -10
+   ],
+   "fov": 57.49028905381948,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9973,
+   "fogFar": 2128.61,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.966666666666656,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.491399332043017,
+    1.5659236727976538,
+    -10
+   ],
+   "fov": 57.49710881809294,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9985,
+   "fogFar": 2080.17,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.994444444444434,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.490038881266802,
+    1.565997879203629,
+    -10
+   ],
+   "fov": 57.49991966680413,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 0.9998,
+   "fogFar": 2031.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.022222222222211,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.490622025304662,
+    1.5659660713470185,
+    -10
+   ],
+   "fov": 57.498714823750696,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.001,
+   "fogFar": 1983.22,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.049999999999988,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.493147358578627,
+    1.5658283258957113,
+    -10
+   ],
+   "fov": 57.493497193019365,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0022,
+   "fogFar": 1934.76,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.077777777777767,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.497608790250814,
+    1.5655849750772284,
+    -10
+   ],
+   "fov": 57.48427935898592,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0034,
+   "fogFar": 1886.35,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.105555555555544,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.50399554422343,
+    1.565236606678722,
+    -10
+   ],
+   "fov": 57.471083586315224,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0047,
+   "fogFar": 1838.01,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.133333333333322,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.512292159138777,
+    1.5647840640469757,
+    -10
+   ],
+   "fov": 57.4539418199612,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0059,
+   "fogFar": 1789.77,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.161111111111099,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.522478488379246,
+    1.5642284460884048,
+    -10
+   ],
+   "fov": 57.43289568516684,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0071,
+   "fogFar": 1741.66,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.188888888888878,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.534529700067319,
+    1.5635711072690555,
+    -10
+   ],
+   "fov": 57.40799648746422,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0083,
+   "fogFar": 1693.69,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.216666666666654,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.548416277065565,
+    1.5628136576146057,
+    -10
+   ],
+   "fov": 57.37930521267445,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0095,
+   "fogFar": 1645.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.244444444444433,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.56410401697665,
+    1.5619579627103646,
+    -10
+   ],
+   "fov": 57.34689252690775,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0107,
+   "fogFar": 1598.31,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.27222222222221,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.581554032143327,
+    1.5610061437012732,
+    -10
+   ],
+   "fov": 57.31083877656337,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0119,
+   "fogFar": 1550.95,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.299999999999988,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.60072274964844,
+    1.5599605772919032,
+    -10
+   ],
+   "fov": 57.27123398832967,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0131,
+   "fogFar": 1503.85,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.327777777777767,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.621561911314929,
+    1.5588238957464584,
+    -10
+   ],
+   "fov": 57.22817786918403,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0143,
+   "fogFar": 1457.02,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.355555555555544,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.644018573705814,
+    1.5575989868887739,
+    -10
+   ],
+   "fov": 57.181779806392946,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0155,
+   "fogFar": 1410.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.383333333333322,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.668035108124219,
+    1.5562889941023155,
+    -10
+   ],
+   "fov": 57.13215886751195,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0166,
+   "fogFar": 1364.31,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.4111111111111,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.693549200613345,
+    1.5548973163301811,
+    -10
+   ],
+   "fov": 57.07944380038565,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0178,
+   "fogFar": 1318.48,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.43888888888888,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.720493851956498,
+    1.5534276080751002,
+    -10
+   ],
+   "fov": 57.023773033147734,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0189,
+   "fogFar": 1273.03,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.466666666666656,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.748797377677064,
+    1.551883779399433,
+    -10
+   ],
+   "fov": 56.96529467422094,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0201,
+   "fogFar": 1227.99,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.494444444444433,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.778383408038525,
+    1.5502699959251713,
+    -10
+   ],
+   "fov": 56.9041665123171,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0212,
+   "fogFar": 1183.38,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.522222222222211,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.809170888044452,
+    1.548590678833939,
+    -10
+   ],
+   "fov": 56.840556016437084,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0223,
+   "fogFar": 1139.24,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.54999999999999,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.841074077438508,
+    1.5468505048669905,
+    -10
+   ],
+   "fov": 56.77464033587085,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0234,
+   "fogFar": 1095.58,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.577777777777765,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.874002550704446,
+    1.545054406325212,
+    -10
+   ],
+   "fov": 56.70660630019743,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0245,
+   "fogFar": 1052.43,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.605555555555544,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.90786119706611,
+    1.5432075710691213,
+    -10
+   ],
+   "fov": 56.6366504192849,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0256,
+   "fogFar": 1009.83,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.633333333333322,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    12.942550220487435,
+    1.541315442518867,
+    -10
+   ],
+   "fov": 56.56497888329042,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0266,
+   "fogFar": 967.79,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.661111111111099,
+    1.62,
+    -10
+   ],
+   "target": [
+    12.977965139672449,
+    1.5393837196542302,
+    -10
+   ],
+   "fov": 56.49180756266023,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0277,
+   "fogFar": 926.33,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.688888888888876,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.013996788065265,
+    1.5374183570146218,
+    -10
+   ],
+   "fov": 56.417362008129615,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0287,
+   "fogFar": 885.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.716666666666654,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.050531313850096,
+    1.5354255646990858,
+    -10
+   ],
+   "fov": 56.34187745072294,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0297,
+   "fogFar": 845.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.744444444444433,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.087450179951233,
+    1.5334118083662964,
+    -10
+   ],
+   "fov": 56.26559880175365,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0307,
+   "fogFar": 805.78,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.77222222222221,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.124630164033071,
+    1.5313838092345597,
+    -10
+   ],
+   "fov": 56.188780652824235,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0317,
+   "fogFar": 766.94,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.799999999999986,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.161943358500087,
+    1.5293485440818133,
+    -10
+   ],
+   "fov": 56.11168727582626,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0327,
+   "fogFar": 728.83,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.827777777777765,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.199257170496853,
+    1.5273132452456262,
+    -10
+   ],
+   "fov": 56.03459262294038,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0336,
+   "fogFar": 691.46,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.855555555555544,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.236434321908032,
+    1.5252854006231982,
+    -10
+   ],
+   "fov": 55.957780326636296,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0346,
+   "fogFar": 654.87,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.88333333333332,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.273332849358376,
+    1.5232727536713613,
+    -10
+   ],
+   "fov": 55.881543699672775,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0355,
+   "fogFar": 619.07,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.911111111111099,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.309806104212727,
+    1.5212833034065785,
+    -10
+   ],
+   "fov": 55.80618573509767,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0363,
+   "fogFar": 584.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.938888888888876,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.34570275257602,
+    1.5193253044049444,
+    -10
+   ],
+   "fov": 55.73201910624789,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0372,
+   "fogFar": 549.97,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.966666588297148,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.380866677268452,
+    1.5174072721489935,
+    -10
+   ],
+   "fov": 55.65936636928006,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0381,
+   "fogFar": 516.72,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.994427676026696,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.415117082485692,
+    1.5155390682280532,
+    -10
+   ],
+   "fov": 55.58860106924443,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0389,
+   "fogFar": 484.39,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.022119876812688,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.448229223016972,
+    1.5137329514718014,
+    -10
+   ],
+   "fov": 55.520187555750056,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0397,
+   "fogFar": 453.06,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.04968806634143,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.47998092123897,
+    1.5120010406596924,
+    -10
+   ],
+   "fov": 55.4545848734732,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0404,
+   "fogFar": 422.81,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.077079334127086,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.510161989177414,
+    1.510354800590323,
+    -10
+   ],
+   "fov": 55.392227295087984,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0412,
+   "fogFar": 393.71,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.10424298351168,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.538577013012654,
+    1.5088048901993099,
+    -10
+   ],
+   "fov": 55.333518568155675,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0419,
+   "fogFar": 365.82,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.131130531665095,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.565047930097247,
+    1.5073610219946956,
+    -10
+   ],
+   "fov": 55.278826590708164,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0425,
+   "fogFar": 339.18,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.157695709585067,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.58941635259661,
+    1.5060318353129123,
+    -10
+   ],
+   "fov": 55.22847861033758,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0432,
+   "fogFar": 313.82,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.1838944620972,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.611545597373704,
+    1.5048247855977979,
+    -10
+   ],
+   "fov": 55.18275703021962,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0438,
+   "fogFar": 289.79,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.209684947854955,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.631322387905813,
+    1.5037460515687737,
+    -10
+   ],
+   "fov": 55.14189589275658,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0444,
+   "fogFar": 267.09,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.23502753933965,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.648658200708955,
+    1.5028004617795114,
+    -10
+   ],
+   "fov": 55.10607809770877,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0449,
+   "fogFar": 245.72,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.259884822860462,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.66349023580939,
+    1.5019914416831242,
+    -10
+   ],
+   "fov": 55.075433397088034,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0454,
+   "fogFar": 225.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.284221598554433,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.675781998093914,
+    1.50132098192215,
+    -10
+   ],
+   "fov": 55.05003719402084,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0459,
+   "fogFar": 207.01,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.308004880386456,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.68552348374291,
+    1.5007896281594777,
+    -10
+   ],
+   "fov": 55.02991015755597,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0463,
+   "fogFar": 189.63,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.33120389614929,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.692730973256484,
+    1.5003964923678281,
+    -10
+   ],
+   "fov": 55.01501865029652,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0467,
+   "fogFar": 173.54,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.353790087463546,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.697446439684601,
+    1.5001392851081126,
+    -10
+   ],
+   "fov": 55.005275951064874,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0471,
+   "fogFar": 158.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.375737109777704,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.699736587434932,
+    1.5000143679580946,
+    -10
+   ],
+   "fov": 55.000544240836916,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0474,
+   "fogFar": 145.08,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.397020832368094,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0478,
+   "fogFar": 132.64,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.41761933833891,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.048,
+   "fogFar": 121.33,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.43751292462221,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0483,
+   "fogFar": 111.09,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.456684101977897,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0485,
+   "fogFar": 101.88,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.475117594993751,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0487,
+   "fogFar": 93.63,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.492800342085395,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0489,
+   "fogFar": 86.28,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.509721495496322,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0491,
+   "fogFar": 79.78,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.525872421297878,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0492,
+   "fogFar": 74.07,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.541246699389278,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0494,
+   "fogFar": 69.07,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.555840123497582,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0495,
+   "fogFar": 64.73,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.569650701177721,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0496,
+   "fogFar": 61,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.582678653812478,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0497,
+   "fogFar": 57.81,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.5949264166125,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0497,
+   "fogFar": 55.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.606398638616293,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0498,
+   "fogFar": 52.83,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.617102182690218,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0498,
+   "fogFar": 50.94,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.627046125528498,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0499,
+   "fogFar": 49.39,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.636241757653217,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0499,
+   "fogFar": 48.12,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.644702583414313,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0499,
+   "fogFar": 47.11,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.652444320989591,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.0499,
+   "fogFar": 46.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.65948490238471,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 45.67,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.665844473433188,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 45.19,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.671545393796405,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.83,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.676612236963598,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.56,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.681071790251861,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.37,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.684953054806158,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.23,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.688287245599298,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.14,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.691107791431957,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.08,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.693450334932672,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.04,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.695352732557835,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.02,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.696855054591694,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44.01,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.697999585146368,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.698830822161824,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699395477405895,
+    1.62,
+    -9.999999999999998
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.69974247647427,
+    1.62,
+    -10.000000000000002
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699922958790497,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699990277605984,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "target": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "fov": 55,
+   "owner": "DIRECTED",
+   "space": "space.gallery-b",
+   "step": "step.08-paso-galeria-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": false
+  }
+ ],
+ "errors": []
+}

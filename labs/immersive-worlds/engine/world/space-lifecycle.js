@@ -45,6 +45,8 @@ export class SpaceLifecycle {
     this._slots = new Map();
     this._activeSpaceId = null;
     this._previousSpaceId = null;
+    /** Set when an activation postponed its working-set reconcile — see settle(). */
+    this._pendingWorkingSet = false;
     /** Every state transition, for QA evidence. */
     this.transitions = [];
   }
@@ -132,12 +134,38 @@ export class SpaceLifecycle {
    * outgoing Space, then re-evaluates the working set.
    * @returns {Promise<{spaceId:string, prepared:boolean, waitedMs:number}>}
    */
-  async activate(spaceId) {
+  async activate(spaceId, options = {}) {
     const startedAt = performance.now();
     const alreadyReady = this.stateOf(spaceId) === SPACE_STATE.READY;
     await this.prepare(spaceId);
     const waitedMs = Math.round(performance.now() - startedAt);
+    this._activateNow(spaceId, options);
+    return { spaceId, prepared: !alreadyReady, waitedMs };
+  }
 
+  /**
+   * Activate a Space that is already READY, on this call, with no await.
+   *
+   * A crossing hands the room over on the frame the camera passes the threshold,
+   * and `activate` cannot do that: even with nothing to load, its `await` defers
+   * the swap by a microtask, so for one frame the visitor is through the doorway
+   * and World State still says they are in the room behind them. Measured — the
+   * active Space read as the origin room on the frame after the handoff.
+   *
+   * Requiring READY is the point. The caller must already have paid for the room
+   * before the move started; if it has not, that is a bug to surface, not a stall
+   * to hide inside a crossing.
+   */
+  activateReady(spaceId, options = {}) {
+    const state = this.stateOf(spaceId);
+    if (state !== SPACE_STATE.READY && state !== SPACE_STATE.ACTIVE) {
+      throw new Error(`[IW] activateReady("${spaceId}") needs a READY Space, found ${state}`);
+    }
+    this._activateNow(spaceId, options);
+    return { spaceId, prepared: false, waitedMs: 0 };
+  }
+
+  _activateNow(spaceId, options = {}) {
     if (this._activeSpaceId && this._activeSpaceId !== spaceId) {
       const outgoing = this._slots.get(this._activeSpaceId);
       if (outgoing?.handle) {
@@ -152,9 +180,35 @@ export class SpaceLifecycle {
     this._setState(spaceId, SPACE_STATE.ACTIVE);
     this._activeSpaceId = spaceId;
 
+    // Building and throwing away rooms is the most expensive thing this class
+    // does. During a crossing the camera is mid-flight, so a caller can ask for
+    // the working set to be reconciled after the move instead of inside it — a
+    // dropped frame at the threshold is exactly the frame the visitor is
+    // watching.
+    if (options.deferWorkingSet) this._pendingWorkingSet = true;
+    else this._reconcileWorkingSet();
+    this._reconcilePresence();
+  }
+
+  /** Run the reconcile that `activate({deferWorkingSet:true})` postponed. */
+  settle() {
+    if (!this._pendingWorkingSet) return false;
+    this._pendingWorkingSet = false;
     this._reconcileWorkingSet();
     this._reconcilePresence();
-    return { spaceId, prepared: !alreadyReady, waitedMs };
+    return true;
+  }
+
+  /**
+   * Bring a Space to READY *and* make it perceptible from where the visitor
+   * stands. A crossing needs the destination lit and standing before the camera
+   * starts moving toward it; arriving is not when you find out whether the room
+   * is there.
+   */
+  async preview(spaceId) {
+    await this.prepare(spaceId);
+    this._reconcilePresence();
+    return this.stateOf(spaceId);
   }
 
   /**

@@ -35,6 +35,7 @@ import { CameraAuthority, clonePose } from '../camera/camera-authority.js';
 import { ExploreController } from '../camera/controllers/explore-controller.js';
 import { FocusController } from '../camera/controllers/focus-controller.js';
 import { DirectedController } from '../camera/controllers/directed-controller.js';
+import { CrossingController } from '../camera/controllers/crossing-controller.js';
 import { AuthorController } from '../camera/controllers/author-controller.js';
 import { ProximitySystem } from '../interaction/proximity.js';
 import { ActionDispatch } from '../interaction/action-dispatch.js';
@@ -100,15 +101,21 @@ export class Runtime {
     this.explore = new ExploreController();
     this.focus = new FocusController();
     this.directed = new DirectedController();
+    // The camera while a doorway is being passed. It is a registered authority
+    // rather than a mode of the Directed controller because a crossing outlives
+    // the beat that starts it and belongs to neither room.
+    this.crossing = new CrossingController();
     this.author = new AuthorController();
     this.focus.setReducedMotion(reducedMotion);
     this.directed.setReducedMotion(reducedMotion);
+    this.crossing.setReducedMotion(reducedMotion);
 
     this.camera = new CameraAuthority({ bus: this.bus, reducedMotion });
     this.camera
       .register(CAMERA_AUTHORITY.EXPLORE, this.explore)
       .register(CAMERA_AUTHORITY.FOCUS, this.focus)
       .register(CAMERA_AUTHORITY.DIRECTED, this.directed)
+      .register(CAMERA_AUTHORITY.TRANSITION, this.crossing)
       .register(CAMERA_AUTHORITY.AUTHOR, this.author);
     this.camera._owner = mode === 'AUTHOR' ? CAMERA_AUTHORITY.AUTHOR : CAMERA_AUTHORITY.EXPLORE;
 
@@ -138,6 +145,7 @@ export class Runtime {
         currentPose: () => clonePose(this.camera.pose),
         subjectPoint: (subjectRef) => this.sceneKit.subjectPoint?.(subjectRef) ?? null,
         pathWaypoint: (from, to, context) => this.sceneKit.pathWaypoint?.(from, to, context) ?? null,
+        crossingActive: () => this.crossing.isCrossing,
         requestAuthority: (authority, opts) => this.camera.request(authority, opts),
         dispatch: (action, context) => this.actions.dispatch(action, context),
         viewport: () => this.viewport()
@@ -332,6 +340,20 @@ export class Runtime {
 
     if (this.state.focusedEntityId) this.releaseFocus();
 
+    // A caller that decided this portal is a crossing gets a crossing, provided
+    // the Portal's own semantics allow one. A TELEPORT has no line of sight to
+    // fly through and a CUT was authored as a cut; neither is a continuity
+    // failure to be fixed here.
+    if (context.crossing
+      && portal.transitionBehaviour !== TRANSITION_BEHAVIOUR.TELEPORT
+      && portal.transitionBehaviour !== TRANSITION_BEHAVIOUR.CUT) {
+      const flown = await this._flyCrossing(portal, context.crossing, context);
+      if (flown) return flown;
+      // Falling through is deliberate: a crossing that cannot be planned — no
+      // opening, no destination framing — must still get the visitor into the
+      // next room. A cut is a worse crossing, not a broken one.
+    }
+
     const activation = await this.spaces.activate(portal.toSpaceId);
     this.state.enterSpace(portal.toSpaceId, portal.destinationSpawnId);
     this.state.markPortalTraversed(portalId);
@@ -373,6 +395,133 @@ export class Runtime {
       source: context.source || null
     });
     return { spaceId: portal.toSpaceId, waitedMs: activation.waitedMs };
+  }
+
+  /**
+   * Walk the visitor through a doorway instead of cutting them through it.
+   *
+   * The order here is the whole point, and it is not the order the cut used:
+   *
+   *   1. the destination is built, warmed and made visible *before* anything moves
+   *   2. the aperture is measured and the arrival pose resolved against it
+   *   3. TRANSITION takes the camera — one writer for the whole crossing
+   *   4. the room handoff fires on the frame the camera passes the threshold
+   *   5. the camera lands on the arrival pose and hands authority back
+   *
+   * Step 1 is what makes the *first* crossing look like the second one. The cut
+   * built the destination while the visitor was already notionally in it, so the
+   * first pass paid for the build with a stall and every later pass did not.
+   *
+   * This resolves as soon as the crossing is in flight, not when it lands: the
+   * beat that started it waits on `crossingActive`, and blocking the action here
+   * would stall the Director's clock behind its own camera move.
+   *
+   * @returns {Promise<object|null>} null when no crossing could be planned
+   */
+  async _flyCrossing(portal, intent, context = {}) {
+    const fromSpaceId = this.state.activeSpaceId;
+    const eyeHeight = this.explore.eyeHeight;
+
+    // 1 — the destination stands and is lit before the camera commits to it.
+    const warmStartedAt = performance.now();
+    await this.spaces.preview(portal.toSpaceId);
+    const warmedMs = Math.round(performance.now() - warmStartedAt);
+
+    // 2 — WHERE, and the endpoint. The arrival pose is the ordinary framing the
+    // beat would have asked for anyway; the crossing may choose the path to it
+    // and nothing else.
+    const threshold = this.sceneKit.thresholdFor?.(portal.id, { eyeHeight });
+    const arrivalPose = this.framingFor(portal.toSpaceId, 'PORTAL', {});
+    if (!threshold || !arrivalPose) return null;
+
+    const from = clonePose(this.camera.pose);
+    const legIn = Math.hypot(
+      threshold.gate[0] - from.position[0], threshold.gate[2] - from.position[2]
+    );
+    const legOut = Math.hypot(
+      arrivalPose.position[0] - threshold.gate[0], arrivalPose.position[2] - threshold.gate[2]
+    );
+    const travelMs = Math.min(
+      Math.max(((legIn + legOut) / (intent.speed || 1.35)) * 1000, intent.min || 2000),
+      intent.max || 5000
+    );
+
+    // 3 — one writer. The Directed shot that was running is dropped here, not
+    // left to argue with the crossing over the same frames.
+    this.camera.request(CAMERA_AUTHORITY.TRANSITION, {
+      reason: `crossing:${portal.id}`, restore: 'ADOPT_INCOMING'
+    });
+
+    const resumeAuthority = this.state.mode === EXPERIENCE_MODE.GUIDED
+      ? CAMERA_AUTHORITY.DIRECTED
+      : CAMERA_AUTHORITY.EXPLORE;
+
+    // Each room owns its fog, background and exposure, and activating one
+    // applies them in a single frame. Held here, they resolve across the
+    // doorway instead — the crossing is not finished being continuous if the
+    // light cuts.
+    this.sceneKit.setAtmosphereLock?.(true);
+    this._crossingHolds = true;
+
+    let crossedAt = null;
+    const plan = this.crossing.playCrossing(arrivalPose, {
+      gate: threshold.gate,
+      axis: threshold.axis,
+      travelMs,
+      flat: intent.flat,
+      lead: intent.lead,
+      holdHeight: intent.holdHeight,
+      apertureFov: intent.apertureFov,
+      pin: intent.pin,
+      onProgress: ({ atmosphere }) => {
+        this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, atmosphere);
+      },
+      // 4 — the handoff. Which room you are in changes when you pass through the
+      // opening, which is both the truthful moment and the invisible one.
+      onCrossPlane: () => {
+        crossedAt = Math.round(performance.now());
+        // Synchronously, on this frame. The room was paid for before the move
+        // started precisely so that this moment costs nothing and cannot slip.
+        // The working set is reconciled after the move instead: disposing two
+        // rooms is the most expensive thing the lifecycle does, and this is the
+        // frame the visitor is looking hardest at.
+        this.spaces.activateReady(portal.toSpaceId, { deferWorkingSet: true });
+        this.state.enterSpace(portal.toSpaceId, portal.destinationSpawnId);
+        this.state.markPortalTraversed(portal.id);
+        this._onSpaceActivated(portal.toSpaceId, portal.destinationSpawnId);
+        this.bus.emit(EVENTS.PORTAL_ENTERED, {
+          portalId: portal.id,
+          spaceId: portal.toSpaceId,
+          behaviour: portal.transitionBehaviour,
+          preparedOnDemand: warmedMs > 0,
+          waitedMs: warmedMs,
+          crossing: true,
+          source: context.source || null
+        });
+      },
+      // 5 — land, release the atmosphere onto the destination exactly, give the
+      // camera back.
+      onComplete: () => {
+        this._crossingHolds = false;
+        this.sceneKit.setAtmosphereLock?.(false);
+        this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, 1);
+        this.spaces.settle();
+        this.camera.request(resumeAuthority, {
+          reason: `crossing:${portal.id}:landed`, restore: 'ADOPT_INCOMING'
+        });
+        this.bus.emit(EVENTS.PORTAL_ENTERED, {
+          portalId: portal.id, spaceId: portal.toSpaceId, phase: 'LANDED', crossing: true
+        });
+      }
+    });
+
+    return {
+      spaceId: portal.toSpaceId,
+      waitedMs: warmedMs,
+      // The Director reads this and does not write the camera for this beat.
+      cameraHandled: true,
+      crossing: { ...plan, travelMs, warmedMs, crossedAt, threshold: threshold.portalId }
+    };
   }
 
   /**
@@ -529,6 +678,15 @@ export class Runtime {
   step(dt) {
     this.experience.update(dt);
     const pose = this.camera.update(dt);
+    // A crossing that is abandoned rather than completed — the visitor presses
+    // Escape halfway through a doorway — never runs its own completion, and the
+    // two things it holds are both things that stay wrong silently: the
+    // atmosphere would freeze mid-blend, and two rooms would stay resident.
+    if (this._crossingHolds && !this.crossing.isCrossing) {
+      this._crossingHolds = false;
+      this.sceneKit.setAtmosphereLock?.(false);
+      this.spaces.settle();
+    }
     this.proximity.update(dt, pose.position);
     this.sceneKit.update(dt, this.clock.elapsed);
     this.onFrame?.(pose, dt);
