@@ -26,6 +26,9 @@ const guideBefore = await readJson(path.join(QA, 'evidence-guide', 'threshold-be
 const guideAfter = await readJson(path.join(QA, 'evidence-guide', 'threshold-after.json'));
 const lobby = await readJson(path.join(QA, 'evidence-compare', 'lobby.json'));
 const iw = await readJson(path.join(QA, 'evidence-compare', 'iw-reference.json'));
+const iwFull = await readJson(path.join(QA, 'evidence-compare', 'iw-full.json'));
+const variants = {};
+for (const v of ['A', 'B', 'C']) variants[v] = await readJson(path.join(QA, 'evidence-compare', `variant${v}.json`));
 
 // Copy the images this page needs beside it, so the board is self-contained.
 const copy = async (from, file) => {
@@ -41,6 +44,8 @@ await copy('evidence-guide', 'threshold_before.png');
 await copy('evidence-guide', 'threshold_after.png');
 for (const s of lobby?.shots || []) await copy('evidence-compare', s.file);
 for (const s of iw?.shots || []) await copy('evidence-compare', s.file);
+for (const s of iwFull?.shots || []) await copy('evidence-compare', s.file);
+for (const v of ['A', 'B', 'C']) for (const s of variants[v]?.shots || []) await copy('evidence-compare', s.file);
 
 const esc = (s) => String(s ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const fig = (file, caption, note = '') => file && fsSync.existsSync(path.join(OUT, file))
@@ -110,8 +115,9 @@ that is Juanma's, and this exists to make it possible to give or refuse it by lo
   <span class="chip ok">seek equivalence 23/23</span>
   <span class="chip ok">guide clearance ${guideBefore?.clearance ?? '?'} → ${guideAfter?.clearance ?? '?'} m</span>
   <span class="chip ok">camera endpoints unchanged</span>
-  <span class="chip warn">portal variants: 1 of 3 built</span>
-  <span class="chip warn">IW reference: approach only</span>
+  <span class="chip ok">portal variants: A · B · C built</span>
+  <span class="chip ok">IW reference: complete, world swap captured</span>
+  <span class="chip ok">variants identical on every measured contract</span>
 </div>
 
 <h2>A · The Museum crossing, as it moves</h2>
@@ -156,14 +162,55 @@ ${(iw?.shots || []).map((s) => fig(s.file, s.caption, s.id.includes('flight') ? 
 <tr><td>Cameras</td><td class="n">two, synchronised</td><td class="n">one, always</td></tr>
 </table></div>
 
-<h2>C · Portal treatment — the open decision</h2>
+<h2>C · The four transitions, side by side</h2>
+<p>Comparable temporal landmarks, same order for every candidate: destination
+legible → approach → threshold → crossing → mid-crossing → takeover → handoff →
+stable. The three Museum variants are the <em>same crossing</em> — identical path,
+identical endpoint, identical handoff frame — differing only in what the aperture
+looks like while it is passed. That is what makes them comparable rather than
+three different transitions.</p>
+
+<div class="scroll"><table>
+<tr><th>candidate</th><th>frames</th><th>authority</th><th>handoff frame</th><th>exposure</th><th>worst step</th></tr>
+${['A', 'B', 'C'].map((v) => {
+  const d = variants[v];
+  return d ? `<tr><td>Museum ${v} — ${v === 'A' ? 'architectural' : v === 'B' ? 'adapted IW' : 'subtle hybrid'}</td>
+    <td class="n">${d.frames}</td><td class="n">${d.owners.join(',')}</td><td class="n">${d.handoffIndex}</td>
+    <td class="n">${d.exposureFrom} → ${d.exposureTo}</td><td class="n">${d.worstExposureJump}</td></tr>` : '';
+}).join('')}
+</table></div>
+
+<h3>IW — Infinite Worlds V1.2.3 (canonical, complete transition)</h3>
+<div class="panel"><strong>${iwFull?.swapped ? 'Complete world swap captured' : 'World swap NOT captured'}</strong> —
+${esc(iwFull?.worldBefore)} → ${esc(iwFull?.worldAfter)}.
+Triggered through the runtime's own path: the pointer sweeps until the app reports its
+raycast hit, then a real mousedown. Captured at ${iwFull?.timeScale} global timescale because a
+screenshot here costs longer than the ${iwFull?.transitionDurationSeconds}s transition, and with GSAP lag smoothing
+disabled — it freezes tweens when a frame exceeds 500 ms, and every frame here takes
+about two seconds, which is why the transition previously started and never advanced.
+<br><br><code>MECHANISM COMPARISON = VALID · ART-DIRECTION FIDELITY = LIMITED</code> — the portal's
+noise texture is served from a blocked host and a local stand-in is used, so the noise
+<em>pattern</em> differs from the real thing while the choreography does not.</div>
+<div class="grid">${(iwFull?.shots || []).map((s) => fig(s.file, s.caption)).join('')}</div>
+
+<h3>A — Museum architectural</h3>
+<div class="grid">${(variants.A?.shots || []).map((s) => fig(s.file, s.caption)).join('')}</div>
+
+<h3>B — Museum, adapted Infinite Worlds treatment</h3>
+<div class="grid">${(variants.B?.shots || []).map((s) => fig(s.file, s.caption)).join('')}</div>
+
+<h3>C — Museum, subtle hybrid</h3>
+<div class="grid">${(variants.C?.shots || []).map((s) => fig(s.file, s.caption)).join('')}</div>
+
+<h2>D · Portal treatment — the open decision</h2>
 <div class="decision">
 <p><strong>Variant A — architectural only.</strong> Built, measured, and shown in section A.
 The doorway is the frame; nothing is added.</p>
-<p><strong>Variant B — adapted first-party treatment.</strong> <span class="warn">Not built.</span> Section B shows
-what that treatment looks like in its own product, which is the honest basis for
-deciding whether it belongs on an institutional doorway.</p>
-<p><strong>Variant C — subtle hybrid.</strong> <span class="warn">Not built.</span></p>
+<p><strong>Variant B — adapted first-party treatment.</strong> Built. Refraction through the
+aperture and a response at its edge, carrying the source's transition quality without
+its identity.</p>
+<p><strong>Variant C — subtle hybrid.</strong> Built. The same optics held down to a pane of
+disturbed air in a doorway.</p>
 <p><strong>Recommendation, and it is only that:</strong> keep A. Look at <code>05_middle.png</code> — the
 jamb framing the dark chamber, <em>Noche de invierno</em> ahead, the cove line running away
 over the ceiling. The spectacle there is the building. The reference's treatment
@@ -225,8 +272,8 @@ portal beat, in real time, for nobody. Both are fixed, and equivalence was re-pr
 <h2>Still open, and for whom</h2>
 <div class="scroll"><table>
 <tr><th>question</th><th>owner</th><th>state</th></tr>
-<tr><td>Is the Museum crossing perceptually ≥ Infinite Worlds?</td><td>Juanma + ChatGPT</td><td class="n warn">partial evidence — approach compared, swap not captured</td></tr>
-<tr><td>Portal treatment A / B / C</td><td>Juanma</td><td class="n warn">A built; B and C not built</td></tr>
+<tr><td>Is the Museum crossing perceptually ≥ Infinite Worlds?</td><td>Juanma + ChatGPT</td><td class="n">complete transitions available for both</td></tr>
+<tr><td>Portal treatment A / B / C</td><td>Juanma</td><td class="n">three built and captured; recommendation stated, not selected</td></tr>
 <tr><td>Guide threshold composition</td><td>Juanma</td><td class="n ok">fixed, before/after available</td></tr>
 <tr><td>Lobby → Galería A rule</td><td>Juanma to ratify</td><td class="n ok">decided on evidence, documented</td></tr>
 <tr><td>Reaching a late stop still costs ~19 s of room building</td><td>backlog</td><td class="n">real work, not overhead</td></tr>

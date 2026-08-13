@@ -44,7 +44,7 @@
 <body><main>
 
 <h1>Block 2B — final product closure</h1>
-<p class="sub">TECHNICALLY_CLOSED · PRODUCT_APPROVAL_PENDING · generated 2026-08-13T13:15:36.012Z</p>
+<p class="sub">TECHNICALLY_CLOSED · PRODUCT_APPROVAL_PENDING · generated 2026-08-13T13:42:01.285Z</p>
 
 <p>Everything below is measured or photographed from the running prototype. Where a
 piece of evidence is incomplete, it says so on the page. Nothing here is approval —
@@ -55,8 +55,9 @@ that is Juanma's, and this exists to make it possible to give or refuse it by lo
   <span class="chip ok">seek equivalence 23/23</span>
   <span class="chip ok">guide clearance 0 → 0.92 m</span>
   <span class="chip ok">camera endpoints unchanged</span>
-  <span class="chip warn">portal variants: 1 of 3 built</span>
-  <span class="chip warn">IW reference: approach only</span>
+  <span class="chip ok">portal variants: A · B · C built</span>
+  <span class="chip ok">IW reference: complete, world swap captured</span>
+  <span class="chip ok">variants identical on every measured contract</span>
 </div>
 
 <h2>A · The Museum crossing, as it moves</h2>
@@ -114,14 +115,85 @@ the source pins, served locally because <code>esm.sh</code> is blocked here.</p>
 <tr><td>Cameras</td><td class="n">two, synchronised</td><td class="n">one, always</td></tr>
 </table></div>
 
-<h2>C · Portal treatment — the open decision</h2>
+<h2>C · The four transitions, side by side</h2>
+<p>Comparable temporal landmarks, same order for every candidate: destination
+legible → approach → threshold → crossing → mid-crossing → takeover → handoff →
+stable. The three Museum variants are the <em>same crossing</em> — identical path,
+identical endpoint, identical handoff frame — differing only in what the aperture
+looks like while it is passed. That is what makes them comparable rather than
+three different transitions.</p>
+
+<div class="scroll"><table>
+<tr><th>candidate</th><th>frames</th><th>authority</th><th>handoff frame</th><th>exposure</th><th>worst step</th></tr>
+<tr><td>Museum A — architectural</td>
+    <td class="n">300</td><td class="n">TRANSITION</td><td class="n">209</td>
+    <td class="n">0.95 → 1.05</td><td class="n">0.0012</td></tr><tr><td>Museum B — adapted IW</td>
+    <td class="n">300</td><td class="n">TRANSITION</td><td class="n">209</td>
+    <td class="n">0.95 → 1.05</td><td class="n">0.0012</td></tr><tr><td>Museum C — subtle hybrid</td>
+    <td class="n">300</td><td class="n">TRANSITION</td><td class="n">209</td>
+    <td class="n">0.95 → 1.05</td><td class="n">0.0012</td></tr>
+</table></div>
+
+<h3>IW — Infinite Worlds V1.2.3 (canonical, complete transition)</h3>
+<div class="panel"><strong>Complete world swap captured</strong> —
+THE GREY CITY → THE LIVING VALLEY.
+Triggered through the runtime's own path: the pointer sweeps until the app reports its
+raycast hit, then a real mousedown. Captured at 0.08 global timescale because a
+screenshot here costs longer than the 1.5s transition, and with GSAP lag smoothing
+disabled — it freezes tweens when a frame exceeds 500 ms, and every frame here takes
+about two seconds, which is why the transition previously started and never advanced.
+<br><br><code>MECHANISM COMPARISON = VALID · ART-DIRECTION FIDELITY = LIMITED</code> — the portal's
+noise texture is served from a blocked host and a local stand-in is used, so the noise
+<em>pattern</em> differs from the real thing while the choreography does not.</div>
+<div class="grid"><figure><img src="iwfull_1_legible.png" alt="destination first legible — the other world rendered inside the portal surface" loading="lazy">
+      <figcaption><b>iwfull_1_legible.png</b>destination first legible — the other world rendered inside the portal surface</figcaption></figure><figure><img src="iwfull_2_approach.png" alt="portal hover — the app reports its own raycast hit, hint shown" loading="lazy">
+      <figcaption><b>iwfull_2_approach.png</b>portal hover — the app reports its own raycast hit, hint shown</figcaption></figure><figure><img src="iwfull_3_anticipation.png" alt="threshold anticipation — camera begins moving to the portal" loading="lazy">
+      <figcaption><b>iwfull_3_anticipation.png</b>threshold anticipation — camera begins moving to the portal</figcaption></figure><figure><img src="iwfull_4_crossing.png" alt="crossing begins" loading="lazy">
+      <figcaption><b>iwfull_4_crossing.png</b>crossing begins</figcaption></figure><figure><img src="iwfull_5_mid.png" alt="mid-crossing" loading="lazy">
+      <figcaption><b>iwfull_5_mid.png</b>mid-crossing</figcaption></figure><figure><img src="iwfull_6_takeover.png" alt="spatial takeover — destination fills the view" loading="lazy">
+      <figcaption><b>iwfull_6_takeover.png</b>spatial takeover — destination fills the view</figcaption></figure><figure><img src="iwfull_7_handoff.png" alt="handoff — world swap" loading="lazy">
+      <figcaption><b>iwfull_7_handoff.png</b>handoff — world swap</figcaption></figure><figure><img src="iwfull_8_stable.png" alt="stable destination — THE LIVING VALLEY" loading="lazy">
+      <figcaption><b>iwfull_8_stable.png</b>stable destination — THE LIVING VALLEY</figcaption></figure></div>
+
+<h3>A — Museum architectural</h3>
+<div class="grid"><figure><img src="variantA_00_before.png" alt="before the crossing — departure pose" loading="lazy">
+      <figcaption><b>variantA_00_before.png</b>before the crossing — departure pose</figcaption></figure><figure><img src="variantA_01_flight.png" alt="17% through the crossing" loading="lazy">
+      <figcaption><b>variantA_01_flight.png</b>17% through the crossing</figcaption></figure><figure><img src="variantA_02_flight.png" alt="33% through the crossing" loading="lazy">
+      <figcaption><b>variantA_02_flight.png</b>33% through the crossing</figcaption></figure><figure><img src="variantA_03_flight.png" alt="50% through the crossing" loading="lazy">
+      <figcaption><b>variantA_03_flight.png</b>50% through the crossing</figcaption></figure><figure><img src="variantA_04_flight.png" alt="67% through the crossing" loading="lazy">
+      <figcaption><b>variantA_04_flight.png</b>67% through the crossing</figcaption></figure><figure><img src="variantA_05_flight.png" alt="83% through the crossing" loading="lazy">
+      <figcaption><b>variantA_05_flight.png</b>83% through the crossing</figcaption></figure><figure><img src="variantA_99_after.png" alt="after the crossing — arrival pose" loading="lazy">
+      <figcaption><b>variantA_99_after.png</b>after the crossing — arrival pose</figcaption></figure></div>
+
+<h3>B — Museum, adapted Infinite Worlds treatment</h3>
+<div class="grid"><figure><img src="variantB_00_before.png" alt="before the crossing — departure pose" loading="lazy">
+      <figcaption><b>variantB_00_before.png</b>before the crossing — departure pose</figcaption></figure><figure><img src="variantB_01_flight.png" alt="17% through the crossing" loading="lazy">
+      <figcaption><b>variantB_01_flight.png</b>17% through the crossing</figcaption></figure><figure><img src="variantB_02_flight.png" alt="33% through the crossing" loading="lazy">
+      <figcaption><b>variantB_02_flight.png</b>33% through the crossing</figcaption></figure><figure><img src="variantB_03_flight.png" alt="50% through the crossing" loading="lazy">
+      <figcaption><b>variantB_03_flight.png</b>50% through the crossing</figcaption></figure><figure><img src="variantB_04_flight.png" alt="67% through the crossing" loading="lazy">
+      <figcaption><b>variantB_04_flight.png</b>67% through the crossing</figcaption></figure><figure><img src="variantB_05_flight.png" alt="83% through the crossing" loading="lazy">
+      <figcaption><b>variantB_05_flight.png</b>83% through the crossing</figcaption></figure><figure><img src="variantB_99_after.png" alt="after the crossing — arrival pose" loading="lazy">
+      <figcaption><b>variantB_99_after.png</b>after the crossing — arrival pose</figcaption></figure></div>
+
+<h3>C — Museum, subtle hybrid</h3>
+<div class="grid"><figure><img src="variantC_00_before.png" alt="before the crossing — departure pose" loading="lazy">
+      <figcaption><b>variantC_00_before.png</b>before the crossing — departure pose</figcaption></figure><figure><img src="variantC_01_flight.png" alt="17% through the crossing" loading="lazy">
+      <figcaption><b>variantC_01_flight.png</b>17% through the crossing</figcaption></figure><figure><img src="variantC_02_flight.png" alt="33% through the crossing" loading="lazy">
+      <figcaption><b>variantC_02_flight.png</b>33% through the crossing</figcaption></figure><figure><img src="variantC_03_flight.png" alt="50% through the crossing" loading="lazy">
+      <figcaption><b>variantC_03_flight.png</b>50% through the crossing</figcaption></figure><figure><img src="variantC_04_flight.png" alt="67% through the crossing" loading="lazy">
+      <figcaption><b>variantC_04_flight.png</b>67% through the crossing</figcaption></figure><figure><img src="variantC_05_flight.png" alt="83% through the crossing" loading="lazy">
+      <figcaption><b>variantC_05_flight.png</b>83% through the crossing</figcaption></figure><figure><img src="variantC_99_after.png" alt="after the crossing — arrival pose" loading="lazy">
+      <figcaption><b>variantC_99_after.png</b>after the crossing — arrival pose</figcaption></figure></div>
+
+<h2>D · Portal treatment — the open decision</h2>
 <div class="decision">
 <p><strong>Variant A — architectural only.</strong> Built, measured, and shown in section A.
 The doorway is the frame; nothing is added.</p>
-<p><strong>Variant B — adapted first-party treatment.</strong> <span class="warn">Not built.</span> Section B shows
-what that treatment looks like in its own product, which is the honest basis for
-deciding whether it belongs on an institutional doorway.</p>
-<p><strong>Variant C — subtle hybrid.</strong> <span class="warn">Not built.</span></p>
+<p><strong>Variant B — adapted first-party treatment.</strong> Built. Refraction through the
+aperture and a response at its edge, carrying the source's transition quality without
+its identity.</p>
+<p><strong>Variant C — subtle hybrid.</strong> Built. The same optics held down to a pane of
+disturbed air in a doorway.</p>
 <p><strong>Recommendation, and it is only that:</strong> keep A. Look at <code>05_middle.png</code> — the
 jamb framing the dark chamber, <em>Noche de invierno</em> ahead, the cove line running away
 over the ceiling. The spectacle there is the building. The reference's treatment
@@ -201,8 +273,8 @@ portal beat, in real time, for nobody. Both are fixed, and equivalence was re-pr
 <h2>Still open, and for whom</h2>
 <div class="scroll"><table>
 <tr><th>question</th><th>owner</th><th>state</th></tr>
-<tr><td>Is the Museum crossing perceptually ≥ Infinite Worlds?</td><td>Juanma + ChatGPT</td><td class="n warn">partial evidence — approach compared, swap not captured</td></tr>
-<tr><td>Portal treatment A / B / C</td><td>Juanma</td><td class="n warn">A built; B and C not built</td></tr>
+<tr><td>Is the Museum crossing perceptually ≥ Infinite Worlds?</td><td>Juanma + ChatGPT</td><td class="n">complete transitions available for both</td></tr>
+<tr><td>Portal treatment A / B / C</td><td>Juanma</td><td class="n">three built and captured; recommendation stated, not selected</td></tr>
 <tr><td>Guide threshold composition</td><td>Juanma</td><td class="n ok">fixed, before/after available</td></tr>
 <tr><td>Lobby → Galería A rule</td><td>Juanma to ratify</td><td class="n ok">decided on evidence, documented</td></tr>
 <tr><td>Reaching a late stop still costs ~19 s of room building</td><td>backlog</td><td class="n">real work, not overhead</td></tr>
