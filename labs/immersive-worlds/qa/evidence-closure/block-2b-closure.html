@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Block 2B Product Closure</title>
+<style>
+  :root { --bg:#faf9f7; --panel:#fff; --ink:#1b1a18; --dim:#6f6a63; --edge:#d8d2c8;
+    --ok:#2f6b3f; --bad:#9c2b21; --warn:#a8621a; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#131211; --panel:#1c1b19; --ink:#efece6; --dim:#a09a91; --edge:#35322d;
+    --ok:#7fbf8e; --bad:#e08a80; --warn:#e0a45c; } }
+  :root[data-theme="dark"] { --bg:#131211; --panel:#1c1b19; --ink:#efece6; --dim:#a09a91;
+    --edge:#35322d; --ok:#7fbf8e; --bad:#e08a80; --warn:#e0a45c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 ui-serif,Georgia,"Times New Roman",serif; padding:40px 24px 90px; }
+  main { max-width:1100px; margin:0 auto; }
+  h1 { font-size:30px; margin:0 0 4px; letter-spacing:-0.01em; }
+  .sub { color:var(--dim); margin:0 0 30px; font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  h2 { font-size:20px; margin:44px 0 6px; border-bottom:1px solid var(--edge); padding-bottom:8px; }
+  h3 { font-size:16px; margin:26px 0 8px; color:var(--dim); font-weight:600; }
+  .verdict { display:flex; flex-wrap:wrap; gap:9px; margin:14px 0 18px; }
+  .chip { border:1px solid var(--edge); border-radius:999px; padding:5px 13px; font-size:13px;
+    background:var(--panel); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .chip.ok { color:var(--ok); } .chip.bad { color:var(--bad); } .chip.warn { color:var(--warn); }
+  table { border-collapse:collapse; width:100%; font-size:14px; margin:10px 0; }
+  td,th { border-bottom:1px solid var(--edge); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { color:var(--dim); font-weight:400; font-size:13px; }
+  td.n { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--dim); }
+  .ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:18px; }
+  figure { margin:0; background:var(--panel); border:1px solid var(--edge); border-radius:8px; overflow:hidden; }
+  figure img { display:block; width:100%; height:auto; }
+  figcaption { padding:10px 13px; font-size:13.5px; }
+  figcaption b { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px;
+    color:var(--dim); font-weight:400; display:block; margin-bottom:2px; letter-spacing:0.04em; }
+  figcaption em { display:block; margin-top:5px; color:var(--warn); font-size:12.5px; font-style:normal; }
+  .panel { background:var(--panel); border:1px solid var(--edge); border-radius:8px; padding:16px 20px; margin:14px 0; }
+  .decision { border-left:3px solid var(--warn); padding-left:16px; margin:16px 0; }
+  .scroll { overflow-x:auto; }
+  p { max-width:74ch; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; }
+</style></head>
+<body><main>
+
+<h1>Block 2B — final product closure</h1>
+<p class="sub">TECHNICALLY_CLOSED · PRODUCT_APPROVAL_PENDING · generated 2026-08-13T13:15:36.012Z</p>
+
+<p>Everything below is measured or photographed from the running prototype. Where a
+piece of evidence is incomplete, it says so on the page. Nothing here is approval —
+that is Juanma's, and this exists to make it possible to give or refuse it by looking.</p>
+
+<div class="verdict">
+  <span class="chip ok">crossing 19/19</span>
+  <span class="chip ok">seek equivalence 23/23</span>
+  <span class="chip ok">guide clearance 0 → 0.92 m</span>
+  <span class="chip ok">camera endpoints unchanged</span>
+  <span class="chip warn">portal variants: 1 of 3 built</span>
+  <span class="chip warn">IW reference: approach only</span>
+</div>
+
+<h2>A · The Museum crossing, as it moves</h2>
+<p>Galería A → Galería B. Each frame is a named frame of one crossing, captured by
+stepping the runtime by hand with the render loop stopped.</p>
+<div class="grid">
+<figure><img src="01_departure.png" alt="departure — the threshold approach begins" loading="lazy">
+      <figcaption><b>01_departure.png</b>departure — the threshold approach begins</figcaption></figure>
+<figure><img src="02_threshold.png" alt="threshold — Galería B live through the opening" loading="lazy">
+      <figcaption><b>02_threshold.png</b>threshold — Galería B live through the opening</figcaption></figure>
+<figure><img src="04_portal_active.png" alt="crossing active, under TRANSITION authority" loading="lazy">
+      <figcaption><b>04_portal_active.png</b>crossing active, under TRANSITION authority</figcaption></figure>
+<figure><img src="05_middle.png" alt="mid-crossing — inside the aperture" loading="lazy">
+      <figcaption><b>05_middle.png</b>mid-crossing — inside the aperture</figcaption></figure>
+<figure><img src="06_handoff.png" alt="room handoff, 0.022 m from the wall plane" loading="lazy">
+      <figcaption><b>06_handoff.png</b>room handoff, 0.022 m from the wall plane</figcaption></figure>
+<figure><img src="07_arrival.png" alt="arrival — the authored end pose" loading="lazy">
+      <figcaption><b>07_arrival.png</b>arrival — the authored end pose</figcaption></figure>
+<figure><img src="08_continuation.png" alt="continuation — the next beat starts from here" loading="lazy">
+      <figcaption><b>08_continuation.png</b>continuation — the next beat starts from here</figcaption></figure>
+</div>
+
+<h2>B · The owned Infinite Worlds reference</h2>
+<p>Run from the canonical snapshot <code>453ed40</code> with the exact dependency versions
+the source pins, served locally because <code>esm.sh</code> is blocked here.</p>
+<div class="panel">
+  <strong>What this evidence is, and is not.</strong>
+  <p>It shows how the reference <em>presents a destination before you reach it</em>: the
+  other world rendered live inside a framed portal surface, with a distortion and
+  edge treatment over it. That is the dimension the Museum decision turns on.</p>
+  <p><strong>It does not show the completed world swap.</strong> The crossing is triggered by
+  clicking the portal and the click did not land on its interaction target. The
+  portal's noise texture is also a local stand-in, because the original is served
+  from a blocked host — so the noise <em>pattern</em> differs from the real thing, while the
+  choreography and the render-target portal do not.</p>
+</div>
+<div class="grid">
+<figure><img src="iw_00_before.png" alt="THE GREY CITY — portal visible, destination world live inside it" loading="lazy">
+      <figcaption><b>iw_00_before.png</b>THE GREY CITY — portal visible, destination world live inside it</figcaption></figure><figure><img src="iw_01_flight.png" alt="crossing, sample 1 of 4" loading="lazy">
+      <figcaption><b>iw_01_flight.png</b>crossing, sample 1 of 4<em>noise pattern substituted; choreography faithful</em></figcaption></figure><figure><img src="iw_02_flight.png" alt="crossing, sample 2 of 4" loading="lazy">
+      <figcaption><b>iw_02_flight.png</b>crossing, sample 2 of 4<em>noise pattern substituted; choreography faithful</em></figcaption></figure><figure><img src="iw_03_flight.png" alt="crossing, sample 3 of 4" loading="lazy">
+      <figcaption><b>iw_03_flight.png</b>crossing, sample 3 of 4<em>noise pattern substituted; choreography faithful</em></figcaption></figure><figure><img src="iw_04_flight.png" alt="crossing, sample 4 of 4" loading="lazy">
+      <figcaption><b>iw_04_flight.png</b>crossing, sample 4 of 4<em>noise pattern substituted; choreography faithful</em></figcaption></figure><figure><img src="iw_99_after.png" alt="after the crossing — destination world" loading="lazy">
+      <figcaption><b>iw_99_after.png</b>after the crossing — destination world</figcaption></figure>
+</div>
+
+<h3>What the two products actually do differently</h3>
+<div class="scroll"><table>
+<tr><th></th><th>Infinite Worlds</th><th>Museum</th></tr>
+<tr><td>Why a portal exists</td><td class="n">two scenes share coordinates; a texture is the only way to see one from the other</td><td class="n">two rooms share a wall with a real hole in it</td></tr>
+<tr><td>Destination presence</td><td class="n">rendered to a 2048² target, shown on a portal surface</td><td class="n">the actual room, seen through the actual opening</td></tr>
+<tr><td>Parallax and depth</td><td class="n">correct, via frameCorners</td><td class="n">native — it is the same scene</td></tr>
+<tr><td>Portal treatment</td><td class="n">distortion, edge glow, chromatic fringe</td><td class="n">none; the architecture is the frame</td></tr>
+<tr><td>Crossing</td><td class="n">camera to portal, world swap, camera to origin</td><td class="n">one continuous move through the aperture</td></tr>
+<tr><td>Cameras</td><td class="n">two, synchronised</td><td class="n">one, always</td></tr>
+</table></div>
+
+<h2>C · Portal treatment — the open decision</h2>
+<div class="decision">
+<p><strong>Variant A — architectural only.</strong> Built, measured, and shown in section A.
+The doorway is the frame; nothing is added.</p>
+<p><strong>Variant B — adapted first-party treatment.</strong> <span class="warn">Not built.</span> Section B shows
+what that treatment looks like in its own product, which is the honest basis for
+deciding whether it belongs on an institutional doorway.</p>
+<p><strong>Variant C — subtle hybrid.</strong> <span class="warn">Not built.</span></p>
+<p><strong>Recommendation, and it is only that:</strong> keep A. Look at <code>05_middle.png</code> — the
+jamb framing the dark chamber, <em>Noche de invierno</em> ahead, the cove line running away
+over the ceiling. The spectacle there is the building. The reference's treatment
+earns its place because its portal is a surface that must announce itself as a
+portal; a Museum doorway is already a doorway. Final call is Juanma's, and B and C
+remain buildable if he wants them seen.</p>
+</div>
+
+<h2>D · Guide at the threshold — before and after</h2>
+<div class="grid">
+<figure><img src="threshold_before.png" alt="before — she stands in the middle of the opening, covering the work she is describing" loading="lazy">
+      <figcaption><b>threshold_before.png</b>before — she stands in the middle of the opening, covering the work she is describing</figcaption></figure>
+<figure><img src="threshold_after.png" alt="after — she stands beside it; the opening, the artwork and the floor are all visible" loading="lazy">
+      <figcaption><b>threshold_after.png</b>after — she stands beside it; the opening, the artwork and the floor are all visible</figcaption></figure>
+</div>
+<div class="scroll"><table>
+<tr><th></th><th>before</th><th>after</th></tr>
+<tr><td>camera position</td><td class="n">3.4, 1.62, -10</td><td class="n">3.4, 1.62, -10</td></tr>
+<tr><td>camera target</td><td class="n">7.5, 1.26, -10</td><td class="n">7.5, 1.26, -10</td></tr>
+<tr><td>guide anchor</td><td class="n">6.3, 0, -10</td><td class="n">6.3, 0, -10</td></tr>
+<tr><td>guide staged at</td><td class="n">6.3, 0, -10</td><td class="n">6.3, 0, -10.92</td></tr>
+<tr><td>blocks the centre</td><td class="n bad">YES</td><td class="n ok">no</td></tr>
+<tr><td>crossing clearance</td><td class="n bad">0 m</td><td class="n ok">0.92 m</td></tr>
+</table></div>
+<p>The camera did not move. The fix is two lines of world data — <code>aside: true</code>, the
+same authored grammar every cesión beat already uses — because the camera for this
+beat is derived <em>from</em> the guide anchor, so moving the anchor would have dragged the
+approved endpoint with it.</p>
+
+<h2>E · Lobby → Galería A</h2>
+<p>This became a crossing as a consequence of T6 following beat intent rather than
+portal identity. It was outside the authorised slice, so it has now been looked at.</p>
+<div class="grid">
+<figure><img src="lobby_00_before.png" alt="before the crossing — departure pose" loading="lazy">
+      <figcaption><b>lobby_00_before.png</b>before the crossing — departure pose</figcaption></figure><figure><img src="lobby_01_flight.png" alt="17% through the crossing" loading="lazy">
+      <figcaption><b>lobby_01_flight.png</b>17% through the crossing</figcaption></figure><figure><img src="lobby_02_flight.png" alt="33% through the crossing" loading="lazy">
+      <figcaption><b>lobby_02_flight.png</b>33% through the crossing</figcaption></figure><figure><img src="lobby_03_flight.png" alt="50% through the crossing" loading="lazy">
+      <figcaption><b>lobby_03_flight.png</b>50% through the crossing</figcaption></figure>
+</div>
+<div class="decision">
+<p><strong>Decision: keep it.</strong> It is the same thing semantically — a continuous passage
+between adjacent spaces through a real aperture — and it reads as a museum entrance:
+welcomed in the vestíbulo, then walked through the jamb with the first work ahead.
+No inappropriate spectacle is introduced, and that is measurable rather than a
+matter of taste: lobby and Galería A share the white-cube profile, so the atmosphere
+blend is provably inert (exposure 0.95 → 0.95, worst single-frame step 0).</p>
+<p><strong>Rule to record:</strong> T6 applies to any <code>PORTAL</code> beat whose portal is <code>CONTINUOUS</code>.
+<code>TELEPORT</code> portals stay cuts. <code>representationHint</code> (DOOR 1.5 m vs OPENING 2.6 m)
+is available as a future profiling axis, but nothing measured so far demands a split.</p>
+</div>
+
+<h2>F · Direct seek and state reconstruction</h2>
+<div class="scroll"><table>
+<tr><th>stop</th><th>beat</th><th>playback</th><th>reconstruction</th><th>state equivalence</th></tr>
+<tr>
+  <td>early</td><td class="n">step.03-lleva-horizonte</td>
+  <td class="n">24459 ms</td><td class="n">1656 ms</td>
+  <td class="n ok">0 of 23 fields differ</td>
+</tr><tr>
+  <td>mid</td><td class="n">step.06h-lleva-vasija</td>
+  <td class="n">43253 ms</td><td class="n">3227 ms</td>
+  <td class="n ok">0 of 23 fields differ</td>
+</tr><tr>
+  <td>late</td><td class="n">step.10c-lleva-cuaderno</td>
+  <td class="n">72365 ms</td><td class="n">19740 ms</td>
+  <td class="n ok">0 of 23 fields differ</td>
+</tr>
+</table></div>
+<p>The headline number this mission was given — a ~100 s seek — was a software-rasteriser
+artefact, not a product cost: a frame here takes about two seconds and about ten
+milliseconds on a GPU. Chasing it exposed two real defects underneath. Seek latency
+was coupled to frame time, because the step yielded through a timer that queues
+behind rendering; and a reconstruction was flying full crossing choreography at every
+portal beat, in real time, for nobody. Both are fixed, and equivalence was re-proven
+<em>after</em> the change rather than carried over from before it.</p>
+
+<h2>Still open, and for whom</h2>
+<div class="scroll"><table>
+<tr><th>question</th><th>owner</th><th>state</th></tr>
+<tr><td>Is the Museum crossing perceptually ≥ Infinite Worlds?</td><td>Juanma + ChatGPT</td><td class="n warn">partial evidence — approach compared, swap not captured</td></tr>
+<tr><td>Portal treatment A / B / C</td><td>Juanma</td><td class="n warn">A built; B and C not built</td></tr>
+<tr><td>Guide threshold composition</td><td>Juanma</td><td class="n ok">fixed, before/after available</td></tr>
+<tr><td>Lobby → Galería A rule</td><td>Juanma to ratify</td><td class="n ok">decided on evidence, documented</td></tr>
+<tr><td>Reaching a late stop still costs ~19 s of room building</td><td>backlog</td><td class="n">real work, not overhead</td></tr>
+</table></div>
+
+</main></body></html>
