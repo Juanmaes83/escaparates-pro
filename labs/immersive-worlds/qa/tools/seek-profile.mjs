@@ -81,11 +81,19 @@ const report = await page.evaluate(async () => {
     const framesBefore = frames;
     const buildsBefore = builds.length;
 
+    // Call the engine's own step, do not reimplement it.
+    //
+    // The first version of this profiler copied the body of _advanceAndSettle so
+    // it could time the parts. Then _advanceAndSettle changed, and the profiler
+    // went on faithfully measuring the old code it still contained — reporting
+    // 62 s for a path the equivalence harness measured at 19.7 s. An instrument
+    // that duplicates what it measures stops measuring it the moment either one
+    // moves.
     d._advance();
     const afterAdvance = performance.now();
     if (d._pendingStep) { try { await d._pendingStep; } catch { /* reported elsewhere */ } }
     const afterPending = performance.now();
-    await new Promise((r) => setTimeout(r, 0));
+    await Promise.resolve();
     const beatEnd = performance.now();
 
     beats.push({
