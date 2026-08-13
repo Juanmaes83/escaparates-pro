@@ -233,8 +233,20 @@ export class ExperienceDirector {
     if (this._pendingStep) {
       try { await this._pendingStep; } catch { /* already reported as ASSET_ERROR */ }
     }
-    // Yield once so a shot queued in a microtask has landed.
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Yield so a shot queued in a microtask has landed — as a microtask, not a
+    // timer.
+    //
+    // A timer callback queues behind the render loop, so this line cost whatever
+    // one frame costs. Measured on the software rasteriser the QA environment
+    // uses: `setTimeout(0)` took 1989.7 ms with the loop running and 4.2 ms with
+    // it stopped, which is where ~68 s of a 28-beat seek was going — 99.95% of it,
+    // against 33 ms of actual work. A microtask is 0.008 ms and drains exactly
+    // what this line is here to drain, because anything queued as a microtask
+    // before it runs before the continuation.
+    //
+    // The seek is no longer coupled to frame time at all, which matters beyond
+    // the harness: on any slow frame, in any browser, this was seek latency.
+    await Promise.resolve();
     return this.index !== before;
   }
 
@@ -465,6 +477,18 @@ export class ExperienceDirector {
   _crossingIntent(previous, step) {
     if (step.shotIntent !== SHOT_INTENT.PORTAL) return null;
     if (this._transitionFamily(previous, step) !== TRANSITION.CROSSING) return null;
+    // A crossing is something the visitor watches. A seek is not watching it.
+    //
+    // Reconstructing a late state — a direct jump, a QA state, an authoring
+    // preview — passed through both portal beats and started a full crossing at
+    // each, in real time, for nobody. The endpoint is identical either way, so
+    // skipping the travel changes where the camera goes exactly not at all; it
+    // only stops paying for a journey with no passenger.
+    //
+    // This is the playback/reconstruction split: the same beats, the same
+    // destinations, and choreography only on the path where choreography is the
+    // point.
+    if (this._seeking) return null;
     // A crossing may not outrun the beat that contains it. The beat waits for the
     // move the way a lead waits for the guide, but that wait is bounded, so the
     // move has to fit inside the bound rather than rely on it.
