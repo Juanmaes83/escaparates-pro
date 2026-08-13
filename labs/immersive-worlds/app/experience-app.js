@@ -23,6 +23,9 @@ import { AudioDirector } from './audio-director.js';
 import { ExperienceHUD } from './ui/hud.js';
 import { InputSystem } from './ui/input.js';
 import { DETERMINISTIC_STATES, STATE_NAMES } from '../qa/deterministic-states.js';
+import { applyConfigToWorld, baseConfigFromWorld, normaliseConfig } from '../authoring/experience-config.js';
+import { MediaVault } from '../authoring/media-vault.js';
+import { ConfigStore } from '../authoring/config-store.js';
 
 const params = new URLSearchParams(location.search);
 const WORLD_URL = params.get('world') || './worlds/museum-v1.world.json';
@@ -46,10 +49,24 @@ export async function boot() {
   const tier = params.get('tier')?.toUpperCase() || detectTier(env);
   const seed = params.get('seed') || 'fundacion-arenas-v1';
 
+  // The authoring layer edits data, and the Museum is built from that data. So
+  // the config is applied to the world record here, before anything is
+  // constructed — which is why a second institution needs no engine change:
+  // every representation already derives from these records.
+  const authoringOn = params.get('authoring') === '1';
+  const vault = window.__IW_VAULT || (window.__IW_VAULT = new MediaVault());
   const world = await fetch(WORLD_URL, { cache: 'no-store' }).then((response) => {
     if (!response.ok) throw new Error(`No se pudo cargar el mundo (${response.status})`);
     return response.json();
   });
+
+  // The client layer, applied to the data. `window.__IW_CONFIG` lets a re-boot
+  // carry the authored config across without persisting it first, which is what
+  // makes "apply" feel immediate rather than like a save-and-reload.
+  const activeConfig = normaliseConfig(
+    window.__IW_CONFIG || ConfigStore.load() || baseConfigFromWorld(world)
+  );
+  const authoredWorld = applyConfigToWorld(world, activeConfig, (ref) => vault.resolve(ref));
 
   const renderHost = new RenderHost({ canvas, quality: policyForTier(tier, { mobile: isMobileEnv(env) }) });
   // Media paths in a world file are relative to that file, so an institution can
@@ -58,7 +75,7 @@ export async function boot() {
   const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader });
 
   const runtime = new Runtime({
-    world,
+    world: authoredWorld,
     sceneKit,
     // The wall label sits low in the frame on desktop and becomes a sheet on a
     // phone. Framing composes the work into what is left, so the label never
@@ -155,6 +172,48 @@ export async function boot() {
   // nothing about them survives a page load that does not ask for one.
   const portalVariant = (params.get('portalVariant') || 'A').toUpperCase();
   sceneKit.setThresholdTreatment?.({ A: 'NONE', B: 'ADAPTED', C: 'SUBTLE', D: 'IW_ENGINE' }[portalVariant] || 'NONE');
+
+  // Authoring is opt-in and additive: without ?authoring=1 nothing below runs and
+  // the Museum behaves exactly as it always has.
+  if (authoringOn) {
+    const [{ AuthoringPanel }] = await Promise.all([import('../authoring/authoring-panel.js')]);
+    if (!document.getElementById('au-css')) {
+      const link = document.createElement('link');
+      link.id = 'au-css'; link.rel = 'stylesheet'; link.href = './authoring/authoring.css';
+      document.head.appendChild(link);
+    }
+    const artworks = authoredWorld.entities
+      .filter((e) => e.content?.title)
+      .map((e) => ({
+        id: e.id, title: e.content.title, creator: e.content.creator,
+        year: e.content.year, medium: e.content.medium, description: e.content.description
+      }));
+
+    const openBtn = document.createElement('button');
+    openBtn.id = 'au-open'; openBtn.textContent = 'Editar';
+    document.body.appendChild(openBtn);
+
+    const panel = new AuthoringPanel({
+      config: activeConfig,
+      vault,
+      artworks,
+      // Applying re-boots the experience from the authored data. Mutating a
+      // built scene in place would mean a second path to every representation,
+      // and two paths drift; rebuilding from the record keeps one truth. It
+      // costs about a second and needs no developer.
+      onApply: async (config) => {
+        window.__IW_CONFIG = config;
+        const url = new URL(location.href);
+        url.searchParams.set('portalVariant', config.experience.portalVariant || 'A');
+        history.replaceState(null, '', url);
+        if (window.__IW?.runtime) { try { window.__IW.runtime.dispose(); } catch { /* */ } }
+        document.getElementById('iw-ui').innerHTML = '';
+        await boot();
+      }
+    });
+    openBtn.onclick = () => panel.root.classList.toggle('au--hidden');
+    window.__IW_PANEL = panel;
+  }
 
   const requestedState = params.get('state');
   installProbe({ runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion });

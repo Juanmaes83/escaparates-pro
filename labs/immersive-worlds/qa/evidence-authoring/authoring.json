@@ -1,0 +1,173 @@
+{
+ "generatedAt": "2026-08-13T17:02:28.122Z",
+ "original": {
+  "institution": "Fundación Arenas — Colección permanente",
+  "artwork": {
+   "title": "Horizonte interrumpido",
+   "creator": "Amalia Serrat",
+   "year": "1971",
+   "medium": "Óleo sobre lienzo",
+   "description": "Serrat pintó esta serie desde la misma ventana durante catorce meses. La franja inferior, más oscura que en el resto de la serie, corresponde al invierno de 1971.",
+   "media": {
+    "kind": "IMAGE",
+    "src": "../assets/collection/horizonte-interrumpido.jpg",
+    "aspect": 1.4607,
+    "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+    "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+   }
+  }
+ },
+ "afterB": {
+  "institution": "Museo de la Bruma — Paisaje atlántico",
+  "metaInstitution": "Museo de la Bruma",
+  "title": "Marea de septiembre",
+  "creator": "Olga Vilariño",
+  "year": "1961",
+  "medium": "óleo sobre tabla",
+  "second": "Cuaderno de niebla",
+  "focusable": [
+   "Marea de septiembre",
+   "Campo de ceniza",
+   "Cuaderno de niebla",
+   "Estudio de figura, IV",
+   "Vasija de arenas"
+  ]
+ },
+ "media": {
+  "badState": "ERROR",
+  "badError": "Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp.",
+  "goodState": "READY",
+  "goodSize": "2×2",
+  "resolved": true,
+  "releasedFrom": 2,
+  "releasedTo": 1
+ },
+ "persistence": {
+  "bytes": 1091,
+  "version": 1,
+  "institution": "Museo de la Bruma",
+  "artworkTitle": "Marea de septiembre",
+  "hasEngineRefs": false
+ },
+ "restored": {
+  "institution": "Fundación Arenas (institución ficticia)",
+  "title": "Horizonte interrumpido",
+  "guided": true,
+  "violations": 0
+ },
+ "checks": [
+  {
+   "name": "el Museo original arranca con authoring activo",
+   "ok": true,
+   "detail": "Fundación Arenas — Colección permanente · Horizonte interrumpido"
+  },
+  {
+   "name": "el panel de edición está montado",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "la identidad institucional cambia",
+   "ok": true,
+   "detail": "Museo de la Bruma"
+  },
+  {
+   "name": "el título de la exposición cambia",
+   "ok": true,
+   "detail": "Museo de la Bruma — Paisaje atlántico"
+  },
+  {
+   "name": "los metadatos de la obra cambian",
+   "ok": true,
+   "detail": "Marea de septiembre · Olga Vilariño · 1961 · óleo sobre tabla"
+  },
+  {
+   "name": "una segunda obra también responde",
+   "ok": true,
+   "detail": "Cuaderno de niebla"
+  },
+  {
+   "name": "un registro alimenta todas las representaciones",
+   "ok": true,
+   "detail": "Collection Browse: Marea de septiembre · Campo de ceniza · Cuaderno de niebla"
+  },
+  {
+   "name": "un formato no admitido falla con motivo",
+   "ok": true,
+   "detail": "Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp."
+  },
+  {
+   "name": "una imagen válida llega a READY",
+   "ok": true,
+   "detail": "2×2"
+  },
+  {
+   "name": "la referencia autorizada resuelve a un URL vivo",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "liberar revoca y olvida el asset",
+   "ok": true,
+   "detail": "2 → 1"
+  },
+  {
+   "name": "la configuración se serializa",
+   "ok": true,
+   "detail": "1091 bytes · esquema v1"
+  },
+  {
+   "name": "la configuración se restaura íntegra",
+   "ok": true,
+   "detail": "Museo de la Bruma · Marea de septiembre"
+  },
+  {
+   "name": "la configuración no contiene objetos del motor",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Fundación Arenas vuelve intacta",
+   "ok": true,
+   "detail": "Fundación Arenas (institución ficticia) · Horizonte interrumpido"
+  },
+  {
+   "name": "el recorrido guiado sigue disponible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "sin violaciones de autoridad de cámara",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ],
+ "shots": [
+  {
+   "id": "01_original",
+   "file": "01_original.png",
+   "caption": "original — Fundación Arenas — Colección permanente"
+  },
+  {
+   "id": "02_panel",
+   "file": "02_panel.png",
+   "caption": "panel de edición abierto"
+  },
+  {
+   "id": "03_museum_b",
+   "file": "03_museum_b.png",
+   "caption": "Museo B — Museo de la Bruma"
+  },
+  {
+   "id": "04_restored",
+   "file": "04_restored.png",
+   "caption": "Fundación Arenas restaurada"
+  }
+ ],
+ "errors": []
+}

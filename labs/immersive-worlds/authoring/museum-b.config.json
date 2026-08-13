@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "configId": "cfg_museo_bruma",
+  "label": "Museo de la Bruma — configuración de prueba",
+  "institution": {
+    "name": "Museo de la Bruma",
+    "claim": "Colección de paisaje atlántico, 1902 — 1968",
+    "introduction": "El Museo de la Bruma conserva pintura y obra sobre papel del norte peninsular. Esta configuración existe para probar que una segunda institución usa el mismo motor sin tocar una línea de código."
+  },
+  "exhibition": { "title": "Museo de la Bruma — Paisaje atlántico" },
+  "artworks": {
+    "entity.artwork.horizonte-interrumpido": {
+      "title": "Marea de septiembre",
+      "creator": "Olga Vilariño",
+      "year": "1961",
+      "medium": "óleo sobre tabla",
+      "description": "Pintada en la ría durante tres inviernos consecutivos. La artista trabajaba únicamente con la luz de la primera hora, y abandonaba el cuadro cuando el sol alcanzaba el agua."
+    },
+    "entity.artwork.division-tercera": {
+      "title": "Cuaderno de niebla",
+      "creator": "Ramón Estévez",
+      "year": "1957",
+      "medium": "tinta y aguada sobre papel"
+    }
+  },
+  "experience": { "portalVariant": "A" }
+}
