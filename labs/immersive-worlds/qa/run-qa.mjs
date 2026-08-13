@@ -801,7 +801,22 @@ async function main() {
     for (const name of stateNames) {
       const url = `${BASE}/index.html?reducedMotion=1&tier=HIGH&state=${encodeURIComponent(name)}`;
       await page.goto(url, { waitUntil: 'load' });
-      await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 45000 });
+      // `__IW.ready` is set *after* the state has been applied, and applying a
+      // guided state replays the route from the first beat — so this wait covers
+      // the whole replay, not a page load.
+      //
+      // Measured on this hardware with qa/tools/states-timing.mjs, at Block 2A
+      // `7211e3f` and again after the Block 2B crossing: the Explore and Focus
+      // states take 12–17 s, and every guided state from the threshold onward
+      // takes 82–105 s, at *both* commits. The crossing adds 4.1% overall, which
+      // is inside the run-to-run noise — one state came back 6.8 s faster.
+      //
+      // The old ceiling was under the measured cost of the work, so the section
+      // passed on a warm browser and timed out on a cold one. A limit below what
+      // the correct behaviour takes is not a limit, it is a coin toss. Raised to
+      // sit above the measured worst case with room to spare, and left as the one
+      // number in this file with a citation attached.
+      await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 240000 });
       await page.evaluate(() => window.__IW.frames(24));
       const file = path.join(EVIDENCE, `${name.replace(/:/g, '_')}.png`);
       await page.screenshot({ path: file });
