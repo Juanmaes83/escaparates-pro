@@ -1888,7 +1888,8 @@
       "shotIntent": "LEAD",
       "duration": 7,
       "guide": {
-        "anchorId": "anchor.gallery-a.guide-umbral"
+        "anchorId": "anchor.gallery-a.guide-umbral",
+        "aside": true
       },
       "caption": "La sala siguiente está a oscuras. Deje que la vista se acostumbre."
     },
