@@ -6,9 +6,11 @@ const interfaceFiles = [
   'projects.html',
   'js/projects/project-library-page.js',
   'js/customization/project-store-local.js',
+  'js/sector-blueprints/fashion-commerce-pro.js',
   'review/phase1-studio-v2.js',
   'review/phase2-studio-extension.js',
   'tests/product-studio-module.spec.mjs',
+  'tests/fashion-commerce-pro.spec.mjs',
   'tests/phase2-vercel.spec.mjs'
 ];
 

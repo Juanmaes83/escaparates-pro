@@ -1,0 +1,62 @@
+{
+  "templateId": "fashion-commerce-pro",
+  "presetId": "rubik-sota-disruption",
+  "updatedAt": "2026-07-17",
+  "assets": [
+    {
+      "id": "heroVideo",
+      "type": "video",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4",
+      "section": "hero",
+      "usageStatus": "approved-by-owner",
+      "strategy": "remote-cloudfront-authorized"
+    },
+    {
+      "id": "campaignVideo2",
+      "type": "video",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_074625_a81f018a-956b-43fb-9aee-4d1508e30e6a.mp4",
+      "section": "campaign-grid",
+      "usageStatus": "approved-by-owner",
+      "strategy": "remote-cloudfront-authorized"
+    },
+    {
+      "id": "campaignVideo3",
+      "type": "video",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260402_054547_9875cfc5-155a-4229-8ec8-b7ba7125cbf8.mp4",
+      "section": "campaign-grid",
+      "usageStatus": "approved-by-owner",
+      "strategy": "remote-cloudfront-authorized"
+    },
+    {
+      "id": "campaignVideo4",
+      "type": "video",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4",
+      "section": "campaign-grid",
+      "usageStatus": "approved-by-owner",
+      "strategy": "remote-cloudfront-authorized"
+    },
+    {
+      "id": "heroPoster",
+      "type": "image",
+      "url": "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1920&q=80",
+      "section": "hero",
+      "usageStatus": "approved-unsplash",
+      "strategy": "remote-unsplash"
+    },
+    {
+      "id": "productImages",
+      "type": "image-set",
+      "urlPattern": "https://images.unsplash.com/*",
+      "section": "gallery",
+      "usageStatus": "approved-unsplash",
+      "strategy": "remote-unsplash"
+    },
+    {
+      "id": "designerPortraits",
+      "type": "image-set",
+      "section": "designers",
+      "usageStatus": "replacement-authorized",
+      "strategy": "replace-randomuser-before-designer-block"
+    }
+  ]
+}
