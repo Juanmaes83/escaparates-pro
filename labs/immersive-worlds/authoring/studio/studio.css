@@ -1,0 +1,467 @@
+/*
+ * Museum authoring — Studio (VS02)
+ *
+ * The layout decision, made against evidence rather than in prose: VS01 put the
+ * editor ON the room and the room lost. Here the Museum is docked in the middle
+ * at its own size and everything else is furniture around it. The approved
+ * reference does the same thing for the same reason — the preview is the
+ * product, not a thumbnail of it.
+ *
+ * Colour follows the Museum's constitution, not the reference's gold: warm
+ * neutrals, hairline rules, one serif, one grotesque, and no saturated colour
+ * except the art on the walls. The three state colours are the single exception,
+ * because "listo" and "no se pudo usar" must be distinguishable without reading.
+ */
+
+:root {
+  --st-ground: #100f0e;
+  --st-panel: #16151300;
+  --st-raise: #1a1917;
+  --st-ink: #ece7dd;
+  --st-dim: #9a9389;
+  --st-faint: #6f6960;
+  --st-line: rgba(226, 219, 205, 0.14);
+  --st-line-strong: rgba(226, 219, 205, 0.3);
+  --st-serif: Georgia, 'Times New Roman', serif;
+  --st-sans: 'Helvetica Neue', Inter, system-ui, Arial, sans-serif;
+  --st-ok: #8fbf95;
+  --st-warn: #d8b45e;
+  --st-bad: #e08a80;
+
+  --st-top: 56px;
+  --st-left: 236px;
+  --st-editor: 316px;
+  --st-val: 232px;
+}
+
+/* The Museum, docked — and letterboxed to the shape the visitor will actually
+   see. A full-height column made the preview portrait, so an author was
+   composing an exhibition in a viewport no visitor will ever have. The height
+   comes from `--st-canvas-h`, measured from the column and set by the shell,
+   because only JS knows how wide the column ended up. */
+body[data-studio="on"] #iw-stage,
+body[data-studio="on"] #iw-ui {
+  top: var(--st-top);
+  left: var(--st-left);
+  right: calc(var(--st-editor) + var(--st-val));
+  bottom: auto;
+  height: var(--st-canvas-h, 62vh);
+}
+
+/* The band the letterbox frees: the room's own pieces, in the order they hang.
+   The approved reference puts a filmstrip here for the same reason — a tree
+   tells you what exists, a filmstrip tells you what it looks like. */
+.st-film {
+  position: fixed;
+  top: calc(var(--st-top) + var(--st-canvas-h, 62vh));
+  left: var(--st-left);
+  right: calc(var(--st-editor) + var(--st-val));
+  bottom: 0;
+  background: var(--st-ground);
+  border-top: 1px solid var(--st-line);
+  padding: 12px 14px 16px;
+  overflow-y: auto;
+  z-index: 41;
+}
+.st-filmhead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-bottom: 10px;
+}
+.st-filmhead h3 {
+  margin: 0; font: 400 10px/1.3 var(--st-sans);
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--st-faint);
+}
+.st-filmhead span { font-size: 10.5px; color: var(--st-faint); }
+.st-filmrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.st-chip {
+  flex: 0 1 auto; min-width: 108px; max-width: 168px; text-align: left;
+  background: none; border: 1px solid var(--st-line); border-radius: 3px;
+  color: var(--st-dim); font: inherit; padding: 8px 10px; cursor: pointer;
+  transition: border-color 0.16s, color 0.16s;
+}
+.st-chip:hover { border-color: var(--st-line-strong); color: var(--st-ink); }
+.st-chip.is-on { border-color: var(--st-ink); color: var(--st-ink); background: rgba(236, 231, 221, 0.06); }
+.st-chip b {
+  display: block; font-weight: 400; font-size: 12px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-chip i { display: block; font-style: normal; font-size: 9.5px; color: var(--st-faint); }
+.st-chip em { display: block; font-style: normal; font-size: 9.5px; color: var(--st-ok); margin-top: 3px; }
+body[data-studio="on"] { overflow: hidden; }
+
+/* The visitor's navigation belongs to the visitor. Inside the studio it wrapped
+   onto three rows in a narrower column and duplicated the tree, so two sets of
+   navigation competed over one room. The cartela and the tour transport stay:
+   those are the preview telling the truth about the experience. */
+body[data-studio="on"] .iw-topbar { display: none; }
+
+/* What the centre column is: live, and which room it is showing. */
+.st-live {
+  position: absolute; top: 10px; left: 12px; z-index: 2;
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 11px 5px 8px; border-radius: 999px;
+  background: rgba(12, 11, 10, 0.62); border: 1px solid var(--st-line);
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--st-dim);
+  backdrop-filter: blur(6px);
+}
+.st-live::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--st-ok); box-shadow: 0 0 0 3px rgba(143, 191, 149, 0.16);
+}
+.st-live b { font-weight: 400; color: var(--st-ink); letter-spacing: 0.08em; }
+
+/* Narrow-only furniture, off by default. */
+.st-jump { display: none; }
+
+#st {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-rows: var(--st-top) 1fr;
+  color: var(--st-ink);
+  font: 400 13.5px/1.55 var(--st-sans);
+  pointer-events: none;
+}
+#st > * { pointer-events: auto; }
+
+/* == top bar =============================================================== */
+
+.st-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 0 16px;
+  background: var(--st-ground);
+  border-bottom: 1px solid var(--st-line);
+}
+.st-brand { display: flex; align-items: center; gap: 10px; }
+.st-mark {
+  display: grid; place-items: center; width: 24px; height: 24px;
+  border: 1px solid var(--st-line-strong); border-radius: 2px;
+  font: 400 12px/1 var(--st-serif); color: var(--st-dim);
+}
+.st-brand b { display: block; font: 400 14px/1.2 var(--st-serif); }
+.st-brand i { display: block; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--st-faint); font-style: normal; }
+
+.st-crumbs { display: flex; align-items: center; gap: 8px; min-width: 0; overflow: hidden; }
+.st-crumbs span {
+  font-size: 11.5px; color: var(--st-dim); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 30ch;
+}
+.st-crumbs span + span::before { content: '·'; margin-right: 8px; color: var(--st-faint); }
+.st-crumbs .st-here { color: var(--st-ink); }
+
+.st-acts { display: flex; align-items: center; gap: 8px; }
+.st-saved { font-size: 11px; color: var(--st-faint); margin-right: 4px; white-space: nowrap; }
+.st-saved--dirty { color: var(--st-warn); }
+
+.st-b {
+  background: transparent; border: 1px solid var(--st-line-strong); border-radius: 999px;
+  color: var(--st-ink); padding: 7px 14px; font: inherit; font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; white-space: nowrap;
+  transition: background 0.18s, border-color 0.18s, opacity 0.18s;
+}
+.st-b:hover:not(:disabled), .st-b:focus-visible:not(:disabled) {
+  background: rgba(236, 231, 221, 0.09); border-color: var(--st-ink); outline: none;
+}
+.st-b:disabled { opacity: 0.34; cursor: not-allowed; }
+.st-b--go { background: var(--st-ink); color: #14120f; border-color: var(--st-ink); font-weight: 600; }
+.st-b--go:hover:not(:disabled) { background: #fff; border-color: #fff; }
+.st-b--small { padding: 6px 11px; font-size: 10px; }
+
+/* == body ================================================================== */
+
+.st-body {
+  display: grid;
+  grid-template-columns: var(--st-left) 1fr var(--st-editor) var(--st-val);
+  min-height: 0;
+}
+/* The Museum shows through. Positioned, so the live badge anchors to the preview
+   column instead of escaping to the viewport and landing on the brand. */
+.st-stage { pointer-events: none; position: relative; }
+
+.st-rail, .st-tree, .st-ed, .st-val {
+  background: var(--st-ground);
+  overflow-y: auto;
+  min-height: 0;
+}
+.st-rail { display: none; }           /* domains live above the tree, see .st-tree h2 */
+.st-tree { border-right: 1px solid var(--st-line); padding: 16px 0 28px; }
+.st-ed { border-left: 1px solid var(--st-line); padding-bottom: 40px; }
+.st-val { border-left: 1px solid var(--st-line); padding: 16px 14px 28px; }
+
+h2 {
+  margin: 0 0 10px; padding: 0 14px;
+  font: 400 10px/1.3 var(--st-sans); letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--st-faint);
+}
+
+/* == experience tree ======================================================= */
+
+.st-tree ul { list-style: none; margin: 0; padding: 0; }
+.st-node {
+  display: flex; align-items: center; gap: 2px;
+  padding-left: calc(6px + var(--d) * 13px);
+  border-left: 2px solid transparent;
+}
+.st-node.is-on { background: rgba(236, 231, 221, 0.07); border-left-color: var(--st-ink); }
+.st-twist {
+  flex: 0 0 16px; width: 16px; background: none; border: 0; color: var(--st-faint);
+  font-size: 9px; cursor: pointer; padding: 0; line-height: 1;
+}
+.st-twist--leaf { cursor: default; }
+.st-nodebtn {
+  flex: 1 1 auto; min-width: 0; text-align: left; background: none; border: 0;
+  color: inherit; font: inherit; padding: 6px 4px 6px 0; cursor: pointer;
+}
+.st-nodebtn b {
+  display: block; font-weight: 400; font-size: 12.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-nodebtn i {
+  display: block; font-style: normal; font-size: 10px; color: var(--st-faint);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-node--institution > .st-nodebtn b { font-family: var(--st-serif); font-size: 14px; }
+.st-node--room > .st-nodebtn b { letter-spacing: 0.02em; }
+.st-node--entity > .st-nodebtn b { color: var(--st-dim); }
+.st-node.is-on .st-nodebtn b { color: var(--st-ink); }
+.st-dot {
+  flex: 0 0 auto; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--st-ok); margin-right: 10px;
+}
+.st-treefoot {
+  margin: 18px 14px 0; padding-top: 12px; border-top: 1px solid var(--st-line);
+  font-size: 10px; line-height: 1.5; color: var(--st-faint);
+}
+
+/* == editor ================================================================ */
+
+.st-edtop {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
+  padding: 16px 16px 14px; border-bottom: 1px solid var(--st-line);
+  position: sticky; top: 0; background: var(--st-ground); z-index: 2;
+}
+.st-eyebrow { margin: 0 0 4px; font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--st-faint); }
+.st-edtop h2 { margin: 0; padding: 0; font: 400 17px/1.25 var(--st-serif); color: var(--st-ink); letter-spacing: 0; text-transform: none; }
+.st-id { font: 10px/1 ui-monospace, Menlo, monospace; color: var(--st-faint); padding-top: 4px; }
+
+.st-g { border-bottom: 1px solid var(--st-line); }
+.st-gh {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  background: none; border: 0; color: var(--st-dim); cursor: pointer;
+  padding: 13px 16px; font: inherit; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+}
+.st-gh i { font-style: normal; font-size: 9px; }
+.st-gb { padding: 0 16px 18px; }
+
+.st-f { display: block; margin: 0 0 12px; }
+.st-l {
+  display: flex; align-items: baseline; gap: 7px;
+  font-size: 10.5px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--st-dim); margin-bottom: 4px;
+}
+/* "This value came from the Museum's own record, not from you." */
+.st-inh {
+  font-style: normal; font-size: 9px; letter-spacing: 0.1em;
+  color: var(--st-faint); border: 1px solid var(--st-line); border-radius: 999px;
+  padding: 1px 6px;
+}
+#st [data-state="inherited"] { color: var(--st-dim); }
+#st [data-state="own"] { color: var(--st-ink); }
+.st-h { display: block; font-size: 10.5px; color: var(--st-faint); margin: -2px 0 5px; }
+#st input:not([type=file]), #st textarea {
+  width: 100%; box-sizing: border-box; background: rgba(255, 252, 246, 0.05);
+  border: 1px solid var(--st-line); border-radius: 3px; color: var(--st-ink);
+  padding: 8px 10px; font: inherit; font-size: 13px;
+}
+#st textarea { resize: vertical; line-height: 1.5; }
+#st input:focus, #st textarea:focus { outline: none; border-color: var(--st-line-strong); background: rgba(255, 252, 246, 0.08); }
+#st ::placeholder { color: var(--st-faint); }
+
+.st-note { margin: 0 0 12px; font-size: 11.5px; line-height: 1.55; color: var(--st-faint); }
+.st-facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0 0 12px; font-size: 12px; }
+.st-facts dt { color: var(--st-faint); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; padding-top: 2px; }
+.st-facts dd { margin: 0; color: var(--st-dim); }
+
+.st-list { list-style: none; margin: 0; padding: 0; }
+.st-list button {
+  width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--st-line);
+  color: inherit; font: inherit; padding: 8px 0; cursor: pointer;
+}
+.st-list b { display: block; font-weight: 400; font-size: 12.5px; }
+.st-list i { display: block; font-style: normal; font-size: 10px; color: var(--st-faint); }
+
+/* == media slots =========================================================== */
+
+.st-slot { border: 1px solid var(--st-line); border-radius: 4px; padding: 12px; margin-bottom: 12px; }
+.st-slot.is-bad { border-color: rgba(224, 138, 128, 0.5); }
+.st-slothead { margin-bottom: 9px; }
+.st-slotrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* The native input never shows its own English. The label is the control. */
+.st-file { position: relative; display: inline-block; }
+.st-file input[type=file] {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+}
+.st-file span {
+  display: inline-block; background: rgba(236, 231, 221, 0.9); color: #14120f;
+  border-radius: 999px; padding: 6px 13px; font-size: 10.5px;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+}
+.st-file input:focus-visible + span { outline: 2px solid var(--st-ink); outline-offset: 2px; }
+.st-filename {
+  font-size: 11.5px; color: var(--st-dim); min-width: 0;
+  overflow-wrap: anywhere; flex: 1 1 8ch;
+}
+
+.st-chain { list-style: none; display: flex; flex-wrap: wrap; gap: 4px; margin: 11px 0 7px; padding: 0; }
+.st-chain li {
+  font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--st-faint); padding: 3px 7px; border: 1px solid var(--st-line); border-radius: 999px;
+}
+.st-chain li.is-done { color: var(--st-ok); border-color: rgba(143, 191, 149, 0.4); }
+.st-chain li.is-now { color: var(--st-warn); border-color: rgba(216, 180, 94, 0.5); }
+.st-chain li.is-bad { color: var(--st-bad); border-color: rgba(224, 138, 128, 0.4); }
+.st-slotstate { margin: 0; font-size: 11.5px; color: var(--st-dim); }
+.st-slotstate.is-ok { color: var(--st-ok); }
+.st-slotstate.is-busy { color: var(--st-warn); }
+.st-slotstate.is-bad { color: var(--st-bad); }
+.st-slot .st-b { margin-top: 9px; }
+
+/* == readiness ============================================================= */
+
+.st-val h2 { padding: 0; }
+.st-gauge { border: 1px solid var(--st-line); border-radius: 4px; padding: 13px; margin-bottom: 16px; }
+.st-gauge b { display: block; font: 400 26px/1 var(--st-serif); margin-bottom: 5px; }
+.st-gauge i { display: block; font-style: normal; font-size: 11px; line-height: 1.45; color: var(--st-dim); }
+.st-gauge.is-ok b { color: var(--st-ok); }
+.st-gauge.is-busy b { color: var(--st-warn); }
+.st-gauge.is-bad b { color: var(--st-bad); }
+
+/* What is complete, by domain. One percentage is a score; this is a to-do list. */
+.st-domains { list-style: none; margin: 0 0 16px; padding: 0; }
+.st-domains li {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid var(--st-line); font-size: 11.5px;
+}
+.st-domains li span { color: var(--st-dim); }
+.st-domains li i { font-style: normal; font-size: 10.5px; color: var(--st-faint); }
+.st-domains li.is-ok i { color: var(--st-ok); }
+.st-domains li.is-warn i { color: var(--st-warn); }
+.st-domains li.is-bad i { color: var(--st-bad); }
+
+.st-vgroup { margin-bottom: 15px; }
+.st-vgroup h3 { margin: 0 0 6px; font: 400 9.5px/1.3 var(--st-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--st-dim); }
+.st-vgroup h3.is-bad { color: var(--st-bad); }
+.st-vgroup h3.is-warn { color: var(--st-warn); }
+.st-vgroup h3.is-dim { color: var(--st-faint); }
+.st-vgroup ul { list-style: none; margin: 0; padding: 0; }
+.st-vgroup button {
+  width: 100%; text-align: left; background: none; border: 0; color: var(--st-dim);
+  font: inherit; font-size: 11px; line-height: 1.4; padding: 4px 0; cursor: pointer;
+}
+.st-vgroup button:hover { color: var(--st-ink); }
+.st-vgroup i { display: block; font-style: normal; font-size: 10px; color: var(--st-faint); }
+.st-ready { font-size: 11.5px; line-height: 1.5; color: var(--st-ok); margin: 0 0 15px; }
+/* These labels name real institutions and real actions, so they are long. A
+   nowrap pill pushed them straight off the right edge of the window. */
+.st-io { display: grid; gap: 6px; margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--st-line); }
+.st-io .st-b {
+  white-space: normal; text-align: center; line-height: 1.35;
+  padding: 8px 10px; letter-spacing: 0.06em;
+}
+.st-msg { margin: 12px 0 0; font-size: 11px; line-height: 1.5; color: var(--st-dim); }
+.st-msg.is-bad { color: var(--st-bad); }
+
+/* == narrower: the validation column folds into the editor ================= */
+
+@media (max-width: 1240px) {
+  :root { --st-left: 208px; --st-editor: 300px; --st-val: 0px; }
+  .st-body { grid-template-columns: var(--st-left) 1fr var(--st-editor); }
+  .st-val {
+    position: fixed; right: 0; bottom: 0; width: var(--st-editor);
+    max-height: 46vh; border-top: 1px solid var(--st-line-strong); z-index: 3;
+  }
+}
+
+/* == narrow: the preview stays put, everything else scrolls under it ======= */
+
+@media (max-width: 900px) {
+  :root { --st-top: 88px; --st-preview: 32vh; }
+
+  /* The preview does not scroll away: an author on a phone should still be able
+     to see what they are changing while they change it. */
+  body[data-studio="on"] #iw-stage,
+  body[data-studio="on"] #iw-ui {
+    inset: var(--st-top) 0 auto 0; height: var(--st-preview);
+  }
+
+  .st-top {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    align-content: center;
+    gap: 7px;
+    padding: 8px 10px;
+  }
+  .st-brand i { display: none; }
+  .st-brand b { font-size: 13px; }
+  .st-crumbs { display: none; }
+  .st-saved { display: none; }
+  /* Wrapping, not clipping: "Empezar experiencia" is the primary action and was
+     running off the right edge at 420 px. */
+  .st-acts { flex-wrap: wrap; gap: 6px; }
+  .st-b { padding: 6px 10px; font-size: 9.5px; letter-spacing: 0.06em; }
+
+  /* One scrolling document. The columns stop being columns and stop clipping
+     themselves — each was a scroll container inside a grid track with no height,
+     which is why the editor showed a label and no field. */
+  .st-body {
+    display: block;
+    height: calc(100vh - var(--st-top));
+    overflow-y: auto;
+    padding-top: calc(var(--st-preview) + 42px);
+    scroll-behavior: smooth;
+  }
+  .st-stage { display: none; }
+  .st-film { display: none; }
+
+  /* Two strings the collapsed header used to drop, and they are the two the
+     author most needs: where am I, and is my work saved. */
+  .st-crumbs {
+    display: flex; position: fixed; left: 0; right: 0;
+    top: calc(var(--st-top) + var(--st-preview)); height: 42px; z-index: 42;
+    align-items: center; gap: 6px; padding: 0 10px;
+    background: var(--st-ground); border-bottom: 1px solid var(--st-line);
+  }
+  .st-crumbs span { font-size: 10.5px; max-width: 14ch; }
+  .st-crumbs .st-here { max-width: 20ch; }
+  .st-saved {
+    display: block; position: fixed; right: 10px;
+    top: calc(var(--st-top) + var(--st-preview) + 13px); z-index: 43;
+    font-size: 10px;
+  }
+
+  /* Without this the inspector sits below an eleven-row tree with nothing on
+     screen to say it exists. */
+  .st-jump {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 44;
+    background: var(--st-ground); border-top: 1px solid var(--st-line-strong);
+  }
+  .st-jump button {
+    flex: 1 1 0; background: none; border: 0; color: var(--st-dim);
+    font: inherit; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 4px; cursor: pointer;
+  }
+  .st-jump button + button { border-left: 1px solid var(--st-line); }
+  .st-val { padding-bottom: 64px; }
+  .st-tree, .st-ed, .st-val {
+    overflow: visible; max-height: none; width: auto; position: static;
+    border-left: 0; border-right: 0; border-top: 0;
+    border-bottom: 1px solid var(--st-line);
+  }
+  .st-edtop { position: static; }
+  .st-live { top: calc(var(--st-top) + 8px); }
+}

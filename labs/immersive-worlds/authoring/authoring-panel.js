@@ -39,16 +39,20 @@ export class AuthoringPanel {
   }
 
   _artwork(id = this.selectedArtworkId) {
-    if (!this.config.artworks[id]) {
-      this.config.artworks[id] = { title: null, creator: null, year: null, medium: null, description: null, media: null };
+    // VS02 renamed `artworks` to `entities` and split the single ambiguous media
+    // slot into `image` and `video`. This panel is kept runnable as the VS02
+    // gauntlet's baseline, so it rides the new model rather than a frozen copy of
+    // the old one — its layout is what the comparison is about, not its plumbing.
+    if (!this.config.entities[id]) {
+      this.config.entities[id] = { title: null, creator: null, year: null, medium: null, description: null, image: null, video: null };
     }
-    return this.config.artworks[id];
+    return this.config.entities[id];
   }
 
   _render() {
     const a = this._artwork();
     const source = this.artworks.find((x) => x.id === this.selectedArtworkId) || {};
-    const video = this.videoTargetId ? this.config.artworks[this.videoTargetId]?.media : null;
+    const video = this.videoTargetId ? this.config.entities[this.videoTargetId]?.video : null;
     const logo = this.config.institution.logo;
     this.root.innerHTML = `
       <header class="au-top">
@@ -92,13 +96,13 @@ export class AuthoringPanel {
         ${FIELD('Imagen de la obra', 'JPG, PNG o WebP')}
           <input type="file" accept="image/jpeg,image/png,image/webp" data-media="artworkImage">
         </label>
-        <p class="au-state" data-state="artworkImage">${a.media?.kind === 'image' ? `Aplicada · ${esc(a.media.name)}` : 'Imagen original'}</p>
+        <p class="au-state" data-state="artworkImage">${a.image ? `Aplicada · ${esc(a.image.name)}` : 'Imagen original'}</p>
         ${FIELD('Vídeo de la sala', this.videoTarget
           ? `MP4 o WebM · se aplica a «${esc(this.videoTarget.title)}»`
           : 'Esta sala no tiene proyección')}
           <input type="file" accept="video/mp4,video/webm" data-media="artworkVideo"${this.videoTarget ? '' : ' disabled'}>
         </label>
-        <p class="au-state" data-state="artworkVideo">${video?.kind === 'video' ? `Aplicado · ${esc(video.name)}` : 'Sin vídeo autorizado'}</p>
+        <p class="au-state" data-state="artworkVideo">${video ? `Aplicado · ${esc(video.name)}` : 'Sin vídeo autorizado'}</p>
       </section>
 
       <section class="au-s">
@@ -165,7 +169,8 @@ export class AuthoringPanel {
 
         // Replacing releases the previous asset: an object URL that is dropped
         // rather than revoked is a leak that never announces itself.
-        const previous = slot === 'logo' ? this.config.institution.logo : this._artwork(targetId).media;
+        const previous = slot === 'logo' ? this.config.institution.logo
+          : slot === 'artworkVideo' ? this._artwork(targetId).video : this._artwork(targetId).image;
         if (previous?.assetId) this.vault.release(previous.assetId);
 
         const asset = await this.vault.accept(file, { kind });
@@ -180,7 +185,8 @@ export class AuthoringPanel {
           width: asset.width, height: asset.height
         };
         if (slot === 'logo') this.config.institution.logo = ref;
-        else this._artwork(targetId).media = ref;
+        else if (slot === 'artworkVideo') this._artwork(targetId).video = ref;
+        else this._artwork(targetId).image = ref;
 
         state.textContent = kind === 'video'
           ? `Listo · ${asset.name} · ${asset.width}×${asset.height} · ${asset.duration.toFixed(1)} s`

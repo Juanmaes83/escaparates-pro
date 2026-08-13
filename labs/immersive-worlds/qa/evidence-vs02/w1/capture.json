@@ -1,0 +1,88 @@
+{
+ "wave": "w1",
+ "runId": "vs02_w1_mss5a57y",
+ "head": "90a3576",
+ "generatedAt": "2026-08-13T23:30:39.983Z",
+ "fixtures": [],
+ "shots": [
+  {
+   "id": "02_VS02_DEFAULT",
+   "file": "02_VS02_DEFAULT.png",
+   "state": "Estudio recién abierto sobre el Museo por defecto",
+   "action": "Abrir ?authoring=1",
+   "expected": "La sala ocupa el centro a su propio tamaño; el editor no la tapa",
+   "observed": "lienzo 656×410 · Todo el contenido necesario está listo · un solo estudio (1)",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:24:22.932Z"
+  },
+  {
+   "id": "03_EXPERIENCE_TREE",
+   "file": "03_EXPERIENCE_TREE.png",
+   "state": "Galería A seleccionada en el árbol",
+   "action": "Clic en la sala «Galería A — Horizontes»",
+   "expected": "El árbol muestra Institución → Exposición → Salas → Piezas y la vista previa camina hasta la sala",
+   "observed": "seleccionado space.gallery-a · lienzo 656×410",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:24:34.862Z"
+  },
+  {
+   "id": "08_ARTWORK_SELECTED",
+   "file": "08_ARTWORK_SELECTED.png",
+   "state": "Una obra concreta seleccionada",
+   "action": "Clic en «División tercera» dentro de Galería A",
+   "expected": "El editor cambia a esa obra y dice de qué sala y soporte se trata",
+   "observed": "seleccionado entity.artwork.division-tercera",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:24:40.427Z"
+  },
+  {
+   "id": "04_INSTITUTION_EDIT",
+   "file": "04_INSTITUTION_EDIT.png",
+   "state": "Identidad institucional editada, sin aplicar",
+   "action": "Escribir nombre y claim",
+   "expected": "El encabezado y el árbol siguen al autor; el proyecto se marca sin guardar",
+   "observed": "sin guardar: true · Todo el contenido necesario está listo",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:24:46.913Z"
+  },
+  {
+   "id": "25_NARROW_VIEW",
+   "file": "25_NARROW_VIEW.png",
+   "state": "Estudio a 420 px",
+   "action": "Abrir el estudio en viewport estrecho",
+   "expected": "Sin desbordamiento horizontal; la sala sigue visible; los controles siguen alcanzables",
+   "observed": "lienzo 420×275 · desbordamiento false",
+   "viewport": "420×860",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:25:05.627Z"
+  },
+  {
+   "id": "01_VS01_BASELINE",
+   "file": "01_VS01_BASELINE.png",
+   "state": "VS01 — el panel anterior, misma tarea y mismo viewport",
+   "action": "Abrir ?authoring=1&shell=vs01 y abrir el editor",
+   "expected": "Referencia de comparación, no un objetivo",
+   "observed": "editor superpuesto sobre la sala",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "90a3576",
+   "runId": "vs02_w1_mss5a57y",
+   "at": "2026-08-13T23:30:39.958Z"
+  }
+ ],
+ "errors": []
+}

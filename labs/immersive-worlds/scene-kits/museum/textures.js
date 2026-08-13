@@ -376,7 +376,15 @@ function surfaceTooth(ctx, w, h, rng, composition) {
  * in the room at the right scale — but the same text is also published to the
  * accessibility layer outside the canvas (Constitution §22).
  */
-export function labelTexture(content, { width = 512, dark = false } = {}) {
+/**
+ * @param {object} content              title / creator / year / medium
+ * @param {object} [options]
+ * @param {CanvasImageSource} [options.mark]  an institutional mark to print above
+ *   the text. Signage is where a museum's logo actually goes: on the panel it
+ *   already signs, at the size a printed mark is set, not on a plane invented to
+ *   have somewhere to put it.
+ */
+export function labelTexture(content, { width = 512, dark = false, mark = null } = {}) {
   const height = Math.round(width * 0.62);
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -390,6 +398,19 @@ export function labelTexture(content, { width = 512, dark = false } = {}) {
   const dim = dark ? '#8d867c' : '#6d675e';
   const pad = width * 0.09;
   let y = pad + width * 0.055;
+
+  if (mark) {
+    // Set to a printed height and left-aligned with the text, so the panel reads
+    // as one piece of signage rather than a picture with a caption. Width follows
+    // the mark's own proportions — an institution's logo is not ours to distort.
+    const markHeight = width * 0.1;
+    const ratio = (mark.width || 1) / (mark.height || 1);
+    const markWidth = Math.min(markHeight * ratio, width - pad * 2);
+    try {
+      ctx.drawImage(mark, pad, y - width * 0.055, markWidth, markHeight);
+      y += markHeight + width * 0.045;
+    } catch { /* a mark that will not draw must not cost the panel its text */ }
+  }
 
   ctx.fillStyle = ink;
   ctx.font = `600 ${Math.round(width * 0.062)}px Georgia, 'Times New Roman', serif`;

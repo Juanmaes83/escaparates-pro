@@ -175,7 +175,14 @@ export async function boot() {
 
   // Authoring is opt-in and additive: without ?authoring=1 nothing below runs and
   // the Museum behaves exactly as it always has.
-  if (authoringOn) {
+  //
+  // `?shell=vs01` keeps the first vertical slice reachable. It is not dead code
+  // kept out of sentiment: the VS02 gauntlet compares against it at the same
+  // task, viewport and state, and a baseline you cannot run is a baseline you
+  // cannot compare.
+  if (authoringOn && params.get('shell') !== 'vs01') {
+    await mountStudio({ world, activeConfig, vault, boot });
+  } else if (authoringOn) {
     const [{ AuthoringPanel }] = await Promise.all([import('../authoring/authoring-panel.js')]);
     if (!document.getElementById('au-css')) {
       const link = document.createElement('link');
@@ -236,6 +243,11 @@ export async function boot() {
     hud.el.veil.hidden = true;
     await DETERMINISTIC_STATES[requestedState].apply(runtime);
     window.__IW.state = requestedState;
+  } else if (document.body.dataset.studio === 'on') {
+    // An author is already inside the product; making them click "entrar" before
+    // every preview would put a door in the middle of their workspace. Sound
+    // still waits for a real gesture, because the browser requires one.
+    hud.el.veil.hidden = true;
   } else {
     hud.showEnter(() => {
       audio.resume().then(() => {
@@ -248,6 +260,112 @@ export async function boot() {
   window.__IW.ready = true;
   document.documentElement.dataset.iwReady = 'true';
   return runtime;
+}
+
+/**
+ * Mount the VS02 Studio around the running Museum.
+ *
+ * The shell is furniture: it docks the canvas by setting one attribute on
+ * `<body>` and lets the render host measure itself, which it already did from
+ * its own element. No engine call changes, no second renderer, no second truth.
+ */
+async function mountStudio({ world, activeConfig, vault, boot }) {
+  const [{ StudioShell }] = await Promise.all([import('../authoring/studio/studio-shell.js')]);
+  // Awaited, not fired and forgotten: the shell measures its own column on first
+  // render to letterbox the preview, and a measurement taken before the
+  // stylesheet lands measures an unstyled div — which silently pinned the canvas
+  // to its minimum height.
+  if (!document.getElementById('st-css')) {
+    const link = document.createElement('link');
+    link.id = 'st-css'; link.rel = 'stylesheet'; link.href = './authoring/studio/studio.css';
+    const ready = new Promise((resolve) => { link.onload = resolve; link.onerror = resolve; });
+    document.head.appendChild(link);
+    await ready;
+  }
+
+  // A re-boot runs this again. Clearing the previous mount is what VS01 had to
+  // learn the hard way: two nodes with one id, and closing the editor closed the
+  // one underneath.
+  document.getElementById('st')?.remove();
+  document.getElementById('au')?.remove();
+  document.getElementById('au-open')?.remove();
+
+  document.body.dataset.studio = 'on';
+  // The canvas just changed size. It measures its own element, so one call after
+  // the layout settles is the whole integration.
+  requestAnimationFrame(() => window.__IW?.renderHost?.resize());
+
+  const rebuild = async (config) => {
+    window.__IW_CONFIG = config;
+    const url = new URL(location.href);
+    url.searchParams.set('portalVariant', config.experience.portalVariant || 'A');
+    history.replaceState(null, '', url);
+    // Lowering the flag makes every wait on it edge-triggered, for QA and for the
+    // studio alike: `ready` left true from the previous boot is how a capture
+    // ends up photographing the loading veil.
+    if (window.__IW) window.__IW.ready = false;
+    if (window.__IW?.runtime) { try { window.__IW.runtime.dispose(); } catch { /* */ } }
+    document.getElementById('iw-ui').innerHTML = '';
+    await boot();
+  };
+
+  const studio = new StudioShell({
+    config: activeConfig,
+    world,
+    vault,
+
+    currentRoom: () => {
+      const runtime = window.__IW?.runtime;
+      if (!runtime) return '';
+      try { return runtime.store.require(runtime.state.activeSpaceId)?.title || ''; } catch { return ''; }
+    },
+
+    // PREVIEW: the authored project, shown in the docked Museum. The author stays
+    // in the studio.
+    onApply: rebuild,
+
+    // START: not another Apply. The studio leaves, the canvas returns to the full
+    // window, and what remains is the visitor's experience with no authoring
+    // furniture in it.
+    onStart: async (config) => {
+      window.__IW_CONFIG = config;
+      studio.destroy();
+      delete document.body.dataset.studio;
+      const url = new URL(location.href);
+      url.searchParams.delete('authoring');
+      history.replaceState(null, '', url);
+      requestAnimationFrame(() => window.__IW?.renderHost?.resize());
+      window.__IW?.hud?.showEnter?.(() => {
+        window.__IW.audio?.resume?.();
+        document.getElementById('iw-canvas')?.focus?.();
+      });
+    },
+
+    // Selecting a node walks the preview to where that node lives, so "where does
+    // this live" is answered in the room rather than only in the tree.
+    onReveal: async (nodeId) => {
+      const runtime = window.__IW?.runtime;
+      if (!runtime) return;
+      const entity = (world.entities || []).find((e) => e.id === nodeId);
+      // Institution and exhibition are not entities, but they are not abstract
+      // either: they render onto the entry wall. Editing them should show that
+      // wall, or the fields appear to change nothing.
+      const spaceId = nodeId === 'institution' || nodeId === 'exhibition'
+        ? world.startSpaceId
+        : entity?.spaceId
+        || ((world.spaces || []).some((s) => s.id === nodeId) ? nodeId : null);
+      if (!spaceId || spaceId === runtime.state.activeSpaceId) return;
+      const portal = (world.portals || []).find(
+        (p) => p.fromSpaceId === runtime.state.activeSpaceId && p.toSpaceId === spaceId
+      );
+      // Only a doorway the world actually has. The studio does not invent
+      // teleports, and a room two doors away simply is not revealed in one step.
+      if (portal) { try { await runtime.traversePortal(portal.id, { source: 'STUDIO' }); } catch { /* */ } }
+    }
+  });
+
+  window.__IW_STUDIO = studio;
+  window.__IW_PANEL = studio;   // the QA surface keeps one name for "the editor"
 }
 
 /**

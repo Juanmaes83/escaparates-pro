@@ -17,12 +17,62 @@
  * file is an `EP.*` global outside this module's boundary.
  *
  * States, and none of them is skipped:
- *   SELECTED → LOADING → READY → APPLIED, or → ERROR
+ *   SELECTED → LOADING → (DECODED) → READY → APPLIED, or → ERROR
  *   any state → RELEASED, exactly once
+ *
+ * DECODED exists only for video and is not ceremony: a video whose header has
+ * parsed is not a video that can show a frame, and an author watching a slow
+ * upload deserves to see the difference between "still arriving" and "arrived,
+ * now decoding". Images go LOADING → READY because for an image those are the
+ * same moment.
  */
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/webm'];
+
+/**
+ * What each state is called on screen. Internal enum names are for the code;
+ * an author reads Spanish, and reads about their file rather than about our
+ * state machine.
+ */
+const COPY = {
+  image: {
+    SELECTED: 'Seleccionada', LOADING: 'Cargando…', DECODED: 'Decodificando…',
+    READY: 'Lista', APPLIED: 'En la sala', ERROR: 'No se pudo usar', RELEASED: 'Retirada'
+  },
+  video: {
+    SELECTED: 'Seleccionado', LOADING: 'Cargando…', DECODED: 'Decodificado',
+    READY: 'Listo', APPLIED: 'En la sala', ERROR: 'No se pudo usar', RELEASED: 'Retirado'
+  }
+};
+
+/** The ordered chain, so a UI can draw progress instead of a single word. */
+export const ASSET_CHAIN = Object.freeze({
+  image: ['SELECTED', 'LOADING', 'READY'],
+  video: ['SELECTED', 'LOADING', 'DECODED', 'READY']
+});
+
+/**
+ * One asset, described for a person: state in words, the facts that prove the
+ * file is real, and the reason when it is not.
+ */
+export function describeAsset(asset) {
+  if (!asset) return { label: 'Sin archivo', detail: '', state: null, chain: [], index: -1 };
+  const copy = COPY[asset.kind] || COPY.image;
+  const chain = ASSET_CHAIN[asset.kind] || ASSET_CHAIN.image;
+  const facts = [];
+  if (asset.width && asset.height) facts.push(`${asset.width}×${asset.height}`);
+  if (asset.duration) facts.push(`${asset.duration.toFixed(1)} s`);
+  if (asset.bytes) facts.push(`${(asset.bytes / 1024).toFixed(0)} kB`);
+  return {
+    state: asset.state,
+    label: copy[asset.state] || asset.state,
+    name: asset.name,
+    detail: asset.state === 'ERROR' ? asset.error : facts.join(' · '),
+    chain,
+    index: chain.indexOf(asset.state)
+  };
+}
 
 export class MediaVault {
   constructor({ onChange } = {}) {
@@ -80,7 +130,10 @@ export class MediaVault {
       if (kind === 'video') {
         // Readiness is metadata plus enough buffered data to draw, not the file
         // handle existing. "Selected" is not "ready".
-        const meta = await this._probeVideo(url);
+        const meta = await this._probeVideo(url, () => {
+          asset.state = 'DECODED';
+          this.onChange(asset);
+        });
         asset.width = meta.width; asset.height = meta.height; asset.duration = meta.duration;
       } else {
         const meta = await this._probeImage(url);
@@ -106,12 +159,15 @@ export class MediaVault {
     });
   }
 
-  _probeVideo(url) {
+  _probeVideo(url, onDecoded = () => {}) {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       video.preload = 'auto';
       video.muted = true;
       video.playsInline = true;
+      // The header parsed: the file is a video and we know its shape. Not yet
+      // playable, and the author is told exactly that.
+      video.onloadedmetadata = () => onDecoded();
       const done = () => {
         if (!video.videoWidth) { reject(new Error('El vídeo no tiene pista de imagen legible.')); return; }
         resolve({ width: video.videoWidth, height: video.videoHeight, duration: video.duration || 0 });

@@ -720,7 +720,10 @@ export class MuseumSceneKit extends SceneKit {
           new THREE.MeshStandardMaterial({
             map: labelTexture(
               { title: entity.content.title, creator: entity.content.creator, year: entity.content.year, medium: entity.content.medium },
-              { dark, width: 768 }
+              // An institutional panel may carry the institution's mark. The
+              // media loader already resolved it, because it resolves any entity
+              // that declares one — nothing kind-specific was needed here.
+              { dark, width: 768, mark: media?.get(entity.id)?.texture?.image || null }
             ),
             roughness: 0.94
           })
