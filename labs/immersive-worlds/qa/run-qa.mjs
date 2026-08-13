@@ -798,6 +798,10 @@ async function main() {
 
     /* -- deterministic states: captures + performance ------------------------ */
     const stateNames = await page.evaluate(() => window.__IW.states);
+    // Raised for this section only, and restored after it. A guided state replay
+    // legitimately takes minutes here; nothing else in the suite should be given
+    // that much rope to hang a genuine stall on.
+    context.setDefaultTimeout(240000);
     for (const name of stateNames) {
       const url = `${BASE}/index.html?reducedMotion=1&tier=HIGH&state=${encodeURIComponent(name)}`;
       await page.goto(url, { waitUntil: 'load' });
@@ -816,7 +820,13 @@ async function main() {
       // the correct behaviour takes is not a limit, it is a coin toss. Raised to
       // sit above the measured worst case with room to spare, and left as the one
       // number in this file with a citation attached.
-      await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 240000 });
+      //
+      // It has to be set on the context. In Playwright 1.56 a per-call `timeout`
+      // does NOT override `context.setDefaultTimeout` for waitForFunction — the
+      // context default wins, verified directly: an explicit 6000 failed after
+      // 2005 ms under a context default of 2000. So every inline timeout in this
+      // file is decorative, and raising this one inline changed nothing at all.
+      await page.waitForFunction(() => window.__IW?.ready === true);
       await page.evaluate(() => window.__IW.frames(24));
       const file = path.join(EVIDENCE, `${name.replace(/:/g, '_')}.png`);
       await page.screenshot({ path: file });
@@ -832,6 +842,7 @@ async function main() {
         };
       });
     }
+    context.setDefaultTimeout(90000);
     const allClean = Object.values(evidence.states).every((state) => state.cameraViolations === 0);
     check('STATES-DETERMINISTIC', 'Todos los estados nombrados se reproducen y capturan',
       Object.keys(evidence.states).length === stateNames.length && allClean,
