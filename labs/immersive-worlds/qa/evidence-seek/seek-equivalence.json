@@ -1,0 +1,310 @@
+{
+ "runId": "seek-2026-08-13T11-48-30-105Z",
+ "generatedAt": "2026-08-13T11:54:09.107Z",
+ "stops": [
+  {
+   "id": "step.01-entrada",
+   "first": 0
+  },
+  {
+   "id": "step.02-paso-galeria-a",
+   "first": 1
+  },
+  {
+   "id": "step.03-lleva-horizonte",
+   "first": 6
+  },
+  {
+   "id": "step.05-lleva-division",
+   "first": 10
+  },
+  {
+   "id": "step.06d-lleva-estudio",
+   "first": 14
+  },
+  {
+   "id": "step.06h-lleva-vasija",
+   "first": 18
+  },
+  {
+   "id": "step.07-lleva-umbral",
+   "first": 22
+  },
+  {
+   "id": "step.09-lleva-noche",
+   "first": 24
+  },
+  {
+   "id": "step.10c-lleva-cuaderno",
+   "first": 28
+  },
+  {
+   "id": "step.11-cierre",
+   "first": 32
+  }
+ ],
+ "rows": [
+  {
+   "label": "early",
+   "tourStepId": "step.03-lleva-horizonte",
+   "playbackMs": 20380,
+   "seekMs": 5906,
+   "playback": {
+    "step": "step.03-lleva-horizonte",
+    "tourStep": "step.03-lleva-horizonte",
+    "tourOrder": 3,
+    "index": 6,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-a",
+    "routeId": null,
+    "focus": "entity.artwork.horizonte-interrumpido",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     -1.572,
+     1.72,
+     -10.05,
+     -1.284,
+     1.67,
+     -15.24
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     -2.5,
+     0,
+     -12.95
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 0.95,
+    "fogFar": null,
+    "workingSet": "gallery-a:ACTIVE gallery-b:READY lobby:COOLING",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.horizonte-interrumpido",
+    "portalsTraversed": "portal.lobby-gallery-a"
+   },
+   "seek": {
+    "step": "step.03-lleva-horizonte",
+    "tourStep": "step.03-lleva-horizonte",
+    "tourOrder": 3,
+    "index": 6,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-a",
+    "routeId": null,
+    "focus": "entity.artwork.horizonte-interrumpido",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     -1.572,
+     1.72,
+     -10.05,
+     -1.284,
+     1.67,
+     -15.24
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     -2.5,
+     0,
+     -12.95
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 0.95,
+    "fogFar": null,
+    "workingSet": "gallery-a:ACTIVE gallery-b:READY lobby:COOLING",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.horizonte-interrumpido",
+    "portalsTraversed": "portal.lobby-gallery-a"
+   },
+   "diffs": []
+  },
+  {
+   "label": "mid",
+   "tourStepId": "step.06h-lleva-vasija",
+   "playbackMs": 42261,
+   "seekMs": 38319,
+   "playback": {
+    "step": "step.06h-lleva-vasija",
+    "tourStep": "step.06h-lleva-vasija",
+    "tourOrder": 6,
+    "index": 18,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-a",
+    "routeId": null,
+    "focus": "entity.sculpture.vasija-de-arenas",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     1.072,
+     1.72,
+     -6.693,
+     4.099,
+     1.516,
+     -7.287
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     3.3,
+     0,
+     -6.3
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 0.95,
+    "fogFar": null,
+    "workingSet": "gallery-a:ACTIVE gallery-b:READY lobby:COOLING",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.division-tercera,entity.artwork.estudio-de-figura,entity.artwork.horizonte-interrumpido,entity.sculpture.vasija-de-arenas",
+    "portalsTraversed": "portal.lobby-gallery-a"
+   },
+   "seek": {
+    "step": "step.06h-lleva-vasija",
+    "tourStep": "step.06h-lleva-vasija",
+    "tourOrder": 6,
+    "index": 18,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-a",
+    "routeId": null,
+    "focus": "entity.sculpture.vasija-de-arenas",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     1.072,
+     1.72,
+     -6.693,
+     4.099,
+     1.516,
+     -7.287
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     3.3,
+     0,
+     -6.3
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 0.95,
+    "fogFar": null,
+    "workingSet": "gallery-a:ACTIVE gallery-b:READY lobby:COOLING",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.division-tercera,entity.artwork.estudio-de-figura,entity.artwork.horizonte-interrumpido,entity.sculpture.vasija-de-arenas",
+    "portalsTraversed": "portal.lobby-gallery-a"
+   },
+   "diffs": []
+  },
+  {
+   "label": "late",
+   "tourStepId": "step.10c-lleva-cuaderno",
+   "playbackMs": 75126,
+   "seekMs": 124607,
+   "playback": {
+    "step": "step.10c-lleva-cuaderno",
+    "tourStep": "step.10c-lleva-cuaderno",
+    "tourOrder": 9,
+    "index": 28,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-b",
+    "routeId": null,
+    "focus": "entity.video.cuaderno-de-luz",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     16.48,
+     1.72,
+     -8.7,
+     16.66,
+     1.739,
+     -14.74
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     15.9,
+     0,
+     -11.6
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 1.05,
+    "fogFar": 44,
+    "workingSet": "gallery-a:COOLING gallery-b:ACTIVE",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.division-tercera,entity.artwork.estudio-de-figura,entity.artwork.horizonte-interrumpido,entity.artwork.noche-de-invierno,entity.sculpture.vasija-de-arenas,entity.video.cuaderno-de-luz",
+    "portalsTraversed": "portal.gallery-a-gallery-b,portal.lobby-gallery-a"
+   },
+   "seek": {
+    "step": "step.10c-lleva-cuaderno",
+    "tourStep": "step.10c-lleva-cuaderno",
+    "tourOrder": 9,
+    "index": 28,
+    "transport": "PAUSED",
+    "mode": "GUIDED",
+    "activeSpace": "space.gallery-b",
+    "routeId": null,
+    "focus": "entity.video.cuaderno-de-luz",
+    "cameraOwner": "DIRECTED",
+    "cameraViolations": 0,
+    "pose": [
+     16.48,
+     1.72,
+     -8.7,
+     16.66,
+     1.739,
+     -14.74
+    ],
+    "fov": 55,
+    "guideStaged": true,
+    "guideOpacity": 1,
+    "guidePos": [
+     15.9,
+     0,
+     -11.6
+    ],
+    "visitorStaged": true,
+    "visitorOpacity": 0,
+    "crossingActive": false,
+    "crossingHolds": false,
+    "atmosphereLocked": false,
+    "pendingWorkingSet": false,
+    "exposure": 1.05,
+    "fogFar": 44,
+    "workingSet": "gallery-a:COOLING gallery-b:ACTIVE",
+    "visited": "entity.artwork.campo-de-ceniza,entity.artwork.division-tercera,entity.artwork.estudio-de-figura,entity.artwork.horizonte-interrumpido,entity.artwork.noche-de-invierno,entity.sculpture.vasija-de-arenas,entity.video.cuaderno-de-luz",
+    "portalsTraversed": "portal.gallery-a-gallery-b,portal.lobby-gallery-a"
+   },
+   "diffs": []
+  }
+ ],
+ "errors": []
+}
