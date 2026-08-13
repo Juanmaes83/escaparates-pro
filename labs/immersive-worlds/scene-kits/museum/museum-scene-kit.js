@@ -20,6 +20,7 @@ import { RoomEnvironment } from '../../vendor/three/addons/environments/RoomEnvi
 import { SceneKit } from '../../engine/scenekit/scene-kit.js';
 import { ENTITY_KIND, HOTSPOT_STATE, REPRESENTATION_HINT } from '../../engine/schema/types.js';
 import { framePose, overviewPose, vec3 } from '../../engine/camera/framing.js';
+import { PortalSurface } from './portal-surface.js';
 import { profileFor } from './profiles.js';
 import {
   artworkTexture, createGeneratedVideoTexture, floorTexture, labelTexture, plasterTexture,
@@ -1058,9 +1059,78 @@ export class MuseumSceneKit extends SceneKit {
     this._thresholdPreset = preset;
     if (preset === 'NONE') {
       this._disposeThresholdPane();
+      this._disposePortalSurface();
       return preset;
     }
+    if (preset !== 'IW_ENGINE') this._disposePortalSurface();
+    else this._disposeThresholdPane();
     return preset;
+  }
+
+  /**
+   * Variant D — the owned Infinite Worlds portal, running in the Museum.
+   *
+   * Built lazily on the first crossing that asks for it, because it needs both
+   * rooms' groups to exist before it can mask one and render the other.
+   */
+  _ensurePortalSurface(threshold, fromSpaceId, toSpaceId) {
+    if (this._thresholdPreset !== 'IW_ENGINE' || !threshold) return null;
+    if (this._portalSurface && this._portalSurface.threshold.portalId === threshold.portalId) {
+      return this._portalSurface;
+    }
+    this._disposePortalSurface();
+    const origin = this._spaces.get(fromSpaceId);
+    const destination = this._spaces.get(toSpaceId);
+    if (!destination) return null;
+    this._portalSurface = new PortalSurface({
+      scene: this.scene,
+      threshold,
+      originGroup: origin?.group || null,
+      destinationGroup: destination.group
+    });
+    return this._portalSurface;
+  }
+
+  _disposePortalSurface() {
+    if (!this._portalSurface) return;
+    this._portalSurface.dispose();
+    this._portalSurface = null;
+  }
+
+  /**
+   * The destination pass, called by the host between applying the visitor pose
+   * and drawing the frame — the same position it occupies in the source's own
+   * render loop.
+   */
+  renderPortalPass(renderHost) {
+    const surface = this._portalSurface;
+    if (!surface || !surface.visible) return false;
+    return surface.renderDestination(renderHost.renderer, renderHost.camera, this.scene);
+  }
+
+  /**
+   * Drive variant D across a crossing.
+   *
+   * Source behaviour, reproduced: `moveCameraToPortal()` runs
+   * `gsap.to(this.portal, { ease: Power4.easeIn, effectIntensity: 0 })` over the
+   * approach, so the distortion *resolves away* as the portal is reached and the
+   * visitor arrives through a clean window. That fade is the source's takeover
+   * feeling, and it is the opposite of ramping an effect up.
+   */
+  setPortalProgress(threshold, t, context = {}) {
+    if (this._thresholdPreset !== 'IW_ENGINE') return;
+    const surface = this._ensurePortalSurface(threshold, context.fromSpaceId, context.toSpaceId);
+    if (!surface) return;
+    const k = Math.min(Math.max(t, 0), 1);
+    const phase1 = Math.min(k / (context.crossAt || 0.66), 1);
+    const easeIn = phase1 * phase1 * phase1 * phase1;          // Power4.easeIn
+    surface.effectIntensity = 1 - easeIn;
+    surface.setVisible(k > 0.001 && k < 0.999);
+  }
+
+  /** Source: `Portal.loop(dt)`, advanced from the Scene Kit's own update. */
+  _updatePortalSurface(dt) {
+    if (this._portalSurface?.visible) this._portalSurface.loop(dt);
   }
 
   /** Build (once) and position the treatment pane inside a portal's opening. */
@@ -1841,6 +1911,7 @@ export class MuseumSceneKit extends SceneKit {
   }
 
   update(dt, elapsed) {
+    this._updatePortalSurface(dt);
     for (const item of this._animated) item.update(elapsed);
     this._updateGuide(dt);
     this._updateVisitor(dt);

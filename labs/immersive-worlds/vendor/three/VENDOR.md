@@ -36,3 +36,14 @@ They were read for concepts, contracts and construction order only, which is the
 `PATTERNS ONLY / DIRECT REUSE NOT PLANNED` default set by the Reference Ledger.
 
 The reuse register in `REFERENCE_LEDGER.md` §22 therefore still contains no rows.
+
+## `examples/jsm/utils/CameraUtils.js`
+
+| Field | Value |
+|---|---|
+| Package | `three` (addon) |
+| Version | `0.185.1` (exact, matches the pinned core above) |
+| Source | npm registry, `three-0.185.1.tgz`, `examples/jsm/utils/CameraUtils.js` |
+| License | MIT — same `LICENSE` as the core, copied verbatim |
+| Modification | one line: the bare `'three'` specifier rewritten to `'../../three.module.min.js'`, the same rewrite already applied to `addons/environments/RoomEnvironment.js` |
+| Required by | Portal variant D — `CameraUtils.frameCorners` reproduces the off-axis portal projection of the owned Infinite Worlds transition engine |

@@ -137,6 +137,10 @@ export async function boot() {
   runtime.onFrame = (pose, dt) => {
     input.update(dt);
     renderHost.applyPose(pose);
+    // Variant D's destination pass sits exactly where the owned Infinite Worlds
+    // render loop puts it: after the visitor camera is placed, before the frame
+    // is drawn. A no-op for every other variant.
+    sceneKit.renderPortalPass?.(renderHost);
     renderHost.render(sceneKit.scene);
   };
 
@@ -150,7 +154,7 @@ export async function boot() {
   // approved architectural crossing; the others exist to be looked at, and
   // nothing about them survives a page load that does not ask for one.
   const portalVariant = (params.get('portalVariant') || 'A').toUpperCase();
-  sceneKit.setThresholdTreatment?.({ A: 'NONE', B: 'ADAPTED', C: 'SUBTLE' }[portalVariant] || 'NONE');
+  sceneKit.setThresholdTreatment?.({ A: 'NONE', B: 'ADAPTED', C: 'SUBTLE', D: 'IW_ENGINE' }[portalVariant] || 'NONE');
 
   const requestedState = params.get('state');
   installProbe({ runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion });

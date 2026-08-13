@@ -474,7 +474,8 @@ export class Runtime {
     this._crossingHolds = true;
 
     let crossedAt = null;
-    const plan = this.crossing.playCrossing(arrivalPose, {
+    let plan = null;
+    plan = this.crossing.playCrossing(arrivalPose, {
       gate: threshold.gate,
       axis: threshold.axis,
       travelMs,
@@ -489,6 +490,11 @@ export class Runtime {
         // cannot reach the camera, the endpoint or the handoff — it only decides
         // what the aperture looks like while it is being passed.
         this.sceneKit.setThresholdProgress?.(threshold, e);
+        // Variant D needs to know which rooms it is between, because with one
+        // scene graph the destination pass masks by group rather than by scene.
+        this.sceneKit.setPortalProgress?.(threshold, e, {
+          fromSpaceId, toSpaceId: portal.toSpaceId, crossAt: plan?.s ?? 0.66
+        });
       },
       // 4 — the handoff. Which room you are in changes when you pass through the
       // opening, which is both the truthful moment and the invisible one.
@@ -517,6 +523,7 @@ export class Runtime {
       // camera back.
       onComplete: () => {
         this.sceneKit.setThresholdProgress?.(threshold, 1);
+        this.sceneKit.setPortalProgress?.(threshold, 1, { fromSpaceId, toSpaceId: portal.toSpaceId });
         // Exact, not almost: the blend is applied at 1 before the holds go, so the
         // destination's own atmosphere is what the room is left with.
         this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, 1);
