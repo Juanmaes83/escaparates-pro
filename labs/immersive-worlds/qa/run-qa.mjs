@@ -29,8 +29,18 @@ const PORT = Number(process.env.IW_QA_PORT || 4188);
 const BASE = `http://127.0.0.1:${PORT}/labs/immersive-worlds`;
 
 const headed = process.argv.includes('--headed');
-/** Skip the sections a previous, audited run already proved. See the resume note in main(). */
-const TAIL_ONLY = process.env.IW_QA_TAIL === '1';
+/**
+ * Resume point. See the resume note in main().
+ *
+ * A binary skip-to-the-end was not enough the first time it was needed: the run it
+ * had to rescue died in the middle, and a tail that starts after the middle cannot
+ * cover it. The stages are ordered, and a run starts at the named one.
+ */
+const STAGES = ['boot', 'tour', 'detail'];
+const FROM = process.env.IW_QA_FROM || (process.env.IW_QA_TAIL === '1' ? 'detail' : 'boot');
+if (!STAGES.includes(FROM)) throw new Error(`[IW QA] IW_QA_FROM debe ser uno de ${STAGES.join(', ')}`);
+const runs = (stage) => STAGES.indexOf(stage) >= STAGES.indexOf(FROM);
+const PARTIAL = FROM !== 'boot';
 const keep = process.argv.includes('--keep');
 
 /* == tiny assertion harness ================================================= */
@@ -169,13 +179,16 @@ async function main() {
     // so preserved evidence can be preserved in practice and not just in
     // principle. The result is reported as a partial run and must be read
     // alongside the run whose evidence it continues.
-    if (TAIL_ONLY) {
-      await page.goto(`${BASE}/index.html?reducedMotion=1&tier=HIGH&state=museum:gallery-a-overview`, { waitUntil: 'load' });
-      await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 90000 });
-      console.log('  ·· modo cola: se omiten las secciones ya verificadas en la corrida previa');
-    } else {
+    if (runs('boot')) {
       await page.goto(`${BASE}/index.html?reducedMotion=1&tier=HIGH&state=museum:lobby-entry`, { waitUntil: 'load' });
       await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 45000 });
+    } else {
+      await page.goto(`${BASE}/index.html?reducedMotion=1&tier=HIGH&state=museum:gallery-a-overview`, { waitUntil: 'load' });
+      await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 90000 });
+      console.log(`  ·· reanudación desde «${FROM}»: se omiten las secciones ya verificadas en la corrida previa`);
+    }
+
+    if (runs('boot')) {
       check('BOOT', 'El prototipo arranca sin errores de consola', consoleErrors.length === 0, consoleErrors.slice(0, 2).join(' | '));
 
       /* -- schema ------------------------------------------------------------ */
@@ -458,6 +471,9 @@ async function main() {
         projection.boxes === 0, `${projection.boxes} volúmenes en el grupo`);
       evidence.performance.projection = projection;
 
+    }
+
+    if (runs('tour')) {
       /* -- tour contract: one order, and everything derives from it ------------ */
       // The Tour Control Pass exists because a second, hand-written sequence grew
       // beside the authoritative one and drifted for eleven checkpoints without a
@@ -937,7 +953,7 @@ async function main() {
   }
 
   console.log('');
-  console.log(`${results.length - failures}/${results.length} comprobaciones superadas${TAIL_ONLY ? ' (SOLO COLA — corrida parcial, léase junto a la corrida que continúa)' : ''}`);
+  console.log(`${results.length - failures}/${results.length} comprobaciones superadas${PARTIAL ? ` (PARCIAL desde «${FROM}» — léase junto a la corrida que continúa)` : ''}`);
   console.log(`Evidencia: ${path.relative(REPO_ROOT, EVIDENCE)}`);
   process.exit(failures === 0 ? 0 : 1);
 }

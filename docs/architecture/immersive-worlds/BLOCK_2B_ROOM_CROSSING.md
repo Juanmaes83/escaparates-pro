@@ -4,9 +4,13 @@ Galería A → Galería B, as a move instead of a cut. Block 2A ended at the thr
 and recorded portals as a known limitation; this closes it.
 
 Baseline: Block 2A `7211e3f` (68/68). Room 1 closure `a0ada12`.
-Contracts: `TRANSITION_LANGUAGE_SPEC.md` §T6, `BLOCK_2A_TRANSITION_LANGUAGE.md`,
-`MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md`.
+Contracts: `MUSEUM_CURRENT_STATE.md` §5–§9, `TRANSITION_LANGUAGE_SPEC.md` §T6,
+`BLOCK_2A_TRANSITION_LANGUAGE.md`, `MUSEUM_CAPABILITY_SOURCE_INFINITE_WORLDS.md`.
 Review: `qa/evidence-crossing/crossing-review.html`.
+
+**Status: implementation complete, awaiting the human gate.** Technical closure is
+not product approval; §8 of the current state reserves KEEP / ADJUST / REJECT to
+Juanma. Nothing here is merged, promoted or proposed for promotion.
 
 ---
 
@@ -151,6 +155,30 @@ the first crossing is not a cold path: the prefetch had already brought Galería
 to READY, and `preview()` before the move is a guarantee rather than a wait. Two
 further crossings of the same doorway, warm, produced the same 5000 ms travel and
 worst-frame times of 0.5–2.4 ms. **There is no first-crossing penalty to hide.**
+
+### QA scope, and why it was the whole suite
+
+The current state (§9) says not to restart all 68 checks from zero automatically,
+and to validate according to change impact. The map was drawn first, and it came
+back broad:
+
+| Changed | Contracts that depend on it |
+|---|---|
+| `runtime.js` — composition root, portal traversal | portal, lifecycle, guided, focus, detail, handoff |
+| `experience-director.js` — advance, wait, shot dispatch | tour contract, grammar, browse |
+| `space-lifecycle.js` — activation | portal prewarm, cooling, working set, deterministic states |
+| `museum-scene-kit.js` — activation and atmosphere | projection, media, states, warmup |
+| `crossing-controller.js` — new camera authority | every camera-authority contract |
+
+That is not a subset with a clean boundary, so the honest scope was all 68 rather
+than a targeted slice. **"Do not restart from zero automatically" is not "do not
+restart" — it is "map first".** Cheap validation still came first: 21 curve
+properties and 19 crossing checks, both of which found real defects (§4.1, §4.2),
+ran before the expensive suite.
+
+The suite is covered by two runs whose union is complete, the same shape as Block
+2A's closure and for the same reason — the first run's browser was lost mid-flight.
+See §5.
 
 ## 4. What was found by measuring
 

@@ -602,6 +602,73 @@ Stops that do not use the Artwork grammar.
 
 ---
 
+## IW-DEC-030 — The Museum crossing reuses the choreography, not the render target
+
+**Status:** ENGINEERING DECISION — AWAITING PRODUCT REVIEW
+
+**Trigger**
+
+Block 2B, and the standing rule that a proven first-party capability must be
+inspected before it is reimplemented. The complete Infinite Worlds V1.2.3 snapshot
+at `453ed40008f838d6187a7e85d93872f7866ad5cb` was read before any code was written.
+`MUSEUM_CURRENT_STATE.md` §6 authorises direct reuse of its `WebGLRenderTarget`
+live destination rendering, `CameraUtils.frameCorners`, camera synchronisation and
+portal shaders **where useful**. The inspection concluded they are not useful here,
+and that conclusion needs recording because it declines an explicit authorisation.
+
+**Decision**
+
+1. **The render-target portal is not reused, because Museum does not have the
+   problem it solves.** Grey City and Living Valley are two scenes at the same
+   coordinates: the only way to see one from the other is to render it to a
+   texture. Museum has one scene. Galería A is `x ∈ [-8, 8]`, Galería B is
+   `x ∈ [8, 20]`, they share the wall at `x = 8`, and the portal is a real hole in
+   it. The destination was already visible through that hole before any Block 2B
+   code existed — verified visually, not assumed.
+
+2. **What is reused is the choreography shape and the warmup discipline:** ease
+   into the aperture and out of it as one continuous move; bring the destination to
+   READY and make it visible *before* the move commits; hand the room over at the
+   portal plane. These are the parts that were load-bearing in the source.
+
+3. **No second camera.** The source syncs a destination camera to render through
+   the portal. With nothing to render through, that camera would be a second writer
+   against IW-ADR-002 for no gain. The invariant is satisfied by absence rather
+   than by discipline.
+
+4. **The crossing is its own camera authority.** `CAMERA_AUTHORITY.TRANSITION` was
+   declared from the start with no controller; `CrossingController` is it. Not a
+   mode of the Directed controller, because a crossing outlives the beat that
+   starts it and belongs to neither room.
+
+5. **The room's atmosphere crosses with the camera.** Fog, background and exposure
+   resolve across the doorway rather than switching on the activation frame, and
+   are exact at `t = 1`. Without this the camera move was continuous and the light
+   was still a cut.
+
+6. **T6 is decided by beat intent, never by distance** — consistent with the
+   Product Owner's Block 2A correction that families express experience intent and
+   geometry only executes. `TELEPORT` portals stay cuts: there is no line of sight
+   to fly through, and a crossing would misdescribe the building.
+
+**Consequences**
+
+`crossing-controller.js`; `TRANSITION_SHAPE[T6]`; `thresholdFor()` and
+`blendAtmosphere()` in the Scene Kit; `activateReady()` in the lifecycle, because
+an `await` with nothing to await still deferred the handoff by a frame. No world
+data changed. Because the family follows beat intent rather than portal identity,
+the lobby → Galería A entry became a crossing too — correct grammar, outside the
+authorised slice, not yet visually reviewed.
+
+**Not decided here**
+
+Whether the source's `PortalAppearance` distortion/edge-glow belongs on an
+institutional doorway — recommended against, but it is a product call. Whether the
+guide should move off the crossing axis, which would change a frozen Room 1
+endpoint. Whether Explore-initiated portals should also be choreographed.
+
+---
+
 # Architecture decisions awaiting review
 
 ## IW-ADR-001 — Semantic data and representation are separate

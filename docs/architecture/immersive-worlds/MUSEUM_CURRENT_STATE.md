@@ -174,6 +174,42 @@ CONTROLLED
 
 A simple fade/teleport is not the intended primary solution when the proven first-party crossing engine can be reused.
 
+## 5b. Block 2B implementation status
+
+```text
+IMPLEMENTATION COMPLETE
+AWAITING HUMAN GATE (KEEP / ADJUST / REJECT)
+```
+
+Written by the implementing agent at the point of handing off to the gate, per §14. It records what was built and what is open. **It does not record approval, which only Juanma gives.**
+
+Implementation record:
+
+```text
+docs/architecture/immersive-worlds/BLOCK_2B_ROOM_CROSSING.md
+```
+
+Canonical family added:
+
+```text
+T6 — ROOM CROSSING
+```
+
+Evidence:
+
+```text
+labs/immersive-worlds/qa/evidence-crossing/crossing-review.html
+labs/immersive-worlds/qa/evidence-crossing/crossing.json
+```
+
+First-party inspection outcome — the source was read in full before any code, and §6's authorisation was **partially declined on evidence**: the `WebGLRenderTarget` / `frameCorners` / synced-camera machinery exists to see one scene from another at the same coordinates, and Museum's rooms genuinely share a wall with a real opening in it. Reused instead: crossing choreography, warmup/readiness discipline, and plane-accurate room handoff. Recorded as `IW-DEC-030`.
+
+Open for the human gate:
+
+- two guide-composition defects at the threshold, reported and deliberately not fixed because both would move a frozen Room 1 endpoint;
+- whether the source's portal appearance shader belongs on an institutional doorway (recommended against);
+- the lobby → Galería A entry became a crossing as a consequence of T6 following beat intent — correct grammar, outside the authorised slice, not yet visually reviewed.
+
 ---
 
 # 6. Mandatory first-party source for Block 2B
