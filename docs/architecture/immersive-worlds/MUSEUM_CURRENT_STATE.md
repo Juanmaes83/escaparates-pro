@@ -217,6 +217,35 @@ The QA resume gate is now `boot | tour | grammar | detail`. It was split twice d
 
 First-party inspection outcome — the source was read in full before any code, and §6's authorisation was **partially declined on evidence**: the `WebGLRenderTarget` / `frameCorners` / synced-camera machinery exists to see one scene from another at the same coordinates, and Museum's rooms genuinely share a wall with a real opening in it. Reused instead: crossing choreography, warmup/readiness discipline, and plane-accurate room handoff. Recorded as `IW-DEC-030`.
 
+## 5c. Block 2B final product closure pass
+
+```text
+TECHNICALLY_CLOSED
+FINAL VISUAL REVIEW AVAILABLE
+PRODUCT_APPROVAL_PENDING
+```
+
+Review surface: `labs/immersive-worlds/qa/evidence-closure/block-2b-closure.html`.
+
+Guided seek / state reconstruction — reconstruction now reaches early / mid / late stops in `1656 / 3227 / 19740 ms` against `5906 / 38319 / 124607 ms`, with **zero differences across 23 compared state fields at every stop**, re-measured after the change. Two product defects were the cause and are fixed: seek latency was coupled to frame time through a macrotask yield that queues behind rendering, and a reconstruction was flying full crossing choreography at every portal beat for nobody. The `~100 s` figure that motivated the mission was a software-rasteriser artefact rather than a product cost; the residual `19.7 s` is genuine room building.
+
+Guide threshold composition — corrected without moving any approved camera endpoint. For a LEAD toward a Space the camera is derived *from* the guide anchor, so the standing recommendation to move that anchor would have dragged the endpoint with it. The fix is `aside: true`, the authored grammar every cesión beat already uses: two lines of world data, no code. Crossing clearance `0 m → 0.92 m`; the guide no longer blocks the centre of the opening; camera identical before and after.
+
+Lobby → Galería A — **decided: keep the crossing family.** Same semantics as the gallery crossing, and no inappropriate spectacle is introduced, which is measurable rather than a matter of taste: lobby and Galería A share the white-cube profile so the atmosphere blend is provably inert (`0.95 → 0.95`, worst step `0`).
+
+```text
+T6 APPLIES TO ANY PORTAL BEAT WHOSE PORTAL IS CONTINUOUS
+TELEPORT PORTALS REMAIN CUTS
+```
+
+`representationHint` (DOOR 1.5 m vs OPENING 2.6 m) remains available as a future profiling axis; nothing measured so far demands a split.
+
+Infinite Worlds comparison — **partial.** The owned V1.2.3 snapshot was made to run locally with the exact dependency versions it pins, because `esm.sh` is blocked here. It shows how the reference presents a destination before you reach it: the other world rendered live into a framed portal surface with a distortion and edge treatment. It does **not** show the completed world swap, and the portal's noise texture is a local stand-in. Recorded so the comparison is not read as more complete than it is.
+
+Portal treatment — Variant A (architectural only) built and measured; Variants B and C **not built**. Recommendation is A, stated as a recommendation.
+
+---
+
 Open for the human gate:
 
 - two guide-composition defects at the threshold, reported and deliberately not fixed because both would move a frozen Room 1 endpoint;
