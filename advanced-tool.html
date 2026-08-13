@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Advanced Tool · Escaparates Pro</title>
+<link rel="stylesheet" href="css/advanced-tool-host.css">
+</head>
+<body>
+<div class="at-app">
+  <aside class="at-side">
+    <header class="at-head"><div class="at-kicker">ESCAPARATES PRO · ADVANCED TOOL</div><h1 id="at-title">Advanced Tool</h1><div style="display:flex;gap:8px;align-items:center"><span class="at-badge" id="at-source">TYPE B</span><span class="at-status" id="at-status">Inicializando…</span></div><input id="at-project-name" value="Infinite Display Project" aria-label="Nombre del proyecto" style="margin-top:10px;width:100%;background:#080808;color:#fff;border:1px solid #303030;border-radius:8px;padding:8px"></header>
+    <div class="at-toolbar"><button class="at-btn primary" id="at-save">Guardar</button><button class="at-btn" id="at-load">Restaurar</button><button class="at-btn" id="at-version">Crear versión</button><button class="at-btn" id="at-reset">Original</button></div>
+    <div class="at-scroll">
+      <section class="at-section at-priority-section"><button type="button">MEDIA · IMÁGENES / VÍDEOS / LOGO</button><div class="at-body"><div class="at-action-grid"><button class="at-btn primary" id="at-add-media">Subir imágenes / vídeos</button><button class="at-btn" id="at-logo">Subir logo</button></div><input id="at-media-input" type="file" accept="image/*,video/*" multiple hidden><input id="at-logo-input" type="file" accept="image/*" hidden><div class="at-media-list" id="at-media-list"></div></div></section>
+      <section class="at-section at-priority-section"><button type="button">GUARDAR / GRABAR / EXPORTAR</button><div class="at-body"><div class="at-field"><label>Preset de salida</label><select id="at-output-preset"></select></div><div class="at-action-grid"><button class="at-btn" id="at-png">Exportar PNG</button><button class="at-btn primary" id="at-record">Grabar WEBM</button><button class="at-btn" id="at-json">Guardar Project JSON</button><button class="at-btn" id="at-presentation">Presentación</button></div></div></section>
+      <div id="at-controls"></div>
+      <div id="at-branding"></div>
+    </div>
+  </aside>
+  <main class="at-stage"><header class="at-stagebar"><strong>VISTA PREVIA EN DIRECTO</strong><div class="at-stage-actions"><button class="at-btn" id="at-fullscreen">Pantalla completa</button></div></header><div class="at-canvas"><div class="at-frame-shell" id="at-frame-shell"><iframe id="at-preview" title="Infinite Display Studio PRO"></iframe><div class="at-loading" id="at-loading"><div class="at-loading-card"><span class="at-dot"></span>Cargando motor canónico…</div></div></div></div></main>
+</div><div class="at-toast" id="at-toast"></div>
+<script>window.EP=window.EP||{};</script>
+<script src="js/control-schema.js"></script>
+<script src="js/output-presets.js"></script>
+<script src="js/customization/project-store-local.js"></script>
+<script src="js/projects/project-versioning.js"></script>
+<script src="js/advanced-tools/registry.js"></script>
+<script src="js/advanced-tools/render-adapter.js"></script>
+<script src="js/advanced-tools/project-adapter.js"></script>
+<script src="js/advanced-tools/hardening.js"></script>
+<script src="js/advanced-tools/host.js"></script>
+</body></html>
