@@ -1,7 +1,7 @@
 {
- "generatedAt": "2026-08-14T11:17:42.263Z",
- "passed": 38,
- "total": 46,
+ "generatedAt": "2026-08-14T12:08:24.320Z",
+ "passed": 49,
+ "total": 49,
  "results": [
   {
    "name": "TOP · institución · campo editable en el DOM",
@@ -76,12 +76,12 @@
   {
    "name": "TOP · proyección · qa-motion.webm · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.508,3.972] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.814,0] (dio la vuelta) cambióImagen=true playError=null"
   },
   {
    "name": "TOP · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "231274 vs 232193 bytes"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · aceptado por el almacén",
@@ -96,12 +96,12 @@
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.768,3.977] cambióImagen=true playError=null"
+   "detail": "paused=false t=[3.055,0] (dio la vuelta) cambióImagen=true playError=null"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "218495 vs 220541 bytes"
   },
   {
    "name": "TOP · proyección · qa-motion.mp4 · aceptado por el almacén",
@@ -116,12 +116,12 @@
   {
    "name": "TOP · proyección · qa-motion.mp4 · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.625,3.765] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.409,3.868] cambióImagen=true playError=null"
   },
   {
    "name": "TOP · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "225530 vs 225039 bytes"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
@@ -136,12 +136,12 @@
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.899,3.993] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.882,3.976] cambióImagen=true playError=null"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "217278 vs 218717 bytes"
   },
   {
    "name": "TOP · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
@@ -161,12 +161,12 @@
   {
    "name": "FRAME · proyección · qa-motion.webm · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.602,3.971] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.408,3.884] cambióImagen=true playError=null"
   },
   {
    "name": "FRAME · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "229330 vs 232136 bytes"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · aceptado por el almacén",
@@ -181,12 +181,12 @@
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.917,3.978] cambióImagen=true playError=null"
+   "detail": "paused=false t=[3.409,0] (dio la vuelta) cambióImagen=true playError=null"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "218374 vs 218216 bytes"
   },
   {
    "name": "FRAME · proyección · qa-motion.mp4 · aceptado por el almacén",
@@ -201,12 +201,12 @@
   {
    "name": "FRAME · proyección · qa-motion.mp4 · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.677,3.985] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.448,3.937] cambióImagen=true playError=null"
   },
   {
    "name": "FRAME · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "229113 vs 232056 bytes"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
@@ -221,17 +221,32 @@
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
    "ok": true,
-   "detail": "paused=false t=[2.968,3.992] cambióImagen=true playError=null"
+   "detail": "paused=false t=[2.853,0] (dio la vuelta) cambióImagen=true playError=null"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
-   "ok": false,
-   "detail": "0% de los píxeles"
+   "ok": true,
+   "detail": "218425 vs 217240 bytes"
   },
   {
    "name": "FRAME · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
    "ok": true,
    "detail": "estado=\"No se pudo usar · El vídeo no se pudo decodificar. Prueba con un MP4 (H.264) o un WebM.\""
+  },
+  {
+   "name": "obra · la imagen sigue aceptándose",
+   "ok": true,
+   "detail": "{\"image\":\"qa-artwork.jpg\",\"video\":null}"
+  },
+  {
+   "name": "obra · elegir vídeo retira la imagen",
+   "ok": true,
+   "detail": "{\"image\":null,\"video\":\"qa-motion.mp4\",\"assets\":[\"video:READY\"]}"
+  },
+  {
+   "name": "obra · el archivo retirado se libera",
+   "ok": true,
+   "detail": "en el almacén: [\"video:READY\"]"
   }
  ]
 }
