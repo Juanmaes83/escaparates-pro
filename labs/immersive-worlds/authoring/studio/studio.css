@@ -748,3 +748,24 @@ h2 {
 .st-opt.is-on { border-color: var(--st-accent); background: var(--st-accent-soft); }
 .st-opt.is-on b { color: var(--st-accent); }
 .st-mitem--plain { grid-template-columns: 1fr; }
+
+/* == projection presentation controls ====================================== */
+
+.st-f--block { display: block; margin: 0 0 12px; }
+.st-choice--tight { padding: 0; margin-top: 5px; }
+.st-f--range {
+  display: grid; grid-template-columns: 96px 1fr auto; align-items: center;
+  gap: 2px 12px; margin: 0 0 10px;
+}
+.st-f--range input[type="range"] {
+  width: 100%; accent-color: var(--st-accent); background: none; border: 0; padding: 0;
+}
+.st-f--range output {
+  font-size: 10.5px; color: var(--st-faint); font-variant-numeric: tabular-nums;
+  min-width: 3ch; text-align: right;
+}
+.st-f--check {
+  display: flex; align-items: center; gap: 9px; margin: 0 0 10px; cursor: pointer;
+}
+.st-f--check input { accent-color: var(--st-accent); width: 14px; height: 14px; }
+.st-f--check .st-l { margin: 0; }

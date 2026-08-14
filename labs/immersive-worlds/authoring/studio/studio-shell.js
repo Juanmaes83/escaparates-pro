@@ -21,7 +21,7 @@ import {
   normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND, SLOT_MEDIA
 } from '../experience-config.js';
 import { buildCatalogue, slotsAccepting, CATEGORY, CATEGORY_LABEL } from './media-catalogue.js';
-import { PACING, TRANSITION_LABEL, PROGRAMME_TYPE } from '../experience-config.js';
+import { PACING, TRANSITION_LABEL, PROGRAMME_TYPE, PROJECTION_FIT } from '../experience-config.js';
 
 /**
  * What each slot is called on the panel. The name says the destination *and* the
@@ -682,6 +682,49 @@ export class StudioShell {
       </section>`;
   }
 
+  /** A projection's presentation block, created on first touch like other drafts. */
+  _projectionDraft(id) {
+    const draft = this._entityDraft(id);
+    if (!draft.projection) {
+      draft.projection = { fit: 'COVER', intensity: 1, spill: 1, reflection: 0.5, loop: true };
+    }
+    return draft.projection;
+  }
+
+  /** A choice between named alternatives, shown as what they do. */
+  _choice(label, path, value, options) {
+    return `
+      <div class="st-f st-f--block">
+        <span class="st-l">${esc(label)}</span>
+        <div class="st-choice st-choice--tight">
+          ${Object.entries(options).map(([id, spec]) => `
+            <button class="st-opt ${id === value ? 'is-on' : ''}"
+              data-setpath="${esc(path)}" data-value="${esc(id)}">
+              <b>${esc(spec.label)}</b><i>${esc(spec.hint)}</i>
+            </button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  /** A continuous value with its own number beside it, so the slider is legible. */
+  _slider(label, path, value, min, max) {
+    return `
+      <label class="st-f st-f--range">
+        <span class="st-l">${esc(label)}</span>
+        <input type="range" data-bind="${esc(path)}" data-num="1"
+          min="${min}" max="${max}" step="0.05" value="${value}">
+        <output>${Number(value).toFixed(2)}</output>
+      </label>`;
+  }
+
+  _toggle(label, path, value) {
+    return `
+      <label class="st-f st-f--check">
+        <input type="checkbox" data-bind="${esc(path)}" data-bool="1" ${value ? 'checked' : ''}>
+        <span class="st-l">${esc(label)}</span>
+      </label>`;
+  }
+
   /** A field whose value comes from a fixed vocabulary rather than free text. */
   _selectField(label, path, value, options) {
     const opts = Object.entries(options)
@@ -1013,6 +1056,22 @@ export class StudioShell {
       `) : this._group('Medios', `
         <p class="st-note">Esta pieza no admite medios sustituibles en esta versión.</p>
       `)}
+      ${node.entityKind === 'PROJECTION' ? this._more('projection', 'Proyección', `
+        ${this._choice('Encaje', `entities.${node.id}.projection.fit`,
+    this._projectionDraft(node.id).fit, PROJECTION_FIT)}
+        ${this._slider('Brillo del proyector', `entities.${node.id}.projection.intensity`,
+    this._projectionDraft(node.id).intensity, 0.2, 1.6)}
+        ${this._slider('Derrame de luz', `entities.${node.id}.projection.spill`,
+    this._projectionDraft(node.id).spill, 0, 1.6)}
+        ${this._slider('Reflejo en el suelo', `entities.${node.id}.projection.reflection`,
+    this._projectionDraft(node.id).reflection, 0, 1)}
+        ${this._toggle('Repetir en bucle', `entities.${node.id}.projection.loop`,
+    this._projectionDraft(node.id).loop)}
+        <p class="st-note">
+          Estos ajustes describen cómo se presenta la pieza. La inclinación y el
+          color de la lámpara los fija la sala.
+        </p>
+      `, []) : ''}
       ${this._more('entity', 'Obra', `
         ${this._field('Año', `entities.${node.id}.year`, d.year, { inherited: src.year })}
         ${this._field('Técnica', `entities.${node.id}.medium`, d.medium, { inherited: src.medium })}
@@ -1237,6 +1296,12 @@ export class StudioShell {
     // A radio group over config values. Applying immediately rather than on a
     // separate "apply" keeps the panel honest: pacing is a preference, not a
     // pending edit to the exhibition.
+    on('[data-setpath]', 'click', (e) => {
+      this._write(e.currentTarget.dataset.setpath, e.currentTarget.dataset.value);
+      this._markDirty();
+      this.render();
+    });
+
     on('[data-set]', 'click', (e) => {
       const { set, value } = e.currentTarget.dataset;
       const [group, key] = set.split('.');
@@ -1259,7 +1324,16 @@ export class StudioShell {
     });
 
     on('[data-bind]', 'input', (e) => {
-      this._write(e.target.dataset.bind, e.target.value);
+      const el = e.target;
+      // A range gives a string and a checkbox gives nothing useful from `value`.
+      // Coercing here rather than in `_write` keeps the config typed: a slider
+      // that stores "0.85" makes every later comparison a string comparison.
+      const value = el.dataset.bool ? el.checked
+        : el.dataset.num ? Number(el.value)
+          : el.value;
+      this._write(el.dataset.bind, value);
+      const out = el.parentElement?.querySelector('output');
+      if (out) out.textContent = Number(el.value).toFixed(2);
       this._markDirty();
       // Only the header and the readiness column depend on a keystroke; redrawing
       // the whole studio on every character would steal focus mid-word.
@@ -1408,6 +1482,13 @@ export class StudioShell {
       this._roomDraft(parts.slice(1, -1).join('.')).title = value || null;
     } else if (parts[0] === 'entities') {
       const field = parts[parts.length - 1];
+      // `entities.<id>.projection.<field>` — the id itself contains dots, so the
+      // block name is found by position from the end rather than by splitting.
+      if (parts[parts.length - 2] === 'projection') {
+        const id = parts.slice(1, -2).join('.');
+        this._projectionDraft(id)[field] = value;
+        return;
+      }
       this._entityDraft(parts.slice(1, -1).join('.'))[field] = value || null;
     }
   }

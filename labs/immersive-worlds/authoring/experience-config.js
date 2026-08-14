@@ -134,7 +134,47 @@ const WORLD_MEDIA_KIND = { image: 'IMAGE', video: 'VIDEO' };
 function emptyEntity() {
   return {
     title: null, creator: null, year: null, medium: null, description: null,
-    image: null, video: null
+    image: null, video: null, projection: null
+  };
+}
+
+/**
+ * How a projection is presented, for the surfaces that are one.
+ *
+ * Every value here already existed in the Scene Kit's projection builder and
+ * was reachable only by editing the world file. This is authoring for
+ * capabilities the Museum already had, not a new rendering subsystem — which is
+ * also why the list stops where it does. `keystone` and `tint` stay unexposed:
+ * they describe the physical projector, not the work being shown, and an author
+ * tilting a virtual lamp is authoring a mistake.
+ */
+/**
+ * Two fits, and only two, because only two are honest here.
+ *
+ * `CONTAIN` — show the whole frame with bands — is deliberately absent. The
+ * projection is a textured plane, so letterboxing would mean sampling outside
+ * the texture's own range, and the default clamp smears the edge pixels
+ * outward instead of going black. That is not a band, it is an artefact, and
+ * offering it as a fit would be offering a control that produces a defect.
+ * Recorded as deferred rather than shipped broken.
+ */
+export const PROJECTION_FIT = Object.freeze({
+  COVER: { label: 'Respetar proporciones', hint: 'Recorta lo que no cabe, sin deformar' },
+  STRETCH: { label: 'Ajustar a la superficie', hint: 'Ocupa todo; puede deformar la imagen' }
+});
+
+function normaliseProjection(pr) {
+  if (!pr) return null;
+  const clamp = (v, lo, hi, dflt) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.min(Math.max(n, lo), hi) : dflt;
+  };
+  return {
+    fit: PROJECTION_FIT[pr.fit] ? pr.fit : 'COVER',
+    intensity: clamp(pr.intensity, 0.2, 1.6, 1),
+    spill: clamp(pr.spill, 0, 1.6, 1),
+    reflection: clamp(pr.reflection, 0, 1, 0.5),
+    loop: pr.loop !== false
   };
 }
 
@@ -302,7 +342,8 @@ export function normaliseConfig(input = {}) {
         medium: e?.medium ?? null,
         description: e?.description ?? null,
         image: normaliseMedia(e?.image),
-        video: normaliseMedia(e?.video)
+        video: normaliseMedia(e?.video),
+        projection: normaliseProjection(e?.projection)
       }])
     ),
 
@@ -453,6 +494,23 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
       || (takes('image') && authored.image)
       || null;
     if (chosen) content.media = mediaForWorld(chosen, content.media, c, resolveMedia);
+
+    // Presentation of a projection: merged onto the world's own block rather
+    // than replacing it, so the values an author never touched keep whatever
+    // the institution's world file said.
+    if (authored.projection && entity.kind === 'PROJECTION') {
+      const pr = authored.projection;
+      content.projection = {
+        ...(content.projection || {}),
+        intensity: pr.intensity,
+        spill: pr.spill,
+        reflection: pr.reflection,
+        fit: pr.fit
+      };
+      // Looping belongs to the medium, not to the lamp: it is the file that
+      // repeats, and the media loader is what reads it.
+      if (content.media) content.media = { ...content.media, loop: pr.loop };
+    }
 
     entity.content = content;
   }

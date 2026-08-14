@@ -652,6 +652,13 @@ export class MuseumSceneKit extends SceneKit {
         const source = loaded?.texture
           ? { texture: loaded.texture, update: () => {}, dispose: () => {} }
           : createGeneratedVideoTexture(rng.fork(entity.id), { size: 320 });
+        // A film is rarely the shape of the wall it is thrown at. Left alone the
+        // texture stretches to the surface, which distorts every face in it —
+        // the one artefact an author notices immediately and cannot fix from
+        // the file. Cropping or letterboxing is a choice, so it is authored.
+        if (loaded?.texture && loaded.aspect) {
+          fitTextureToSurface(loaded.texture, loaded.aspect, w / h, p.fit || 'COVER');
+        }
         this._animated.push({ ...source, spaceId: space.id, update: source.update, dispose: source.dispose });
 
         const projection = buildProjection({
@@ -2133,4 +2140,36 @@ function boxAround([x, z], width, depth) {
     min: [x - width / 2, 0, z - depth / 2],
     max: [x + width / 2, 3, z + depth / 2]
   };
+}
+
+
+/**
+ * Make a texture keep its own proportions on a surface with different ones.
+ *
+ * Adjusts the texture's repeat and offset rather than the geometry: the plane
+ * is the projection surface the room was built with, and moving it is not the
+ * media layer's business.
+ *
+ *   COVER    sample the middle of the frame so nothing is distorted
+ *   STRETCH  the identity transform — fill the surface, accept the distortion
+ *
+ * Only these two. Letterboxing would mean sampling outside the texture's range,
+ * where the default clamp smears the edge pixels outward rather than going
+ * black — an artefact, not a band.
+ */
+export function fitTextureToSurface(texture, mediaAspect, surfaceAspect, fit) {
+  if (!texture || !mediaAspect || !surfaceAspect) return;
+  if (fit === 'STRETCH') {
+    texture.repeat.set(1, 1);
+    texture.offset.set(0, 0);
+    texture.needsUpdate = true;
+    return;
+  }
+  // Crop whichever axis is long relative to the surface.
+  const scale = mediaAspect > surfaceAspect
+    ? [surfaceAspect / mediaAspect, 1]
+    : [1, mediaAspect / surfaceAspect];
+  texture.repeat.set(scale[0], scale[1]);
+  texture.offset.set((1 - scale[0]) / 2, (1 - scale[1]) / 2);
+  texture.needsUpdate = true;
 }
