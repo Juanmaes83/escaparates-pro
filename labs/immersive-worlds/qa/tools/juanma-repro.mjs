@@ -278,14 +278,12 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
       if (here()) break;
       try { await rt.traversePortal(id, { source: 'QA' }); } catch { /* not from here */ }
     }
-    // The engine knows where its own things are; a hand-written pose once
-    // photographed the wrong wall and called it evidence. Setting a pose while
-    // another authority owns the camera does nothing at all, so wait for EXPLORE.
-    for (let i = 0; i < 60 && rt.camera?.owner !== 'EXPLORE'; i += 1) {
-      await new Promise((r) => setTimeout(r, 50));
-    }
-    const pose = rt.framingFor?.(entityId, 'FOCUS');
-    if (pose) rt.explore.setPose(pose);
+    // The product's own way of putting a piece on screen, rather than a pose of
+    // my own invention. `framingFor` returns {position, target}; `setPose` wants
+    // {position, yaw, pitch}, so handing one to the other silently framed
+    // nothing and photographed the default view — four screenshots of different
+    // fixtures came out byte-identical, which is what that looks like.
+    try { rt.focusEntity(entityId, {}, { source: 'QA' }); } catch { /* reported below */ }
   }, target.entity);
   await scope.waitForTimeout(2400);
 
@@ -358,7 +356,32 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
   say(`${label} · se está reproduciendo`, measured.advanced === true && measured.pictureChanged === true,
     `paused=${measured.paused} t=${JSON.stringify(measured.currentTime)} cambióImagen=${measured.pictureChanged} playError=${measured.playError}`);
 
-  const shot = path.join(OUT, `video-${mode.toLowerCase()}-${fixture.replace(/\W/g, '-')}.png`);
+  // The element advancing proves decode; it does not prove the picture reached
+  // the canvas the visitor is looking at. So the last question is asked of the
+  // rendered pixels: does the WebGL canvas change over a second, and is the
+  // change where the piece is rather than somewhere else in the room?
+  const onCanvas = await scope.evaluate(async () => {
+    const canvas = document.querySelector('canvas');
+    const read = () => {
+      const c = document.createElement('canvas');
+      c.width = 160; c.height = 100;
+      const x = c.getContext('2d', { willReadFrequently: true });
+      x.drawImage(canvas, 0, 0, 160, 100);
+      return x.getImageData(0, 0, 160, 100).data;
+    };
+    const a = read();
+    await new Promise((r) => setTimeout(r, 1000));
+    const b = read();
+    let changed = 0;
+    for (let i = 0; i < a.length; i += 4) {
+      const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
+      if (d > 12) changed += 1;
+    }
+    return { pct: +(100 * changed / (a.length / 4)).toFixed(2) };
+  });
+  say(`${label} · el lienzo cambia con el tiempo`, onCanvas.pct > 0.5, `${onCanvas.pct}% de los píxeles`);
+
+  const shot = path.join(OUT, `video-${mode.toLowerCase()}-${target.what.replace(/\W/g, '')}-${fixture.replace(/\W/g, '-')}.png`);
   await page.screenshot({ path: shot });
   await scope.waitForTimeout(900);
   await page.screenshot({ path: shot.replace('.png', '-b.png') });
@@ -375,6 +398,64 @@ for (const mode of ['TOP', 'FRAME']) {
     await videoCase(mode, fixture, true, ARTWORK);
   }
   await videoCase(mode, 'qa-broken.mp4', false, PROJECTION);
+}
+
+/* ── 3. What already worked must still work ──────────────────────────────── */
+
+// Widening the model is the kind of change that quietly breaks the case it grew
+// out of. Juanma reported images as working; this is the check that they are
+// still working afterwards, and that choosing a video retires the still rather
+// than leaving two files on one record.
+{
+  const { page, scope } = await open(browser, 'TOP');
+  await ready(scope);
+  await unveil(scope);
+  await scope.waitForTimeout(1200);
+  await page.locator(`[data-node="${ARTWORK.entity}"]`).click();
+  await scope.waitForTimeout(2000);
+
+  const put = async (slot, file) => {
+    const bytes = [...await fs.readFile(path.join(FIXTURES, file))];
+    await scope.evaluate(({ b, name, s }) => {
+      const dt = new DataTransfer();
+      dt.items.add(new File([new Uint8Array(b)], name, { type: '' }));
+      const input = document.querySelector(`[data-media="${s}"]`);
+      if (!input) throw new Error(`falta la ranura ${s}`);
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }, { b: bytes, name: file, s: slot });
+    await scope.waitForFunction(
+      (s) => /Listo|no se pudo|En la sala/.test(
+        document.querySelector(`[data-slot="${s}"] .st-slotstate`)?.textContent || ''),
+      slot, { timeout: 120000 }
+    );
+  };
+
+  await put('ARTWORK_IMAGE', 'qa-artwork.jpg');
+  const afterImage = await scope.evaluate((id) => {
+    const e = window.__IW_STUDIO.config.entities[id] || {};
+    return { image: e.image?.name || null, video: e.video?.name || null };
+  }, ARTWORK.entity);
+  say('obra · la imagen sigue aceptándose', afterImage.image === 'qa-artwork.jpg', JSON.stringify(afterImage));
+
+  await put('ARTWORK_VIDEO', 'qa-motion.mp4');
+  const afterVideo = await scope.evaluate((id) => {
+    const e = window.__IW_STUDIO.config.entities[id] || {};
+    const vault = window.__IW_VAULT;
+    return {
+      image: e.image?.name || null,
+      video: e.video?.name || null,
+      // A released asset is gone from the vault, not merely unreferenced.
+      assets: vault ? vault.report().map((a) => `${a.kind}:${a.state}`) : null
+    };
+  }, ARTWORK.entity);
+  say('obra · elegir vídeo retira la imagen', afterVideo.image === null && afterVideo.video === 'qa-motion.mp4',
+    JSON.stringify(afterVideo));
+  say('obra · el archivo retirado se libera', (afterVideo.assets || []).length === 1,
+    `en el almacén: ${JSON.stringify(afterVideo.assets)}`);
+
+  await page.screenshot({ path: path.join(OUT, 'obra-video-sustituye-imagen.png') });
+  await page.close();
 }
 
 const summary = {
