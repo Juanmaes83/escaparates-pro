@@ -422,8 +422,10 @@ export class StudioShell {
                 aria-current="${on ? 'true' : 'false'}"
                 title="${esc(d.hint)}${d.ready ? '' : ' · en preparación'}">
                 <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">${ICON[d.id]}</svg>
-                <span><b>${esc(d.label)}</b><i>${esc(d.hint)}</i></span>
-                ${d.ready ? '' : '<em>Pronto</em>'}
+                <span>
+                  <b>${esc(d.label)}</b><i>${esc(d.hint)}</i>
+                  ${d.ready ? '' : '<em>Pronto</em>'}
+                </span>
               </button>
               ${on && d.areas ? `<ul class="st-areas">${
   d.areas.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>` : ''}

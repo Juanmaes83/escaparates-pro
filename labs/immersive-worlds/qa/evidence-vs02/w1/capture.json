@@ -1,8 +1,8 @@
 {
  "wave": "w1",
- "runId": "vs02_w1_mssxwkln",
- "head": "40808af",
- "generatedAt": "2026-08-14T12:52:46.673Z",
+ "runId": "vs02_w1_mst0faym",
+ "head": "4d31dc1",
+ "generatedAt": "2026-08-14T14:03:03.878Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
@@ -22,12 +22,12 @@
    "state": "Estudio recién abierto sobre el Museo por defecto",
    "action": "Abrir ?authoring=1",
    "expected": "La sala ocupa el centro a su propio tamaño; el editor no la tapa",
-   "observed": "lienzo 656×525 · Todo el contenido necesario está listo · un solo estudio (1)",
+   "observed": "lienzo 530×424 · Todo el contenido necesario está listo · un solo estudio (1)",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:45:39.312Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T13:56:17.371Z"
   },
   {
    "id": "03_EXPERIENCE_TREE",
@@ -35,12 +35,12 @@
    "state": "Galería A seleccionada en el árbol",
    "action": "Clic en la sala «Galería A — Horizontes»",
    "expected": "El árbol muestra Institución → Exposición → Salas → Piezas y la vista previa camina hasta la sala",
-   "observed": "seleccionado space.gallery-a · lienzo 656×524",
+   "observed": "seleccionado space.gallery-a · lienzo 530×424",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:45:51.948Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T13:56:31.231Z"
   },
   {
    "id": "08_ARTWORK_SELECTED",
@@ -51,9 +51,9 @@
    "observed": "seleccionado entity.artwork.division-tercera",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:45:58.552Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T13:56:36.534Z"
   },
   {
    "id": "04_INSTITUTION_EDIT",
@@ -64,9 +64,9 @@
    "observed": "sin guardar: true · Todo el contenido necesario está listo",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:46:11.974Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T13:56:49.704Z"
   },
   {
    "id": "25_NARROW_VIEW",
@@ -77,9 +77,9 @@
    "observed": "lienzo 420×275 · desbordamiento false",
    "viewport": "420×860",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:46:53.769Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T13:57:17.932Z"
   },
   {
    "id": "01_VS01_BASELINE",
@@ -90,9 +90,9 @@
    "observed": "editor superpuesto sobre la sala",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "40808af",
-   "runId": "vs02_w1_mssxwkln",
-   "at": "2026-08-14T12:52:46.660Z"
+   "head": "4d31dc1",
+   "runId": "vs02_w1_mst0faym",
+   "at": "2026-08-14T14:03:03.861Z"
   }
  ],
  "errors": []
