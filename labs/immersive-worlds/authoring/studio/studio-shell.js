@@ -246,6 +246,8 @@ export class StudioShell {
     // shell reporting "saved" because it had not been typed into yet was the
     // studio telling the author their work was safe when it might not be.
     this.domain = 'build';
+    /** Which `Personalizar más` sections the author has opened. */
+    this.opened = new Set();
     this.selectedId = 'institution';
     this.dirty = false;
     this.savedAt = null;
@@ -719,15 +721,17 @@ export class StudioShell {
       ${this._group('Identidad', `
         ${this._field('Nombre de la institución', 'institution.name', i.name)}
         ${this._field('Claim', 'institution.claim', i.claim, { hint: 'Encabeza la cartela de entrada' })}
-        ${this._field('Fechas de la colección', 'institution.dates', i.dates, { hint: 'Bajo el claim, en la misma cartela' })}
-        ${this._field('Introducción', 'institution.introduction', i.introduction,
-    { area: true, rows: 6, hint: 'Texto de la cartela de entrada' })}
       `)}
       ${this._group('Marca', `
         <p class="st-note">Se imprime en la cartela de entrada, sobre el claim — donde una institución pone su marca.</p>
         ${this._slot(MEDIA_SLOT.INSTITUTION_LOGO, SLOT_COPY.INSTITUTION_LOGO.label, i.logo,
     SLOT_MEDIA.INSTITUTION_LOGO.kind, SLOT_COPY.INSTITUTION_LOGO.formats)}
-      `)}`;
+      `)}
+      ${this._more('institution', 'Institución', `
+        ${this._field('Fechas de la colección', 'institution.dates', i.dates, { hint: 'Bajo el claim, en la misma cartela' })}
+        ${this._field('Introducción', 'institution.introduction', i.introduction,
+    { area: true, rows: 6, hint: 'Texto de la cartela de entrada' })}
+      `, [i.dates, i.introduction])}`;
   }
 
   _exhibitionEditor() {
@@ -774,12 +778,6 @@ export class StudioShell {
       ${this._group('Identidad', `
         ${this._field('Título', `entities.${node.id}.title`, d.title, { inherited: src.title })}
         ${this._field('Autoría', `entities.${node.id}.creator`, d.creator, { inherited: src.creator })}
-        ${this._field('Año', `entities.${node.id}.year`, d.year, { inherited: src.year })}
-        ${this._field('Técnica', `entities.${node.id}.medium`, d.medium, { inherited: src.medium })}
-      `)}
-      ${this._group('Interpretación', `
-        ${this._field('Texto curatorial', `entities.${node.id}.description`, d.description,
-    { area: true, inherited: src.description })}
       `)}
       ${slots.length ? this._group('Medios', `
         <p class="st-note">${esc(SLOT_CHOICE_NOTE[node.entityKind] || '')}</p>
@@ -790,14 +788,52 @@ export class StudioShell {
       `) : this._group('Medios', `
         <p class="st-note">Esta pieza no admite medios sustituibles en esta versión.</p>
       `)}
-      ${this._group('Presentación', `
+      ${this._more('entity', 'Obra', `
+        ${this._field('Año', `entities.${node.id}.year`, d.year, { inherited: src.year })}
+        ${this._field('Técnica', `entities.${node.id}.medium`, d.medium, { inherited: src.medium })}
+        ${this._field('Texto curatorial', `entities.${node.id}.description`, d.description,
+    { area: true, inherited: src.description })}
         <dl class="st-facts">
           <dt>Sala</dt><dd>${esc(roomOf(this.tree, node.id)?.label || '')}</dd>
           <dt>Soporte</dt><dd>${esc(SUPPORT[entity?.representation?.profile] || '—')}</dd>
           <dt>Medidas</dt><dd>${entity?.size ? `${(entity.size[0] * 100).toFixed(0)} × ${(entity.size[1] * 100).toFixed(0)} cm` : '—'}</dd>
         </dl>
         <p class="st-note">La colocación y el encuadre los gobierna la sala. El estudio no expone coordenadas de cámara.</p>
-      `)}`;
+      `, [d.year, d.medium, d.description])}`;
+  }
+
+  /**
+   * `Personalizar más · <familia>` — the deeper half of a family.
+   *
+   * Essential first, deeper on demand (Constitution §36.6). The opening is named
+   * for its family rather than called "Avanzado": "Personalizar más · Obra" says
+   * what is behind it, where "Avanzado" says only that somebody judged it
+   * complicated.
+   *
+   * Three things this must not do, because each would turn a calmer panel into a
+   * worse one:
+   *
+   *   - hide that something is written. A closed section that already holds
+   *     authored values says so, so nothing an author typed can disappear from
+   *     view without a trace.
+   *   - discard edits. Values live in the config, not in the DOM, so collapsing
+   *     is a change of view and never a change of data.
+   *   - hide fields from readiness. The validation column reads the config too,
+   *     so a folded field still counts — hidden is not ignored.
+   */
+  _more(family, label, inner, values = []) {
+    const key = `more:${family}`;
+    const open = this.opened.has(key);
+    const filled = values.filter((v) => v != null && v !== '').length;
+    return `
+      <section class="st-more ${open ? 'is-open' : ''}">
+        <button class="st-morebtn" data-more="${esc(key)}" aria-expanded="${open}">
+          <span>Personalizar más · <b>${esc(label)}</b></span>
+          ${filled ? `<em>${filled} con contenido</em>` : ''}
+          <i aria-hidden="true">${open ? '−' : '+'}</i>
+        </button>
+        ${open ? `<div class="st-morebody">${inner}</div>` : ''}
+      </section>`;
   }
 
   _group(title, inner) {
@@ -971,6 +1007,12 @@ export class StudioShell {
       // The walk changed which room is live, and a badge that still names the
       // room you left is worse than no badge.
       this._refreshLive();
+    });
+
+    on('[data-more]', 'click', (e) => {
+      const key = e.currentTarget.dataset.more;
+      if (this.opened.has(key)) this.opened.delete(key); else this.opened.add(key);
+      this.render();
     });
 
     on('[data-twist]', 'click', (e) => {
