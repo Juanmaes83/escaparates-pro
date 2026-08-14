@@ -895,3 +895,170 @@ When a decision changes:
 4. explain trigger/evidence;
 5. state implementation consequences;
 6. reconcile proposed/current branch work before continuing.
+
+---
+
+# Error / learning log
+
+Institutional memory, not anecdote. Every entry is a mistake that actually
+happened and cost real time, recorded so the next agent does not pay for it
+twice. The most useful column is the last one: **what rule prevents recurrence**.
+
+A pattern runs through almost all of it, and it is worth naming before the
+table: **most of these were instruments, not products.** A test that cannot
+fail is worse than no test, because it produces confidence instead of silence.
+When a human browser and a harness disagree, the harness is the suspect.
+
+## L-1 · A harness that types without typing
+
+**What happened.** The authoring harness set `input.value` and dispatched an
+`input` event. Real keystrokes never reached the page.
+**Root cause.** Convenience: setting a value is faster than pressing keys.
+**Exposed by.** Juanma, in his own browser. `Museo Atlántico de Vigo` arrived as
+`Fundación AMueotlánticoeVigorenas`.
+**Product or instrument.** Both. The product ate W/A/S/D and space at the window
+level; the instrument made it invisible for weeks.
+**Changed.** `isTyping()` guard in `app/ui/input.js`; the repro now uses
+`page.keyboard.type()`.
+**Rule.** *Input tests press keys.* If a test never generates a real key event,
+it does not test keyboard handling.
+
+## L-2 · A video test that drove the only slot that existed
+
+**What happened.** Video QA passed 15/15 while video authoring was, to an author,
+entirely broken.
+**Root cause.** The fixture drove the single PROJECTION slot. Nine artworks had
+no video slot at all, and a test that only uses what exists cannot discover what
+is missing.
+**Exposed by.** Juanma opening an artwork and finding nowhere to put a video.
+**Product or instrument.** Product model (the config asserted the Scene Kit could
+not draw video on a canvas — it always could), amplified by a narrow instrument.
+**Changed.** Explicit slots per medium; the proof now covers artwork *and*
+projection.
+**Rule.** *Cover the surface an author actually opens, not the one the fixture
+knows.* Coverage counts panels, not assertions.
+
+## L-3 · Reading a WebGL canvas that was already cleared
+
+**What happened.** A pixel check reported exactly `0.00%` change on every video
+case — playing and frozen alike.
+**Root cause.** `drawImage` on a WebGL canvas returns a cleared buffer unless
+`preserveDrawingBuffer` is set. Two blanks were being compared.
+**Exposed by.** Its own consistency: `0.00%` in eight of eight cases, beside
+screenshots that plainly differed.
+**Product or instrument.** Instrument.
+**Changed.** Compare two `page.screenshot()` PNGs of the canvas element instead.
+**Rule.** *An identical result in every cell is a broken measurement, not a
+finding.* Include a case that must differ.
+
+## L-4 · A looping video is not a stopped one
+
+**What happened.** `t=[2.998, 0]` scored as "not playing".
+**Root cause.** A 4-second looping fixture sampled a second apart wraps roughly a
+quarter of the time; the assertion demanded monotonic `currentTime`.
+**Product or instrument.** Instrument.
+**Rule.** *Assert the property, not a proxy.* "Playing" is `!paused` plus a
+changing picture; a wrap is evidence of playing to the end.
+
+## L-5 · «Lista» is not «Listo»
+
+**What happened.** An image-upload wait timed out forever.
+**Root cause.** The regex matched only the masculine form of READY. Images are
+`Lista`; videos are `Listo`.
+**Rule.** *Match state by code, or match every surface form.* Localised UI text
+is a bad primary key.
+
+## L-6 · Measuring a camera in flight
+
+**What happened.** The transition endpoint proof "failed" the frozen contract.
+The drift was smooth, one-directional and proportional to the pace.
+**Root cause.** Sampling 120 ms after each beat began measured *how far along the
+travel was* and reported it as *where the beat ends*.
+**Product or instrument.** Instrument. The contract was never violated.
+**Rule.** *Wait for the thing to stop before measuring where it stopped.* A
+fixed delay is not pace-independent.
+
+## L-7 · Racing the transport you are trying to observe
+
+**What happened.** Fixing L-6 by waiting for stillness produced 9 beats in one
+run and 10 in another, with poses off by one.
+**Root cause.** The route advances itself on a timer; the test also advanced it.
+**Rule.** *Pause the subject, then step it deterministically by id.* Never walk a
+sequence by index into a live array.
+
+## L-8 · Three runs in one page
+
+**What happened.** Each pace inherited the camera the previous run abandoned, and
+the first run's first beat was sampled before any travel.
+**Rule.** *One run, one fresh page.* Without isolation a test cannot tell a
+violation from its own leftovers.
+
+## L-9 · A diagnostic that disagreed with its own verdict
+
+**What happened.** The failure line printed `10 destinos idénticos` next to
+**FAIL**.
+**Root cause.** The assertion compared two pairs on two fields; the message
+compared one pair on one field.
+**Rule.** *The diagnostic must cover exactly what the assertion covers.* A
+message that contradicts its verdict is worse than no message.
+
+## L-10 · Demanding bit-equality from an asymptote
+
+**What happened.** After L-6 to L-9 were fixed, poses still differed by 1–3 cm
+between paces.
+**Root cause.** Not a bug. The camera eases toward its destination
+asymptotically and stops just short; how short depends on how many frames the
+move lasted, which pace legitimately changes.
+**Changed.** The proof now asserts two separate facts: the **authored
+destination** exactly, and the **resting camera** within 5 cm.
+**Rule.** *Assert the contract, not the arithmetic underneath it.* Ask what the
+frozen promise actually says before choosing a tolerance.
+
+## L-11 · Reading a room you are not standing in
+
+**What happened.** The projection texture read as `null` after Apply, looking
+exactly like "the video never arrived".
+**Root cause.** The Scene Kit builds the active space; an entity in another room
+has no object.
+**Rule.** *Navigate to the subject before measuring it.* Preconditions are not
+part of what is measured, and a null must never be reported as an absence.
+
+## L-12 · Evidence that outlived the product it photographed
+
+**What happened.** The stored w2 storyboard showed an artwork panel with one
+image slot and no video, long after both slots existed. The capture tool still
+drove `PROJECTION_MEDIA`, a slot that had been removed.
+**Rule.** *Re-capture after any change to what the frame shows, and let capture
+tools fail loudly on removed selectors.* Stale captures are the most convincing
+wrong evidence there is.
+
+## L-13 · A review board that contradicted its own subject
+
+**What happened.** The published board listed thumbnails and the Media Library as
+missing, in the same document that documented building them.
+**Root cause.** A silent `str.replace` that matched nothing, because I did not
+assert on it.
+**Rule.** *Assert on every scripted edit.* A replacement that matches nothing must
+raise, never pass quietly.
+
+## L-14 · A wrong flag reran the wrong wave
+
+**What happened.** `studio-capture.mjs w2` silently ran w1 — the flag is `--wave`
+— and I nearly read w1 frames as w2 evidence.
+**Rule.** *A tool given an argument it does not understand should say so.*
+Silent fallback to a default is how the wrong evidence gets published.
+
+## L-15 · Measuring a layout that was overlapping
+
+**What happened.** Reported the preview had *gained* width (712px) after adding
+the rail. It had not: the stage was sliding 178px underneath the rail because
+its `left` inset did not name the new column. The honest figure was 530px.
+**Rule.** *A measurement taken while elements overlap is not a measurement.*
+Check the layout is valid before quoting numbers from it.
+
+## L-16 · Ending a turn mid-mandate
+
+**What happened.** Reported progress after two of four verticals and stopped,
+during a mandate that authorised working through to the final gate.
+**Rule.** *A progress report is not a stopping point.* Under an autonomous
+mandate, stop only at the named gate or at a genuine blocker.
