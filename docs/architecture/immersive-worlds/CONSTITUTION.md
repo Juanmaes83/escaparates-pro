@@ -1660,3 +1660,56 @@ Decisions taken now must stay compatible with:
 **Export is not visitor mode.** Leaving the Studio to look at the experience is
 not the same act as producing an artefact for a client, and the two must not
 share a button.
+
+## 36.6 Progressive disclosure — the rule for every future Authoring surface
+
+> **ESSENTIAL FIRST. DEEPER ON DEMAND.**
+
+The first view of every authoring family shows the essential controls only.
+Everything else is reached deliberately, through a named opening:
+
+```text
+PERSONALIZAR MÁS · INSTITUCIÓN
+PERSONALIZAR MÁS · OBRA
+PERSONALIZAR MÁS · MEDIOS
+PERSONALIZAR MÁS · VISITANTE
+```
+
+This exists because of the direction the product is going, not because of how it
+looks today. §36.2 lists fifteen capabilities and the blueprint lists five
+workspaces with four or five sub-areas each. If every capability earns a control
+on the surface it belongs to, the panel an author opens first becomes a wall —
+and a wall is not more powerful than a page, only harder to use. The tool has to
+stay usable *as it grows*, which is a decision that has to be made before the
+growth, not after it.
+
+Two things follow, and both are load-bearing:
+
+- **The opening is named for its domain**, not called "Advanced". "Personalizar
+  más · Obra" tells an author what is behind it; "Advanced" tells them only that
+  someone judged it complicated.
+- **Essential is decided by the task, not by the schema.** A field is essential
+  because an author needs it to finish an ordinary piece of work — not because
+  it happens to be required, and not because it is cheap to render.
+
+This is a rule for **future** expansion. It was recorded, deliberately, without
+being implemented: retrofitting it across the current panels is its own piece of
+work with its own review, and doing it in the same breath as writing it down
+would have made the principle untestable.
+
+## 36.7 The muted brass — a reviewed proposal
+
+The Studio currently marks four things with a muted brass (`--st-accent`,
+`#bfa06a`): the active workspace, the current selection, the primary action, and
+the house mark. Nothing else.
+
+Status: **reviewed proposal, kept — not an immutable house contract.** It has
+been looked at and left in place; it has not been ratified as the house accent,
+and a later visual pass may tune or drop it without arguing with this document.
+
+What is *not* up for revision is the rule it lives under (§24): the art on the
+walls holds the only saturated colour in the room, and the three state colours
+are the only other exception. The approved UI reference paints its chrome gold
+throughout; the Studio deliberately does not, and any future accent has to clear
+the same bar — visible enough that "you are here" does not depend on one grey
+against another, quieter than the work hanging behind it.

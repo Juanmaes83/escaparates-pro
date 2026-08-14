@@ -66,8 +66,6 @@ const LOOPS = [
 
 const DEBT = [
   ['Vista de autor ≠ vista de visitante', 'Enfocar la pieza usa la ruta de foco del runtime real, así que el autor ve la presentación del visitante: cartela, paginación, «volver a la sala». Hoy es deseable — es prueba en vivo de que los metadatos editados llegan a la pared — pero la distinción está pendiente. Registrado en CONSTITUTION §36.4.'],
-  ['Sin miniaturas', 'La referencia muestra la imagen de cada obra en la tira y una miniatura en el grupo de medios. VS02 muestra nombres de archivo. Una herramienta de autoría visual que nunca enseña lo visual.'],
-  ['Sin biblioteca de medios', 'La referencia tiene una segunda columna con los medios de la institución contados por tipo. VS02 no la tiene.'],
   ['Sin actividad reciente', 'Deliberado. La referencia lista personas y horas; detrás de VS02 no hay historial ni cuentas, así que cada fila sería inventada. Una consola de validación que se fabrica su propio registro de auditoría es peor que una que aún no lo tiene.'],
   ['Sin mapa de sala', 'La referencia superpone un plano en la vista previa.'],
   ['Techo en la vista de sala', 'A nivel de sala, la vista previa gasta cerca de un quinto de su altura en techo.'],
@@ -214,6 +212,17 @@ const html = `<title>VS02 — La forma del taller</title>
   <ul class="debt">
     ${DEBT.map(([t, d]) => `<li><b>${esc(t)}</b><span>${d}</span></li>`).join('')}
   </ul>
+
+  <h2>Principio canónico nuevo — Divulgación progresiva</h2>
+  <p>
+    <b>Lo esencial primero. Lo profundo, a petición.</b> La primera vista de cada
+    familia de autoría muestra solo los controles esenciales; el detalle aparece
+    bajo un «Personalizar más · Institución / Obra / Medios / Visitante». Es la
+    regla contra la que se mide la próxima expansión, para que la interfaz no se
+    convierta en un muro de controles a medida que crecen las capacidades.
+    Registrado en <code>CONSTITUTION §36.6</code>; no implementado en este
+    checkpoint a propósito.
+  </p>
 
   <h2>Documentación canónica</h2>
   <p>
