@@ -21,6 +21,7 @@ import {
   normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND, SLOT_MEDIA
 } from '../experience-config.js';
 import { buildCatalogue, slotsAccepting, CATEGORY, CATEGORY_LABEL } from './media-catalogue.js';
+import { PACING, TRANSITION_LABEL } from '../experience-config.js';
 
 /**
  * What each slot is called on the panel. The name says the destination *and* the
@@ -196,7 +197,7 @@ const DOMAINS = [
     id: 'experience',
     label: 'Experiencia',
     hint: 'Luz, proyección, recorridos',
-    ready: false,
+    ready: true,
     areas: ['Iluminación', 'Proyección', 'Recorridos', 'Comportamientos', 'Audio']
   },
   {
@@ -314,7 +315,7 @@ export class StudioShell {
       ${this._topBar(r)}
       <div class="st-body">
         ${this._rail()}
-        ${this.domain === 'content' ? this._library() : this._tree()}
+        ${this._secondColumn()}
         <div class="st-stage" id="st-stage-slot">
           <span class="st-live ${this.dirty ? 'is-stale' : ''}">${
   this.dirty ? 'Vista previa desactualizada' : 'Vista previa aplicada'} <b>${esc(this.currentRoom() || '')}</b></span>
@@ -487,6 +488,124 @@ export class StudioShell {
   }).join('')}
         </ul>
       </nav>`;
+  }
+
+  /**
+   * The second column follows the workspace, which is what makes the spine
+   * navigation rather than decoration.
+   */
+  _secondColumn() {
+    if (this.domain === 'content') return this._library();
+    if (this.domain === 'experience') return this._transitions();
+    return this._tree();
+  }
+
+  /**
+   * Transition authoring.
+   *
+   * The engine already decides which family carries each move, from what the
+   * move *means* — same subject, an inspection, a threshold, another room. That
+   * stays where it is: it is the part that keeps the grammar coherent, and an
+   * author choosing "orbit" for a beat that is really a reframe would be
+   * authoring a mistake.
+   *
+   * What an author may tune is the pace, and it is safe to expose because of
+   * where it lands in the director: the destination pose is resolved first, and
+   * pacing scales only the clock afterwards. The frozen contract survives by
+   * construction rather than by carefulness —
+   *
+   *   TRANSITIONS MAY CHANGE HOW THE CAMERA TRAVELS, NEVER WHERE THE BEAT ENDS.
+   *
+   * Nothing here names a coordinate, a vector, a controller or an engine id.
+   */
+  _transitions() {
+    const e = this.config.experience;
+    const families = this._familiesInUse();
+    const pacing = PACING[e.pacing] ? e.pacing : 'NATURAL';
+    const motion = e.motion === 'CALM' ? 'CALM' : 'SYSTEM';
+
+    return `
+      <section class="st-tree st-lib" aria-label="Recorridos y transiciones">
+        <h2>Recorridos</h2>
+        <p class="st-note">
+          Cómo viaja la cámara entre las paradas del recorrido comentado. Los
+          destinos los fija el recorrido; aquí se ajusta el trayecto.
+        </p>
+
+        <section class="st-shelf">
+          <h3>Movimientos en uso <i>${families.length}</i></h3>
+          ${families.length ? `<ul class="st-mlist">${families.map((f) => `
+            <li class="st-mitem st-mitem--plain">
+              <div class="st-mmeta">
+                <b>${esc(TRANSITION_LABEL[f.id] || f.id)}</b>
+                <span>${f.count} ${f.count === 1 ? 'paso' : 'pasos'}</span>
+              </div>
+            </li>`).join('')}</ul>`
+    : '<p class="st-note">El recorrido todavía no tiene pasos.</p>'}
+          <p class="st-note">
+            El tipo de movimiento lo elige la propia parada según lo que significa
+            —acercarse a una obra, girar alrededor de una pieza, cruzar a otra
+            sala—. No se elige a mano para que la gramática del recorrido no se
+            contradiga.
+          </p>
+        </section>
+
+        <section class="st-shelf">
+          <h3>Ritmo</h3>
+          <div class="st-choice" role="radiogroup" aria-label="Ritmo del recorrido">
+            ${Object.entries(PACING).map(([id, spec]) => `
+              <button class="st-opt ${id === pacing ? 'is-on' : ''}"
+                role="radio" aria-checked="${id === pacing}"
+                data-set="experience.pacing" data-value="${id}">
+                <b>${esc(spec.label)}</b><i>${esc(spec.hint)}</i>
+              </button>`).join('')}
+          </div>
+        </section>
+
+        <section class="st-shelf">
+          <h3>Movimiento reducido</h3>
+          <div class="st-choice" role="radiogroup" aria-label="Movimiento reducido">
+            <button class="st-opt ${motion === 'SYSTEM' ? 'is-on' : ''}"
+              role="radio" aria-checked="${motion === 'SYSTEM'}"
+              data-set="experience.motion" data-value="SYSTEM">
+              <b>Seguir al visitante</b><i>Respeta la preferencia de su sistema</i>
+            </button>
+            <button class="st-opt ${motion === 'CALM' ? 'is-on' : ''}"
+              role="radio" aria-checked="${motion === 'CALM'}"
+              data-set="experience.motion" data-value="CALM">
+              <b>Siempre sin viaje</b><i>La cámara aparece ya colocada, para todos</i>
+            </button>
+          </div>
+          <p class="st-note">
+            Un visitante que ha pedido movimiento reducido lo recibe siempre. Esta
+            opción solo puede añadir quietud, nunca quitarla.
+          </p>
+        </section>
+
+        <div class="st-io">
+          <button class="st-b st-b--small" data-act="replay">Ver el recorrido</button>
+        </div>
+      </section>`;
+  }
+
+  /** Which families the current route actually uses, counted from the route. */
+  _familiesInUse() {
+    const counts = new Map();
+    const steps = window.__IW?.runtime?.experience?.steps || [];
+    for (const step of steps) {
+      const f = step.__family || null;
+      if (f) counts.set(f, (counts.get(f) || 0) + 1);
+    }
+    if (!counts.size) {
+      // Before a route has run, the families are still knowable from the beats'
+      // own intents — reporting nothing would make a real capability look absent.
+      for (const step of steps) {
+        const f = step.shotIntent === 'PORTAL' ? 'T6_ROOM_CROSSING'
+          : !step.subjectRef ? 'T5_THRESHOLD_APPROACH' : 'T2_LOCAL_WALK';
+        counts.set(f, (counts.get(f) || 0) + 1);
+      }
+    }
+    return [...counts.entries()].map(([id, count]) => ({ id, count }));
   }
 
   /** What the project holds, so a file can be found instead of re-uploaded. */
@@ -1009,6 +1128,18 @@ export class StudioShell {
       this._refreshLive();
     });
 
+    // A radio group over config values. Applying immediately rather than on a
+    // separate "apply" keeps the panel honest: pacing is a preference, not a
+    // pending edit to the exhibition.
+    on('[data-set]', 'click', (e) => {
+      const { set, value } = e.currentTarget.dataset;
+      const [group, key] = set.split('.');
+      this.config[group][key] = value;
+      this._markDirty();
+      this._applyExperienceSettings();
+      this.render();
+    });
+
     on('[data-more]', 'click', (e) => {
       const key = e.currentTarget.dataset.more;
       if (this.opened.has(key)) this.opened.delete(key); else this.opened.add(key);
@@ -1044,6 +1175,7 @@ export class StudioShell {
     });
 
     const act = (name, fn) => on(`[data-act="${name}"]`, 'click', fn);
+    act('replay', () => this._replay());
     act('save', () => this._save());
     act('apply', () => this._apply());
     act('validate', () => { this.message = this.readiness.headline; this.messageBad = !this.readiness.canStart; this.render(); });
@@ -1227,6 +1359,39 @@ export class StudioShell {
     });
     this._markDirty();
     this.render();
+  }
+
+  /**
+   * Push the experience preferences into the running preview.
+   *
+   * Not through `applyConfigToWorld`: pacing and motion are not properties of
+   * the world record — no wall changes — they are how the visitor is carried
+   * through it. Writing them into the world would make a rebuild necessary to
+   * change a preference, and would put travel timing in a document that is
+   * supposed to describe an institution.
+   */
+  _applyExperienceSettings() {
+    const runtime = window.__IW?.runtime;
+    if (!runtime?.experience) return;
+    const spec = PACING[this.config.experience.pacing] || PACING.NATURAL;
+    runtime.experience.pacing = spec.factor;
+    // Only ever towards stillness. A visitor who asked their system for reduced
+    // motion is not argued with by a config; the config may only join them.
+    if (this.config.experience.motion === 'CALM') runtime.experience.reducedMotion = true;
+  }
+
+  /** Run the guided route in the preview, so a pace can be judged by watching. */
+  async _replay() {
+    const runtime = window.__IW?.runtime;
+    const route = runtime?.store?.routes?.[0];
+    if (!route) { this._say('Este proyecto no tiene recorrido comentado.', true); return; }
+    this._applyExperienceSettings();
+    try {
+      await runtime.startRoute(route.id);
+      this._say('Recorrido en marcha en la vista previa.');
+    } catch {
+      this._say('No se pudo iniciar el recorrido.', true);
+    }
   }
 
   _markDirty() { this.dirty = true; }

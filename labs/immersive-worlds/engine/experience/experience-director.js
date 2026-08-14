@@ -58,6 +58,14 @@ export class ExperienceDirector {
     this.bus = bus;
     this.ports = ports;
     this.reducedMotion = reducedMotion;
+    /**
+     * How unhurried the travel is, as a multiplier on every move's clock.
+     *
+     * 1 is the authored pace. An author may ask for calmer or brisker; they may
+     * not ask for a different destination, and this cannot give them one — the
+     * pose is resolved before this is applied.
+     */
+    this._pacing = 1;
 
     this.transport = TRANSPORT.IDLE;
     this.routeId = null;
@@ -162,6 +170,19 @@ export class ExperienceDirector {
     this.ports.requestAuthority(CAMERA_AUTHORITY.DIRECTED, { reason: `route:${this.routeId}:resume` });
     this._applyShot(step);
     return true;
+  }
+
+  get pacing() { return this._pacing; }
+
+  /**
+   * @param {number} value 0.6 (brisk) … 2 (unhurried).
+   *
+   * Clamped rather than trusted: a config is data, and a hand-edited 40 would
+   * leave a visitor watching a camera crawl with no way out.
+   */
+  set pacing(value) {
+    const n = Number(value);
+    this._pacing = Number.isFinite(n) ? Math.min(Math.max(n, 0.6), 2) : 1;
   }
 
   /**
@@ -540,6 +561,12 @@ export class ExperienceDirector {
           travelMs = Math.min(Math.max(travelMs, shape.min), shape.max);
         }
       }
+
+      // Pacing is the one thing an author may tune about a move, and it is safe
+      // to expose precisely because it lands here: `pose` was resolved above and
+      // is not touched. Transitions may change HOW the camera travels, never
+      // WHERE the approved beat ends — so this scales the clock and nothing else.
+      travelMs = Math.round(travelMs * this.pacing);
 
       let via = null;
       if (shape?.waypoint && previousPose) {

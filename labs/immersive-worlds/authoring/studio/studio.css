@@ -732,3 +732,19 @@ h2 {
 .st-more.is-open .st-morebtn b { color: var(--st-accent); }
 .st-morebody { padding-top: 8px; }
 .st-morebody .st-facts { margin-top: 12px; }
+
+/* == choice groups (pacing, motion) ======================================== */
+
+.st-choice { display: grid; gap: 6px; padding: 0 14px; }
+.st-opt {
+  display: block; width: 100%; text-align: left; cursor: pointer;
+  background: none; border: 1px solid var(--st-line); border-radius: 3px;
+  color: var(--st-dim); font: inherit; padding: 8px 11px;
+  transition: border-color .16s, background .16s;
+}
+.st-opt b { display: block; font-weight: 400; font-size: 12px; color: var(--st-ink); }
+.st-opt i { display: block; font-style: normal; font-size: 10px; color: var(--st-faint); margin-top: 1px; }
+.st-opt:hover { border-color: var(--st-line-strong); }
+.st-opt.is-on { border-color: var(--st-accent); background: var(--st-accent-soft); }
+.st-opt.is-on b { color: var(--st-accent); }
+.st-mitem--plain { grid-template-columns: 1fr; }

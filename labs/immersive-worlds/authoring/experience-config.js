@@ -212,10 +212,39 @@ export function normaliseConfig(input = {}) {
     ),
 
     experience: {
-      portalVariant: c.experience?.portalVariant || 'A'
+      portalVariant: c.experience?.portalVariant || 'A',
+      // How the camera travels between authored beats — never where it lands.
+      pacing: PACING[c.experience?.pacing] ? c.experience.pacing : 'NATURAL',
+      // Whether the visitor's own system preference may be overridden towards
+      // stillness. It may never be overridden the other way: a visitor who has
+      // asked for reduced motion does not get talked out of it by a config.
+      motion: c.experience?.motion === 'CALM' ? 'CALM' : 'SYSTEM'
     }
   };
 }
+
+/**
+ * The pace of travel, in author language and in numbers.
+ *
+ * An author picks a feeling; the engine takes a multiplier. Both live here so
+ * the panel never has to know that "Paseo" is 1.35, and the director never has
+ * to know what "Paseo" is called in Spanish.
+ */
+export const PACING = Object.freeze({
+  BRISK: { label: 'Ágil', hint: 'Llega antes a cada obra', factor: 0.75 },
+  NATURAL: { label: 'Natural', hint: 'El ritmo con el que se compuso el recorrido', factor: 1 },
+  CALM: { label: 'Pausado', hint: 'Da tiempo a mirar mientras la cámara viaja', factor: 1.35 }
+});
+
+/** What each transition family is called for someone who is not an engineer. */
+export const TRANSITION_LABEL = Object.freeze({
+  T1_MICRO_REFRAMING: 'Reencuadre suave',
+  T2_LOCAL_WALK: 'Paseo corto',
+  T3_GALLERY_TRAVERSE: 'Recorrido de sala',
+  T4_OBJECT_ORBIT: 'Órbita de objeto',
+  T5_THRESHOLD_APPROACH: 'Aproximación al umbral',
+  T6_ROOM_CROSSING: 'Paso entre salas'
+});
 
 /** The entry wall: the institution's own voice, already written into the world. */
 function welcomePanelOf(world) {
@@ -247,7 +276,7 @@ export function baseConfigFromWorld(world) {
     exhibition: { title: world?.title || '' },
     rooms: {},
     entities: {},
-    experience: { portalVariant: 'A' }
+    experience: { portalVariant: 'A', pacing: 'NATURAL', motion: 'SYSTEM' }
   });
 }
 
