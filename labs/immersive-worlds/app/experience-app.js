@@ -98,6 +98,9 @@ export async function boot() {
 
   const audio = new AudioDirector();
   const hud = new ExperienceHUD({ root: uiRoot, runtime, audio });
+  // ONE SEMANTIC RECORD → MULTIPLE REPRESENTATIONS. The institution's visitor
+  // information is authored once and read here by the person in the room.
+  hud.setVisitorInfo(activeConfig.visitor, activeConfig.institution?.name || '');
 
   // Loading evidence comes from the lifecycle itself, not from a fake timer.
   let readySpaces = 0;

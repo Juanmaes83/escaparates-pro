@@ -20,6 +20,12 @@ import { EVENTS } from '../../engine/core/event-bus.js';
 import { EXPERIENCE_MODE } from '../../engine/world/world-state.js';
 import { KEY_BINDINGS } from './input.js';
 
+/** Programme types, said for a visitor rather than stored for a database. */
+const PROGRAMME_LABEL = {
+  EXHIBITION: 'Exposición', GUIDED: 'Visita guiada', TALK: 'Charla',
+  WORKSHOP: 'Taller', PERFORMANCE: 'Performance', EVENT: 'Actividad'
+};
+
 export class ExperienceHUD {
   /**
    * @param {{root:HTMLElement, runtime:import('../../engine/core/runtime.js').Runtime, audio:import('../audio-director.js').AudioDirector}} deps
@@ -63,6 +69,7 @@ export class ExperienceHUD {
           <button class="iw-btn" data-el="mapBtn" aria-expanded="false">Salas <kbd>M</kbd></button>
           <button class="iw-btn" data-el="routeBtn">Recorrido comentado <kbd>G</kbd></button>
           <button class="iw-btn iw-btn--icon" data-el="soundBtn" aria-pressed="false" title="Sonido">Sonido</button>
+          <button class="iw-btn iw-btn--icon" data-el="visitBtn" aria-expanded="false" hidden>Visita</button>
           <button class="iw-btn iw-btn--icon" data-el="a11yBtn" aria-expanded="false">Contenido en texto</button>
         </div>
       </header>
@@ -121,6 +128,16 @@ export class ExperienceHUD {
         </div>
       </div>
 
+      <div class="iw-visit" data-el="visit" hidden role="dialog" aria-label="Información para la visita">
+        <div class="iw-visit__panel">
+          <header>
+            <h2 data-el="visitTitle">Visita</h2>
+            <button class="iw-btn" data-el="visitClose">Cerrar</button>
+          </header>
+          <div data-el="visitBody"></div>
+        </div>
+      </div>
+
       <div class="iw-a11y" data-el="a11y" hidden role="dialog" aria-label="Contenido de la exposición en texto">
         <div class="iw-a11y__panel">
           <header>
@@ -141,6 +158,8 @@ export class ExperienceHUD {
 
     this.el.mapBtn.addEventListener('click', () => this.toggleMap());
     this.el.mapClose.addEventListener('click', () => this.toggleMap(false));
+    this.el.visitBtn?.addEventListener('click', () => this.toggleVisit());
+    this.el.visitClose.addEventListener('click', () => this.toggleVisit(false));
     this.el.a11yBtn.addEventListener('click', () => this.toggleAccessibility());
     this.el.a11yClose.addEventListener('click', () => this.toggleAccessibility(false));
     const route = this.runtime.store.routes[0];
@@ -424,6 +443,84 @@ export class ExperienceHUD {
   }
 
   /* == accessibility ======================================================== */
+
+  /**
+   * The institution's own information, for the person standing in the room.
+   *
+   * `AUTHORING DATA → MUST REACH VISITOR EXPERIENCE.` This is the other end of
+   * the Visitante workspace: the same semantic record, drawn as something a
+   * visitor reads rather than something an author fills in. No field, no label
+   * for an empty value, and no control that belongs to the Studio.
+   *
+   * A section with nothing in it is not rendered at all. An institution that
+   * has not published its parking arrangements should not have a heading that
+   * says "Aparcamiento" above a blank — that reads as a broken page rather than
+   * as an institution that simply did not say.
+   */
+  setVisitorInfo(visitor, institutionName = '') {
+    const v = visitor || {};
+    const has = (x) => typeof x === 'string' && x.trim().length > 0;
+    const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const programme = Array.isArray(v.programme) ? v.programme.filter((p) => has(p.title)) : [];
+
+    const anything = ['hours', 'address', 'admission', 'accessibility', 'transport',
+      'parking', 'contact', 'notes', 'ticketUrl', 'bookingUrl', 'directionsUrl']
+      .some((k) => has(v[k])) || programme.length > 0;
+
+    // Nothing authored means no button. An empty panel behind a button that
+    // promises information is worse than no button at all.
+    if (this.el.visitBtn) this.el.visitBtn.hidden = !anything;
+    if (!anything) { this.el.visitBody.innerHTML = ''; return; }
+
+    if (institutionName) this.el.visitTitle.textContent = `Visitar ${institutionName}`;
+
+    const block = (title, value) => (has(value)
+      ? `<section><h3>${esc(title)}</h3><p>${esc(value).replace(/\n/g, '<br>')}</p></section>` : '');
+
+    // Actions are links because that is what they are. The Museum does not hold
+    // inventory and must not imply it does.
+    const actions = [
+      has(v.ticketUrl) ? ['Comprar entrada', v.ticketUrl, true] : null,
+      has(v.bookingUrl) ? ['Reservar visita', v.bookingUrl, false] : null,
+      has(v.directionsUrl) ? ['Cómo llegar', v.directionsUrl, false] : null
+    ].filter(Boolean);
+
+    const when = (item) => [item.start, item.end].filter(has).join(' — ');
+
+    this.el.visitBody.innerHTML = `
+      ${block('Horarios', v.hours)}
+      ${block('Dirección', v.address)}
+      ${block('Entrada', v.admission)}
+      ${actions.length ? `<div class="iw-visit__cta">${actions.map(([label, href, primary]) => `
+        <a class="iw-btn ${primary ? 'iw-btn--go' : ''}" href="${esc(href)}"
+          target="_blank" rel="noopener noreferrer">${esc(label)}</a>`).join('')}</div>` : ''}
+      ${programme.length ? `
+        <section>
+          <h3>Programación</h3>
+          <ul class="iw-visit__prog">
+            ${programme.map((item) => `
+              <li>
+                <b>${esc(item.title)}</b>
+                <span>${esc(PROGRAMME_LABEL[item.type] || 'Actividad')}${
+  has(when(item)) ? ` · ${esc(when(item))}` : ''}${has(item.location) ? ` · ${esc(item.location)}` : ''}</span>
+                ${has(item.description) ? `<p>${esc(item.description)}</p>` : ''}
+                ${has(item.bookingUrl)
+    ? `<a href="${esc(item.bookingUrl)}" target="_blank" rel="noopener noreferrer">Reservar</a>` : ''}
+              </li>`).join('')}
+          </ul>
+        </section>` : ''}
+      ${block('Accesibilidad', v.accessibility)}
+      ${block('Cómo llegar', v.transport)}
+      ${block('Aparcamiento', v.parking)}
+      ${block('Contacto', v.contact)}
+      ${block('Más información', v.notes)}`;
+  }
+
+  toggleVisit(force) {
+    const open = force ?? this.el.visit.hidden;
+    this.el.visit.hidden = !open;
+    this.el.visitBtn?.setAttribute('aria-expanded', String(open));
+  }
 
   toggleAccessibility(force) {
     const open = force ?? this.el.a11y.hidden;

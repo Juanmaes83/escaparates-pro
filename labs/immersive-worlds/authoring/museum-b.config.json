@@ -53,5 +53,53 @@
     "space.gallery-a": {
       "title": "Sala del norte"
     }
+  },
+  "visitor": {
+    "hours": "Martes a domingo, 10:00 – 19:00\nLunes cerrado",
+    "address": "Muelle de Poniente s/n, 36202 Vigo",
+    "admission": "6 € · Reducida 3 € · Menores de 12 años, gratis",
+    "accessibility": "Acceso sin escalones por el muelle. Bucle magnético en la sala de escucha.",
+    "ticketUrl": "https://example.org/museo-de-la-bruma/entradas",
+    "bookingUrl": "https://example.org/museo-de-la-bruma/visitas",
+    "directionsUrl": "https://example.org/museo-de-la-bruma/como-llegar",
+    "transport": "Cercanías hasta Vigo-Guixar y diez minutos a pie por el paseo.",
+    "parking": "Aparcamiento público del muelle, 200 plazas.",
+    "contact": "visitas@museodelabruma.example · +34 986 000 000",
+    "notes": "La sala de niebla se cierra veinte minutos antes que el resto del museo.",
+    "programme": [
+      {
+        "id": "prog_bruma_01",
+        "title": "Marea de septiembre",
+        "type": "EXHIBITION",
+        "description": "Nueve piezas sobre la luz del estuario, reunidas por primera vez.",
+        "start": "2026-09-04",
+        "end": "2027-01-11",
+        "location": "Galería A",
+        "bookingUrl": "",
+        "accessibilityNote": ""
+      },
+      {
+        "id": "prog_bruma_02",
+        "title": "Ver la niebla: visita comentada",
+        "type": "GUIDED",
+        "description": "Recorrido de una hora con la conservadora de la colección.",
+        "start": "2026-09-19 18:00",
+        "end": "2026-09-19 19:00",
+        "location": "Vestíbulo",
+        "bookingUrl": "https://example.org/museo-de-la-bruma/visitas/ver-la-niebla",
+        "accessibilityNote": "Con bucle magnético."
+      },
+      {
+        "id": "prog_bruma_03",
+        "title": "Taller de revelado a la luz del muelle",
+        "type": "WORKSHOP",
+        "description": "Seis plazas. Materiales incluidos.",
+        "start": "2026-10-03 11:00",
+        "end": "2026-10-03 14:00",
+        "location": "Archivo",
+        "bookingUrl": "https://example.org/museo-de-la-bruma/talleres/revelado",
+        "accessibilityNote": ""
+      }
+    ]
   }
 }

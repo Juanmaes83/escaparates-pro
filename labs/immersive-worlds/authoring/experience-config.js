@@ -161,6 +161,101 @@ function migrate(input) {
   return c;
 }
 
+const text = (v, max = 240) => String(v ?? '').slice(0, max);
+
+/**
+ * One thing that happens on a date: an exhibition, a talk, a guided visit.
+ *
+ * The smallest record that can carry a programme without becoming a CMS. It has
+ * no recurrence, no capacity, no waiting list and no seat map, because none of
+ * those can be honoured by a link — and a field that cannot be honoured is a
+ * promise the institution did not make.
+ */
+export const PROGRAMME_TYPE = Object.freeze({
+  EXHIBITION: 'Exposición',
+  GUIDED: 'Visita guiada',
+  TALK: 'Charla',
+  WORKSHOP: 'Taller',
+  PERFORMANCE: 'Performance',
+  EVENT: 'Actividad'
+});
+
+function normaliseProgrammeItem(item, index) {
+  const type = PROGRAMME_TYPE[item?.type] ? item.type : 'EVENT';
+  return {
+    id: item?.id || `prog_${index}_${Math.random().toString(36).slice(2, 7)}`,
+    title: text(item?.title, 160),
+    type,
+    description: text(item?.description, 600),
+    // ISO-ish strings as the institution wrote them. Not Date objects: a config
+    // is a document, and a document that has to be revived to be read is not one.
+    start: text(item?.start, 40),
+    end: text(item?.end, 40),
+    location: text(item?.location, 160),
+    bookingUrl: text(item?.bookingUrl, 400),
+    accessibilityNote: text(item?.accessibilityNote, 300)
+  };
+}
+
+/** Every visitor field, always present, so a panel never has to guess. */
+function normaliseVisitor(v) {
+  const it = v || {};
+  return {
+    hours: text(it.hours, 300),
+    address: text(it.address, 300),
+    accessibility: text(it.accessibility, 600),
+    admission: text(it.admission, 300),
+    ticketUrl: text(it.ticketUrl, 400),
+    bookingUrl: text(it.bookingUrl, 400),
+    contact: text(it.contact, 240),
+    transport: text(it.transport, 400),
+    parking: text(it.parking, 300),
+    directionsUrl: text(it.directionsUrl, 400),
+    notes: text(it.notes, 600),
+    programme: (Array.isArray(it.programme) ? it.programme : []).slice(0, 24).map(normaliseProgrammeItem)
+  };
+}
+
+/**
+ * What the demonstration institution publishes about visiting it.
+ *
+ * Fictional, and marked as such in the world record's own name. It exists so
+ * the visitor layer has something real to draw on the first run and so a second
+ * institution has something to differ from.
+ */
+const DEMO_VISITOR = {
+  hours: 'Miércoles a domingo, 11:00 – 20:00\nLunes y martes cerrado',
+  address: 'Calle del Horno 14, 28012 Madrid',
+  admission: 'Entrada libre. Aforo limitado en la sala de escucha.',
+  accessibility: 'Itinerario accesible completo. Cartelas en alto contraste y audio descripción en la sala de escucha.',
+  ticketUrl: '',
+  bookingUrl: 'https://example.org/fundacion-arenas/visitas',
+  directionsUrl: '',
+  transport: 'Metro Antón Martín (L1) a cinco minutos. Autobuses 6, 26 y 32.',
+  parking: '',
+  contact: 'visitas@fundacionarenas.example',
+  notes: '',
+  programme: [
+    {
+      id: 'prog_arenas_01',
+      title: 'Colección permanente',
+      type: 'EXHIBITION',
+      description: 'Pintura, obra sobre papel, escultura y registro sonoro producidos entre 1958 y 1994.',
+      start: '1958', end: '1994', location: 'Galerías A y B',
+      bookingUrl: '', accessibilityNote: ''
+    },
+    {
+      id: 'prog_arenas_02',
+      title: 'Recorrido comentado por la colección',
+      type: 'GUIDED',
+      description: 'Seis paradas por las dos galerías, con la voz de la institución.',
+      start: 'Sábados 12:00', end: '', location: 'Vestíbulo',
+      bookingUrl: 'https://example.org/fundacion-arenas/visitas/comentada',
+      accessibilityNote: 'Con audio descripción a petición.'
+    }
+  ]
+};
+
 /**
  * Fill every field, so a partial config from an author, an import or an older
  * version still produces a complete, predictable object.
@@ -210,6 +305,22 @@ export function normaliseConfig(input = {}) {
         video: normaliseMedia(e?.video)
       }])
     ),
+
+    /**
+     * What an institution tells the people who might visit it.
+     *
+     * This is the layer that turns a virtual exhibition into an institutional
+     * surface: hours, address, how to get in, what is on. It is authored in the
+     * Studio and consumed by the visitor, and those are different people — the
+     * visitor never sees a field, only the answer.
+     *
+     * Every value is a string an institution can write, or a URL it already
+     * has. Nothing here pretends to be an integration: a ticket link is a link,
+     * and if there is no link there is no button. Inventing availability an
+     * institution has not confirmed would be the one lie this layer must never
+     * tell.
+     */
+    visitor: normaliseVisitor(c.visitor),
 
     experience: {
       portalVariant: c.experience?.portalVariant || 'A',
@@ -276,6 +387,10 @@ export function baseConfigFromWorld(world) {
     exhibition: { title: world?.title || '' },
     rooms: {},
     entities: {},
+    // The demonstration institution comes with a filled visitor layer, because
+    // an empty one would leave the second-museum proof comparing nothing to
+    // something. These are the Fundación's own published details.
+    visitor: normaliseVisitor(world?.metadata?.visitor || DEMO_VISITOR),
     experience: { portalVariant: 'A', pacing: 'NATURAL', motion: 'SYSTEM' }
   });
 }

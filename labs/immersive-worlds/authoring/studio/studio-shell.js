@@ -21,7 +21,7 @@ import {
   normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND, SLOT_MEDIA
 } from '../experience-config.js';
 import { buildCatalogue, slotsAccepting, CATEGORY, CATEGORY_LABEL } from './media-catalogue.js';
-import { PACING, TRANSITION_LABEL } from '../experience-config.js';
+import { PACING, TRANSITION_LABEL, PROGRAMME_TYPE } from '../experience-config.js';
 
 /**
  * What each slot is called on the panel. The name says the destination *and* the
@@ -203,8 +203,8 @@ const DOMAINS = [
   {
     id: 'visitor',
     label: 'Visitante',
-    hint: 'Información, accesibilidad, idiomas',
-    ready: false,
+    hint: 'Horarios, cómo llegar, programación',
+    ready: true,
     areas: ['Información al visitante', 'Accesibilidad', 'Idiomas', 'Guía']
   },
   {
@@ -497,6 +497,7 @@ export class StudioShell {
   _secondColumn() {
     if (this.domain === 'content') return this._library();
     if (this.domain === 'experience') return this._transitions();
+    if (this.domain === 'visitor') return this._visitor();
     return this._tree();
   }
 
@@ -586,6 +587,111 @@ export class StudioShell {
           <button class="st-b st-b--small" data-act="replay">Ver el recorrido</button>
         </div>
       </section>`;
+  }
+
+  /**
+   * The Visitor / Institutional workspace.
+   *
+   * What an institution tells the people who might come. Authored here by the
+   * Studio, read by the visitor in the Museum — two different people, and the
+   * visitor never sees a field, only the answer.
+   *
+   * Essential first: hours, address, admission and the one action most
+   * institutions actually want pressed. Everything else — transport, parking,
+   * contact, notes — is behind `Personalizar más · Visitante`, because a first
+   * view with fourteen inputs is the wall Constitution §36.6 exists to prevent.
+   *
+   * Programme is a list of records rather than more fields. Twenty inputs called
+   * "actividad 1 título" is how a form becomes a database with no schema.
+   */
+  _visitor() {
+    const v = this.config.visitor;
+    const f = (label, key, opts = {}) => this._field(label, `visitor.${key}`, v[key], opts);
+    return `
+      <section class="st-tree st-lib" aria-label="Información para el visitante">
+        <h2>Visitante</h2>
+        <p class="st-note">
+          Lo que la institución cuenta a quien piensa venir. El visitante lo lee
+          dentro del Museo; aquí no entra nunca.
+        </p>
+
+        <section class="st-shelf">
+          <h3>Visita</h3>
+          <div class="st-vform">
+            ${f('Horarios', 'hours', { area: true, rows: 3, hint: 'Como los escribiría la institución' })}
+            ${f('Dirección', 'address', { area: true, rows: 2 })}
+            ${f('Entrada', 'admission', { hint: 'Precio, gratuidad o condiciones' })}
+            ${f('Accesibilidad', 'accessibility', { area: true, rows: 2 })}
+          </div>
+        </section>
+
+        <section class="st-shelf">
+          <h3>Acciones</h3>
+          <div class="st-vform">
+            ${f('Comprar entrada', 'ticketUrl', { hint: 'Enlace de venta. Sin enlace no aparece el botón.' })}
+            ${f('Reservar visita', 'bookingUrl', { hint: 'Enlace de reserva' })}
+          </div>
+          <p class="st-note">
+            Un enlace es un enlace. El Museo no consulta disponibilidad ni reserva
+            nada: mostrar plazas que nadie ha confirmado sería la única mentira
+            que esta capa no puede permitirse.
+          </p>
+        </section>
+
+        ${this._programme()}
+
+        ${this._more('visitor', 'Visitante', `
+          ${f('Cómo llegar', 'transport', { area: true, rows: 2 })}
+          ${f('Mapa o indicaciones', 'directionsUrl', { hint: 'Enlace a un mapa' })}
+          ${f('Aparcamiento', 'parking', { area: true, rows: 2 })}
+          ${f('Contacto', 'contact', { hint: 'Teléfono o correo' })}
+          ${f('Notas para el visitante', 'notes', { area: true, rows: 3 })}
+        `, [v.transport, v.directionsUrl, v.parking, v.contact, v.notes])}
+      </section>`;
+  }
+
+  /** The programme: real records, added and removed, not a wall of numbered fields. */
+  _programme() {
+    const items = this.config.visitor.programme;
+    return `
+      <section class="st-shelf">
+        <h3>Programación <i>${items.length}</i></h3>
+        ${items.length ? items.map((item, i) => `
+          <div class="st-prog">
+            <div class="st-proghead">
+              <b>${esc(item.title || 'Actividad sin título')}</b>
+              <button class="st-progdel" data-prog-remove="${esc(item.id)}"
+                title="Quitar esta actividad">Quitar</button>
+            </div>
+            <div class="st-vform">
+              ${this._field('Título', `visitor.programme.${i}.title`, item.title)}
+              ${this._selectField('Tipo', `visitor.programme.${i}.type`, item.type, PROGRAMME_TYPE)}
+              ${this._field('Empieza', `visitor.programme.${i}.start`, item.start,
+    { hint: 'Fecha y hora, como se publican' })}
+              ${this._field('Termina', `visitor.programme.${i}.end`, item.end)}
+              ${this._field('Lugar', `visitor.programme.${i}.location`, item.location)}
+              ${this._field('Reserva', `visitor.programme.${i}.bookingUrl`, item.bookingUrl)}
+              ${this._field('Descripción', `visitor.programme.${i}.description`, item.description,
+    { area: true, rows: 2 })}
+            </div>
+          </div>`).join('')
+    : '<p class="st-note">Todavía no hay actividades.</p>'}
+        <div class="st-io">
+          <button class="st-b st-b--small" data-act="progAdd">Añadir actividad</button>
+        </div>
+      </section>`;
+  }
+
+  /** A field whose value comes from a fixed vocabulary rather than free text. */
+  _selectField(label, path, value, options) {
+    const opts = Object.entries(options)
+      .map(([id, text]) => `<option value="${esc(id)}" ${id === value ? 'selected' : ''}>${esc(text)}</option>`)
+      .join('');
+    return `
+      <label class="st-f">
+        <span class="st-l">${esc(label)}</span>
+        <select data-bind="${esc(path)}">${opts}</select>
+      </label>`;
   }
 
   /** Which families the current route actually uses, counted from the route. */
@@ -1176,6 +1282,21 @@ export class StudioShell {
 
     const act = (name, fn) => on(`[data-act="${name}"]`, 'click', fn);
     act('replay', () => this._replay());
+    act('progAdd', () => {
+      this.config.visitor.programme.push({
+        id: `prog_${Date.now().toString(36)}`,
+        title: '', type: 'EVENT', description: '',
+        start: '', end: '', location: '', bookingUrl: '', accessibilityNote: ''
+      });
+      this._markDirty();
+      this.render();
+    });
+    on('[data-prog-remove]', 'click', (e) => {
+      const id = e.currentTarget.dataset.progRemove;
+      this.config.visitor.programme = this.config.visitor.programme.filter((p) => p.id !== id);
+      this._markDirty();
+      this.render();
+    });
     act('save', () => this._save());
     act('apply', () => this._apply());
     act('validate', () => { this.message = this.readiness.headline; this.messageBad = !this.readiness.canStart; this.render(); });
@@ -1269,6 +1390,18 @@ export class StudioShell {
 
   _write(path, value) {
     const parts = path.split('.');
+    if (parts[0] === 'visitor') {
+      // `visitor.programme.<i>.<field>` or `visitor.<field>`. The index is
+      // positional because the list is ordered and an author reorders by
+      // meaning, not by id — but the record keeps its own id for removal.
+      if (parts[1] === 'programme') {
+        const item = this.config.visitor.programme[Number(parts[2])];
+        if (item) item[parts[3]] = value;
+      } else {
+        this.config.visitor[parts[1]] = value;
+      }
+      return;
+    }
     if (parts[0] === 'institution' || parts[0] === 'exhibition') {
       this.config[parts[0]][parts[1]] = value;
     } else if (parts[0] === 'rooms') {
