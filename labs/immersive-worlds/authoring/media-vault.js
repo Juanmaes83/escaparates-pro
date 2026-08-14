@@ -33,6 +33,31 @@ const VIDEO_TYPES = ['video/mp4', 'video/webm'];
 /** Long enough for a large file over a slow disk, short enough to be an answer. */
 const PROBE_TIMEOUT_MS = 20000;
 
+/** Wide enough to recognise a work, small enough to keep dozens in memory. */
+const THUMB_W = 200;
+
+/**
+ * One frame of a video, as a data URL.
+ *
+ * Returns null rather than throwing: a poster is a convenience, and a file that
+ * will not paint into a canvas — a cross-origin source, a codec the 2D context
+ * declines — is still a perfectly good video for the wall.
+ */
+function posterFrom(video) {
+  try {
+    const w = video.videoWidth;
+    const h = video.videoHeight;
+    if (!w || !h) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = THUMB_W;
+    canvas.height = Math.max(1, Math.round((THUMB_W * h) / w));
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', 0.72);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * The browser fills `File.type` from the operating system, and the operating
  * system does not always know. On Windows the MIME for an extension comes from
@@ -155,7 +180,8 @@ export class MediaVault {
       error: null,
       width: 0,
       height: 0,
-      duration: 0
+      duration: 0,
+      thumb: null
     };
     this.assets.set(id, asset);
     this.onChange(asset);
@@ -179,9 +205,12 @@ export class MediaVault {
           this.onChange(asset);
         });
         asset.width = meta.width; asset.height = meta.height; asset.duration = meta.duration;
+        asset.thumb = meta.thumb || null;
       } else {
         const meta = await this._probeImage(url);
         asset.width = meta.width; asset.height = meta.height;
+        // An image is its own thumbnail; the object URL already points at it.
+        asset.thumb = url;
       }
     } catch (error) {
       URL.revokeObjectURL(url);
@@ -239,7 +268,16 @@ export class MediaVault {
           reject(new Error('El vídeo no tiene pista de imagen legible.'));
           return;
         }
-        const meta = { width: video.videoWidth, height: video.videoHeight, duration: video.duration || 0 };
+        const meta = {
+          width: video.videoWidth,
+          height: video.videoHeight,
+          duration: video.duration || 0,
+          // A still, taken while the element is still alive. A catalogue that
+          // shows a filename for every video and a picture for every image is
+          // a catalogue you cannot skim, and the frame is free here — the
+          // decoder has just produced one.
+          thumb: posterFrom(video)
+        };
         teardown();
         resolve(meta);
       };

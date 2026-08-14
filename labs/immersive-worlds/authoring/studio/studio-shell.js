@@ -20,6 +20,7 @@
 import {
   normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND, SLOT_MEDIA
 } from '../experience-config.js';
+import { buildCatalogue, slotsAccepting, CATEGORY, CATEGORY_LABEL } from './media-catalogue.js';
 
 /**
  * What each slot is called on the panel. The name says the destination *and* the
@@ -149,6 +150,24 @@ function ring(pct) {
 }
 
 /**
+ * A file's picture in the catalogue.
+ *
+ * An image is its own thumbnail. A video the author supplied has a poster frame
+ * grabbed while its element was alive. A video the *project* ships has neither —
+ * and its `.webm` inside an `<img>` is a guaranteed broken image, which claims a
+ * picture and shows a hole. That case gets a real `<video>` at metadata preload,
+ * which paints its first frame and costs nothing until it does.
+ */
+function thumbTag(item) {
+  const src = item.thumb || item.url;
+  if (!src) return '<span class="st-mnone">Sin vista</span>';
+  if (item.kind === 'video' && !item.thumb) {
+    return `<video src="${esc(src)}" muted playsinline preload="metadata" tabindex="-1"></video>`;
+  }
+  return `<img src="${esc(src)}" alt="" loading="lazy">`;
+}
+
+/**
  * The Authoring Workspaces, as the system blueprint names them.
  *
  * These five are the product's spine, not a filter: the blueprint draws them as
@@ -206,10 +225,14 @@ export class StudioShell {
    * @param {(config:object)=>Promise<void>} deps.onStart   leave authoring
    * @param {(nodeId:string)=>Promise<void>} deps.onReveal  walk the preview there
    */
-  constructor({ config, world, vault, onApply, onStart, onReveal, currentRoom }) {
+  constructor({ config, world, vault, onApply, onStart, onReveal, currentRoom, mediaBaseUrl = '' }) {
     this.config = normaliseConfig(config);
     this.world = world;
     this.vault = vault;
+    // The world's media are paths relative to the world file, and the library
+    // renders them in <img>. Without the same base the loader uses, every
+    // project thumbnail would 404 against the page's own directory.
+    this.mediaBaseUrl = mediaBaseUrl;
     this.onApply = onApply;
     this.onStart = onStart;
     this.onReveal = onReveal || (async () => {});
@@ -289,7 +312,7 @@ export class StudioShell {
       ${this._topBar(r)}
       <div class="st-body">
         ${this._rail()}
-        ${this._tree()}
+        ${this.domain === 'content' ? this._library() : this._tree()}
         <div class="st-stage" id="st-stage-slot">
           <span class="st-live ${this.dirty ? 'is-stale' : ''}">${
   this.dirty ? 'Vista previa desactualizada' : 'Vista previa aplicada'} <b>${esc(this.currentRoom() || '')}</b></span>
@@ -349,9 +372,12 @@ export class StudioShell {
         <div class="st-filmrow">
           ${pieces.length ? pieces.map((p, i) => `
             <button class="st-chip ${p.id === this.selectedId ? 'is-on' : ''}" data-node="${esc(p.id)}">
-              <b>${i + 1}. ${esc(p.label)}</b>
-              <i>${esc(p.sublabel)}</i>
-              ${p.authored ? '<em>Personalizado</em>' : ''}
+              ${this._thumbMark(p)}
+              <span class="st-chiptext">
+                <b>${i + 1}. ${esc(p.label)}</b>
+                <i>${esc(p.sublabel)}</i>
+                ${p.authored ? '<em>Personalizado</em>' : ''}
+              </span>
             </button>`).join('')
     : '<p class="st-note">Esta sala no expone piezas: es el acceso a la exposición.</p>'}
         </div>
@@ -459,6 +485,145 @@ export class StudioShell {
   }).join('')}
         </ul>
       </nav>`;
+  }
+
+  /** What the project holds, so a file can be found instead of re-uploaded. */
+  get catalogue() {
+    return buildCatalogue({
+      world: this.world,
+      config: this.config,
+      vault: this.vault,
+      baseUrl: this.mediaBaseUrl
+    });
+  }
+
+  /**
+   * The Media Library.
+   *
+   * It takes the second column when the Contenido workspace is active, which is
+   * where the system blueprint files it — under CONTENT, beside Artwork Data
+   * and Cartelas. That also makes the spine do real work: the domains stopped
+   * being a filter and started choosing what you are looking at.
+   *
+   * Scope is this project in this browser. The value is not storage — it is
+   * that a file's entry says which works it belongs to, which is the one fact
+   * a filename never carries, and that a file already here can be put on
+   * another wall without being found on disk twice.
+   */
+  _library() {
+    const cat = this.catalogue;
+    const selected = this.selectedEntity;
+    const total = cat.items.length;
+
+    const card = (item) => {
+      const uses = item.usedBy.length;
+      const targets = selected ? slotsAccepting(item, selected.kind) : [];
+      // Reuse stays inside the semantic model: offer a destination only where
+      // the medium and the piece's kind agree, and never where the file is
+      // already the one in place.
+      const already = targets.some((slot) => {
+        const spec = SLOT_MEDIA[slot];
+        return (this.config.entities[this.selectedId] || {})[spec.field]?.src === item.reference;
+      });
+      return `
+        <li class="st-mitem ${item.state === 'ERROR' ? 'is-bad' : ''}">
+          <div class="st-mthumb ${item.kind === 'video' ? 'is-video' : ''}">
+            ${thumbTag(item)}
+            ${item.kind === 'video' ? '<i aria-hidden="true"></i>' : ''}
+          </div>
+          <div class="st-mmeta">
+            <b title="${esc(item.name)}">${esc(item.name)}</b>
+            <span>${esc(item.stateLabel)}${
+  item.width ? ` · ${item.width}×${item.height}` : ''}</span>
+            ${uses
+    ? `<em>${uses === 1
+      ? esc(item.usedBy[0].label)
+      : `En ${uses} piezas`}</em>`
+    : '<em class="is-spare">Sin usar</em>'}
+            ${targets.length && !already ? `
+              <button class="st-muse" data-reuse="${esc(item.reference)}"
+                data-slot="${esc(targets[0])}">Usar en «${esc(this._shortLabel(selected))}»</button>` : ''}
+            ${already ? '<span class="st-mhere">En esta pieza</span>' : ''}
+          </div>
+        </li>`;
+    };
+
+    const shelf = (key) => {
+      const list = cat.byCategory[key];
+      return `
+        <section class="st-shelf">
+          <h3>${esc(CATEGORY_LABEL[key])} <i>${list.length}</i></h3>
+          ${list.length
+    ? `<ul class="st-mlist">${list.map(card).join('')}</ul>`
+    : '<p class="st-note">Ninguno todavía.</p>'}
+        </section>`;
+    };
+
+    return `
+      <section class="st-tree st-lib" aria-label="Biblioteca de medios">
+        <h2>Medios</h2>
+        <p class="st-note">
+          ${total} archivo${total === 1 ? '' : 's'} en este proyecto.
+          ${selected ? 'Puedes reutilizar uno en la pieza seleccionada.' : 'Selecciona una pieza para reutilizar.'}
+        </p>
+        ${shelf(CATEGORY.IMAGES)}
+        ${shelf(CATEGORY.VIDEOS)}
+        ${shelf(CATEGORY.LOGOS)}
+        <p class="st-note st-libfoot">
+          Los archivos aportados en esta sesión viven en el navegador. Guardar el
+          proyecto conserva la configuración, no los archivos.
+        </p>
+      </section>`;
+  }
+
+  /**
+   * The picture of a piece, if there is one to show.
+   *
+   * A filmstrip of names is a list; a filmstrip of pictures is a filmstrip. But
+   * only some pieces have a file behind them — a sculpture is built rather than
+   * photographed, and a work with no media is drawn procedurally — so this
+   * returns null rather than inventing a placeholder image, and the chip falls
+   * back to a plain mark. Showing a grey square for a sculpture would claim a
+   * missing photograph where there is nothing missing.
+   */
+  _thumbFor(entityId) {
+    const authored = this.config.entities[entityId] || {};
+    for (const field of ['image', 'video']) {
+      const media = authored[field];
+      if (!media?.src) continue;
+      const asset = media.assetId ? this.vault.get(media.assetId) : null;
+      if (asset?.thumb) return asset.thumb;
+      if (asset?.url && asset.kind === 'image') return asset.url;
+      // A video the project ships has no poster stored anywhere, and its own
+      // file cannot decode in an <img>. Say "no picture" rather than draw a
+      // broken one; the library shows the frame through a <video> instead.
+      if (!media.src.startsWith('authored:')) {
+        return field === 'image' ? this._projectUrl(media.src) : null;
+      }
+    }
+    const entity = (this.world.entities || []).find((e) => e.id === entityId);
+    const own = entity?.content?.media;
+    if (own?.src && own.kind === 'IMAGE') return this._projectUrl(own.src);
+    return null;
+  }
+
+  _projectUrl(src) {
+    try { return this.mediaBaseUrl ? new URL(src, this.mediaBaseUrl).href : src; } catch { return src; }
+  }
+
+  /** The chip's picture, or a mark that does not pretend to be one. */
+  _thumbMark(node) {
+    const thumb = this._thumbFor(node.id);
+    return thumb
+      ? `<span class="st-chipthumb"><img src="${esc(thumb)}" alt="" loading="lazy"></span>`
+      : '<span class="st-chipthumb is-none" aria-hidden="true"></span>';
+  }
+
+  /** A piece's name, short enough to sit inside a button. */
+  _shortLabel(entity) {
+    const authored = this.config.entities[entity?.id] || {};
+    const name = authored.title || entity?.content?.title || entity?.id || '';
+    return name.length > 22 ? `${name.slice(0, 21)}…` : name;
   }
 
   _tree() {
@@ -673,6 +838,16 @@ export class StudioShell {
           </label>
           <span class="st-filename">${media ? esc(media.name) : 'Ningún archivo seleccionado'}</span>
         </div>
+        ${(() => {
+    // The file the author attached, shown. A slot that reports "Listo · 640×360"
+    // and never shows the picture asks its author to trust a filename — which is
+    // exactly how the wrong photograph ends up on a wall.
+    if (!media) return '';
+    const thumb = asset?.thumb || (asset?.kind === 'image' ? asset.url : null)
+      || (media.src && !media.src.startsWith('authored:') && kind === 'image'
+        ? this._projectUrl(media.src) : null);
+    return thumb ? `<div class="st-slotthumb"><img src="${esc(thumb)}" alt="" loading="lazy"></div>` : '';
+  })()}
         ${media ? `
           <ol class="st-chain" aria-label="Estado del archivo">
             ${chain.map((step, i) => `
@@ -813,6 +988,14 @@ export class StudioShell {
     });
 
     on('[data-media]', 'change', (e) => this._takeFile(e.currentTarget.dataset.media, e.target.files?.[0]));
+
+    // Reuse: point an existing file at another wall, without finding it on disk
+    // a second time. It goes through the same slot rules as an upload, so a
+    // video cannot land where only a still can be drawn.
+    on('[data-reuse]', 'click', (e) => {
+      const { reuse, slot } = e.currentTarget.dataset;
+      this._reuse(reuse, slot);
+    });
     on('[data-retry]', 'click', (e) => {
       const input = this.root.querySelector(`[data-media="${e.currentTarget.dataset.retry}"]`);
       input?.click();
@@ -920,6 +1103,42 @@ export class StudioShell {
       const field = parts[parts.length - 1];
       this._entityDraft(parts.slice(1, -1).join('.'))[field] = value || null;
     }
+  }
+
+  /**
+   * Put a file the project already has onto the selected piece.
+   *
+   * The reference is copied, not the file: one asset, several walls, and the
+   * vault still owns the single object URL behind it. Releasing on replacement
+   * is deliberately *not* done here — the previous file may be the same one, or
+   * may still be hanging elsewhere, and revoking a URL another wall is using
+   * would blank a work that nobody touched.
+   */
+  _reuse(reference, slot) {
+    const item = this.catalogue.items.find((i) => i.reference === reference);
+    const entity = this.selectedEntity;
+    if (!item || !entity) return;
+    if (!slotsAccepting(item, entity.kind).includes(slot)) return;
+
+    const holder = this._entityDraft(this.selectedId);
+    const { field } = SLOT_MEDIA[slot];
+    for (const other of SLOTS_FOR_KIND[entity.kind] || []) {
+      const spec = SLOT_MEDIA[other];
+      if (spec.field !== field) holder[spec.field] = null;
+    }
+    holder[field] = {
+      kind: item.kind,
+      src: item.reference,
+      assetId: item.reference.startsWith('authored:') ? item.reference.slice(9) : null,
+      name: item.name,
+      mimeType: '',
+      bytes: item.bytes || 0,
+      width: item.width || 0,
+      height: item.height || 0,
+      durationMs: item.durationMs || 0
+    };
+    this._markDirty();
+    this._say(`«${item.name}» asignado a «${this._shortLabel(entity)}». Aplica para verlo en la sala.`);
   }
 
   async _takeFile(slot, file) {

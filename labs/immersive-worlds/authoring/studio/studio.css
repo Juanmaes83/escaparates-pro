@@ -24,15 +24,28 @@
   --st-line-strong: rgba(226, 219, 205, 0.3);
   --st-serif: Georgia, 'Times New Roman', serif;
   --st-sans: 'Helvetica Neue', Inter, system-ui, Arial, sans-serif;
+  /* PROPUESTA VISUAL — pendiente de Juanma.
+     Un latón apagado, no el oro de la referencia. Se usa en cuatro sitios y en
+     ninguno más: el área activa, la selección, la acción principal y la marca de
+     la casa. La obra de la pared sigue siendo lo único saturado de la pantalla;
+     este acento está por debajo de ella a propósito, y por encima de la regla
+     de hairline para que "aquí estás" no dependa de un gris contra otro gris. */
+  --st-accent: #bfa06a;
+  --st-accent-soft: rgba(191, 160, 106, 0.13);
+
   --st-ok: #8fbf95;
   --st-warn: #d8b45e;
   --st-bad: #e08a80;
 
   --st-top: 56px;
-  --st-rail: 172px;
-  --st-left: 208px;
-  --st-editor: 322px;
-  --st-val: 208px;
+  /* The preview is the product, so the furniture is what gets trimmed. Measured
+     against the reference, which gives its preview roughly 46% of the width;
+     these four columns leave 600px of 1440, and every one of them was cut to
+     get there rather than taking it out of the room. */
+  --st-rail: 156px;
+  --st-left: 196px;
+  --st-editor: 306px;
+  --st-val: 182px;
 }
 
 /* The Museum, docked — and letterboxed to the shape the visitor will actually
@@ -81,7 +94,7 @@ body[data-studio="on"] #iw-ui {
   transition: border-color 0.16s, color 0.16s;
 }
 .st-chip:hover { border-color: var(--st-line-strong); color: var(--st-ink); }
-.st-chip.is-on { border-color: var(--st-ink); color: var(--st-ink); background: rgba(236, 231, 221, 0.06); }
+.st-chip.is-on { border-color: var(--st-accent); color: var(--st-ink); background: var(--st-accent-soft); }
 .st-chip b {
   display: block; font-weight: 400; font-size: 12px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -145,8 +158,8 @@ body[data-studio="on"] .iw-topbar { display: none; }
 .st-brand { display: flex; align-items: center; gap: 10px; }
 .st-mark {
   display: grid; place-items: center; width: 24px; height: 24px;
-  border: 1px solid var(--st-line-strong); border-radius: 2px;
-  font: 400 12px/1 var(--st-serif); color: var(--st-dim);
+  border: 1px solid var(--st-accent); border-radius: 2px;
+  font: 400 12px/1 var(--st-serif); color: var(--st-accent);
 }
 .st-brand b { display: block; font: 400 14px/1.2 var(--st-serif); }
 .st-brand i { display: block; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--st-faint); font-style: normal; }
@@ -173,8 +186,8 @@ body[data-studio="on"] .iw-topbar { display: none; }
   background: rgba(236, 231, 221, 0.09); border-color: var(--st-ink); outline: none;
 }
 .st-b:disabled { opacity: 0.34; cursor: not-allowed; }
-.st-b--go { background: var(--st-ink); color: #14120f; border-color: var(--st-ink); font-weight: 600; }
-.st-b--go:hover:not(:disabled) { background: #fff; border-color: #fff; }
+.st-b--go { background: var(--st-accent); color: #17140e; border-color: var(--st-accent); font-weight: 600; }
+.st-b--go:hover:not(:disabled) { background: #d4b87d; border-color: #d4b87d; }
 .st-b--small { padding: 6px 11px; font-size: 10px; }
 
 /* == body ================================================================== */
@@ -227,8 +240,8 @@ body[data-studio="on"] .iw-topbar { display: none; }
 }
 .st-dom:hover:not(:disabled) { background: var(--st-raise); }
 .st-dom:hover:not(:disabled) svg { opacity: 1; }
-.st-dom.is-on { background: var(--st-raise); border-left-color: var(--st-ink); }
-.st-dom.is-on svg { opacity: 1; }
+.st-dom.is-on { background: var(--st-accent-soft); border-left-color: var(--st-accent); }
+.st-dom.is-on svg { opacity: 1; color: var(--st-accent); }
 .st-dom:disabled { cursor: default; }
 .st-dom:disabled b, .st-dom:disabled svg { opacity: .5; }
 .st-tree { border-right: 1px solid var(--st-line); padding: 16px 0 28px; }
@@ -613,3 +626,79 @@ h2 {
   .st-edtop { position: static; }
   .st-live { top: calc(var(--st-top) + 8px); }
 }
+
+/* == media library and thumbnails ========================================== */
+
+/* A catalogue you can skim. The reference shows a picture per work for the same
+   reason a registrar pins contact sheets: names are how you file things, images
+   are how you find them. */
+.st-lib { padding: 16px 0 28px; }
+.st-lib > .st-note, .st-lib > h2 { padding-left: 14px; padding-right: 14px; }
+.st-shelf { margin: 16px 0 4px; }
+.st-shelf h3 {
+  display: flex; align-items: baseline; gap: 7px; margin: 0 0 8px; padding: 0 14px;
+  font: 400 9.5px/1.3 var(--st-sans); letter-spacing: .16em;
+  text-transform: uppercase; color: var(--st-dim);
+}
+.st-shelf h3 i { font-style: normal; color: var(--st-faint); letter-spacing: 0; font-size: 10.5px; }
+.st-shelf .st-note { padding: 0 14px; }
+.st-mlist { list-style: none; margin: 0; padding: 0; }
+.st-mitem {
+  display: grid; grid-template-columns: 54px 1fr; gap: 10px;
+  padding: 8px 14px; border-bottom: 1px solid var(--st-line);
+}
+.st-mitem.is-bad { background: rgba(224, 138, 128, 0.06); }
+.st-mthumb {
+  position: relative; width: 54px; height: 40px; border-radius: 2px;
+  border: 1px solid var(--st-line); background: var(--st-raise); overflow: hidden;
+}
+.st-mthumb img, .st-mthumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.st-mnone {
+  display: grid; place-items: center; height: 100%;
+  font-size: 8.5px; color: var(--st-faint); text-align: center;
+}
+/* A play mark, so a still frame is not mistaken for a photograph. */
+.st-mthumb.is-video i {
+  position: absolute; right: 3px; bottom: 3px; width: 0; height: 0;
+  border-left: 7px solid rgba(255, 255, 255, .82);
+  border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, .7));
+}
+.st-mmeta { min-width: 0; }
+.st-mmeta b {
+  display: block; font-weight: 400; font-size: 12px; color: var(--st-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-mmeta span { display: block; font-size: 10px; color: var(--st-faint); }
+.st-mmeta em {
+  display: block; font-style: normal; font-size: 10px; color: var(--st-dim); margin-top: 2px;
+}
+.st-mmeta em.is-spare { color: var(--st-faint); }
+.st-mhere { display: block; font-size: 10px; color: var(--st-ok); margin-top: 3px; }
+.st-muse {
+  margin-top: 5px; background: none; border: 1px solid var(--st-line-strong);
+  border-radius: 999px; color: var(--st-ink); font: inherit; font-size: 10px;
+  padding: 3px 9px; cursor: pointer; max-width: 100%;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-muse:hover { background: rgba(236, 231, 221, 0.09); border-color: var(--st-ink); }
+.st-libfoot { margin-top: 18px; padding: 0 14px; color: var(--st-faint); }
+
+/* The filmstrip carries the work, not only its name. */
+.st-chip { display: grid; grid-template-columns: 44px 1fr; gap: 9px; align-items: center; }
+.st-chipthumb {
+  width: 44px; height: 33px; border-radius: 2px; overflow: hidden;
+  border: 1px solid var(--st-line); background: var(--st-raise); flex: 0 0 auto;
+}
+.st-chipthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* A piece with no file is not a piece with a missing file: a sculpture is built
+   rather than photographed. The mark stays blank instead of claiming a gap. */
+.st-chipthumb.is-none { background: linear-gradient(135deg, var(--st-raise) 0%, rgba(236,231,221,.05) 100%); }
+.st-chiptext { min-width: 0; }
+
+/* The attached file, shown rather than described. */
+.st-slotthumb {
+  margin: 8px 0 2px; border: 1px solid var(--st-line); border-radius: 3px;
+  overflow: hidden; background: var(--st-raise); max-height: 132px;
+}
+.st-slotthumb img { width: 100%; max-height: 132px; object-fit: contain; display: block; }

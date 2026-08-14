@@ -1,8 +1,8 @@
 {
  "wave": "w2",
- "runId": "vs02_w2_mst0zvaf",
- "head": "668158d",
- "generatedAt": "2026-08-14T14:13:36.307Z",
+ "runId": "vs02_w2_mst4j9ji",
+ "head": "c775204",
+ "generatedAt": "2026-08-14T15:52:21.115Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
@@ -15,151 +15,151 @@
  ],
  "transitions": [
   {
-   "id": "a1_mst10lp0",
+   "id": "a1_mst4jtlm",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "SELECTED",
-   "at": 1786716742357
+   "at": 1786722677914
   },
   {
-   "id": "a1_mst10lp0",
+   "id": "a1_mst4jtlm",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "LOADING",
-   "at": 1786716742363
+   "at": 1786722677919
   },
   {
-   "id": "a1_mst10lp0",
+   "id": "a1_mst4jtlm",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "READY",
-   "at": 1786716743177
+   "at": 1786722678619
   },
   {
-   "id": "a2_mst113ip",
+   "id": "a2_mst4k7v2",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786716765458
+   "at": 1786722696398
   },
   {
-   "id": "a2_mst113ip",
+   "id": "a2_mst4k7v2",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786716765469
+   "at": 1786722696405
   },
   {
-   "id": "a2_mst113ip",
+   "id": "a2_mst4k7v2",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786716765938
+   "at": 1786722696828
   },
   {
-   "id": "a2_mst113ip",
+   "id": "a2_mst4k7v2",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "RELEASED",
-   "at": 1786716777300
+   "at": 1786722707097
   },
   {
-   "id": "a3_mst11cnw",
+   "id": "a3_mst4kg4f",
    "kind": "video",
    "name": "qa-motion.mp4",
    "state": "SELECTED",
-   "at": 1786716777309
+   "at": 1786722707103
   },
   {
-   "id": "a3_mst11cnw",
+   "id": "a3_mst4kg4f",
    "kind": "video",
    "name": "qa-motion.mp4",
    "state": "LOADING",
-   "at": 1786716777316
+   "at": 1786722707108
   },
   {
-   "id": "a3_mst11cnw",
+   "id": "a3_mst4kg4f",
    "kind": "video",
    "name": "qa-motion.mp4",
    "state": "DECODED",
-   "at": 1786716778513
+   "at": 1786722708070
   },
   {
-   "id": "a3_mst11cnw",
+   "id": "a3_mst4kg4f",
    "kind": "video",
    "name": "qa-motion.mp4",
    "state": "READY",
-   "at": 1786716778521
+   "at": 1786722708078
   },
   {
-   "id": "a4_mst11lkq",
+   "id": "a4_mst4knff",
    "kind": "video",
    "name": "qa-motion.webm",
    "state": "SELECTED",
-   "at": 1786716788858
+   "at": 1786722716571
   },
   {
-   "id": "a4_mst11lkq",
+   "id": "a4_mst4knff",
    "kind": "video",
    "name": "qa-motion.webm",
    "state": "LOADING",
-   "at": 1786716788865
+   "at": 1786722716577
   },
   {
-   "id": "a4_mst11lkq",
+   "id": "a4_mst4knff",
    "kind": "video",
    "name": "qa-motion.webm",
    "state": "DECODED",
-   "at": 1786716789262
+   "at": 1786722717557
   },
   {
-   "id": "a4_mst11lkq",
+   "id": "a4_mst4knff",
    "kind": "video",
    "name": "qa-motion.webm",
    "state": "READY",
-   "at": 1786716789661
+   "at": 1786722717565
   },
   {
-   "id": "a5_mst11x2b",
+   "id": "a5_mst4kw81",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "SELECTED",
-   "at": 1786716803748
+   "at": 1786722727970
   },
   {
-   "id": "a5_mst11x2b",
+   "id": "a5_mst4kw81",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "ERROR",
-   "at": 1786716803754
+   "at": 1786722727976
   },
   {
-   "id": "a5_mst11x2b",
+   "id": "a5_mst4kw81",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "RELEASED",
-   "at": 1786716810898
+   "at": 1786722735984
   },
   {
-   "id": "a6_mst122l5",
+   "id": "a6_mst4l2eu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786716810905
+   "at": 1786722735990
   },
   {
-   "id": "a6_mst122l5",
+   "id": "a6_mst4l2eu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786716810912
+   "at": 1786722735995
   },
   {
-   "id": "a6_mst122l5",
+   "id": "a6_mst4l2eu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786716812002
+   "at": 1786722737055
   }
  ],
  "routing": [],
@@ -173,9 +173,9 @@
    "observed": "Sin logotipo. La cartela de entrada mostrará solo el nombre.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:25.199Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:20.074Z"
   },
   {
    "id": "07_LOGO_READY",
@@ -186,9 +186,9 @@
    "observed": "\n            Lista · 512×160 · 9 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:28.785Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:23.370Z"
   },
   {
    "id": "09_ARTWORK_EDIT",
@@ -199,9 +199,9 @@
    "observed": "entity.artwork.horizonte-interrumpido",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:43.968Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:34.995Z"
   },
   {
    "id": "10_IMAGE_SELECTED",
@@ -212,9 +212,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:47.063Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:37.914Z"
   },
   {
    "id": "12_IMAGE_READY",
@@ -225,9 +225,9 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:49.074Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:39.682Z"
   },
   {
    "id": "13_VIDEO_SELECTED",
@@ -238,9 +238,9 @@
    "observed": "Sin vídeo. Añade uno para que la pieza se muestre en movimiento.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:12:55.811Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:45.765Z"
   },
   {
    "id": "14_VIDEO_READY",
@@ -251,9 +251,9 @@
    "observed": "\n            Listo · 640×360 · 4.0 s · 73 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:13:00.081Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:49.479Z"
   },
   {
    "id": "14b_PROJECTION_VIDEO_READY",
@@ -264,9 +264,9 @@
    "observed": "\n            Listo · 640×360 · 4.0 s · 82 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:13:11.018Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:51:58.738Z"
   },
   {
    "id": "23_INVALID_MEDIA_ERROR",
@@ -277,9 +277,9 @@
    "observed": "\n            No se pudo usar · Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:13:26.979Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:52:12.533Z"
   },
   {
    "id": "24_RECOVERY",
@@ -290,9 +290,9 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "668158d",
-   "runId": "vs02_w2_mst0zvaf",
-   "at": "2026-08-14T14:13:35.769Z"
+   "head": "c775204",
+   "runId": "vs02_w2_mst4j9ji",
+   "at": "2026-08-14T15:52:20.590Z"
   }
  ],
  "errors": []

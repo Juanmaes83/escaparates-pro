@@ -314,6 +314,9 @@ async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
     world,
     vault,
 
+    // The library renders the world's own media in <img>, so it needs the same
+    // base the loader resolves against.
+    mediaBaseUrl: new URL(WORLD_URL, location.href).href,
     currentRoom: () => {
       const runtime = window.__IW?.runtime;
       if (!runtime) return '';
