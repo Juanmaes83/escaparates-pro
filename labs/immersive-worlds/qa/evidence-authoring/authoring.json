@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-13T19:06:05.625Z",
+ "generatedAt": "2026-08-14T00:01:30.878Z",
  "original": {
   "institution": "Fundación Arenas — Colección permanente",
   "artwork": {
@@ -43,8 +43,8 @@
   "releasedTo": 1
  },
  "persistence": {
-  "bytes": 1243,
-  "version": 1,
+  "bytes": 1520,
+  "version": 2,
   "institution": "Museo de la Bruma",
   "artworkTitle": "Marea de septiembre",
   "hasEngineRefs": false
@@ -64,7 +64,7 @@
    "detail": "Fundación Arenas — Colección permanente · Horizonte interrumpido"
   },
   {
-   "name": "el panel de edición está montado",
+   "name": "el editor está montado",
    "ok": true,
    "detail": ""
   },
@@ -136,12 +136,12 @@
   {
    "name": "el vestíbulo no conserva la datación de la institución anterior",
    "ok": true,
-   "detail": "year=\"\""
+   "detail": "year=\"1902 — 1968\""
   },
   {
    "name": "la configuración se serializa",
    "ok": true,
-   "detail": "1243 bytes · esquema v1"
+   "detail": "1520 bytes · esquema v2"
   },
   {
    "name": "la configuración se restaura íntegra",

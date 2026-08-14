@@ -1,0 +1,113 @@
+{
+ "wave": "w3",
+ "runId": "vs02_w3_mss6ck96",
+ "head": "7e0ace5",
+ "generatedAt": "2026-08-13T23:56:45.906Z",
+ "fixtures": [
+  "README.md",
+  "qa-artwork.jpg",
+  "qa-logo.png",
+  "qa-not-media.txt",
+  "qa-video.webm"
+ ],
+ "transitions": [],
+ "routing": [
+  "entity.lobby.bienvenida · TEXT · IMAGE",
+  "entity.artwork.horizonte-interrumpido · ARTWORK · IMAGE",
+  "entity.video.cuaderno-de-luz · PROJECTION · VIDEO"
+ ],
+ "shots": [
+  {
+   "id": "15_CONFIG_SAVED",
+   "file": "15_CONFIG_SAVED.png",
+   "state": "Proyecto guardado",
+   "action": "Pulsar GUARDAR",
+   "expected": "La cabecera pasa de «Cambios sin guardar» a una hora de guardado; GUARDADO se completa en la cadena del archivo — guardar el proyecto no es lo mismo que decodificar un archivo",
+   "observed": "Guardado · 23:54",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:54:55.015Z"
+  },
+  {
+   "id": "16_PROJECT_READY",
+   "file": "16_PROJECT_READY.png",
+   "state": "Validación del proyecto",
+   "action": "Pulsar VALIDAR",
+   "expected": "Recuento por dominios, obligatorio frente a opcional, y una sola frase de estado",
+   "observed": "READY · Todo el contenido necesario está listo",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:54:58.397Z"
+  },
+  {
+   "id": "17_PREVIEW_APPLIED",
+   "file": "17_PREVIEW_APPLIED.png",
+   "state": "Vista previa aplicada",
+   "action": "Pulsar VISTA PREVIA",
+   "expected": "La sala muestra el proyecto autorizado y el estudio sigue presente",
+   "observed": "institución en el mundo: Colección Marés",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:55:11.998Z"
+  },
+  {
+   "id": "17b_IDENTITY_ON_WALL",
+   "file": "17b_IDENTITY_ON_WALL.png",
+   "state": "La cartela de entrada, con la identidad autorizada",
+   "action": "Mirar la pared del vestíbulo tras aplicar",
+   "expected": "Claim, fechas, firma institucional y la marca impresa sobre el claim",
+   "observed": "space.lobby",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:55:17.619Z"
+  },
+  {
+   "id": "18_VISITOR_START",
+   "file": "18_VISITOR_START.png",
+   "state": "Experiencia del visitante",
+   "action": "Pulsar EMPEZAR EXPERIENCIA",
+   "expected": "El estudio desaparece, el lienzo vuelve a la ventana completa y la navegación del visitante regresa. Sin restos de autoría",
+   "observed": "estudios 0 · acoplado off · lienzo 1440px · barra del visitante true · url ?tier=HIGH&portalVariant=A",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:55:42.818Z"
+  },
+  {
+   "id": "21_MUSEUM_B",
+   "file": "21_MUSEUM_B.png",
+   "state": "Museo de la Bruma — segunda institución",
+   "action": "Abrir la configuración de la segunda institución",
+   "expected": "Otra identidad, otras cartelas y otro árbol, sin tocar una línea del motor",
+   "observed": "institución en el mundo: Museo de la Bruma",
+   "viewport": "1440×900",
+   "museum": "Museo de la Bruma",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:56:21.869Z"
+  },
+  {
+   "id": "22_RESTORED_ORIGINAL",
+   "file": "22_RESTORED_ORIGINAL.png",
+   "state": "Fundación Arenas, intacta",
+   "action": "Abrir el estudio sin configuración guardada",
+   "expected": "El Museo que se envía vuelve palabra por palabra",
+   "observed": "institución en el mundo: Fundación Arenas (institución ficticia)",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w3_mss6ck96",
+   "at": "2026-08-13T23:56:45.901Z"
+  }
+ ],
+ "errors": []
+}

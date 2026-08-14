@@ -94,6 +94,38 @@ check('los cinco dominios están presentes', facts.domains.length === 5, facts.d
 check('el proyecto por defecto está listo para empezar',
   facts.readiness.canStart && facts.startEnabled,
   `${facts.readiness.requiredReady}/${facts.readiness.requiredTotal} · ${facts.readiness.state}`);
+// A control bound twice does its work twice. For a file picker that means two
+// decodes and two object URLs, one of which nobody will ever revoke — and it
+// compounds silently with every redraw, which is exactly why it needs a check
+// rather than a careful reviewer.
+const doubleBound = await page.evaluate(async () => {
+  let calls = 0;
+  const vault = window.__IW_VAULT;
+  const real = vault.accept.bind(vault);
+  vault.accept = (...args) => { calls += 1; return real(...args); };
+
+  // Redraw the studio the way a few minutes of ordinary use would.
+  for (const id of ['space.gallery-a', 'entity.artwork.campo-de-ceniza', 'institution', 'space.gallery-b']) {
+    document.querySelector(`[data-node="${id}"]`)?.click();
+    await new Promise((r) => setTimeout(r, 120));
+  }
+  document.querySelector('[data-node="institution"]')?.click();
+  await new Promise((r) => setTimeout(r, 200));
+
+  const png = Uint8Array.from(atob(
+    'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR4nGP8z8Dwn4GBgYGJAQkAAB0BAglHM8gAAAAASUVORK5CYII='
+  ), (c) => c.charCodeAt(0));
+  const input = document.querySelector('[data-media="INSTITUTION_LOGO"]');
+  const dt = new DataTransfer();
+  dt.items.add(new File([png], 'una-vez.png', { type: 'image/png' }));
+  input.files = dt.files;
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 900));
+  return calls;
+});
+check('un archivo elegido una vez se acepta una vez', doubleBound === 1,
+  `accept() llamado ${doubleBound} ${doubleBound === 1 ? 'vez' : 'veces'} tras cinco redibujados`);
+
 check('sin errores de consola', errors.length === 0, errors.slice(0, 2).join(' | ') || 'ninguno');
 
 const failed = checks.filter((c) => !c.ok).length;

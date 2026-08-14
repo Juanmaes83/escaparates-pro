@@ -72,7 +72,11 @@ check('el Museo original arranca con authoring activo', Boolean(original.artwork
   `${original.institution} · ${original.artwork?.title}`);
 await shoot('01_original', `original — ${original.institution}`);
 
-check('el panel de edición está montado', await page.evaluate(() => Boolean(document.getElementById('au'))));
+// Shell-agnostic: this suite is about the data layer, and it should keep passing
+// whichever editor is mounted over it. `#st` is the VS02 studio, `#au` the VS01
+// panel that ?shell=vs01 still reaches.
+check('el editor está montado', await page.evaluate(
+  () => Boolean(document.getElementById('st') || document.getElementById('au'))));
 await shoot('02_panel', 'panel de edición abierto');
 
 /* -- the second museum, with no engine change ------------------------------ */
@@ -154,7 +158,10 @@ const applied = await page.evaluate(async (base) => {
   // authored media on top of a real institution rather than in isolation, and
   // leaves the config the later persistence checks read intact.
   const config = structuredClone(base);
-  config.artworks['entity.artwork.horizonte-interrumpido'].media = {
+  // Schema 2: named slots. `image` on an artwork, `video` on the projection —
+  // the whole point of the rename is that a config can no longer be ambiguous
+  // about where a file is going.
+  config.entities['entity.artwork.horizonte-interrumpido'].image = {
     kind: 'image', src: asset.reference, assetId: asset.id,
     name: asset.name, width: asset.width, height: asset.height
   };
@@ -183,8 +190,11 @@ check('el medio autorizado declara sus propios derechos', applied.rights, applie
 check('la cartela institucional del vestíbulo cambia de institución',
   applied.welcomeCreator === 'Museo de la Bruma',
   `«${applied.welcomeTitle}» · ${applied.welcomeCreator}`);
+// The point was never "empty" — it was "not the previous tenant's". Museo de la
+// Bruma now states its own dating, and demanding a blank field would fail the
+// product for doing the right thing.
 check('el vestíbulo no conserva la datación de la institución anterior',
-  applied.welcomeYear === '', `year="${applied.welcomeYear}"`);
+  applied.welcomeYear !== '1958 — 1994', `year="${applied.welcomeYear}"`);
 
 /* -- save / restore -------------------------------------------------------- */
 const persistence = await page.evaluate(async () => {
@@ -196,7 +206,7 @@ const persistence = await page.evaluate(async () => {
     bytes: raw?.length || 0,
     version: restored?.schemaVersion,
     institution: restored?.institution?.name,
-    artworkTitle: restored?.artworks?.['entity.artwork.horizonte-interrumpido']?.title,
+    artworkTitle: restored?.entities?.['entity.artwork.horizonte-interrumpido']?.title,
     hasEngineRefs: /\[object |__three|Mesh|WebGL/.test(raw || '')
   };
 });

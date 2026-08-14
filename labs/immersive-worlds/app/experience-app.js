@@ -181,7 +181,7 @@ export async function boot() {
   // task, viewport and state, and a baseline you cannot run is a baseline you
   // cannot compare.
   if (authoringOn && params.get('shell') !== 'vs01') {
-    await mountStudio({ world, activeConfig, vault, boot });
+    await mountStudio({ world, activeConfig, vault, boot, runtime });
   } else if (authoringOn) {
     const [{ AuthoringPanel }] = await Promise.all([import('../authoring/authoring-panel.js')]);
     if (!document.getElementById('au-css')) {
@@ -269,7 +269,7 @@ export async function boot() {
  * `<body>` and lets the render host measure itself, which it already did from
  * its own element. No engine call changes, no second renderer, no second truth.
  */
-async function mountStudio({ world, activeConfig, vault, boot }) {
+async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
   const [{ StudioShell }] = await Promise.all([import('../authoring/studio/studio-shell.js')]);
   // Awaited, not fired and forgotten: the shell measures its own column on first
   // render to letterbox the preview, and a measurement taken before the
@@ -366,6 +366,14 @@ async function mountStudio({ world, activeConfig, vault, boot }) {
 
   window.__IW_STUDIO = studio;
   window.__IW_PANEL = studio;   // the QA surface keeps one name for "the editor"
+
+  // The preview can change rooms without the studio asking — a guided beat, a
+  // portal, a QA harness. Listening to the world means the badge names the room
+  // the visitor is in rather than the last room the studio sent them to.
+  // The runtime in scope, not `window.__IW` — the probe that publishes it is
+  // installed later in this same boot, so reading the global here would wire the
+  // studio to the previous run's bus.
+  runtime.bus?.on?.(EVENTS.SPACE_ENTERED, () => studio._refreshLive());
 }
 
 /**

@@ -1,0 +1,247 @@
+{
+ "wave": "w2",
+ "runId": "vs02_w2_mss5pej0",
+ "head": "7e0ace5",
+ "generatedAt": "2026-08-13T23:37:17.250Z",
+ "fixtures": [
+  "README.md",
+  "qa-artwork.jpg",
+  "qa-logo.png",
+  "qa-not-media.txt",
+  "qa-video.webm"
+ ],
+ "transitions": [
+  {
+   "id": "a1_mss5q126",
+   "kind": "image",
+   "name": "qa-logo.png",
+   "state": "SELECTED",
+   "at": 1786664180958
+  },
+  {
+   "id": "a1_mss5q126",
+   "kind": "image",
+   "name": "qa-logo.png",
+   "state": "LOADING",
+   "at": 1786664180962
+  },
+  {
+   "id": "a1_mss5q126",
+   "kind": "image",
+   "name": "qa-logo.png",
+   "state": "READY",
+   "at": 1786664181774
+  },
+  {
+   "id": "a2_mss5qgqa",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "SELECTED",
+   "at": 1786664201266
+  },
+  {
+   "id": "a2_mss5qgqa",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "LOADING",
+   "at": 1786664201271
+  },
+  {
+   "id": "a2_mss5qgqa",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "READY",
+   "at": 1786664201689
+  },
+  {
+   "id": "a3_mss5qoz9",
+   "kind": "video",
+   "name": "qa-video.webm",
+   "state": "SELECTED",
+   "at": 1786664211958
+  },
+  {
+   "id": "a3_mss5qoz9",
+   "kind": "video",
+   "name": "qa-video.webm",
+   "state": "LOADING",
+   "at": 1786664211963
+  },
+  {
+   "id": "a3_mss5qoz9",
+   "kind": "video",
+   "name": "qa-video.webm",
+   "state": "DECODED",
+   "at": 1786664212891
+  },
+  {
+   "id": "a3_mss5qoz9",
+   "kind": "video",
+   "name": "qa-video.webm",
+   "state": "READY",
+   "at": 1786664212898
+  },
+  {
+   "id": "a4_mss5qyrn",
+   "kind": "image",
+   "name": "qa-not-media.txt",
+   "state": "SELECTED",
+   "at": 1786664224644
+  },
+  {
+   "id": "a4_mss5qyrn",
+   "kind": "image",
+   "name": "qa-not-media.txt",
+   "state": "ERROR",
+   "at": 1786664224648
+  },
+  {
+   "id": "a4_mss5qyrn",
+   "kind": "image",
+   "name": "qa-not-media.txt",
+   "state": "RELEASED",
+   "at": 1786664232212
+  },
+  {
+   "id": "a5_mss5r4m0",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "SELECTED",
+   "at": 1786664232217
+  },
+  {
+   "id": "a5_mss5r4m0",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "LOADING",
+   "at": 1786664232220
+  },
+  {
+   "id": "a5_mss5r4m0",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "READY",
+   "at": 1786664233227
+  }
+ ],
+ "shots": [
+  {
+   "id": "05_LOGO_SELECTED",
+   "file": "05_LOGO_SELECTED.png",
+   "state": "Logotipo recién elegido — el fotograma inmediatamente posterior",
+   "action": "Elegir qa-logo.png en la ranura del logotipo",
+   "expected": "La ranura nombra el archivo y dibuja la cadena. Un PNG de 9 kB decodifica antes de que se pueda fotografiar: la cadena SELECCIONADO → CARGANDO → LISTO queda registrada en transitions[], no simulada aquí",
+   "observed": "Se conserva el medio original de la pieza.",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:23.509Z"
+  },
+  {
+   "id": "07_LOGO_READY",
+   "file": "07_LOGO_READY.png",
+   "state": "Logotipo listo",
+   "action": "Esperar a que el archivo se decodifique",
+   "expected": "Estado «Lista» con dimensiones reales; el paso «Guardado» sigue pendiente",
+   "observed": "\n            Lista · 512×160 · 9 kB\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:27.072Z"
+  },
+  {
+   "id": "09_ARTWORK_EDIT",
+   "file": "09_ARTWORK_EDIT.png",
+   "state": "Obra con metadatos del autor",
+   "action": "Escribir título y autoría sobre los valores del registro",
+   "expected": "Los campos pasan de «del registro» a valor propio; el árbol y la tira siguen el cambio",
+   "observed": "entity.artwork.horizonte-interrumpido",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:39.824Z"
+  },
+  {
+   "id": "10_IMAGE_SELECTED",
+   "file": "10_IMAGE_SELECTED.png",
+   "state": "Imagen recién elegida — el fotograma inmediatamente posterior",
+   "action": "Elegir qa-artwork.jpg",
+   "expected": "La cadena real está en transitions[]; a 37 kB la decodificación no dura lo que tarda una captura",
+   "observed": "Se conserva el medio original de la pieza.",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:42.782Z"
+  },
+  {
+   "id": "12_IMAGE_READY",
+   "file": "12_IMAGE_READY.png",
+   "state": "Imagen lista",
+   "action": "Esperar la decodificación",
+   "expected": "Dimensiones reales del archivo del autor",
+   "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:44.649Z"
+  },
+  {
+   "id": "13_VIDEO_SELECTED",
+   "file": "13_VIDEO_SELECTED.png",
+   "state": "Vídeo recién elegido en la proyección",
+   "action": "Elegir qa-video.webm en la pieza «Cuaderno de luz»",
+   "expected": "La ranura pertenece a la proyección, no a un lienzo enmarcado",
+   "observed": "Se conserva el medio original de la pieza.",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:53.241Z"
+  },
+  {
+   "id": "14_VIDEO_READY",
+   "file": "14_VIDEO_READY.png",
+   "state": "Vídeo listo",
+   "action": "Esperar a decodificar y poder dibujar un fotograma",
+   "expected": "Cadena con paso DECODIFICADO propio del vídeo, y duración real",
+   "observed": "\n            Listo · 960×540 · 2.0 s · 123 kB\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:36:54.627Z"
+  },
+  {
+   "id": "23_INVALID_MEDIA_ERROR",
+   "file": "23_INVALID_MEDIA_ERROR.png",
+   "state": "Archivo no admitido",
+   "action": "Elegir qa-not-media.txt como imagen de la obra",
+   "expected": "Motivo legible y una salida ofrecida, sin fallo silencioso",
+   "observed": "\n            No se pudo usar · Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp.\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:37:08.686Z"
+  },
+  {
+   "id": "24_RECOVERY",
+   "file": "24_RECOVERY.png",
+   "state": "Recuperado con un archivo válido",
+   "action": "Volver a elegir, esta vez qa-artwork.jpg",
+   "expected": "El error desaparece y la pieza queda lista",
+   "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "7e0ace5",
+   "runId": "vs02_w2_mss5pej0",
+   "at": "2026-08-13T23:37:16.740Z"
+  }
+ ],
+ "errors": []
+}

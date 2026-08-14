@@ -119,6 +119,58 @@ const videoData = await page.evaluate(() => new Promise((resolve, reject) => {
 }));
 await write('qa-video.webm', videoData);
 
+/* -- the second institution's own identity --------------------------------- */
+// Product content, not a QA fixture: Museo de la Bruma is the second-institution
+// proof, and the mandate asks it to differ in mark and in at least one image.
+// Owned and generated, like the rest of the collection.
+const INST = path.resolve(HERE, '..', '..', 'assets', 'institutions');
+await fs.mkdir(INST, { recursive: true });
+const writeTo = async (dir, name, dataUrl) => {
+  await fs.writeFile(path.join(dir, name), Buffer.from(dataUrl.split(',')[1], 'base64'));
+  console.log(`  ${name}`);
+};
+
+await writeTo(INST, 'bruma-logo.png', await page.evaluate(() => {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 160;
+  const x = c.getContext('2d');
+  x.fillStyle = '#f4f1ea'; x.fillRect(0, 0, 512, 160);
+  // A horizon in fog: quiet, northern, and nothing like the Marés monogram.
+  x.strokeStyle = '#3d4a4f'; x.lineWidth = 3;
+  for (let i = 0; i < 3; i += 1) {
+    x.globalAlpha = 0.9 - i * 0.28;
+    x.beginPath(); x.moveTo(24, 58 + i * 13); x.lineTo(122, 58 + i * 13); x.stroke();
+  }
+  x.globalAlpha = 1;
+  x.fillStyle = '#22282b';
+  x.font = '400 40px Georgia, serif';
+  x.fillText('Museo de la Bruma', 150, 84);
+  x.fillStyle = '#6c757a';
+  x.font = '400 17px Helvetica, Arial, sans-serif';
+  x.fillText('PAISAJE ATLÁNTICO', 152, 114);
+  return c.toDataURL('image/png');
+}));
+
+await writeTo(INST, 'bruma-marea-septiembre.jpg', await page.evaluate(() => {
+  const c = document.createElement('canvas');
+  c.width = 1300; c.height = 890;
+  const x = c.getContext('2d');
+  // Cold Atlantic greys against the Fundación's warm umbers: the same room, a
+  // visibly different collection.
+  const g = x.createLinearGradient(0, 0, 0, 890);
+  g.addColorStop(0, '#8fa2ab'); g.addColorStop(0.52, '#6d818c'); g.addColorStop(1, '#39464e');
+  x.fillStyle = g; x.fillRect(0, 0, 1300, 890);
+  x.globalAlpha = 0.5; x.fillStyle = '#cdd8dc';
+  for (let i = 0; i < 60; i += 1) {
+    const y = 440 + Math.sin(i * 0.7) * 26 + i * 6;
+    x.fillRect(0, y, 1300, 1.6);
+  }
+  x.globalAlpha = 1;
+  x.fillStyle = 'rgba(20,28,32,.55)';
+  x.fillRect(0, 470, 1300, 6);
+  return c.toDataURL('image/jpeg', 0.9);
+}));
+
 /* -- something that is not media at all, for the error path ---------------- */
 await fs.writeFile(path.join(OUT, 'qa-not-media.txt'),
   'Este archivo existe para probar el rechazo de formatos no admitidos.\n');

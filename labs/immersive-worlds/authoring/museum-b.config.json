@@ -1,20 +1,46 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "configId": "cfg_museo_bruma",
   "label": "Museo de la Bruma — configuración de prueba",
   "institution": {
     "name": "Museo de la Bruma",
     "claim": "Colección de paisaje atlántico, 1902 — 1968",
-    "introduction": "El Museo de la Bruma conserva pintura y obra sobre papel del norte peninsular. Esta configuración existe para probar que una segunda institución usa el mismo motor sin tocar una línea de código."
+    "introduction": "El Museo de la Bruma conserva pintura y obra sobre papel del norte peninsular. Esta configuración existe para probar que una segunda institución usa el mismo motor sin tocar una línea de código.",
+    "dates": "1902 — 1968",
+    "logo": {
+      "kind": "image",
+      "src": "../assets/institutions/bruma-logo.png",
+      "assetId": null,
+      "name": "bruma-logo.png",
+      "mimeType": "image/png",
+      "bytes": 0,
+      "width": 512,
+      "height": 160
+    }
   },
-  "exhibition": { "title": "Museo de la Bruma — Paisaje atlántico" },
-  "artworks": {
+  "exhibition": {
+    "title": "Museo de la Bruma — Paisaje atlántico"
+  },
+  "experience": {
+    "portalVariant": "A"
+  },
+  "entities": {
     "entity.artwork.horizonte-interrumpido": {
       "title": "Marea de septiembre",
       "creator": "Olga Vilariño",
       "year": "1961",
       "medium": "óleo sobre tabla",
-      "description": "Pintada en la ría durante tres inviernos consecutivos. La artista trabajaba únicamente con la luz de la primera hora, y abandonaba el cuadro cuando el sol alcanzaba el agua."
+      "description": "Pintada en la ría durante tres inviernos consecutivos. La artista trabajaba únicamente con la luz de la primera hora, y abandonaba el cuadro cuando el sol alcanzaba el agua.",
+      "image": {
+        "kind": "image",
+        "src": "../assets/institutions/bruma-marea-septiembre.jpg",
+        "assetId": null,
+        "name": "bruma-marea-septiembre.jpg",
+        "mimeType": "image/jpeg",
+        "bytes": 0,
+        "width": 1300,
+        "height": 890
+      }
     },
     "entity.artwork.division-tercera": {
       "title": "Cuaderno de niebla",
@@ -23,5 +49,9 @@
       "medium": "tinta y aguada sobre papel"
     }
   },
-  "experience": { "portalVariant": "A" }
+  "rooms": {
+    "space.gallery-a": {
+      "title": "Sala del norte"
+    }
+  }
 }

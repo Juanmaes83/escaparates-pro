@@ -72,6 +72,10 @@ export class StudioShell {
     // copy that can drift.
     this.currentRoom = currentRoom || (() => '');
 
+    // "Saved" is a fact about the stored project, not about whether this shell
+    // happens to be dirty. Applying a preview rebuilds the shell, and a fresh
+    // shell reporting "saved" because it had not been typed into yet was the
+    // studio telling the author their work was safe when it might not be.
     this.domain = 'build';
     this.selectedId = 'institution';
     this.dirty = false;
@@ -219,10 +223,22 @@ export class StudioShell {
       + (here ? `<span class="st-here">${esc(here)}</span>` : '');
   }
 
+  /** Does the stored project match what is on screen? */
+  _isSaved() {
+    if (this.dirty) return false;
+    try {
+      const stored = ConfigStore.load();
+      if (!stored) return false;
+      const strip = (c) => JSON.stringify({ ...normaliseConfig(c), updatedAt: null, configId: null });
+      return strip(stored) === strip(this.config);
+    } catch { return false; }
+  }
+
   _savedLabel() {
+    if (!this._isSaved()) return 'Sin guardar todavía';
     return this.savedAt
       ? `Guardado · ${this.savedAt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
-      : 'Sin guardar todavía';
+      : 'Guardado';
   }
 
   _topBar(r) {
@@ -475,10 +491,14 @@ export class StudioShell {
         ${media ? `
           <ol class="st-chain" aria-label="Estado del archivo">
             ${chain.map((step, i) => `
-              <li class="${bad ? 'is-bad' : i < at ? 'is-done' : i === at ? 'is-now' : ''}">
+              <li class="${bad ? 'is-bad'
+    // READY is the end of the chain, not a step still in progress. Painting the
+    // last state amber made a finished file look like a stalled one.
+    : i < at || (i === at && step === 'READY') ? 'is-done'
+      : i === at ? 'is-now' : ''}">
                 ${esc(names[step] || step)}
               </li>`).join('')}
-            <li class="${this.dirty ? '' : 'is-done'}">Guardado</li>
+            <li class="${this._isSaved() ? 'is-done' : ''}">Guardado</li>
           </ol>
           <p class="st-slotstate ${bad ? 'is-bad' : d.state === 'READY' ? 'is-ok' : 'is-busy'}">
             ${esc(d.label)}${d.detail ? ` · ${esc(d.detail)}` : ''}
@@ -528,9 +548,18 @@ export class StudioShell {
 
   /* == behaviour ============================================================ */
 
-  _bind() {
+  /**
+   * @param {Element} [scope] bind only inside this subtree.
+   *
+   * Scoped, because binding the whole studio again after a partial redraw left
+   * two listeners on every control that had not been replaced. The visible cost
+   * was a file being accepted twice per click — two decodes, two object URLs,
+   * one of them leaked — and it compounded with every selection: by the sixth,
+   * one upload ran six times.
+   */
+  _bind(scope = this.root) {
     const on = (selector, event, handler) => {
-      for (const el of this.root.querySelectorAll(selector)) el.addEventListener(event, handler);
+      for (const el of scope.querySelectorAll(selector)) el.addEventListener(event, handler);
     };
 
     on('[data-domain]', 'click', (e) => {
@@ -633,11 +662,14 @@ export class StudioShell {
       if (i) i.textContent = fresh.sublabel || '';
     }
     const val = this.root.querySelector('.st-val');
-    if (val) val.outerHTML = this._readiness(r);
+    if (val) {
+      val.outerHTML = this._readiness(r);
+      // Only the replaced column is rebound. Rebinding the studio would double
+      // every listener that survived the redraw.
+      this._bind(this.root.querySelector('.st-val'));
+    }
     const start = this.root.querySelector('[data-act=start]');
     if (start) start.disabled = !r.canStart;
-    // The readiness column was replaced, so its own buttons need rebinding.
-    this._bind();
   }
 
   _write(path, value) {
@@ -707,7 +739,11 @@ export class StudioShell {
     this.render();
     await this.onApply(this.config);
     this.busy = null;
+    // A rebuild puts the visitor back at the entrance. The badge kept naming the
+    // room the preview had been in before the rebuild, which is the kind of small
+    // lie that makes an author distrust everything else on screen.
     this._say('La vista previa muestra el proyecto actual.');
+    this._refreshLive();
   }
 
   async _start() {
