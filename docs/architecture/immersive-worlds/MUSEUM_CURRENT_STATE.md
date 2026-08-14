@@ -463,6 +463,59 @@ every pass:
 The layer edits **data**, and the Museum is built from that data. Nothing in `engine/` knows an
 authoring layer exists, which is the whole reason a second institution needs no engine change.
 
+## 11b-2. Authoring Vertical Slice 02 — the Studio (implemented, product approval pending)
+
+Mandate `MUSEUM_AUTHORING_VS02_GAUNTLET_LOOP_V2` (`docs/prompts/`). VS01 remains runnable at
+`?authoring=1&shell=vs01` as the comparison baseline; `?authoring=1` now opens the Studio.
+
+```text
+authoring/
+  experience-config.js      schema 2 — entities (not artworks), named media slots, rooms; v1 migrates
+  media-vault.js            SELECTED → LOADING → (DECODED) → READY → APPLIED | ERROR → RELEASED
+  config-store.js           unchanged
+  authoring-panel.js        VS01, kept runnable on the v2 model
+  studio/
+    experience-tree.js      Institución → Exposición → Salas → Piezas, derived from the world record
+    readiness.js            required vs optional, blocking vs warning, grouped by domain
+    studio-shell.js         docked workspace: tree · letterboxed preview · editor · project column
+    studio.css              house art direction; no gold, state colours only
+```
+
+Contracts VS02 introduced, and the reasons they exist:
+
+- **A media slot names what a file is FOR** (`INSTITUTION_LOGO`, `ARTWORK_IMAGE`, `PROJECTION_MEDIA`),
+  and the entity's own kind decides which slots it may use. A common vault is fine; a common slot is
+  not — VS01 proved it by discarding an image when a video was chosen.
+- **`SLOTS_FOR_KIND` must describe what the Scene Kit can actually render.** A sculpture is built,
+  not photographed: giving it an image slot would be a control that does nothing, and requiring one
+  reported the shipped Museum as incomplete.
+- **ASSET READY ≠ CONFIG SAVED ≠ PROJECT READY.** "Saved" compares the stored project to what is on
+  screen, never "this shell has no pending edits" — applying a preview rebuilds the shell.
+- **Preview ≠ Start.** Preview rebuilds the docked Museum and the author stays; Start checks
+  readiness, dismisses the studio, returns the canvas to the window, restores the visitor's own
+  navigation and drops `authoring` from the URL.
+- **Institutional signage carries the mark.** The entry cartela already speaks for the institution,
+  so the logo prints on it. No floating plane invented to have somewhere to put a logo.
+- **The docked preview needed no engine change.** `RenderHost.resize()` already measured its own
+  canvas element; the studio sets one attribute on `<body>` and the renderer follows.
+
+Two Scene Kit lines changed: `labelTexture` accepts an optional mark, and the TEXT/wall-panel profile
+passes the one the media loader had already resolved. Nothing else in `scene-kits/` or `engine/` moved.
+
+Evidence: `qa/evidence-vs02/` (board, gauntlet page, three capture waves, manifests with HEAD and
+run id per frame). VS01 evidence in `qa/evidence-authoring/` is untouched.
+
+Lessons this wave paid for, worth carrying:
+
+- **A partial redraw must not rebind the whole surface.** Rebinding everything after replacing one
+  column doubled the listeners on every control that survived, so one upload ran six times: six
+  decodes, six object URLs, five leaked. Found in a state-transition log, not in a screenshot —
+  which is the argument for keeping the log.
+- **Measure after the stylesheet lands.** The shell measured its column to letterbox the preview and
+  got an unstyled div, pinning the canvas to its minimum height.
+- **Setting a pose is not entering a room.** A frame captioned "the entry wall" was standing in
+  another gallery. Frame with the engine's own semantic framing, which cannot drift.
+
 ## 11c. Visual review contract (process, binding)
 
 Added by the addendum `MUSEUM AUTHORING VISUAL QA + REVIEW CONTRACT`, after a pass that reported
