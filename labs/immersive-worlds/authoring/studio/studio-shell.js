@@ -28,6 +28,12 @@ const NODE_NOUN = {
   INSTITUTION: 'Institución', EXHIBITION: 'Exposición', ROOM: 'Sala', ENTITY: 'Pieza'
 };
 
+/** The same nouns the tree uses, so one object is not an OBRA here and a PIEZA there. */
+const KIND_NOUN = {
+  ARTWORK: 'Obra', SCULPTURE: 'Escultura', PROJECTION: 'Proyección',
+  AUDIO: 'Pieza sonora', TEXT: 'Señalética'
+};
+
 /**
  * A reference a registrar can read aloud. The engine id stays in the tooltip,
  * because it is real and occasionally needed, but `entity.artwork.division-tercera`
@@ -84,6 +90,7 @@ export class StudioShell {
     this.message = null;
     this.messageBad = false;
     this.collapsed = new Set();
+    this.jump = 'tree';
 
     this.root = document.createElement('div');
     this.root.id = 'st';
@@ -144,16 +151,16 @@ export class StudioShell {
         ${this._rail()}
         ${this._tree()}
         <div class="st-stage" id="st-stage-slot">
-          <span class="st-live">Vista en vivo <b>${esc(this.currentRoom() || '')}</b></span>
+          <span class="st-live ${this.dirty ? 'is-stale' : ''}">${
+  this.dirty ? 'Vista previa desactualizada' : 'Vista previa aplicada'} <b>${esc(this.currentRoom() || '')}</b></span>
         </div>
         ${this._editor()}
         ${this._readiness(r)}
       </div>
       ${this._filmstrip()}
       <nav class="st-jump" aria-label="Ir a">
-        <button data-jump="tree">Experiencia</button>
-        <button data-jump="ed">Editar</button>
-        <button data-jump="val">Proyecto</button>
+        ${[['tree', 'Experiencia'], ['ed', 'Editar'], ['val', 'Proyecto']].map(([id, label]) => `
+          <button data-jump="${id}" class="${this.jump === id ? 'is-on' : ''}">${label}</button>`).join('')}
       </nav>`;
     this._bind();
     this._layout();
@@ -169,10 +176,20 @@ export class StudioShell {
     if (!stage) return;
     const { width, height } = stage.getBoundingClientRect();
     if (!width) return;
-    // 16:10, but never so tall that the filmstrip has nowhere to live.
-    const h = Math.round(Math.min(width * 0.625, height - 132));
-    this.root.style.setProperty('--st-canvas-h', `${Math.max(h, 240)}px`);
-    document.documentElement.style.setProperty('--st-canvas-h', `${Math.max(h, 240)}px`);
+
+    // The strip takes what its content needs and the preview takes the rest.
+    // A fixed 16:10 left 420 px of flat charcoal under a four-chip strip, which
+    // read as an unbuilt region — and it was exactly the space the preview
+    // should have had.
+    const film = this.root.querySelector('.st-film');
+    const filmNeeds = film ? Math.min(film.scrollHeight + 2, height * 0.42) : 132;
+    const h = Math.round(Math.max(
+      Math.min(height - filmNeeds, width * 0.8),
+      Math.min(width * 0.52, height - 132)
+    ));
+    const px = `${Math.max(h, 240)}px`;
+    this.root.style.setProperty('--st-canvas-h', px);
+    document.documentElement.style.setProperty('--st-canvas-h', px);
     requestAnimationFrame(() => window.__IW?.renderHost?.resize());
   }
 
@@ -328,7 +345,8 @@ export class StudioShell {
       <section class="st-ed" aria-label="Editor">
         <header class="st-edtop">
           <div>
-            <p class="st-eyebrow">${esc(NODE_NOUN[node.kind] || 'Editor')}</p>
+            <p class="st-eyebrow">${esc(
+    node.kind === NODE.ENTITY ? (KIND_NOUN[node.entityKind] || 'Pieza') : NODE_NOUN[node.kind] || 'Editor')}</p>
             <h2>${esc(node.label)}</h2>
           </div>
           ${node.kind === NODE.ENTITY || node.kind === NODE.ROOM
@@ -348,13 +366,13 @@ export class StudioShell {
    * not a styling nit. Inherited values are shown as values, marked as inherited,
    * and the mark disappears the moment the author takes ownership of the field.
    */
-  _field(label, path, value, { hint = '', inherited = '', area = false } = {}) {
+  _field(label, path, value, { hint = '', inherited = '', area = false, rows = 4 } = {}) {
     const owned = value != null && value !== '';
     const shown = owned ? value : inherited;
     const state = owned ? 'own' : inherited ? 'inherited' : 'empty';
     const control = area
-      ? `<textarea rows="4" data-bind="${path}" data-state="${state}" placeholder="Sin texto">${esc(shown || '')}</textarea>`
-      : `<input data-bind="${path}" data-state="${state}" value="${esc(shown || '')}" placeholder="Sin dato">`;
+      ? `<textarea rows="${rows}" data-bind="${path}" data-state="${state}" placeholder="Sin texto">${esc(shown || '')}</textarea>`
+      : `<input data-bind="${path}" data-state="${state}" value="${esc(shown || '')}" title="${esc(shown || '')}" placeholder="Sin dato">`;
     return `
       <label class="st-f">
         <span class="st-l">
@@ -373,7 +391,8 @@ export class StudioShell {
         ${this._field('Nombre de la institución', 'institution.name', i.name)}
         ${this._field('Claim', 'institution.claim', i.claim, { hint: 'Encabeza la cartela de entrada' })}
         ${this._field('Fechas de la colección', 'institution.dates', i.dates, { hint: 'Bajo el claim, en la misma cartela' })}
-        ${this._field('Introducción', 'institution.introduction', i.introduction, { area: true, hint: 'Texto de la cartela de entrada' })}
+        ${this._field('Introducción', 'institution.introduction', i.introduction,
+    { area: true, rows: 6, hint: 'Texto de la cartela de entrada' })}
       `)}
       ${this._group('Marca', `
         <p class="st-note">Se imprime en la cartela de entrada, sobre el claim — donde una institución pone su marca.</p>
@@ -468,7 +487,7 @@ export class StudioShell {
    */
   _slot(slot, label, media, kind, formats) {
     const asset = media?.assetId ? this.vault.get(media.assetId) : null;
-    const d = describeAsset(asset);
+    const d = describeAsset(asset, media);
     const chain = d.chain.length ? d.chain : (kind === 'video' ? ['SELECTED', 'LOADING', 'DECODED', 'READY'] : ['SELECTED', 'LOADING', 'READY']);
     const at = d.index;
     const bad = d.state === 'ERROR';
@@ -529,7 +548,7 @@ export class StudioShell {
           <i>${esc(r.headline)}</i>
         </div>
         <ul class="st-domains">
-          ${r.domains.map((d) => `
+          ${r.domains.filter((d) => d.total > 0).map((d) => `
             <li class="${d.ok === d.total ? 'is-ok' : d.worst === SEVERITY.BLOCKING ? 'is-bad' : 'is-warn'}">
               <span>${esc(d.name)}</span><i>${d.ok}/${d.total}</i>
             </li>`).join('')}
@@ -561,6 +580,15 @@ export class StudioShell {
     const on = (selector, event, handler) => {
       for (const el of scope.querySelectorAll(selector)) el.addEventListener(event, handler);
     };
+
+    on('[data-jump]', 'click', (e) => {
+      this.jump = e.currentTarget.dataset.jump;
+      const target = { tree: '.st-tree', ed: '.st-ed', val: '.st-val' }[this.jump];
+      this.root.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      for (const b of this.root.querySelectorAll('[data-jump]')) {
+        b.classList.toggle('is-on', b.dataset.jump === this.jump);
+      }
+    });
 
     on('[data-domain]', 'click', (e) => {
       this.domain = e.currentTarget.dataset.domain;
@@ -631,7 +659,10 @@ export class StudioShell {
   _refreshLive() {
     const r = this.readiness;
     const live = this.root.querySelector('.st-live');
-    if (live) live.innerHTML = `Vista en vivo <b>${esc(this.currentRoom() || '')}</b>`;
+    if (live) {
+      live.innerHTML = `${this.dirty ? 'Vista previa desactualizada' : 'Vista previa aplicada'} <b>${esc(this.currentRoom() || '')}</b>`;
+      live.classList.toggle('is-stale', this.dirty);
+    }
     const saved = this.root.querySelector('[data-role=saved]');
     if (saved) {
       // The same sentence the first render used. Reporting "Guardado" for a

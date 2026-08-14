@@ -60,9 +60,9 @@ export function evaluateReadiness(world, config, assetState = () => null) {
     { where: 'institution' });
   need('exhibition.title', 'La exposición tiene título', text(config.exhibition.title),
     { where: 'exhibition' });
-  need('institution.introduction', 'Hay un texto de introducción', text(config.institution.introduction),
+  need('institution.introduction', 'Añadir el texto de introducción', text(config.institution.introduction),
     { severity: SEVERITY.SUGGESTION, required: false, where: 'institution' });
-  need('institution.logo', 'La institución ha aportado su marca', config.institution.logo,
+  need('institution.logo', 'Añadir la marca de la institución', config.institution.logo,
     { severity: SEVERITY.SUGGESTION, required: false, where: 'institution' });
 
   /* -- every exhibited work ------------------------------------------------- */
@@ -105,7 +105,9 @@ export function evaluateReadiness(world, config, assetState = () => null) {
           `Las proporciones de «${resolved('title')}» encajan en su soporte`, drift < 0.25,
           {
             severity: SEVERITY.WARNING, required: false, where: entity.id,
-            detail: `archivo ${fileAspect.toFixed(2)} · soporte ${supportAspect.toFixed(2)}`
+            detail: fileAspect > supportAspect
+              ? 'La imagen es más ancha que el soporte y se recortará por los lados'
+              : 'La imagen es más alta que el soporte y se recortará por arriba y abajo'
           });
       }
     }
@@ -120,8 +122,15 @@ export function evaluateReadiness(world, config, assetState = () => null) {
         : item.id.endsWith('.aspect') ? 'Presentación'
           : 'Catalogación'
   );
+  // Counted over the SAME set the headline percentage uses. Counting every item
+  // here while the percentage counted only the required ones produced a card
+  // that said "100% · todo listo" directly above "Identidad 4/5" — the hero
+  // number contradicting the rows underneath it, on most screens.
   const domains = {};
+  const FIXED_DOMAINS = ['Identidad', 'Catalogación', 'Medios', 'Presentación'];
+  for (const name of FIXED_DOMAINS) domains[name] = { name, total: 0, ok: 0, worst: null };
   for (const item of items) {
+    if (!item.required) continue;
     const key = DOMAIN_OF(item);
     domains[key] ||= { name: key, total: 0, ok: 0, worst: null };
     domains[key].total += 1;

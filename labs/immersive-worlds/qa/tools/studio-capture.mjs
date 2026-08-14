@@ -209,7 +209,7 @@ if (WAVE === 'w2' || WAVE === 'full') {
   /* -- an artwork's image ---------------------------------------------------- */
   await page.click('[data-node="entity.artwork.horizonte-interrumpido"]');
   await page.waitForTimeout(2600);
-  await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.title"]', 'Prueba de marea');
+  await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.title"]', 'Marea de septiembre');
   await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.creator"]', 'Nuria Sendra');
   await shoot(page, '09_ARTWORK_EDIT', {
     state: 'Obra con metadatos del autor',
@@ -307,7 +307,7 @@ if (WAVE === 'w3' || WAVE === 'full') {
 
   await page.click('[data-node="entity.artwork.horizonte-interrumpido"]');
   await page.waitForTimeout(2600);
-  await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.title"]', 'Prueba de marea');
+  await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.title"]', 'Marea de septiembre');
   await page.fill('[data-bind="entities.entity.artwork.horizonte-interrumpido.creator"]', 'Nuria Sendra');
   await page.setInputFiles('[data-media="ARTWORK_IMAGE"]', path.join(FIXTURES, 'qa-artwork.jpg'));
   await page.waitForFunction(() => /Lista/.test(document.querySelector('[data-slot="ARTWORK_IMAGE"] .st-slotstate')?.textContent || ''), { timeout: 120000 });

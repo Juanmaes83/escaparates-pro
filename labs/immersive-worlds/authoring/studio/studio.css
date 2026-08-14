@@ -109,6 +109,11 @@ body[data-studio="on"] .iw-topbar { display: none; }
   background: var(--st-ok); box-shadow: 0 0 0 3px rgba(143, 191, 149, 0.16);
 }
 .st-live b { font-weight: 400; color: var(--st-ink); letter-spacing: 0.08em; }
+/* The centre shows the applied project, not the keystroke. When they differ, it
+   says so — a badge reading "en vivo" beside an Apply button was the product
+   contradicting itself. */
+.st-live.is-stale { color: var(--st-warn); }
+.st-live.is-stale::before { background: var(--st-warn); box-shadow: 0 0 0 3px rgba(216,180,94,.16); }
 
 /* Narrow-only furniture, off by default. */
 .st-jump { display: none; }
@@ -277,7 +282,7 @@ h2 {
   border: 1px solid var(--st-line); border-radius: 3px; color: var(--st-ink);
   padding: 8px 10px; font: inherit; font-size: 13px;
 }
-#st textarea { resize: vertical; line-height: 1.5; }
+#st textarea { resize: vertical; line-height: 1.55; padding-bottom: 12px; min-height: 6.2em; }
 #st input:focus, #st textarea:focus { outline: none; border-color: var(--st-line-strong); background: rgba(255, 252, 246, 0.08); }
 #st ::placeholder { color: var(--st-faint); }
 
@@ -456,6 +461,7 @@ h2 {
     padding: 12px 4px; cursor: pointer;
   }
   .st-jump button + button { border-left: 1px solid var(--st-line); }
+  .st-jump button.is-on { color: var(--st-ink); box-shadow: inset 0 2px 0 var(--st-ink); }
   .st-val { padding-bottom: 64px; }
   .st-tree, .st-ed, .st-val {
     overflow: visible; max-height: none; width: auto; position: static;

@@ -56,7 +56,20 @@ export const ASSET_CHAIN = Object.freeze({
  * One asset, described for a person: state in words, the facts that prove the
  * file is real, and the reason when it is not.
  */
-export function describeAsset(asset) {
+export function describeAsset(asset, media = null) {
+  // A file that came with the project rather than from this session has no vault
+  // asset — it is a path the world already resolves. Reporting "Sin archivo"
+  // beside its own filename, under a button reading "Cambiar archivo", was three
+  // signals giving two different answers in one card.
+  if (!asset && media?.src) {
+    const chain = ASSET_CHAIN[media.kind] || ASSET_CHAIN.image;
+    const facts = [];
+    if (media.width && media.height) facts.push(`${media.width}×${media.height}`);
+    return {
+      state: 'READY', label: 'En el proyecto', name: media.name,
+      detail: facts.join(' · '), chain, index: chain.length - 1
+    };
+  }
   if (!asset) return { label: 'Sin archivo', detail: '', state: null, chain: [], index: -1 };
   const copy = COPY[asset.kind] || COPY.image;
   const chain = ASSET_CHAIN[asset.kind] || ASSET_CHAIN.image;
@@ -119,7 +132,8 @@ export class MediaVault {
 
     if (!file) return this._fail(asset, 'No se ha seleccionado ningún archivo.');
     if (!allowed.includes(file.type)) {
-      return this._fail(asset, `Formato no admitido: ${file.type || 'desconocido'}. Se admiten ${allowed.join(', ')}.`);
+      const wanted = kind === 'video' ? 'un vídeo MP4 o WebM' : 'una imagen JPG, PNG o WebP';
+      return this._fail(asset, `Ese archivo no es ${wanted}. Elige otro y vuelve a intentarlo.`);
     }
 
     asset.state = 'LOADING';

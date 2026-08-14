@@ -65,11 +65,11 @@ del resultado y no sólo de la foto.</p>
 
 <div class="sum">
   <div><b>22</b>capturas</div>
-  <div><b>14</b>defectos registrados</div>
-  <div><b>11</b>corregidos</div>
-  <div><b>3</b>abiertos</div>
+  <div><b>22</b>defectos registrados</div>
+  <div><b>17</b>corregidos</div>
+  <div><b>5</b>abiertos</div>
   <div><b>0</b>errores de consola</div>
-  <div><b>f0af246</b>HEAD</div>
+  <div><b>7f55928</b>HEAD</div>
 </div>
 
 <h2>VS01 frente a VS02</h2>
@@ -102,6 +102,20 @@ mirando las capturas o midiendo las ejecuciones, no leyendo el código.</p>
     <dt>Se ve</dt><dd>El registro de transiciones mostraba SELECCIONADO → CARGANDO repetido: dos veces al principio de la sesión, doce veces después de unas cuantas selecciones.</dd>
     <dt>Por qué</dt><dd>Un redibujado parcial volvía a enlazar todo el estudio, de modo que los controles que sobrevivían al redibujado acumulaban un oyente más cada vez. Una subida acababa ejecutándose seis veces: seis decodificaciones y seis object URL, cinco de ellos sin revocar.</dd>
     <dt>Corrección</dt><dd>El enlazado es ahora local al fragmento redibujado. La suite de humo falla si un clic vuelve a producir dos aceptaciones — el defecto se escondía en un registro, no en un fotograma, y no debería depender de que alguien lo lea.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BLOQUEANTE">BLOQUEANTE</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D10</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>El porcentaje del proyecto contradecía las filas que tenía justo debajo</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La tarjeta decía «<em>100% · todo el contenido necesario está listo</em>» y cuarenta píxeles más abajo «<em>Identidad 4/5</em>». En la pantalla de recuperación decía 100% sobre «<em>Presentación 2/3</em>». En la del error decía «<em>27 / 28</em>» mientras las filas sumaban 31 de 32.</dd>
+    <dt>Por qué</dt><dd>El porcentaje contaba sólo los elementos obligatorios y las filas contaban todos. Dos contabilidades distintas dibujadas en la misma tarjeta.</dd>
+    <dt>Corrección</dt><dd>Las filas cuentan exactamente el conjunto del que sale el porcentaje, las cuatro categorías aparecen siempre en el mismo orden, y una categoría sin elementos no se dibuja en lugar de mostrar 0/0.</dd>
   </dl>
 </article>
 <article class="d">
@@ -158,6 +172,62 @@ mirando las capturas o midiendo las ejecuciones, no leyendo el código.</p>
     <dt>Se ve</dt><dd>Las columnas se recortaban a sí mismas —el editor mostraba una etiqueta y ningún campo—, «<em>Empezar experiencia</em>» quedaba cortada por el borde derecho, y desaparecían la miga de pan y el estado de guardado.</dd>
     <dt>Por qué</dt><dd>Cada columna era un contenedor con scroll dentro de una pista de rejilla sin altura.</dd>
     <dt>Corrección</dt><dd>Un solo documento que se desplaza, con la vista previa fija arriba, la miga y el estado anclados, y una barra inferior para saltar a cada sección.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D11</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>El logotipo del Museo B decía «<em>Sin archivo</em>» junto a su propio nombre de archivo</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Botón «<em>Cambiar archivo</em>», nombre «<em>bruma-logo.png</em>», los cuatro pasos apagados y debajo, en ámbar, «<em>Sin archivo</em>». Tres señales, dos respuestas, en una tarjeta.</dd>
+    <dt>Por qué</dt><dd>Un archivo que llega con el proyecto no pasa por el almacén de medios de la sesión, y la descripción de estado sólo sabía leer assets de sesión.</dd>
+    <dt>Corrección</dt><dd>Un medio que ya está en el proyecto se describe como tal: «<em>En el proyecto</em>», con la cadena completa y sus dimensiones.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D12</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La insignia decía «<em>vista en vivo</em>» al lado de un botón llamado «<em>Vista previa</em>»</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El centro se anunciaba como en vivo mientras una pulsación de tecla no llegaba a él, de modo que el botón que sí lo actualizaba parecía no hacer nada.</dd>
+    <dt>Por qué</dt><dd>La vista previa muestra el proyecto aplicado, no el borrador. La insignia decía otra cosa.</dd>
+    <dt>Corrección</dt><dd>«<em>Vista previa aplicada</em>» y, en cuanto hay cambios sin aplicar, «<em>Vista previa desactualizada</em>» en ámbar. El efecto del botón se ve.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D13</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>Nombres de QA y jerga de motor impresos en contenido de cara al visitante</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El texto de la cartela de entrada del Museo B decía «<em>Esta configuración existe para probar que una segunda institución usa el mismo motor sin tocar una línea de código</em>». La obra en edición se llamaba «<em>Prueba de marea</em>». Los errores citaban «<em>text/plain</em>» y los avisos «<em>archivo 1.46 · soporte 0.81</em>».</dd>
+    <dt>Por qué</dt><dd>Texto de prueba escrito en campos de producto, y mensajes redactados para quien programa en lugar de para quien cataloga.</dd>
+    <dt>Corrección</dt><dd>El Museo B tiene ahora un texto institucional real. El error dice «<em>Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo</em>». El aviso dice «<em>La imagen es más ancha que el soporte y se recortará por los lados</em>». Las capturas escriben títulos que una institución escribiría.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — A CRITERIO DE JUANMA</span>
+    <span class="t">O4</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_04_INSTITUTION_EDIT">w1/04_INSTITUTION_EDIT</a></span>
+  </div>
+  <h3>Renombrar la institución no reescribe los textos libres que la nombran</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Tras cambiar el nombre a «<em>Colección Marés</em>», la introducción seguía diciendo «<em>La Fundación Arenas reúne pintura… entre 1958 y 1994</em>», y ese texto se imprime en la pared.</dd>
+    <dt>Por qué</dt><dd>Es contenido redactado por el autor. El producto no puede reescribirlo sin inventar prosa institucional en nombre de una institución.</dd>
+    <dt>Qué falta</dt><dd>PROPUESTA: detectar el nombre anterior dentro de los textos libres y avisar en línea —«<em>Este texto todavía nombra a Fundación Arenas</em>»— con reemplazo en un clic. Avisar es del producto; reescribir la voz de una institución no lo es, y esa frontera la decide Juanma.</dd>
   </dl>
 </article>
 <article class="d">
@@ -246,6 +316,48 @@ mirando las capturas o midiendo las ejecuciones, no leyendo el código.</p>
 </article>
 <article class="d">
   <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D14</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La pared decía «<em>Once obras</em>» y el Museo tiene nueve</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La cartela de entrada anunciaba once obras; el árbol suma nueve piezas en cuatro salas.</dd>
+    <dt>Por qué</dt><dd>Texto del mundo escrito antes de que existiera un árbol capaz de contarlo. VS02 no lo introdujo: lo hizo visible.</dd>
+    <dt>Corrección</dt><dd>Corregido el texto del mundo. Cuando la herramienta y la pared discrepan, una de las dos está mintiendo a un visitante.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D15</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_25_NARROW_VIEW">w1/25_NARROW_VIEW</a></span>
+  </div>
+  <h3>Vocabulario y estados inconsistentes entre pantallas</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La misma pieza era OBRA en una pantalla y PIEZA en la siguiente; la barra inferior a 420 px no señalaba qué pestaña estaba activa; la introducción se cortaba por los descendentes en seis capturas.</dd>
+    <dt>Por qué</dt><dd>Dos vocabularios para un tipo de objeto, una barra sin estado y un textarea de cuatro líneas para un texto de cinco.</dd>
+    <dt>Corrección</dt><dd>Un solo sustantivo por tipo, el mismo que usa el árbol. Pestaña activa marcada. El campo de introducción cabe.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BAJA">BAJA</span>
+    <span class="t t--ABIERTO">ABIERTO — POR DISEÑO</span>
+    <span class="t">O5</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>El Museo B es el mismo mundo con otra configuración</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Un crítico lo describió como «<em>la Fundación Arenas con tres cadenas renombradas</em>».</dd>
+    <dt>Por qué</dt><dd>Es exactamente lo que la prueba de la segunda institución comprueba: mismo motor, mismo mundo, otra configuración. Un mundo distinto probaría otra cosa.</dd>
+    <dt>Qué falta</dt><dd>Sin cambio de código. Difiere en nombre, claim, datación, marca, nombre de sala, una imagen de obra y los metadatos de dos obras. Si Juanma quiere que la demostración sea más evidente, se amplía la configuración —no el motor.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
     <span class="t t--BAJA">BAJA</span>
     <span class="t t--CORREGIDO">CORREGIDO</span>
     <span class="t">D9</span><span class="t">W1</span>
@@ -291,7 +403,7 @@ mirando las capturas o midiendo las ejecuciones, no leyendo el código.</p>
 <p>Abrir · navegar la exposición · editar la institución · subir marca, imagen y vídeo · guardar ·
 validar · vista previa · empezar como visitante · segunda institución · volver al original.</p>
 
-  <h3 class="wave">W1 · Árbol de la experiencia y espacio de trabajo — run <code>vs02_w1_mss5a57y</code> · HEAD <code>90a3576</code></h3>
+  <h3 class="wave">W1 · Árbol de la experiencia y espacio de trabajo — run <code>vs02_w1_mssb3gts</code> · HEAD <code>7f55928</code></h3>
   <div class="grid">
   <figure id="w1_02_VS02_DEFAULT">
     <img src="w1/02_VS02_DEFAULT.png" alt="Estudio recién abierto sobre el Museo por defecto" loading="lazy">
@@ -301,7 +413,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
       <dl>
         <dt>Acción</dt><dd>Abrir ?authoring=1</dd>
         <dt>Se espera</dt><dd>La sala ocupa el centro a su propio tamaño; el editor no la tapa</dd>
-        <dt>Se observa</dt><dd>lienzo 656×410 · Todo el contenido necesario está listo · un solo estudio (1)</dd>
+        <dt>Se observa</dt><dd>lienzo 656×525 · Todo el contenido necesario está listo · un solo estudio (1)</dd>
       </dl>
     </figcaption>
   </figure>
@@ -313,7 +425,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
       <dl>
         <dt>Acción</dt><dd>Clic en la sala «Galería A — Horizontes»</dd>
         <dt>Se espera</dt><dd>El árbol muestra Institución → Exposición → Salas → Piezas y la vista previa camina hasta la sala</dd>
-        <dt>Se observa</dt><dd>seleccionado space.gallery-a · lienzo 656×410</dd>
+        <dt>Se observa</dt><dd>seleccionado space.gallery-a · lienzo 656×524</dd>
       </dl>
     </figcaption>
   </figure>
@@ -368,7 +480,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
   
   
 
-  <h3 class="wave">W2 · Medios, estados y recuperación — run <code>vs02_w2_mss5pej0</code> · HEAD <code>7e0ace5</code></h3>
+  <h3 class="wave">W2 · Medios, estados y recuperación — run <code>vs02_w2_mssbcrnd</code> · HEAD <code>7f55928</code></h3>
   <div class="grid">
   <figure id="w2_05_LOGO_SELECTED">
     <img src="w2/05_LOGO_SELECTED.png" alt="Logotipo recién elegido — el fotograma inmediatamente posterior" loading="lazy">
@@ -455,7 +567,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
         <dt>Acción</dt><dd>Esperar a decodificar y poder dibujar un fotograma</dd>
         <dt>Se espera</dt><dd>Cadena con paso DECODIFICADO propio del vídeo, y duración real</dd>
         <dt>Se observa</dt><dd>
-            Listo · 960×540 · 2.0 s · 123 kB
+            Listo · 960×540 · 2.0 s · 129 kB
           </dd>
       </dl>
     </figcaption>
@@ -469,7 +581,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
         <dt>Acción</dt><dd>Elegir qa-not-media.txt como imagen de la obra</dd>
         <dt>Se espera</dt><dd>Motivo legible y una salida ofrecida, sin fallo silencioso</dd>
         <dt>Se observa</dt><dd>
-            No se pudo usar · Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp.
+            No se pudo usar · Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.
           </dd>
       </dl>
     </figcaption>
@@ -493,7 +605,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
     Cadena de estados registrada en esta tanda:
     <code>image:SELECTED</code> · <code>image:LOADING</code> · <code>image:READY</code> · <code>video:SELECTED</code> · <code>video:LOADING</code> · <code>video:DECODED</code> · <code>video:READY</code> · <code>image:ERROR</code> · <code>image:RELEASED</code></p>
 
-  <h3 class="wave">W3–W4 · Guardar, validar, empezar y la segunda institución — run <code>vs02_w3_mss6ck96</code> · HEAD <code>7e0ace5</code></h3>
+  <h3 class="wave">W3–W4 · Guardar, validar, empezar y la segunda institución — run <code>vs02_w3_mssbewwe</code> · HEAD <code>7f55928</code></h3>
   <div class="grid">
   <figure id="w3_15_CONFIG_SAVED">
     <img src="w3/15_CONFIG_SAVED.png" alt="Proyecto guardado" loading="lazy">
@@ -503,7 +615,7 @@ validar · vista previa · empezar como visitante · segunda institución · vol
       <dl>
         <dt>Acción</dt><dd>Pulsar GUARDAR</dd>
         <dt>Se espera</dt><dd>La cabecera pasa de «Cambios sin guardar» a una hora de guardado; GUARDADO se completa en la cadena del archivo — guardar el proyecto no es lo mismo que decodificar un archivo</dd>
-        <dt>Se observa</dt><dd>Guardado · 23:54</dd>
+        <dt>Se observa</dt><dd>Guardado · 02:16</dd>
       </dl>
     </figcaption>
   </figure>
@@ -593,7 +705,7 @@ Consola: limpia en las tres tandas.</p>
 
 <div class="gate">
   <p><b>Puerta.</b> A la espera de revisión de Juanma y de ChatGPT. Sin merge, sin promoción, sin
-  tocar master. Rama <code>claude/immersive-worlds-module-c0d3f7</code>, HEAD <code>f0af246</code>.</p>
+  tocar master. Rama <code>claude/immersive-worlds-module-c0d3f7</code>, HEAD <code>7f55928</code>.</p>
   <p>La evidencia de VS01 sigue intacta en <code>qa/evidence-authoring/</code> y su artifact no se ha
   reemplazado.</p>
 </div>

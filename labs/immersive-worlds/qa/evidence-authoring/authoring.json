@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-14T00:01:30.878Z",
+ "generatedAt": "2026-08-14T02:19:51.768Z",
  "original": {
   "institution": "Fundación Arenas — Colección permanente",
   "artwork": {
@@ -35,7 +35,7 @@
  },
  "media": {
   "badState": "ERROR",
-  "badError": "Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp.",
+  "badError": "Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.",
   "goodState": "READY",
   "goodSize": "2×2",
   "resolved": true,
@@ -43,7 +43,7 @@
   "releasedTo": 1
  },
  "persistence": {
-  "bytes": 1520,
+  "bytes": 1562,
   "version": 2,
   "institution": "Museo de la Bruma",
   "artworkTitle": "Marea de septiembre",
@@ -96,7 +96,7 @@
   {
    "name": "un formato no admitido falla con motivo",
    "ok": true,
-   "detail": "Formato no admitido: text/plain. Se admiten image/jpeg, image/png, image/webp."
+   "detail": "Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo."
   },
   {
    "name": "una imagen válida llega a READY",
@@ -141,7 +141,7 @@
   {
    "name": "la configuración se serializa",
    "ok": true,
-   "detail": "1520 bytes · esquema v2"
+   "detail": "1562 bytes · esquema v2"
   },
   {
    "name": "la configuración se restaura íntegra",

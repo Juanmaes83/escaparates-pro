@@ -144,6 +144,92 @@ const DEFECTS = [
     fix: 'Se espera a la hoja, y la medida se repite en cada cambio de tamaño.'
   },
   {
+    id: 'D10', severity: 'BLOQUEANTE', status: 'CORREGIDO', wave: 'W5', shot: 'w1/02_VS02_DEFAULT',
+    title: 'El porcentaje del proyecto contradecía las filas que tenía justo debajo',
+    found: 'La tarjeta decía «100% · todo el contenido necesario está listo» y cuarenta píxeles ' +
+      'más abajo «Identidad 4/5». En la pantalla de recuperación decía 100% sobre «Presentación ' +
+      '2/3». En la del error decía «27 / 28» mientras las filas sumaban 31 de 32.',
+    cause: 'El porcentaje contaba sólo los elementos obligatorios y las filas contaban todos. Dos ' +
+      'contabilidades distintas dibujadas en la misma tarjeta.',
+    fix: 'Las filas cuentan exactamente el conjunto del que sale el porcentaje, las cuatro ' +
+      'categorías aparecen siempre en el mismo orden, y una categoría sin elementos no se dibuja ' +
+      'en lugar de mostrar 0/0.'
+  },
+  {
+    id: 'D11', severity: 'ALTA', status: 'CORREGIDO', wave: 'W5', shot: 'w3/21_MUSEUM_B',
+    title: 'El logotipo del Museo B decía «Sin archivo» junto a su propio nombre de archivo',
+    found: 'Botón «Cambiar archivo», nombre «bruma-logo.png», los cuatro pasos apagados y debajo, ' +
+      'en ámbar, «Sin archivo». Tres señales, dos respuestas, en una tarjeta.',
+    cause: 'Un archivo que llega con el proyecto no pasa por el almacén de medios de la sesión, y ' +
+      'la descripción de estado sólo sabía leer assets de sesión.',
+    fix: 'Un medio que ya está en el proyecto se describe como tal: «En el proyecto», con la ' +
+      'cadena completa y sus dimensiones.'
+  },
+  {
+    id: 'D12', severity: 'ALTA', status: 'CORREGIDO', wave: 'W5', shot: 'w1/02_VS02_DEFAULT',
+    title: 'La insignia decía «vista en vivo» al lado de un botón llamado «Vista previa»',
+    found: 'El centro se anunciaba como en vivo mientras una pulsación de tecla no llegaba a él, ' +
+      'de modo que el botón que sí lo actualizaba parecía no hacer nada.',
+    cause: 'La vista previa muestra el proyecto aplicado, no el borrador. La insignia decía otra cosa.',
+    fix: '«Vista previa aplicada» y, en cuanto hay cambios sin aplicar, «Vista previa ' +
+      'desactualizada» en ámbar. El efecto del botón se ve.'
+  },
+  {
+    id: 'D13', severity: 'ALTA', status: 'CORREGIDO', wave: 'W5', shot: 'w3/21_MUSEUM_B',
+    title: 'Nombres de QA y jerga de motor impresos en contenido de cara al visitante',
+    found: 'El texto de la cartela de entrada del Museo B decía «Esta configuración existe para ' +
+      'probar que una segunda institución usa el mismo motor sin tocar una línea de código». La ' +
+      'obra en edición se llamaba «Prueba de marea». Los errores citaban «text/plain» y los avisos ' +
+      '«archivo 1.46 · soporte 0.81».',
+    cause: 'Texto de prueba escrito en campos de producto, y mensajes redactados para quien ' +
+      'programa en lugar de para quien cataloga.',
+    fix: 'El Museo B tiene ahora un texto institucional real. El error dice «Ese archivo no es una ' +
+      'imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo». El aviso dice «La imagen es más ' +
+      'ancha que el soporte y se recortará por los lados». Las capturas escriben títulos que una ' +
+      'institución escribiría.'
+  },
+  {
+    id: 'D14', severity: 'MEDIA', status: 'CORREGIDO', wave: 'W5', shot: 'w1/02_VS02_DEFAULT',
+    title: 'La pared decía «Once obras» y el Museo tiene nueve',
+    found: 'La cartela de entrada anunciaba once obras; el árbol suma nueve piezas en cuatro salas.',
+    cause: 'Texto del mundo escrito antes de que existiera un árbol capaz de contarlo. VS02 no lo ' +
+      'introdujo: lo hizo visible.',
+    fix: 'Corregido el texto del mundo. Cuando la herramienta y la pared discrepan, una de las dos ' +
+      'está mintiendo a un visitante.'
+  },
+  {
+    id: 'D15', severity: 'MEDIA', status: 'CORREGIDO', wave: 'W5', shot: 'w1/25_NARROW_VIEW',
+    title: 'Vocabulario y estados inconsistentes entre pantallas',
+    found: 'La misma pieza era OBRA en una pantalla y PIEZA en la siguiente; la barra inferior a ' +
+      '420 px no señalaba qué pestaña estaba activa; la introducción se cortaba por los ' +
+      'descendentes en seis capturas.',
+    cause: 'Dos vocabularios para un tipo de objeto, una barra sin estado y un textarea de cuatro ' +
+      'líneas para un texto de cinco.',
+    fix: 'Un solo sustantivo por tipo, el mismo que usa el árbol. Pestaña activa marcada. El campo ' +
+      'de introducción cabe.'
+  },
+  {
+    id: 'O4', severity: 'MEDIA', status: 'ABIERTO — A CRITERIO DE JUANMA', wave: 'W5', shot: 'w1/04_INSTITUTION_EDIT',
+    title: 'Renombrar la institución no reescribe los textos libres que la nombran',
+    found: 'Tras cambiar el nombre a «Colección Marés», la introducción seguía diciendo «La ' +
+      'Fundación Arenas reúne pintura… entre 1958 y 1994», y ese texto se imprime en la pared.',
+    cause: 'Es contenido redactado por el autor. El producto no puede reescribirlo sin inventar ' +
+      'prosa institucional en nombre de una institución.',
+    fix: 'PROPUESTA: detectar el nombre anterior dentro de los textos libres y avisar en línea ' +
+      '—«Este texto todavía nombra a Fundación Arenas»— con reemplazo en un clic. Avisar es del ' +
+      'producto; reescribir la voz de una institución no lo es, y esa frontera la decide Juanma.'
+  },
+  {
+    id: 'O5', severity: 'BAJA', status: 'ABIERTO — POR DISEÑO', wave: 'W5', shot: 'w3/21_MUSEUM_B',
+    title: 'El Museo B es el mismo mundo con otra configuración',
+    found: 'Un crítico lo describió como «la Fundación Arenas con tres cadenas renombradas».',
+    cause: 'Es exactamente lo que la prueba de la segunda institución comprueba: mismo motor, ' +
+      'mismo mundo, otra configuración. Un mundo distinto probaría otra cosa.',
+    fix: 'Sin cambio de código. Difiere en nombre, claim, datación, marca, nombre de sala, una ' +
+      'imagen de obra y los metadatos de dos obras. Si Juanma quiere que la demostración sea más ' +
+      'evidente, se amplía la configuración —no el motor.'
+  },
+  {
     id: 'O1', severity: 'ALTA', status: 'ABIERTO — HEREDADO', wave: 'VS01', shot: null,
     title: 'La proyección autorizada no se parece a la original y la causa sigue sin determinar',
     found: 'Defecto abierto de VS01. VS02 no lo ha investigado.',

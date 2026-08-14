@@ -1,8 +1,8 @@
 {
  "wave": "w3",
- "runId": "vs02_w3_mss6ck96",
- "head": "7e0ace5",
- "generatedAt": "2026-08-13T23:56:45.906Z",
+ "runId": "vs02_w3_mssbewwe",
+ "head": "7f55928",
+ "generatedAt": "2026-08-14T02:18:34.632Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
@@ -23,12 +23,12 @@
    "state": "Proyecto guardado",
    "action": "Pulsar GUARDAR",
    "expected": "La cabecera pasa de «Cambios sin guardar» a una hora de guardado; GUARDADO se completa en la cadena del archivo — guardar el proyecto no es lo mismo que decodificar un archivo",
-   "observed": "Guardado · 23:54",
+   "observed": "Guardado · 02:16",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:54:55.015Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:16:47.113Z"
   },
   {
    "id": "16_PROJECT_READY",
@@ -39,9 +39,9 @@
    "observed": "READY · Todo el contenido necesario está listo",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:54:58.397Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:16:51.160Z"
   },
   {
    "id": "17_PREVIEW_APPLIED",
@@ -52,9 +52,9 @@
    "observed": "institución en el mundo: Colección Marés",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:55:11.998Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:17:05.233Z"
   },
   {
    "id": "17b_IDENTITY_ON_WALL",
@@ -65,9 +65,9 @@
    "observed": "space.lobby",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:55:17.619Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:17:11.451Z"
   },
   {
    "id": "18_VISITOR_START",
@@ -78,9 +78,9 @@
    "observed": "estudios 0 · acoplado off · lienzo 1440px · barra del visitante true · url ?tier=HIGH&portalVariant=A",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:55:42.818Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:17:34.440Z"
   },
   {
    "id": "21_MUSEUM_B",
@@ -91,9 +91,9 @@
    "observed": "institución en el mundo: Museo de la Bruma",
    "viewport": "1440×900",
    "museum": "Museo de la Bruma",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:56:21.869Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:18:10.977Z"
   },
   {
    "id": "22_RESTORED_ORIGINAL",
@@ -104,9 +104,9 @@
    "observed": "institución en el mundo: Fundación Arenas (institución ficticia)",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7e0ace5",
-   "runId": "vs02_w3_mss6ck96",
-   "at": "2026-08-13T23:56:45.901Z"
+   "head": "7f55928",
+   "runId": "vs02_w3_mssbewwe",
+   "at": "2026-08-14T02:18:34.624Z"
   }
  ],
  "errors": []
