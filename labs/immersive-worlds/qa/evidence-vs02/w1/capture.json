@@ -1,8 +1,8 @@
 {
  "wave": "w1",
- "runId": "vs02_w1_mst4ah0e",
- "head": "c775204",
- "generatedAt": "2026-08-14T15:50:51.565Z",
+ "runId": "vs02_w1_mstkk9rt",
+ "head": "94f22e8",
+ "generatedAt": "2026-08-14T23:26:39.356Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
@@ -25,9 +25,9 @@
    "observed": "lienzo 600×480 · Todo el contenido necesario está listo · un solo estudio (1)",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:44:21.904Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:19:58.309Z"
   },
   {
    "id": "03_EXPERIENCE_TREE",
@@ -38,9 +38,9 @@
    "observed": "seleccionado space.gallery-a · lienzo 600×480",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:44:31.986Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:20:14.398Z"
   },
   {
    "id": "08_ARTWORK_SELECTED",
@@ -51,9 +51,9 @@
    "observed": "seleccionado entity.artwork.division-tercera",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:44:37.290Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:20:22.000Z"
   },
   {
    "id": "04_INSTITUTION_EDIT",
@@ -64,9 +64,9 @@
    "observed": "sin guardar: true · Todo el contenido necesario está listo",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:44:47.660Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:20:39.121Z"
   },
   {
    "id": "25_NARROW_VIEW",
@@ -77,9 +77,9 @@
    "observed": "lienzo 420×275 · desbordamiento false",
    "viewport": "420×860",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:45:10.034Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:21:07.063Z"
   },
   {
    "id": "01_VS01_BASELINE",
@@ -90,9 +90,9 @@
    "observed": "editor superpuesto sobre la sala",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "c775204",
-   "runId": "vs02_w1_mst4ah0e",
-   "at": "2026-08-14T15:50:51.546Z"
+   "head": "94f22e8",
+   "runId": "vs02_w1_mstkk9rt",
+   "at": "2026-08-14T23:26:39.336Z"
   }
  ],
  "errors": []
