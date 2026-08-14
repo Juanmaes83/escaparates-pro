@@ -383,12 +383,28 @@ h2 {
 /* == readiness ============================================================= */
 
 .st-val h2 { padding: 0; }
-.st-gauge { border: 1px solid var(--st-line); border-radius: 4px; padding: 13px; margin-bottom: 16px; }
-.st-gauge b { display: block; font: 400 26px/1 var(--st-serif); margin-bottom: 5px; }
+.st-gauge {
+  display: grid; grid-template-columns: 64px 1fr; align-items: center; gap: 13px;
+  border: 1px solid var(--st-line); border-radius: 4px; padding: 13px; margin-bottom: 16px;
+}
 .st-gauge i { display: block; font-style: normal; font-size: 11px; line-height: 1.45; color: var(--st-dim); }
-.st-gauge.is-ok b { color: var(--st-ok); }
-.st-gauge.is-busy b { color: var(--st-warn); }
-.st-gauge.is-bad b { color: var(--st-bad); }
+.st-ring { width: 64px; height: 64px; display: block; }
+.st-ring-track { fill: none; stroke: var(--st-line); stroke-width: 5; }
+/* The arc that is missing is the part of the answer a number cannot give. */
+.st-ring-fill {
+  fill: none; stroke-width: 5; stroke-linecap: round;
+  transition: stroke-dasharray 0.4s ease;
+}
+.st-ring-num {
+  font: 400 15px/1 var(--st-serif); fill: var(--st-ink);
+  text-anchor: middle; dominant-baseline: central;
+}
+.st-gauge.is-ok .st-ring-fill { stroke: var(--st-ok); }
+.st-gauge.is-busy .st-ring-fill { stroke: var(--st-warn); }
+.st-gauge.is-bad .st-ring-fill { stroke: var(--st-bad); }
+.st-gauge.is-ok .st-ring-num { fill: var(--st-ok); }
+.st-gauge.is-busy .st-ring-num { fill: var(--st-warn); }
+.st-gauge.is-bad .st-ring-num { fill: var(--st-bad); }
 
 /* What is complete, by domain. One percentage is a score; this is a to-do list. */
 .st-domains { list-style: none; margin: 0 0 16px; padding: 0; }
@@ -396,7 +412,16 @@ h2 {
   display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
   padding: 6px 0; border-bottom: 1px solid var(--st-line); font-size: 11.5px;
 }
-.st-domains li span { color: var(--st-dim); }
+.st-domains li span {
+  color: var(--st-dim); display: flex; align-items: center; gap: 8px;
+}
+.st-domains li span::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--st-faint); flex: 0 0 auto;
+}
+.st-domains li.is-ok span::before { background: var(--st-ok); }
+.st-domains li.is-warn span::before { background: var(--st-warn); }
+.st-domains li.is-bad span::before { background: var(--st-bad); }
 .st-domains li i { font-style: normal; font-size: 10.5px; color: var(--st-faint); }
 .st-domains li.is-ok i { color: var(--st-ok); }
 .st-domains li.is-warn i { color: var(--st-warn); }

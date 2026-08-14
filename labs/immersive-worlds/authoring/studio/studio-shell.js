@@ -123,6 +123,32 @@ const ICON = Object.freeze({
 });
 
 /**
+ * Readiness, drawn as a dial rather than stated as a number.
+ *
+ * A percentage set in large type is a fact; the reference's ring is an
+ * instrument, and the difference is that an instrument shows the remainder. "84%"
+ * tells you where you are, but the unfilled arc tells you how much is left
+ * without arithmetic, which is the question an author actually has.
+ *
+ * The arc is the real figure — the same one the column already computed — and
+ * takes its colour from the project's state, which is one of the three
+ * exceptions house art direction allows.
+ */
+function ring(pct) {
+  const r = 26;
+  const c = 2 * Math.PI * r;
+  const filled = (Math.max(0, Math.min(100, pct)) / 100) * c;
+  return `
+    <svg class="st-ring" viewBox="0 0 64 64" role="img" aria-label="${pct}% del contenido necesario">
+      <circle cx="32" cy="32" r="${r}" class="st-ring-track"/>
+      <circle cx="32" cy="32" r="${r}" class="st-ring-fill"
+        stroke-dasharray="${filled.toFixed(1)} ${(c - filled).toFixed(1)}"
+        transform="rotate(-90 32 32)"/>
+      <text x="32" y="32" class="st-ring-num">${pct}%</text>
+    </svg>`;
+}
+
+/**
  * The Authoring Workspaces, as the system blueprint names them.
  *
  * These five are the product's spine, not a filter: the blueprint draws them as
@@ -707,7 +733,7 @@ export class StudioShell {
       <aside class="st-val" aria-label="Estado del proyecto">
         <h2>Proyecto</h2>
         <div class="st-gauge is-${tone}">
-          <b>${pct}%</b>
+          ${ring(pct)}
           <i>${esc(r.headline)}</i>
         </div>
         <ul class="st-domains">
