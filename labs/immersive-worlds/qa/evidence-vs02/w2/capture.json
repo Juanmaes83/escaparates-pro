@@ -1,8 +1,8 @@
 {
  "wave": "w2",
- "runId": "vs02_w2_mssbcrnd",
- "head": "7f55928",
- "generatedAt": "2026-08-14T02:15:39.642Z",
+ "runId": "vs02_w2_mssmmikt",
+ "head": "e7a0a1d",
+ "generatedAt": "2026-08-14T07:31:21.984Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
@@ -12,116 +12,116 @@
  ],
  "transitions": [
   {
-   "id": "a1_mssbdg7k",
+   "id": "a1_mssmn9nr",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "SELECTED",
-   "at": 1786673671761
+   "at": 1786692605607
   },
   {
-   "id": "a1_mssbdg7k",
+   "id": "a1_mssmn9nr",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "LOADING",
-   "at": 1786673671766
+   "at": 1786692605613
   },
   {
-   "id": "a1_mssbdg7k",
+   "id": "a1_mssmn9nr",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "READY",
-   "at": 1786673672753
+   "at": 1786692606713
   },
   {
-   "id": "a2_mssbdyki",
+   "id": "a2_mssmnu6v",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786673695554
+   "at": 1786692632216
   },
   {
-   "id": "a2_mssbdyki",
+   "id": "a2_mssmnu6v",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786673695559
+   "at": 1786692632221
   },
   {
-   "id": "a2_mssbdyki",
+   "id": "a2_mssmnu6v",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786673696107
+   "at": 1786692632861
   },
   {
-   "id": "a3_mssbe8dd",
+   "id": "a3_mssmo596",
    "kind": "video",
    "name": "qa-video.webm",
    "state": "SELECTED",
-   "at": 1786673708257
+   "at": 1786692646555
   },
   {
-   "id": "a3_mssbe8dd",
+   "id": "a3_mssmo596",
    "kind": "video",
    "name": "qa-video.webm",
    "state": "LOADING",
-   "at": 1786673708262
+   "at": 1786692646560
   },
   {
-   "id": "a3_mssbe8dd",
+   "id": "a3_mssmo596",
    "kind": "video",
    "name": "qa-video.webm",
    "state": "DECODED",
-   "at": 1786673709467
+   "at": 1786692647873
   },
   {
-   "id": "a3_mssbe8dd",
+   "id": "a3_mssmo596",
    "kind": "video",
    "name": "qa-video.webm",
    "state": "READY",
-   "at": 1786673709472
+   "at": 1786692647879
   },
   {
-   "id": "a4_mssbek7p",
+   "id": "a4_mssmoj2x",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "SELECTED",
-   "at": 1786673723606
+   "at": 1786692664473
   },
   {
-   "id": "a4_mssbek7p",
+   "id": "a4_mssmoj2x",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "ERROR",
-   "at": 1786673723610
+   "at": 1786692664478
   },
   {
-   "id": "a4_mssbek7p",
+   "id": "a4_mssmoj2x",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "RELEASED",
-   "at": 1786673733628
+   "at": 1786692675265
   },
   {
-   "id": "a5_mssbery8",
+   "id": "a5_mssmoreu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786673733633
+   "at": 1786692675271
   },
   {
-   "id": "a5_mssbery8",
+   "id": "a5_mssmoreu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786673733637
+   "at": 1786692675276
   },
   {
-   "id": "a5_mssbery8",
+   "id": "a5_mssmoreu",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786673734241
+   "at": 1786692676620
   }
  ],
  "routing": [],
@@ -135,9 +135,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:14:35.214Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:08.916Z"
   },
   {
    "id": "07_LOGO_READY",
@@ -148,9 +148,9 @@
    "observed": "\n            Lista · 512×160 · 9 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:14:39.532Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:13.718Z"
   },
   {
    "id": "09_ARTWORK_EDIT",
@@ -161,9 +161,9 @@
    "observed": "entity.artwork.horizonte-interrumpido",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:14:53.715Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:30.171Z"
   },
   {
    "id": "10_IMAGE_SELECTED",
@@ -174,9 +174,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:14:57.485Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:34.328Z"
   },
   {
    "id": "12_IMAGE_READY",
@@ -187,9 +187,9 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:14:59.801Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:36.909Z"
   },
   {
    "id": "13_VIDEO_SELECTED",
@@ -200,9 +200,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:15:09.907Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:48.343Z"
   },
   {
    "id": "14_VIDEO_READY",
@@ -213,9 +213,9 @@
    "observed": "\n            Listo · 960×540 · 2.0 s · 129 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:15:11.675Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:30:50.212Z"
   },
   {
    "id": "23_INVALID_MEDIA_ERROR",
@@ -226,9 +226,9 @@
    "observed": "\n            No se pudo usar · Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:15:29.317Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:31:10.606Z"
   },
   {
    "id": "24_RECOVERY",
@@ -239,9 +239,9 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "7f55928",
-   "runId": "vs02_w2_mssbcrnd",
-   "at": "2026-08-14T02:15:39.031Z"
+   "head": "e7a0a1d",
+   "runId": "vs02_w2_mssmmikt",
+   "at": "2026-08-14T07:31:21.331Z"
   }
  ],
  "errors": []

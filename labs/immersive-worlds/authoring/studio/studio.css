@@ -381,6 +381,50 @@ h2 {
 .st-msg { margin: 12px 0 0; font-size: 11px; line-height: 1.5; color: var(--st-dim); }
 .st-msg.is-bad { color: var(--st-bad); }
 
+/* == wide: label beside field, the way the approved reference sets a form ===
+   Stacked rows put four fields above the fold; the reference fits roughly
+   twenty. Density is not decoration in an authoring tool — it is how much of
+   the record an editor can hold in their head at once. */
+
+@media (min-width: 1241px) {
+  .st-f {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    align-items: start;
+    gap: 2px 12px;
+    margin: 0 0 9px;
+  }
+  .st-l {
+    grid-column: 1;
+    margin: 0;
+    padding-top: 9px;
+    flex-wrap: wrap;
+    gap: 3px;
+    line-height: 1.25;
+  }
+  .st-h { grid-column: 2; margin: 0 0 3px; }
+  #st .st-f input:not([type=file]),
+  #st .st-f textarea,
+  #st .st-f select { grid-column: 2; }
+  .st-gb { padding: 0 16px 14px; }
+  .st-facts { grid-template-columns: 88px 1fr; gap: 3px 12px; }
+  .st-slothead { display: grid; grid-template-columns: 88px 1fr; gap: 2px 12px; margin-bottom: 8px; }
+  .st-slothead .st-l { padding-top: 0; }
+
+  /* In an 88 px column the words "del registro" wrap onto three lines and make
+     every label ragged. The signal survives as a mark: the field's own ink
+     already separates an inherited value from one the author typed, and from an
+     empty one. */
+  .st-inh {
+    width: 5px; height: 5px; padding: 0; border-radius: 50%;
+    font-size: 0; line-height: 0; overflow: hidden;
+    border-color: var(--st-line-strong); background: var(--st-line-strong);
+    flex: 0 0 auto; align-self: center;
+  }
+  #st .st-f [data-state="inherited"] { border-left: 2px solid var(--st-line-strong); }
+  #st .st-f [data-state="own"] { border-left: 2px solid var(--st-ok); }
+}
+
 /* == narrower: the validation column folds into the editor ================= */
 
 @media (max-width: 1240px) {
