@@ -109,6 +109,7 @@ const html = `<title>Dos bloqueos de autoría</title>
     font-family: ui-sans-serif, system-ui, sans-serif; font-size: .78rem;
   }
   .status span { border: 1px solid var(--rule); padding: .35rem .7rem; border-radius: 2px; background: var(--card); }
+  .status .ok { border-color: var(--good); color: var(--good); }
   blockquote {
     margin: 1.2rem 0; padding: .6rem 0 .6rem 1.2rem;
     border-left: 2px solid var(--rule); color: var(--muted); font-style: italic;
@@ -125,10 +126,17 @@ const html = `<title>Dos bloqueos de autoría</title>
   </p>
 
   <div class="status">
-    <span>Verificación humana: <b>PENDIENTE</b></span>
-    <span>Aprobación de producto: <b>PENDIENTE</b></span>
+    <span class="ok">Verificación de Juanma: <b>PASA</b></span>
+    <span>Aprobación global del producto: <b>PENDIENTE</b></span>
     <span>Sin merge · sin master · sin promoción</span>
   </div>
+  <p>
+    Juanma lo ha probado en su propio navegador contra el artefacto publicado:
+    edición de texto de institución, autoría de imagen en obra, autoría de vídeo
+    en obra, subida de vídeo, guardar/aplicar, y vídeo visible y reproduciéndose
+    en el Museo. El bloqueo humano que motivó esta investigación queda
+    <b>cerrado</b>. La aprobación global de Museum Authoring sigue pendiente.
+  </p>
 
   <h2>El texto: la cámara se comía las teclas</h2>
   <p>
