@@ -354,13 +354,32 @@ async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
         ? world.startSpaceId
         : entity?.spaceId
         || ((world.spaces || []).some((s) => s.id === nodeId) ? nodeId : null);
-      if (!spaceId || spaceId === runtime.state.activeSpaceId) return;
-      const portal = (world.portals || []).find(
-        (p) => p.fromSpaceId === runtime.state.activeSpaceId && p.toSpaceId === spaceId
-      );
-      // Only a doorway the world actually has. The studio does not invent
-      // teleports, and a room two doors away simply is not revealed in one step.
-      if (portal) { try { await runtime.traversePortal(portal.id, { source: 'STUDIO' }); } catch { /* */ } }
+      if (!spaceId) return;
+      if (spaceId !== runtime.state.activeSpaceId) {
+        const portal = (world.portals || []).find(
+          (p) => p.fromSpaceId === runtime.state.activeSpaceId && p.toSpaceId === spaceId
+        );
+        // Only a doorway the world actually has. The studio does not invent
+        // teleports, and a room two doors away simply is not revealed in one step.
+        if (portal) { try { await runtime.traversePortal(portal.id, { source: 'STUDIO' }); } catch { /* */ } }
+      }
+
+      // Walking to the right room was never the whole promise. An author editing
+      // "División tercera" was shown Galería A from across the floor, with five
+      // pieces in it and no way to tell which one they were editing — the tree,
+      // the editor and the filmstrip all named the work while the one surface
+      // that could have pointed at it showed a room.
+      //
+      // So the piece itself is framed, using the runtime's own focus rather than
+      // a pose invented here: the studio still exposes no camera controls, and
+      // what an author sees is what the product already does for a visitor
+      // inspecting that work. Selecting a room or the institution releases the
+      // focus again, because a room is not a subject.
+      if (entity) {
+        try { runtime.focusEntity(nodeId, {}, { source: 'STUDIO' }); } catch { /* stays in the room */ }
+      } else {
+        try { runtime.releaseFocus(); } catch { /* nothing was focused */ }
+      }
     }
   });
 

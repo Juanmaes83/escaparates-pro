@@ -1,12 +1,15 @@
 {
  "wave": "w1",
- "runId": "vs02_w1_mssmce8t",
- "head": "e7a0a1d",
- "generatedAt": "2026-08-14T07:28:42.743Z",
+ "runId": "vs02_w1_mssxit29",
+ "head": "62eca1b",
+ "generatedAt": "2026-08-14T12:42:11.969Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
+  "qa-broken.mp4",
   "qa-logo.png",
+  "qa-motion.mp4",
+  "qa-motion.webm",
   "qa-not-media.txt",
   "qa-video.webm"
  ],
@@ -22,9 +25,9 @@
    "observed": "lienzo 656×525 · Todo el contenido necesario está listo · un solo estudio (1)",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:22:05.525Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:35:00.962Z"
   },
   {
    "id": "03_EXPERIENCE_TREE",
@@ -35,9 +38,9 @@
    "observed": "seleccionado space.gallery-a · lienzo 656×524",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:22:20.497Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:35:15.080Z"
   },
   {
    "id": "08_ARTWORK_SELECTED",
@@ -48,9 +51,9 @@
    "observed": "seleccionado entity.artwork.division-tercera",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:22:27.259Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:35:21.584Z"
   },
   {
    "id": "04_INSTITUTION_EDIT",
@@ -61,9 +64,9 @@
    "observed": "sin guardar: true · Todo el contenido necesario está listo",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:22:42.765Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:35:35.019Z"
   },
   {
    "id": "25_NARROW_VIEW",
@@ -74,9 +77,9 @@
    "observed": "lienzo 420×275 · desbordamiento false",
    "viewport": "420×860",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:23:15.203Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:36:18.378Z"
   },
   {
    "id": "01_VS01_BASELINE",
@@ -87,9 +90,9 @@
    "observed": "editor superpuesto sobre la sala",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w1_mssmce8t",
-   "at": "2026-08-14T07:28:42.727Z"
+   "head": "62eca1b",
+   "runId": "vs02_w1_mssxit29",
+   "at": "2026-08-14T12:42:11.943Z"
   }
  ],
  "errors": []

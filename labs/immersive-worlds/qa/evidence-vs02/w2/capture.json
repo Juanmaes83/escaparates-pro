@@ -1,127 +1,165 @@
 {
  "wave": "w2",
- "runId": "vs02_w2_mssmmikt",
- "head": "e7a0a1d",
- "generatedAt": "2026-08-14T07:31:21.984Z",
+ "runId": "vs02_w2_mssxt0fa",
+ "head": "40808af",
+ "generatedAt": "2026-08-14T12:44:22.152Z",
  "fixtures": [
   "README.md",
   "qa-artwork.jpg",
+  "qa-broken.mp4",
   "qa-logo.png",
+  "qa-motion.mp4",
+  "qa-motion.webm",
   "qa-not-media.txt",
   "qa-video.webm"
  ],
  "transitions": [
   {
-   "id": "a1_mssmn9nr",
+   "id": "a1_mssxtp3a",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "SELECTED",
-   "at": 1786692605607
+   "at": 1786711381319
   },
   {
-   "id": "a1_mssmn9nr",
+   "id": "a1_mssxtp3a",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "LOADING",
-   "at": 1786692605613
+   "at": 1786711381323
   },
   {
-   "id": "a1_mssmn9nr",
+   "id": "a1_mssxtp3a",
    "kind": "image",
    "name": "qa-logo.png",
    "state": "READY",
-   "at": 1786692606713
+   "at": 1786711382296
   },
   {
-   "id": "a2_mssmnu6v",
+   "id": "a2_mssxu72j",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786692632216
+   "at": 1786711404620
   },
   {
-   "id": "a2_mssmnu6v",
+   "id": "a2_mssxu72j",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786692632221
+   "at": 1786711404626
   },
   {
-   "id": "a2_mssmnu6v",
+   "id": "a2_mssxu72j",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786692632861
+   "at": 1786711405157
   },
   {
-   "id": "a3_mssmo596",
+   "id": "a2_mssxu72j",
+   "kind": "image",
+   "name": "qa-artwork.jpg",
+   "state": "RELEASED",
+   "at": 1786711417940
+  },
+  {
+   "id": "a3_mssxuhcp",
    "kind": "video",
-   "name": "qa-video.webm",
+   "name": "qa-motion.mp4",
    "state": "SELECTED",
-   "at": 1786692646555
+   "at": 1786711417945
   },
   {
-   "id": "a3_mssmo596",
+   "id": "a3_mssxuhcp",
    "kind": "video",
-   "name": "qa-video.webm",
+   "name": "qa-motion.mp4",
    "state": "LOADING",
-   "at": 1786692646560
+   "at": 1786711417952
   },
   {
-   "id": "a3_mssmo596",
+   "id": "a3_mssxuhcp",
    "kind": "video",
-   "name": "qa-video.webm",
+   "name": "qa-motion.mp4",
    "state": "DECODED",
-   "at": 1786692647873
+   "at": 1786711419335
   },
   {
-   "id": "a3_mssmo596",
+   "id": "a3_mssxuhcp",
    "kind": "video",
-   "name": "qa-video.webm",
+   "name": "qa-motion.mp4",
    "state": "READY",
-   "at": 1786692647879
+   "at": 1786711419341
   },
   {
-   "id": "a4_mssmoj2x",
+   "id": "a4_mssxuqb0",
+   "kind": "video",
+   "name": "qa-motion.webm",
+   "state": "SELECTED",
+   "at": 1786711429548
+  },
+  {
+   "id": "a4_mssxuqb0",
+   "kind": "video",
+   "name": "qa-motion.webm",
+   "state": "LOADING",
+   "at": 1786711429552
+  },
+  {
+   "id": "a4_mssxuqb0",
+   "kind": "video",
+   "name": "qa-motion.webm",
+   "state": "DECODED",
+   "at": 1786711430663
+  },
+  {
+   "id": "a4_mssxuqb0",
+   "kind": "video",
+   "name": "qa-motion.webm",
+   "state": "READY",
+   "at": 1786711430668
+  },
+  {
+   "id": "a5_mssxv1ip",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "SELECTED",
-   "at": 1786692664473
+   "at": 1786711444081
   },
   {
-   "id": "a4_mssmoj2x",
+   "id": "a5_mssxv1ip",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "ERROR",
-   "at": 1786692664478
+   "at": 1786711444086
   },
   {
-   "id": "a4_mssmoj2x",
+   "id": "a5_mssxv1ip",
    "kind": "image",
    "name": "qa-not-media.txt",
    "state": "RELEASED",
-   "at": 1786692675265
+   "at": 1786711453786
   },
   {
-   "id": "a5_mssmoreu",
+   "id": "a6_mssxv90f",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "SELECTED",
-   "at": 1786692675271
+   "at": 1786711453791
   },
   {
-   "id": "a5_mssmoreu",
+   "id": "a6_mssxv90f",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "LOADING",
-   "at": 1786692675276
+   "at": 1786711453797
   },
   {
-   "id": "a5_mssmoreu",
+   "id": "a6_mssxv90f",
    "kind": "image",
    "name": "qa-artwork.jpg",
    "state": "READY",
-   "at": 1786692676620
+   "at": 1786711454988
   }
  ],
  "routing": [],
@@ -135,9 +173,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:08.916Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:04.362Z"
   },
   {
    "id": "07_LOGO_READY",
@@ -148,9 +186,9 @@
    "observed": "\n            Lista · 512×160 · 9 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:13.718Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:08.648Z"
   },
   {
    "id": "09_ARTWORK_EDIT",
@@ -161,9 +199,9 @@
    "observed": "entity.artwork.horizonte-interrumpido",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:30.171Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:22.823Z"
   },
   {
    "id": "10_IMAGE_SELECTED",
@@ -174,9 +212,9 @@
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:34.328Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:26.495Z"
   },
   {
    "id": "12_IMAGE_READY",
@@ -187,35 +225,48 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:36.909Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:28.949Z"
   },
   {
    "id": "13_VIDEO_SELECTED",
    "file": "13_VIDEO_SELECTED.png",
-   "state": "Vídeo recién elegido en la proyección",
-   "action": "Elegir qa-video.webm en la pieza «Cuaderno de luz»",
-   "expected": "La ranura pertenece a la proyección, no a un lienzo enmarcado",
+   "state": "Una obra ofrece imagen y vídeo",
+   "action": "Abrir «Marea de septiembre» y mirar el grupo Medios",
+   "expected": "Dos ranuras nombradas por su medio, y una nota diciendo que son alternativas",
    "observed": "Se conserva el medio original de la pieza.",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:48.343Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:36.133Z"
   },
   {
    "id": "14_VIDEO_READY",
    "file": "14_VIDEO_READY.png",
-   "state": "Vídeo listo",
-   "action": "Esperar a decodificar y poder dibujar un fotograma",
-   "expected": "Cadena con paso DECODIFICADO propio del vídeo, y duración real",
-   "observed": "\n            Listo · 960×540 · 2.0 s · 129 kB\n          ",
+   "state": "Vídeo listo en una obra enmarcada",
+   "action": "Elegir qa-motion.mp4 y esperar a que pueda dibujar un fotograma",
+   "expected": "Cadena con paso DECODIFICADO propio del vídeo, duración real, y la imagen retirada",
+   "observed": "\n            Listo · 640×360 · 4.0 s · 73 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:30:50.212Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:41.320Z"
+  },
+  {
+   "id": "14b_PROJECTION_VIDEO_READY",
+   "file": "14b_PROJECTION_VIDEO_READY.png",
+   "state": "Vídeo listo en la proyección",
+   "action": "Elegir qa-motion.webm en la pieza «Cuaderno de luz»",
+   "expected": "La proyección admite vídeo y también imagen fija, cada una con su nombre",
+   "observed": "\n            Listo · 640×360 · 4.0 s · 82 kB\n          ",
+   "viewport": "1440×900",
+   "museum": "Fundación Arenas",
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:43:52.003Z"
   },
   {
    "id": "23_INVALID_MEDIA_ERROR",
@@ -226,9 +277,9 @@
    "observed": "\n            No se pudo usar · Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:31:10.606Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:44:09.505Z"
   },
   {
    "id": "24_RECOVERY",
@@ -239,9 +290,9 @@
    "observed": "\n            Lista · 1400×960 · 37 kB\n          ",
    "viewport": "1440×900",
    "museum": "Fundación Arenas",
-   "head": "e7a0a1d",
-   "runId": "vs02_w2_mssmmikt",
-   "at": "2026-08-14T07:31:21.331Z"
+   "head": "40808af",
+   "runId": "vs02_w2_mssxt0fa",
+   "at": "2026-08-14T12:44:21.053Z"
   }
  ],
  "errors": []

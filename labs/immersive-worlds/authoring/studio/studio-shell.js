@@ -582,8 +582,31 @@ export class StudioShell {
             ${esc(d.label)}${d.detail ? ` · ${esc(d.detail)}` : ''}
           </p>
           ${bad ? `<button class="st-b st-b--small" data-retry="${slot}">Elegir otro archivo</button>` : ''}
-        ` : `<p class="st-slotstate">Se conserva el medio original de la pieza.</p>`}
+        ` : `<p class="st-slotstate">${esc(this._emptySlotNote(kind, slot))}</p>`}
       </div>`;
+  }
+
+  /**
+   * What an empty slot says about itself.
+   *
+   * Both slots used to say "se conserva el medio original de la pieza", which
+   * is true of the one whose medium the piece actually has and a small lie
+   * under the other: a framed painting's original medium is a photograph, so
+   * printing that sentence under «Vídeo de la obra» told the author a video was
+   * being preserved when none had ever existed. Two identical sentences in
+   * adjacent cards also read as a template that had not been finished.
+   */
+  _emptySlotNote(kind, slot) {
+    // The institution's mark is not a piece and has no original to preserve.
+    if (slot === MEDIA_SLOT.INSTITUTION_LOGO) {
+      return 'Sin logotipo. La cartela de entrada mostrará solo el nombre.';
+    }
+    const inherited = this.selectedEntity?.content?.media;
+    const inheritedKind = inherited?.kind === 'VIDEO' ? 'video' : inherited?.src ? 'image' : null;
+    if (inheritedKind === kind) return 'Se conserva el medio original de la pieza.';
+    return kind === 'video'
+      ? 'Sin vídeo. Añade uno para que la pieza se muestre en movimiento.'
+      : 'Sin imagen. Añade una para que la pieza se muestre como fotografía.';
   }
 
   /* == readiness column ===================================================== */
