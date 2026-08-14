@@ -31,6 +31,34 @@ const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/webm'];
 
 /**
+ * The browser fills `File.type` from the operating system, and the operating
+ * system does not always know. On Windows the MIME for an extension comes from
+ * the registry, and `.webm` and `.mp4` frequently have no entry — the file
+ * arrives with `type: ''`. Judging only by MIME told an author their perfectly
+ * good video was "not a video", which is why images worked and video did not:
+ * `.jpg` and `.png` are registered on essentially every machine.
+ *
+ * So the extension is consulted when the MIME is missing or unhelpful. This does
+ * not make acceptance loose — the decoder is still the final judge, and a file
+ * that cannot produce a frame still fails, just with a truthful reason.
+ */
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'm4v'];
+
+function looksLike(file, kind) {
+  const types = kind === 'video' ? VIDEO_TYPES : IMAGE_TYPES;
+  const extensions = kind === 'video' ? VIDEO_EXTENSIONS : IMAGE_EXTENSIONS;
+  const type = String(file?.type || '').toLowerCase();
+  if (types.includes(type)) return true;
+  // A type that names the right family but a codec we did not list is still
+  // worth handing to the decoder rather than refusing on a string comparison.
+  if (type.startsWith(`${kind}/`)) return true;
+  if (type) return false;
+  const extension = String(file?.name || '').split('.').pop().toLowerCase();
+  return extensions.includes(extension);
+}
+
+/**
  * What each state is called on screen. Internal enum names are for the code;
  * an author reads Spanish, and reads about their file rather than about our
  * state machine.
@@ -112,7 +140,6 @@ export class MediaVault {
    */
   async accept(file, { kind = 'image' } = {}) {
     const id = `a${(this._n += 1)}_${Date.now().toString(36)}`;
-    const allowed = kind === 'video' ? VIDEO_TYPES : IMAGE_TYPES;
     const asset = {
       id,
       reference: `authored:${id}`,
@@ -131,7 +158,7 @@ export class MediaVault {
     this.onChange(asset);
 
     if (!file) return this._fail(asset, 'No se ha seleccionado ningún archivo.');
-    if (!allowed.includes(file.type)) {
+    if (!looksLike(file, kind)) {
       const wanted = kind === 'video' ? 'un vídeo MP4 o WebM' : 'una imagen JPG, PNG o WebP';
       return this._fail(asset, `Ese archivo no es ${wanted}. Elige otro y vuelve a intentarlo.`);
     }

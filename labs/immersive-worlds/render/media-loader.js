@@ -79,7 +79,7 @@ export class MediaLoader {
     if (this._inflight.has(url)) return this._inflight.get(url);
 
     const started = performance.now();
-    const promise = (media.kind === 'VIDEO' ? this._loadVideo(url, media) : this._loadImage(url))
+    const promise = (media.kind === 'VIDEO' ? this._loadVideo(url, media, context) : this._loadImage(url))
       .then((result) => {
         this._cache.set(url, { ...result, refs: 1 });
         this._record({
@@ -134,7 +134,7 @@ export class MediaLoader {
     });
   }
 
-  _loadVideo(url, media) {
+  _loadVideo(url, media, context = {}) {
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       video.crossOrigin = 'anonymous';
@@ -155,9 +155,19 @@ export class MediaLoader {
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.generateMipmaps = false;
-        video.play().catch(() => {
-          /* autoplay may still be refused; the poster frame remains visible */
-        });
+        video.play().then(
+          () => { texture.userData.playing = true; },
+          (error) => {
+            // Autoplay can still be refused — by a policy, by a frame without
+            // the permission, by a hostile tab. The frame stays visible, so the
+            // wall does not go black, but the refusal is recorded rather than
+            // swallowed: a projection that is frozen must not report success.
+            texture.userData.playing = false;
+            texture.userData.playError = error?.name || String(error);
+            this._record({ entityId: context.entityId ?? null, url, kind: media.kind,
+              ok: true, ms: 0, error: `autoplay refused: ${error?.name || error}` });
+          }
+        );
         resolve({ texture, aspect: video.videoWidth / video.videoHeight || media.aspect || 16 / 9, video });
       };
 
