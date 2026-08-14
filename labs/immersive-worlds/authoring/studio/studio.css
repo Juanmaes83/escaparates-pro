@@ -29,9 +29,10 @@
   --st-bad: #e08a80;
 
   --st-top: 56px;
-  --st-left: 236px;
-  --st-editor: 316px;
-  --st-val: 232px;
+  --st-rail: 178px;
+  --st-left: 214px;
+  --st-editor: 300px;
+  --st-val: 214px;
 }
 
 /* The Museum, docked — and letterboxed to the shape the visitor will actually
@@ -42,7 +43,7 @@
 body[data-studio="on"] #iw-stage,
 body[data-studio="on"] #iw-ui {
   top: var(--st-top);
-  left: var(--st-left);
+  left: calc(var(--st-rail) + var(--st-left));
   right: calc(var(--st-editor) + var(--st-val));
   bottom: auto;
   height: var(--st-canvas-h, 62vh);
@@ -54,7 +55,7 @@ body[data-studio="on"] #iw-ui {
 .st-film {
   position: fixed;
   top: calc(var(--st-top) + var(--st-canvas-h, 62vh));
-  left: var(--st-left);
+  left: calc(var(--st-rail) + var(--st-left));
   right: calc(var(--st-editor) + var(--st-val));
   bottom: 0;
   background: var(--st-ground);
@@ -180,7 +181,7 @@ body[data-studio="on"] .iw-topbar { display: none; }
 
 .st-body {
   display: grid;
-  grid-template-columns: var(--st-left) 1fr var(--st-editor) var(--st-val);
+  grid-template-columns: var(--st-rail) var(--st-left) 1fr var(--st-editor) var(--st-val);
   min-height: 0;
 }
 /* The Museum shows through. Positioned, so the live badge anchors to the preview
@@ -192,7 +193,43 @@ body[data-studio="on"] .iw-topbar { display: none; }
   overflow-y: auto;
   min-height: 0;
 }
-.st-rail { display: none; }           /* domains live above the tree, see .st-tree h2 */
+/* The workspace spine. Hairline marks, no fills, no accent colour: the rail
+   frames the art and must not compete with it. */
+.st-rail { border-right: 1px solid var(--st-line); padding: 16px 0 28px; }
+.st-rail h2 { padding: 0 14px; }
+.st-rail > ul { list-style: none; margin: 0; padding: 0; }
+.st-rail ul.st-areas { list-style: none; margin: 2px 0 10px; padding: 0 14px 0 44px; }
+.st-areas li {
+  font-size: 11.5px; line-height: 1.9; color: var(--st-dim);
+  letter-spacing: .01em;
+}
+.st-dom {
+  display: grid; grid-template-columns: 20px 1fr auto; align-items: start;
+  gap: 10px; width: 100%; padding: 8px 14px; border: 0; background: none;
+  text-align: left; color: var(--st-ink); cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.st-dom svg {
+  width: 20px; height: 20px; fill: none; stroke: currentColor;
+  stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round;
+  opacity: .72; margin-top: 1px;
+}
+.st-dom b { display: block; font-size: 13px; font-weight: 500; letter-spacing: .01em; }
+.st-dom i {
+  display: block; font-style: normal; font-size: 11px; line-height: 1.45;
+  color: var(--st-dim); margin-top: 1px;
+}
+.st-dom em {
+  font-style: normal; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--st-dim); border: 1px solid var(--st-line); border-radius: 2px;
+  padding: 1px 4px; white-space: nowrap;
+}
+.st-dom:hover:not(:disabled) { background: var(--st-raise); }
+.st-dom:hover:not(:disabled) svg { opacity: 1; }
+.st-dom.is-on { background: var(--st-raise); border-left-color: var(--st-ink); }
+.st-dom.is-on svg { opacity: 1; }
+.st-dom:disabled { cursor: default; }
+.st-dom:disabled b, .st-dom:disabled svg { opacity: .5; }
 .st-tree { border-right: 1px solid var(--st-line); padding: 16px 0 28px; }
 .st-ed { border-left: 1px solid var(--st-line); padding-bottom: 40px; }
 .st-val { border-left: 1px solid var(--st-line); padding: 16px 14px 28px; }
@@ -428,8 +465,12 @@ h2 {
 /* == narrower: the validation column folds into the editor ================= */
 
 @media (max-width: 1240px) {
-  :root { --st-left: 208px; --st-editor: 300px; --st-val: 0px; }
-  .st-body { grid-template-columns: var(--st-left) 1fr var(--st-editor); }
+  :root { --st-rail: 52px; --st-left: 208px; --st-editor: 300px; --st-val: 0px; }
+  .st-body { grid-template-columns: var(--st-rail) var(--st-left) 1fr var(--st-editor); }
+  /* The spine keeps its place but gives up its words: an icon column still says
+     where you are, and the preview does not pay for it. */
+  .st-rail h2, .st-dom span, .st-dom em, .st-areas { display: none; }
+  .st-dom { grid-template-columns: 20px; justify-items: center; padding: 10px 0; }
   .st-val {
     position: fixed; right: 0; bottom: 0; width: var(--st-editor);
     max-height: 46vh; border-top: 1px solid var(--st-line-strong); z-index: 3;
@@ -476,6 +517,25 @@ h2 {
   }
   .st-stage { display: none; }
   .st-film { display: none; }
+
+  /* Stacked, the spine would be five tall rows before the author reached
+     anything to edit. It becomes a strip that scrolls sideways instead, keeping
+     its words — there is room for them here, and an icon alone at the top of a
+     phone screen is a puzzle rather than a signpost. */
+  .st-rail { border-right: 0; border-bottom: 1px solid var(--st-line); padding: 10px 0; }
+  .st-rail h2 { display: none; }
+  .st-rail > ul {
+    display: flex; gap: 6px; overflow-x: auto; padding: 0 10px;
+    scrollbar-width: none;
+  }
+  .st-rail > ul::-webkit-scrollbar { display: none; }
+  .st-rail > ul > li { flex: 0 0 auto; }
+  .st-dom {
+    grid-template-columns: 18px auto; align-items: center; gap: 7px;
+    border: 1px solid var(--st-line); border-radius: 3px; padding: 7px 10px;
+  }
+  .st-dom.is-on { border-color: var(--st-line-strong); }
+  .st-dom i, .st-dom em, .st-areas { display: none; }
 
   /* Two strings the collapsed header used to drop, and they are the two the
      author most needs: where am I, and is my work saved. */

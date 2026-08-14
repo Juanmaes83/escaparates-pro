@@ -1565,3 +1565,98 @@ Approval must be explicit. A merged document without explicit product review mus
 ## Guiding statement
 
 > **Immersive Worlds is not a 3D website. It is a reusable system for building, exploring, connecting, directing, narrating and publishing interactive worlds — proven first through a small, complete Museum / Institutional world.**
+---
+
+# 36. Escaparates Pro — who authors, who reviews, who visits
+
+Added because the Authoring work kept meeting decisions this document could not
+settle. It records what Escaparates Pro is *for*, so that a later contributor
+does not have to infer it from the code and infer it differently.
+
+Escaparates Pro serves **two creator/business use cases** and **one final
+consumption context**. They are not three views of one screen; they are three
+different products' worth of intent, and conflating them is the failure mode
+this section exists to prevent.
+
+## 36.1 Studio / Authoring — internal professional production
+
+The Studio is a real professional production environment, not a demonstration
+UI. The house must be able to run its own client work through it:
+
+```text
+CREATE → PERSONALIZE → PREVIEW → VALIDATE → SAVE → EXPORT/CAPTURE → DELIVER
+```
+
+Every one of those verbs is a product surface, and the chain does not end at
+SAVE. A tool that can author but not deliver is half a tool.
+
+## 36.2 Studio / Authoring — paid self-service platform
+
+The same architecture must later support other people paying to use it:
+accounts, tiers, and capability gating by plan or role.
+
+Capabilities are named per capability, never per screen — the unit of gating is
+what someone may *do*, so that a plan can grant `artwork_image` while withholding
+`artwork_video` without either one needing its own copy of a panel:
+
+```text
+institution_branding   artwork_image      artwork_video
+projection_image       projection_video   custom_text
+advanced_layout        export_json        export_html
+export_png             export_video       publish_hosted
+custom_domain          ai_guide           analytics
+```
+
+**Billing, accounts and plan logic are out of scope for now.** What is in scope
+is not foreclosing them: the five Authoring Workspaces and their sub-areas are
+the surface those capabilities attach to, which is one reason the workspace
+spine is part of the shell rather than a filter hidden in a column.
+
+## 36.3 Visitor experience — final consumption
+
+**The visitor never authors.** A visitor may navigate, explore, use Guided mode,
+Focus and Browse, interact, and in future use accessibility, language and AI
+guide features.
+
+A visitor must never see upload controls, authoring fields, project save,
+configuration, personalization, export tools, or publishing controls. Not
+disabled, not hidden behind a role check in the same panel — absent.
+
+## 36.4 The canonical separation
+
+```text
+STUDIO / AUTHORING  ≠  PREVIEW / REVIEW  ≠  VISITOR EXPERIENCE
+```
+
+All three run the **real Museum runtime**. That is not negotiable, and it is the
+reason `NO SECOND RENDERING TRUTH` (§9) is load-bearing here: the way to keep a
+preview honest is to make it the same engine, not a mock of it.
+
+### Open product debt — Author Preview vs Visitor Preview
+
+Framing the selected work in the Studio preview uses the runtime's own focus
+path, so the author sees the visitor's presentation of that work — caption,
+paging, "volver a la sala". That is currently *desirable*: it is live proof that
+edited metadata reaches the wall.
+
+It is also not yet the finished idea. The long-term UX should distinguish an
+**Author Preview** from a **Visitor Experience Preview**, both on the real
+runtime, differing in chrome rather than in rendering. Recorded here as debt so
+it is not rediscovered as a bug.
+
+## 36.5 Output / Publish — future layer
+
+`EXPORTAR PROYECTO` is the first step of an Output layer, not the whole of it.
+Decisions taken now must stay compatible with:
+
+| Layer | Deliverable |
+|---|---|
+| Project / config | JSON |
+| Experience | HTML / standalone package |
+| Visual | PNG, screenshots, contact sheets |
+| Motion | Video walkthrough / presentation output |
+| Publish | Hosted, client review, production experience |
+
+**Export is not visitor mode.** Leaving the Studio to look at the experience is
+not the same act as producing an artefact for a client, and the two must not
+share a button.

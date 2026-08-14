@@ -105,12 +105,69 @@ function humanRef(node, position) {
 const esc = (v) => String(v ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 /** The five domains of the blueprint. VS02 implements the two it can honour. */
+/**
+ * Hairline marks, drawn rather than fetched — the page must stay one file, and
+ * an icon font would be a second rendering truth for glyphs.
+ *
+ * Monochrome and stroked, never filled with colour: house art direction gives
+ * the only saturated colour in the room to the art on the walls, so the rail
+ * that frames the art cannot compete with it. The approved reference paints its
+ * chrome gold throughout; that is the one place this deliberately diverges.
+ */
+const ICON = Object.freeze({
+  build: '<path d="M3 7.5 9 4l6 3.5V14L9 17.5 3 14Z"/><path d="M3 7.5 9 11l6-3.5M9 11v6.5"/>',
+  content: '<path d="M3 4.5h5.2c.99 0 1.8.81 1.8 1.8V17a2 2 0 0 0-2-1.6H3Z"/><path d="M17 4.5h-5.2c-.99 0-1.8.81-1.8 1.8V17a2 2 0 0 1 2-1.6H17Z"/>',
+  experience: '<circle cx="10" cy="10" r="2.4"/><path d="M10 3v2.2M10 14.8V17M3 10h2.2M14.8 10H17M5.05 5.05l1.55 1.55M13.4 13.4l1.55 1.55M14.95 5.05 13.4 6.6M6.6 13.4l-1.55 1.55"/>',
+  visitor: '<circle cx="10" cy="6.4" r="2.6"/><path d="M4.8 16.4a5.2 5.2 0 0 1 10.4 0"/>',
+  publish: '<path d="M10 14.5V4.2"/><path d="m6.3 7.9 3.7-3.7 3.7 3.7"/><path d="M4.5 15.8h11"/>'
+});
+
+/**
+ * The Authoring Workspaces, as the system blueprint names them.
+ *
+ * These five are the product's spine, not a filter: the blueprint draws them as
+ * the domains the whole platform is organised by, and the sub-areas under each
+ * are where a future plan or role will attach its capabilities. Three of them
+ * are honest about not being built yet — hiding that would make the product
+ * look smaller than it is planned to be, and would leave nowhere for the
+ * capability gating to land.
+ */
 const DOMAINS = [
-  { id: 'build', label: 'Construir', hint: 'Institución, exposición, salas y piezas', ready: true },
-  { id: 'content', label: 'Contenido', hint: 'Cartelas, medios e interpretación', ready: true },
-  { id: 'experience', label: 'Experiencia', hint: 'Luz, proyección, recorridos', ready: false },
-  { id: 'visitor', label: 'Visitante', hint: 'Información, accesibilidad, idiomas', ready: false },
-  { id: 'publish', label: 'Publicar', hint: 'Validación, derechos, publicación', ready: false }
+  {
+    id: 'build',
+    label: 'Construir',
+    hint: 'Institución, exposición, salas y piezas',
+    ready: true,
+    areas: ['Espacios y salas', 'Estructura de la exposición', 'Colección y piezas']
+  },
+  {
+    id: 'content',
+    label: 'Contenido',
+    hint: 'Cartelas, medios e interpretación',
+    ready: true,
+    areas: ['Datos de la obra', 'Cartelas', 'Interpretación curatorial', 'Medios']
+  },
+  {
+    id: 'experience',
+    label: 'Experiencia',
+    hint: 'Luz, proyección, recorridos',
+    ready: false,
+    areas: ['Iluminación', 'Proyección', 'Recorridos', 'Comportamientos', 'Audio']
+  },
+  {
+    id: 'visitor',
+    label: 'Visitante',
+    hint: 'Información, accesibilidad, idiomas',
+    ready: false,
+    areas: ['Información al visitante', 'Accesibilidad', 'Idiomas', 'Guía']
+  },
+  {
+    id: 'publish',
+    label: 'Publicar',
+    hint: 'Validación, derechos, publicación',
+    ready: false,
+    areas: ['Validación', 'Derechos y fuentes', 'Exportación', 'Publicación']
+  }
 ];
 
 export class StudioShell {
@@ -341,16 +398,38 @@ export class StudioShell {
       </header>`;
   }
 
+  /**
+   * The workspace spine.
+   *
+   * This existed as markup and was hidden by a stylesheet, with the domains
+   * demoted to a filter strip inside the validation column. The cost was that
+   * the product's own architecture — the five Authoring Workspaces the system
+   * blueprint is built around — was invisible in the thing an author navigates
+   * with. Beside the approved reference the shell read as one form next to a
+   * viewport, rather than as a platform whose scope you can see at a glance.
+   */
   _rail() {
     return `
       <nav class="st-rail" aria-label="Áreas de trabajo">
-        ${DOMAINS.map((d) => `
-          <button class="st-dom ${d.id === this.domain ? 'is-on' : ''} ${d.ready ? '' : 'is-later'}"
-            data-domain="${d.id}" ${d.ready ? '' : 'disabled'}>
-            <b>${esc(d.label)}</b>
-            <i>${esc(d.hint)}</i>
-            ${d.ready ? '' : '<em>Más adelante</em>'}
-          </button>`).join('')}
+        <h2>Áreas</h2>
+        <ul>
+          ${DOMAINS.map((d) => {
+    const on = d.id === this.domain;
+    return `
+            <li>
+              <button class="st-dom ${on ? 'is-on' : ''} ${d.ready ? '' : 'is-later'}"
+                data-domain="${d.id}" ${d.ready ? '' : 'disabled'}
+                aria-current="${on ? 'true' : 'false'}"
+                title="${esc(d.hint)}${d.ready ? '' : ' · en preparación'}">
+                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">${ICON[d.id]}</svg>
+                <span><b>${esc(d.label)}</b><i>${esc(d.hint)}</i></span>
+                ${d.ready ? '' : '<em>Pronto</em>'}
+              </button>
+              ${on && d.areas ? `<ul class="st-areas">${
+  d.areas.map((a) => `<li>${esc(a)}</li>`).join('')}</ul>` : ''}
+            </li>`;
+  }).join('')}
+        </ul>
       </nav>`;
   }
 
