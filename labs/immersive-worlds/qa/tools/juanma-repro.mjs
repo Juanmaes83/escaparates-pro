@@ -240,7 +240,7 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
   const slotState = await scope.waitForFunction(
     (slot) => {
       const t = document.querySelector(`[data-slot="${slot}"] .st-slotstate`)?.textContent || '';
-      return /Listo|no se pudo|En la sala/.test(t) ? t.trim() : false;
+      return /List[oa]|no se pudo|En la sala/.test(t) ? t.trim() : false;
     },
     target.slot,
     { timeout: 120000 }
@@ -338,7 +338,11 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
       w: element.videoWidth, h: element.videoHeight,
       paused: element.paused, readyState: element.readyState,
       currentTime: [+tA.toFixed(3), +tB.toFixed(3)],
-      advanced: tB > tA + 0.05,
+      // A looping four-second fixture sampled a second apart lands back near
+      // zero about a quarter of the time, and `tB > tA` calls that "stopped".
+      // It is the opposite: the only way to wrap is to have played to the end.
+      advanced: tB > tA + 0.05 || (tB < tA && element.loop),
+      wrapped: tB < tA,
       pictureChanged: a.fingerprint !== b.fingerprint,
       // The fixture is saturated primaries; the Museum's own projection is dim
       // blue-grey. Saturation is how "whose picture is this" gets answered.
@@ -353,8 +357,10 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
 
   say(`${label} · el archivo del autor está en la pared`, measured.onWall && measured.looksLikeAuthored,
     measured.onWall ? `${measured.w}×${measured.h}` : JSON.stringify(measured).slice(0, 400));
-  say(`${label} · se está reproduciendo`, measured.advanced === true && measured.pictureChanged === true,
-    `paused=${measured.paused} t=${JSON.stringify(measured.currentTime)} cambióImagen=${measured.pictureChanged} playError=${measured.playError}`);
+  say(`${label} · se está reproduciendo`,
+    measured.advanced === true && measured.pictureChanged === true && measured.paused === false,
+    `paused=${measured.paused} t=${JSON.stringify(measured.currentTime)}${measured.wrapped ? ' (dio la vuelta)' : ''}`
+    + ` cambióImagen=${measured.pictureChanged} playError=${measured.playError}`);
 
   // The element advancing proves decode; it does not prove the picture reached
   // the surface a visitor looks at. So the last question is asked of the
@@ -420,7 +426,7 @@ for (const mode of ['TOP', 'FRAME']) {
       input.dispatchEvent(new Event('change', { bubbles: true }));
     }, { b: bytes, name: file, s: slot });
     await scope.waitForFunction(
-      (s) => /Listo|no se pudo|En la sala/.test(
+      (s) => /List[oa]|no se pudo|En la sala/.test(
         document.querySelector(`[data-slot="${s}"] .st-slotstate`)?.textContent || ''),
       slot, { timeout: 120000 }
     );
