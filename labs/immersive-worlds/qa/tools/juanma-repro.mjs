@@ -357,29 +357,24 @@ async function videoCase(mode, fixture, expectPlayable = true, target = PROJECTI
     `paused=${measured.paused} t=${JSON.stringify(measured.currentTime)} cambióImagen=${measured.pictureChanged} playError=${measured.playError}`);
 
   // The element advancing proves decode; it does not prove the picture reached
-  // the canvas the visitor is looking at. So the last question is asked of the
-  // rendered pixels: does the WebGL canvas change over a second, and is the
-  // change where the piece is rather than somewhere else in the room?
-  const onCanvas = await scope.evaluate(async () => {
-    const canvas = document.querySelector('canvas');
-    const read = () => {
-      const c = document.createElement('canvas');
-      c.width = 160; c.height = 100;
-      const x = c.getContext('2d', { willReadFrequently: true });
-      x.drawImage(canvas, 0, 0, 160, 100);
-      return x.getImageData(0, 0, 160, 100).data;
-    };
-    const a = read();
-    await new Promise((r) => setTimeout(r, 1000));
-    const b = read();
-    let changed = 0;
-    for (let i = 0; i < a.length; i += 4) {
-      const d = Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]);
-      if (d > 12) changed += 1;
-    }
-    return { pct: +(100 * changed / (a.length / 4)).toFixed(2) };
-  });
-  say(`${label} · el lienzo cambia con el tiempo`, onCanvas.pct > 0.5, `${onCanvas.pct}% de los píxeles`);
+  // the surface a visitor looks at. So the last question is asked of the
+  // compositor's own output.
+  //
+  // Not by reading the WebGL canvas in the page: `drawImage` on it returns a
+  // cleared buffer unless `preserveDrawingBuffer` is set, so both reads come
+  // back blank and the diff is 0.00% — for a playing video, for a frozen one,
+  // for anything. That check reported exactly 0% in all eight cases while the
+  // screenshots beside it plainly differed, which is what an instrument that
+  // cannot fail looks like when it finally contradicts itself.
+  const canvas = mode === 'TOP' ? page.locator('canvas') : page.frameLocator('#f').locator('canvas');
+  const a = await canvas.screenshot();
+  await scope.waitForTimeout(1000);
+  const b = await canvas.screenshot();
+  // Identical pixels compress to identical PNGs, so a byte difference is a
+  // picture difference. How much and where is measured by frame-diff.mjs on the
+  // saved pair; this only has to answer "did it move at all".
+  say(`${label} · el lienzo cambia con el tiempo`, !a.equals(b),
+    `${a.length} vs ${b.length} bytes`);
 
   const shot = path.join(OUT, `video-${mode.toLowerCase()}-${target.what.replace(/\W/g, '')}-${fixture.replace(/\W/g, '-')}.png`);
   await page.screenshot({ path: shot });

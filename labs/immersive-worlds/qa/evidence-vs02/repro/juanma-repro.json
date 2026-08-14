@@ -1,7 +1,7 @@
 {
- "generatedAt": "2026-08-14T10:37:51.488Z",
- "passed": 22,
- "total": 38,
+ "generatedAt": "2026-08-14T11:17:42.263Z",
+ "passed": 38,
+ "total": 46,
  "results": [
   {
    "name": "TOP · institución · campo editable en el DOM",
@@ -70,13 +70,18 @@
   },
   {
    "name": "TOP · proyección · qa-motion.webm · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "TOP · proyección · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.508,3.972] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · aceptado por el almacén",
@@ -85,13 +90,18 @@
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.768,3.977] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "TOP · proyección · qa-motion.mp4 · aceptado por el almacén",
@@ -100,13 +110,18 @@
   },
   {
    "name": "TOP · proyección · qa-motion.mp4 · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "TOP · proyección · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.625,3.765] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
@@ -115,13 +130,18 @@
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "TOP · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.899,3.993] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "TOP · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
@@ -135,13 +155,18 @@
   },
   {
    "name": "FRAME · proyección · qa-motion.webm · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "FRAME · proyección · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.602,3.971] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · aceptado por el almacén",
@@ -150,13 +175,18 @@
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.917,3.978] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "FRAME · proyección · qa-motion.mp4 · aceptado por el almacén",
@@ -165,13 +195,18 @@
   },
   {
    "name": "FRAME · proyección · qa-motion.mp4 · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "FRAME · proyección · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.677,3.985] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
@@ -180,13 +215,18 @@
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · el archivo del autor está en la pared",
-   "ok": false,
-   "detail": "ningún vídeo en la escena"
+   "ok": true,
+   "detail": "640×360"
   },
   {
    "name": "FRAME · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.968,3.992] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
    "ok": false,
-   "detail": "paused=undefined t=undefined cambióImagen=undefined playError=undefined"
+   "detail": "0% de los píxeles"
   },
   {
    "name": "FRAME · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
