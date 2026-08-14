@@ -87,3 +87,27 @@
         'labs/website-modules-source/hanging-media-studio-v4-1-1/index.html'
     );
 })();
+
+// Paint Your Logo Wall V1 — standalone brand activation. V2 intentionally excluded pending visual approval.
+(function() {
+    'use strict';
+    window.EP = window.EP || {};
+    if (!EP.WebsiteModules || !EP.WebsiteModules.register) return;
+
+    var PATH = 'labs/website-modules-source/paint-your-logo-wall-v1/index.html';
+    EP.WebsiteModules.register({
+        id: 'paint-your-logo-wall-v1',
+        name: 'Paint Your Logo Wall V1 — Creative Crew',
+        icon: 'PW',
+        family: 'Interactive Media / Brand Activations',
+        description: 'Activacion de marca 3D en la que una Creative Crew pinta progresivamente logos e imagenes sobre un muro con coreografia, herramientas, escenarios y authoring propio.',
+        sourceFile: 'Juanmaes83/PAINT-YOUR-LOGO-WALL · agent/logo-crew-v1 · 449d222ee6c56106d3a833dd52f6dfebba1115c8',
+        mediaMap: 'PNG/JPG/WebP/GIF/SVG; 5 Wall Jobs; AYA/NOA/MIMO/FOXIE/LUMI/BYTE; Brush/Roller; world presets; lighting; camera; timeline; local project save; PNG output.',
+        standalonePath: PATH,
+        standaloneEditorNote: 'V1 preservada con su panel original. Escaparates Pro solo registra y carga el standalone; V2 queda expresamente fuera hasta aprobacion visual.',
+        fields: [],
+        build: function() {
+            return '<!doctype html><html><body style="margin:0;background:#171717"><iframe src="' + PATH + '" style="position:fixed;inset:0;width:100%;height:100%;border:0" allow="autoplay;fullscreen;clipboard-write;display-capture" allowfullscreen></iframe></body></html>';
+        }
+    });
+})();
