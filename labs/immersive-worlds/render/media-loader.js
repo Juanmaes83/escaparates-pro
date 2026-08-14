@@ -166,6 +166,13 @@ export class MediaLoader {
             texture.userData.playError = error?.name || String(error);
             this._record({ entityId: context.entityId ?? null, url, kind: media.kind,
               ok: true, ms: 0, error: `autoplay refused: ${error?.name || error}` });
+            // Recording it is not enough on its own: a refusal leaves a still
+            // frame on the wall for the rest of the visit, which looks exactly
+            // like a video that is playing very slowly. A refused policy is
+            // satisfied by the visitor's first gesture, so the retry rides on
+            // it — the pattern `breeze-studio-pro` already uses. The visitor
+            // never learns there was a problem; the screen simply starts.
+            this._retryOnGesture(video, texture);
           }
         );
         resolve({ texture, aspect: video.videoWidth / video.videoHeight || media.aspect || 16 / 9, video });
@@ -180,6 +187,25 @@ export class MediaLoader {
     });
   }
 
+  /**
+   * Wait for the visitor's first gesture, then start the video they cannot yet
+   * see is stopped. One listener per refused video, removed once it has served.
+   */
+  _retryOnGesture(video, texture) {
+    const events = ['pointerdown', 'keydown', 'touchstart'];
+    const attempt = () => {
+      video.play().then(
+        () => {
+          texture.userData.playing = true;
+          texture.userData.playError = null;
+          for (const type of events) window.removeEventListener(type, attempt);
+        },
+        () => { /* still refused; the next gesture tries again */ }
+      );
+    };
+    for (const type of events) window.addEventListener(type, attempt, { passive: true });
+  }
+
   /** Release one reference; the texture is freed when the last Space lets go. */
   release(src) {
     const url = this._resolve(src);
@@ -187,8 +213,7 @@ export class MediaLoader {
     if (!entry) return;
     entry.refs -= 1;
     if (entry.refs > 0) return;
-    entry.video?.pause();
-    if (entry.video) entry.video.src = '';
+    releaseVideo(entry.video);
     entry.texture.dispose();
     this._cache.delete(url);
   }
@@ -209,9 +234,28 @@ export class MediaLoader {
 
   disposeAll() {
     for (const [, entry] of this._cache) {
-      entry.video?.pause();
+      releaseVideo(entry.video);
       entry.texture.dispose();
     }
     this._cache.clear();
   }
+}
+
+/**
+ * Let a video element go the way the proven modules in this repository do.
+ *
+ * `video.src = ''` does not clear the source: an empty string resolves against
+ * the document's own address, so the element dutifully fetches the page and
+ * tries to decode HTML as video — a wasted request and an error event fired at
+ * teardown, when nobody is listening for a reason. Removing the attribute and
+ * calling `load()` is the teardown `js/media-manager.js`, `breeze-studio-pro`
+ * and `kinetic-letter-curtain-pro-v2` all use.
+ */
+function releaseVideo(video) {
+  if (!video) return;
+  try {
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+  } catch { /* the element is already beyond caring */ }
 }

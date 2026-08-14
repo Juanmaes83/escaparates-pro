@@ -50,18 +50,54 @@ export const CONFIG_SCHEMA_VERSION = 2;
 export const MEDIA_SLOT = Object.freeze({
   INSTITUTION_LOGO: 'INSTITUTION_LOGO',
   ARTWORK_IMAGE: 'ARTWORK_IMAGE',
-  PROJECTION_MEDIA: 'PROJECTION_MEDIA'
+  ARTWORK_VIDEO: 'ARTWORK_VIDEO',
+  PROJECTION_VIDEO: 'PROJECTION_VIDEO',
+  PROJECTION_IMAGE: 'PROJECTION_IMAGE'
 });
 
-/** Which entity kinds can genuinely carry which slot, per the running Scene Kit. */
+/**
+ * What each slot accepts and where the config keeps it.
+ *
+ * `PROJECTION_MEDIA` used to be one slot whose medium was inferred from the
+ * entity kind. That is the ambiguity this table exists to remove: the slot names
+ * the medium as well as the destination, so nothing downstream has to guess, and
+ * a panel cannot offer a control whose meaning depends on where you clicked it.
+ */
+export const SLOT_MEDIA = Object.freeze({
+  INSTITUTION_LOGO: { kind: 'image', field: 'logo' },
+  ARTWORK_IMAGE: { kind: 'image', field: 'image' },
+  ARTWORK_VIDEO: { kind: 'video', field: 'video' },
+  PROJECTION_IMAGE: { kind: 'image', field: 'image' },
+  PROJECTION_VIDEO: { kind: 'video', field: 'video' }
+});
+
+/**
+ * Which entity kinds can genuinely carry which slot, per the running Scene Kit.
+ *
+ * This table used to say a video could not hang on a framed canvas. That was
+ * never true of the kit — `museum-scene-kit.js` hangs whatever texture the media
+ * layer hands it, and a `VideoTexture` is a texture. It was true only of this
+ * file, and the cost was that video was authorable on exactly one entity in the
+ * whole Museum: an author who opened any of the nine artworks found no way to
+ * give it a moving image and concluded, correctly, that video authoring did not
+ * work. Video art has hung in museums since the 1960s; a platform for museums
+ * that cannot accept it is not finished.
+ *
+ * The reverse was equally arbitrary: a projection surface can show a still. A
+ * projected photograph is an ordinary thing to want, and the kit draws it.
+ *
+ * An entity carries one representation at a time — a work is either a still or a
+ * moving image, never both at once — so the two slots on a kind are alternatives,
+ * and choosing one releases the other.
+ */
 export const SLOTS_FOR_KIND = Object.freeze({
-  ARTWORK: [MEDIA_SLOT.ARTWORK_IMAGE],
+  ARTWORK: [MEDIA_SLOT.ARTWORK_IMAGE, MEDIA_SLOT.ARTWORK_VIDEO],
   // A sculpture is built, not photographed: the Scene Kit raises a vessel on a
   // plinth and never reads a media file for it. Offering an image slot here
   // would be a control that does nothing, and requiring one would report the
   // shipped Museum as incomplete because a sculpture is not a picture.
   SCULPTURE: [],
-  PROJECTION: [MEDIA_SLOT.PROJECTION_MEDIA],
+  PROJECTION: [MEDIA_SLOT.PROJECTION_VIDEO, MEDIA_SLOT.PROJECTION_IMAGE],
   AUDIO: [],
   TEXT: []
 });
@@ -261,13 +297,17 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
     }
 
     // The slot the author used decides the destination, and the entity's own
-    // kind decides which slot it was allowed to use. A video on a framed canvas
-    // is not a thing this Scene Kit can draw, so it is not a thing the config
-    // can express.
+    // kind decides which slots it was allowed to use. A kind that admits no slot
+    // reads no file, however much the config happens to carry.
     const allowed = SLOTS_FOR_KIND[entity.kind] || [];
-    const chosen = allowed.includes(MEDIA_SLOT.PROJECTION_MEDIA)
-      ? authored.video
-      : allowed.includes(MEDIA_SLOT.ARTWORK_IMAGE) ? authored.image : null;
+    const takes = (medium) => allowed.some((slot) => SLOT_MEDIA[slot].kind === medium);
+    // The studio releases one when the other is chosen, so this is a tie that
+    // should never arrive. If a hand-edited config brings one anyway, the moving
+    // image wins: it is the more specific claim, and silently preferring the
+    // still would drop the medium the author went out of their way to supply.
+    const chosen = (takes('video') && authored.video)
+      || (takes('image') && authored.image)
+      || null;
     if (chosen) content.media = mediaForWorld(chosen, content.media, c, resolveMedia);
 
     entity.content = content;

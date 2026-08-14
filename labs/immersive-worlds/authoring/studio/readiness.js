@@ -18,7 +18,7 @@
  * the product's truth lives in the record.
  */
 
-import { SLOTS_FOR_KIND, MEDIA_SLOT } from '../experience-config.js';
+import { SLOTS_FOR_KIND, SLOT_MEDIA } from '../experience-config.js';
 
 export const SEVERITY = Object.freeze({
   BLOCKING: 'BLOCKING',   // START is not honest while this is true
@@ -79,8 +79,12 @@ export function evaluateReadiness(world, config, assetState = () => null) {
     // Media is required only where the representation cannot stand without it,
     // and the world's own record already satisfies it unless the author replaced
     // it with something broken.
-    for (const slot of SLOTS_FOR_KIND[entity.kind] || []) {
-      const chosen = slot === MEDIA_SLOT.PROJECTION_MEDIA ? authored.video : authored.image;
+    // The slots a kind offers are alternatives, not a checklist: a work needs
+    // one representation, and asking for both would report a finished piece as
+    // incomplete for declining to be two things at once.
+    const slots = SLOTS_FOR_KIND[entity.kind] || [];
+    if (slots.length) {
+      const chosen = slots.map((slot) => authored[SLOT_MEDIA[slot].field]).find(Boolean) || null;
       const inherited = entity.content?.media?.src;
       const state = chosen ? assetState(chosen.src) : null;
 

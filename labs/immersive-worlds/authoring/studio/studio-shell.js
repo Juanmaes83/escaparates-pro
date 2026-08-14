@@ -17,7 +17,44 @@
  * distinguishable without reading.
  */
 
-import { normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND } from '../experience-config.js';
+import {
+  normaliseConfig, exportConfigJSON, MEDIA_SLOT, SLOTS_FOR_KIND, SLOT_MEDIA
+} from '../experience-config.js';
+
+/**
+ * What each slot is called on the panel. The name says the destination *and* the
+ * medium, because those are the two things an author is choosing between and a
+ * label reading only "Medios" leaves them guessing which control does what.
+ */
+const SLOT_COPY = Object.freeze({
+  INSTITUTION_LOGO: { label: 'Logotipo', formats: 'PNG, JPG o WebP' },
+  ARTWORK_IMAGE: { label: 'Imagen de la obra', formats: 'JPG, PNG o WebP' },
+  ARTWORK_VIDEO: { label: 'Vídeo de la obra', formats: 'MP4 o WebM' },
+  PROJECTION_IMAGE: { label: 'Imagen proyectada', formats: 'JPG, PNG o WebP' },
+  PROJECTION_VIDEO: { label: 'Vídeo de la proyección', formats: 'MP4 o WebM' }
+});
+
+/**
+ * What the file dialog will let an author pick.
+ *
+ * Extensions as well as MIME types, and the extensions are not belt-and-braces.
+ * The dialog resolves a MIME type to a set of extensions through the operating
+ * system, and on Windows `.mp4` and `.webm` frequently have no registry entry —
+ * the same gap that made files arrive with `type: ''`. A MIME-only `accept` on
+ * such a machine greys out the author's own videos: they open the dialog, see
+ * their file unselectable, and conclude the product does not take video. Naming
+ * the extensions outright removes the operating system from the decision.
+ */
+const ACCEPT = Object.freeze({
+  image: '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp',
+  video: '.mp4,.m4v,.webm,video/mp4,video/webm'
+});
+
+/** Two slots on one piece are alternatives, and the panel says so in words. */
+const SLOT_CHOICE_NOTE = Object.freeze({
+  ARTWORK: 'Una obra se muestra como imagen o como vídeo. Al elegir uno se retira el otro.',
+  PROJECTION: 'La proyección muestra un vídeo o una imagen fija. Al elegir uno se retira el otro.'
+});
 import { ConfigStore } from '../config-store.js';
 import { describeAsset } from '../media-vault.js';
 import { buildExperienceTree, walkTree, findNode, roomOf, NODE } from './experience-tree.js';
@@ -396,7 +433,8 @@ export class StudioShell {
       `)}
       ${this._group('Marca', `
         <p class="st-note">Se imprime en la cartela de entrada, sobre el claim — donde una institución pone su marca.</p>
-        ${this._slot(MEDIA_SLOT.INSTITUTION_LOGO, 'Logotipo', i.logo, 'image', 'PNG, JPG o WebP')}
+        ${this._slot(MEDIA_SLOT.INSTITUTION_LOGO, SLOT_COPY.INSTITUTION_LOGO.label, i.logo,
+    SLOT_MEDIA.INSTITUTION_LOGO.kind, SLOT_COPY.INSTITUTION_LOGO.formats)}
       `)}`;
   }
 
@@ -451,11 +489,13 @@ export class StudioShell {
         ${this._field('Texto curatorial', `entities.${node.id}.description`, d.description,
     { area: true, inherited: src.description })}
       `)}
-      ${slots.length ? this._group('Medios', slots.map((slot) => (
-    slot === MEDIA_SLOT.PROJECTION_MEDIA
-      ? this._slot(slot, 'Vídeo de la proyección', d.video, 'video', 'MP4 o WebM')
-      : this._slot(slot, 'Imagen de la obra', d.image, 'image', 'JPG, PNG o WebP')
-  )).join('')) : this._group('Medios', `
+      ${slots.length ? this._group('Medios', `
+        <p class="st-note">${esc(SLOT_CHOICE_NOTE[node.entityKind] || '')}</p>
+        ${slots.map((slot) => {
+    const spec = SLOT_COPY[slot];
+    return this._slot(slot, spec.label, d[SLOT_MEDIA[slot].field], SLOT_MEDIA[slot].kind, spec.formats);
+  }).join('')}
+      `) : this._group('Medios', `
         <p class="st-note">Esta pieza no admite medios sustituibles en esta versión.</p>
       `)}
       ${this._group('Presentación', `
@@ -501,8 +541,7 @@ export class StudioShell {
         </div>
         <div class="st-slotrow">
           <label class="st-file">
-            <input type="file" data-media="${slot}"
-              accept="${kind === 'video' ? 'video/mp4,video/webm' : 'image/jpeg,image/png,image/webp'}">
+            <input type="file" data-media="${slot}" accept="${ACCEPT[kind]}">
             <span>${media ? 'Cambiar archivo' : 'Elegir archivo'}</span>
           </label>
           <span class="st-filename">${media ? esc(media.name) : 'Ningún archivo seleccionado'}</span>
@@ -716,17 +755,28 @@ export class StudioShell {
   }
 
   async _takeFile(slot, file) {
-    const kind = slot === MEDIA_SLOT.PROJECTION_MEDIA ? 'video' : 'image';
-    const target = slot === MEDIA_SLOT.INSTITUTION_LOGO
-      ? { get: () => this.config.institution.logo, set: (v) => { this.config.institution.logo = v; } }
-      : slot === MEDIA_SLOT.PROJECTION_MEDIA
-        ? { get: () => this._entityDraft(this.selectedId).video, set: (v) => { this._entityDraft(this.selectedId).video = v; } }
-        : { get: () => this._entityDraft(this.selectedId).image, set: (v) => { this._entityDraft(this.selectedId).image = v; } };
+    const { kind, field } = SLOT_MEDIA[slot];
+    const holder = slot === MEDIA_SLOT.INSTITUTION_LOGO
+      ? this.config.institution
+      : this._entityDraft(this.selectedId);
+    const target = { get: () => holder[field], set: (v) => { holder[field] = v; } };
 
     // Replacing releases the previous asset: an object URL that is dropped
     // rather than revoked is a leak that never announces itself.
     const previous = target.get();
     if (previous?.assetId) this.vault.release(previous.assetId);
+
+    // A piece shows one representation. Choosing a video for a work that already
+    // had a photograph retires the photograph rather than leaving two files on
+    // one record for a later rule to arbitrate — the author decided; the config
+    // should record the decision, not the ambiguity.
+    for (const other of SLOTS_FOR_KIND[this.selectedEntity?.kind] || []) {
+      const spec = SLOT_MEDIA[other];
+      if (spec.field === field) continue;
+      const stale = holder[spec.field];
+      if (stale?.assetId) this.vault.release(stale.assetId);
+      holder[spec.field] = null;
+    }
 
     const asset = await this.vault.accept(file, { kind });
     if (asset.state === 'ERROR') {

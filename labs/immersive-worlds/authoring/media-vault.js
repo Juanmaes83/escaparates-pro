@@ -30,6 +30,9 @@
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/webm'];
 
+/** Long enough for a large file over a slow disk, short enough to be an answer. */
+const PROBE_TIMEOUT_MS = 20000;
+
 /**
  * The browser fills `File.type` from the operating system, and the operating
  * system does not always know. On Windows the MIME for an extension comes from
@@ -209,16 +212,47 @@ export class MediaVault {
       // The header parsed: the file is a video and we know its shape. Not yet
       // playable, and the author is told exactly that.
       video.onloadedmetadata = () => onDecoded();
+      let settled = false;
+      // A codec the browser half-recognises can leave a load neither resolved
+      // nor errored, and the author waits on "Cargando…" with no way to tell a
+      // slow file from a dead one. Every proven implementation in this
+      // repository bounds the wait; this one did not.
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        teardown();
+        reject(new Error('El vídeo tardó demasiado en abrirse. Puede que el códec no sea compatible.'));
+      }, PROBE_TIMEOUT_MS);
+      // `src = ''` resolves against the page's own address, so the element goes
+      // off and loads the document as if it were a video — a wasted request and
+      // a spurious error. Removing the attribute and reloading is how the four
+      // implementations this was adapted from let a video element go.
+      const teardown = () => {
+        clearTimeout(timer);
+        try { video.pause(); video.removeAttribute('src'); video.load(); } catch { /* already gone */ }
+      };
       const done = () => {
-        if (!video.videoWidth) { reject(new Error('El vídeo no tiene pista de imagen legible.')); return; }
-        resolve({ width: video.videoWidth, height: video.videoHeight, duration: video.duration || 0 });
-        video.src = '';
+        if (settled) return;
+        settled = true;
+        if (!video.videoWidth) {
+          teardown();
+          reject(new Error('El vídeo no tiene pista de imagen legible.'));
+          return;
+        }
+        const meta = { width: video.videoWidth, height: video.videoHeight, duration: video.duration || 0 };
+        teardown();
+        resolve(meta);
       };
       // canplaythrough, not loadedmetadata: metadata alone means the header
       // parsed, which is not the same as being able to show a frame.
       video.oncanplaythrough = done;
       video.onloadeddata = () => { if (video.readyState >= 2) done(); };
-      video.onerror = () => reject(new Error('El vídeo no se pudo decodificar.'));
+      video.onerror = () => {
+        if (settled) return;
+        settled = true;
+        teardown();
+        reject(new Error('El vídeo no se pudo decodificar. Prueba con un MP4 (H.264) o un WebM.'));
+      };
       video.src = url;
     });
   }

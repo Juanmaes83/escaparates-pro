@@ -109,6 +109,23 @@ export class InputSystem {
    */
   _onKey(event, down) {
     if (!this.enabled) return;
+    if (isTyping(event.target)) {
+      // A person writing a museum's name is not steering a camera. This listener
+      // is on `window`, so before the guard existed every keystroke in the
+      // authoring panel was read as movement: W/A/S/D and the space bar were
+      // swallowed by `preventDefault`, and M, G and E fired the map, the guided
+      // route and "activate the nearest point" while the caret sat in a form.
+      //
+      // "Museo Atlántico de Vigo" arrived in the field as "Mueotlántico eVigo" —
+      // every s, every a and every space gone. It read as a broken text box, and
+      // the panel an author meets first is the one that names the institution,
+      // which is why this looked like "the first panel cannot be edited".
+      //
+      // Held keys are cleared as well: focusing a field mid-stride otherwise
+      // leaves the visitor walking into a wall with no key to release.
+      if (down && this._keys.size) { this._keys.clear(); this._applyKeys(); }
+      return;
+    }
     const code = event.code;
 
     if (down && !event.repeat) {
@@ -226,6 +243,28 @@ export class InputSystem {
 }
 
 const MOVEMENT_CODES = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']);
+
+const EDITABLE_TAGS = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
+
+/**
+ * Is this key going into a text field rather than into the room?
+ *
+ * Asked of the event target rather than of `document.activeElement`, because the
+ * two can disagree inside a shadow root, and asked by role rather than by a list
+ * of the studio's own selectors — any future panel gets the same protection
+ * without this file having to know it exists.
+ */
+function isTyping(target) {
+  if (!target || target.nodeType !== 1) return false;
+  if (target.isContentEditable) return true;
+  const tag = target.tagName;
+  if (!EDITABLE_TAGS.has(tag)) return false;
+  // A disabled or read-only control is not receiving text, so the room keeps its
+  // keys; a checkbox or a button is not receiving text either, but the space bar
+  // legitimately belongs to it.
+  if (target.disabled) return false;
+  return true;
+}
 
 function clampUnit(value) {
   return Math.max(-1, Math.min(1, value));
