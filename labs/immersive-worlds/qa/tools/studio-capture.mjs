@@ -52,6 +52,8 @@ await fs.mkdir(OUT, { recursive: true });
 const BASE = `http://127.0.0.1:${PORT}/labs/immersive-worlds`;
 
 const FIXTURES = path.join(MODULE_ROOT, 'qa', 'fixtures');
+/** The framed work the media frames are taken on, named once. */
+const ARTWORK_ID = 'entity.artwork.horizonte-interrumpido';
 const browser = await chromium.launch({ headless: true, args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--disable-gpu-sandbox'] });
 const shots = [];
 const errors = [];
@@ -237,27 +239,41 @@ if (WAVE === 'w2' || WAVE === 'full') {
     observed: await page.textContent('[data-slot="ARTWORK_IMAGE"] .st-slotstate')
   });
 
-  /* -- the projection's video ------------------------------------------------ */
-  await page.click('[data-node="entity.video.cuaderno-de-luz"]');
-  await page.waitForTimeout(2600);
-  await page.setInputFiles('[data-media="PROJECTION_MEDIA"]', path.join(FIXTURES, 'qa-video.webm'));
-  // A video is the one medium slow enough to photograph mid-chain.
-  await page.waitForTimeout(250);
+  /* -- video, on the two surfaces that can carry it -------------------------- */
+  // A framed work first, because that is the case an author meets nine times out
+  // of ten and the one that had no slot at all until the model was corrected.
+  await page.click(`[data-node="${ARTWORK_ID}"]`);
+  await page.waitForTimeout(2400);
   await shoot(page, '13_VIDEO_SELECTED', {
-    state: 'Vídeo recién elegido en la proyección',
-    action: 'Elegir qa-video.webm en la pieza «Cuaderno de luz»',
-    expected: 'La ranura pertenece a la proyección, no a un lienzo enmarcado',
-    observed: await page.textContent('[data-slot="PROJECTION_MEDIA"] .st-slotstate').catch(() => '—')
+    state: 'Una obra ofrece imagen y vídeo',
+    action: `Abrir «${await page.textContent('.st-edtop h2')}» y mirar el grupo Medios`,
+    expected: 'Dos ranuras nombradas por su medio, y una nota diciendo que son alternativas',
+    observed: await page.textContent('[data-slot="ARTWORK_VIDEO"] .st-slotstate').catch(() => 'ranura vacía')
   });
+  await page.setInputFiles('[data-media="ARTWORK_VIDEO"]', path.join(FIXTURES, 'qa-motion.mp4'));
   await page.waitForFunction(
-    () => /Listo|no se pudo/.test(document.querySelector('[data-slot="PROJECTION_MEDIA"] .st-slotstate')?.textContent || ''),
+    () => /Listo|no se pudo/.test(document.querySelector('[data-slot="ARTWORK_VIDEO"] .st-slotstate')?.textContent || ''),
     { timeout: 180000 }
   );
   await shoot(page, '14_VIDEO_READY', {
-    state: 'Vídeo listo',
-    action: 'Esperar a decodificar y poder dibujar un fotograma',
-    expected: 'Cadena con paso DECODIFICADO propio del vídeo, y duración real',
-    observed: await page.textContent('[data-slot="PROJECTION_MEDIA"] .st-slotstate')
+    state: 'Vídeo listo en una obra enmarcada',
+    action: 'Elegir qa-motion.mp4 y esperar a que pueda dibujar un fotograma',
+    expected: 'Cadena con paso DECODIFICADO propio del vídeo, duración real, y la imagen retirada',
+    observed: await page.textContent('[data-slot="ARTWORK_VIDEO"] .st-slotstate')
+  });
+
+  await page.click('[data-node="entity.video.cuaderno-de-luz"]');
+  await page.waitForTimeout(2600);
+  await page.setInputFiles('[data-media="PROJECTION_VIDEO"]', path.join(FIXTURES, 'qa-motion.webm'));
+  await page.waitForFunction(
+    () => /Listo|no se pudo/.test(document.querySelector('[data-slot="PROJECTION_VIDEO"] .st-slotstate')?.textContent || ''),
+    { timeout: 180000 }
+  );
+  await shoot(page, '14b_PROJECTION_VIDEO_READY', {
+    state: 'Vídeo listo en la proyección',
+    action: 'Elegir qa-motion.webm en la pieza «Cuaderno de luz»',
+    expected: 'La proyección admite vídeo y también imagen fija, cada una con su nombre',
+    observed: await page.textContent('[data-slot="PROJECTION_VIDEO"] .st-slotstate')
   });
 
   /* -- the error path, and the way out --------------------------------------- */

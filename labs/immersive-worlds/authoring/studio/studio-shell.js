@@ -50,6 +50,26 @@ const ACCEPT = Object.freeze({
   video: '.mp4,.m4v,.webm,video/mp4,video/webm'
 });
 
+/**
+ * How a piece is mounted, said the way a registrar would say it.
+ *
+ * The panel used to print the world file's `representation.profile` verbatim —
+ * so a Spanish cataloguing tool told its author the support was
+ * `framed-canvas`. That is the engine's identifier for a rendering profile, in
+ * English, in a field a museum professional reads. Constitution §12 keeps the
+ * engine's vocabulary out of the author's sight; this is the last place it was
+ * still getting through.
+ */
+const SUPPORT = Object.freeze({
+  'framed-canvas': 'Lienzo enmarcado',
+  'framed-paper': 'Obra sobre papel, enmarcada',
+  'framed-panel': 'Tabla enmarcada',
+  'plinth-vessel': 'Pieza exenta sobre peana',
+  'projected-light': 'Proyección sobre pared',
+  'wall-panel': 'Cartela de pared',
+  'floor-listening-point': 'Punto de escucha'
+});
+
 /** Two slots on one piece are alternatives, and the panel says so in words. */
 const SLOT_CHOICE_NOTE = Object.freeze({
   ARTWORK: 'Una obra se muestra como imagen o como vídeo. Al elegir uno se retira el otro.',
@@ -501,7 +521,7 @@ export class StudioShell {
       ${this._group('Presentación', `
         <dl class="st-facts">
           <dt>Sala</dt><dd>${esc(roomOf(this.tree, node.id)?.label || '')}</dd>
-          <dt>Soporte</dt><dd>${esc(entity?.representation?.profile || '—')}</dd>
+          <dt>Soporte</dt><dd>${esc(SUPPORT[entity?.representation?.profile] || '—')}</dd>
           <dt>Medidas</dt><dd>${entity?.size ? `${(entity.size[0] * 100).toFixed(0)} × ${(entity.size[1] * 100).toFixed(0)} cm` : '—'}</dd>
         </dl>
         <p class="st-note">La colocación y el encuadre los gobierna la sala. El estudio no expone coordenadas de cámara.</p>
@@ -730,6 +750,24 @@ export class StudioShell {
       const b = row.querySelector('b'); const i = row.querySelector('i');
       if (b) b.textContent = fresh.label;
       if (i) i.textContent = fresh.sublabel || '';
+    }
+
+    // The filmstrip names the same pieces as the tree, so it has to hear the
+    // same rename. It did not, and the result was the worst kind of wrong: an
+    // author retitled a work and watched the tree and the editor agree on the
+    // new name while the strip below the preview kept insisting on the old one.
+    // Two surfaces contradicting each other about the same record, in the same
+    // glance, in a tool whose job is cataloguing.
+    for (const chip of this.root.querySelectorAll('.st-chip')) {
+      const fresh = findNode(this.tree, chip.dataset.node);
+      if (!fresh) continue;
+      const b = chip.querySelector('b'); const i = chip.querySelector('i');
+      // The ordinal belongs to the strip, not to the record, so it is kept.
+      if (b) b.textContent = `${b.textContent.match(/^\d+\./)?.[0] || ''} ${fresh.label}`.trim();
+      if (i) i.textContent = fresh.sublabel || '';
+      const mark = chip.querySelector('em');
+      if (fresh.authored && !mark) chip.insertAdjacentHTML('beforeend', '<em>Personalizado</em>');
+      if (!fresh.authored && mark) mark.remove();
     }
     const val = this.root.querySelector('.st-val');
     if (val) {
