@@ -149,7 +149,21 @@ const html = `<title>VS02 — La forma del taller</title>
     <span>Sin merge · sin master · sin promoción</span>
   </div>
 
-  <h2>Antes y después</h2>
+  <h2>Biblioteca de medios y miniaturas</h2>
+  <p>
+    Corrección al veredicto anterior: llamar «densidad decorativa» a la
+    biblioteca era un error. Es parte del producto profesional — si el taller
+    sirve para hacer entregables de cliente, encontrar y reutilizar lo que ya
+    existe es trabajo, no adorno.
+  </p>
+  ${fig(path.join(EV, 'library', '26_MEDIA_LIBRARY.png'), 'Biblioteca de medios V1: siete archivos reales, con su imagen, su estado y —lo que ningún nombre de archivo lleva— en qué obra se usa cada uno. Se abre desde el área Contenido, que es donde el blueprint la coloca.')}
+  ${fig(path.join(EV, 'library', '27_MEDIA_REUSED.png'), 'Después de reutilizar: el mismo archivo cuelga ahora en dos piezas, y la biblioteca lo dice.')}
+  <div class="pair">
+    ${fig(path.join(SCRATCH, 'before', '09_before.png'), 'Antes — la tira nombraba once obras y no enseñaba ninguna.')}
+    ${fig(path.join(EV, 'w2', '09_ARTWORK_EDIT.png'), 'Después — cada obra lleva su imagen. La escultura sigue en blanco a propósito: se construye, no se fotografía.')}
+  </div>
+
+  <h2>Antes y después de la carcasa</h2>
   <div class="pair">
     ${fig(path.join(SCRATCH, 'before', '08_before.png'), 'Antes — al empezar este mandato. Una columna de árbol junto a un visor; sin iconos en toda la carcasa; etiquetas en versales que ocupan tres líneas; validación como frase.')}
     ${fig(path.join(EV, 'w1', '08_ARTWORK_SELECTED.png'), 'Después — la columna de áreas da la escala del producto, el editor se lee como una ficha, y la validación se lee sin leerla.')}
