@@ -1713,3 +1713,101 @@ are the only other exception. The approved UI reference paints its chrome gold
 throughout; the Studio deliberately does not, and any future accent has to clear
 the same bar — visible enough that "you are here" does not depend on one grey
 against another, quieter than the work hanging behind it.
+
+---
+
+# 37. Transition authoring — what an author may tune
+
+**IMPLEMENTED.**
+
+The transition engine chooses the family — T1…T6 — from what a move *means*:
+same subject, an inspection of a free-standing piece, a threshold, another
+room. That stays engine-owned. An author choosing "orbit" for a beat that is
+really a reframe would be authoring a mistake, and the grammar of the route is
+the thing that keeps a guided visit coherent.
+
+What an author may tune is **pace**, and it is safe to expose because of where
+it lands: the destination pose is resolved first, and pacing scales the clock
+afterwards. The frozen contract therefore holds by construction —
+
+> **Transitions may change HOW the camera travels, never WHERE the approved beat ends.**
+
+| Author sees | Stored | Engine |
+|---|---|---|
+| Ágil / Natural / Pausado | `experience.pacing` | `director.pacing` = 0.75 / 1 / 1.35, clamped to [0.6, 2] |
+| Seguir al visitante / Siempre sin viaje | `experience.motion` | may only *add* reduced motion |
+
+Reduced motion is one-way on purpose. A visitor who has asked their system for
+stillness is not argued with by a configuration; a config may join them and may
+never override them.
+
+Not exposed, and not by oversight: camera coordinates, vectors, destination
+poses, engine ids, `frameCorners`, controller ownership, easing internals.
+`keystone` and `tint` likewise stay with the room. The QA asserts the absence of
+that vocabulary rather than trusting review.
+
+# 38. Visitor / Institutional layer
+
+**IMPLEMENTED (V1).**
+
+The layer that makes the Museum an institutional surface rather than only a
+virtual exhibition. Authored by the Studio in the `VISITANTE` workspace, read by
+the visitor inside the Museum. Those are different people: **the visitor never
+sees a field, only the answer.**
+
+```text
+visitor {
+  hours  address  admission  accessibility
+  ticketUrl  bookingUrl  directionsUrl
+  transport  parking  contact  notes
+  programme: ProgrammeItem[]
+}
+
+ProgrammeItem { id  title  type  description
+                start  end  location  bookingUrl  accessibilityNote }
+```
+
+`type` ∈ EXHIBITION · GUIDED · TALK · WORKSHOP · PERFORMANCE · EVENT.
+
+**CTA semantics.** A link is a link. The Museum holds no inventory, checks no
+availability and reserves nothing, so a button appears only where the
+institution supplied a URL — no link, no button. Showing places that nobody has
+confirmed is the one lie this layer must never tell, and it is the assertion the
+QA is built around.
+
+**Programme semantics.** Real repeatable records, not numbered fields. The record
+carries no recurrence, capacity, waiting list or seat map, because none of those
+can be honoured by a link, and a field that cannot be honoured is a promise the
+institution did not make.
+
+Dates are strings as the institution publishes them, not `Date` objects: a config
+is a document, and a document that must be revived to be read is not one.
+
+**Second-museum proof.** Fundación Arenas and Museo de la Bruma differ in hours,
+address, admission, programme and available actions with no engine change — the
+first publishes a booking link and no ticket link and gets one button, the second
+sells tickets and gets three.
+
+# 39. Gallery B — projection authoring
+
+**IMPLEMENTED (V1).**
+
+Authoring for capabilities the Scene Kit already had and only a world file could
+reach.
+
+| Author sees | Stored | Range |
+|---|---|---|
+| Encaje | `projection.fit` | COVER · STRETCH |
+| Brillo del proyector | `projection.intensity` | 0.2 – 1.6 |
+| Derrame de luz | `projection.spill` | 0 – 1.6 |
+| Reflejo en el suelo | `projection.reflection` | 0 – 1 |
+| Repetir en bucle | `projection.loop` | on the *medium*, not the lamp |
+
+**DEFERRED — `CONTAIN` (letterboxing).** The projection is a textured plane, so
+bands would mean sampling outside the texture's own range, where the default
+clamp smears the edge pixels outward instead of going black. That is an artefact,
+not a band. Offering it would be offering a control that produces a defect. It
+needs a mask or a backing plane; until then the fit list is two.
+
+Only on entities that are projections. A framed artwork does not sprout
+projection controls, and that is tested.
