@@ -1223,3 +1223,48 @@ reclaims width, check the surface it was taken from against the same acceptance
 criteria as the surface being fixed. Folding Readiness into a genuine compact
 summary is a product change with its own scope, not a side effect of another
 mission.
+
+## L-25 · A forward pass proves nothing about going back
+
+**What happened.** Every acceptance run this project has made drives the route
+forwards. Human QA asked for one thing that had never been exercised — return to
+the previous stop — and the answer was not a missing feature but a mechanism
+whose cost had never been looked at. Backward destination selection existed and
+landed correctly every time; it is implemented by restarting the route and
+replaying forwards.
+
+Measured against an ordinary forward step (4 beats, 0 portals, 0 room entries):
+
+- back one stop **inside the same room**: 7 beats, 1 portal, 1 room re-entry —
+  the visitor watches themselves re-enter the room they are standing in;
+- back one stop **across rooms**: 23 beats and 16 guide stagings;
+- the cost scales with the **target's** index, not with how far back the visitor
+  asked to go, so "back one stop" late in a route is the most expensive
+  navigation in the product.
+
+And the destination is not the same destination: the identical stop reached
+forwards and backwards, sampled after an identical settle, differs by 2.44 m of
+camera position and 4.46 m of target.
+
+**Classification.** ROUTE MODEL characteristic surfacing as a PRODUCT defect —
+not a bug in any component. Every part behaves as designed.
+**Rule.** *A capability that only ever ran in one direction has only been tested
+in one direction.* When a timeline, wizard or route is accepted forwards, state
+explicitly whether reverse traversal is supported, and measure its cost rather
+than its endpoint — an endpoint assertion cannot see a replay.
+**Corollary, verified here.** *Deterministic destination recovery and perceptual
+visitor navigation are different requirements.* Replay is correct for the first
+and unacceptable for the second, and one mechanism cannot serve both.
+
+## L-26 · The approved framing of a stop was never a fixed pose
+
+**What happened.** The static-framing comparison could not be performed as
+specified, because no canonical stop is static: every Tour Step is owned by an
+ENTRY, PORTAL or LEAD beat, and LEAD framing is derived from where the guide is
+standing mid-walk. So a stop's "approved destination framing" is a function of
+guide choreography, not a stored pose — which is why two arrivals at the same
+stop, after the same settle, sit metres apart when the guide has been staged a
+different number of times on the way.
+**Rule.** *Before comparing two arrivals at "the same" destination, establish
+whether that destination is a fixed pose or a derived one.* A derived framing
+cannot be asserted for equality without also reproducing what it derives from.
