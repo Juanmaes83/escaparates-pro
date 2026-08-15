@@ -1155,3 +1155,27 @@ portals, two room profiles, two datasets — sampling one instance and naming it
 after the class is an evidence defect, however rigorous the sampling. And when
 human and agent evidence appear to contradict, first check that they are
 describing the same instance.
+
+## L-22 · Evidence filenames that did not name the instance
+
+**What happened.** Running the storyboard harness against the second crossing
+overwrote three frames of the first crossing's committed board. The output tag
+was built from pace and mode — `museum-NATURAL-SCRUB-01.png` — and said nothing
+about *which crossing* produced it, so both instances resolved to the same
+paths. The frames were gate-bound G1 evidence.
+
+They were recovered from git and verified against their known luminance (beat 01
+= 181.3, beat 08 = 35.61). Nothing in the harness would have reported the
+substitution. Had it gone unnoticed, the board would have shown two different
+crossings spliced together under one set of captions, with every caption
+individually truthful — the same failure shape as L-18, one layer down.
+
+**Classification.** EVIDENCE BUG. Violates the Playbook's evidence-preservation
+rule directly: approved or gate-bound evidence must never be silently
+overwritten.
+**Rule.** *An artefact's filename must identify the instance it belongs to,
+not only the run that produced it.* Where a behaviour has several materially
+different instances (L-21), instance identity belongs in the path — otherwise
+the second run of a correct harness quietly destroys the first run's evidence.
+Corollary: prefer write paths that cannot collide across instances over
+remembering to clear the output directory.

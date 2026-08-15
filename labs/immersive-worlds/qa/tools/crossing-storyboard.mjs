@@ -55,7 +55,28 @@ const FFMPEG = process.env.IW_FFMPEG
 // under the instrument's control and photographed beat by beat — that is the
 // choreography evidence.
 const SCRUB = process.env.IW_SCRUB === '1';
-const TAG = `${REDUCED ? `${PACE}-REDUCED` : PACE}${SCRUB ? '-SCRUB' : ''}`;
+/**
+ * WHICH CROSSING is part of the evidence's identity, not a run-time detail.
+ *
+ * This tag named the pace and the mode but not the portal, so a run against the
+ * Cámara Oscura crossing wrote `museum-NATURAL-SCRUB-01.png` — the same path
+ * Crossing A's board uses — and silently overwrote three frames of committed,
+ * gate-bound evidence with frames of a different crossing. They were recovered
+ * from git and verified against their known luminance, but nothing in the
+ * harness would have reported the substitution: the board would simply have
+ * shown two crossings spliced together under one set of captions.
+ *
+ * Naming the instance is the fix. Evidence that cannot say which instance it
+ * belongs to is exactly the defect L-21 is about, one layer further down.
+ */
+const CROSSING = STEP_ID_TAG(PORTAL_STEP);
+const TAG = `${CROSSING}-${REDUCED ? `${PACE}-REDUCED` : PACE}${SCRUB ? '-SCRUB' : ''}`;
+
+function STEP_ID_TAG(stepId) {
+  if (stepId.includes('galeria-b')) return 'B';
+  if (stepId.includes('galeria-a')) return 'A';
+  return stepId.replace(/[^a-z0-9]+/gi, '-');
+}
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
   '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg',
@@ -216,10 +237,28 @@ await page.waitForFunction((step) => {
 }, PORTAL_STEP, { timeout: 600000 });
 console.log(`beat de portal en escena: ${PORTAL_STEP}`);
 
+/**
+ * Wait for the crossing to actually take the camera.
+ *
+ * Not 20 s. `_flyCrossing` awaits `spaces.preview(toSpaceId)` before it plans
+ * anything — the destination stands and is lit before the camera commits to it —
+ * so the gap between the beat appearing and `isCrossing` turning true is however
+ * long the destination room takes to build. For the first crossing that room is
+ * already warm and the gap is negligible; for the crossing into the Cámara
+ * Oscura it is a room being built for the first time, in an environment
+ * rendering at about two frames per second.
+ *
+ * A 20 s budget expired during that build and the harness printed "NO se
+ * planificó travesía alguna" — which reads exactly like the product failing to
+ * fly a crossing, and is not. Declaring the behaviour absent on that basis would
+ * have repeated L-17 precisely.
+ */
 const flew = await page.waitForFunction(
-  () => window.__IW.runtime.crossing.isCrossing === true, null, { timeout: 20000 }
+  () => window.__IW.runtime.crossing.isCrossing === true, null, { timeout: 240000 }
 ).then(() => true).catch(() => false);
-console.log(flew ? 'travesía en vuelo (TRANSITION posee la cámara)' : 'NO se planificó travesía alguna');
+console.log(flew
+  ? 'travesía en vuelo (TRANSITION posee la cámara)'
+  : 'NO se planificó travesía alguna — comprobar si es el producto o el instrumento antes de concluir');
 
 /**
  * SCRUB the crossing rather than chase it.
