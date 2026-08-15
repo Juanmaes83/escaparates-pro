@@ -173,7 +173,17 @@ export async function boot() {
   // Portal treatment variant, for the Block 2B visual comparison. Default is the
   // approved architectural crossing; the others exist to be looked at, and
   // nothing about them survives a page load that does not ask for one.
-  const portalVariant = (params.get('portalVariant') || 'A').toUpperCase();
+// The Museum's canonical representation is D — IW_ENGINE, the proven
+// first-party portal. Approved by Juanma on pixel evidence: variant A leaves
+// `_thresholdPreset` at NONE, so no portal surface is built, and a crossing
+// with no membrane is a naked hard cut with nothing to occlude the world swap
+// and nothing for the recoil to look back at.
+//
+// A, B and C are kept and still reachable by `?portalVariant=`: they are valid
+// alternative representations and future authoring options, not dead code. This
+// default is scoped to this Museum experience shell and changes nothing for any
+// other Immersive Worlds product.
+const portalVariant = (params.get('portalVariant') || 'D').toUpperCase();
   sceneKit.setThresholdTreatment?.({ A: 'NONE', B: 'ADAPTED', C: 'SUBTLE', D: 'IW_ENGINE' }[portalVariant] || 'NONE');
 
   // Authoring is opt-in and additive: without ?authoring=1 nothing below runs and
@@ -226,7 +236,7 @@ export async function boot() {
       onApply: async (config) => {
         window.__IW_CONFIG = config;
         const url = new URL(location.href);
-        url.searchParams.set('portalVariant', config.experience.portalVariant || 'A');
+        url.searchParams.set('portalVariant', config.experience.portalVariant || 'D');
         history.replaceState(null, '', url);
         if (window.__IW?.runtime) { try { window.__IW.runtime.dispose(); } catch { /* */ } }
         document.getElementById('iw-ui').innerHTML = '';
@@ -301,7 +311,7 @@ async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
   const rebuild = async (config) => {
     window.__IW_CONFIG = config;
     const url = new URL(location.href);
-    url.searchParams.set('portalVariant', config.experience.portalVariant || 'A');
+    url.searchParams.set('portalVariant', config.experience.portalVariant || 'D');
     history.replaceState(null, '', url);
     // Lowering the flag makes every wait on it edge-triggered, for QA and for the
     // studio alike: `ready` left true from the previous boot is how a capture

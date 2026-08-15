@@ -6,3 +6,10 @@
 # bundle its self-contained preview (esbuild). Never part of the module: the
 # prototype itself is vanilla ES modules with a vendored three.js and no build.
 node_modules/
+
+# Crossing storyboard intermediates: thousands of frames decoded out of the
+# recording, and the contact sheets built from them. Both are regenerable from
+# the committed .webm by qa/tools/crossing-storyboard.mjs, and neither is the
+# evidence — the beat stills and the state JSON are.
+labs/immersive-worlds/qa/evidence-vs02/crossing/mframe-*.png
+labs/immersive-worlds/qa/evidence-vs02/crossing/museum-sheet-*.png

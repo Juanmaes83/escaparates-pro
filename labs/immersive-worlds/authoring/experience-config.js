@@ -364,7 +364,7 @@ export function normaliseConfig(input = {}) {
     visitor: normaliseVisitor(c.visitor),
 
     experience: {
-      portalVariant: c.experience?.portalVariant || 'A',
+      portalVariant: c.experience?.portalVariant || 'D',
       // How the camera travels between authored beats — never where it lands.
       pacing: PACING[c.experience?.pacing] ? c.experience.pacing : 'NATURAL',
       // Whether the visitor's own system preference may be overridden towards
@@ -432,7 +432,7 @@ export function baseConfigFromWorld(world) {
     // an empty one would leave the second-museum proof comparing nothing to
     // something. These are the Fundación's own published details.
     visitor: normaliseVisitor(world?.metadata?.visitor || DEMO_VISITOR),
-    experience: { portalVariant: 'A', pacing: 'NATURAL', motion: 'SYSTEM' }
+    experience: { portalVariant: 'D', pacing: 'NATURAL', motion: 'SYSTEM' }
   });
 }
 

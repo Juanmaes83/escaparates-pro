@@ -1,0 +1,3100 @@
+{
+ "generatedAt": "2026-08-15T08:22:46.905Z",
+ "pace": "NATURAL",
+ "reducedMotion": false,
+ "portalStep": "step.02-paso-galeria-a",
+ "flew": true,
+ "plan": {
+  "s": 0.8,
+  "via": [
+   0,
+   1.62,
+   -2.6624999999999974
+  ],
+  "gate": [
+   0,
+   1.62,
+   -4.5
+  ],
+  "window": 0.16999999999999996,
+  "durationMs": 5000,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "slowMotion": 8,
+ "spaces": [
+  "space.lobby",
+  "space.gallery-a"
+ ],
+ "owners": [
+  "EXPLORE",
+  "DIRECTED",
+  "TRANSITION"
+ ],
+ "beats": [
+  {
+   "id": "01",
+   "label": "Mundo A, umbral en su contexto",
+   "file": "museum-NATURAL-SLOWMO-01.png",
+   "state": {
+    "k": 0.0375,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.02-paso-galeria-a",
+    "facing": 1,
+    "alongAxis": -7.681,
+    "effect": 1,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     3.181
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -0.87
+    ]
+   }
+  },
+  {
+   "id": "02",
+   "label": "Adquisición: el umbral es el sujeto",
+   "file": "museum-NATURAL-SLOWMO-02.png",
+   "state": {
+    "k": 0.125,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.02-paso-galeria-a",
+    "facing": 1,
+    "alongAxis": -7.18,
+    "effect": 1,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     2.68
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -2.154
+    ]
+   }
+  },
+  {
+   "id": "03",
+   "label": "Aproximación A",
+   "file": "museum-NATURAL-SLOWMO-03.png",
+   "state": {
+    "k": 0.25,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03a-lleva-campo",
+    "facing": 1,
+    "alongAxis": -5.552,
+    "effect": 0.997,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     1.052
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -4.575
+    ]
+   }
+  },
+  {
+   "id": "04",
+   "label": "Aproximación B — compromiso",
+   "file": "museum-NATURAL-SLOWMO-04.png",
+   "state": {
+    "k": 0.4,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03a-lleva-campo",
+    "facing": 1,
+    "alongAxis": -3.657,
+    "effect": 0.951,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -0.843
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -7.481
+    ]
+   }
+  },
+  {
+   "id": "05",
+   "label": "Aproximación C — toma del encuadre",
+   "file": "museum-NATURAL-SLOWMO-05.png",
+   "state": {
+    "k": 0.55,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03b-campo",
+    "facing": 1,
+    "alongAxis": -1.942,
+    "effect": 0.757,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -2.558
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -9.863
+    ]
+   }
+  },
+  {
+   "id": "06",
+   "label": "Umbral a pantalla completa",
+   "file": "museum-NATURAL-SLOWMO-06.png",
+   "state": {
+    "k": 0.6875,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03c-campo-contemplacion",
+    "facing": 1,
+    "alongAxis": -0.528,
+    "effect": 0.301,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -3.972
+    ],
+    "tgt": [
+     0,
+     1.546,
+     -9.167
+    ]
+   }
+  },
+  {
+   "id": "07",
+   "label": "Cruce de la membrana — el cambio de mundo, oculto",
+   "file": "museum-NATURAL-SLOWMO-07.png",
+   "state": {
+    "k": 0.775,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.03c-campo-contemplacion",
+    "facing": -1,
+    "alongAxis": 0.293,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -4.793
+    ],
+    "tgt": [
+     0,
+     1.62,
+     -6.223
+    ]
+   }
+  },
+  {
+   "id": "08",
+   "label": "Mundo B — el reverso del umbral, de frente",
+   "file": "museum-NATURAL-SLOWMO-08.png",
+   "state": {
+    "k": 0.8625,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.03d-campo-cesion",
+    "facing": 1,
+    "alongAxis": 1.024,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -5.524
+    ],
+    "tgt": [
+     0,
+     1.602,
+     -5.487
+    ]
+   }
+  },
+  {
+   "id": "09",
+   "label": "Retroceso: el umbral todavía domina",
+   "file": "museum-NATURAL-SLOWMO-09.png",
+   "state": {
+    "k": 0.8625,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.03d-campo-cesion",
+    "facing": 1,
+    "alongAxis": 1.024,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -5.524
+    ],
+    "tgt": [
+     0,
+     1.602,
+     -5.487
+    ]
+   }
+  },
+  {
+   "id": "10",
+   "label": "Retroceso medio: el destino empieza a aparecer",
+   "file": "museum-NATURAL-SLOWMO-10.png",
+   "state": {
+    "k": 1,
+    "crossing": false,
+    "settled": true,
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "step": "step.03d-campo-cesion",
+    "facing": null,
+    "alongAxis": null,
+    "effect": 0,
+    "surface": false,
+    "pos": [
+     -0.965,
+     1.673,
+     -0.455
+    ],
+    "tgt": [
+     -1.813,
+     1.581,
+     -3.518
+    ]
+   }
+  },
+  {
+   "id": "11",
+   "label": "Fin del retroceso: el entorno ya está establecido",
+   "file": "museum-NATURAL-SLOWMO-11.png",
+   "state": {
+    "k": 1,
+    "crossing": false,
+    "settled": true,
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "step": "step.03d-campo-cesion",
+    "facing": null,
+    "alongAxis": null,
+    "effect": 0,
+    "surface": false,
+    "pos": [
+     -0.965,
+     1.673,
+     -0.455
+    ],
+    "tgt": [
+     -1.813,
+     1.581,
+     -3.518
+    ]
+   }
+  },
+  {
+   "id": "12",
+   "label": "Asentamiento",
+   "file": "museum-NATURAL-SLOWMO-12.png",
+   "state": {
+    "k": 1,
+    "crossing": false,
+    "settled": true,
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "step": "step.03d-campo-cesion",
+    "facing": null,
+    "alongAxis": null,
+    "effect": 0,
+    "surface": false,
+    "pos": [
+     -0.965,
+     1.673,
+     -0.455
+    ],
+    "tgt": [
+     -1.813,
+     1.581,
+     -3.518
+    ]
+   }
+  }
+ ],
+ "marks": [
+  {
+   "t": 43375.799999999814,
+   "phase": "REQUESTED",
+   "portalId": "portal.lobby-gallery-a",
+   "ms": 13655
+  },
+  {
+   "t": 191968.3999999999,
+   "phase": "CROSSED",
+   "crossing": true,
+   "spaceId": "space.gallery-a",
+   "ms": 162248
+  },
+  {
+   "t": 289077.1999999997,
+   "phase": "LANDED",
+   "crossing": true,
+   "spaceId": "space.gallery-a",
+   "ms": 259356
+  }
+ ],
+ "samples": [
+  {
+   "ms": 3,
+   "space": "space.lobby",
+   "step": null,
+   "owner": "EXPLORE",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.62,
+    2.2
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1120,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.617,
+    2.123
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 2267,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.6,
+    1.696
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 3430,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.567,
+    0.887
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 4562,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.532,
+    -0.009
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 5709,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -0.604
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 6823,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.795
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 7951,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 9109,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 10258,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 11407,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 12533,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 13658,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 16585,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.671
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 19161,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2,
+   "effect": 0.999,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.224,
+   "pos": [
+    0,
+    1.62,
+    1.724
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.607
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 21741,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.0375,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.681,
+   "pos": [
+    0,
+    1.62,
+    3.181
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.87
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 22921,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.05,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.657,
+   "pos": [
+    0,
+    1.62,
+    3.157
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.954
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 24069,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.0625,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.618,
+   "pos": [
+    0,
+    1.62,
+    3.118
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.079
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 25235,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.075,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.565,
+   "pos": [
+    0,
+    1.62,
+    3.065
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.244
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 27669,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.0875,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.494,
+   "pos": [
+    0,
+    1.62,
+    2.994
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.444
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 30100,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.671
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 32535,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1125,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.301,
+   "pos": [
+    0,
+    1.62,
+    2.801
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.912
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 34982,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.125,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.18,
+   "pos": [
+    0,
+    1.62,
+    2.68
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -2.154
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 37425,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1375,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.043,
+   "pos": [
+    0,
+    1.62,
+    2.543
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -2.396
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 39978,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.15,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.894,
+   "pos": [
+    0,
+    1.62,
+    2.394
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -2.638
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 42489,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1625,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.734,
+   "pos": [
+    0,
+    1.62,
+    2.234
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -2.88
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 45068,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.175,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.566,
+   "pos": [
+    0,
+    1.62,
+    2.066
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.122
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 47576,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1875,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.395,
+   "pos": [
+    0,
+    1.62,
+    1.895
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.365
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 50119,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2,
+   "effect": 0.999,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.224,
+   "pos": [
+    0,
+    1.62,
+    1.724
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.607
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 52626,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2125,
+   "effect": 0.999,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.054,
+   "pos": [
+    0,
+    1.62,
+    1.554
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.849
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 55124,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.225,
+   "effect": 0.998,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.886,
+   "pos": [
+    0,
+    1.62,
+    1.386
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.091
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 57616,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2375,
+   "effect": 0.998,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.719,
+   "pos": [
+    0,
+    1.62,
+    1.219
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.333
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 60073,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.575
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 62580,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2625,
+   "effect": 0.996,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.388,
+   "pos": [
+    0,
+    1.62,
+    0.888
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.817
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 65087,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.275,
+   "effect": 0.994,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.224,
+   "pos": [
+    0,
+    1.62,
+    0.724
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -5.059
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 67602,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2875,
+   "effect": 0.992,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.062,
+   "pos": [
+    0,
+    1.62,
+    0.562
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -5.302
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 70105,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3,
+   "effect": 0.99,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.901,
+   "pos": [
+    0,
+    1.62,
+    0.401
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -5.544
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 72712,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3125,
+   "effect": 0.987,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.741,
+   "pos": [
+    0,
+    1.62,
+    0.241
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -5.786
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 75249,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.325,
+   "effect": 0.984,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.582,
+   "pos": [
+    0,
+    1.62,
+    0.082
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -6.028
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 77726,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3375,
+   "effect": 0.98,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.425,
+   "pos": [
+    0,
+    1.62,
+    -0.075
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -6.27
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 80291,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.35,
+   "effect": 0.976,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.269,
+   "pos": [
+    0,
+    1.62,
+    -0.231
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -6.512
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 82839,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3625,
+   "effect": 0.971,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.114,
+   "pos": [
+    0,
+    1.62,
+    -0.386
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -6.754
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 85424,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.375,
+   "effect": 0.965,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.961,
+   "pos": [
+    0,
+    1.62,
+    -0.539
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -6.996
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 88198,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3875,
+   "effect": 0.958,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.808,
+   "pos": [
+    0,
+    1.62,
+    -0.692
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.239
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 90817,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 93429,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4125,
+   "effect": 0.942,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.507,
+   "pos": [
+    0,
+    1.62,
+    -0.993
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.723
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 96076,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.425,
+   "effect": 0.933,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.359,
+   "pos": [
+    0,
+    1.62,
+    -1.141
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.965
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 98758,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4375,
+   "effect": 0.922,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.212,
+   "pos": [
+    0,
+    1.62,
+    -1.288
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -8.207
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 101377,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.45,
+   "effect": 0.91,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.065,
+   "pos": [
+    0,
+    1.62,
+    -1.435
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -8.449
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 103965,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4625,
+   "effect": 0.897,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.921,
+   "pos": [
+    0,
+    1.62,
+    -1.579
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -8.691
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 106515,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.475,
+   "effect": 0.882,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.777,
+   "pos": [
+    0,
+    1.62,
+    -1.723
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -8.933
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 109032,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4875,
+   "effect": 0.865,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.635,
+   "pos": [
+    0,
+    1.62,
+    -1.865
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.167
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 111521,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5,
+   "effect": 0.847,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.494,
+   "pos": [
+    0,
+    1.62,
+    -2.006
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.38
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 113963,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5125,
+   "effect": 0.828,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.354,
+   "pos": [
+    0,
+    1.62,
+    -2.146
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.56
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 116402,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.525,
+   "effect": 0.806,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.215,
+   "pos": [
+    0,
+    1.62,
+    -2.285
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.701
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 118821,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5375,
+   "effect": 0.783,
+   "surface": true,
+   "facing": 1,
+   "distance": 2.078,
+   "pos": [
+    0,
+    1.62,
+    -2.422
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.801
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 121199,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 123559,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5625,
+   "effect": 0.729,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.807,
+   "pos": [
+    0,
+    1.62,
+    -2.693
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.892
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 125889,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.575,
+   "effect": 0.699,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.674,
+   "pos": [
+    0,
+    1.62,
+    -2.826
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 128181,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5875,
+   "effect": 0.666,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.541,
+   "pos": [
+    0,
+    1.62,
+    -2.959
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 130461,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6,
+   "effect": 0.631,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.41,
+   "pos": [
+    0,
+    1.62,
+    -3.09
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 132797,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6125,
+   "effect": 0.593,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.28,
+   "pos": [
+    0,
+    1.62,
+    -3.22
+   ],
+   "tgt": [
+    0,
+    1.501,
+    -9.889
+   ],
+   "fov": 55.03
+  },
+  {
+   "ms": 136423,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.625,
+   "effect": 0.552,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.152,
+   "pos": [
+    0,
+    1.62,
+    -3.348
+   ],
+   "tgt": [
+    0,
+    1.505,
+    -9.826
+   ],
+   "fov": 55.18
+  },
+  {
+   "ms": 139353,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6375,
+   "effect": 0.509,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.025,
+   "pos": [
+    0,
+    1.62,
+    -3.475
+   ],
+   "tgt": [
+    0,
+    1.511,
+    -9.722
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 142175,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.65,
+   "effect": 0.462,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.899,
+   "pos": [
+    0,
+    1.62,
+    -3.601
+   ],
+   "tgt": [
+    0,
+    1.52,
+    -9.591
+   ],
+   "fov": 55.74
+  },
+  {
+   "ms": 144863,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6625,
+   "effect": 0.412,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.774,
+   "pos": [
+    0,
+    1.62,
+    -3.726
+   ],
+   "tgt": [
+    0,
+    1.529,
+    -9.447
+   ],
+   "fov": 56.08
+  },
+  {
+   "ms": 147430,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.675,
+   "effect": 0.358,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.65,
+   "pos": [
+    0,
+    1.62,
+    -3.85
+   ],
+   "tgt": [
+    0,
+    1.538,
+    -9.303
+   ],
+   "fov": 56.43
+  },
+  {
+   "ms": 150000,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6875,
+   "effect": 0.301,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.528,
+   "pos": [
+    0,
+    1.62,
+    -3.972
+   ],
+   "tgt": [
+    0,
+    1.546,
+    -9.167
+   ],
+   "fov": 56.75
+  },
+  {
+   "ms": 152470,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 154902,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7125,
+   "effect": 0.175,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.287,
+   "pos": [
+    0,
+    1.62,
+    -4.213
+   ],
+   "tgt": [
+    0,
+    1.56,
+    -8.955
+   ],
+   "fov": 57.26
+  },
+  {
+   "ms": 157278,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.725,
+   "effect": 0.107,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.169,
+   "pos": [
+    0,
+    1.62,
+    -4.331
+   ],
+   "tgt": [
+    0,
+    1.564,
+    -8.89
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 159722,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7375,
+   "effect": 0.034,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.051,
+   "pos": [
+    0,
+    1.62,
+    -4.449
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.858
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 164170,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 166171,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7625,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.18,
+   "pos": [
+    0,
+    1.62,
+    -4.68
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.349
+   ],
+   "fov": 57.4
+  },
+  {
+   "ms": 172741,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.775,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.293,
+   "pos": [
+    0,
+    1.62,
+    -4.793
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.223
+   ],
+   "fov": 57.24
+  },
+  {
+   "ms": 179084,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7875,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.405,
+   "pos": [
+    0,
+    1.62,
+    -4.905
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.044
+   ],
+   "fov": 57.01
+  },
+  {
+   "ms": 185349,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.822
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 191795,
+   "space": "space.gallery-a",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8125,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.626,
+   "pos": [
+    0,
+    1.62,
+    -5.126
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.569
+   ],
+   "fov": 56.39
+  },
+  {
+   "ms": 197981,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.825,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.734,
+   "pos": [
+    0,
+    1.62,
+    -5.234
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.304
+   ],
+   "fov": 56.04
+  },
+  {
+   "ms": 204168,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8375,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.838,
+   "pos": [
+    0,
+    1.62,
+    -5.338
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.05
+   ],
+   "fov": 55.71
+  },
+  {
+   "ms": 211374,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 218586,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8625,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.024,
+   "pos": [
+    0,
+    1.62,
+    -5.524
+   ],
+   "tgt": [
+    0,
+    1.602,
+    -5.487
+   ],
+   "fov": 55.21
+  },
+  {
+   "ms": 225798,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.875,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.105,
+   "pos": [
+    0,
+    1.62,
+    -5.605
+   ],
+   "tgt": [
+    0,
+    1.577,
+    -6.504
+   ],
+   "fov": 55.07
+  },
+  {
+   "ms": 231838,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8875,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.175,
+   "pos": [
+    0,
+    1.62,
+    -5.675
+   ],
+   "tgt": [
+    0,
+    1.551,
+    -7.596
+   ],
+   "fov": 55.01
+  },
+  {
+   "ms": 237856,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.235,
+   "pos": [
+    0,
+    1.62,
+    -5.735
+   ],
+   "tgt": [
+    0,
+    1.531,
+    -8.513
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 243867,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9125,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.285,
+   "pos": [
+    0,
+    1.62,
+    -5.785
+   ],
+   "tgt": [
+    0,
+    1.516,
+    -9.163
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 249870,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.925,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.325,
+   "pos": [
+    0,
+    1.62,
+    -5.825
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.562
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 255917,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9375,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.355,
+   "pos": [
+    0,
+    1.62,
+    -5.855
+   ],
+   "tgt": [
+    0,
+    1.503,
+    -9.772
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 256575,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.95,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.376,
+   "pos": [
+    0,
+    1.62,
+    -5.876
+   ],
+   "tgt": [
+    0,
+    1.501,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 257227,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9625,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.389,
+   "pos": [
+    0,
+    1.62,
+    -5.889
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.893
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 257870,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.975,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 258362,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9871,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.4,
+   "pos": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 258855,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9996,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.4,
+   "pos": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 259358,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.4,
+   "pos": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 259912,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": 0.875,
+   "distance": 4.159,
+   "pos": [
+    -0.965,
+    1.673,
+    -0.455
+   ],
+   "tgt": [
+    -1.813,
+    1.581,
+    -3.518
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 261028,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.658,
+   "distance": 6.828,
+   "pos": [
+    -3.569,
+    1.816,
+    -10.321
+   ],
+   "tgt": [
+    -6.708,
+    1.8,
+    -10.854
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 261524,
+   "space": "space.gallery-a",
+   "step": "step.03d-campo-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.462,
+   "distance": 8.909,
+   "pos": [
+    -4.118,
+    1.847,
+    -12.4
+   ],
+   "tgt": [
+    -7.74,
+    1.847,
+    -12.4
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 262076,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.516,
+   "distance": 8.854,
+   "pos": [
+    -4.075,
+    1.847,
+    -12.361
+   ],
+   "tgt": [
+    -7.353,
+    1.836,
+    -12.57
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 262602,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.7,
+   "distance": 8.62,
+   "pos": [
+    -3.892,
+    1.847,
+    -12.192
+   ],
+   "tgt": [
+    -6.406,
+    1.81,
+    -12.987
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 263953,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.903,
+   "distance": 8.334,
+   "pos": [
+    -3.667,
+    1.847,
+    -11.984
+   ],
+   "tgt": [
+    -5.454,
+    1.784,
+    -13.405
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 265050,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.999,
+   "distance": 8.049,
+   "pos": [
+    -3.442,
+    1.847,
+    -11.776
+   ],
+   "tgt": [
+    -4.502,
+    1.758,
+    -13.824
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 266405,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.955,
+   "distance": 7.765,
+   "pos": [
+    -3.216,
+    1.847,
+    -11.568
+   ],
+   "tgt": [
+    -3.551,
+    1.732,
+    -14.243
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 267709,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.863,
+   "distance": 7.484,
+   "pos": [
+    -2.991,
+    1.847,
+    -11.36
+   ],
+   "tgt": [
+    -2.599,
+    1.706,
+    -14.662
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 268376,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.784,
+   "distance": 7.204,
+   "pos": [
+    -2.766,
+    1.847,
+    -11.152
+   ],
+   "tgt": [
+    -1.653,
+    1.68,
+    -15.078
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 269046,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.79,
+   "distance": 6.927,
+   "pos": [
+    -2.541,
+    1.845,
+    -10.944
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 269712,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.836,
+   "distance": 6.653,
+   "pos": [
+    -2.316,
+    1.83,
+    -10.736
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 270361,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.876,
+   "distance": 6.381,
+   "pos": [
+    -2.09,
+    1.796,
+    -10.529
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 271025,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.91,
+   "distance": 6.112,
+   "pos": [
+    -1.865,
+    1.755,
+    -10.321
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 271655,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.936,
+   "distance": 5.866,
+   "pos": [
+    -1.656,
+    1.728,
+    -10.127
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 272274,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.945,
+   "distance": 5.77,
+   "pos": [
+    -1.573,
+    1.72,
+    -10.051
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 272885,
+   "space": "space.gallery-a",
+   "step": "step.03-lleva-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.946,
+   "distance": 5.768,
+   "pos": [
+    -1.572,
+    1.72,
+    -10.05
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 273496,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.915,
+   "distance": 6.204,
+   "pos": [
+    -1.821,
+    1.722,
+    -10.431
+   ],
+   "tgt": [
+    -1.254,
+    1.669,
+    -15.282
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 274121,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.785,
+   "distance": 7.393,
+   "pos": [
+    -2.492,
+    1.729,
+    -11.46
+   ],
+   "tgt": [
+    -1.171,
+    1.666,
+    -15.394
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 274819,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.746,
+   "distance": 7.645,
+   "pos": [
+    -2.633,
+    1.73,
+    -11.677
+   ],
+   "tgt": [
+    -1.154,
+    1.665,
+    -15.418
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 275557,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.746,
+   "distance": 7.645,
+   "pos": [
+    -2.633,
+    1.73,
+    -11.677
+   ],
+   "tgt": [
+    -1.154,
+    1.665,
+    -15.418
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 276286,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.746,
+   "distance": 7.645,
+   "pos": [
+    -2.633,
+    1.73,
+    -11.677
+   ],
+   "tgt": [
+    -1.154,
+    1.665,
+    -15.418
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 276982,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.746,
+   "distance": 7.645,
+   "pos": [
+    -2.633,
+    1.73,
+    -11.677
+   ],
+   "tgt": [
+    -1.154,
+    1.665,
+    -15.418
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 277677,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 1.0117,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.746,
+   "distance": 7.645,
+   "pos": [
+    -2.633,
+    1.73,
+    -11.677
+   ],
+   "tgt": [
+    -1.154,
+    1.665,
+    -15.418
+   ],
+   "fov": 55
+  }
+ ],
+ "sampleError": null,
+ "errors": []
+}

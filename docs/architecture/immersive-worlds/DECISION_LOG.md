@@ -1062,3 +1062,46 @@ Check the layout is valid before quoting numbers from it.
 during a mandate that authorised working through to the final gate.
 **Rule.** *A progress report is not a stopping point.* Under an autonomous
 mandate, stop only at the named gate or at a genuine blocker.
+
+## L-17 · Photographing a code path the product never takes
+
+**What happened.** The crossing storyboard drove the doorway with
+`runtime.traversePortal(id, { source: 'QA' })` and reported a naked hard cut —
+no membrane, no takeover, no recoil — which was then carried forward as a
+suspected product defect. It was not. `traversePortal` flies a crossing only
+when the caller supplies a `crossing` intent, and the sole producer of that
+intent in the whole engine is the Director, at a guided beat whose `shotIntent`
+is `PORTAL`. A bare `traversePortal` **is** the cut path, by design. The
+instrument had invented a caller that does not exist and photographed the
+result.
+**Rule.** *Before calling a behaviour absent, prove the harness invokes it the
+way the product does.* Find the real caller in the source and reproduce its
+contract — the trigger is part of the behaviour, not scaffolding around it.
+
+## L-18 · A caption and its picture from different instants
+
+**What happened.** Beat 08 of the Museum storyboard was captioned "facing +1,
+looking back at the threshold" over a photograph of the far wall of Gallery A.
+Both halves were honest on their own: the state really was read at `facing=+1`,
+and the screenshot really was taken. They were seconds apart, and in this
+environment seconds are a large fraction of the move, so the recoil had already
+released by the time the shutter fell.
+**Rule.** *Read the state, take the picture, then read the state again and
+assert they match.* A board whose captions and pixels come from different
+moments is worse than a board with a missing beat, because it is wrong
+confidently.
+
+## L-19 · A frame rate that silently decided the verdict
+
+**What happened.** Three separate readings — "hard cut", "six beats stamped
+k=1", "the look-back never happens" — all traced to one unexamined fact: this
+environment draws the Museum at about two frames per second, and about six
+times slower again past the threshold, where the portal surface renders the
+destination a second time and both rooms are live. An authored 5000 ms crossing
+is drawn roughly ten times end to end. Ten images cannot show twelve beats, and
+no amount of care in choosing them would have helped.
+**Rule.** *Measure the instrument's own resolution before trusting what it did
+not see.* When the sampling rate is comparable to the event, absence of
+evidence is a property of the instrument. The fix was to stop chasing the move
+and scrub it: `_duration` set enormous, progress written directly, every capture
+a frozen instant — tempo changed, choreography untouched.
