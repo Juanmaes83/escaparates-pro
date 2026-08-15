@@ -1179,3 +1179,47 @@ different instances (L-21), instance identity belongs in the path — otherwise
 the second run of a correct harness quietly destroys the first run's evidence.
 Corollary: prefer write paths that cannot collide across instances over
 remembering to clear the output directory.
+
+## L-23 · Widening a column that the rest of the layout could not see
+
+**What happened.** P0.1's fix is one token: the Visitante domain needs an
+editorial measure, and the shell already derives its geometry from `--st-left`.
+The token was set on `#st`. The column widened, the measurements looked like a
+clean fix — 196px to 576px, every control above 240px, no split labels — and the
+harness reported the preview unchanged at exactly its previous width.
+
+That last number was the tell. `body[data-studio="on"] #iw-stage` also derives
+its insets from `--st-left`, and `#iw-stage` is a **sibling** of `#st`, not a
+descendant, so it never received the value. The canvas stayed where it was and
+the widened editor was drawn on top of it. Every "after" number had been taken
+across an overlap, which is L-15 exactly, in a different surface.
+
+Two things caught it, and neither was the passing metric: the preview width was
+suspiciously *identical* before and after a change that must have moved it, and
+the screenshot showed the preview clipped rather than resized.
+
+**Classification.** PRODUCT BUG in the fix, plus an INSTRUMENT BUG that hid it —
+preview width was read from `#iw-canvas`, which is `inset:0` inside a fixed
+parent and therefore reports the docked width regardless of the shell.
+**Rule.** *A layout token must be published where every consumer of it can
+resolve it.* Before setting a custom property, list the selectors that read it
+and confirm each one inherits from the element being set. The shell already
+publishes `--st-canvas-h` to `documentElement` for precisely this reason; the
+proven in-repo pattern was there to be reused and was not.
+**Corollary.** *A metric that does not move when the layout moves is not
+measuring the layout.* An unchanged number across a change that must have
+changed it is a signal to check the instrument, not a result.
+
+## L-24 · Fixing a narrow column by making another one narrow
+
+**What happened.** To keep the preview large while widening the editor, the
+Readiness column was reduced to 116px. The Visitante fields passed every
+acceptance number. Readiness then truncated its ring caption, its counts and its
+buttons — the same defect the mission exists to remove, moved one column right.
+Reverted; Readiness keeps its measure and the width comes from the inspector and
+the preview instead.
+**Rule.** *Space taken from a neighbour is not space created.* When a layout fix
+reclaims width, check the surface it was taken from against the same acceptance
+criteria as the surface being fixed. Folding Readiness into a genuine compact
+summary is a product change with its own scope, not a side effect of another
+mission.

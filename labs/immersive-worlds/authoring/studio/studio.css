@@ -769,3 +769,65 @@ h2 {
 }
 .st-f--check input { accent-color: var(--st-accent); width: 14px; height: 14px; }
 .st-f--check .st-l { margin: 0; }
+
+/* == the editorial workspace ==============================================
+ *
+ * P0.1. The Visitante domain edits editorial prose — opening hours, an address,
+ * an accessibility statement, reservation URLs — inside the second column,
+ * which is 196px because it was sized to hold a tree of room and piece names.
+ *
+ * Measured before this rule, at 1920, 1440 and 1366 alike: the column stayed
+ * 196px at every width, all eighteen text controls were under 240px, the
+ * narrowest was 87px, and the domain scrolled 1041 to 1353px vertically. The
+ * form grid is not at fault — 96px of label plus 12px of gap against a 196px
+ * column leaves exactly the 87px that was measured. The column is the fault.
+ *
+ * CONSISTENT SYSTEM IS NOT IDENTICAL LAYOUT FOR EVERY TASK. A tree of names and
+ * a page of institutional prose are different editing tasks and want different
+ * widths, and the rest of the shell already reads its geometry from `--st-left`
+ * — the canvas insets, the caption strip and the shell's own measurement all
+ * derive from it. So the whole layout adapts by moving one token, rather than
+ * by a second layout being invented next to the first.
+ *
+ * The preview keeps priority: `clamp` gives the editor a real measure at the
+ * widths this Studio is used at and stops it eating the room on smaller ones.
+ * At 1366 the editor takes 380px and the preview keeps what is left, which is
+ * still materially more preview than editor.
+ */
+/* Published on the document element, not on `#st`.
+ *
+ * `body[data-studio="on"] #iw-stage` and `.st-film` both derive their insets
+ * from `--st-left`, and #iw-stage is a SIBLING of #st rather than a descendant,
+ * so a value set on #st never reaches them: the column widened, the canvas
+ * stayed where it was, and the editor simply drew on top of the preview. The
+ * measurements taken across that overlap looked like a fix and were not
+ * (DECISION_LOG L-15). The shell already publishes `--st-canvas-h` to
+ * documentElement for exactly this reason; this follows that proven pattern. */
+:root[data-st-mode="editorial"] {
+  --st-left: clamp(420px, 26vw, 560px);
+  /* The inspector keeps its role but not its full measure: in this domain the
+     editorial column is the subject and the inspector is context.
+     Readiness is deliberately NOT squeezed. Narrowing it to a summary rail was
+     tried and reverted: at 116px its ring caption, its counts and its buttons
+     all truncated, which is the same defect this rule exists to remove, moved
+     one column to the right. Folding Readiness into a real compact summary is a
+     product change the brief scopes separately (AVISOS · n with [VER]); until
+     that exists it keeps its measure. */
+  --st-editor: 268px;
+}
+
+/* Editorial prose gets a wider label column than a tree's cramped one, and the
+   fields stop being the narrowest thing on screen. */
+@media (min-width: 1241px) {
+  #st[data-mode="editorial"] .st-f { grid-template-columns: 112px 1fr; }
+  #st[data-mode="editorial"] .st-facts { grid-template-columns: 112px 1fr; }
+}
+
+/* Long single-line values — a reservation URL is the case Human QA called out —
+   must be readable without selecting the field and scrolling inside it. */
+#st[data-mode="editorial"] .st-vform input[type="text"],
+#st[data-mode="editorial"] .st-vform input:not([type]),
+#st[data-mode="editorial"] .st-vform textarea {
+  width: 100%;
+  min-width: 0;
+}

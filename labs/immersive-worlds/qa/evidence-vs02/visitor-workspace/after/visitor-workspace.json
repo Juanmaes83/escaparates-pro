@@ -1,0 +1,147 @@
+{
+ "generatedAt": "2026-08-15T15:39:22.281Z",
+ "label": "after",
+ "viewports": [
+  {
+   "id": "1920",
+   "w": 1920,
+   "h": 1080,
+   "present": true,
+   "column": {
+    "width": 499,
+    "height": 1024
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "clamp(420px, 26vw, 560px)",
+    "editor": "268px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374,
+    374
+   ],
+   "narrowestControl": 374,
+   "medianControl": 374,
+   "narrowInputs": 0,
+   "overflowingLabels": 0,
+   "scrollHeight": 1671,
+   "clientHeight": 1024,
+   "verticalOverflowPx": 647,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 815,
+   "errors": []
+  },
+  {
+   "id": "1440",
+   "w": 1440,
+   "h": 900,
+   "present": true,
+   "column": {
+    "width": 420,
+    "height": 844
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "clamp(420px, 26vw, 560px)",
+    "editor": "268px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295
+   ],
+   "narrowestControl": 295,
+   "medianControl": 295,
+   "narrowInputs": 0,
+   "overflowingLabels": 0,
+   "scrollHeight": 1671,
+   "clientHeight": 844,
+   "verticalOverflowPx": 827,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 414,
+   "errors": []
+  },
+  {
+   "id": "1366",
+   "w": 1366,
+   "h": 768,
+   "present": true,
+   "column": {
+    "width": 420,
+    "height": 712
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "clamp(420px, 26vw, 560px)",
+    "editor": "268px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295,
+    295
+   ],
+   "narrowestControl": 295,
+   "medianControl": 295,
+   "narrowInputs": 0,
+   "overflowingLabels": 0,
+   "scrollHeight": 1671,
+   "clientHeight": 712,
+   "verticalOverflowPx": 959,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 340,
+   "errors": []
+  }
+ ]
+}

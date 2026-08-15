@@ -216,6 +216,16 @@ const DOMAINS = [
   }
 ];
 
+/**
+ * Domains whose second column is a form to be read and typed into rather than a
+ * tree to be navigated, and which therefore need an editorial measure.
+ *
+ * Deliberately a set of one for now. Human QA demonstrated the defect on
+ * Visitante; adding the others on the strength of the same argument would be
+ * changing surfaces nobody has reviewed.
+ */
+const EDITORIAL_DOMAINS = new Set(['visitor']);
+
 export class StudioShell {
   /**
    * @param {object} deps
@@ -311,6 +321,22 @@ export class StudioShell {
 
   render() {
     const r = this.readiness;
+    // Which layout this domain wants. A tree of room and piece names and a page
+    // of institutional prose are different editing tasks: the first is a list of
+    // short labels, the second is opening hours, an address and reservation
+    // URLs. They were sharing one 196px column, which is why every Visitante
+    // control measured under 240px at every viewport. The stylesheet reads this
+    // and moves `--st-left`; the canvas insets and the shell's own measurement
+    // already derive from that token, so the whole shell reflows from one
+    // switch rather than from a second layout living beside the first.
+    const mode = EDITORIAL_DOMAINS.has(this.domain) ? 'editorial' : 'workspace';
+    this.root.dataset.mode = mode;
+    // Published to the document element as well, because #iw-stage and .st-film
+    // derive their insets from `--st-left` and #iw-stage is a sibling of #st,
+    // not a descendant. Setting the token only on #st widened the column while
+    // the canvas stayed put, so the editor drew over the preview instead of
+    // beside it. Same pattern the shell already uses for `--st-canvas-h`.
+    document.documentElement.dataset.stMode = mode;
     this.root.innerHTML = `
       ${this._topBar(r)}
       <div class="st-body">
@@ -1647,6 +1673,7 @@ export class StudioShell {
   destroy() {
     window.removeEventListener('resize', this._onResize);
     document.documentElement.style.removeProperty('--st-canvas-h');
+    delete document.documentElement.dataset.stMode;
     this.root.remove();
   }
 }
