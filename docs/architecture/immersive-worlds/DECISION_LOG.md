@@ -1105,3 +1105,21 @@ not see.* When the sampling rate is comparable to the event, absence of
 evidence is a property of the instrument. The fix was to stop chasing the move
 and scrub it: `_duration` set enormous, progress written directly, every capture
 a frozen instant — tempo changed, choreography untouched.
+
+## L-20 · Reading a WebGL canvas the way you read a 2D one
+
+**What happened.** Built a tool to check whether the look-back frame was really
+dark, by drawing `#iw-canvas` into a 2D canvas and averaging the pixels. It
+reported luminance 0 for every frame — including frames already photographed as
+a brightly lit gallery. The reading was not of the Museum: a WebGL drawing
+buffer is cleared after compositing unless the context was created with
+`preserveDrawingBuffer`, so `drawImage` returns transparent black no matter what
+is on screen. Had the frame under suspicion not already been known-dark, this
+would have "confirmed" a defect that was not there — the worst possible
+direction for an instrument to fail.
+**Rule.** *An instrument that returns the expected answer for the wrong reason
+is indistinguishable from a working one until it is pointed at a known case.*
+Check a new measurement against a frame whose answer is already known before
+trusting it on the frame in question. The valid version measures the captured
+PNGs instead, which are composited output rather than a live drawing buffer:
+`ffmpeg -i frame.png -vf signalstats,metadata=print:key=lavfi.signalstats.YAVG`.
