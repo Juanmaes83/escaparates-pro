@@ -1297,3 +1297,24 @@ at; if the forward arrival varies, the return will faithfully reproduce one of
 its variants and look wrong against the others. Where a destination is derived
 rather than stored, either freeze what it derives from or store the resolved
 pose as the contract — and say which, because the two are different products.
+
+## L-28 · Probing a capability outside the context it needs
+
+**What happened.** Phase 0 of the Breeze mission reported WebGPU unavailable in
+this environment and classified it as an external blocker. Three launch
+configurations were tried and all returned `navigator.gpu` undefined, which
+looked conclusive. The probe ran on `about:blank`. WebGPU is gated on a secure
+context, so the answer was about the page, not the browser: served over
+`http://127.0.0.1` with `--enable-unsafe-webgpu`, the same container yields a
+`google/swiftshader` adapter, a device, and a compute pass returning its
+expected values.
+
+The error was found only because the spike happened to run its own check inside
+the real Museum page and disagreed with the document.
+
+**Classification.** INSTRUMENT BUG, reported as an external blocker — the most
+expensive direction for this kind of mistake, because a blocker ends work.
+**Rule.** *Probe a capability in the same context the product runs in.* Anything
+gated on origin, secure context, permissions or user activation will report
+absent from a blank page regardless of launch flags. When a probe says a
+capability is missing, confirm it from the real page before recording a blocker.

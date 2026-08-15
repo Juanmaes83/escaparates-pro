@@ -14,6 +14,32 @@ Authority: Breeze Studio PRO V4 @ `3a58e9b`. Engine donor: `Juanmaes83/breeze` @
 | `.github/workflows/build-breeze-studio-pro.yml` | **Absent at HEAD** (§30 assumes it exists) |
 | Branches carrying breeze-studio-pro | `origin/feature/breeze-studio-pro` and five others |
 
+## CORRECTION — WebGPU IS available here
+
+An earlier version of this document reported WebGPU unavailable in this
+environment and treated it as an external blocker. **That was wrong**, and the
+error was mine: the probe ran on `about:blank`. WebGPU is gated on a secure
+context, so a blank page reports `navigator.gpu` undefined however the browser
+was launched.
+
+Probed correctly — page served over `http://127.0.0.1`, Chromium launched with
+`--enable-unsafe-webgpu` alongside the usual swiftshader flags:
+
+```
+isSecureContext  true
+adapter          google / swiftshader
+device           created
+compute pass     dispatched, returned [0, 2, 4, 6] — the expected values
+```
+
+So Breeze's compute path **can** execute in this container. The renderer
+architecture finding below is unaffected and still stands; what changes is that
+proving the Breeze capability is no longer environment-blocked.
+
+*Rule, recorded as L-28: probe a capability in the same context the product
+runs in. A feature gated on origin or secure context will report absent from a
+blank page whatever the launch flags say.*
+
 ## §9 — the mandatory renderer reconciliation
 
 | | Museum | Breeze V4 |
