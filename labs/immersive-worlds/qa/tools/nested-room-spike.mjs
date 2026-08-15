@@ -247,7 +247,8 @@ say('el Museo sigue operativo tras el ciclo', Boolean(museum.space) && museum.re
 
 const passed = results.filter((r) => r.ok).length;
 console.log(`\n${passed}/${results.length} comprobaciones · activación ${activateMs} ms · liberación ${disposeMs} ms`);
-console.log(`CAPACIDAD BREEZE: NO PROBADA — WebGPU no disponible en este entorno`);
+console.log(`CAPACIDAD BREEZE: NO PROBADA en este arnés — el invitado es un doble de prueba, no Breeze`);
+console.log(`WebGPU: ${webgpu.available ? 'disponible' : 'no disponible'} (contexto seguro requerido)`);
 
 await fs.writeFile(path.join(OUT, 'nested-room-spike.json'), JSON.stringify({
   generatedAt: new Date().toISOString(),
