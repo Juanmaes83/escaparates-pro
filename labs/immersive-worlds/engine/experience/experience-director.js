@@ -81,24 +81,6 @@ export class ExperienceDirector {
     this.manifest = null;
     /** Set while a seek is replaying beats, so `update` does not race it. */
     this._seeking = false;
-    /**
-     * The approved arrival of each Tour Stop, remembered the first time the
-     * visitor reaches it going forwards.
-     *
-     * This is what makes going back possible without replaying the route. The
-     * canonical definition of returning to a stop is the settled viewing state
-     * of its approved forward arrival — so the honest thing to store is the
-     * pose the Director itself resolved for that beat, captured at the moment
-     * it was applied. Sampling the live camera instead would record whatever
-     * animation phase the sampler happened to catch, which is exactly the 2.4 m
-     * spread the replay evidence measured between two arrivals at one stop.
-     *
-     * Nothing here invents framing: it is the same pose the approved forward
-     * experience already flew to.
-     *
-     * @type {Map<string, {pose:object, guide:object|null, visitor:object|null, spaceId:string, beatIndex:number}>}
-     */
-    this._arrivals = new Map();
   }
 
   get currentStep() {
@@ -356,37 +338,92 @@ export class ExperienceDirector {
     return this.currentTourStep?.previousId || null;
   }
 
+  /**
+   * The beat that holds a stop's settled contemplation.
+   *
+   * A stop is a small sequence — the guide leads, accompanies, then withdraws
+   * and leaves the visitor with the work. The last of those is the composition
+   * the stop exists to deliver, and it is the one whose framing does not depend
+   * on where a walking guide happens to be. Preferring it in that order is how
+   * the canonical pose is *derived from the approved forward experience* rather
+   * than invented: it is the shot the tour already ends each stop on.
+   */
+  _settleBeat(step) {
+    const ORDER = [SHOT_INTENT.CONTEMPLATION, SHOT_INTENT.FOCUS, SHOT_INTENT.ACCOMPANIED,
+      SHOT_INTENT.DETAIL, SHOT_INTENT.OVERVIEW];
+    const beats = step.beatIds.map((id) => this.steps.find((b) => b.id === id)).filter(Boolean);
+    for (const intent of ORDER) {
+      const found = [...beats].reverse().find((b) => b.shotIntent === intent);
+      if (found) return found;
+    }
+    return beats[beats.length - 1] || beats[0] || null;
+  }
+
+  /**
+   * A stop's canonical settled pose — single-valued, by contract.
+   *
+   * Resolved from the settle beat's own framing, which takes a subject and an
+   * intent and nothing else. That is what makes it deterministic: two visits
+   * cannot disagree, because nothing about the journey is an input.
+   *
+   * The measured problem this replaces: a stop's arrival used to be read from
+   * whichever pose the opening LEAD beat resolved to, and LEAD framing derives
+   * from where the guide is standing mid-walk. Two ordinary forward arrivals at
+   * one stop came out 2.5 m apart. A return can only be as reproducible as the
+   * destination it aims at.
+   *
+   * @returns {{pose:object, beat:object, guide:object|null, visitor:object|null}|null}
+   */
+  canonicalSettle(stopId) {
+    if (!this.manifest) return null;
+    const step = this.manifest.steps.find((s) => s.id === stopId);
+    if (!step) return null;
+    const beat = this._settleBeat(step);
+    if (!beat?.subjectRef) return null;
+    const pose = this.ports.framingFor(beat.subjectRef, beat.shotIntent, {
+      guideAnchorId: beat.guide?.anchorId,
+      visitorAnchorId: beat.visitor?.anchorId
+    });
+    if (!pose) return null;
+    return {
+      pose,
+      beat,
+      beatIndex: this.steps.indexOf(beat),
+      spaceId: step.spaceId,
+      guide: beat.guide ? { ...beat.guide, subjectRef: beat.guide.subjectRef || beat.subjectRef } : null,
+      visitor: beat.visitor ? { ...beat.visitor, subjectRef: beat.visitor.subjectRef || beat.subjectRef } : null
+    };
+  }
+
   /** Whether going back is possible from here without replaying the route. */
   get canGoBack() {
     const previousId = this.previousTourStepId;
     if (!previousId) return false;
-    const arrival = this._arrivals.get(previousId);
-    return Boolean(arrival) && arrival.spaceId === this.state.activeSpaceId;
+    const settle = this.canonicalSettle(previousId);
+    return Boolean(settle) && settle.spaceId === this.state.activeSpaceId;
   }
 
   /**
-   * Return to the previous Tour Stop.
+   * Return to the previous Tour Stop's canonical settled pose.
    *
    * SEEK AND BACK ARE DIFFERENT THINGS, and this is the second one.
    * `seekToTourStep` recovers a destination deterministically by replaying the
    * route from its start, which is right for tooling and wrong for a visitor:
    * measured, going back one stop inside a single room replayed seven beats,
    * re-crossed the lobby portal and re-entered the room the visitor was already
-   * standing in, and going back one stop across rooms replayed twenty-three
-   * beats with sixteen guide stagings. The endpoint was correct every time. The
-   * experience was a restarted tour.
+   * standing in. The endpoint was correct every time; the experience was a
+   * restarted tour.
    *
-   * So this does not travel through the route at all. It re-applies the
-   * approved arrival that was recorded when the visitor first reached that stop
-   * going forwards: the guide is staged where it stood, the camera flies from
-   * where it is now to the pose the beat was authored to land on, and the route
-   * index is moved so that SIGUIENTE continues normally afterwards. No restart,
-   * no portal, no room re-entry, no repeated choreography.
+   * So this does not travel through the route. It resolves the target stop's
+   * canonical settled pose — the same composition the forward tour settles that
+   * stop on — stages the guide as that beat authors it, and flies there on a
+   * LOCAL family. The route index lands on the settle beat, so SIGUIENTE
+   * continues to the next stop exactly as it would have.
+   *
+   *   FORWARD SETTLE = BACK RETURN
    *
    * It returns false rather than guessing when the previous stop is in another
-   * room or was never visited forwards. A cross-room return is a genuinely
-   * different move — it has a doorway in it — and silently substituting a
-   * replay would reintroduce the defect this exists to remove.
+   * room. A cross-room return has a doorway in it and is a different move.
    *
    * @returns {boolean} whether the return was performed
    */
@@ -394,29 +431,28 @@ export class ExperienceDirector {
     if (!this.manifest || this.transport === TRANSPORT.IDLE) return false;
     const previousId = this.previousTourStepId;
     if (!previousId) return false;
-    const target = this.manifest.steps.find((step) => step.id === previousId);
-    const arrival = this._arrivals.get(previousId);
-    if (!target || !arrival) return false;
-    // Same room only. The doorway case is not this move.
-    if (arrival.spaceId !== this.state.activeSpaceId) return false;
+    const settle = this.canonicalSettle(previousId);
+    if (!settle) return false;
+    if (settle.spaceId !== this.state.activeSpaceId) return false;
+    return this._returnToSettle(previousId, settle);
+  }
 
-    this.index = target.firstBeatIndex;
+  /** Fly to a stop's settled composition and leave the route ready to continue. */
+  _returnToSettle(stopId, settle) {
+    this.index = settle.beatIndex >= 0 ? settle.beatIndex : this.index;
     this.stepElapsed = 0;
-    const beat = this.steps[this.index];
+    const beat = settle.beat;
     this.state.setRoute(this.routeId, beat.id);
     this.bus.emit(EVENTS.ROUTE_STEP, {
-      routeId: this.routeId,
-      stepId: beat.id,
-      index: this.index,
-      total: this.steps.length,
-      caption: beat.caption,
-      direction: 'BACK'
+      routeId: this.routeId, stepId: beat.id, index: this.index,
+      total: this.steps.length, caption: beat.caption, direction: 'BACK'
     });
 
-    // Staged as the arrival had them, so the guide is standing where the
-    // visitor last saw them at this stop rather than walking the approach again.
-    this.ports.stageGuide?.(arrival.guide);
-    this.ports.stageVisitor?.(arrival.visitor);
+    // The settled composition includes who is standing in it. A contemplation
+    // beat authors no guide, so the guide is dismissed rather than left over
+    // from wherever the visitor came from.
+    this.ports.stageGuide?.(settle.guide);
+    this.ports.stageVisitor?.(settle.visitor);
 
     this.ports.requestAuthority(CAMERA_AUTHORITY.DIRECTED, { reason: `route:${this.routeId}:back` });
     const shape = TRANSITION_SHAPE[TRANSITION.LOCAL];
@@ -424,15 +460,14 @@ export class ExperienceDirector {
     let travelMs = shape.max;
     if (from) {
       const d = Math.hypot(
-        arrival.pose.position[0] - from.position[0],
-        arrival.pose.position[2] - from.position[2]
+        settle.pose.position[0] - from.position[0],
+        settle.pose.position[2] - from.position[2]
       );
       travelMs = Math.min(Math.max((d / shape.speed) * 1000, shape.min), shape.max);
     }
-    // Pacing scales the clock and nothing else, exactly as it does going
-    // forwards. The destination is the recorded one and is not touched.
+    // Pacing scales the clock and nothing else, exactly as going forwards.
     travelMs = Math.round(travelMs * this.pacing);
-    this.ports.playShot(arrival.pose, {
+    this.ports.playShot(settle.pose, {
       travelMs, flat: shape.flat, lead: shape.lead, holdHeight: shape.holdHeight
     });
     this._lastTransition = TRANSITION.LOCAL;
@@ -689,20 +724,6 @@ export class ExperienceDirector {
         via = this.ports.pathWaypoint?.(previousPose.position, pose.position, {
           family, subjectRef: step.subjectRef
         }) || null;
-      }
-
-      // The beat that opens a Tour Stop is that stop's arrival. Later beats of
-      // the same stop are further looking at the same subject, not arrivals, so
-      // returning to them would return to the middle of a moment rather than to
-      // its beginning.
-      if (this.manifest?.beatOwner.get(step.id) === step.id) {
-        this._arrivals.set(step.id, {
-          pose: { position: [...pose.position], target: [...pose.target], fov: pose.fov },
-          guide: step.guide ? { ...step.guide, subjectRef: step.guide.subjectRef || step.subjectRef } : null,
-          visitor: step.visitor ? { ...step.visitor, subjectRef: step.visitor.subjectRef || step.subjectRef } : null,
-          spaceId: this.state.activeSpaceId,
-          beatIndex: this.index
-        });
       }
 
       this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent, transition: family });
