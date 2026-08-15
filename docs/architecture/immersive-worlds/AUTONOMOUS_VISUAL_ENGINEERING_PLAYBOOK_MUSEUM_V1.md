@@ -3,7 +3,7 @@
 > **Status:** MUSEUM V1 REVIEW CANDIDATE — REQUIRES EXPLICIT JUANMA APPROVAL  
 > **Repository:** `Juanmaes83/escaparates-pro`  
 > **Applies to:** Immersive Worlds / Museum / Institutional Experiences  
-> **Purpose:** enable long, efficient autonomous implementation runs without sacrificing product safety, visual quality, evidence quality, traceability or human authority.  
+> **Purpose:** enable long, efficient autonomous implementation runs without sacrificing project safety, product quality, visual quality, evidence quality, traceability, learning continuity or human authority.  
 > **Product Owner / Visual Authority / Final Decision / Merge Authority:** Juanma  
 > **Implementation agent:** Claude Code  
 > **Review partners:** ChatGPT + Juanma  
@@ -13,7 +13,7 @@
 
 # 0. PRIME DIRECTIVE
 
-Autonomy exists to increase useful progress, reduce waiting, reduce repeated work and reduce human supervision cost. It never authorizes unnecessary project risk.
+Autonomy exists to increase useful progress, reduce waiting, reduce repeated work, reduce cost and reduce unnecessary human supervision. It never authorizes unnecessary project risk.
 
 Canonical safety rules:
 
@@ -33,11 +33,15 @@ Canonical safety rules:
 
 > **AGENT KEEP ≠ HUMAN APPROVAL.**
 
+> **A FIX THAT IS NOT CONVERTED INTO REUSABLE LEARNING WHEN THE LESSON IS GENERALIZABLE IS AN INCOMPLETE FIX.**
+
+> **EVERY MEANINGFUL DELIVERY MUST LEAVE THE NEXT AGENT BETTER INFORMED THAN THE PREVIOUS ONE.**
+
 ---
 
 # 1. WHY THIS PLAYBOOK EXISTS
 
-Museum work has shown that Claude performs materially better when authority, references, mission instructions, evidence, QA rules and learned corrections live in the repository instead of only in transient chat.
+Museum work has shown that Claude performs materially better when authority, references, mission instructions, evidence, QA rules, implementation history and learned corrections live in the repository instead of only in transient chat.
 
 The operating model is:
 
@@ -46,12 +50,12 @@ CHAT
 = immediate intent / decision / correction
 
 REPOSITORY
-= durable authority / contracts / references / evidence / learning
+= durable authority / contracts / references / implementation history / evidence / learning
 ```
 
 A short chat instruction should often be enough:
 
-> Read the current mandate in the repository, reconcile it against the actual tree, and execute it.
+> Read the current mandate in the repository, reconcile it against the actual tree and current authority, and execute it.
 
 Claude must not depend on remembering long conversation history correctly.
 
@@ -69,7 +73,7 @@ When sources conflict, use this order unless Juanma explicitly changes it:
 3. Current mission mandate in repository
 4. Canonical source code / proven donor implementation
 5. Canonical visual reference / video / storyboard
-6. Existing architecture documentation
+6. Existing architecture / decision documentation
 7. Current implementation
 8. Agent inference
 ```
@@ -82,24 +86,22 @@ When visual interpretation and source code appear to disagree, inspect both, ide
 
 # 3. OWNED LEARNING IS REUSABLE FIRST-PARTY CAPABILITY
 
-Juanma works across multiple owned projects and repositories. Proven methods discovered in one owned project may be promoted into another when they improve quality or safety.
+Juanma works across multiple owned projects and repositories. Proven methods discovered in one owned project may be promoted into another when they improve quality, safety or efficiency.
 
-This is not external inspiration. It is first-party learning reuse.
-
-Canonical principle:
+This is first-party learning reuse, not external inspiration.
 
 > **OWNED PROVEN PATTERNS SHOULD BE REUSED BEFORE NEW ONES ARE INVENTED.**
 
-A method may originate in Sarah Katerina, Museum, Escaparates Pro or another Juanma-owned project. If it proves general, it may be promoted into this playbook after adaptation to Museum constraints.
+A method may originate in Sarah Katerina, Museum, Escaparates Pro or another Juanma-owned project. If it proves general, it may be promoted after adaptation to the receiving project's contracts.
 
-Museum V1 explicitly adopts the proven Sarah Katerina separation pattern represented by:
+Museum V1 explicitly adopts the proven Sarah Katerina separation mechanism represented by:
 
 ```text
 sk-photographer-designer
 sk-amnesiac-critic
 ```
 
-The role names are Sarah-specific. The underlying mechanism is general and is adopted here as Builder / Fresh Amnesiac Critic separation.
+The Sarah role names are domain-specific. The reusable mechanism is Builder / Fresh Amnesiac Critic separation.
 
 ---
 
@@ -109,7 +111,7 @@ Every important reference must be understood by authority level:
 
 ```text
 CANONICAL
-= target behaviour/result that acceptance is measured against
+= target behaviour/result acceptance is measured against
 
 DONOR
 = proven implementation/capability from which reuse/adaptation is expected
@@ -123,17 +125,20 @@ INSPIRATION
 
 Do not treat inspiration as canonical truth.
 
-Whenever practical, canonical videos, images, screenshots, storyboards, donor notes and review boards should live in the repository so future runs can inspect the same evidence.
+Whenever practical, canonical videos, images, screenshots, storyboards, donor notes and review boards should live in the repository so future runs inspect the same evidence.
 
 ---
 
-# 5. REFERENCE-FIRST IMPLEMENTATION
+# 5. REFERENCE-FIRST + PROVEN-FLOW-FIRST IMPLEMENTATION
 
-Before inventing a solution, determine whether the capability already exists in:
+Before inventing a solution or workflow, determine whether the capability **or a sufficiently similar implementation flow** already exists in:
 
 - current Museum code;
 - another Immersive Worlds surface;
 - first-party Scene Kits;
+- `REFERENCE_LEDGER.md`;
+- prior `IW-*_IMPLEMENTATION_RECORD.md` records;
+- approved visual/evidence folders;
 - Infinite Worlds;
 - Breeze Studio Pro;
 - Three.js examples already reused in first-party code;
@@ -151,7 +156,24 @@ MISSING
 INCOMPATIBLE — documented reason required
 ```
 
-Do not replace a proven capability merely because a generic reimplementation is easier to write.
+If a sufficiently similar **approved flow** already exists, reuse its sequence, checkpoints and QA pattern before designing a new workflow.
+
+> **PROVEN FLOW BEFORE NEW FLOW.**
+
+This does not mean blind copying. Before reuse, verify:
+
+```text
+SAME / COMPATIBLE CONTRACT?
+SAME FAILURE SURFACE?
+SAME EVIDENCE NEED?
+SAME OR COMPATIBLE GLOBAL ASSUMPTIONS?
+WHAT MUST BE ADAPTED?
+WHAT MUST NOT BE COPIED?
+```
+
+If the prior flow is incompatible, record why. Do not silently ignore it.
+
+Do not replace a proven capability or proven workflow merely because a generic reimplementation is easier to write.
 
 ---
 
@@ -161,7 +183,8 @@ A bounded Museum vertical normally follows:
 
 ```text
 CONTRACT / QUESTION
-→ RECONCILE CURRENT TREE
+→ RECONCILE CURRENT TREE + CURRENT AUTHORITY
+→ SEARCH PROVEN CAPABILITY / PROVEN FLOW
 → IDENTIFY REFERENCES / DONORS
 → DEFINE ACCEPTANCE EVIDENCE
 → IMPLEMENT
@@ -169,9 +192,14 @@ CONTRACT / QUESTION
 → REAL OUTPUT / BROWSER QA
 → VISUAL EVIDENCE
 → FRESH AMNESIAC VISUAL CRITIC
+→ UPDATE IMPLEMENTATION RECORD
+→ UPDATE ERROR / LEARNING / DECISION / REFERENCE MEMORY AS REQUIRED
+→ RUN LEARNING-PROMOTION CHECK
 → HUMAN GATE
 → DECISION
 ```
+
+The documentation updates happen **after** the fresh critic has judged the artifact, so the critic is not contaminated by builder history.
 
 Canonical principle:
 
@@ -276,7 +304,7 @@ The builder does not become the final critic of its own work.
 
 The critic does not redesign or edit the implementation.
 
-The critic diagnoses. The builder solves.
+> **THE CRITIC DIAGNOSES. THE BUILDER SOLVES. THE HUMAN APPROVES.**
 
 ## 9.2 Fresh critic every serious review round
 
@@ -284,13 +312,11 @@ A serious visual review must use a **fresh critic context**.
 
 Do not continue the builder session and ask it to become independent.
 
-Do not reuse a critic whose prior-round knowledge could bias the next assessment when a clean review is required.
+Do not reuse a critic whose prior-round knowledge could bias a review that is meant to be clean.
 
 ## 9.3 Process-amnesiac, standards-rich
 
 The critic should know everything necessary to judge the result and nothing unnecessary about how the maker produced it.
-
-Canonical principle:
 
 > **A REVIEWER SHOULD KNOW EVERYTHING REQUIRED TO JUDGE THE RESULT, AND NOTHING THAT COULD BIAS IT TOWARD THE MAKER'S INTENT.**
 
@@ -311,7 +337,7 @@ The critic should not receive unless absolutely necessary:
 - failed implementation attempts;
 - tool frustrations;
 - time/cost invested;
-- preferred diagnosis from the builder;
+- builder's preferred diagnosis;
 - narrative explaining why a weak result should be accepted;
 - previous critic verdicts when a genuinely fresh review is required.
 
@@ -340,7 +366,7 @@ WHETHER CONTINUITY READS
 WHETHER THE EFFECT NEEDS EXPLANATION TO WORK
 ```
 
-If the artifact needs the builder's explanation to make perceptual sense, the artifact has not yet proved itself.
+If the artifact needs the builder's explanation to make perceptual sense, the artifact has not proved itself.
 
 ## 9.5 Critic write boundary
 
@@ -357,8 +383,6 @@ It may not:
 The critic returns diagnosis only.
 
 ## 9.6 Verdict vocabulary
-
-Recommended critic result:
 
 ```text
 KEEP
@@ -384,7 +408,7 @@ REQUIRED CORRECTION
 PRIORITY: P1 / P2 / P3
 ```
 
-The critic should identify the defect precisely without prescribing an unnecessary redesign.
+The critic identifies the defect precisely without prescribing unnecessary redesign.
 
 ## 9.8 Isolation probe
 
@@ -398,9 +422,7 @@ Do I know the builder's preferred explanation?
 Do I know information that was unnecessary to judge the pixels?
 ```
 
-If the critic can answer with production-history specifics that were not required for judgment, the review is contaminated.
-
-Repeat fresh when the contamination is material.
+If production-history knowledge was unnecessary for judgment, the review is contaminated. Repeat fresh when contamination is material.
 
 ---
 
@@ -435,8 +457,6 @@ The second museum proves platform reuse instead of a hardcoded demonstration.
 
 Do not restart all QA after every local failure.
 
-Canonical rules:
-
 > **A FAILURE INVALIDATES ONLY THE EVIDENCE IT CAN REASONABLY AFFECT.**
 
 > **VALIDATION SCOPE SHOULD MATCH CHANGE IMPACT SCOPE.**
@@ -452,7 +472,7 @@ FAILURE
 → CONTINUE
 ```
 
-Do not blindly resume from the exact failed line if a small predecessor runway is required to recreate valid state.
+Do not blindly resume from the exact failed line if a bounded predecessor runway is required to recreate valid state.
 
 Do not restart from zero merely to feel rigorous.
 
@@ -478,20 +498,13 @@ PROCESS BUG
 = workflow rule or handoff allowed an avoidable failure mode
 ```
 
-Known Museum examples include:
-
-- camera sampled while still moving;
-- auto-advance racing the test;
-- state leaking between runs;
-- diagnostic assertions disagreeing with messages;
-- synthetic click before listener attachment;
-- recording loading gate instead of experience;
-- measurement stuck at zero;
-- stale screenshots representing a previous build.
+Known Museum failures include sampling a camera in flight, racing auto-advance, state leakage between runs, synthetic interaction that did not reproduce the real path, stale screenshots, insufficient frame resolution and WebGL measurements that returned the expected answer for the wrong reason.
 
 Never change product code merely to satisfy a broken instrument.
 
-Instrumentation must exercise the actual production path where practical instead of duplicating an approximate shadow implementation.
+Instrumentation must exercise the actual production path where practical instead of an approximate shadow path.
+
+> **A NEW INSTRUMENT MUST BE CHECKED AGAINST AT LEAST ONE KNOWN-ANSWER CASE BEFORE ITS UNKNOWN-CASE VERDICT IS TRUSTED.**
 
 ---
 
@@ -499,11 +512,14 @@ Instrumentation must exercise the actual production path where practical instead
 
 Fixing is not enough. Significant mistakes must become institutional memory.
 
+The active Museum precedent is the `Error / learning log` inside `DECISION_LOG.md`: institutional memory, not anecdote.
+
 Record:
 
 ```text
 WHAT HAPPENED
 ROOT CAUSE
+EXPOSED BY / EVIDENCE
 CLASSIFICATION: PRODUCT / TOOL / EVIDENCE / PROCESS
 WHAT CHANGED
 RECURRENCE-PREVENTION RULE
@@ -512,13 +528,179 @@ WHICH EVIDENCE REMAINS TRUSTWORTHY
 WHICH EVIDENCE IS STALE / INVALIDATED
 ```
 
-If a temporary QA tool is misleading, remove or quarantine it instead of leaving a dangerous false-positive instrument in the repository.
+Rules:
 
-Generalizable process discoveries should update this Playbook after review.
+- do not record invented failures as lessons;
+- do not leave the lesson only in chat;
+- if a temporary QA tool is misleading, remove or quarantine it;
+- if a recurrence rule is already documented, reference and apply it instead of creating a duplicate rule;
+- if a new lesson generalizes beyond the local bug, run the Learning-Promotion Check in §16.
 
 ---
 
-# 14. EVIDENCE PRESERVATION
+# 14. IMPLEMENTATION RECORD — MANDATORY FOR MEANINGFUL DELIVERIES
+
+Museum already proved the value of `IW-1_IMPLEMENTATION_RECORD.md` and `IW-2_IMPLEMENTATION_RECORD.md`.
+
+A meaningful vertical, architectural slice or Human-Gate delivery must leave a durable implementation record or update the current equivalent record.
+
+It exists to answer for the next agent:
+
+```text
+WHAT WAS BUILT / CHANGED
+WHY IT WAS DONE
+WHICH CONTRACT / MISSION AUTHORIZED IT
+WHICH PROVEN FLOW / DONOR / REFERENCE WAS USED
+HOW IT WAS IMPLEMENTED AT THE RELEVANT LEVEL
+WHICH FILES / SUBSYSTEMS CHANGED
+WHAT WAS DELIBERATELY NOT CHANGED
+HOW IT WAS TESTED
+WHAT REAL EVIDENCE EXISTS
+WHAT FAILED DURING THE RUN
+HOW FAILURES WERE RESOLVED
+WHICH DECISIONS WERE MADE
+WHICH DECISIONS REMAIN OPEN
+WHAT DEBT / LIMITATIONS REMAIN
+WHAT THE NEXT AGENT SHOULD READ FIRST
+```
+
+The record must distinguish:
+
+```text
+FACT / IMPLEMENTED
+PROPOSED
+PENDING HUMAN APPROVAL
+DEFERRED
+REJECTED / NOT USED
+```
+
+Do not rewrite history to make a difficult run look clean.
+
+The implementation record is not a success narrative. It is a reproducibility and continuity instrument.
+
+> **EVERY MEANINGFUL DELIVERY MUST LEAVE THE NEXT AGENT BETTER INFORMED THAN THE PREVIOUS ONE.**
+
+---
+
+# 15. PROVEN FLOW MEMORY
+
+A repeated, approved sequence of implementation + QA + evidence is itself reusable project knowledge.
+
+Museum must not rely on human memory to rediscover it.
+
+Before starting a similar mission, Claude must inspect:
+
+```text
+REFERENCE_LEDGER.md
+relevant IMPLEMENTATION_RECORD(s)
+DECISION_LOG.md / Error-Learning entries
+relevant evidence / storyboard / review board
+current Playbook
+```
+
+A flow may be treated as **PROVEN** only when there is adequate evidence that it worked and it is not contradicted by a later decision.
+
+A proven flow should capture, at minimum:
+
+```text
+FLOW NAME / PURPOSE
+APPLIES WHEN
+DOES NOT APPLY WHEN
+ENTRY PRECONDITIONS
+SEQUENCE
+CHECKPOINTS
+STOP CONDITIONS
+REQUIRED QA
+REQUIRED VISUAL EVIDENCE
+KNOWN FAILURE MODES
+RELATED LEARNING RULES
+CANONICAL EXAMPLE / COMMIT / ARTIFACT
+ADAPTATION POINTS
+```
+
+Examples already present in Museum or first-party sources include:
+
+```text
+SCENE KIT BUILD PASSES
+SPEC → BLOCKOUT → STRUCTURE → FORM → MATERIAL → LIGHTING → INTERACTION → OPTIMIZATION
+
+REFERENCE-MOTION FIDELITY
+SOURCE VIDEO → SOURCE STORYBOARD → IMPLEMENT → REAL CAPTURE → MATCHED STORYBOARD → COMPARE → CRITIC → HUMAN
+
+RESPONSIVE PRODUCT PROOF
+DESKTOP + MOBILE + SECOND DATASET / SECOND MUSEUM
+```
+
+A new mission should replicate the proven flow **when the contracts and failure surface are sufficiently similar**.
+
+If adaptation is required, record the delta. If the flow is rejected as unsuitable, record why.
+
+---
+
+# 16. CONTINUOUS PROJECT LEARNING + LEARNING-PROMOTION CHECK
+
+The project must learn from execution, not merely accumulate logs.
+
+Canonical loop:
+
+```text
+MISSION
+↓
+IMPLEMENTATION RECORD
+↓
+QA + REAL EVIDENCE
+↓
+ERROR / LEARNING REVIEW
+↓
+PROVEN-FLOW CHECK
+↓
+LEARNING-PROMOTION CHECK
+↓
+PROJECT MEMORY UPDATED
+↓
+NEXT MISSION STARTS FROM THE NEW BASELINE
+```
+
+At every meaningful delivery, answer:
+
+```text
+Did this mission teach us something that should change:
+
+[ ] only this implementation
+[ ] project documentation
+[ ] Decision Log
+[ ] Error / Learning Log
+[ ] Reference Ledger
+[ ] Proven Flow memory
+[ ] Museum Playbook
+[ ] future General Playbook candidate
+```
+
+Classification rule:
+
+```text
+LOCAL FACT
+→ implementation record only
+
+REPEATED / REUSABLE PROJECT LESSON
+→ project docs / Error-Learning / Proven Flow memory
+
+GLOBAL MUSEUM PROCESS LESSON
+→ Playbook candidate/update after review
+
+CROSS-PROJECT LESSON
+→ mark as future General Playbook candidate; do not prematurely write the General Playbook here
+```
+
+Do not promote every bug into a global rule.
+
+Do not fail to promote a clearly reusable safety or efficiency lesson merely because the immediate bug is fixed.
+
+> **THE PLAYBOOK IS PART OF THE PRODUCT'S OPERATING SYSTEM AND EVOLVES FROM VERIFIED LEARNING.**
+
+---
+
+# 17. EVIDENCE PRESERVATION
 
 Never silently overwrite approved or gate-bound evidence.
 
@@ -542,7 +724,7 @@ Later work must not make it ambiguous which build the human is being asked to re
 
 ---
 
-# 15. HUMAN GATES
+# 18. HUMAN GATES
 
 Human Gates exist because some decisions cannot be delegated safely.
 
@@ -571,7 +753,7 @@ Do not write only “please review”.
 
 ---
 
-# 16. AUTONOMOUS CONTINUATION AFTER A HUMAN GATE
+# 19. AUTONOMOUS CONTINUATION AFTER A HUMAN GATE
 
 Waiting for Human QA does not automatically require global idleness.
 
@@ -595,17 +777,13 @@ B
 
 A and B can be locally separate while sharing architecture, runtime assumptions, shell, navigation, semantics, persistence or QA process.
 
-Therefore:
-
 > **LOCAL INDEPENDENCE IS NOT ENOUGH. CONTINUATION REQUIRES GLOBAL OUTCOME STABILITY.**
 
 ---
 
-# 17. PENDING-DECISION IMPACT ENVELOPE
+# 20. PENDING-DECISION IMPACT ENVELOPE
 
 When Mission A reaches a Human Gate, define what may still change depending on Human QA.
-
-Required structure:
 
 ```text
 MISSION A
@@ -636,13 +814,13 @@ Not expected to change:
 ...
 ```
 
-The next mission is tested against this uncertainty envelope, not merely against the current A implementation.
+The next mission is tested against this uncertainty envelope, not merely against current A.
 
 > **INDEPENDENCE MUST BE PROVEN AGAINST PLAUSIBLE OUTCOMES OF THE PENDING HUMAN GATE, NOT ONLY AGAINST THE CURRENT IMPLEMENTATION.**
 
 ---
 
-# 18. GLOBAL OUTCOME STABILITY CHECK
+# 21. GLOBAL OUTCOME STABILITY CHECK
 
 Before starting Mission B while A waits for Human QA:
 
@@ -669,7 +847,7 @@ BLOCKED
 
 ---
 
-# 19. CONTINUATION CLASSIFICATIONS
+# 22. CONTINUATION CLASSIFICATIONS
 
 ## FULL CONTINUATION
 
@@ -702,13 +880,9 @@ Stop and wait.
 
 ---
 
-# 20. UNCERTAINTY RULE
-
-This rule is intentionally conservative:
+# 23. UNCERTAINTY RULE
 
 > **UNCERTAINTY ABOUT GLOBAL IMPACT = NO FULL CONTINUATION.**
-
-Use:
 
 ```text
 uncertain + bounded impact
@@ -724,7 +898,7 @@ Avoiding destructive rework is part of efficiency.
 
 ---
 
-# 21. GLOBAL FREEZE
+# 24. GLOBAL FREEZE
 
 When A has unresolved global impact, B may proceed only inside explicitly safe local boundaries.
 
@@ -753,7 +927,7 @@ The freeze is a hard safety boundary unless the current mandate explicitly autho
 
 ---
 
-# 22. EVIDENCE FREEZE DURING PARALLEL CONTINUATION
+# 25. EVIDENCE FREEZE DURING PARALLEL CONTINUATION
 
 When A pauses for Human QA:
 
@@ -771,7 +945,7 @@ A must not silently inherit B's newer artifact.
 
 ---
 
-# 23. REQUIRED CONTINUATION NOTE BEFORE B STARTS
+# 26. REQUIRED CONTINUATION NOTE BEFORE B STARTS
 
 Claude must state what it will do **before** beginning B.
 
@@ -826,7 +1000,7 @@ If the agent cannot write a convincing answer, it cannot classify the work as Fu
 
 ---
 
-# 24. GATE TYPES
+# 27. GATE TYPES
 
 Gate labels communicate scope but never override the Global Outcome Stability Check.
 
@@ -845,7 +1019,7 @@ If uncertain, choose the safer gate.
 
 ---
 
-# 25. LONG AUTONOMOUS RUNS / OVERNIGHT MODE
+# 28. LONG AUTONOMOUS RUNS / OVERNIGHT MODE
 
 Long runs are allowed only when roadmap, authority and stop rules are clear.
 
@@ -861,6 +1035,8 @@ TARGETED QA
 VISUAL EVIDENCE
 PROBLEM FOUND
 ROOT CAUSE
+LEARNING LOG UPDATED? YES / NO / NOT REQUIRED
+IMPLEMENTATION RECORD UPDATED? YES / NO / NOT YET
 DECISION NEEDED? YES / NO
 COMMIT
 NEXT ACTION
@@ -880,9 +1056,11 @@ Claude must stop or downgrade for:
 
 If only one authorized mission exists and it blocks, stop. Do not invent Mission B.
 
+A progress report is not a stopping point when the mandate explicitly authorizes continuation to a later gate.
+
 ---
 
-# 26. CURRENT MUSEUM GLOBAL CONTRACT REGISTRY
+# 29. CURRENT MUSEUM GLOBAL CONTRACT REGISTRY
 
 Treat these as global/shared unless a stronger document narrows ownership:
 
@@ -910,7 +1088,7 @@ A mission touching these requires explicit impact analysis.
 
 ---
 
-# 27. MUSEUM-SPECIFIC VISUAL PROOF PATTERNS
+# 30. MUSEUM-SPECIFIC VISUAL PROOF PATTERNS
 
 ## Authoring / Visitor UI
 
@@ -964,7 +1142,7 @@ REFERENCE CHARACTER BEHAVIOUR
 
 ---
 
-# 28. PRODUCT CAPABILITIES ARE NOT USER OBLIGATIONS
+# 31. PRODUCT CAPABILITIES ARE NOT USER OBLIGATIONS
 
 Museum may contain many capabilities without forcing every visitor to consume them.
 
@@ -978,7 +1156,7 @@ This guides Viewpoints, Guide presence, Guided tours, AI Guide, reactive install
 
 ---
 
-# 29. MERGE / PROMOTION / PROTECTED BASELINES
+# 32. MERGE / PROMOTION / PROTECTED BASELINES
 
 No autonomous run authorizes merge merely because internal QA passes.
 
@@ -988,6 +1166,7 @@ WORKING BRANCH
 → TARGETED QA
 → VISUAL EVIDENCE
 → FRESH CRITIC
+→ IMPLEMENTATION + LEARNING MEMORY UPDATED
 → HUMAN QA
 → FIX IF REQUIRED
 → INTEGRATION AUDIT
@@ -1006,11 +1185,14 @@ Before merge inspect:
 - module registration;
 - shared contracts;
 - regression surface;
-- final artifact / production entry.
+- final artifact / production entry;
+- implementation record currentness;
+- Decision / Error-Learning log currentness;
+- whether any proven-flow or Playbook update is still only in chat.
 
 ---
 
-# 30. DEFINITION OF A TRUSTWORTHY HUMAN GATE
+# 33. DEFINITION OF A TRUSTWORTHY HUMAN GATE
 
 A strong Human Gate contains:
 
@@ -1027,7 +1209,9 @@ CURRENT DEBT
 REAL ARTIFACT URL
 VIDEOS / SCREENSHOTS / BOARDS
 COMPARISON EVIDENCE
-ERROR / LEARNING LOG UPDATE
+IMPLEMENTATION RECORD UPDATE
+ERROR / LEARNING LOG UPDATE OR "NOT REQUIRED"
+PROVEN FLOW USED / ADAPTED / NOT APPLICABLE
 FRESH CRITIC VERDICT
 HUMAN QA: PENDING
 PRODUCT APPROVAL: PENDING
@@ -1038,17 +1222,25 @@ Do not bury the unresolved question inside a success report.
 
 ---
 
-# 31. ANTI-PATTERNS
+# 34. ANTI-PATTERNS
 
 Do not:
 
 - start from zero after every local failure;
-- blindly resume from the exact failed line when a bounded predecessor runway is needed;
+- blindly resume from the exact failed line when bounded predecessor runway is needed;
 - rebuild proven first-party capability without donor audit;
+- design a new workflow before checking for a sufficiently similar proven flow;
+- copy a proven flow without checking compatibility;
+- leave implementation history only in chat;
+- fix a recurring problem without recording the recurrence-prevention rule;
+- duplicate an existing learning rule instead of reusing it;
+- turn every local bug into a global Playbook rule;
+- fail to promote a clearly reusable process lesson;
 - declare visual PASS from semantic tests;
 - compare screenshots from different builds without labels;
 - use stale artifacts as current evidence;
 - modify product code to satisfy a broken instrument;
+- trust a new measurement before checking it on a known-answer case;
 - continue B merely because it does not directly import A;
 - modify global contracts while A's global outcome is unresolved;
 - say “probably independent” and continue fully;
@@ -1062,7 +1254,7 @@ Do not:
 
 ---
 
-# 32. PROCESS-LEARNING LOOP
+# 35. PROCESS-LEARNING LOOP
 
 The Playbook itself is a living Museum standard until explicitly frozen.
 
@@ -1073,8 +1265,9 @@ PROCESS FAILURE
 → LOG IT
 → IDENTIFY ROOT CAUSE
 → DEFINE RECURRENCE RULE
-→ TEST RULE IN NEXT RUN
-→ IF GENERALIZABLE, UPDATE PLAYBOOK
+→ APPLY / TEST THE RULE
+→ CLASSIFY LOCAL vs PROJECT vs PLAYBOOK vs CROSS-PROJECT
+→ UPDATE THE CORRECT MEMORY LAYER
 ```
 
 Do not add rules merely because they sound prudent. Prefer rules grounded in observed failure modes or clear high-impact risk.
@@ -1085,7 +1278,39 @@ The goal is controlled improvement, not maximum rule count.
 
 ---
 
-# 33. MUSEUM V1 ADOPTION / VALIDATION MATRIX
+# 36. DOCUMENTATION FRESHNESS IS PART OF DELIVERY
+
+A mission is not fully handed off when code and screenshots exist but the durable memory is stale.
+
+Before a meaningful Human Gate or final delivery, Claude must reconcile the affected documentation set:
+
+```text
+CURRENT MISSION / STATUS
+DECISION LOG
+ERROR / LEARNING LOG
+IMPLEMENTATION RECORD
+REFERENCE LEDGER when reuse authority changed
+PROVEN FLOW memory when a flow was proven/changed
+EVIDENCE INDEX / BOARD when evidence changed
+PLAYBOOK when an approved process rule changed
+```
+
+Not every mission changes every document. The requirement is to **decide explicitly**, not to blindly edit everything.
+
+Use:
+
+```text
+UPDATED
+REVIEWED — NO CHANGE REQUIRED
+NOT APPLICABLE
+BLOCKED BY HUMAN DECISION
+```
+
+A stale authoritative document is a future defect source.
+
+---
+
+# 37. MUSEUM V1 ADOPTION / VALIDATION MATRIX
 
 This Museum Playbook should be validated across materially different work classes:
 
@@ -1112,14 +1337,14 @@ The general project-agnostic Playbook is deliberately deferred until Museum V1 i
 
 ---
 
-# 34. SCOPE BOUNDARY AFTER MUSEUM V1
+# 38. SCOPE BOUNDARY AFTER MUSEUM V1
 
 The intended sequence is:
 
 ```text
 1. CLOSE MUSEUM PLAYBOOK V1
 2. EXTRACT GENERAL REUSABLE PLAYBOOK
-3. THEN PROMOTE REUSABLE PROCESS / CAPABILITY KNOWLEDGE INTO CAPABILITY REGISTRY
+3. THEN BUILD / PROMOTE THE CAPABILITY REGISTRY
 ```
 
 Do not collapse these three steps into one.
@@ -1130,12 +1355,16 @@ The Capability Registry comes after the reusable method has been identified and 
 
 ---
 
-# 35. FINAL PRINCIPLES
+# 39. FINAL PRINCIPLES
 
 ```text
 REPOSITORY OVER MEMORY.
 
+EVERY MEANINGFUL DELIVERY LEAVES THE NEXT AGENT BETTER INFORMED.
+
 OWNED PROVEN PATTERNS BEFORE REINVENTION.
+
+PROVEN FLOW BEFORE NEW FLOW.
 
 REFERENCE BEFORE INVENTION.
 
@@ -1152,6 +1381,10 @@ FRESH CRITIC, MINIMUM BIAS.
 THE CRITIC DIAGNOSES. THE BUILDER SOLVES. THE HUMAN APPROVES.
 
 AGENT KEEP ≠ HUMAN APPROVAL.
+
+IMPLEMENTATION HISTORY IS PART OF THE PROJECT MEMORY.
+
+A FIX SHOULD BECOME REUSABLE LEARNING WHEN THE LESSON GENERALIZES.
 
 PRESERVE VERIFIED EVIDENCE.
 
@@ -1171,6 +1404,8 @@ GLOBAL CONTRACTS STAY FROZEN UNLESS EXPLICITLY AUTHORIZED.
 A PAUSED MISSION MAY NOT BE SILENTLY MODIFIED.
 
 NEVER INVENT WORK TO AVOID WAITING.
+
+DOCUMENTATION FRESHNESS IS PART OF DELIVERY.
 
 THE AUTHOR DEFINES POSSIBILITIES.
 THE VISITOR CHOOSES DEPTH.
