@@ -6,7 +6,7 @@
 | | |
 |---|---|
 | **Branch** | `claude/immersive-worlds-module-c0d3f7` |
-| **HEAD** | *(filled at commit — see `git log -1` on the branch)* |
+| **HEAD** | `3a2dc0d` — *Playbook reconciliation* |
 | **Master** | **UNTOUCHED.** No merge, no promotion, no PR. |
 | **Product approval** | **PENDING** |
 | **Runtime** | local static server, §2 |
