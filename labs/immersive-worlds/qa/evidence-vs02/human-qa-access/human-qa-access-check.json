@@ -1,0 +1,117 @@
+{
+ "generatedAt": "2026-08-15T11:11:35.666Z",
+ "documentRoot": "labs/immersive-worlds",
+ "command": "python3 -m http.server 8085 --directory <repo>/labs/immersive-worlds",
+ "url": "http://127.0.0.1:8085/",
+ "checks": [
+  {
+   "name": "la URL responde",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "el runtime arranca (window.__IW.ready)",
+   "ok": true,
+   "detail": "módulos ES servidos correctamente"
+  },
+  {
+   "name": "sin error de arranque",
+   "ok": true,
+   "detail": "versión IW-2, tier MEDIUM"
+  },
+  {
+   "name": "se puede entrar y el lienzo pinta",
+   "ok": true,
+   "detail": "1440×900"
+  },
+  {
+   "name": "el botón «Visita» está presente",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "Visitor abre con contenido real",
+   "ok": true,
+   "detail": "1098 caracteres"
+  },
+  {
+   "name": "el botón del recorrido está presente",
+   "ok": true,
+   "detail": "Recorrido comentado G"
+  },
+  {
+   "name": "el recorrido alcanza el beat del portal",
+   "ok": true,
+   "detail": "step.02-paso-galeria-a"
+  },
+  {
+   "name": "la travesía cinemática se ejecuta de verdad",
+   "ok": true,
+   "detail": "TRANSITION posee la cámara"
+  },
+  {
+   "name": "se llega a la sala de destino",
+   "ok": true,
+   "detail": "space.gallery-a"
+  },
+  {
+   "name": "sin errores de consola bloqueantes",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ],
+ "consoleErrors": [],
+ "serverErrors": [
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET / HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /app/ui/styles.css HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /app/experience-app.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/core/runtime.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/museum-scene-kit.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /render/render-host.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/core/event-bus.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/world/world-state.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/schema/types.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /render/media-loader.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/core/device-tier.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /app/audio-director.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /app/ui/input.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /app/ui/hud.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /qa/deterministic-states.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /authoring/experience-config.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /authoring/media-vault.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /authoring/config-store.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/core/rng.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /vendor/three/three.module.min.js HTTP/1.1\" 200 -\n127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/core/clock.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/world/world-store.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/world/world-graph.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/world/space-lifecycle.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/camera-authority.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/controllers/explore-controller.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/controllers/focus-controller.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/controllers/directed-controller.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/controllers/crossing-controller.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/controllers/author-controller.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/interaction/proximity.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/interaction/action-dispatch.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/experience/tour-manifest.js HTTP/1.1\" 200 -\n127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/experience/experience-director.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/scenekit/scene-kit.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /vendor/three/addons/environments/RoomEnvironment.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/camera/framing.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/portal-surface.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/profiles.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/textures.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/builders.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /engine/schema/validate.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /scene-kits/museum/guide.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:25] \"GET /vendor/three/three.core.min.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:26] \"GET /vendor/three/addons/utils/CameraUtils.js HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:26] \"GET /worlds/museum-v1.world.json HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:29] \"GET /assets/collection/division-tercera.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:29] \"GET /assets/collection/horizonte-interrumpido.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:29] \"GET /assets/collection/campo-de-ceniza.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:08:29] \"GET /assets/collection/estudio-de-figura.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:11:26] \"GET /assets/collection/noche-de-invierno.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:11:26] \"GET /assets/collection/marea-baja.jpg HTTP/1.1\" 200 -\n",
+  "127.0.0.1 - - [15/Aug/2026 11:11:27] \"GET /assets/collection/cuaderno-de-luz.webm HTTP/1.1\" 200 -\n"
+ ]
+}
