@@ -681,6 +681,27 @@ export class Runtime {
   }
 
   /**
+   * Return to the previous Tour Stop.
+   *
+   * Separate from `goToTourStep` on purpose. That is deterministic destination
+   * recovery and reaches any stop by replaying the route; this is the visitor's
+   * Back, and it must not restart anything. When the previous stop is in another
+   * room, or was never reached going forwards, this reports false rather than
+   * quietly falling back to a replay — a cross-room return is a different move
+   * and pretending otherwise is the defect this was built to remove.
+   *
+   * @returns {boolean} whether the return was performed
+   */
+  goBackOneStop() {
+    return this.experience.back();
+  }
+
+  /** Whether a Back is available from where the visitor stands. */
+  get canGoBack() {
+    return this.experience.canGoBack;
+  }
+
+  /**
    * Stage the guide, or dismiss it with `null`.
    *
    * Presentation, not World State — but it goes through the runtime rather than

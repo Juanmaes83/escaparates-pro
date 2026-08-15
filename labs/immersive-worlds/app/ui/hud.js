@@ -110,6 +110,7 @@ export class ExperienceHUD {
         <div class="iw-transport__caption" data-el="caption" aria-live="polite"></div>
         <div class="iw-transport__controls">
           <span class="iw-transport__step" data-el="stepCount"></span>
+          <button class="iw-btn" data-el="prevBtn">← Anterior</button>
           <button class="iw-btn" data-el="pauseBtn">Pausar</button>
           <button class="iw-btn" data-el="nextBtn">Siguiente</button>
           <button class="iw-btn" data-el="exitBtn">Salir del recorrido <kbd>Esc</kbd></button>
@@ -180,6 +181,10 @@ export class ExperienceHUD {
     this.el.detailMore.addEventListener('click', () => this.toggleLabelDetail());
     this.el.pauseBtn.addEventListener('click', () => this._togglePause());
     this.el.nextBtn.addEventListener('click', () => this.runtime.experience.next());
+    // The guided tour's own Back. Not the ‹ › of the detail overlay: those move
+    // between artworks in Collection Browse, which is a different navigation
+    // with a different meaning, and the HUD already has to keep the two legible.
+    this.el.prevBtn.addEventListener('click', () => this.runtime.goBackOneStop());
     this.el.exitBtn.addEventListener('click', () => this.runtime.exitRoute());
     this.el.soundBtn.addEventListener('click', () => this._toggleSound());
 
@@ -262,6 +267,10 @@ export class ExperienceHUD {
     // The tour's own controls stand down while the collection is being browsed:
     // one arrow pair at a time may be live, or the two meanings blur.
     this.el.pauseBtn.disabled = browsing;
+    // Disabled at the first stop, and while the previous stop is in another room
+    // — a cross-room return is not this move, and offering a control that would
+    // silently replay the tour is worse than not offering it yet.
+    this.el.prevBtn.disabled = browsing || !this.runtime.canGoBack;
     this.el.nextBtn.disabled = browsing;
     this.el.progress.style.width = `${Math.round(this.runtime.experience.progress * 100)}%`;
 

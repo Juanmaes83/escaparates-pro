@@ -81,6 +81,24 @@ export class ExperienceDirector {
     this.manifest = null;
     /** Set while a seek is replaying beats, so `update` does not race it. */
     this._seeking = false;
+    /**
+     * The approved arrival of each Tour Stop, remembered the first time the
+     * visitor reaches it going forwards.
+     *
+     * This is what makes going back possible without replaying the route. The
+     * canonical definition of returning to a stop is the settled viewing state
+     * of its approved forward arrival — so the honest thing to store is the
+     * pose the Director itself resolved for that beat, captured at the moment
+     * it was applied. Sampling the live camera instead would record whatever
+     * animation phase the sampler happened to catch, which is exactly the 2.4 m
+     * spread the replay evidence measured between two arrivals at one stop.
+     *
+     * Nothing here invents framing: it is the same pose the approved forward
+     * experience already flew to.
+     *
+     * @type {Map<string, {pose:object, guide:object|null, visitor:object|null, spaceId:string, beatIndex:number}>}
+     */
+    this._arrivals = new Map();
   }
 
   get currentStep() {
@@ -324,6 +342,104 @@ export class ExperienceDirector {
   next() {
     if (this.transport === TRANSPORT.IDLE || this.transport === TRANSPORT.COMPLETED) return;
     this._advance();
+  }
+
+  /**
+   * The Tour Stop before the one the visitor is on, or null at the first.
+   *
+   * Deliberately the *stop*, not the beat. A stop is the unit the visitor
+   * perceives — an artwork, a room, a moment — and the route reaches each one
+   * through several beats they experience as one arrival. Offering "previous
+   * beat" would step backwards through machinery nobody was shown.
+   */
+  get previousTourStepId() {
+    return this.currentTourStep?.previousId || null;
+  }
+
+  /** Whether going back is possible from here without replaying the route. */
+  get canGoBack() {
+    const previousId = this.previousTourStepId;
+    if (!previousId) return false;
+    const arrival = this._arrivals.get(previousId);
+    return Boolean(arrival) && arrival.spaceId === this.state.activeSpaceId;
+  }
+
+  /**
+   * Return to the previous Tour Stop.
+   *
+   * SEEK AND BACK ARE DIFFERENT THINGS, and this is the second one.
+   * `seekToTourStep` recovers a destination deterministically by replaying the
+   * route from its start, which is right for tooling and wrong for a visitor:
+   * measured, going back one stop inside a single room replayed seven beats,
+   * re-crossed the lobby portal and re-entered the room the visitor was already
+   * standing in, and going back one stop across rooms replayed twenty-three
+   * beats with sixteen guide stagings. The endpoint was correct every time. The
+   * experience was a restarted tour.
+   *
+   * So this does not travel through the route at all. It re-applies the
+   * approved arrival that was recorded when the visitor first reached that stop
+   * going forwards: the guide is staged where it stood, the camera flies from
+   * where it is now to the pose the beat was authored to land on, and the route
+   * index is moved so that SIGUIENTE continues normally afterwards. No restart,
+   * no portal, no room re-entry, no repeated choreography.
+   *
+   * It returns false rather than guessing when the previous stop is in another
+   * room or was never visited forwards. A cross-room return is a genuinely
+   * different move — it has a doorway in it — and silently substituting a
+   * replay would reintroduce the defect this exists to remove.
+   *
+   * @returns {boolean} whether the return was performed
+   */
+  back() {
+    if (!this.manifest || this.transport === TRANSPORT.IDLE) return false;
+    const previousId = this.previousTourStepId;
+    if (!previousId) return false;
+    const target = this.manifest.steps.find((step) => step.id === previousId);
+    const arrival = this._arrivals.get(previousId);
+    if (!target || !arrival) return false;
+    // Same room only. The doorway case is not this move.
+    if (arrival.spaceId !== this.state.activeSpaceId) return false;
+
+    this.index = target.firstBeatIndex;
+    this.stepElapsed = 0;
+    const beat = this.steps[this.index];
+    this.state.setRoute(this.routeId, beat.id);
+    this.bus.emit(EVENTS.ROUTE_STEP, {
+      routeId: this.routeId,
+      stepId: beat.id,
+      index: this.index,
+      total: this.steps.length,
+      caption: beat.caption,
+      direction: 'BACK'
+    });
+
+    // Staged as the arrival had them, so the guide is standing where the
+    // visitor last saw them at this stop rather than walking the approach again.
+    this.ports.stageGuide?.(arrival.guide);
+    this.ports.stageVisitor?.(arrival.visitor);
+
+    this.ports.requestAuthority(CAMERA_AUTHORITY.DIRECTED, { reason: `route:${this.routeId}:back` });
+    const shape = TRANSITION_SHAPE[TRANSITION.LOCAL];
+    const from = this.ports.currentPose?.();
+    let travelMs = shape.max;
+    if (from) {
+      const d = Math.hypot(
+        arrival.pose.position[0] - from.position[0],
+        arrival.pose.position[2] - from.position[2]
+      );
+      travelMs = Math.min(Math.max((d / shape.speed) * 1000, shape.min), shape.max);
+    }
+    // Pacing scales the clock and nothing else, exactly as it does going
+    // forwards. The destination is the recorded one and is not touched.
+    travelMs = Math.round(travelMs * this.pacing);
+    this.ports.playShot(arrival.pose, {
+      travelMs, flat: shape.flat, lead: shape.lead, holdHeight: shape.holdHeight
+    });
+    this._lastTransition = TRANSITION.LOCAL;
+    this.bus.emit(EVENTS.SHOT_STARTED, {
+      stepId: beat.id, intent: beat.shotIntent, transition: TRANSITION.LOCAL, direction: 'BACK'
+    });
+    return true;
   }
 
   /**
@@ -573,6 +689,20 @@ export class ExperienceDirector {
         via = this.ports.pathWaypoint?.(previousPose.position, pose.position, {
           family, subjectRef: step.subjectRef
         }) || null;
+      }
+
+      // The beat that opens a Tour Stop is that stop's arrival. Later beats of
+      // the same stop are further looking at the same subject, not arrivals, so
+      // returning to them would return to the middle of a moment rather than to
+      // its beginning.
+      if (this.manifest?.beatOwner.get(step.id) === step.id) {
+        this._arrivals.set(step.id, {
+          pose: { position: [...pose.position], target: [...pose.target], fov: pose.fov },
+          guide: step.guide ? { ...step.guide, subjectRef: step.guide.subjectRef || step.subjectRef } : null,
+          visitor: step.visitor ? { ...step.visitor, subjectRef: step.visitor.subjectRef || step.subjectRef } : null,
+          spaceId: this.state.activeSpaceId,
+          beatIndex: this.index
+        });
       }
 
       this.bus.emit(EVENTS.SHOT_STARTED, { stepId: step.id, intent: step.shotIntent, transition: family });

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-15T17:15:32.163Z",
+ "generatedAt": "2026-08-15T17:28:56.167Z",
  "settleMs": 3200,
  "tour": [
   {
@@ -67,29 +67,29 @@
   {
    "label": "preparar · parada 3",
    "stopId": "step.03-lleva-horizonte",
-   "ms": 6176,
+   "ms": 5411,
    "stop": "step.03-lleva-horizonte",
    "order": 3,
    "space": "space.gallery-a",
    "owner": "DIRECTED",
    "transport": "PAUSED",
    "pos": [
-    -0.571,
+    -0.452,
     1.62,
-    -5.261
+    -5.181
    ],
    "tgt": [
-    -0.871,
-    1.616,
-    -13.523
+    -0.707,
+    1.594,
+    -12.84
    ],
    "fov": 55,
    "guide": {
     "visible": 1,
     "at": [
-     -1.22,
+     -1.17,
      0,
-     -2.31
+     -1.86
     ]
    },
    "counters": {
@@ -97,35 +97,35 @@
     "portals": 1,
     "rooms": 1,
     "guides": 4,
-    "travel": 10
+    "travel": 9.8
    }
   },
   {
    "label": "ADELANTE 3→4 (referencia)",
    "stopId": "step.05-lleva-division",
-   "ms": 4071,
+   "ms": 4258,
    "stop": "step.05-lleva-division",
    "order": 4,
    "space": "space.gallery-a",
    "owner": "DIRECTED",
    "transport": "PAUSED",
    "pos": [
-    1.644,
+    1.712,
     1.62,
-    -7.738
+    -7.552
    ],
    "tgt": [
-    3.665,
-    1.573,
-    -15.204
+    3.697,
+    1.569,
+    -15.072
    ],
    "fov": 55,
    "guide": {
     "visible": 1,
     "at": [
-     0.25,
+     0.24,
      0,
-     -6.07
+     -5.65
     ]
    },
    "counters": {
@@ -137,247 +137,69 @@
    }
   },
   {
-   "label": "A · ATRÁS 4→3 misma sala",
-   "stopId": "step.03-lleva-horizonte",
-   "ms": 3952,
+   "label": "BACK 4→3 (control real)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4268,
    "stop": "step.03-lleva-horizonte",
    "order": 3,
    "space": "space.gallery-a",
    "owner": "DIRECTED",
    "transport": "PAUSED",
    "pos": [
-    -0.696,
-    1.62,
-    -7.736
+    -1.572,
+    1.72,
+    -10.05
    ],
    "tgt": [
-    -1.022,
-    1.636,
-    -14.152
+    -1.284,
+    1.67,
+    -15.24
    ],
    "fov": 55,
    "guide": {
     "visible": 1,
     "at": [
-     -0.73,
+     -0.85,
      0,
-     -9.73
+     -9.72
     ]
    },
    "counters": {
-    "beats": 7,
-    "portals": 1,
-    "rooms": 1,
-    "guides": 5,
-    "travel": 6.2
-   }
-  },
-  {
-   "label": "preparar · parada 6",
-   "stopId": "step.06h-lleva-vasija",
-   "ms": 3728,
-   "stop": "step.06h-lleva-vasija",
-   "order": 6,
-   "space": "space.gallery-a",
-   "owner": "DIRECTED",
-   "transport": "PAUSED",
-   "pos": [
-    -0.25,
-    1.621,
-    -7.841
-   ],
-   "tgt": [
-    2.209,
-    1.57,
-    -10.079
-   ],
-   "fov": 55,
-   "guide": {
-    "visible": 1,
-    "at": [
-     0.66,
-     0,
-     -8.83
-    ]
-   },
-   "counters": {
-    "beats": 12,
+    "beats": 1,
     "portals": 0,
     "rooms": 0,
-    "guides": 9,
-    "travel": 1.4
-   }
-  },
-  {
-   "label": "B · ATRÁS 6→3 misma sala",
-   "stopId": "step.03-lleva-horizonte",
-   "ms": 4582,
-   "stop": "step.03-lleva-horizonte",
-   "order": 3,
-   "space": "space.gallery-a",
-   "owner": "DIRECTED",
-   "transport": "PAUSED",
-   "pos": [
-    -0.835,
-    1.62,
-    -8.103
-   ],
-   "tgt": [
-    -1.211,
-    1.661,
-    -14.935
-   ],
-   "fov": 55,
-   "guide": {
-    "visible": 1,
-    "at": [
-     -0.89,
-     0,
-     -10.96
-    ]
-   },
-   "counters": {
-    "beats": 7,
-    "portals": 1,
-    "rooms": 1,
-    "guides": 5,
-    "travel": 4.1
-   }
-  },
-  {
-   "label": "preparar · parada 8 (otra sala)",
-   "stopId": "step.09-lleva-noche",
-   "ms": 3725,
-   "stop": "step.09-lleva-noche",
-   "order": 8,
-   "space": "space.gallery-b",
-   "owner": "DIRECTED",
-   "transport": "PAUSED",
-   "pos": [
-    9.939,
-    1.631,
-    -9.956
-   ],
-   "tgt": [
-    13.421,
-    1.516,
-    -10.82
-   ],
-   "fov": 55,
-   "guide": {
-    "visible": 1,
-    "at": [
-     -0.05,
-     0,
-     -11.87
-    ]
-   },
-   "counters": {
-    "beats": 18,
-    "portals": 1,
-    "rooms": 1,
-    "guides": 12,
-    "travel": 11.5
-   }
-  },
-  {
-   "label": "C · ATRÁS 8→7 una parada",
-   "stopId": "step.07-lleva-umbral",
-   "ms": 4324,
-   "stop": "step.07-lleva-umbral",
-   "order": 7,
-   "space": "space.gallery-a",
-   "owner": "DIRECTED",
-   "transport": "PAUSED",
-   "pos": [
-    0.11,
-    1.62,
-    -5.953
-   ],
-   "tgt": [
-    0.298,
-    1.49,
-    -9.888
-   ],
-   "fov": 55,
-   "guide": {
-    "visible": 1,
-    "at": [
-     1.2,
-     0,
-     -11.83
-    ]
-   },
-   "counters": {
-    "beats": 23,
-    "portals": 1,
-    "rooms": 1,
-    "guides": 16,
-    "travel": 11.1
-   }
-  },
-  {
-   "label": "D · ATRÁS 7→3 entre salas",
-   "stopId": "step.03-lleva-horizonte",
-   "ms": 4572,
-   "stop": "step.03-lleva-horizonte",
-   "order": 3,
-   "space": "space.gallery-a",
-   "owner": "DIRECTED",
-   "transport": "PAUSED",
-   "pos": [
-    -0.278,
-    1.62,
-    -6.635
-   ],
-   "tgt": [
-    -0.455,
-    1.56,
-    -11.791
-   ],
-   "fov": 55,
-   "guide": {
-    "visible": 1,
-    "at": [
-     0.71,
-     0,
-     -12.06
-    ]
-   },
-   "counters": {
-    "beats": 7,
-    "portals": 1,
-    "rooms": 1,
-    "guides": 5,
-    "travel": 4.6
+    "guides": 1,
+    "travel": 5.2
    }
   },
   {
    "label": "ADELANTE otra vez 3→4",
    "stopId": "step.05-lleva-division",
-   "ms": 4416,
+   "ms": 4107,
    "stop": "step.05-lleva-division",
    "order": 4,
    "space": "space.gallery-a",
    "owner": "DIRECTED",
    "transport": "PAUSED",
    "pos": [
-    0.39,
-    1.62,
-    -7.853
+    1.241,
+    1.72,
+    -10.072
    ],
    "tgt": [
-    1.204,
-    1.589,
-    -14.029
+    3.656,
+    1.575,
+    -15.24
    ],
    "fov": 55,
    "guide": {
     "visible": 1,
     "at": [
-     1.26,
+     1.6,
      0,
-     -12.56
+     -11.82
     ]
    },
    "counters": {
@@ -385,27 +207,341 @@
     "portals": 0,
     "rooms": 0,
     "guides": 3,
-    "travel": 1.5
+    "travel": 2.8
+   }
+  },
+  {
+   "label": "ADELANTE 4→5",
+   "stopId": "step.06d-lleva-estudio",
+   "ms": 4765,
+   "stop": "step.06d-lleva-estudio",
+   "order": 5,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    2.489,
+    1.72,
+    -11.332
+   ],
+   "tgt": [
+    6.168,
+    1.55,
+    -14.586
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     4.82,
+     0,
+     -13.59
+    ]
+   },
+   "counters": {
+    "beats": 4,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 3,
+    "travel": 1.8
+   }
+  },
+  {
+   "label": "BACK 5→4 (control real)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4510,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    4.785,
+    1.72,
+    -10.1
+   ],
+   "tgt": [
+    4.92,
+    1.55,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     4.35,
+     0,
+     -13
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 1,
+    "travel": 3.4
+   }
+  },
+  {
+   "label": "BACK 4→3 (segunda vez)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4188,
+   "stop": "step.03-lleva-horizonte",
+   "order": 3,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    -1.572,
+    1.72,
+    -10.05
+   ],
+   "tgt": [
+    -1.284,
+    1.67,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     0.73,
+     0,
+     -12.97
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 1,
+    "travel": 6.4
+   }
+  },
+  {
+   "label": "ADELANTE tras dos BACK",
+   "stopId": "step.05-lleva-division",
+   "ms": 3794,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    1.185,
+    1.72,
+    -10.072
+   ],
+   "tgt": [
+    3.565,
+    1.576,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     2.79,
+     0,
+     -12.99
+    ]
+   },
+   "counters": {
+    "beats": 4,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 3,
+    "travel": 2.8
+   }
+  },
+  {
+   "label": "preparar · parada 1",
+   "stopId": "step.01-entrada",
+   "ms": 4343,
+   "stop": "step.01-entrada",
+   "order": 1,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    0.609,
+    1.646,
+    -0.302
+   ],
+   "tgt": [
+    1.297,
+    1.513,
+    -4.607
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     3.14,
+     0,
+     -11.02
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 1,
+    "travel": 10.5
+   }
+  },
+  {
+   "label": "BACK en la primera parada",
+   "via": "prevBtn",
+   "clicked": false,
+   "disabled": true,
+   "ms": 4708,
+   "stop": "step.01-entrada",
+   "order": 1,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     2.27,
+     0,
+     -8.54
+    ]
+   },
+   "counters": {
+    "beats": 0,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 0.9
+   }
+  },
+  {
+   "label": "preparar · parada 8 (otra sala)",
+   "stopId": "step.09-lleva-noche",
+   "ms": 4574,
+   "stop": "step.09-lleva-noche",
+   "order": 8,
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    9.555,
+    1.631,
+    -9.206
+   ],
+   "tgt": [
+    13.435,
+    1.515,
+    -10.78
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     3.21,
+     0,
+     -8.25
+    ]
+   },
+   "counters": {
+    "beats": 24,
+    "portals": 2,
+    "rooms": 2,
+    "guides": 16,
+    "travel": 17.1
+   }
+  },
+  {
+   "label": "BACK entre salas",
+   "via": "prevBtn",
+   "clicked": false,
+   "disabled": true,
+   "ms": 3987,
+   "stop": "step.09-lleva-noche",
+   "order": 8,
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    11.609,
+    1.716,
+    -9.3
+   ],
+   "tgt": [
+    12.088,
+    1.593,
+    -14.74
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     7.17,
+     0,
+     -10.38
+    ]
+   },
+   "counters": {
+    "beats": 0,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 3.5
    }
   }
  ],
  "verdicts": {
-  "endpointCorrect": true,
-  "sameRoomBackReEntersRoom": true,
+  "backLandsOnPreviousStop": true,
+  "backPortals": [
+   0,
+   0,
+   0
+  ],
+  "backRoomEntries": [
+   0,
+   0,
+   0
+  ],
+  "backBeats": [
+   1,
+   1,
+   1
+  ],
   "forwardReferencePortals": 0,
-  "forwardAfterAllBackWorks": true,
+  "forwardReferenceBeats": 4,
+  "repeatedBackWorks": true,
+  "forwardAfterBackWorks": true,
+  "firstStopControlDisabled": true,
+  "crossRoomControlDisabled": true,
   "framing": {
    "stop": "step.06d-lleva-estudio",
    "forward": {
     "pos": [
-     1.508,
-     1.632,
-     -9.021
+     0.122,
+     1.621,
+     -5.972
     ],
     "tgt": [
-     3.819,
-     1.567,
-     -14.426
+     0.091,
+     1.501,
+     -9.945
     ],
     "fov": 55
    },
@@ -422,8 +558,8 @@
     ],
     "fov": 55
    },
-   "deltaPosM": 2.435,
-   "deltaTgtM": 4.462,
+   "deltaPosM": 0.939,
+   "deltaTgtM": 1.54,
    "fovEqual": true,
    "sameSpace": true
   }

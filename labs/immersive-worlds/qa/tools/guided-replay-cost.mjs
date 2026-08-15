@@ -126,6 +126,23 @@ const SNAP = () => {
   };
 };
 
+/** The visitor's own Back control, measured with the same counters. */
+const back = async (label) => {
+  await page.evaluate(() => window.__C.reset());
+  const t0 = Date.now();
+  const performed = await page.evaluate(() => {
+    const btn = document.querySelector('[data-el="prevBtn"]');
+    if (!btn || btn.disabled) return { clicked: false, disabled: Boolean(btn?.disabled) };
+    btn.click();
+    return { clicked: true, disabled: false };
+  });
+  await page.waitForTimeout(SETTLE);
+  const s = await page.evaluate(SNAP);
+  const row = { label, via: 'prevBtn', ...performed, ms: Date.now() - t0, ...s };
+  console.log(`${label.padEnd(34)} → ${String(s.order).padStart(2, '0')} ${String(s.space).padEnd(16)} beats ${String(s.counters.beats).padStart(2)} · portales ${s.counters.portals} · salas ${s.counters.rooms} · guía ${s.counters.guides} · ${s.counters.travel} m · ${row.ms} ms${performed.clicked ? '' : ' · CONTROL DESACTIVADO'}`);
+  return row;
+};
+
 /** Navigate through the runtime's one door, measuring what it costs. */
 const nav = async (stopId, label) => {
   await page.evaluate(() => window.__C.reset());
@@ -143,20 +160,22 @@ await page.waitForTimeout(2500);
 
 const rows = [];
 const S = (n) => tour[n - 1];
-// Reference: an ordinary forward step, to compare every backward step against.
+
+/* The visitor's Back, against the same forward reference as before. */
 rows.push(await nav(S(3).id, 'preparar · parada 3'));
 rows.push(await nav(S(4).id, 'ADELANTE 3→4 (referencia)'));
-// A — same room, one stop back
-rows.push(await nav(S(3).id, 'A · ATRÁS 4→3 misma sala'));
-// B — same room, several stops back
-rows.push(await nav(S(6).id, 'preparar · parada 6'));
-rows.push(await nav(S(3).id, 'B · ATRÁS 6→3 misma sala'));
-// C — cross room: go to a later room, then back to a Gallery A stop
-rows.push(await nav(S(8).id, 'preparar · parada 8 (otra sala)'));
-rows.push(await nav(S(7).id, 'C · ATRÁS 8→7 una parada'));
-rows.push(await nav(S(3).id, 'D · ATRÁS 7→3 entre salas'));
-// Forward again, to prove no corruption after all of that
+rows.push(await back('BACK 4→3 (control real)'));
 rows.push(await nav(S(4).id, 'ADELANTE otra vez 3→4'));
+rows.push(await nav(S(5).id, 'ADELANTE 4→5'));
+rows.push(await back('BACK 5→4 (control real)'));
+rows.push(await back('BACK 4→3 (segunda vez)'));
+rows.push(await nav(S(4).id, 'ADELANTE tras dos BACK'));
+/* First stop: the control must refuse rather than replay. */
+rows.push(await nav(S(1).id, 'preparar · parada 1'));
+rows.push(await back('BACK en la primera parada'));
+/* Cross-room: the control must refuse, not silently replay the tour. */
+rows.push(await nav(S(8).id, 'preparar · parada 8 (otra sala)'));
+rows.push(await back('BACK entre salas'));
 
 /* Static framing: same stop, reached forwards and backwards, both sampled after
    an identical settle so the guide's walk is finished in both. */
@@ -176,13 +195,24 @@ const framing = {
   sameSpace: fwdArrival.space === backArrival.space
 };
 
-const ref = rows.find((r) => r.label.startsWith('ADELANTE 3→4'));
-const caseA = rows.find((r) => r.label.startsWith('A ·'));
+const ref = rows.find((r) => r.label.startsWith('ADELANTE 3→4 (ref'));
+const b1 = rows.find((r) => r.label.startsWith('BACK 4→3 (control'));
+const b2 = rows.find((r) => r.label.startsWith('BACK 5→4'));
+const b3 = rows.find((r) => r.label.startsWith('BACK 4→3 (segunda'));
+const firstStop = rows.find((r) => r.label.startsWith('BACK en la primera'));
+const crossRoom = rows.find((r) => r.label.startsWith('BACK entre salas'));
 const verdicts = {
-  endpointCorrect: rows.filter((r) => r.label.includes('ATRÁS')).every((r) => r.stop === r.stopId),
-  sameRoomBackReEntersRoom: caseA.counters.portals > 0,
+  backLandsOnPreviousStop: b1.order === 3 && b2.order === 4 && b3.order === 3,
+  // The whole point: a same-room Back must cost no doorway and no room entry.
+  backPortals: [b1, b2, b3].map((r) => r.counters.portals),
+  backRoomEntries: [b1, b2, b3].map((r) => r.counters.rooms),
+  backBeats: [b1, b2, b3].map((r) => r.counters.beats),
   forwardReferencePortals: ref.counters.portals,
-  forwardAfterAllBackWorks: rows.at(-4)?.stop === S(4).id || rows.some((r) => r.label.startsWith('ADELANTE otra vez') && r.stop === S(4).id),
+  forwardReferenceBeats: ref.counters.beats,
+  repeatedBackWorks: b2.clicked && b3.clicked && b3.order === 3,
+  forwardAfterBackWorks: rows.some((r) => r.label.startsWith('ADELANTE tras dos BACK') && r.order === 4),
+  firstStopControlDisabled: firstStop.clicked === false && firstStop.disabled === true,
+  crossRoomControlDisabled: crossRoom.clicked === false && crossRoom.disabled === true,
   framing
 };
 console.log(`\n${JSON.stringify(verdicts, null, 1)}`);

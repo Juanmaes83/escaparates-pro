@@ -1268,3 +1268,32 @@ different number of times on the way.
 **Rule.** *Before comparing two arrivals at "the same" destination, establish
 whether that destination is a fixed pose or a derived one.* A derived framing
 cannot be asserted for equality without also reproducing what it derives from.
+
+## L-27 · Returning to a stop needs a destination that does not move
+
+**What happened.** Visitor Back was implemented as its own move, separate from
+seek: the Director records each Tour Stop's approved arrival the first time the
+visitor reaches it forwards, and Back re-applies that recording. Measured
+against a forward step of 4 beats and 3 guide stagings, a same-room Back now
+costs **1 beat, 0 portals, 0 room entries, 1 guide staging**, repeats correctly,
+and lets the tour continue forwards afterwards. The replay is gone.
+
+What did not resolve is what "the same place" means. Two ordinary *forward*
+arrivals at one stop, sampled the same way, were themselves **2.5 m apart**, and
+Back — which is exactly repeatable, returning to its recording every time —
+sits ~3.5 m from either. The variance is in the forward experience, not in the
+return.
+
+The cause is L-26: every Tour Stop is owned by an ENTRY, PORTAL or LEAD beat,
+and LEAD framing is derived from where the guide is standing. A stop's arrival
+is therefore a function of guide choreography and route history, so "the settled
+viewing state of the approved forward arrival" does not name one pose.
+
+**Classification.** PRODUCT DEFINITION gap, surfaced by implementation. Not a
+bug in the Back mechanism, which is deterministic.
+**Rule.** *Before building a return, establish that the destination is
+single-valued.* A Back can only be as reproducible as the arrival it is aiming
+at; if the forward arrival varies, the return will faithfully reproduce one of
+its variants and look wrong against the others. Where a destination is derived
+rather than stored, either freeze what it derives from or store the resolved
+pose as the contract — and say which, because the two are different products.
