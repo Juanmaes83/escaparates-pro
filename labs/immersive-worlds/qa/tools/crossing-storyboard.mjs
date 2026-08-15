@@ -65,20 +65,44 @@ const errors = [];
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto(`http://127.0.0.1:${PORT}/labs/immersive-worlds/index.html?tier=HIGH`, { waitUntil: 'load' });
 await page.waitForFunction(() => window.__IW?.ready === true, { timeout: 300000 });
-// The visitor experience opens behind an enter gate, and hiding the veil is not
-// the same as passing through it: the first recording captured twelve seconds of
-// "La sala está preparada" while the crossing ran against a scene nobody had
-// started. Press the button the visitor presses.
-await page.evaluate(() => { window.__IW.hud?.el?.enter?.click?.(); });
-await page.waitForTimeout(600);
-await page.evaluate(() => {
-  const hud = window.__IW.hud;
-  if (hud?.el?.veil) hud.el.veil.hidden = true;
-  if (hud?.el?.enter) hud.el.enter.hidden = true;
-  // The visitor's own chrome is not the subject of this board.
-  document.getElementById('iw-ui').style.opacity = '0';
-});
+/**
+ * Enter the way a visitor enters.
+ *
+ * Twice now this harness recorded the loading screen instead of the Museum.
+ * First because hiding the veil is not the same as passing through it, and then
+ * because a synthetic `.click()` fired before `showEnter()` had attached its
+ * listener — the button existed, so the call succeeded, and nothing happened.
+ *
+ * A real Playwright click waits for the control to be visible and enabled
+ * before pressing it, which is both the visitor's path and the only version of
+ * this that cannot silently no-op.
+ */
+await page.locator('[data-el="enter"]').click({ timeout: 120000 });
+await page.waitForFunction(() => {
+  const veil = window.__IW?.hud?.el?.veil;
+  return veil && (veil.hidden || veil.classList.contains('is-gone'));
+}, { timeout: 60000 });
+// The visitor's own chrome is not the subject of this board; the room is.
+await page.evaluate(() => { document.getElementById('iw-ui').style.opacity = '0'; });
 await page.waitForTimeout(2500);
+
+/**
+ * Is the room actually on screen?
+ *
+ * A recording of a black canvas is not evidence of a crossing, and both earlier
+ * attempts produced exactly that while reporting success. This refuses to go on
+ * unless real pixels are being painted.
+ */
+const painting = await page.evaluate(async () => {
+  const canvas = document.getElementById('iw-canvas');
+  const shot = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+  return { hasCanvas: Boolean(canvas), bytes: shot ? shot.size : 0,
+    w: canvas?.width || 0, h: canvas?.height || 0 };
+});
+if (!painting.hasCanvas || painting.w < 100) {
+  throw new Error(`el lienzo no está listo: ${JSON.stringify(painting)}`);
+}
+console.log(`sala en pantalla: ${painting.w}×${painting.h}`);
 
 /**
  * Read everything the beat conditions depend on, in one go.

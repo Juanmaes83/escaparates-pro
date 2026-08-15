@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-08-15T00:55:41.612Z",
+ "generatedAt": "2026-08-15T07:23:26.143Z",
  "pace": "NATURAL",
  "portalId": "portal.lobby-gallery-a",
  "timeline": [
   {
-   "ms": 2434,
+   "ms": 1870,
    "space": "space.gallery-a",
    "coverage": 0,
    "facing": 0,
@@ -13,7 +13,7 @@
    "surfaceVisible": false
   },
   {
-   "ms": 3918,
+   "ms": 3231,
    "space": "space.gallery-a",
    "coverage": 0,
    "facing": 0,
@@ -22,7 +22,7 @@
    "surfaceVisible": false
   },
   {
-   "ms": 5211,
+   "ms": 4341,
    "space": "space.gallery-a",
    "coverage": 0,
    "facing": 0,
@@ -31,7 +31,25 @@
    "surfaceVisible": false
   },
   {
-   "ms": 8899,
+   "ms": 7580,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "ms": 10898,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "ms": 12492,
    "space": "space.gallery-a",
    "coverage": 0,
    "facing": 0,
