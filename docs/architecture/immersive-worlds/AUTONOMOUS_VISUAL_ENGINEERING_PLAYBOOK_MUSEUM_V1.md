@@ -504,7 +504,99 @@ Never change product code merely to satisfy a broken instrument.
 
 Instrumentation must exercise the actual production path where practical instead of an approximate shadow path.
 
-> **A NEW INSTRUMENT MUST BE CHECKED AGAINST AT LEAST ONE KNOWN-ANSWER CASE BEFORE ITS UNKNOWN-CASE VERDICT IS TRUSTED.**
+## 12.1 REAL PRODUCT PATH BEFORE HARNESS SHORTCUT
+
+Before declaring a behaviour missing, broken or visually wrong, prove that the harness invokes the behaviour through the same contract/path the real product uses.
+
+> **REAL PRODUCT PATH BEFORE HARNESS SHORTCUT.**
+
+Required check when a harness calls runtime internals directly:
+
+```text
+WHO IS THE REAL CALLER?
+WHAT INTENT / STATE / PAYLOAD DOES IT SUPPLY?
+WHAT PRECONDITIONS EXIST IN PRODUCTION?
+DOES THE HARNESS REPRODUCE THEM?
+```
+
+If the harness invents a caller/state that production never creates, its result is not product evidence.
+
+Museum precedent: a bare `traversePortal(id, { source: 'QA' })` correctly followed the cut path; only the Experience Director supplies the `crossing` intent that activates the cinematic crossing. The harness had photographed a caller that does not exist in the visitor flow.
+
+## 12.2 TEMPORAL EVIDENCE MUST BE ATOMIC
+
+For motion/state evidence, caption, measured state and pixels must refer to the same instant.
+
+> **TEMPORAL EVIDENCE MUST BE ATOMIC.**
+
+Preferred capture contract:
+
+```text
+READ STATE BEFORE
+→ CAPTURE PIXELS
+→ READ STATE AFTER
+→ ASSERT THE RELEVANT STATE DID NOT CHANGE
+→ WRITE CAPTION / METADATA FROM THAT SAME ATOMIC SAMPLE
+```
+
+If the subject can move materially between state read and screenshot, the evidence is contaminated even when both readings are individually truthful.
+
+Museum precedent: beat 08 was labelled as a look-back while the screenshot was taken seconds later after recoil had already released.
+
+## 12.3 INSTRUMENT RESOLUTION MUST EXCEED EVENT RESOLUTION
+
+Before inferring that a visual beat/event is absent, establish that the capture instrument has enough temporal/spatial resolution to observe it.
+
+> **INSTRUMENT RESOLUTION MUST EXCEED EVENT RESOLUTION.**
+
+Check:
+
+```text
+EVENT DURATION / SCALE
+EXPECTED NUMBER OF DISTINCT STATES
+ACTUAL FPS / SAMPLE RATE / PIXEL RESOLUTION
+AVAILABLE DISTINCT SAMPLES
+MARGIN ABOVE THE MINIMUM NEEDED
+```
+
+If the instrument can produce fewer meaningful samples than the states being judged, absence of evidence is an instrument limitation, not a product verdict.
+
+Museum precedent: the environment rendered roughly ten frames across a 5000 ms crossing while the acceptance board asked for twelve functional beats. The correct solution was deterministic scrubbing/frozen progress, not repeated real-time sampling.
+
+## 12.4 CALIBRATE NEW INSTRUMENTS AGAINST KNOWN ANSWERS
+
+A new measurement must prove that it can distinguish a known-positive and/or known-negative case before its unknown-case verdict is trusted.
+
+> **CALIBRATE NEW INSTRUMENTS AGAINST A KNOWN ANSWER.**
+
+Minimum protocol:
+
+```text
+KNOWN CASE
+→ EXPECTED RESULT
+→ MEASURE
+→ VERIFY MEASUREMENT AGREES FOR THE RIGHT REASON
+→ ONLY THEN USE ON UNKNOWN CASE
+```
+
+An instrument that returns the expected answer for the wrong reason is more dangerous than one that fails loudly.
+
+Museum precedent: drawing a composited WebGL canvas into a 2D canvas returned transparent black because the drawing buffer had already been cleared. It would have "confirmed" the dark portal frame for the wrong reason. The valid measurement was made against the captured PNG using ffmpeg signal statistics.
+
+## 12.5 INSTRUMENT TRUST GATE
+
+For a new or materially changed QA instrument, Claude must answer before using its verdict as product evidence:
+
+```text
+[ ] real product path reproduced
+[ ] known-answer calibration passed
+[ ] sample resolution sufficient
+[ ] temporal state and pixels synchronized where relevant
+[ ] diagnostic message covers the same contract as the assertion
+[ ] stale/invalid evidence cannot be silently mistaken for current evidence
+```
+
+If any required item is uncertain, the instrument may be used for investigation but **not** as authoritative pass/fail evidence.
 
 ---
 
@@ -1212,6 +1304,7 @@ COMPARISON EVIDENCE
 IMPLEMENTATION RECORD UPDATE
 ERROR / LEARNING LOG UPDATE OR "NOT REQUIRED"
 PROVEN FLOW USED / ADAPTED / NOT APPLICABLE
+INSTRUMENT TRUST GATE: PASS / NOT APPLICABLE / BLOCKED
 FRESH CRITIC VERDICT
 HUMAN QA: PENDING
 PRODUCT APPROVAL: PENDING
@@ -1240,7 +1333,11 @@ Do not:
 - compare screenshots from different builds without labels;
 - use stale artifacts as current evidence;
 - modify product code to satisfy a broken instrument;
+- call a runtime internal directly and assume it reproduces the real product path;
+- trust motion captions/state and screenshots taken at different instants;
+- infer an absent beat when the instrument cannot sample enough distinct states to observe it;
 - trust a new measurement before checking it on a known-answer case;
+- accept an expected measurement result without verifying that the instrument produced it for the correct reason;
 - continue B merely because it does not directly import A;
 - modify global contracts while A's global outcome is unresolved;
 - say “probably independent” and continue fully;
@@ -1373,6 +1470,16 @@ CONTRACTS BEFORE ENTHUSIASM.
 PIXELS WIN.
 
 FUNCTIONAL PASS ≠ PRODUCT PASS.
+
+REAL PRODUCT PATH BEFORE HARNESS SHORTCUT.
+
+TEMPORAL EVIDENCE MUST BE ATOMIC.
+
+INSTRUMENT RESOLUTION MUST EXCEED EVENT RESOLUTION.
+
+CALIBRATE NEW INSTRUMENTS AGAINST A KNOWN ANSWER.
+
+AN EXPECTED RESULT FOR THE WRONG REASON IS NOT VALID EVIDENCE.
 
 BUILDER ≠ CRITIC.
 
