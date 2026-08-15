@@ -124,6 +124,7 @@ for (const c of canonical) console.log(`  ${String(c.order).padStart(2, '0')} ${
 if (!canonical.some((c) => c.pose)) throw new Error('ninguna parada resuelve pose canónica — el contrato no está operativo');
 
 const TARGETS = canonical.filter((c) => c.order >= 3 && c.order <= 5 && c.settleBeat);
+const CROSS = process.env.IW_CROSS === '1';
 const forward = [];
 for (const t of TARGETS) {
   await page.waitForFunction((beatId) => window.__IW.runtime.experience.currentStep?.id === beatId,
@@ -133,6 +134,62 @@ for (const t of TARGETS) {
   forward.push({ ...t, actual: s });
   console.log(`ADELANTE parada ${String(t.order).padStart(2, '0')} asentada · beat ${s.beat} · pos ${s.pos} · guía ${s.guideVisible}`);
   await page.screenshot({ path: path.join(OUT, `fs-forward-${t.order}.png`) });
+}
+
+/* Cross-room: let the tour run on into Galeria B, then come back through the
+   doorway with the real control, sampling the whole way rather than only the
+   endpoint. */
+let crossing = null;
+if (CROSS) {
+  const target = canonical.find((c) => c.order === 3);
+  await page.waitForFunction(() => window.__IW.runtime.state.activeSpaceId === 'space.gallery-b',
+    null, { timeout: 600000 });
+  await page.waitForTimeout(4000);
+  await page.evaluate(() => window.__IW.runtime.experience.pause());
+  await page.waitForTimeout(500);
+  const before = await page.evaluate(POSE);
+  await page.evaluate(() => {
+    window.__T = { frames: [], portals: [], spaces: [] };
+    const rt = window.__IW.runtime;
+    rt.bus.on('portal:entered', (e) => window.__T.portals.push({ t: Math.round(performance.now()), id: e.portalId, phase: e.phase || 'CROSSED' }));
+    rt.bus.on('space:entered', (e) => window.__T.spaces.push({ t: Math.round(performance.now()), id: e.spaceId }));
+    const tick = () => {
+      const p = rt.camera.pose.position;
+      window.__T.frames.push({ t: Math.round(performance.now()), space: rt.state.activeSpaceId,
+        owner: rt.camera.owner, pos: p.map((n) => +n.toFixed(2)) });
+      if (window.__T.frames.length < 900) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  const clicked = await page.evaluate(() => {
+    const b = document.querySelector('[data-el="prevBtn"]');
+    if (!b || b.disabled) return false;
+    b.click(); return true;
+  });
+  for (let i = 0; i < 14; i += 1) {
+    await page.waitForTimeout(900);
+    await page.screenshot({ path: path.join(OUT, `xr-${String(i).padStart(2, '0')}.png`) });
+  }
+  await settled();
+  const after = await page.evaluate(POSE);
+  const trace = await page.evaluate(() => ({
+    portals: window.__T.portals, spaces: window.__T.spaces,
+    owners: [...new Set(window.__T.frames.map((f) => f.owner))],
+    spacesSeen: [...new Set(window.__T.frames.map((f) => f.space))],
+    frames: window.__T.frames.length
+  }));
+  crossing = { clicked, before, after, trace, canonical: target?.pose || null };
+  console.log(`\nCROSS-ROOM BACK  pulsado=${clicked}`);
+  console.log(`  antes  sala ${before.space} parada ${before.order}`);
+  console.log(`  después sala ${after.space} parada ${after.order} beat ${after.beat}`);
+  console.log(`  portales: ${trace.portals.map((p) => p.id + '/' + p.phase).join(' · ') || 'ninguno'}`);
+  console.log(`  salas: ${trace.spacesSeen.join(' → ')} · cámara: ${trace.owners.join(' → ')}`);
+  if (target?.pose) {
+    const dp = Math.hypot(...after.pos.map((v, i) => v - target.pose.pos[i]));
+    const dt = Math.hypot(...after.tgt.map((v, i) => v - target.pose.tgt[i]));
+    console.log(`  vs pose canónica: Δpos ${dp.toFixed(4)} m · Δtgt ${dt.toFixed(4)} m`);
+    crossing.deltaPos = +dp.toFixed(4); crossing.deltaTgt = +dt.toFixed(4);
+  }
 }
 
 /* Pause where the tour left us, then use the real control. */
@@ -190,7 +247,7 @@ console.log(`\nFORWARD SETTLE = BACK RETURN: ${pass ? 'PASS' : 'FALLO'} (toleran
 if (errors.length) console.log(`errores: ${errors.slice(0, 3).join(' · ')}`);
 
 await fs.writeFile(path.join(OUT, 'forward-settle-equivalence.json'), JSON.stringify({
-  generatedAt: new Date().toISOString(), toleranceM: TOL, canonical, forward, backs, rows, pass, errors
+  generatedAt: new Date().toISOString(), toleranceM: TOL, canonical, forward, backs, rows, pass, crossing, errors
 }, null, 1));
 await browser.close();
 server.close();

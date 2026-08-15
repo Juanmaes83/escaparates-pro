@@ -81,6 +81,8 @@ export class ExperienceDirector {
     this.manifest = null;
     /** Set while a seek is replaying beats, so `update` does not race it. */
     this._seeking = false;
+    /** A cross-room Back waiting for its crossing to land. */
+    this._pendingReturn = null;
   }
 
   get currentStep() {
@@ -395,12 +397,23 @@ export class ExperienceDirector {
     };
   }
 
-  /** Whether going back is possible from here without replaying the route. */
+  /**
+   * Whether going back is possible from here without replaying the route.
+   *
+   * Same room is always possible once the stop resolves. Another room is
+   * possible when the world authors a way back into it — which the Museum does
+   * for every CONTINUOUS connection. A one-way TELEPORT is not a doorway a
+   * visitor can walk back through, so it does not count.
+   */
   get canGoBack() {
     const previousId = this.previousTourStepId;
     if (!previousId) return false;
     const settle = this.canonicalSettle(previousId);
-    return Boolean(settle) && settle.spaceId === this.state.activeSpaceId;
+    if (!settle) return false;
+    if (settle.spaceId === this.state.activeSpaceId) return true;
+    const portals = this.store.portalsOf(this.state.activeSpaceId) || [];
+    return portals.some((p) => p.toSpaceId === settle.spaceId
+      && p.transitionBehaviour !== 'TELEPORT' && p.transitionBehaviour !== 'CUT');
   }
 
   /**
@@ -433,8 +446,54 @@ export class ExperienceDirector {
     if (!previousId) return false;
     const settle = this.canonicalSettle(previousId);
     if (!settle) return false;
-    if (settle.spaceId !== this.state.activeSpaceId) return false;
+    if (settle.spaceId !== this.state.activeSpaceId) {
+      return this._returnAcrossRooms(previousId, settle);
+    }
     return this._returnToSettle(previousId, settle);
+  }
+
+  /**
+   * Go back to a stop in another room, through the doorway.
+   *
+   * The world already authors the return portal — every CONTINUOUS connection in
+   * the Museum has its counterpart, `portal.gallery-b-gallery-a` beside
+   * `portal.gallery-a-gallery-b` — so a reverse crossing is not a new visual
+   * behaviour to invent. It is the approved T6 crossing, run on the portal that
+   * already points the other way.
+   *
+   * That is what keeps the human-preferred forward baseline safe: the forward
+   * crossing's portal record, threshold, shader treatment and endpoint are not
+   * touched, read or reconfigured here. This traverses a different portal, which
+   * has always had its own threshold, and the forward path cannot regress
+   * because nothing on it is involved.
+   *
+   * The crossing resolves as soon as it is in flight rather than when it lands,
+   * so the settled composition cannot be applied inline — writing the camera
+   * mid-crossing would be a second authority for the same frames. The stop is
+   * remembered instead and applied by `update` on the frame the crossing gives
+   * the camera back.
+   */
+  _returnAcrossRooms(stopId, settle) {
+    const portals = this.store.portalsOf(this.state.activeSpaceId) || [];
+    const back = portals.find((p) => p.toSpaceId === settle.spaceId
+      && p.transitionBehaviour !== 'TELEPORT' && p.transitionBehaviour !== 'CUT');
+    if (!back) return false;
+
+    const shape = TRANSITION_SHAPE[TRANSITION.CROSSING];
+    this._pendingReturn = { stopId, settle };
+    this.ports.dispatch(
+      { type: ACTION.ACTIVATE_PORTAL, target: back.id },
+      {
+        source: 'EXPERIENCE',
+        sourceId: `${this.routeId}:back`,
+        crossing: { family: TRANSITION.CROSSING, ...shape }
+      }
+    );
+    this.bus.emit(EVENTS.ROUTE_STEP, {
+      routeId: this.routeId, stepId: settle.beat.id, index: this.steps.indexOf(settle.beat),
+      total: this.steps.length, caption: settle.beat.caption, direction: 'BACK'
+    });
+    return true;
   }
 
   /** Fly to a stop's settled composition and leave the route ready to continue. */
@@ -547,6 +606,17 @@ export class ExperienceDirector {
    * duration the step advances regardless.
    */
   update(dt) {
+    // A cross-room Back is two moves: the doorway, then the composition on the
+    // other side of it. The second cannot start until the crossing has given the
+    // camera back, so it waits here rather than racing the transition.
+    if (this._pendingReturn && !this.ports.crossingActive?.()) {
+      const { stopId, settle } = this._pendingReturn;
+      this._pendingReturn = null;
+      if (this.state.activeSpaceId === settle.spaceId) {
+        this._returnToSettle(stopId, settle);
+      }
+    }
+
     if (this._seeking) return;
     if (this.transport !== TRANSPORT.PLAYING) return;
     const step = this.currentStep;

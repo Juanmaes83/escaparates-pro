@@ -206,9 +206,20 @@ export class ExperienceHUD {
     bus.on(EVENTS.ENTITY_FOCUS_LEFT, () => this._hideDetail());
     bus.on(EVENTS.WORLD_STATE_CHANGED, () => this.update());
     bus.on(EVENTS.ROUTE_STARTED, () => this.update());
-    bus.on(EVENTS.ROUTE_STEP, ({ caption, index, total }) => {
+    bus.on(EVENTS.ROUTE_STEP, ({ caption }) => {
       this.el.caption.textContent = caption || '';
-      this.el.stepCount.textContent = `Parada ${index + 1} de ${total}`;
+      // Counted in stops, not beats.
+      //
+      // This read `Parada ${index + 1} de ${total}` from the beat index, so the
+      // Museum's ten stops were announced as "parada 21 de 33" — the engine's
+      // beat machinery, wearing the visitor's word for it. It went unnoticed
+      // while the only control was SIGUIENTE, because a beat and a stop advance
+      // together often enough to look right. ← ANTERIOR moves by stops and made
+      // the counter jump several at a time, which is the same defect finally
+      // becoming visible.
+      const order = this.runtime.experience.tourOrder;
+      const total = this.runtime.experience.tourTotal;
+      this.el.stepCount.textContent = order && total ? `Parada ${order} de ${total}` : '';
       this._stepCountText = this.el.stepCount.textContent;
       this.update();
     });
