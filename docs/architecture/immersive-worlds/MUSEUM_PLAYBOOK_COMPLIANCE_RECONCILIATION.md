@@ -24,7 +24,7 @@ nine separate oversights:
 | VISUAL EVIDENCE | 7 of 9 |
 | MOTION EVIDENCE | 1 of 9 *(only the crossing, and that predates these verticals)* |
 | FRESH AMNESIAC CRITIC | **0 of 9** |
-| IMPLEMENTATION RECORD | **0 of 9** |
+| IMPLEMENTATION RECORD | 0 of 9 → **9 of 9** (`IW-3`) |
 | LEARNING LOG | 7 of 9 |
 | NAVIGABLE HUMAN RUNTIME | 9 of 9 (one shared runtime) |
 | HUMAN FIRST-GLANCE | 1 of 9 |
@@ -57,7 +57,7 @@ Commits `8c545bd`, `f417925`. Tools `visitor-audit.mjs`, `visitor-workspace-audi
 | VISUAL EVIDENCE | DONE | `evidence-vs02/visitor-workspace/{before,after}` at 1366/1440/1920, matched. **Correction:** `visitor-design/{current,corrected}` was previously filed here too. It is not this vertical — those frames are the *public* VISITA panel, which belongs to §1.3. The fresh critic caught the mislabelling; it is fixed here rather than quietly |
 | MOTION EVIDENCE | N/A | a static layout measure; nothing moves |
 | FRESH AMNESIAC CRITIC | **MISSING** | never run |
-| IMPLEMENTATION RECORD | **MISSING** | `IW-2_IMPLEMENTATION_RECORD.md` still describes the previous milestone |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | L-23, L-24 |
 | NAVIGABLE HUMAN RUNTIME | DONE | shared runtime, §5 |
 | HUMAN FIRST-GLANCE | **MISSING** | |
@@ -76,7 +76,7 @@ Commit `1dc8628`. Tool `project-cloud-contract-test.mjs`.
 | VISUAL EVIDENCE | BLOCKED | nothing to photograph until bytes move |
 | MOTION EVIDENCE | N/A | |
 | FRESH AMNESIAC CRITIC | BLOCKED | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | recorded in the integration decision |
 | NAVIGABLE HUMAN RUNTIME | N/A | not reachable by a visitor |
 | HUMAN FIRST-GLANCE | BLOCKED | |
@@ -95,7 +95,7 @@ Commit `2873945`. Tool `visita-traceability.mjs`.
 | VISUAL EVIDENCE | DONE | `evidence-vs02/visita-traceability/visita-trazabilidad.png`; **and** `visitor-design/{current,corrected}` — the public panel at 4 viewports × 4 states, before and after the presentation redesign (`f417925`), reassigned here from §1.2 |
 | MOTION EVIDENCE | N/A | |
 | FRESH AMNESIAC CRITIC | **MISSING** | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | |
 | NAVIGABLE HUMAN RUNTIME | DONE | §5 |
 | HUMAN FIRST-GLANCE | **MISSING** | |
@@ -114,7 +114,7 @@ Commits `25d67eb` (audit), `1e025f3` (cost), `4415f1c` (implementation), `de601a
 | VISUAL EVIDENCE | DONE | `fs-forward-{3,4,5}.png` / `fs-back-{3,4,5}.png` |
 | MOTION EVIDENCE | **WAS MISSING → PRODUCED** | `evidence-vs02/guided-back-motion/` — recording + per-frame filmstrip (§3) |
 | FRESH AMNESIAC CRITIC | **MISSING → RUN** (§4) | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | L-25, L-26, L-27 |
 | NAVIGABLE HUMAN RUNTIME | DONE | §5 |
 | HUMAN FIRST-GLANCE | **MISSING** | pending, package in §5 |
@@ -133,7 +133,7 @@ Commit `8c20452`.
 | VISUAL EVIDENCE | DONE | `xr-00…xr-13.png` |
 | MOTION EVIDENCE | **WAS MISSING → PRODUCED** | §3 |
 | FRESH AMNESIAC CRITIC | **MISSING → RUN** (§4) | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | |
 | NAVIGABLE HUMAN RUNTIME | DONE | |
 | HUMAN FIRST-GLANCE | **MISSING** | |
@@ -152,7 +152,7 @@ Commit `ed45704`. Human decision: option C.
 | VISUAL EVIDENCE | DONE | shared with §1.4 |
 | MOTION EVIDENCE | **WAS MISSING → PRODUCED** | §3, moment 3 (forward after Back) |
 | FRESH AMNESIAC CRITIC | **MISSING → RUN** | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | L-26, L-27 |
 | NAVIGABLE HUMAN RUNTIME | DONE | |
 | HUMAN FIRST-GLANCE | **MISSING** | |
@@ -171,7 +171,7 @@ Part of `4415f1c` / `ed45704`.
 | VISUAL EVIDENCE | **WAS MISSING → PRODUCED** | the counter is legible in every §3 still and printed in its caption |
 | MOTION EVIDENCE | **PRODUCED** | §3 |
 | FRESH AMNESIAC CRITIC | **MISSING → RUN** | |
-| IMPLEMENTATION RECORD | **MISSING** | |
+| IMPLEMENTATION RECORD | **MISSING → WRITTEN** | `IW-3_IMPLEMENTATION_RECORD.md` |
 | LEARNING LOG | DONE | the beat-vs-stop defect is recorded |
 | NAVIGABLE HUMAN RUNTIME | DONE | |
 | HUMAN FIRST-GLANCE | **MISSING** | |
