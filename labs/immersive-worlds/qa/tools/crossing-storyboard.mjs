@@ -202,13 +202,18 @@ await page.evaluate(() => {
   rt.startRoute(rt.defaultRouteId);
 });
 
-// Beat 01 dwells ~6 s before the portal beat comes up; the crossing itself runs
-// a few seconds more. Waiting on the *state* rather than on a clock is what lets
-// the pace vary without the harness needing to be retuned.
+// Waiting on the *state* rather than on a clock is what lets the pace vary
+// without the harness needing to be retuned.
+//
+// The budget has to suit the furthest portal beat on the route, not the nearest.
+// The first crossing is beat 02 and arrives in about six seconds; the second is
+// beat 08, roughly ten authored beats of six to nine seconds each, and a 90 s
+// budget sized on the first one timed out before the route ever got there. That
+// is what kept the Cámara Oscura crossing out of the acceptance board.
 await page.waitForFunction((step) => {
   const rt = window.__IW.runtime;
   return rt.experience.currentStep?.id === step;
-}, PORTAL_STEP, { timeout: 90000 });
+}, PORTAL_STEP, { timeout: 600000 });
 console.log(`beat de portal en escena: ${PORTAL_STEP}`);
 
 const flew = await page.waitForFunction(
