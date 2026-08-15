@@ -321,7 +321,7 @@ body[data-focused="true"] .iw-topbar__mark { opacity: 0.32; }
   background: rgba(8, 7, 6, 0.86);
   z-index: 30;
 }
-.iw-map__panel, .iw-a11y__panel, .iw-visit__panel {
+.iw-map__panel, .iw-a11y__panel {
   width: min(46rem, 92vw);
   max-height: 84vh;
   overflow: auto;
@@ -329,7 +329,7 @@ body[data-focused="true"] .iw-topbar__mark { opacity: 0.32; }
   border: 1px solid var(--iw-line);
   background: #100f0e;
 }
-.iw-map__panel header, .iw-a11y__panel header, .iw-visit__panel header {
+.iw-map__panel header, .iw-a11y__panel header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -394,21 +394,157 @@ body[data-focused="true"] .iw-topbar__mark { opacity: 0.32; }
 
 /* == the institution's own information, for the visitor ==================== */
 
-.iw-visit__panel section { margin-bottom: 1.4rem; }
-.iw-visit__panel h3 {
-  margin: 0 0 .3rem;
-  font: 400 .68rem/1.3 var(--iw-sans, system-ui);
-  letter-spacing: .18em; text-transform: uppercase; color: var(--iw-dim, #9a9389);
+/*
+ * Three questions, in the order a visitor asks them: can I go, what is on, and
+ * what should I know before I set off. The previous layout answered all nine
+ * fields in one column of identical label-and-paragraph rows and let the
+ * primary action fall wherever the text ended — 460 px below the fold on a
+ * phone. Nothing has been removed; the hierarchy is what changed.
+ *
+ * The panel is a flex column of head / scroller / action bar, so the title and
+ * the primary action are pinned and only the content between them moves.
+ */
+.iw-visit__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(64rem, 94vw);
+  max-height: 88vh;
+  border: 1px solid var(--iw-line);
+  background: #100f0e;
+  overflow: hidden;                     /* the scroller inside owns scrolling */
 }
-.iw-visit__panel p { margin: 0; line-height: 1.6; }
-.iw-visit__cta { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1.4rem 0 1.8rem; }
-.iw-visit__cta .iw-btn { text-decoration: none; }
+
+.iw-visit__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.5rem 1.8rem 1.2rem;
+  border-bottom: 1px solid var(--iw-line);
+}
+.iw-visit__eyebrow {
+  margin: 0 0 .35rem;
+  font: 400 .62rem/1 var(--iw-sans);
+  letter-spacing: .2em; text-transform: uppercase; color: var(--iw-ink-dim);
+}
+/* The visit title was the one panel heading left out of the serif rule, so it
+   fell back to the browser's bold sans — the only heading in the product not
+   speaking in the house voice. */
+.iw-visit__panel h2 {
+  margin: 0;
+  font: 400 1.35rem/1.2 var(--iw-serif);
+  letter-spacing: .01em;
+}
+.iw-visit__head .iw-btn { flex: none; }
+
+.iw-visit__scroll { overflow: auto; padding: 1.6rem 1.8rem 1.8rem; }
+
+/* -- can I go: the three that may never be scrolled for ------------------- */
+.iw-visit__key {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.6rem 2.4rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--iw-line);
+}
+.iw-visit__fact h3 {
+  margin: 0 0 .35rem;
+  font: 400 .64rem/1.3 var(--iw-sans);
+  letter-spacing: .18em; text-transform: uppercase; color: var(--iw-ink-dim);
+}
+.iw-visit__fact p { margin: 0; line-height: 1.55; }
+/* Opening hours are the single most-asked fact in the panel and are set to
+   read as an answer rather than as a row in a record. */
+.iw-visit__key .iw-visit__fact:first-child p {
+  font: 400 1.05rem/1.45 var(--iw-serif);
+}
+
+/* -- what is on, and what to know ---------------------------------------- */
+.iw-visit__cols {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2.6rem;
+  padding-top: 1.5rem;
+}
+.iw-visit__col > h3 {
+  margin: 0 0 1rem;
+  font: 400 1rem/1.3 var(--iw-serif);
+  letter-spacing: .01em;
+}
+.iw-visit__col--plan {
+  padding-left: 2.6rem;
+  border-left: 1px solid var(--iw-line);
+}
+.iw-visit__col--plan .iw-visit__fact + .iw-visit__fact { margin-top: 1.1rem; }
+.iw-visit__col--plan .iw-visit__fact p { font-size: .88rem; color: #cfc9be; }
+
 .iw-visit__prog { list-style: none; margin: 0; padding: 0; }
-.iw-visit__prog li {
-  padding: .8rem 0; border-top: 1px solid var(--iw-line, rgba(226,219,205,.14));
-}
+.iw-visit__prog li { padding: 1rem 0; border-top: 1px solid var(--iw-line); }
 .iw-visit__prog li:first-child { border-top: 0; padding-top: 0; }
-.iw-visit__prog b { display: block; font-weight: 400; }
-.iw-visit__prog span { display: block; font-size: .8rem; color: var(--iw-dim, #9a9389); margin-top: .1rem; }
-.iw-visit__prog p { margin: .35rem 0 0; font-size: .9rem; }
-.iw-visit__prog a { display: inline-block; margin-top: .4rem; font-size: .82rem; }
+.iw-visit__prog b { display: block; font: 400 1.02rem/1.35 var(--iw-serif); }
+.iw-visit__prog span {
+  display: block; margin-top: .2rem;
+  font-size: .76rem; letter-spacing: .04em; color: var(--iw-ink-dim);
+}
+.iw-visit__prog p { margin: .45rem 0 0; font-size: .88rem; line-height: 1.6; color: #cfc9be; }
+/* This link rendered in the browser's default blue — the one saturated colour
+   on screen that was not a painting (Constitution §24). */
+.iw-visit__link {
+  display: inline-block; margin-top: .55rem;
+  font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--iw-ink); text-decoration: none;
+  border-bottom: 1px solid var(--iw-line-strong); padding-bottom: .15rem;
+}
+.iw-visit__link:hover { border-bottom-color: var(--iw-ink); }
+
+/* -- the action bar, pinned ---------------------------------------------- */
+.iw-visit__foot {
+  display: flex; flex-wrap: wrap; gap: .6rem;
+  padding: 1.1rem 1.8rem;
+  border-top: 1px solid var(--iw-line);
+  background: #100f0e;
+}
+.iw-visit__foot .iw-btn { text-decoration: none; }
+
+/*
+ * Phone: a sheet, not the desktop dialog made narrow.
+ *
+ * The overlay filled the width at 92vw and kept every desktop decision — the
+ * centred card, the 1.8rem padding, the 1.35rem title over five lines, and
+ * 460 px of scroll below the fold. A visitor holding a phone in a gallery gets
+ * a full-height sheet instead: title pinned at the top, action pinned at the
+ * bottom, one column of content between them.
+ */
+@media (max-width: 780px) {
+  .iw-visit { place-items: stretch; }
+  .iw-visit__panel {
+    width: 100%; max-height: none; height: 100%;
+    border: 0; border-top: 1px solid var(--iw-line);
+  }
+  .iw-visit__head { padding: 1.1rem 1.1rem .9rem; gap: .9rem; }
+  .iw-visit__panel h2 { font-size: 1.1rem; }
+  .iw-visit__scroll { padding: 1.2rem 1.1rem 1.6rem; }
+  .iw-visit__key { grid-template-columns: 1fr; gap: 1.2rem; }
+  .iw-visit__key .iw-visit__fact:first-child p { font-size: 1rem; }
+  .iw-visit__cols { grid-template-columns: 1fr; gap: 1.8rem; }
+  .iw-visit__col--plan { padding-left: 0; border-left: 0; padding-top: 1.5rem; border-top: 1px solid var(--iw-line); }
+  .iw-visit__foot { padding: .85rem 1.1rem; }
+  /* One action per row beats two half-width targets on a 360 px screen. */
+  .iw-visit__foot .iw-btn { flex: 1 1 100%; justify-content: center; }
+  /* Room to scroll past the last field. Without it the final line stops dead
+     level with the action bar, so the last thing a visitor reads — usually the
+     contact address — sits jammed against a button. A fade here would have hidden
+     that same line once scrolled to the end, which is worse than the gap it fixed. */
+  .iw-visit__scroll { padding-bottom: 2.4rem; }
+}
+
+/* Laptop: the plan column is too narrow to be worth its rule at this width. */
+@media (min-width: 781px) and (max-width: 1120px) {
+  .iw-visit__cols { grid-template-columns: 1fr; gap: 1.8rem; }
+  .iw-visit__col--plan {
+    padding-left: 0; border-left: 0;
+    padding-top: 1.5rem; border-top: 1px solid var(--iw-line);
+  }
+  .iw-visit__col--plan > div { display: inline-block; width: calc(50% - .8rem); vertical-align: top; }
+  .iw-visit__col--plan .iw-visit__fact + .iw-visit__fact { margin-top: 0; margin-bottom: 1.1rem; }
+}

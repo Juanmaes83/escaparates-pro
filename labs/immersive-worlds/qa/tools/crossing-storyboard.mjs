@@ -251,6 +251,9 @@ console.log(flew ? 'travesía en vuelo (TRANSITION posee la cámara)' : 'NO se p
  * evidence; this is the choreography evidence. They never share an artefact.
  */
 const SCRUB_DURATION = 100000;   // seconds
+// Read before the tempo is touched, so the board can quote the duration the
+// visitor actually gets rather than the one the instrument imposed.
+const plan0 = flew ? await page.evaluate(() => window.__IW.runtime.crossing.lastPlan || null) : null;
 if (flew) {
   await page.evaluate((d) => {
     const c = window.__IW.runtime.crossing;
@@ -318,9 +321,17 @@ const shoot = async (id, label, state, note = null) => {
   const file = `museum-${TAG}-${id}.png`;
   await page.screenshot({ path: path.join(OUT, file) });
   const after = await page.evaluate(READ);
-  const drifted = after.k !== state.k || after.facing !== state.facing;
-  captured.push({ id, label, file, state, note, drifted });
-  console.log(`  beat ${id} · k=${state.k} · eje=${state.alongAxis} · facing=${state.facing}${drifted ? ' · ¡DERIVA!' : ''} · ${label}`);
+  // Scrubbing pins progress but does not stop time: the engine still adds its
+  // own `dt` each frame, which over a screenshot amounts to a few parts in a
+  // hundred thousand of the move. Demanding exact equality flagged all twelve
+  // beats as drifted, which is a false alarm — and a detector that always fires
+  // is another instrument that cannot fail. The tolerance is set well below any
+  // difference a viewer could see and well above the residue.
+  const dk = Math.abs((after.k ?? 0) - (state.k ?? 0));
+  const df = Math.abs((after.facing ?? 0) - (state.facing ?? 0));
+  const drifted = dk > 0.002 || df > 0.05;
+  captured.push({ id, label, file, state, after: { k: after.k, facing: after.facing }, note, drifted });
+  console.log(`  beat ${id} · k=${state.k} · eje=${state.alongAxis} · facing=${state.facing}${drifted ? ` · ¡DERIVA! Δk=${dk.toFixed(4)} Δfacing=${df.toFixed(3)}` : ''} · ${label}`);
   return !drifted;
 };
 
@@ -362,13 +373,40 @@ const back = await advanceUntil(plane.k, (s) => s.alongAxis > 0 && s.facing > 0.
 if (back.hit) await shoot('08', 'Mundo B — el reverso del umbral, de frente', back.state);
 else console.log('  beat 08 AUSENTE: la cámara nunca se vuelve hacia el umbral tras cruzarlo');
 
-// The exit leg is whatever it is. Spacing the recoil beats across it — rather
-// than at fixed progress values — is what lets the board report a short exit
-// honestly instead of stretching three captions over one image.
-const kp = plane.hit ? plane.k : 0.8;
-await shoot('09', 'Retroceso: el umbral todavía domina', await seek(kp + 0.30 * (1 - kp)));
-await shoot('10', 'Retroceso medio: el destino empieza a aparecer', await seek(kp + 0.60 * (1 - kp)));
-await shoot('11', 'Fin del retroceso: el entorno ya está establecido', await seek(kp + 0.90 * (1 - kp)));
+/**
+ * How long is the look-back, actually?
+ *
+ * The source spends beats 09–11 on the reverse of the threshold shrinking while
+ * the destination reveals around it, so the honest question is not "does the
+ * Museum turn round" — it does — but "for how much of the move". Scanning the
+ * exit for the span where the camera is genuinely facing the opening turns that
+ * into a number, and a number is what can be compared with the source.
+ */
+let lookBack = null;
+if (back.hit) {
+  let last = back.k;
+  for (let k = back.k; k <= 1 + 1e-9; k += 0.01) {
+    const s = await seek(Math.min(k, 1));
+    if (s.facing !== null && s.facing > 0.5) last = Math.min(k, 1);
+    else break;
+  }
+  const authoredMs = plan0?.durationMs ?? 5000;
+  lookBack = {
+    from: +back.k.toFixed(3), to: +last.toFixed(3),
+    fractionOfMove: +(last - back.k).toFixed(3),
+    approxMsAtAuthoredTempo: Math.round((last - back.k) * authoredMs)
+  };
+  console.log(`  mirada atrás: k ${lookBack.from} → ${lookBack.to} · ${(lookBack.fractionOfMove * 100).toFixed(1)}% del recorrido · ~${lookBack.approxMsAtAuthoredTempo} ms al tempo autorizado`);
+}
+
+// The recoil beats are spaced across what remains AFTER the look-back is
+// established, not from the plane — anchoring them at the plane put beat 09
+// (k=0.825) in front of beat 08 (k=0.83), so the board showed the camera turning
+// back and then un-turning. Beats must run forwards.
+const kp = back.hit ? back.k : (plane.hit ? plane.k : 0.8);
+await shoot('09', 'Retroceso: el umbral todavía domina', await seek(kp + 0.25 * (1 - kp)));
+await shoot('10', 'Retroceso medio: el destino empieza a aparecer', await seek(kp + 0.55 * (1 - kp)));
+await shoot('11', 'Fin del retroceso: el entorno ya está establecido', await seek(kp + 0.85 * (1 - kp)));
 
 // Beat 12 is the only one that must be taken at the authored tempo: it is the
 // resting frame, and the contract is that the crossing leaves the camera exactly
@@ -406,7 +444,7 @@ const plan = await page.evaluate(() => window.__IW.runtime.crossing.lastPlan || 
 await fs.writeFile(path.join(OUT, `crossing-state-${TAG}.json`), JSON.stringify({
   generatedAt: new Date().toISOString(),
   pace: PACE, reducedMotion: REDUCED, portalStep: PORTAL_STEP,
-  flew, plan, scrubbed: SCRUB, spaces, owners, beats: captured,
+  flew, plan, plan0, lookBackWindow: lookBack, scrubbed: SCRUB, spaces, owners, beats: captured,
   marks: sb.marks, samples: sb.samples, sampleError: sb.error || null, errors
 }, null, 1));
 

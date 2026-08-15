@@ -66,7 +66,13 @@ const MEASURE = () => {
   const panel = document.querySelector('.iw-visit__panel');
   if (!panel) return { present: false };
   const body = document.querySelector('[data-el="visitBody"]');
-  const sections = [...body.querySelectorAll(':scope > section')];
+  // Whichever element actually scrolls. The redesign moves scrolling off the
+  // panel and onto an inner column, and an audit that keeps measuring the panel
+  // would report zero overflow for a layout that still overflows — flattering
+  // the thing it is meant to check.
+  const scroller = [panel, body, ...body.querySelectorAll('*')]
+    .find((el) => el.scrollHeight - el.clientHeight > 2) || panel;
+  const sections = [...body.querySelectorAll('.iw-visit__fact, :scope > section')];
   const panelBox = panel.getBoundingClientRect();
   const visibleBottom = panelBox.top + panel.clientHeight;
   const reach = (el) => {
@@ -76,15 +82,19 @@ const MEASURE = () => {
   };
   const headings = sections.map((s) => s.querySelector('h3')?.textContent?.trim() || '');
   const byHeading = (needle) => sections.find((s) => (s.querySelector('h3')?.textContent || '').toLowerCase().includes(needle)) || null;
-  const cta = body.querySelector('.iw-visit__cta a');
+  // The action bar left the body in the redesign. Looking in both places is what
+  // stops the audit reporting "no CTA" for a CTA that is pinned on screen.
+  const foot = document.querySelector('[data-el="visitFoot"]');
+  const cta = foot?.querySelector('a') || body.querySelector('.iw-visit__cta a');
   return {
     present: true,
-    panel: { width: Math.round(panelBox.width), height: Math.round(panelBox.height), scrollHeight: panel.scrollHeight, clientHeight: panel.clientHeight },
-    overflowPx: Math.max(0, panel.scrollHeight - panel.clientHeight),
+    panel: { width: Math.round(panelBox.width), height: Math.round(panelBox.height) },
+    scroller: { tag: scroller.className || scroller.tagName, scrollHeight: scroller.scrollHeight, clientHeight: scroller.clientHeight },
+    overflowPx: Math.max(0, scroller.scrollHeight - scroller.clientHeight),
     sections: sections.length,
     headings,
     programmeItems: body.querySelectorAll('.iw-visit__prog li').length,
-    ctaCount: body.querySelectorAll('.iw-visit__cta a').length,
+    ctaCount: (foot?.querySelectorAll('a').length || 0) + body.querySelectorAll('.iw-visit__cta a').length,
     reachable: {
       hours: reach(byHeading('horario')),
       address: reach(byHeading('direcci')),
@@ -132,16 +142,25 @@ for (const vp of VIEWPORTS) {
   // of the design and has to be looked at.
   const scrolled = await page.evaluate(() => {
     const panel = document.querySelector('.iw-visit__panel');
+    const body = document.querySelector('[data-el="visitBody"]');
     const prog = document.querySelector('.iw-visit__prog');
     if (!panel || !prog) return false;
-    panel.scrollTop = prog.getBoundingClientRect().top - panel.getBoundingClientRect().top + panel.scrollTop - 24;
+    const scroller = [panel, body, ...body.querySelectorAll('*')]
+      .find((el) => el.scrollHeight - el.clientHeight > 2) || panel;
+    scroller.scrollTop += prog.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 24;
     return true;
   });
   await page.waitForTimeout(300);
   if (scrolled) await page.screenshot({ path: path.join(OUT, `${vp.id}-02-programme.png`) });
 
   // The bottom, where the CTA and the long-tail fields ended up.
-  await page.evaluate(() => { const p = document.querySelector('.iw-visit__panel'); if (p) p.scrollTop = p.scrollHeight; });
+  await page.evaluate(() => {
+    const panel = document.querySelector('.iw-visit__panel');
+    const body = document.querySelector('[data-el="visitBody"]');
+    const scroller = [panel, body, ...body.querySelectorAll('*')]
+      .find((el) => el.scrollHeight - el.clientHeight > 2) || panel;
+    if (scroller) scroller.scrollTop = scroller.scrollHeight;
+  });
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(OUT, `${vp.id}-03-end.png`) });
 

@@ -130,11 +130,15 @@ export class ExperienceHUD {
 
       <div class="iw-visit" data-el="visit" hidden role="dialog" aria-label="Información para la visita">
         <div class="iw-visit__panel">
-          <header>
-            <h2 data-el="visitTitle">Visita</h2>
+          <header class="iw-visit__head">
+            <div>
+              <p class="iw-visit__eyebrow">Información para la visita</p>
+              <h2 data-el="visitTitle">Visita</h2>
+            </div>
             <button class="iw-btn" data-el="visitClose">Cerrar</button>
           </header>
-          <div data-el="visitBody"></div>
+          <div class="iw-visit__scroll" data-el="visitBody"></div>
+          <footer class="iw-visit__foot" data-el="visitFoot" hidden></footer>
         </div>
       </div>
 
@@ -470,50 +474,92 @@ export class ExperienceHUD {
     // Nothing authored means no button. An empty panel behind a button that
     // promises information is worse than no button at all.
     if (this.el.visitBtn) this.el.visitBtn.hidden = !anything;
-    if (!anything) { this.el.visitBody.innerHTML = ''; return; }
+    if (!anything) {
+      this.el.visitBody.innerHTML = '';
+      if (this.el.visitFoot) { this.el.visitFoot.innerHTML = ''; this.el.visitFoot.hidden = true; }
+      return;
+    }
 
     if (institutionName) this.el.visitTitle.textContent = `Visitar ${institutionName}`;
 
-    const block = (title, value) => (has(value)
-      ? `<section><h3>${esc(title)}</h3><p>${esc(value).replace(/\n/g, '<br>')}</p></section>` : '');
+    const fact = (title, value) => (has(value)
+      ? `<div class="iw-visit__fact"><h3>${esc(title)}</h3><p>${esc(value).replace(/\n/g, '<br>')}</p></div>` : '');
 
     // Actions are links because that is what they are. The Museum does not hold
     // inventory and must not imply it does.
+    // Order is the institution's priority: buy, book, find. Emphasis goes to
+    // whichever of them actually exists — an institution with free entry and a
+    // booking link had its only action drawn as a secondary control, because
+    // "primary" was pinned to the ticket link rather than to the first offered.
     const actions = [
-      has(v.ticketUrl) ? ['Comprar entrada', v.ticketUrl, true] : null,
-      has(v.bookingUrl) ? ['Reservar visita', v.bookingUrl, false] : null,
-      has(v.directionsUrl) ? ['Cómo llegar', v.directionsUrl, false] : null
-    ].filter(Boolean);
+      has(v.ticketUrl) ? ['Comprar entrada', v.ticketUrl] : null,
+      has(v.bookingUrl) ? ['Reservar visita', v.bookingUrl] : null,
+      has(v.directionsUrl) ? ['Cómo llegar', v.directionsUrl] : null
+    ].filter(Boolean).map(([label, href], i) => [label, href, i === 0]);
 
     const when = (item) => [item.start, item.end].filter(has).join(' — ');
 
+    /**
+     * Three groups, because a visitor asks three questions in order: can I go,
+     * what is on, and what do I need to know before I set off.
+     *
+     * The previous version answered all nine fields in one column of identical
+     * label-and-paragraph rows — the same shape whether it was opening hours or
+     * a parking note — which reads as a record being displayed rather than an
+     * institution speaking. Nothing is removed here and nothing is hidden: the
+     * fields, their order within each group, and the CTA semantics are the ones
+     * that were there. What changes is which of them the eye reaches first.
+     */
+    const plan = [
+      fact('Accesibilidad', v.accessibility),
+      fact('Cómo llegar', v.transport),
+      fact('Aparcamiento', v.parking),
+      fact('Contacto', v.contact),
+      fact('Más información', v.notes)
+    ].join('');
+
     this.el.visitBody.innerHTML = `
-      ${block('Horarios', v.hours)}
-      ${block('Dirección', v.address)}
-      ${block('Entrada', v.admission)}
-      ${actions.length ? `<div class="iw-visit__cta">${actions.map(([label, href, primary]) => `
-        <a class="iw-btn ${primary ? 'iw-btn--go' : ''}" href="${esc(href)}"
-          target="_blank" rel="noopener noreferrer">${esc(label)}</a>`).join('')}</div>` : ''}
-      ${programme.length ? `
-        <section>
-          <h3>Programación</h3>
-          <ul class="iw-visit__prog">
-            ${programme.map((item) => `
-              <li>
-                <b>${esc(item.title)}</b>
-                <span>${esc(PROGRAMME_LABEL[item.type] || 'Actividad')}${
+      <div class="iw-visit__key">
+        ${fact('Horarios', v.hours)}
+        ${fact('Dirección', v.address)}
+        ${fact('Entrada', v.admission)}
+      </div>
+      <div class="iw-visit__cols">
+        ${programme.length ? `
+          <section class="iw-visit__col">
+            <h3>Programación</h3>
+            <ul class="iw-visit__prog">
+              ${programme.map((item) => `
+                <li>
+                  <b>${esc(item.title)}</b>
+                  <span>${esc(PROGRAMME_LABEL[item.type] || 'Actividad')}${
   has(when(item)) ? ` · ${esc(when(item))}` : ''}${has(item.location) ? ` · ${esc(item.location)}` : ''}</span>
-                ${has(item.description) ? `<p>${esc(item.description)}</p>` : ''}
-                ${has(item.bookingUrl)
-    ? `<a href="${esc(item.bookingUrl)}" target="_blank" rel="noopener noreferrer">Reservar</a>` : ''}
-              </li>`).join('')}
-          </ul>
-        </section>` : ''}
-      ${block('Accesibilidad', v.accessibility)}
-      ${block('Cómo llegar', v.transport)}
-      ${block('Aparcamiento', v.parking)}
-      ${block('Contacto', v.contact)}
-      ${block('Más información', v.notes)}`;
+                  ${has(item.description) ? `<p>${esc(item.description)}</p>` : ''}
+                  ${has(item.bookingUrl)
+    ? `<a class="iw-visit__link" href="${esc(item.bookingUrl)}"
+                      target="_blank" rel="noopener noreferrer">Reservar</a>` : ''}
+                </li>`).join('')}
+            </ul>
+          </section>` : ''}
+        ${plan.trim() ? `
+          <section class="iw-visit__col iw-visit__col--plan">
+            <h3>Planificar la visita</h3>
+            ${plan}
+          </section>` : ''}
+      </div>`;
+
+    // The actions live in a bar pinned to the foot of the panel rather than
+    // inline among the sections. Inline, "Reservar visita" sat wherever the
+    // preceding text left it — on a 390 px phone that was below the fold behind
+    // 460 px of scroll. Pinned, the primary action is on screen the whole time
+    // the panel is open, at every width, which is what the layer is for.
+    const foot = this.el.visitFoot;
+    if (foot) {
+      foot.hidden = actions.length === 0;
+      foot.innerHTML = actions.map(([label, href, primary]) => `
+        <a class="iw-btn ${primary ? 'iw-btn--primary' : ''}" href="${esc(href)}"
+          target="_blank" rel="noopener noreferrer">${esc(label)}</a>`).join('');
+    }
   }
 
   toggleVisit(force) {
