@@ -1318,3 +1318,91 @@ expensive direction for this kind of mistake, because a blocker ends work.
 gated on origin, secure context, permissions or user activation will report
 absent from a blank page regardless of launch flags. When a probe says a
 capability is missing, confirm it from the real page before recording a blocker.
+
+---
+
+## L-29 · Nine green verticals and a blind product owner
+
+**What happened.** Between `8c545bd` and `dc533a4`, nine verticals were
+contracted, implemented, tested and committed: the Visitor editorial measure,
+the Project Cloud adapter, VISITA traceability, Guided Back in one room, Guided
+Back across rooms, the canonical settled pose, the HUD Tour Stop counter, the
+Crossing B baseline, and the Option E nested-room spike. Every one reported
+green against its own harness. Several were measured to four decimal places.
+
+Across all nine, the following were produced exactly once, and only for the
+oldest of them: motion evidence. And these were produced zero times: a fresh
+amnesiac critic, an implementation record, a packaged human view.
+
+The product owner asked for the audit himself, which is the tell. Nine
+consecutive successful checkpoints had not improved his ability to see the
+product at all.
+
+**Why it was easy to commit.** Each individual decision was correct in
+isolation. The Continuous Execution Protocol had just been added to the branch
+precisely because stopping to file intermediate reports was a process bug, and
+`DEFAULT STATE = CONTINUE EXECUTION` was being honoured. But *not stopping* and
+*not producing human-visible evidence* are different things, and eliminating the
+first does not license the second. Producing evidence is execution. Skipping it
+is not speed, it is debt, and the debt is paid by the one person who cannot
+inspect the branch himself.
+
+There is a second, subtler cause. Every one of these verticals is perceptual —
+how a return *feels*, whether a counter reads right, whether a layout breathes.
+A pose delta of 0.0000 m is a true statement about a thing a visitor never
+experiences. Numeric proof felt like proof because it was rigorous, and rigour
+on the wrong quantity is the most convincing kind of wrong.
+
+**Classification.** PROCESS BUG — evidence and human-visibility debt accumulated
+behind a wall of passing tests.
+
+**Rule.** *A series of green implementation checkpoints does not equal a closed
+product vertical.* A visual or motion-critical vertical is closed only when
+functional QA, real product-path QA, visual **and** motion evidence, a fresh
+amnesiac critic and a human QA package all exist. Static metrics never
+substitute for the recording.
+
+**Detection rule.** If the most recent human verdict is more than two verticals
+old, stop adding verticals and produce the package. The measure is not how long
+since the last commit; it is how long since the product owner last saw the
+product.
+
+---
+
+## L-30 · Measuring motion with an instrument slower than the motion
+
+**What happened.** The Guided Back motion harness judged "is this a movement or
+a cut?" by screenshotting the page ten times at 600 ms and counting how many
+distinct average lumas came back. It reported 2 distinct values in 10 frames for
+the same-room return and called it a cut — a serious accusation against a
+feature that had already been proved correct on its destination.
+
+The luma series was `107.022, 107.247, 107.247, …` — one step, then flat. Which
+is exactly what a cut looks like, and exactly what a 3.5-second move looks like
+when each "600 ms" sample actually costs several seconds, because a screenshot
+plus an ffmpeg pass in a software-rendered container is not free. The whole
+movement fell inside the first interval.
+
+Replaced with a camera trace sampled on `requestAnimationFrame` inside the page,
+which runs on the compositor's clock and does not care how slowly evidence is
+written to disk. The same return then measured 9 distinct camera positions over
+3484 ms; the cross-room return measured 18 positions along a 15.0 m path whose
+straight-line distance is 6.8 m — it goes around, through the doorway, which is
+the property that distinguishes a crossing from a teleport and which no luma
+series could ever have shown.
+
+**Classification.** INSTRUMENT BUG. Same family as L-19, and it recurred in a
+harness written specifically to avoid L-19 — the guard was applied to the
+crossing's *pacing* and not to this harness's *motion detection*.
+
+**Rule.** *Measure motion inside the page, on the page's clock.* Anything
+sampled by the harness — screenshots, video frames, pixel statistics — is
+sampled at the harness's speed, which in a software-rendered container is slower
+than the thing being measured. Screenshots are for a human to look at. Numbers
+come from a trace that runs where the motion runs.
+
+**Corollary.** When an instrument accuses a feature that already passed a
+different, independent check, suspect the instrument first. The destination had
+been proved to 0.0000 m by a harness driving the real control; a cut with a
+correct destination is possible but unlikely, and the cheap move was to confirm
+the measurement before believing it.

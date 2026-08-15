@@ -1,0 +1,583 @@
+{
+ "generatedAt": "2026-08-15T22:37:52.332Z",
+ "productPath": "clicks on [data-el=\"prevBtn\"] and [data-el=\"nextBtn\"]; no engine navigation calls",
+ "motionMeasuredBy": "in-page rAF pose trace; the screenshot filmstrips are for human viewing only",
+ "target": {
+  "stopId": "step.05-lleva-division",
+  "order": 4,
+  "space": "space.gallery-a",
+  "settleBeat": "step.06c-division-contemplacion",
+  "pose": {
+   "pos": [
+    4.617,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    4.617,
+    1.47,
+    -15.24
+   ]
+  }
+ },
+ "moments": {
+  "01-parada-adelante": {
+   "key": "01-parada-adelante",
+   "label": "Parada hacia adelante, asentada",
+   "file": "01-parada-adelante.png",
+   "yavg": 106.363,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "total": 10,
+   "beat": "step.06c-division-contemplacion",
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "pos": [
+    4.617,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    4.617,
+    1.47,
+    -15.24
+   ],
+   "counterText": "Parada 4 de 10",
+   "caption": "Desde aquí se ve el intervalo entero de una vez.",
+   "labelTitle": "División tercera",
+   "labelCount": "3 / 5",
+   "transport": "PAUSED",
+   "pauseLabel": "Pausar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 0,
+   "canGoBack": true
+  },
+  "02-atras-misma-sala": {
+   "key": "02-atras-misma-sala",
+   "label": "Tras ← ANTERIOR, misma sala",
+   "file": "02-atras-misma-sala.png",
+   "yavg": 107.247,
+   "stop": "step.03-lleva-horizonte",
+   "order": 3,
+   "total": 10,
+   "beat": "step.04c-horizonte-contemplacion",
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "pos": [
+    -1.383,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    -1.383,
+    1.5848,
+    -15.24
+   ],
+   "counterText": "Parada 3 de 10",
+   "caption": "Una persona delante de ella da la medida: dos metros sesenta de lado a lado.",
+   "labelTitle": "División tercera",
+   "labelCount": "3 / 5",
+   "transport": "PAUSED",
+   "pauseLabel": "Reanudar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 0,
+   "canGoBack": true
+  },
+  "03-adelante-tras-atras": {
+   "key": "03-adelante-tras-atras",
+   "label": "Adelante otra vez, misma parada",
+   "file": "03-adelante-tras-atras.png",
+   "yavg": 106.363,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "total": 10,
+   "beat": "step.06c-division-contemplacion",
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "pos": [
+    4.617,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    4.617,
+    1.47,
+    -15.24
+   ],
+   "counterText": "Parada 4 de 10",
+   "caption": "Desde aquí se ve el intervalo entero de una vez.",
+   "labelTitle": "División tercera",
+   "labelCount": "3 / 5",
+   "transport": "PAUSED",
+   "pauseLabel": "Pausar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 0,
+   "canGoBack": true
+  },
+  "04-llegada-galeria-b": {
+   "key": "04-llegada-galeria-b",
+   "label": "Llegada a Galería B, tras la travesía",
+   "file": "04-llegada-galeria-b.png",
+   "yavg": 31.2041,
+   "stop": "step.07-lleva-umbral",
+   "order": 7,
+   "total": 10,
+   "beat": "step.08-paso-galeria-b",
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "pos": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "tgt": [
+    13.7,
+    1.5,
+    -10
+   ],
+   "counterText": "Parada 7 de 10",
+   "caption": "Pasamos a la cámara oscura.",
+   "labelTitle": "Vasija de arenas",
+   "labelCount": "5 / 5",
+   "transport": "PAUSED",
+   "pauseLabel": "Pausar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 0,
+   "canGoBack": true
+  },
+  "05-atras-entre-salas": {
+   "key": "05-atras-entre-salas",
+   "label": "Tras ← ANTERIOR, de vuelta en Galería A",
+   "file": "05-atras-entre-salas.png",
+   "yavg": 144.322,
+   "stop": "step.06h-lleva-vasija",
+   "order": 6,
+   "total": 10,
+   "beat": "step.06j-vasija-escala",
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "pos": [
+    3.0333,
+    1.58,
+    -8.8448
+   ],
+   "tgt": [
+    3.796,
+    1.4372,
+    -6.811
+   ],
+   "counterText": "Parada 6 de 10",
+   "caption": "Ochenta y ocho centímetros. Hay que rodearla para verla entera.",
+   "labelTitle": "Vasija de arenas",
+   "labelCount": "5 / 5",
+   "transport": "PAUSED",
+   "pauseLabel": "Reanudar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 0,
+   "canGoBack": true
+  },
+  "06-adelante-entre-salas": {
+   "key": "06-adelante-entre-salas",
+   "label": "Adelante entre salas otra vez",
+   "file": "06-adelante-entre-salas.png",
+   "yavg": 40.0197,
+   "stop": "step.09-lleva-noche",
+   "order": 8,
+   "total": 10,
+   "beat": "step.10-noche",
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "pos": [
+    13.02,
+    1.73,
+    -11.38
+   ],
+   "tgt": [
+    12.09,
+    1.6004,
+    -14.74
+   ],
+   "counterText": "Parada 8 de 10",
+   "caption": "Noche de invierno es un fotograbado sobre papel, montado en ventana. Vilar lo tiró una sola vez.",
+   "labelTitle": "Noche de invierno",
+   "labelCount": "1 / 3",
+   "transport": "PLAYING",
+   "pauseLabel": "Pausar",
+   "prevEnabled": true,
+   "nextEnabled": true,
+   "guideOpacity": 1,
+   "canGoBack": true
+  }
+ },
+ "filmBack1": {
+  "key": "02-atras-misma-sala",
+  "frames": [
+   {
+    "i": 0,
+    "file": "film/02-atras-misma-sala-00.png",
+    "yavg": 107.316
+   },
+   {
+    "i": 1,
+    "file": "film/02-atras-misma-sala-01.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 2,
+    "file": "film/02-atras-misma-sala-02.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 3,
+    "file": "film/02-atras-misma-sala-03.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 4,
+    "file": "film/02-atras-misma-sala-04.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 5,
+    "file": "film/02-atras-misma-sala-05.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 6,
+    "file": "film/02-atras-misma-sala-06.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 7,
+    "file": "film/02-atras-misma-sala-07.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 8,
+    "file": "film/02-atras-misma-sala-08.png",
+    "yavg": 107.247
+   },
+   {
+    "i": 9,
+    "file": "film/02-atras-misma-sala-09.png",
+    "yavg": 107.247
+   }
+  ],
+  "distinctLuma": 1
+ },
+ "filmBack2": {
+  "key": "05-atras-entre-salas",
+  "frames": [
+   {
+    "i": 0,
+    "file": "film/05-atras-entre-salas-00.png",
+    "yavg": 76.551
+   },
+   {
+    "i": 1,
+    "file": "film/05-atras-entre-salas-01.png",
+    "yavg": 157.37
+   },
+   {
+    "i": 2,
+    "file": "film/05-atras-entre-salas-02.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 3,
+    "file": "film/05-atras-entre-salas-03.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 4,
+    "file": "film/05-atras-entre-salas-04.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 5,
+    "file": "film/05-atras-entre-salas-05.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 6,
+    "file": "film/05-atras-entre-salas-06.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 7,
+    "file": "film/05-atras-entre-salas-07.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 8,
+    "file": "film/05-atras-entre-salas-08.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 9,
+    "file": "film/05-atras-entre-salas-09.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 10,
+    "file": "film/05-atras-entre-salas-10.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 11,
+    "file": "film/05-atras-entre-salas-11.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 12,
+    "file": "film/05-atras-entre-salas-12.png",
+    "yavg": 144.322
+   },
+   {
+    "i": 13,
+    "file": "film/05-atras-entre-salas-13.png",
+    "yavg": 144.322
+   }
+  ],
+  "distinctLuma": 3
+ },
+ "traceBack1": {
+  "samples": 78,
+  "distinctPositions": 9,
+  "moveStartMs": 2,
+  "moveEndMs": 3486,
+  "moveDurationMs": 3484,
+  "pathLengthM": 6,
+  "straightLineM": 6,
+  "owners": [
+   "DIRECTED"
+  ],
+  "spaces": [
+   "space.gallery-a"
+  ]
+ },
+ "traceBack2": {
+  "samples": 95,
+  "distinctPositions": 18,
+  "moveStartMs": 1,
+  "moveEndMs": 78992,
+  "moveDurationMs": 78991,
+  "pathLengthM": 15.035,
+  "straightLineM": 6.766,
+  "owners": [
+   "DIRECTED",
+   "TRANSITION"
+  ],
+  "spaces": [
+   "space.gallery-b",
+   "space.gallery-a"
+  ]
+ },
+ "trace": {
+  "portals": [
+   {
+    "id": "portal.gallery-b-gallery-a",
+    "phase": "CROSSED"
+   },
+   {
+    "id": "portal.gallery-b-gallery-a",
+    "phase": "LANDED"
+   }
+  ],
+  "spaces": [
+   "space.gallery-a"
+  ],
+  "owners": [
+   "DIRECTED",
+   "TRANSITION"
+  ]
+ },
+ "planB": {
+  "s": 0.7301587301587302,
+  "via": [
+   6.549999999999999,
+   1.6200000000000006,
+   -10.000000000000002
+  ],
+  "gate": [
+   8,
+   1.62,
+   -10
+  ],
+  "window": 0.22,
+  "durationMs": 4667,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "planB2": {
+  "s": 0.7301587301587302,
+  "via": [
+   6.549999999999999,
+   1.6200000000000006,
+   -10.000000000000002
+  ],
+  "gate": [
+   8,
+   1.62,
+   -10
+  ],
+  "window": 0.22,
+  "durationMs": 4667,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "crossingBBaseline": {
+  "s": 0.7301587301587302,
+  "gate": [
+   8,
+   1.62,
+   -10
+  ],
+  "via": [
+   6.549999999999999,
+   1.6200000000000006,
+   -10.000000000000002
+  ],
+  "window": 0.22,
+  "durationMs": 4667,
+  "recoil": 0.62
+ },
+ "results": [
+  {
+   "name": "la parada muestra su contador en el HUD",
+   "ok": true,
+   "detail": "«Parada 4 de 10» de 10"
+  },
+  {
+   "name": "← ANTERIOR está disponible en una parada asentada",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "← ANTERIOR responde al clic",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "el retroceso en la misma sala es un movimiento, no un corte",
+   "ok": true,
+   "detail": "9 posiciones distintas · 3484 ms · recorrido 6 m (línea recta 6 m)"
+  },
+  {
+   "name": "el retroceso cambia de parada",
+   "ok": true,
+   "detail": "4 → 3"
+  },
+  {
+   "name": "permanece en la misma sala",
+   "ok": true,
+   "detail": "space.gallery-a → space.gallery-a"
+  },
+  {
+   "name": "el contador del HUD sigue al retroceso",
+   "ok": true,
+   "detail": "«Parada 4 de 10» → «Parada 3 de 10»"
+  },
+  {
+   "name": "la guía sigue presente tras retroceder",
+   "ok": true,
+   "detail": "opacidad 0 → 0"
+  },
+  {
+   "name": "REANUDAR responde al clic",
+   "ok": true,
+   "detail": "Reanudar"
+  },
+  {
+   "name": "la ruta vuelve a alcanzar la parada por sí sola",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "continuar tras retroceder vuelve a la misma parada",
+   "ok": true,
+   "detail": "step.05-lleva-division → step.05-lleva-division"
+  },
+  {
+   "name": "y a la misma composición, no a una parecida",
+   "ok": true,
+   "detail": "Δpos 0 m · Δtgt 0 m"
+  },
+  {
+   "name": "el contador vuelve a su valor de ida",
+   "ok": true,
+   "detail": "«Parada 4 de 10»"
+  },
+  {
+   "name": "la ficha describe la parada en la que se está, no la anterior",
+   "ok": false,
+   "detail": "ida «División tercera» 3 / 5 → atrás «División tercera» 3 / 5"
+  },
+  {
+   "name": "la ruta alcanza la Galería B por sí sola",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "TRAVESÍA B SIN CAMBIOS respecto a la línea base humana",
+   "ok": true,
+   "detail": "s 0.7302 · 4667 ms · recoil 0.62 · window 0.22"
+  },
+  {
+   "name": "← ANTERIOR responde también entre salas",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "el retroceso entre salas atraviesa una puerta, no teletransporta",
+   "ok": true,
+   "detail": "portal.gallery-b-gallery-a/CROSSED · portal.gallery-b-gallery-a/LANDED"
+  },
+  {
+   "name": "el retroceso entre salas es un movimiento, no un corte",
+   "ok": true,
+   "detail": "18 posiciones distintas · 78991 ms · recorrido 15.035 m (línea recta 6.766 m)"
+  },
+  {
+   "name": "acaba en la sala anterior",
+   "ok": true,
+   "detail": "space.gallery-b → space.gallery-a"
+  },
+  {
+   "name": "el contador del HUD sigue al retroceso entre salas",
+   "ok": true,
+   "detail": "«Parada 7 de 10» → «Parada 6 de 10»"
+  },
+  {
+   "name": "la guía sobrevive al cruce hacia atrás",
+   "ok": true,
+   "detail": "opacidad 0"
+  },
+  {
+   "name": "la ficha describe la parada tras el retroceso entre salas",
+   "ok": false,
+   "detail": "«Vasija de arenas» 5 / 5 → «Vasija de arenas» 5 / 5"
+  },
+  {
+   "name": "continuar vuelve a cruzar hacia la Galería B",
+   "ok": true,
+   "detail": "space.gallery-b"
+  },
+  {
+   "name": "la travesía sigue siendo la misma tras ir y volver",
+   "ok": true,
+   "detail": "s 0.7302 · 4667 ms"
+  },
+  {
+   "name": "sin errores de runtime en todo el recorrido",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ],
+ "errors": []
+}
