@@ -154,6 +154,9 @@ export class CrossingController {
       holdHeight: reduced ? false : Boolean(options.holdHeight ?? true),
       apertureFov: reduced ? 0 : (options.apertureFov ?? 0),
       pin: Math.min(Math.max(options.pin ?? 0.55, 0), 1),
+      // How much of the post-gate travel is spent looking back at the threshold
+      // just crossed. 0 restores the old behaviour exactly.
+      recoil: reduced ? 0 : Math.min(Math.max(options.recoil ?? 0, 0), 1),
       onProgress: options.onProgress || null,
       onCrossPlane: options.onCrossPlane || null,
       onComplete: options.onComplete || null
@@ -173,7 +176,8 @@ export class CrossingController {
     this._completed = false;
     this._crossed = false;
     this.lastPlan = {
-      s, via, gate, window: plan.window, durationMs: Math.round(this._duration * 1000), reduced
+      s, via, gate, window: plan.window, durationMs: Math.round(this._duration * 1000),
+      reduced, recoil: plan.recoil
     };
     return this.lastPlan;
   }
@@ -216,6 +220,39 @@ export class CrossingController {
       // Through the aperture, look through the aperture. Without this the view
       // lerps between two room-interior targets and sweeps the door jamb at
       // exactly the moment the visitor most needs to read where they are going.
+      // THE REVERSE-FACING EXIT AND RECOIL.
+      //
+      // Past the gate the camera is already travelling away from the threshold
+      // and into the destination — that part was always here. What was missing
+      // is that it never turned round to look at what it had just come through,
+      // so World B simply appeared ahead and the crossing ended at the first
+      // valid frame in it.
+      //
+      // Looking back for the first part of the exit produces the whole of the
+      // source's signature at once: the reverse side of the portal is the first
+      // thing seen in the new world, it is large because the camera is still
+      // close to it, and it shrinks while the destination reveals around it
+      // because the camera is receding. Recoil, reveal and spatial continuity
+      // are one move, not three effects.
+      //
+      // Crucially this touches only where the camera *looks*. The position path
+      // is untouched and the look blends back to the authored target before the
+      // move ends, so the approved destination pose is preserved by
+      // construction rather than by care.
+      if (plan.gate && plan.recoil > 0 && e > plan.s) {
+        const after = (e - plan.s) / Math.max(1 - plan.s, 1e-4);
+        // Hold the look on the threshold, then release it. `recoil` is how much
+        // of the exit is spent facing backwards; the rest turns into the room.
+        const hold = Math.min(Math.max(plan.recoil, 0), 0.95);
+        const release = after <= hold ? 0 : (after - hold) / Math.max(1 - hold, 1e-4);
+        // Smoothstep out, so the head turn reads as a decision rather than a snap.
+        const back = 1 - (release * release * (3 - 2 * release));
+        if (back > 0) {
+          const reverse = [plan.gate[0], plan.gate[1], plan.gate[2]];
+          target = vec3.lerp(target, reverse, back);
+        }
+      }
+
       if (plan.gate && plan.window > 0) {
         const weight = plan.pin * bump((e - plan.s) / plan.window);
         if (weight > 0) {

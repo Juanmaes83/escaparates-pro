@@ -658,7 +658,12 @@ const TRANSITION_SHAPE = {
     // Degrees of fov breath at the aperture, and how hard the look is held
     // through it. Both vanish before the move ends, so neither can shift the
     // pose the beat was authored to land on.
-    apertureFov: 2.5, pin: 0.55
+    apertureFov: 2.5, pin: 0.55,
+    // Two thirds of the exit spent facing the threshold just crossed. This is
+    // the source's strongest signature and the one the first Museum crossing
+    // was missing entirely: it emerged into the destination looking away, so
+    // the visitor never saw what they had come through.
+    recoil: 0.62
   }
 };
 

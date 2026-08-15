@@ -484,6 +484,7 @@ export class Runtime {
       holdHeight: intent.holdHeight,
       apertureFov: intent.apertureFov,
       pin: intent.pin,
+      recoil: intent.recoil,
       onProgress: ({ atmosphere, e }) => {
         this.sceneKit.blendAtmosphere?.(fromSpaceId, portal.toSpaceId, atmosphere);
         // The threshold treatment rides the same clock. It is a visual layer and

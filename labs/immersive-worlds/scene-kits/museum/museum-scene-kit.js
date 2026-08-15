@@ -1132,9 +1132,14 @@ export class MuseumSceneKit extends SceneKit {
     const surface = this._ensurePortalSurface(threshold, context.fromSpaceId, context.toSpaceId);
     if (!surface) return;
     const k = Math.min(Math.max(t, 0), 1);
-    const phase1 = Math.min(k / (context.crossAt || 0.66), 1);
+    const crossAt = context.crossAt || 0.66;
+    const phase1 = Math.min(k / crossAt, 1);
     const easeIn = phase1 * phase1 * phase1 * phase1;          // Power4.easeIn
     surface.effectIntensity = 1 - easeIn;
+    // Visible through the exit as well as the approach. The surface used to be
+    // hidden the moment the plane was crossed, which left the recoil looking
+    // back at an empty doorway — the one thing the visitor most needs to see in
+    // the new room is the threshold they just came through.
     surface.setVisible(k > 0.001 && k < 0.999);
   }
 
