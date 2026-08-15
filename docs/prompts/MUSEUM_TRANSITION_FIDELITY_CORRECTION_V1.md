@@ -36,26 +36,38 @@ The behavior layer is KEEP. The representation layer must now be recovered from 
 
 ---
 
-# 2. CANONICAL MOTION REFERENCE
+# 2. CANONICAL MOTION REFERENCE — NOW STORED IN THE REPOSITORY
 
-Juanma will provide in the Claude chat the source recording:
+The canonical source recording is already stored in this repository on the target branch at:
 
-`Grabación de pantalla 2026-08-15 014225.mp4`
+`docs/visuals/museum-transitions/source-reference/SOURCE_TRANSITION_CANONICAL_GITHUB.mp4`
 
-Treat that recording as **CANONICAL MOTION EVIDENCE**.
+Treat this file as **CANONICAL MOTION EVIDENCE**.
 
-It is not loose inspiration.
+It is not loose inspiration and it is not optional supporting material.
+
+Claude must inspect this repository copy directly before implementing.
 
 The corresponding implementation already belongs to Juanma and exists in the repository under the Infinite Worlds donor family.
 
 Before implementing anything:
 
-1. inspect the video frame by frame;
-2. locate the exact first-party donor implementation responsible for it;
-3. map donor capabilities into Museum;
-4. reuse/adapt proven mechanisms before inventing replacements.
+1. watch the repository video completely;
+2. inspect it frame by frame;
+3. extract the mandatory 12-beat SOURCE storyboard described below;
+4. locate the exact first-party donor implementation responsible for the behavior visible in the video;
+5. build the SOURCE → MUSEUM capability map;
+6. reuse/adapt proven mechanisms before inventing replacements.
 
 Do NOT recreate the effect from memory if the actual source implementation is available.
+
+The transition correction has THREE simultaneous sources of truth:
+
+1. **Repository video** = perceptual / motion truth;
+2. **First-party donor code** = technical implementation truth;
+3. **12-beat storyboard** = narrative / cinematic specification.
+
+All three must agree before the transition can be considered visually faithful.
 
 ---
 
@@ -257,7 +269,7 @@ If a tiny final settle/snap is required to make the shot visibly finish, impleme
 
 # 13. FIRST-PARTY DONOR AUDIT — MANDATORY
 
-Before writing replacement code, locate the exact Infinite Worlds donor implementation responsible for the supplied reference transition.
+Before writing replacement code, locate the exact Infinite Worlds donor implementation responsible for the repository reference video.
 
 Identify the concrete files/functions/classes responsible for:
 
@@ -286,9 +298,11 @@ Do not reimplement first-party capability without a documented incompatibility.
 
 ---
 
-# 14. STORYBOARD EXTRACTION FROM THE SOURCE VIDEO — MANDATORY
+# 14. STORYBOARD EXTRACTION FROM THE REPOSITORY VIDEO — MANDATORY
 
-Before implementing the correction, extract a **12-frame canonical storyboard** from the supplied source video.
+Before implementing the correction, extract a **12-frame canonical storyboard** from:
+
+`docs/visuals/museum-transitions/source-reference/SOURCE_TRANSITION_CANONICAL_GITHUB.mp4`
 
 Do not choose frames at equal time intervals.
 
@@ -403,7 +417,7 @@ The relative beats must remain perceptible across supported pacing levels:
 
 Internal tests are not sufficient.
 
-Juanma + ChatGPT will manually compare Museum against the supplied source video.
+Juanma + ChatGPT will manually compare Museum against the repository source video.
 
 Required visible behavior:
 
@@ -473,6 +487,7 @@ Return with:
 - BRANCH
 - HEAD
 - TREE STATUS
+- SOURCE VIDEO PATH USED
 - SOURCE DONOR FILES IDENTIFIED
 - SOURCE → MUSEUM CAPABILITY MAP
 - WHAT WAS DIRECTLY REUSED
