@@ -111,9 +111,20 @@ const seek = async (k) => {
   return page.evaluate(READ);
 };
 
-/** Walk forward to the first instant past the plane where the look has turned back. */
+/**
+ * Walk forward to the first instant past the plane where the look has turned back.
+ *
+ * Seeded and bounded rather than scanned from 0.60 at 0.01. Past the threshold
+ * the destination pass runs and both rooms are live, so the renderer drops to
+ * roughly a sixth of a frame per second; a full scan costs about forty seeks of
+ * two frames each and ran the whole harness past its own timeout without ever
+ * reaching a measurement. The storyboard already located this instant at k≈0.83
+ * for crossing A, so the search starts just before it and steps coarsely.
+ */
+const FROM = Number(process.env.IW_FROM || 0.78);
+const STEP_K = Number(process.env.IW_STEP_K || 0.02);
 let found = null;
-for (let k = 0.60; k <= 1.0001; k += 0.01) {
+for (let k = FROM; k <= 1.0001; k += STEP_K) {
   const s = await seek(Math.min(k, 1));
   if (s.alongAxis !== null && s.alongAxis > 0 && s.facing > 0.5) { found = { k: Math.min(k, 1), state: s }; break; }
 }

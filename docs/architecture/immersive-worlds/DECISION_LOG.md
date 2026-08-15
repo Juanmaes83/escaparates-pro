@@ -1123,3 +1123,35 @@ Check a new measurement against a frame whose answer is already known before
 trusting it on the frame in question. The valid version measures the captured
 PNGs instead, which are composited output rather than a live drawing buffer:
 `ffmpeg -i frame.png -vf signalstats,metadata=print:key=lavfi.signalstats.YAVG`.
+
+## L-21 · An acceptance board that covered one of two instances
+
+**What happened.** The whole G1 crossing board — twelve beats, storyboard,
+luminance table, NOT PASS verdict, the fidelity finding document — was built
+from `portal.lobby-gallery-a` and presented as "the Museum crossing". The guided
+route crosses **two** CONTINUOUS portals. The second, `portal.gallery-a-gallery-b`
+at beat 08, enters the Cámara Oscura, whose room profile is `dark-exhibition`
+against the `white-cube` of everything before it. Human QA navigated the whole
+route and reported an exposure break the board could not contain, because the
+board had never looked there.
+
+The mechanical cause was mundane and worth naming: the harness waited for the
+portal beat with a 90 s timeout, sized on beat 02 which arrives about six
+seconds into the route. Beat 08 is roughly ten authored beats further on. The
+wait expired, the run died, and the crossing was simply never sampled.
+
+**The instructive part is the near-miss.** Agent evidence said *bright
+destination, near-black look-back*; human evidence said *dark destination,
+bright look-back*. Read as a disagreement, that invites "fix to the metric" —
+adjusting the product until the agent measurement matches the human report, on a
+crossing where nothing was wrong. Both were correct about different instances.
+
+**Classification.** EVIDENCE BUG, with an INSTRUMENT BUG (the timeout) as
+proximate cause.
+**Rule.** *Enumerate every instance of the behaviour before building the
+acceptance board, and state which instances the board covers.* Where a
+behaviour occurs more than once under materially different conditions — two
+portals, two room profiles, two datasets — sampling one instance and naming it
+after the class is an evidence defect, however rigorous the sampling. And when
+human and agent evidence appear to contradict, first check that they are
+describing the same instance.
