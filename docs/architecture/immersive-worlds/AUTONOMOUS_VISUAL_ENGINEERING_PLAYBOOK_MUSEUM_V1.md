@@ -1,10 +1,10 @@
 # AUTONOMOUS VISUAL ENGINEERING PLAYBOOK — MUSEUM V1
 
-> **Status:** MUSEUM PILOT PROCESS STANDARD — REQUIRES JUANMA REVIEW BEFORE GENERALIZATION  
+> **Status:** MUSEUM V1 REVIEW CANDIDATE — REQUIRES EXPLICIT JUANMA APPROVAL  
 > **Repository:** `Juanmaes83/escaparates-pro`  
 > **Applies to:** Immersive Worlds / Museum / Institutional Experiences  
-> **Purpose:** enable long, efficient autonomous implementation runs without sacrificing product safety, visual quality, evidence quality, or human authority.  
-> **Product Owner / Visual Authority / Merge Authority:** Juanma  
+> **Purpose:** enable long, efficient autonomous implementation runs without sacrificing product safety, visual quality, evidence quality, traceability or human authority.  
+> **Product Owner / Visual Authority / Final Decision / Merge Authority:** Juanma  
 > **Implementation agent:** Claude Code  
 > **Review partners:** ChatGPT + Juanma  
 > **Core rule:** **efficiency never means putting the project at risk.**
@@ -13,15 +13,17 @@
 
 # 0. PRIME DIRECTIVE
 
-The project must never be placed at unnecessary risk in the name of autonomy, speed, token efficiency, convenience, or overnight progress.
+Autonomy exists to increase useful progress, reduce waiting, reduce repeated work and reduce human supervision cost. It never authorizes unnecessary project risk.
 
 Canonical safety rules:
+
+> **EFFICIENCY NEVER MEANS PUTTING THE PROJECT AT RISK.**
 
 > **UNCERTAINTY ABOUT GLOBAL IMPACT = NO FULL CONTINUATION.**
 
 > **LOCAL INDEPENDENCE IS NOT ENOUGH. CONTINUATION REQUIRES GLOBAL OUTCOME STABILITY.**
 
-> **IF FULL STABILITY CANNOT BE DEMONSTRATED, DOWNGRADE TO PREPARATION-ONLY OR STOP.**
+> **IF FULL STABILITY CANNOT BE DEMONSTRATED, DOWNGRADE TO PREPARATION ONLY OR STOP.**
 
 > **A PAUSED MISSION MAY NOT BE SILENTLY MODIFIED WHILE AWAITING HUMAN QA.**
 
@@ -29,13 +31,15 @@ Canonical safety rules:
 
 > **FUNCTIONAL PASS ≠ PRODUCT PASS. PIXELS WIN.**
 
+> **AGENT KEEP ≠ HUMAN APPROVAL.**
+
 ---
 
 # 1. WHY THIS PLAYBOOK EXISTS
 
-The Museum project has demonstrated that Claude performs materially better when execution authority, references, evidence, learned rules and QA expectations live in the repository instead of only in transient chat.
+Museum work has shown that Claude performs materially better when authority, references, mission instructions, evidence, QA rules and learned corrections live in the repository instead of only in transient chat.
 
-The working model is:
+The operating model is:
 
 ```text
 CHAT
@@ -45,40 +49,63 @@ REPOSITORY
 = durable authority / contracts / references / evidence / learning
 ```
 
-The repository must become the persistent operational memory of the project.
-
 A short chat instruction should often be enough:
 
-> Read `docs/.../MANDATE.md`, reconcile it against the actual tree, and execute it.
+> Read the current mandate in the repository, reconcile it against the actual tree, and execute it.
 
-Claude must not depend on remembering a long conversation correctly.
+Claude must not depend on remembering long conversation history correctly.
+
+The repository is the persistent operational memory of the project.
 
 ---
 
 # 2. AUTHORITY ORDER
 
-When instructions or evidence conflict, use this order unless Juanma explicitly changes it:
+When sources conflict, use this order unless Juanma explicitly changes it:
 
 ```text
 1. Latest explicit Juanma decision
 2. Frozen / approved project contracts
 3. Current mission mandate in repository
-4. Canonical source code / donor implementation
+4. Canonical source code / proven donor implementation
 5. Canonical visual reference / video / storyboard
 6. Existing architecture documentation
 7. Current implementation
 8. Agent inference
 ```
 
-Agent inference must never override a stronger source silently.
+Agent inference never silently overrides a stronger source.
 
-If code and visual interpretation disagree, inspect the code and record the discrepancy.
+When visual interpretation and source code appear to disagree, inspect both, identify what each proves, and record the discrepancy.
 
 ---
 
-# 3. REFERENCE AUTHORITY LABELS
+# 3. OWNED LEARNING IS REUSABLE FIRST-PARTY CAPABILITY
 
-Every important external or internal reference should be classified.
+Juanma works across multiple owned projects and repositories. Proven methods discovered in one owned project may be promoted into another when they improve quality or safety.
+
+This is not external inspiration. It is first-party learning reuse.
+
+Canonical principle:
+
+> **OWNED PROVEN PATTERNS SHOULD BE REUSED BEFORE NEW ONES ARE INVENTED.**
+
+A method may originate in Sarah Katerina, Museum, Escaparates Pro or another Juanma-owned project. If it proves general, it may be promoted into this playbook after adaptation to Museum constraints.
+
+Museum V1 explicitly adopts the proven Sarah Katerina separation pattern represented by:
+
+```text
+sk-photographer-designer
+sk-amnesiac-critic
+```
+
+The role names are Sarah-specific. The underlying mechanism is general and is adopted here as Builder / Fresh Amnesiac Critic separation.
+
+---
+
+# 4. REFERENCE AUTHORITY LABELS
+
+Every important reference must be understood by authority level:
 
 ```text
 CANONICAL
@@ -88,65 +115,63 @@ DONOR
 = proven implementation/capability from which reuse/adaptation is expected
 
 REFERENCE
-= useful comparison or design benchmark
+= useful benchmark or comparison
 
 INSPIRATION
-= optional directional material, not acceptance truth
+= optional direction, not acceptance truth
 ```
 
 Do not treat inspiration as canonical truth.
 
-Whenever possible, canonical videos, images, source screenshots, storyboards and donor notes should be stored in the repository.
+Whenever practical, canonical videos, images, screenshots, storyboards, donor notes and review boards should live in the repository so future runs can inspect the same evidence.
 
 ---
 
-# 4. REFERENCE-FIRST IMPLEMENTATION
+# 5. REFERENCE-FIRST IMPLEMENTATION
 
 Before inventing a solution, determine whether the capability already exists in:
 
 - current Museum code;
 - another Immersive Worlds surface;
-- first-party donor modules;
-- Scene Kits;
-- Breeze Studio Pro;
+- first-party Scene Kits;
 - Infinite Worlds;
+- Breeze Studio Pro;
 - Three.js examples already reused in first-party code;
-- other repositories owned by Juanma.
+- other Juanma-owned repositories.
 
-If a proven first-party implementation exists, create a capability map before rebuilding it.
+If a proven first-party implementation exists, map it before rebuilding it.
 
-Required labels:
+Use:
 
 ```text
 DIRECT REUSE
 ADAPT
 ALREADY PRESENT
 MISSING
-INCOMPATIBLE — with documented reason
+INCOMPATIBLE — documented reason required
 ```
 
-Do not rewrite working capability merely because rebuilding appears easier.
+Do not replace a proven capability merely because a generic reimplementation is easier to write.
 
 ---
 
-# 5. STANDARD MISSION LIFECYCLE
+# 6. STANDARD MISSION LIFECYCLE
 
-Every bounded vertical follows:
+A bounded Museum vertical normally follows:
 
 ```text
 CONTRACT / QUESTION
 → RECONCILE CURRENT TREE
 → IDENTIFY REFERENCES / DONORS
+→ DEFINE ACCEPTANCE EVIDENCE
 → IMPLEMENT
 → TARGETED FUNCTIONAL QA
 → REAL OUTPUT / BROWSER QA
 → VISUAL EVIDENCE
-→ FRESH VISUAL CRITIC
+→ FRESH AMNESIAC VISUAL CRITIC
 → HUMAN GATE
 → DECISION
 ```
-
-The unit of work should remain small enough that causality is understandable.
 
 Canonical principle:
 
@@ -156,16 +181,16 @@ Avoid open-ended autonomous polishing loops.
 
 ---
 
-# 6. VISUAL ENGINEERING PIPELINE
+# 7. EVIDENCE-FIRST VISUAL ENGINEERING
 
-When motion, interaction, composition or visual behaviour has a reference, use:
+For motion, interaction, composition or visual behaviour with a reference:
 
 ```text
 REFERENCE VIDEO / IMAGE / EXPERIENCE
         ↓
 FRAME / STATE ANALYSIS
         ↓
-CANONICAL STORYBOARD OR COMPARISON SHEET
+CANONICAL STORYBOARD / COMPARISON SHEET
         ↓
 CAPABILITY / SOURCE MAP
         ↓
@@ -177,39 +202,46 @@ MATCHED STORYBOARD / BEFORE-AFTER
         ↓
 SIDE-BY-SIDE COMPARISON
         ↓
-FRESH VISUAL CRITIC
+FRESH AMNESIAC CRITIC
         ↓
 HUMAN QA
 ```
 
-Storyboard frames must be selected by **visual, interaction or narrative function**, not mechanically at equal time intervals.
+Frames are selected by **visual, interaction or narrative function**, not mechanically at equal time intervals.
 
 Examples:
 
-- portal transition: acquire → approach → takeover → crossing → reverse exit → recoil → reveal → settle;
-- reactive cloth: idle → wind onset → lift → anchor tension → collision → maximum reaction → damping → settle;
-- free visitor movement: enter → explore → discover viewpoint → approach → occupy viewpoint → composition resolves → optional content → leave freely.
+```text
+PORTAL
+acquire → approach → takeover → crossing → reverse exit → recoil → reveal → settle
+
+REACTIVE CLOTH
+idle → wind onset → lift → anchor tension → collision → maximum reaction → damping → settle
+
+FREE VISITOR
+enter → explore → discover viewpoint → approach → occupy viewpoint → composition resolves → optional content → leave freely
+```
+
+The storyboard is not decoration. It is a falsifiable acceptance instrument.
 
 ---
 
-# 7. PIXELS WIN
+# 8. PIXELS WIN
 
 Tests prove contracts. They do not automatically prove product quality.
 
-Possible state:
+A valid state can be:
 
 ```text
-FUNCTIONAL QA          PASS
-CONSOLE                CLEAN
-SEMANTIC CONTRACT      PASS
-VISUAL PRODUCT         FAIL
+FUNCTIONAL QA       PASS
+CONSOLE             CLEAN
+SEMANTIC CONTRACT   PASS
+VISUAL PRODUCT      FAIL
 ```
 
-This is valid and must be reported honestly.
+If Juanma rejects a surface visually, it is not product-approved even if every automated test passes.
 
-If Juanma visually rejects a surface, it is not product-approved even if internal tests pass.
-
-For important visual surfaces, prefer evidence such as:
+Prefer evidence such as:
 
 ```text
 SOURCE vs CURRENT
@@ -219,45 +251,164 @@ DESKTOP vs MOBILE
 MUSEUM A vs MUSEUM B
 ```
 
-Never substitute prose for evidence when visual comparison is possible.
+Never substitute prose for evidence when pixels can answer the question.
 
 ---
 
-# 8. BUILDER ≠ CRITIC
+# 9. CREATOR–CRITIC ISOLATION PROTOCOL
 
-The implementation pass cannot be its own final authority.
+This is a mandatory Museum quality-control pattern adapted from the proven first-party Sarah Katerina creator / amnesiac-critic system.
 
-Required separation:
+## 9.1 Builder and Critic are different roles
 
 ```text
 BUILDER
-↓
-FUNCTIONAL QA
-↓
-FRESH VISUAL CRITIC
-↓
-EVIDENCE PACKAGE
-↓
-JUANMA + CHATGPT
+= creates, implements, diagnoses technical causes and solves defects
+
+CRITIC
+= evaluates the result and diagnoses perceptual/product defects
+
+HUMAN
+= approves or rejects the product
 ```
 
-Claude may state:
+The builder does not become the final critic of its own work.
+
+The critic does not redesign or edit the implementation.
+
+The critic diagnoses. The builder solves.
+
+## 9.2 Fresh critic every serious review round
+
+A serious visual review must use a **fresh critic context**.
+
+Do not continue the builder session and ask it to become independent.
+
+Do not reuse a critic whose prior-round knowledge could bias the next assessment when a clean review is required.
+
+## 9.3 Process-amnesiac, standards-rich
+
+The critic should know everything necessary to judge the result and nothing unnecessary about how the maker produced it.
+
+Canonical principle:
+
+> **A REVIEWER SHOULD KNOW EVERYTHING REQUIRED TO JUDGE THE RESULT, AND NOTHING THAT COULD BIAS IT TOWARD THE MAKER'S INTENT.**
+
+The critic may receive:
+
+- current approved standards;
+- acceptance criteria;
+- canonical reference;
+- real artifact;
+- source and implementation videos;
+- matched boards;
+- responsive screenshots;
+- minimum brief necessary to judge the intended result.
+
+The critic should not receive unless absolutely necessary:
+
+- builder reasoning history;
+- failed implementation attempts;
+- tool frustrations;
+- time/cost invested;
+- preferred diagnosis from the builder;
+- narrative explaining why a weak result should be accepted;
+- previous critic verdicts when a genuinely fresh review is required.
+
+## 9.4 First-glance test
+
+Where meaningful, the critic evaluates the output **before reading the explanatory brief**.
+
+Museum adaptation:
 
 ```text
-INTERNAL QA: PASS
-CLAUDE VISUAL CRITIC: PASS
-HUMAN QA: PENDING
+WHAT I THINK THIS IS
+WHAT I THINK IS IMPORTANT
+WHERE MY ATTENTION GOES
+WHAT I THINK I CAN DO
+WHAT FEELS BROKEN / UNCLEAR / GENERIC
+WHAT I EXPECT TO HAPPEN NEXT
 ```
 
-Claude may not convert that into Product Approval.
+For motion:
+
+```text
+WHAT MOTION I PERCEIVE
+WHAT CAUSED IT
+WHAT CHANGED
+WHETHER CONTINUITY READS
+WHETHER THE EFFECT NEEDS EXPLANATION TO WORK
+```
+
+If the artifact needs the builder's explanation to make perceptual sense, the artifact has not yet proved itself.
+
+## 9.5 Critic write boundary
+
+The critic is read-only with respect to product implementation and canonical authority.
+
+It may not:
+
+- edit runtime code;
+- edit canonical architecture;
+- change acceptance criteria to rescue the artifact;
+- approve merge or publication;
+- silently fix what it is reviewing.
+
+The critic returns diagnosis only.
+
+## 9.6 Verdict vocabulary
+
+Recommended critic result:
+
+```text
+KEEP
+ADJUST
+REJECT
+```
+
+But:
+
+> **AGENT KEEP ≠ HUMAN APPROVAL.**
+
+Juanma / authorized human review remains final.
+
+## 9.7 Feedback contract
+
+For every material defect:
+
+```text
+PROBLEM
+WHY IT MATTERS
+EXPECTED IMPACT
+REQUIRED CORRECTION
+PRIORITY: P1 / P2 / P3
+```
+
+The critic should identify the defect precisely without prescribing an unnecessary redesign.
+
+## 9.8 Isolation probe
+
+Every serious fresh-critic report should end by checking for context leakage:
+
+```text
+Do I know how this was produced?
+Do I know which implementation attempt this is?
+Do I know previous versions or previous verdicts?
+Do I know the builder's preferred explanation?
+Do I know information that was unnecessary to judge the pixels?
+```
+
+If the critic can answer with production-history specifics that were not required for judgment, the review is contaminated.
+
+Repeat fresh when the contamination is material.
 
 ---
 
-# 9. RESPONSIVE + PLATFORM PROOF
+# 10. RESPONSIVE + PLATFORM PROOF
 
-For visually significant Museum surfaces, a single desktop screenshot is insufficient.
+For visually significant Museum UI, one desktop screenshot is insufficient.
 
-Default visual proof set when relevant:
+Default evidence when relevant:
 
 ```text
 DESKTOP
@@ -265,7 +416,7 @@ DESKTOP
 + SECOND DATASET / SECOND MUSEUM
 ```
 
-Recommended viewport set for responsive UI work:
+Recommended responsive viewports:
 
 ```text
 1440×900
@@ -274,72 +425,81 @@ Recommended viewport set for responsive UI work:
 360×800
 ```
 
-The second museum proves platform reuse instead of a hardcoded demo.
+Mobile is a distinct composition target, not desktop collapsed into one narrow column.
 
-Mobile is a distinct composition target, not merely desktop collapsed into a narrow column.
+The second museum proves platform reuse instead of a hardcoded demonstration.
 
 ---
 
-# 10. QA MUST MATCH CHANGE IMPACT
+# 11. QA MUST MATCH CHANGE IMPACT
 
-Do not restart every test from zero after every failure.
+Do not restart all QA after every local failure.
 
-Canonical rule:
+Canonical rules:
 
 > **A FAILURE INVALIDATES ONLY THE EVIDENCE IT CAN REASONABLY AFFECT.**
+
+> **VALIDATION SCOPE SHOULD MATCH CHANGE IMPACT SCOPE.**
 
 Use contextual backtrack:
 
 ```text
 FAILURE
 → CLASSIFY IMPACT
-→ FIND LAST TRUSTWORTHY CHECKPOINT
+→ IDENTIFY LAST TRUSTWORTHY CHECKPOINT
 → RE-ENTER SLIGHTLY BEFORE FAILURE
 → RE-RUN AFFECTED COVERAGE
 → CONTINUE
 ```
 
-Rigour does not mean repetition.
+Do not blindly resume from the exact failed line if a small predecessor runway is required to recreate valid state.
 
-Full appropriate QA means testing the complete affected coverage set, not mechanically rerunning unrelated historical tests.
+Do not restart from zero merely to feel rigorous.
+
+Rigour does not mean repetition.
 
 ---
 
-# 11. PRODUCT BUG vs INSTRUMENT BUG vs EVIDENCE BUG
+# 12. PRODUCT BUG vs INSTRUMENT BUG vs EVIDENCE BUG vs PROCESS BUG
 
-Before changing product code after a failed test, classify the failure.
+Before changing product code after a failed test, classify the failure:
 
 ```text
 PRODUCT BUG
-= actual user-facing/runtime defect
+= real user-facing/runtime defect
 
 INSTRUMENT BUG
-= test/harness measured or triggered the wrong thing
+= harness triggered or measured the wrong thing
 
 EVIDENCE BUG
 = output/capture/report is stale, misleading, incomplete or invalid
+
+PROCESS BUG
+= workflow rule or handoff allowed an avoidable failure mode
 ```
 
-Examples already observed in Museum work:
+Known Museum examples include:
 
 - camera sampled while still moving;
 - auto-advance racing the test;
 - state leaking between runs;
-- diagnostic message checking less than its assertion;
+- diagnostic assertions disagreeing with messages;
 - synthetic click before listener attachment;
-- recording the loading gate instead of the experience;
-- a measurement stuck at zero;
+- recording loading gate instead of experience;
+- measurement stuck at zero;
 - stale screenshots representing a previous build.
 
-Do not modify product code until the evidence can distinguish product failure from measurement failure.
+Never change product code merely to satisfy a broken instrument.
+
+Instrumentation must exercise the actual production path where practical instead of duplicating an approximate shadow implementation.
 
 ---
 
-# 12. ERROR / LEARNING LOG — MANDATORY
+# 13. ERROR / LEARNING LOG — MANDATORY
 
-Fixing is not enough. Meaningful mistakes must be converted into institutional memory.
+Fixing is not enough. Significant mistakes must become institutional memory.
 
-Each significant entry should record:
+Record:
 
 ```text
 WHAT HAPPENED
@@ -347,17 +507,20 @@ ROOT CAUSE
 CLASSIFICATION: PRODUCT / TOOL / EVIDENCE / PROCESS
 WHAT CHANGED
 RECURRENCE-PREVENTION RULE
+LAST TRUSTWORTHY CHECKPOINT
 WHICH EVIDENCE REMAINS TRUSTWORTHY
 WHICH EVIDENCE IS STALE / INVALIDATED
 ```
 
-If a temporary QA tool is proved misleading, remove or quarantine it rather than leaving a dangerous false-positive instrument in the repository.
+If a temporary QA tool is misleading, remove or quarantine it instead of leaving a dangerous false-positive instrument in the repository.
+
+Generalizable process discoveries should update this Playbook after review.
 
 ---
 
-# 13. EVIDENCE PRESERVATION
+# 14. EVIDENCE PRESERVATION
 
-Never silently overwrite approved evidence.
+Never silently overwrite approved or gate-bound evidence.
 
 Important evidence should preserve, where applicable:
 
@@ -373,13 +536,13 @@ Important evidence should preserve, where applicable:
 - artifact URL;
 - related QA result.
 
-When a Human Gate is opened, its evidence becomes **frozen review evidence**.
+When a Human Gate opens, its evidence becomes **frozen review evidence**.
 
-Later work must not make it ambiguous which build is being reviewed.
+Later work must not make it ambiguous which build the human is being asked to review.
 
 ---
 
-# 14. HUMAN GATES
+# 15. HUMAN GATES
 
 Human Gates exist because some decisions cannot be delegated safely.
 
@@ -393,7 +556,7 @@ Typical triggers:
 - expensive/external dependency choice;
 - final integration / merge.
 
-A Human Gate must state exactly:
+A Human Gate must state:
 
 ```text
 WHAT NEEDS REVIEW
@@ -404,17 +567,17 @@ WHAT COUNTS AS PASS / FAIL
 WHAT REMAINS FROZEN
 ```
 
-Do not say merely “please review”.
+Do not write only “please review”.
 
 ---
 
-# 15. AUTONOMOUS CONTINUATION AFTER A HUMAN GATE
+# 16. AUTONOMOUS CONTINUATION AFTER A HUMAN GATE
 
 Waiting for Human QA does not automatically require global idleness.
 
-However, continuation is allowed only under strict proof of safety.
+But continuation requires proven safety.
 
-The critical model is not merely:
+The model is not only:
 
 ```text
 A ↔ B
@@ -430,7 +593,7 @@ GLOBAL
 B
 ```
 
-A and B may be locally separate while still sharing global contracts, runtime assumptions, shell architecture, navigation, product semantics or QA process.
+A and B can be locally separate while sharing architecture, runtime assumptions, shell, navigation, semantics, persistence or QA process.
 
 Therefore:
 
@@ -438,9 +601,9 @@ Therefore:
 
 ---
 
-# 16. PENDING-DECISION IMPACT ENVELOPE
+# 17. PENDING-DECISION IMPACT ENVELOPE
 
-When Mission A reaches a Human Gate, Claude must describe what could still change depending on Human QA.
+When Mission A reaches a Human Gate, define what may still change depending on Human QA.
 
 Required structure:
 
@@ -466,38 +629,37 @@ GLOBAL contracts potentially affected:
 GLOBAL process / QA rules potentially affected:
 ...
 
-Shared runtime/components potentially affected:
+Shared runtime/components/files potentially affected:
 ...
 
 Not expected to change:
 ...
 ```
 
-The next mission is tested against this uncertainty envelope — not merely against the current implementation of A.
-
-Canonical rule:
+The next mission is tested against this uncertainty envelope, not merely against the current A implementation.
 
 > **INDEPENDENCE MUST BE PROVEN AGAINST PLAUSIBLE OUTCOMES OF THE PENDING HUMAN GATE, NOT ONLY AGAINST THE CURRENT IMPLEMENTATION.**
 
 ---
 
-# 17. GLOBAL OUTCOME STABILITY CHECK
+# 18. GLOBAL OUTCOME STABILITY CHECK
 
-Before starting Mission B while A waits for Human QA, answer:
+Before starting Mission B while A waits for Human QA:
 
 ```text
 1. What exactly remains undecided in A?
-2. What are the plausible outcomes of that decision?
+2. What plausible outcomes exist?
 3. What GLOBAL contracts could each outcome affect?
 4. What GLOBAL workflow / QA rules could change?
 5. What shared runtime/components/files could change?
 6. What does B depend on?
 7. Would B remain valid under every plausible A outcome?
 8. Could B invalidate or contaminate A evidence?
-9. Could B change a shared contract while A is still undecided?
+9. Could B alter a shared contract while A is unresolved?
+10. Would a future rejection of A force B product code to be undone?
 ```
 
-Then classify B:
+Classify B:
 
 ```text
 FULL CONTINUATION
@@ -507,41 +669,40 @@ BLOCKED
 
 ---
 
-# 18. CONTINUATION CLASSIFICATIONS
+# 19. CONTINUATION CLASSIFICATIONS
 
 ## FULL CONTINUATION
 
-Allowed only when B remains valid under every plausible outcome of A and does not endanger A evidence or shared contracts.
+Allowed only when B remains valid under every plausible A outcome and cannot endanger A evidence or unresolved shared contracts.
 
 ## PREPARATION ONLY
 
-Use when implementation could be invalidated but invariant preparatory work remains safe.
+Use when B implementation might later be invalidated but invariant work is safe.
 
 Allowed examples:
 
 - research;
 - donor audit;
-- canonical references;
-- video capture;
+- canonical reference capture;
 - storyboard extraction;
 - requirements;
 - capability map;
 - test plan;
 - fixtures;
-- benchmark collection;
+- visual benchmarks;
 - documentation that does not freeze a disputed contract.
 
 No dependent product implementation.
 
 ## BLOCKED
 
-Use when a plausible Human decision in A could materially alter B architecture, semantics, implementation, global assumptions or acceptance process.
+Use when a plausible A decision can materially alter B architecture, semantics, implementation, global assumptions or acceptance process.
 
-Claude waits.
+Stop and wait.
 
 ---
 
-# 19. UNCERTAINTY RULE
+# 20. UNCERTAINTY RULE
 
 This rule is intentionally conservative:
 
@@ -550,22 +711,22 @@ This rule is intentionally conservative:
 Use:
 
 ```text
-uncertain, low/medium impact
+uncertain + bounded impact
 → PREPARATION ONLY
 
-uncertain, high/global impact
+uncertain + high/global impact
 → BLOCKED
 ```
 
-“Probably safe” is not enough for Full Continuation.
+“Probably safe” is not enough.
 
-Efficiency includes avoiding rework and avoiding damage.
+Avoiding destructive rework is part of efficiency.
 
 ---
 
-# 20. GLOBAL FREEZE
+# 21. GLOBAL FREEZE
 
-When A has unresolved global impact, B may be allowed to proceed locally but may not modify shared global contracts unless the mandate explicitly authorizes it.
+When A has unresolved global impact, B may proceed only inside explicitly safe local boundaries.
 
 Example:
 
@@ -588,11 +749,11 @@ B MAY NOT MODIFY
 - preview contract
 ```
 
-This is a safety boundary, not merely a recommendation.
+The freeze is a hard safety boundary unless the current mandate explicitly authorizes an exception.
 
 ---
 
-# 21. EVIDENCE FREEZE DURING PARALLEL CONTINUATION
+# 22. EVIDENCE FREEZE DURING PARALLEL CONTINUATION
 
 When A pauses for Human QA:
 
@@ -604,17 +765,15 @@ A STORYBOARD  FROZEN
 A QA REPORT   FROZEN
 ```
 
-If B later changes the combined application, A must remain reviewable at its pinned evidence/commit.
+If B later changes the combined application, A remains reviewable against its pinned evidence and commit.
 
-A must not silently inherit B's later artifact.
+A must not silently inherit B's newer artifact.
 
 ---
 
-# 22. REQUIRED CONTINUATION NOTE BEFORE B STARTS
+# 23. REQUIRED CONTINUATION NOTE BEFORE B STARTS
 
-Claude must write what it is about to do before beginning B.
-
-Template:
+Claude must state what it will do **before** beginning B.
 
 ```text
 MISSION A — PAUSED AT HUMAN GATE
@@ -663,34 +822,36 @@ Starting / Preparing / Stopping.
 
 The line **“Why B remains valid even if A changes”** is mandatory for Full Continuation.
 
+If the agent cannot write a convincing answer, it cannot classify the work as Full Continuation.
+
 ---
 
-# 23. GATE TYPES
+# 24. GATE TYPES
 
-Human Gates may be classified to communicate scope, but classification never overrides the Global Outcome Stability Check.
+Gate labels communicate scope but never override the Global Outcome Stability Check.
 
 ```text
 HARD
-= downstream implementation must stop until decision
+= downstream implementation stops until decision
 
 LOCAL
 = current mission freezes; proven outcome-stable work elsewhere may continue
 
 CONDITIONAL
-= explicitly named work may continue; other work remains blocked
+= only explicitly named work may continue
 ```
 
-If uncertain which type applies, use the safer class.
+If uncertain, choose the safer gate.
 
 ---
 
-# 24. LONG AUTONOMOUS RUNS / OVERNIGHT MODE
+# 25. LONG AUTONOMOUS RUNS / OVERNIGHT MODE
 
-Long runs are allowed when the roadmap and guardrails are clear.
+Long runs are allowed only when roadmap, authority and stop rules are clear.
 
-Claude should provide meaningful checkpoints, not narrate every trivial edit.
+Claude should send meaningful checkpoints, not narrate every small edit.
 
-Useful checkpoint format:
+Recommended checkpoint:
 
 ```text
 VERTICAL / MISSION
@@ -705,23 +866,25 @@ COMMIT
 NEXT ACTION
 ```
 
-Claude should not stop for ordinary implementation choices already bounded by the mandate.
+Claude may continue ordinary bounded implementation decisions already authorized by the mandate.
 
-Claude must stop or downgrade when encountering:
+Claude must stop or downgrade for:
 
 - Human product decision;
 - frozen contract conflict;
 - destructive operation;
 - uncertain global impact;
-- unapproved cost/spend;
+- unapproved spending/cost;
 - merge/promotion decision;
-- missing authoritative input that changes product meaning.
+- missing authority that changes product meaning.
+
+If only one authorized mission exists and it blocks, stop. Do not invent Mission B.
 
 ---
 
-# 25. CURRENT MUSEUM GLOBAL CONTRACT REGISTRY
+# 26. CURRENT MUSEUM GLOBAL CONTRACT REGISTRY
 
-The following should be treated as shared/global authority unless a more specific contract says otherwise:
+Treat these as global/shared unless a stronger document narrows ownership:
 
 ```text
 World semantics
@@ -743,15 +906,13 @@ Visitor semantic model
 Output / publish contract when introduced
 ```
 
-A mission touching one of these requires explicit impact analysis.
+A mission touching these requires explicit impact analysis.
 
 ---
 
-# 26. MUSEUM-SPECIFIC VISUAL ACCEPTANCE PATTERNS
+# 27. MUSEUM-SPECIFIC VISUAL PROOF PATTERNS
 
 ## Authoring / Visitor UI
-
-Prefer:
 
 ```text
 CURRENT DESKTOP → CORRECTED DESKTOP
@@ -762,8 +923,6 @@ MUSEUM A → MUSEUM B
 
 ## Motion / Transition
 
-Prefer:
-
 ```text
 SOURCE VIDEO
 → SOURCE STORYBOARD
@@ -772,37 +931,42 @@ SOURCE VIDEO
 → SIDE-BY-SIDE
 ```
 
-## Reactive Installation
-
-Prefer:
+## Reactive Installation / Breeze
 
 ```text
-BREEZE / SOURCE VIDEO
+BREEZE CANONICAL VIDEO
 → interaction-state storyboard
 → donor capability map
 → Museum implementation video
 → matched state storyboard
+→ side-by-side critic
 ```
 
 ## Free Visitor / Viewpoints
 
-Prefer:
-
 ```text
 REFERENCE EXPERIENCE VIDEO
-→ movement / discovery storyboard
+→ movement/discovery storyboard
 → semantic behaviour map
 → Museum walkthrough recording
 → matched behaviour board
 ```
 
+## Character / Guide
+
+```text
+REFERENCE CHARACTER BEHAVIOUR
+→ interaction storyboard
+→ anchor / look / gesture / movement map
+→ Museum character recording
+→ matched behaviour board
+```
+
 ---
 
-# 27. PRODUCT CAPABILITIES ARE NOT USER OBLIGATIONS
+# 28. PRODUCT CAPABILITIES ARE NOT USER OBLIGATIONS
 
 Museum may contain many capabilities without forcing every visitor to consume them.
-
-Canonical principles:
 
 > **CAPABILITY AVAILABLE ≠ CAPABILITY ALWAYS ACTIVE.**
 
@@ -810,21 +974,20 @@ Canonical principles:
 
 > **THE AUTHOR DEFINES POSSIBILITIES. THE VISITOR CHOOSES DEPTH.**
 
-This must guide future work on Viewpoints, Guide presence, Guided tours, AI Guide, reactive installations and institutional content.
+This guides Viewpoints, Guide presence, Guided tours, AI Guide, reactive installations and institutional content.
 
 ---
 
-# 28. MERGE / PROMOTION / PROTECTED BASELINES
+# 29. MERGE / PROMOTION / PROTECTED BASELINES
 
 No autonomous run authorizes merge merely because internal QA passes.
-
-Required flow:
 
 ```text
 WORKING BRANCH
 → IMPLEMENTATION COMPLETE
 → TARGETED QA
 → VISUAL EVIDENCE
+→ FRESH CRITIC
 → HUMAN QA
 → FIX IF REQUIRED
 → INTEGRATION AUDIT
@@ -834,12 +997,12 @@ WORKING BRANCH
 
 Never touch protected `master` without explicit Juanma approval.
 
-Before merge, inspect:
+Before merge inspect:
 
 - full diff;
 - temporary QA junk;
 - stale evidence;
-- routes/entry points;
+- routes / entry points;
 - module registration;
 - shared contracts;
 - regression surface;
@@ -847,7 +1010,7 @@ Before merge, inspect:
 
 ---
 
-# 29. DEFINITION OF A TRUSTWORTHY HUMAN GATE
+# 30. DEFINITION OF A TRUSTWORTHY HUMAN GATE
 
 A strong Human Gate contains:
 
@@ -865,63 +1028,114 @@ REAL ARTIFACT URL
 VIDEOS / SCREENSHOTS / BOARDS
 COMPARISON EVIDENCE
 ERROR / LEARNING LOG UPDATE
-CLAUDE INTERNAL QA
-CLAUDE VISUAL CRITIC
+FRESH CRITIC VERDICT
 HUMAN QA: PENDING
 PRODUCT APPROVAL: PENDING
 NO MERGE / MASTER UNTOUCHED
 ```
 
-Do not bury the unresolved question inside a long success report.
+Do not bury the unresolved question inside a success report.
 
 ---
 
-# 30. ANTI-PATTERNS
+# 31. ANTI-PATTERNS
 
 Do not:
 
-- start over from zero after every local failure;
-- rebuild a proven first-party donor without audit;
+- start from zero after every local failure;
+- blindly resume from the exact failed line when a bounded predecessor runway is needed;
+- rebuild proven first-party capability without donor audit;
 - declare visual PASS from semantic tests;
-- compare screenshots from different builds without labelling them;
+- compare screenshots from different builds without labels;
 - use stale artifacts as current evidence;
-- continue B merely because B does not directly import A;
+- modify product code to satisfy a broken instrument;
+- continue B merely because it does not directly import A;
 - modify global contracts while A's global outcome is unresolved;
 - say “probably independent” and continue fully;
-- invent extra tasks while waiting;
-- silently fix a frozen mission after requesting Human QA;
+- invent tasks while waiting;
+- silently modify a frozen mission after requesting Human QA;
 - treat mobile as an afterthought;
-- let the builder be the sole visual critic;
+- let builder history leak into a fresh critic unnecessarily;
+- let the critic edit what it reviews;
+- let critic KEEP become product approval;
 - merge because autonomous QA is green.
 
 ---
 
-# 31. MUSEUM V1 ADOPTION PLAN
+# 32. PROCESS-LEARNING LOOP
 
-This document should first be tested as a **Museum process standard** on upcoming verticals such as:
+The Playbook itself is a living Museum standard until explicitly frozen.
 
-1. remaining Transition fidelity correction;
-2. Visitor visual/responsive correction;
-3. Reactive Sculpture / Breeze integration;
-4. Free Visitor / Viewpoints / Visit Depth;
-5. Character / Guide foundation.
+When a run discovers a process failure:
 
-During those runs, every process defect discovered must be added to the Learning Log and used to revise this Playbook.
+```text
+PROCESS FAILURE
+→ LOG IT
+→ IDENTIFY ROOT CAUSE
+→ DEFINE RECURRENCE RULE
+→ TEST RULE IN NEXT RUN
+→ IF GENERALIZABLE, UPDATE PLAYBOOK
+```
 
-Only after Museum demonstrates that the method works across multiple different types of work — motion, UI, physics/interaction, navigation and characters — should a second document extract the project-agnostic standard.
+Do not add rules merely because they sound prudent. Prefer rules grounded in observed failure modes or clear high-impact risk.
 
-Proposed later document:
+Do not remove safety rules merely because they slowed one run.
 
-`AUTONOMOUS_VISUAL_ENGINEERING_PLAYBOOK_GENERAL_V1.md`
-
-The general version must remove Museum-specific architecture while preserving the proven safety, evidence, continuation and Human Gate rules.
+The goal is controlled improvement, not maximum rule count.
 
 ---
 
-# 32. FINAL PRINCIPLES
+# 33. MUSEUM V1 ADOPTION / VALIDATION MATRIX
+
+This Museum Playbook should be validated across materially different work classes:
+
+```text
+TRANSITION
+= fast motion / donor fidelity / cinematic evidence
+
+VISITOR
+= UI composition / responsive proof / second dataset
+
+REACTIVE SCULPTURE / BREEZE
+= physics / interaction / long-form visual storyboard
+
+FREE VISITOR / VIEWPOINTS / VISIT DEPTH
+= navigation / optionality / behavioural reference
+
+CHARACTER / GUIDE
+= animation / anchors / shared attention / role behaviour
+```
+
+A process weakness found in any class must be evaluated for Playbook impact.
+
+The general project-agnostic Playbook is deliberately deferred until Museum V1 is closed and proven.
+
+---
+
+# 34. SCOPE BOUNDARY AFTER MUSEUM V1
+
+The intended sequence is:
+
+```text
+1. CLOSE MUSEUM PLAYBOOK V1
+2. EXTRACT GENERAL REUSABLE PLAYBOOK
+3. THEN PROMOTE REUSABLE PROCESS / CAPABILITY KNOWLEDGE INTO CAPABILITY REGISTRY
+```
+
+Do not collapse these three steps into one.
+
+The general Playbook must be derived from a closed Museum standard, not written in parallel from assumptions.
+
+The Capability Registry comes after the reusable method has been identified and separated from Museum-specific contracts.
+
+---
+
+# 35. FINAL PRINCIPLES
 
 ```text
 REPOSITORY OVER MEMORY.
+
+OWNED PROVEN PATTERNS BEFORE REINVENTION.
 
 REFERENCE BEFORE INVENTION.
 
@@ -933,11 +1147,19 @@ FUNCTIONAL PASS ≠ PRODUCT PASS.
 
 BUILDER ≠ CRITIC.
 
+FRESH CRITIC, MINIMUM BIAS.
+
+THE CRITIC DIAGNOSES. THE BUILDER SOLVES. THE HUMAN APPROVES.
+
+AGENT KEEP ≠ HUMAN APPROVAL.
+
 PRESERVE VERIFIED EVIDENCE.
 
 BACKTRACK CONTEXTUALLY, NOT TO ZERO.
 
 A FAILURE INVALIDATES ONLY WHAT IT CAN REASONABLY AFFECT.
+
+VALIDATION SCOPE MATCHES CHANGE IMPACT.
 
 LOCAL INDEPENDENCE IS NOT ENOUGH.
 CONTINUATION REQUIRES GLOBAL OUTCOME STABILITY.
@@ -945,6 +1167,10 @@ CONTINUATION REQUIRES GLOBAL OUTCOME STABILITY.
 UNCERTAINTY ABOUT GLOBAL IMPACT = NO FULL CONTINUATION.
 
 GLOBAL CONTRACTS STAY FROZEN UNLESS EXPLICITLY AUTHORIZED.
+
+A PAUSED MISSION MAY NOT BE SILENTLY MODIFIED.
+
+NEVER INVENT WORK TO AVOID WAITING.
 
 THE AUTHOR DEFINES POSSIBILITIES.
 THE VISITOR CHOOSES DEPTH.
