@@ -1,0 +1,98 @@
+{
+ "generatedAt": "2026-08-15T12:23:20.498Z",
+ "step": "step.02-paso-galeria-a",
+ "plan": {
+  "s": 0.8,
+  "via": [
+   0,
+   1.62,
+   -2.6624999999999974
+  ],
+  "gate": [
+   0,
+   1.62,
+   -4.5
+  ],
+  "window": 0.16999999999999996,
+  "durationMs": 5000,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "lookBackAt": {
+  "k": 0.8400000000000001,
+  "state": {
+   "k": 0.84,
+   "facing": 1,
+   "alongAxis": 0.858,
+   "space": "space.gallery-a",
+   "effect": 0,
+   "surface": true
+  }
+ },
+ "variants": [
+  {
+   "variant": "as-is",
+   "file": "lookback-A-as-is.png",
+   "yavg": null,
+   "state": {
+    "k": 0.8401,
+    "facing": 1,
+    "alongAxis": 0.858,
+    "space": "space.gallery-a",
+    "effect": 0,
+    "surface": true
+   }
+  },
+  {
+   "variant": "no-surface",
+   "file": "lookback-A-no-surface.png",
+   "yavg": null,
+   "state": {
+    "k": 0.8401,
+    "facing": 1,
+    "alongAxis": 0.859,
+    "space": "space.gallery-a",
+    "effect": 0,
+    "surface": true
+   }
+  },
+  {
+   "variant": "no-effect",
+   "file": "lookback-A-no-effect.png",
+   "yavg": null,
+   "state": {
+    "k": 0.8402,
+    "facing": 1,
+    "alongAxis": 0.859,
+    "space": "space.gallery-a",
+    "effect": 0,
+    "surface": true
+   }
+  },
+  {
+   "variant": "no-fringe",
+   "file": "lookback-A-no-fringe.png",
+   "yavg": null,
+   "state": {
+    "k": 0.8403,
+    "facing": 1,
+    "alongAxis": 0.86,
+    "space": "space.gallery-a",
+    "effect": 0,
+    "surface": true
+   }
+  }
+ ],
+ "forward": {
+  "file": "forward-A.png",
+  "yavg": null,
+  "state": {
+   "k": 0.96,
+   "facing": -1,
+   "alongAxis": 1.387,
+   "space": "space.gallery-a",
+   "effect": 0,
+   "surface": true
+  }
+ }
+}

@@ -32,7 +32,7 @@ import http from 'node:http';
 import fs from 'node:fs/promises';
 import fsSync from 'node:fs';
 import path from 'node:path';
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -156,10 +156,30 @@ const restore = () => {
   s.material.uniforms.fringe.value = 1;
 };
 
+/**
+ * Mean luminance of a captured PNG.
+ *
+ * ffmpeg prints `metadata=print` to STDERR, not stdout, so reading only stdout
+ * returned null for every variant on the first run — the numbers had to be
+ * recovered by hand afterwards. Merging the streams is the fix; throwing when
+ * nothing parses is the part that matters, because a measurement that quietly
+ * returns null is one edit away from a measurement that quietly returns zero.
+ */
 const luma = (file) => {
-  const out = execFileSync(FFMPEG, ['-hide_banner', '-i', file, '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YAVG', '-f', 'null', '-'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  const m = /YAVG=([0-9.]+)/.exec(out);
-  return m ? Number(m[1]) : null;
+  // ffmpeg prints `metadata=print` to stderr, not stdout. execFileSync returns
+  // stdout only, so the first run of this harness reported null for every
+  // variant and the numbers had to be recovered by hand. spawnSync exposes both
+  // streams; throwing when nothing parses is the part that matters, because a
+  // measurement that quietly returns null is one edit away from one that
+  // quietly returns zero.
+  const r = spawnSync(FFMPEG, [
+    '-hide_banner', '-i', file,
+    '-vf', 'signalstats,metadata=print:key=lavfi.signalstats.YAVG',
+    '-f', 'null', '-'
+  ], { encoding: 'utf8' });
+  const m = /YAVG=([0-9.]+)/.exec(`${r.stdout || ''}${r.stderr || ''}`);
+  if (!m) throw new Error(`no se pudo medir la luminancia de ${path.basename(file)}`);
+  return Number(m[1]);
 };
 
 const rows = [];
