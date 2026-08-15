@@ -1,0 +1,239 @@
+{
+ "generatedAt": "2026-08-15T17:07:20.781Z",
+ "tour": [
+  {
+   "id": "step.01-entrada",
+   "order": 1,
+   "title": "Bienvenida"
+  },
+  {
+   "id": "step.02-paso-galeria-a",
+   "order": 2,
+   "title": "Campo de ceniza"
+  },
+  {
+   "id": "step.03-lleva-horizonte",
+   "order": 3,
+   "title": "Horizonte interrumpido"
+  },
+  {
+   "id": "step.05-lleva-division",
+   "order": 4,
+   "title": "División tercera"
+  },
+  {
+   "id": "step.06d-lleva-estudio",
+   "order": 5,
+   "title": "Estudio de figura, IV"
+  },
+  {
+   "id": "step.06h-lleva-vasija",
+   "order": 6,
+   "title": "Vasija de arenas"
+  },
+  {
+   "id": "step.07-lleva-umbral",
+   "order": 7,
+   "title": "La cámara oscura"
+  },
+  {
+   "id": "step.09-lleva-noche",
+   "order": 8,
+   "title": "Noche de invierno"
+  },
+  {
+   "id": "step.10c-lleva-cuaderno",
+   "order": 9,
+   "title": "Cuaderno de luz"
+  },
+  {
+   "id": "step.11-cierre",
+   "order": 10,
+   "title": "Cierre"
+  }
+ ],
+ "log": [
+  {
+   "label": "ida · parada 3",
+   "ok": true,
+   "ms": 1395,
+   "state": {
+    "stop": "step.03-lleva-horizonte",
+    "order": 3,
+    "beat": "step.03-lleva-horizonte",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     -0.225,
+     1.62,
+     -5.337
+    ],
+    "tgt": [
+     -0.391,
+     1.552,
+     -11.528
+    ],
+    "portals": 1
+   }
+  },
+  {
+   "label": "ida · parada 4",
+   "ok": true,
+   "ms": 1614,
+   "state": {
+    "stop": "step.05-lleva-division",
+    "order": 4,
+    "beat": "step.05-lleva-division",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     -0.318,
+     1.62,
+     -5.174
+    ],
+    "tgt": [
+     -0.364,
+     1.573,
+     -12.317
+    ],
+    "portals": 1
+   }
+  },
+  {
+   "label": "ATRÁS · parada 3",
+   "ok": true,
+   "ms": 1744,
+   "state": {
+    "stop": "step.03-lleva-horizonte",
+    "order": 3,
+    "beat": "step.03-lleva-horizonte",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     -0.16,
+     1.62,
+     -5.28
+    ],
+    "tgt": [
+     -0.455,
+     1.56,
+     -11.791
+    ],
+    "portals": 2
+   }
+  },
+  {
+   "label": "ida · parada 5",
+   "ok": true,
+   "ms": 1718,
+   "state": {
+    "stop": "step.06d-lleva-estudio",
+    "order": 5,
+    "beat": "step.06d-lleva-estudio",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     -0.062,
+     1.632,
+     -4.924
+    ],
+    "tgt": [
+     0.947,
+     1.579,
+     -12.803
+    ],
+    "portals": 2
+   }
+  },
+  {
+   "label": "ATRÁS · parada 4",
+   "ok": true,
+   "ms": 2020,
+   "state": {
+    "stop": "step.05-lleva-division",
+    "order": 4,
+    "beat": "step.05-lleva-division",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     0.223,
+     1.62,
+     -5.547
+    ],
+    "tgt": [
+     1.017,
+     1.51,
+     -11.003
+    ],
+    "portals": 3
+   }
+  },
+  {
+   "label": "ATRÁS · parada 3",
+   "ok": true,
+   "ms": 1851,
+   "state": {
+    "stop": "step.03-lleva-horizonte",
+    "order": 3,
+    "beat": "step.03-lleva-horizonte",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     -0.118,
+     1.62,
+     -5.275
+    ],
+    "tgt": [
+     -0.455,
+     1.56,
+     -11.791
+    ],
+    "portals": 4
+   }
+  },
+  {
+   "label": "adelante otra vez · 4",
+   "ok": true,
+   "ms": 1722,
+   "state": {
+    "stop": "step.05-lleva-division",
+    "order": 4,
+    "beat": "step.05-lleva-division",
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "transport": "PAUSED",
+    "pos": [
+     0.318,
+     1.62,
+     -4.842
+    ],
+    "tgt": [
+     1.326,
+     1.573,
+     -13.52
+    ],
+    "portals": 4
+   }
+  }
+ ],
+ "findings": {
+  "landsOnTarget": true,
+  "framingIdentical": false,
+  "multiBackWorks": true,
+  "forwardAfterBackWorks": true,
+  "cameraOwnerAfterBack": "DIRECTED",
+  "transportAfterBack": "PAUSED",
+  "portalsBeforeBack": 1,
+  "portalsAfterBack": 2,
+  "portalsReTraversedByOneBackStep": 1,
+  "backStepMs": 1744,
+  "forwardStepMs": 1614
+ },
+ "errors": []
+}
