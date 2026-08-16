@@ -1,34 +1,29 @@
-# MUSEUM — CURRENT INTEGRATION CONTRACT
+# MUSEUM — INTEGRATION CONTRACT POINTER (ISOLATED DOCS BRANCH)
 
-Current bounded integration contract:
+Status of this documentation branch:
+
+```text
+NON-CANONICAL / ROLLBACK-ONLY
+DO NOT USE AS THE ACTIVE INTEGRATION SOURCE
+```
+
+During documentation work, the parallel Full Museum Studio workstream advanced and created the active contract directly on:
+
+`chatgpt/museum-phase2-capability-expansion`
+
+PR #58.
+
+Active canonical contract to use:
 
 `labs/immersive-worlds/docs/MUSEUM_STUDIO_BREEZE_BOUNDED_INTEGRATION_CONTRACT_V1.md`
 
-Documentation branch:
+The isolated branch `docs/museum-studio-breeze-bounded-integration-v1` is intentionally left untouched as an audit/rollback record. It must not be merged merely because it exists.
 
-`docs/museum-studio-breeze-bounded-integration-v1`
-
-Status:
+Permanent safety rule:
 
 ```text
-CONTRACT DOCUMENTED
-IMPLEMENTATION NOT MERGED
-MASTER UNTOUCHED
-PR #39 UNTOUCHED
-PR #58 UNTOUCHED
+ONE SEMANTIC TRUTH → MULTIPLE REPRESENTATIONS.
+ONE CURRENT CONTRACT → NO COMPETING DOCUMENT TRUTH.
 ```
 
-Current objective:
-
-```text
-FULL MUSEUM STUDIO / SCHEMA 3
-→ BOUNDED BREEZE SEMANTIC CONFIG
-→ EXISTING MUSEUM BREEZE ADAPTER / E1 HOST
-→ PROVEN BREEZE RUNTIME
-→ REAL VISITOR ROUND TRIP
-→ RETURN TO STUDIO
-```
-
-Read the full contract before any cross-stream integration implementation.
-
-If source documents disagree, latest explicit Juanma decision + actual remote branch/PR state wins.
+Before implementation, verify actual remote heads of PR #58 and the Breeze/runtime branch.
