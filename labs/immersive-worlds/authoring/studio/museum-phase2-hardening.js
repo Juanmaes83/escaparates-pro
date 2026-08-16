@@ -3,7 +3,6 @@ import { ExperienceHUD } from '../../app/ui/hud.js';
 
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 const ROOM_A11Y = [
-  ['stepFree','Sin escalones / acceso nivelado'],
   ['lift','Ascensor disponible'],
   ['accessibleWc','Aseo accesible cercano'],
   ['seating','Asientos disponibles'],
@@ -11,14 +10,11 @@ const ROOM_A11Y = [
 ];
 
 function cfg() { return window.__IW_STUDIO?.config || window.__IW_CONFIG || null; }
-function world() { return window.__IW_STUDIO?.world || window.__IW?.runtime?.store || null; }
 
 function ensureHardeningData(studio) {
   for (const space of studio.world.spaces || []) {
     studio.config.rooms[space.id] ||= {};
-    studio.config.rooms[space.id].accessibility ||= {
-      stepFree: true, lift: false, accessibleWc: false, seating: false, quiet: false
-    };
+    studio.config.rooms[space.id].accessibility ||= {};
   }
 }
 
@@ -117,17 +113,26 @@ function enhanceLanguageMatrix(studio) {
 
 function roomAccessibilityHTML(studio, node) {
   const a = studio.config.rooms?.[node.id]?.accessibility || {};
+  const stepFree = a.stepFree === true ? 'true' : a.stepFree === false ? 'false' : '';
   return studio._group('Accesibilidad de la sala', `
-    <p class="st-note">Estos datos alimentan el cálculo de ruta accesible. La ruta nunca inventa condiciones que la sala no haya declarado.</p>
+    <p class="st-note">Estos datos alimentan el cálculo de ruta accesible. “No declarado” no se interpreta como accesible ni como barrera.</p>
+    <label class="st-f"><span class="st-l">Acceso sin escalones</span><select data-p2h-room-stepfree><option value="" ${stepFree===''?'selected':''}>No declarado</option><option value="true" ${stepFree==='true'?'selected':''}>Sí</option><option value="false" ${stepFree==='false'?'selected':''}>No</option></select></label>
     <div class="p2h-room-a11y">
-      ${ROOM_A11Y.map(([key,label]) => `<label class="p1-check"><input type="checkbox" data-p2h-room-a11y="${key}" ${a[key] ? 'checked' : ''}><span>${esc(label)}</span></label>`).join('')}
+      ${ROOM_A11Y.map(([key,label]) => `<label class="p1-check"><input type="checkbox" data-p2h-room-a11y="${key}" ${a[key] === true ? 'checked' : ''}><span>${esc(label)}</span></label>`).join('')}
     </div>
   `);
 }
 
 function bindRoomAccessibility(studio) {
   if (studio.domain !== 'build') return;
-  const node = studio.tree && studio.selectedId ? studio.root.querySelector(`[data-node="${CSS.escape(studio.selectedId)}"]`) : null;
+  studio.root.querySelector('[data-p2h-room-stepfree]')?.addEventListener('change', (event) => {
+    const room = studio.config.rooms[studio.selectedId] ||= {};
+    room.accessibility ||= {};
+    const raw = event.target.value;
+    if (raw === '') delete room.accessibility.stepFree;
+    else room.accessibility.stepFree = raw === 'true';
+    studio._markDirty();
+  });
   studio.root.querySelectorAll('[data-p2h-room-a11y]').forEach((input) => input.addEventListener('change', () => {
     const room = studio.config.rooms[studio.selectedId] ||= {};
     room.accessibility ||= {};
