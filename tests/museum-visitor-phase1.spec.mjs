@@ -39,7 +39,7 @@ test('Studio desktop — calendar, programme, green validation and structured ac
   if (!(await a11y.isChecked())) await a11y.click();
   await expect(page.locator('.p1-a11ygrid input:checked')).not.toHaveCount(0);
 
-  await page.screenshot({ path: `${evidence}/01-studio-desktop.png` });
+  await page.locator('.st-tree').screenshot({ path: `${evidence}/01-studio-desktop.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
@@ -62,7 +62,7 @@ test('Visitor — Interior Map v2 + artwork progress + seen / not seen', async (
   await expect(page.locator('.iw-p1-progress__head b')).toContainText('/');
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
-  await page.screenshot({ path: `${evidence}/02-visitor-map-progress.png` });
+  await page.locator('.iw-map__panel').screenshot({ path: `${evidence}/02-visitor-map-progress.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
@@ -78,7 +78,9 @@ test('Full Studio — dimensions recovered in a real artwork editor', async ({ p
   await expect(height).toBeVisible();
   await width.fill('90');
   await height.fill('240');
+  await height.press('Tab');
   await expect(page.getByText(/90 × 240 cm/)).toBeVisible();
+  await page.locator('.st-ed').screenshot({ path: `${evidence}/03-dimensions-editor.png` });
 });
 
 test('Studio mobile — approved system remains usable', async ({ page }) => {
@@ -86,6 +88,6 @@ test('Studio mobile — approved system remains usable', async ({ page }) => {
   const errors = await ready(page, true);
   await page.locator('[data-domain="visitor"]').click();
   await expect(page.getByText('01 · Planificación')).toBeVisible();
-  await page.screenshot({ path: `${evidence}/03-studio-mobile.png` });
+  await page.locator('.st-tree').screenshot({ path: `${evidence}/04-studio-mobile.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
