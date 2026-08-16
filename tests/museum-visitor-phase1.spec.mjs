@@ -20,7 +20,17 @@ async function evidenceShot(page, path) {
     const canvas = document.getElementById('iw-canvas');
     if (canvas) canvas.style.visibility = 'hidden';
   });
-  await page.screenshot({ path, animations: 'disabled', timeout: 15000 });
+  const client = await page.context().newCDPSession(page);
+  try {
+    const shot = await client.send('Page.captureScreenshot', {
+      format: 'png',
+      fromSurface: true,
+      captureBeyondViewport: false
+    });
+    await fs.writeFile(path, Buffer.from(shot.data, 'base64'));
+  } finally {
+    await client.detach();
+  }
 }
 
 test.beforeAll(async () => { await fs.mkdir(evidence, { recursive: true }); });
