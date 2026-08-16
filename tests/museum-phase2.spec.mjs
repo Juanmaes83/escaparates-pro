@@ -59,8 +59,12 @@ test('Museum Phase 2 closure — integration, UX hardening and reversible runtim
   const roomButton=page.locator('[data-node]').filter({hasText:'Galería A'}).first();await roomButton.click();
   await expect(page.getByText('Accesibilidad de la sala')).toBeVisible();
   await page.locator('[data-p2h-room-stepfree]').selectOption('true');
-  const seat=page.locator('[data-p2h-room-a11y="seating"]');if(!(await seat.isChecked()))await seat.check();
-  const quiet=page.locator('[data-p2h-room-a11y="quiet"]');if(!(await quiet.isChecked()))await quiet.check();
+  const seat=page.locator('[data-p2h-room-a11y="seating"]');
+  if(!(await seat.isChecked())) await page.locator('label.p1-check',{hasText:'Asientos disponibles'}).click();
+  await expect(seat).toBeChecked();
+  const quiet=page.locator('[data-p2h-room-a11y="quiet"]');
+  if(!(await quiet.isChecked())) await page.locator('label.p1-check',{hasText:'Espacio tranquilo'}).click();
+  await expect(quiet).toBeChecked();
 
   // ARTIST → ARTWORK and DOCUMENT → ENTITY connections through the real contextual editor.
   await page.locator('.st-nodebtn[data-node="entity.artwork.horizonte-interrumpido"]').click();
