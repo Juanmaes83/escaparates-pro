@@ -1,0 +1,648 @@
+{
+ "generatedAt": "2026-08-16T11:45:50.742Z",
+ "gpu": {
+  "adapter": "google/swiftshader"
+ },
+ "route": {
+  "routeId": "route.comentado"
+ },
+ "manifest": {
+  "stops": 12,
+  "breeze": [
+   {
+    "id": "step.18-cierre-breeze",
+    "order": 12
+   }
+  ],
+  "hasBreezeChapter": true
+ },
+ "moments": {
+  "00-antes-de-la-puerta": {
+   "key": "00-antes-de-la-puerta",
+   "label": "En Galería B, antes del paso",
+   "file": "00-antes-de-la-puerta.png",
+   "yavg": 28.487,
+   "space": "space.gallery-b",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.12-lleva-breeze",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    13.01,
+    1.62,
+    -11.4
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Queda una sala más. En ella no hay nada colgado de la pared.",
+   "labelVisible": true,
+   "labelTitle": "Cuaderno de luz",
+   "guideOpacity": 1,
+   "presentation": "MUSEUM",
+   "guestBackend": null,
+   "guestSteps": null,
+   "guestVerts": null,
+   "guestSprings": null,
+   "guestWind": null,
+   "guestSinceLaunch": null,
+   "guestError": null,
+   "museumCanvasHidden": false,
+   "guestCanvases": 0
+  },
+  "A-entrada": {
+   "key": "A-entrada",
+   "label": "A · Entrada a la sala",
+   "file": "A-entrada.png",
+   "yavg": 25.6291,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.14-venus-llegada",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    50.87,
+    1.72,
+    -17.79
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "La escultura es una copia digital de la Venus de Milo, a cinco metros.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 1,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 18,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 1.8,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "B-escultura": {
+   "key": "B-escultura",
+   "label": "B · Primera lectura de la escultura",
+   "file": "B-escultura.png",
+   "yavg": 27.1839,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.14-venus-llegada",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    50.87,
+    1.72,
+    -17.79
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "La escultura es una copia digital de la Venus de Milo, a cinco metros.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 1,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 25,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 2.5,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "C-acompanada": {
+   "key": "C-acompanada",
+   "label": "C · Atención compartida con la guía",
+   "file": "C-acompanada.png",
+   "yavg": 29.3705,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.15-venus-acompanada",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    53.27,
+    1.73,
+    -15.85
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Mármol quieto. Lo que se mueve llega desde la izquierda.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 1,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 44,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 4.4,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "D-aproximacion": {
+   "key": "D-aproximacion",
+   "label": "D · La tela se acerca",
+   "file": "D-aproximacion.png",
+   "yavg": 27.6113,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.16-tela-aproxima",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "El viento no está dibujado: es una fuerza, y la tela la obedece.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 62,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 6.2,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "E-colision": {
+   "key": "E-colision",
+   "label": "E · Colisión, momento central",
+   "file": "E-colision.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 82,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 8.2,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "F-paso": {
+   "key": "F-paso",
+   "label": "F · La tela sigue y se libera",
+   "file": "F-paso.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 90,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 9,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "G-asentado": {
+   "key": "G-asentado",
+   "label": "G · Contemplación asentada",
+   "file": "G-asentado.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 98,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 9.8,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "P1-simulando": {
+   "key": "P1-simulando",
+   "label": "Píxeles · con simulación",
+   "file": "P1-simulando.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 105,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 10.5,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "P2-suspendida-a": {
+   "key": "P2-suspendida-a",
+   "label": "Píxeles · suspendida (a)",
+   "file": "P2-suspendida-a.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 105,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 10.5,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "P3-suspendida-b": {
+   "key": "P3-suspendida-b",
+   "label": "Píxeles · suspendida (b)",
+   "file": "P3-suspendida-b.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 105,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 10.5,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "P4-reanudada": {
+   "key": "P4-reanudada",
+   "label": "Píxeles · reanudada",
+   "file": "P4-reanudada.png",
+   "yavg": 27.7065,
+   "space": "space.breeze",
+   "stop": "step.12-lleva-breeze",
+   "beat": "step.17-colision",
+   "order": 11,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    51.75,
+    1.58,
+    -17.28
+   ],
+   "counterText": "Parada 11 de 12",
+   "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
+   "labelVisible": true,
+   "labelTitle": "Viento sobre mármol",
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 115,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 11.24,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  },
+  "H-salida": {
+   "key": "H-salida",
+   "label": "H · Salida, el Museo vuelve a presentar",
+   "file": "H-salida.png",
+   "yavg": 32.5651,
+   "space": "space.gallery-b",
+   "stop": "step.18-cierre-breeze",
+   "beat": "step.18-cierre-breeze",
+   "order": 12,
+   "total": 12,
+   "owner": "DIRECTED",
+   "pos": [
+    45.1,
+    1.63,
+    -20.77
+   ],
+   "counterText": "Parada 12 de 12",
+   "caption": "Aquí termina el recorrido comentado. Puede quedarse mirando el tiempo que quiera.",
+   "labelVisible": false,
+   "labelTitle": null,
+   "guideOpacity": 1,
+   "presentation": "MUSEUM",
+   "guestBackend": null,
+   "guestSteps": null,
+   "guestVerts": null,
+   "guestSprings": null,
+   "guestWind": null,
+   "guestSinceLaunch": null,
+   "guestError": null,
+   "museumCanvasHidden": false,
+   "guestCanvases": 0
+  },
+  "I-reentrada": {
+   "key": "I-reentrada",
+   "label": "I · Reentrada",
+   "file": "I-reentrada.png",
+   "yavg": 25.8428,
+   "space": "space.breeze",
+   "stop": null,
+   "beat": null,
+   "order": 0,
+   "total": 12,
+   "owner": "EXPLORE",
+   "pos": [
+    44,
+    1.62,
+    -22
+   ],
+   "counterText": "Parada 12 de 12",
+   "caption": "Aquí termina el recorrido comentado. Puede quedarse mirando el tiempo que quiera.",
+   "labelVisible": false,
+   "labelTitle": null,
+   "guideOpacity": 0,
+   "presentation": "GUEST",
+   "guestBackend": "webgpu",
+   "guestSteps": 10,
+   "guestVerts": 6561,
+   "guestSprings": 51040,
+   "guestWind": "BREEZE",
+   "guestSinceLaunch": 1,
+   "guestError": null,
+   "museumCanvasHidden": true,
+   "guestCanvases": 1
+  }
+ },
+ "totals": {
+  "presentation": "GUEST",
+  "guestId": "room.breeze",
+  "guestCanvases": 1,
+  "museumCanvasHidden": true,
+  "loopRunning": true,
+  "activations": 2,
+  "disposals": 1,
+  "frames": 125,
+  "loops": 3,
+  "roomOrigin": [
+   60,
+   0,
+   -10
+  ],
+  "museumPaused": true,
+  "lastError": null,
+  "guest": {
+   "phase": "1B-1E",
+   "backend": "webgpu",
+   "adapter": null,
+   "wind": "BREEZE",
+   "windValue": 1,
+   "suspended": 0,
+   "sinceLaunch": 1,
+   "lastError": null,
+   "prepared": 1,
+   "activated": 1,
+   "restored": 0,
+   "disposed": 0,
+   "frames": 10,
+   "steps": 10,
+   "poses": 11,
+   "launches": 1,
+   "vertexCount": 6561,
+   "springCount": 51040
+  },
+  "entered": 2,
+  "left": 1,
+  "failed": 0
+ },
+ "results": [
+  {
+   "name": "adaptador WebGPU presente",
+   "ok": true,
+   "detail": "google/swiftshader"
+  },
+  {
+   "name": "la sala Breeze existe en el grafo del mundo",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "la ruta comentada llega a la sala Breeze",
+   "ok": true,
+   "detail": "1 paradas · 12 en total"
+  },
+  {
+   "name": "el visitante llega a la sala Breeze por la ruta",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "la presentación pasa al invitado Breeze",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "BACKEND REAL: WebGPU en la sala",
+   "ok": true,
+   "detail": "webgpu"
+  },
+  {
+   "name": "la física real de Breeze está horneada",
+   "ok": true,
+   "detail": "6561 vértices · 51040 muelles"
+  },
+  {
+   "name": "el lienzo del Museo queda oculto, no destruido",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "exactamente un lienzo invitado",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "la sala no aparece en negro",
+   "ok": true,
+   "detail": "YAVG 25.6291"
+  },
+  {
+   "name": "el HUD sigue recibiendo el puntero dentro de la sala",
+   "ok": false,
+   "detail": "arriba: detail · velo false · puntero del lienzo invitado none"
+  },
+  {
+   "name": "la cámara del Museo llega traducida al invitado",
+   "ok": true,
+   "detail": "museo [50.87,1.72,-17.79] − origen [60,0,-10] → invitado [-9.13,1.72,-7.79]"
+  },
+  {
+   "name": "el invitado no tiene controles propios",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "la guía se aparta del momento central",
+   "ok": true,
+   "detail": "opacidad de la guía en la colisión 0"
+  },
+  {
+   "name": "la simulación avanza dentro de la sala",
+   "ok": true,
+   "detail": "18 → 98 pasos"
+  },
+  {
+   "name": "la ficha nombra la instalación",
+   "ok": true,
+   "detail": "Viento sobre mármol / Viento sobre mármol"
+  },
+  {
+   "name": "sin error interno en el invitado",
+   "ok": true,
+   "detail": "ninguno"
+  },
+  {
+   "name": "CERO CONOCIDO: suspendida, dos fotogramas idénticos",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "LA SIMULACIÓN MUEVE LOS PÍXELES: al reanudar, el fotograma cambia",
+   "ok": false,
+   "detail": "YAVG 27.7065 → 27.7065"
+  },
+  {
+   "name": "la presentación vuelve al Museo al salir",
+   "ok": true,
+   "detail": "MUSEUM"
+  },
+  {
+   "name": "no queda ningún lienzo invitado",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "el Museo vuelve a pintar",
+   "ok": true,
+   "detail": "YAVG 32.5651"
+  },
+  {
+   "name": "la sala vuelve a abrirse al reentrar",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "el segundo ciclo también es WebGPU",
+   "ok": true,
+   "detail": "webgpu"
+  },
+  {
+   "name": "entradas y salidas equilibradas",
+   "ok": true,
+   "detail": "2 activaciones · 1 liberaciones"
+  },
+  {
+   "name": "sin bucles huérfanos",
+   "ok": true,
+   "detail": "3 bucles para 2 activaciones"
+  },
+  {
+   "name": "sin errores de runtime",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ],
+ "errors": []
+}

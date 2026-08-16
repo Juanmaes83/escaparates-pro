@@ -1,46 +1,42 @@
 /**
- * PHASE 1A — the real Breeze compute core, running as an E1 guest.
+ * The Breeze installation, running inside the Museum as an Option E1 guest.
  *
- * The Option E1 spike proved the host contract with a WebGL test double, and
- * said so in as many words: substituting a double for the ARCHITECTURE is
- * legitimate, substituting one for the CAPABILITY would be faking the result.
- * This file is the beginning of not faking it. Every kernel that runs here comes
- * from `vendor/breeze-core/`, built from `Juanmaes83/breeze@0ab8234`, with the
- * physics file byte-identical to the donor's.
+ * Everything that makes this Breeze comes from `vendor/breeze-core/`, built from
+ * `Juanmaes83/breeze@0ab8234` with the physics, the cloth, the sculpture, the
+ * wind field and the key light byte-identical to the donor:
  *
- *   No fake cloth. No prerecorded substitution. No test double presented as Breeze.
+ *   REAL   WebGPU device and `WebGPURenderer` — a WebGL fallback is refused
+ *   REAL   `VerletPhysics` — donor kernels, dispatched on the GPU
+ *   REAL   `Statue` — the Venus de Milo GLB, and the OBJ its collider is built from
+ *   REAL   `BVH` — donor traversal, compiled into the vertex kernel
+ *   REAL   `ClothGeometry` — the 80×80 spring lattice, the fabric maps, the
+ *          `MeshPhysicalNodeMaterial` with its sheen, and the TSL position node
+ *          that reads every vertex straight out of the physics buffer
+ *   REAL   wind — the donor's `triNoise3Dvec` field, its own expression
  *
- * WHAT IS REAL HERE, AND WHAT IS STILL A PLACEHOLDER
+ *   MUSEUM   the camera, the room, the lighting environment, the lifecycle, and
+ *            when the cloth is launched
  *
- * Being precise about this is the point of phasing, so it is stated in the code
- * rather than only in a report:
- *
- *   REAL   WebGPU device and `WebGPURenderer` — no WebGL fallback is accepted
- *   REAL   `VerletPhysics` — the donor's file, unmodified, its kernels compiled
- *          and dispatched on the GPU
- *   REAL   `StructuredArray` — the donor's GPU struct layout
- *   REAL   `BVH` — the donor's collider traversal, compiled into the vertex kernel
- *   REAL   gravity, exactly the donor's term (`force.y -= 0.000001`)
- *
- *   PLACEHOLDER  the collider geometry is a sphere, not Venus            → 1B
- *   PLACEHOLDER  the cloth is a plain pinned grid built through the physics
- *                API, not `clothGeometry.js`, and it is drawn as instanced
- *                markers rather than a lit, textured fabric              → 1C
- *   ABSENT       wind — the donor's noise term is not added              → 1D
- *   ABSENT       Venus BVH integration and its authored placement        → 1E
- *
- * A placeholder here is a placeholder of *content*, never of capability. The
- * simulation that moves those markers is Breeze's, on the GPU, and the readback
- * in `sampleVertices()` is what proves it rather than asserting it.
+ * There is no CPU animation anywhere. The visible fabric is positioned by
+ * `material.positionNode`, which samples `smoothedPosition` per vertex on the
+ * GPU — so if the compute pass stopped, the cloth would freeze rather than keep
+ * moving. That property is what the pixel evidence tests.
  *
  * CAMERA
  *
  *   MUSEUM DECIDES CAMERA. THE GUEST RENDERS IT.
  *
- * There are no controls in this file, no `OrbitControls`, no `autoRotate`, no
- * pointer or key listeners, and no path by which a pose could be written back to
- * the Museum. `setCameraPose` is the only way the camera moves, and the Director
- * is the only thing that calls it.
+ * No `OrbitControls`, no `autoRotate`, no pointer or key listeners, no way to
+ * write a pose back. `setCameraPose` is the only thing that moves the camera and
+ * the Director is the only thing that calls it.
+ *
+ * COORDINATES
+ *
+ * The guest does not have a coordinate space of its own. The Museum's Breeze
+ * room is authored directly in the installation's coordinates — Venus at the
+ * origin, the cloth entering from −X — so a pose the Director resolves is a pose
+ * this scene can use unchanged. One space, one truth, no conversion to get
+ * subtly wrong.
  */
 
 /** The vendored core. Resolved relative to this file so no import map is needed. */
@@ -48,38 +44,54 @@ export const BREEZE_CORE_URL = new URL(
   '../../../vendor/breeze-core/breeze-core.js', import.meta.url
 ).href;
 
-/** Reported by `report()` so a harness can assert on the phase, not infer it. */
-export const PHASE = '1A';
+export const PHASE = '1B-1E';
+
+/**
+ * Product-facing wind, as the spec asks for: named strengths rather than a raw
+ * coefficient. `BREEZE` is exactly the donor's cloth scene — multiplier 1.0
+ * leaves its expression untouched — so the authored default is the look that was
+ * approved, and the other levels scale that same force rather than substituting
+ * a different one.
+ */
+export const WIND = Object.freeze({
+  CALM: 0,
+  BREEZE: 1,
+  GUST: 1.8
+});
 
 export class BreezeGuest {
-  /**
-   * @param {object} [options]
-   * @param {string} [options.coreUrl]      override for tests
-   * @param {number} [options.clothSize]    grid resolution per side
-   * @param {number} [options.pixelRatio]
-   */
-  constructor({ coreUrl = BREEZE_CORE_URL, clothSize = 24, pixelRatio } = {}) {
+  constructor({
+    coreUrl = BREEZE_CORE_URL,
+    clothSegments = 80,
+    pixelRatio,
+    wind = 'BREEZE'
+  } = {}) {
     this.coreUrl = coreUrl;
-    this.clothSize = clothSize;
+    this.clothSegments = clothSegments;
     this.pixelRatio = pixelRatio;
+    this.windLevel = wind;
 
     this.core = null;
     this.renderer = null;
     this.scene = null;
     this.camera = null;
     this.physics = null;
-    this.bvh = null;
-    this.markers = null;
+    this.statue = null;
+    this.cloth = null;
+    this.clothGeometry = null;
+    this.lights = null;
     this.canvas = null;
+    this.uniforms = {};
 
     this._stepping = false;
     this._reading = false;
     this._suspended = false;
     this._elapsed = 0;
+    this._sinceLaunch = 0;
 
     this.stats = {
       prepared: 0, activated: 0, suspended: 0, restored: 0, disposed: 0,
-      frames: 0, steps: 0, poses: 0, vertexCount: 0, springCount: 0
+      frames: 0, steps: 0, poses: 0, launches: 0, vertexCount: 0, springCount: 0
     };
     this.backend = null;
     this.adapterInfo = null;
@@ -87,14 +99,14 @@ export class BreezeGuest {
   }
 
   /**
-   * Acquire the device. Deliberately separated from `activate`: the host pauses
-   * the Museum only after `prepare` resolves, and device acquisition is the slow,
-   * failure-prone part. Doing it after the handoff is how an activation shows a
-   * black frame for a second and a half.
+   * Acquire the device.
+   *
+   * Separated from `activate` because the host stands the Museum down only once
+   * this resolves, and device acquisition is the slow, failure-prone part. Doing
+   * it after the handoff is how an activation shows a black frame.
    */
   async prepare({ canvas, config = {} } = {}) {
     this.canvas = canvas;
-
     if (!navigator.gpu) {
       throw new Error('BREEZE: este navegador no expone WebGPU (navigator.gpu ausente)');
     }
@@ -102,13 +114,15 @@ export class BreezeGuest {
     this.core = await import(/* @vite-ignore */ this.coreUrl);
     const { THREE } = this.core;
 
-    // No `forceWebGL`. A silent WebGL fallback would run the room without the
-    // compute pipeline the whole room is for, and would look almost right —
-    // which is the worst kind of wrong to ship.
+    // No `forceWebGL`. A silent fallback would run the room without the compute
+    // pipeline the room exists for, and would look almost right.
     this.renderer = new THREE.WebGPURenderer({ canvas, antialias: config.antialias !== false });
     this.renderer.setPixelRatio(this.pixelRatio ?? Math.min(window.devicePixelRatio || 1, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = config.exposure ?? 1.35;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     await this.renderer.init();
 
@@ -119,70 +133,103 @@ export class BreezeGuest {
     try {
       const info = this.renderer.backend?.adapter?.info;
       if (info) this.adapterInfo = { vendor: info.vendor, architecture: info.architecture };
-    } catch { /* adapter info is advisory */ }
+    } catch { /* advisory */ }
 
     this.stats.prepared += 1;
     return true;
   }
 
-  /**
-   * Build the scene and bake the physics.
-   *
-   * `bake()` compiles every kernel and dispatches `resetVertices` once to force
-   * compilation, so by the time this resolves the GPU pipeline exists. That is
-   * the expensive moment, and it is intentionally on this side of the first
-   * frame rather than inside the frame loop.
-   */
   async activate({ config = {} } = {}) {
-    const { THREE, TSL, VerletPhysics, BVH } = this.core;
-    const { instanceIndex, positionLocal, vec3 } = TSL;
+    const { THREE, TSL, VerletPhysics, Statue, ClothGeometry, Lights, triNoise3Dvec } = this.core;
+    const { vec3, smoothstep, uniform } = TSL;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(config.background ?? 0x0c0b0a);
+    this.scene.background = new THREE.Color(config.background ?? 0x14120f);
 
-    this.camera = new THREE.PerspectiveCamera(40, this._aspect(), 0.01, 200);
+    this.camera = new THREE.PerspectiveCamera(config.fov ?? 40, this._aspect(), 0.05, 400);
 
-    // PLACEHOLDER GEOMETRY (1B replaces it with Venus). The BVH built from it is
-    // the donor's, and its traversal is compiled into the real vertex kernel.
-    const colliderGeometry = new THREE.IcosahedronGeometry(0.6, 4);
-    colliderGeometry.deleteAttribute('uv');
-    this.bvh = new BVH(colliderGeometry);
-    this.collider = new THREE.Mesh(
-      colliderGeometry,
-      new THREE.MeshBasicNodeMaterial({ color: 0x2b2724 })
-    );
-    this.scene.add(this.collider);
+    // Image-based lighting from a neutral studio environment rather than the
+    // donor's outdoor HDRI skybox. The spec's background contract is explicit
+    // that the standalone screen background is not a Museum world background,
+    // and lists "bounded installation background" as a representation — an
+    // outdoor sky inside a gallery would be the demo showing through. The
+    // donor's decoder also spins up a second WebGLRenderer per load and never
+    // disposes it, which across repeated room entries is a leaked context each
+    // time.
+    // `RoomEnvironment` comes from the Breeze bundle, not from `vendor/three/`.
+    // The first version of this built it from the Museum's WebGL Three 0.185 and
+    // handed the result to this renderer's PMREM generator, which lost the
+    // WebGPU device outright — "a valid external Instance reference no longer
+    // exists" — with nothing thrown to catch and a blank canvas as the only
+    // symptom. Two Three instances in one page is the design; one object
+    // crossing between them is the bug.
+    if (config.environment !== false) {
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      this._envTarget = pmrem.fromScene(new this.core.RoomEnvironment(), 0.04);
+      this.scene.environment = this._envTarget.texture;
+      this.scene.environmentIntensity = config.environmentIntensity ?? 0.55;
+      this._pmrem = pmrem;
+    }
 
+    // ── The sculpture. Donor class, donor GLB, donor collision OBJ. ──────────
+    this.statue = new Statue();
+    await this.statue.init();
+    this.scene.add(this.statue.object);
+
+    this.lights = new Lights();
+    this.scene.add(this.lights.object);
+
+    // ── The physics, with the donor's own wind, scaled by a named level. ────
     this.physics = new VerletPhysics(this.renderer);
+    this.uniforms.wind = uniform(WIND[this.windLevel] ?? WIND.BREEZE);
 
-    // The donor's gravity term, and only that. The wind that makes Breeze look
-    // like Breeze is a noise field added to this same force, and it arrives in
-    // 1D; adding an approximation of it now would be inventing Breeze rather
-    // than porting it.
+    // The donor's cloth-scene force, unaltered except for the trailing factor
+    // that turns it into an authored strength. At BREEZE the factor is 1 and the
+    // expression is the donor's exactly; at CALM it is 0 and only gravity acts,
+    // which is what makes "the wind is real" checkable rather than asserted.
     this.physics.addForce((position, time) => {
       const force = vec3(0).toVar();
       force.y.subAssign(0.000001);
+      const noise = triNoise3Dvec(position.mul(0.01), 0.2, time).sub(vec3(0.0, 0.285, 0.285));
+      const chaos = smoothstep(-0.5, 1, position.x).mul(0.0001).toVar();
+      force.addAssign(noise.mul(vec3(0.00005, chaos, chaos)).mul(5).mul(this.uniforms.wind));
       return force;
     });
-    this.physics.addCollider(this.bvh);
 
-    this._buildClothGrid(config);
+    // The collider is built from the sculpture's own geometry, not from a proxy
+    // primitive. Replacing the visual without replacing this is called out in
+    // the spec as a failure, so the two arrive together or not at all.
+    this.physics.addCollider(this.statue.bvh);
+
+    // ── The cloth. Donor lattice, donor fabric, donor material. ──────────────
+    this.clothGeometry = new ClothGeometry(this.physics, this.clothSegments, this.clothSegments);
+    this.cloth = this.clothGeometry.addInstance();
+    await this.clothGeometry.bake();
+    this.scene.add(this.clothGeometry.object);
+
+    this._spawn = new THREE.Vector3(...(config.clothSpawn ?? [-10, 5.0, 0]));
+    await this.physics.resetObject(this.cloth.id, this._spawn, new THREE.Quaternion());
 
     await this.physics.bake();
+
+    // The donor's frame loop reads object positions off the GPU every fiftieth
+    // frame, unawaited and uncaught, to decide when a cloth has flown past and
+    // should be recycled. That map fails in this environment once rendering is
+    // active — see qa/tools/breeze-readback-calibration.mjs — and an uncaught
+    // rejection every fifty frames is noise the Museum would have to explain.
+    // The call is neutralised on this instance only; the donor file is
+    // untouched, and the recycle it fed is replaced below by a launch the room
+    // controls, which the room wants anyway.
+    this.physics.readPositions = async () => {};
+
     this.stats.vertexCount = this.physics.vertexCount;
     this.stats.springCount = this.physics.springCount;
+    this.stats.launches = 1;
+    this._sinceLaunch = 0;
 
-    // Instanced markers, one per simulated vertex, positioned straight from the
-    // physics buffer on the GPU. Nothing reads positions back to place them, so
-    // what is on screen is the simulation and not a CPU copy of it.
-    const marker = new THREE.BoxGeometry(0.012, 0.012, 0.012);
-    const material = new THREE.MeshBasicNodeMaterial({ color: 0xd8d2c6 });
-    material.positionNode = positionLocal.add(
-      this.physics.vertexBuffer.element(instanceIndex).get('smoothedPosition')
-    );
-    this.markers = new THREE.InstancedMesh(marker, material, this.physics.vertexCount);
-    this.markers.frustumCulled = false;
-    this.scene.add(this.markers);
+    // Physics defaults: the donor's cloth scene overrides friction to 0.25.
+    this.core.physicsConfig.friction = config.friction ?? 0.25;
+    this.core.physicsConfig.stiffness = config.stiffness ?? 0.25;
 
     this.resize();
     this.stats.activated += 1;
@@ -190,66 +237,42 @@ export class BreezeGuest {
   }
 
   /**
-   * A pinned grid, built through the physics API rather than through
-   * `clothGeometry.js`. That file carries the donor's fabric textures, its
-   * normal map and its material, all of which are room content and belong to 1C.
-   * The springs here are the same springs the same solver will integrate.
+   * Relaunch the cloth on a clock the room owns.
+   *
+   * The spec asks explicitly whether the physics should stay fully continuous,
+   * be seeded, or use a controlled launch, and answers that museum dramaturgy
+   * has to be reliable: a visitor arriving at a Tour Stop must actually see the
+   * approach, the contact and the release, not whatever phase the simulation
+   * happened to be in. So the launch is deterministic and the flight is not —
+   * the cloth is released at a known moment and the wind does what it does.
+   *
+   * This also replaces the donor's recycle, which depended on reading object
+   * positions back off the GPU every fiftieth frame.
    */
-  _buildClothGrid(config) {
+  async relaunch() {
+    if (!this.physics?.isBaked || !this.cloth) return false;
     const { THREE } = this.core;
-    const n = Math.max(4, config.clothSize ?? this.clothSize);
-    const span = config.clothSpan ?? 1.4;
-    const step = span / (n - 1);
-    const object = this.physics.addObject();
-    const grid = [];
-
-    // Rows run bottom-up so vertex 0 is a free vertex. `readPositions()` samples
-    // each object's *first* vertex, and an object whose first vertex is pinned
-    // would report a position that never changes — a still reading from a
-    // running simulation.
-    for (let y = 0; y < n; y++) {
-      const row = [];
-      for (let x = 0; x < n; x++) {
-        const pinned = y === n - 1 && (x === 0 || x === n - 1);
-        // The top row hangs at `clothHeight` and the grid extends `span` below
-        // it, so `clothHeight` must exceed `span`: the donor's vertex kernel has
-        // a hard floor at y = 0 and shoves anything below it back up. A cloth
-        // authored straddling that plane launches upward on the first step, and
-        // the symptom reads as broken physics rather than as bad placement.
-        row.push(this.physics.addVertex(object.id, new THREE.Vector3(
-          -span / 2 + x * step,
-          (config.clothHeight ?? 1.9) - (n - 1 - y) * step,
-          config.clothZ ?? 0.9
-        ), pinned));
-      }
-      grid.push(row);
-    }
-
-    for (let y = 0; y < n; y++) {
-      for (let x = 0; x < n; x++) {
-        if (x + 1 < n) this.physics.addSpring(object.id, grid[y][x], grid[y][x + 1]);
-        if (y + 1 < n) this.physics.addSpring(object.id, grid[y][x], grid[y + 1][x]);
-        // Shear springs: without them a square grid folds flat along a diagonal
-        // and reads as a net rather than as fabric.
-        if (x + 1 < n && y + 1 < n) {
-          this.physics.addSpring(object.id, grid[y][x], grid[y + 1][x + 1]);
-          this.physics.addSpring(object.id, grid[y + 1][x], grid[y][x + 1]);
-        }
-      }
-    }
-    this._clothObjectId = object.id;
+    await this.physics.resetObject(this.cloth.id, this._spawn, new THREE.Quaternion());
+    this._sinceLaunch = 0;
+    this.stats.launches += 1;
+    return true;
   }
 
-  /** The Museum's pose. The guest has no other way to move the camera. */
+  /** Named wind, applied live. The room authors it; there is no GUI. */
+  setWind(level) {
+    if (!(level in WIND)) return false;
+    this.windLevel = level;
+    if (this.uniforms.wind) this.uniforms.wind.value = WIND[level];
+    return true;
+  }
+
   setCameraPose(pose) {
     if (!this.camera || !pose) return false;
     const [px, py, pz] = pose.position;
     const [tx, ty, tz] = pose.target;
     this.camera.position.set(px, py, pz);
     this.camera.lookAt(tx, ty, tz);
-    if (typeof pose.fov === 'number' && pose.fov !== this.camera.fov) {
-      this.camera.fov = pose.fov;
-    }
+    if (typeof pose.fov === 'number' && pose.fov !== this.camera.fov) this.camera.fov = pose.fov;
     this.camera.updateProjectionMatrix();
     this.stats.poses += 1;
     return true;
@@ -279,31 +302,27 @@ export class BreezeGuest {
   /**
    * One frame.
    *
-   * The host's loop is synchronous and the physics is not, so a step in flight
-   * is skipped rather than queued. Awaiting inside `requestAnimationFrame` would
-   * let compute dispatches pile up behind a slow frame until the tab stalls —
-   * and the visible symptom would be the room "freezing", which reads as a
-   * Museum bug rather than as backpressure.
+   * The host's loop is synchronous and the physics is not, so a step already in
+   * flight is skipped rather than queued. Awaiting inside `requestAnimationFrame`
+   * would let compute dispatches pile up behind a slow frame until the tab
+   * stalls, and the visible symptom would be the room freezing — which reads as
+   * a Museum bug rather than as backpressure.
    */
   update(dt) {
     if (!this.renderer || this._suspended || this._stepping || this._reading) return false;
     this._stepping = true;
     this._elapsed += dt;
+    this._sinceLaunch += dt;
     this.stats.frames += 1;
     this._step(dt).catch((e) => { this.lastError = String(e?.message || e); })
       .finally(() => { this._stepping = false; });
     return true;
   }
 
-  /**
-   * True while a compute step is in flight. A conformance harness needs this to
-   * scrub the simulation deterministically: the frame rate under a software
-   * adapter is a few frames a second, so "wait some milliseconds and hope"
-   * measures the environment rather than the physics.
-   */
-  get isStepping() {
-    return this._stepping;
-  }
+  get isStepping() { return this._stepping; }
+
+  /** Simulated seconds since the cloth was last released. */
+  get sinceLaunch() { return this._sinceLaunch; }
 
   async _step(dt) {
     await this.physics.update(dt, this._elapsed);
@@ -326,58 +345,71 @@ export class BreezeGuest {
   /**
    * Read the simulated positions off the GPU.
    *
-   * This is the evidence, not a debugging convenience. "The physics ran" is only
-   * checkable if the numbers the GPU produced come back and can be compared
-   * against the initial state; a canvas that looks plausible proves nothing about
-   * whether a compute pass ever dispatched.
+   * Only usable in a window where nothing is being drawn: mapping the vertex
+   * buffer while the render pass is reading it fails on this backend, and no
+   * amount of gating the frame loop from JavaScript fixes a conflict that is on
+   * the GPU. `qa/tools/breeze-readback-calibration.mjs` establishes that, and
+   * calibrates this path against three known answers before any evidence relies
+   * on it. Motion with the renderer running is proved from pixels instead,
+   * which is the stronger claim anyway — it shows the simulation drives what the
+   * visitor sees.
    */
-  async sampleVertices(limit = 8) {
+  async sampleVertices(limit = 400) {
     if (!this.physics?.isBaked) return null;
-    // Mapping a storage buffer while the frame loop is dispatching against it
-    // fails on the WebGPU backend with "a valid external Instance reference no
-    // longer exists" — a readback and a simulation step cannot share the buffer.
-    // So the loop is gated, any step in flight is allowed to finish, and only
-    // then does the map happen.
     this._reading = true;
     try {
       while (this._stepping) await new Promise((r) => setTimeout(r, 4));
-      const buffer = new Float32Array(
-        await this.renderer.getArrayBufferAsync(this.physics.vertexBuffer.buffer.value)
-      );
+      const ab = await this.renderer.getArrayBufferAsync(this.physics.vertexBuffer.buffer.value);
+      const f32 = new Float32Array(ab);
+      const i32 = new Int32Array(ab);
       const stride = this.physics.vertexBuffer.structSize;
-      const offset = this.physics.vertexBuffer.layout.position.offset;
-      const fixedOffset = this.physics.vertexBuffer.layout.isFixed.offset;
-      const ints = new Int32Array(buffer.buffer);
-      const out = [];
-      const fixed = [];
-      const count = Math.min(limit, this.physics.vertexCount);
-      for (let i = 0; i < count; i++) {
-        const base = i * stride;
-        out.push([buffer[base + offset], buffer[base + offset + 1], buffer[base + offset + 2]]);
-        fixed.push(ints[base + fixedOffset]);
+      const off = this.physics.vertexBuffer.layout.position.offset;
+      const fixedOff = this.physics.vertexBuffer.layout.isFixed.offset;
+      const step = Math.max(1, Math.floor(this.physics.vertexCount / limit));
+      const sample = []; const fixed = [];
+      for (let i = 0; i < this.physics.vertexCount; i += step) {
+        sample.push([f32[i * stride + off], f32[i * stride + off + 1], f32[i * stride + off + 2]]);
+        fixed.push(i32[i * stride + fixedOff]);
       }
-      return { stride, offset, vertexCount: this.physics.vertexCount, sample: out, fixed };
+      return { stride, offset: off, vertexCount: this.physics.vertexCount, step, sample, fixed };
     } finally {
       this._reading = false;
     }
   }
 
+  /** Advance the simulation without drawing. Used by evidence, not by the room. */
+  async stepCompute(frames, dt = 1 / 60) {
+    for (let i = 0; i < frames; i += 1) {
+      this._elapsed += dt;
+      this._sinceLaunch += dt;
+      // eslint-disable-next-line no-await-in-loop
+      await this.physics.update(dt, this._elapsed);
+      this.stats.steps += 1;
+    }
+    return this.stats.steps;
+  }
+
   /**
    * Release the device and everything hanging off it.
    *
-   * Order matters: geometries and materials first, then the renderer, which is
-   * what actually drops the GPU device. A repeated enter/exit that leaked here
-   * would accumulate devices until the browser refused to hand out another, and
-   * the failure would land several rooms later, far from its cause.
+   * Order matters: the scene's own geometries and materials first, then the
+   * environment target and the PMREM generator, then the renderer, which is what
+   * actually drops the GPU device. A repeated enter/exit that leaked here would
+   * accumulate devices until the browser refused another, and the failure would
+   * land several rooms later, far from its cause.
    */
   async dispose() {
     this._suspended = true;
     try {
-      this.markers?.geometry?.dispose();
-      this.markers?.material?.dispose();
-      this.collider?.geometry?.dispose();
-      this.collider?.material?.dispose();
-      this.scene?.clear();
+      this.scene?.traverse?.((o) => {
+        if (o.geometry) o.geometry.dispose?.();
+        const m = o.material;
+        if (Array.isArray(m)) m.forEach((x) => x?.dispose?.());
+        else m?.dispose?.();
+      });
+      this._envTarget?.dispose?.();
+      this._pmrem?.dispose?.();
+      this.scene?.clear?.();
       await this.renderer?.dispose?.();
     } catch (e) {
       this.lastError = String(e?.message || e);
@@ -386,9 +418,12 @@ export class BreezeGuest {
     this.scene = null;
     this.camera = null;
     this.physics = null;
-    this.bvh = null;
-    this.markers = null;
-    this.collider = null;
+    this.statue = null;
+    this.cloth = null;
+    this.clothGeometry = null;
+    this.lights = null;
+    this._envTarget = null;
+    this._pmrem = null;
     this.core = null;
     this.canvas = null;
     this.stats.disposed += 1;
@@ -400,7 +435,10 @@ export class BreezeGuest {
       phase: PHASE,
       backend: this.backend,
       adapter: this.adapterInfo,
+      wind: this.windLevel,
+      windValue: this.uniforms.wind?.value ?? null,
       suspended: this._suspended,
+      sinceLaunch: +this._sinceLaunch.toFixed(2),
       lastError: this.lastError,
       ...this.stats
     };

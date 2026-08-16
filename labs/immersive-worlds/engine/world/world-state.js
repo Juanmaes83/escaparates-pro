@@ -88,6 +88,24 @@ export class WorldState {
     this.visitedSpaceIds.add(spaceId);
     if (previousSpaceId && previousSpaceId !== spaceId) {
       this.bus.emit(EVENTS.SPACE_LEFT, { spaceId: previousSpaceId });
+      // Focus belongs to the room you are standing in.
+      //
+      // Without this, a work stayed focused across a doorway and the label card
+      // went on describing it from the next gallery: arriving in Galería B, the
+      // visitor was told they were looking at a sculpture that is in Galería A.
+      // It showed up first on a Back — the return moved camera, stop and counter
+      // correctly while the card lagged — but it was never a Back defect. The
+      // forward crossing did it too; nobody had looked.
+      //
+      // Fixing it here rather than in the Director is deliberate: a crossing is
+      // a crossing whether the route drives it, a hotspot does, or the visitor
+      // walks through in Explore, and the invariant is the same in all three.
+      // A fix in the guided path would have left the other two wrong.
+      const focused = this.focusedEntityId;
+      if (focused) {
+        const stillHere = (this.store.require(spaceId).entityRefs || []).includes(focused);
+        if (!stillHere) this.setFocus(null);
+      }
     }
     this.bus.emit(EVENTS.SPACE_ENTERED, { spaceId, arrivalAnchorId: this.arrivalAnchorId, previousSpaceId });
     this._changed('space', { spaceId, previousSpaceId });

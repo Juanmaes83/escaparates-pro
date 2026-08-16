@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Build recipe for the vendored Breeze core. Not part of the Museum runtime.",
   "scripts": {
-    "build": "vite build --mode=production && node -e \"require('fs').copyFileSync('dist/breeze-core.js','../breeze-core.js')\"",
+    "build": "vite build --mode=production && node -e \"const fs=require('fs'),p=require('path');fs.rmSync('../assets',{recursive:true,force:true});fs.cpSync('dist/assets','../assets',{recursive:true});fs.copyFileSync('dist/breeze-core.js','../breeze-core.js')\"",
     "build:readable": "vite build --mode=production --minify=false --outDir=dist-readable"
   },
   "dependencies": {

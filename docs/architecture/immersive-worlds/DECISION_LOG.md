@@ -1406,3 +1406,40 @@ different, independent check, suspect the instrument first. The destination had
 been proved to 0.0000 m by a harness driving the real control; a cut with a
 correct destination is possible but unlikely, and the cheap move was to confirm
 the measurement before believing it.
+
+---
+
+## L-31 · Three questions that all get called "WebGPU support"
+
+**What happened.** Phase 1A ended with a readback that failed and was recorded as
+the thing blocking the phase. It was not. Building the room one piece at a time
+and asking after each piece whether the GPU device was still alive put the death
+on the very first `renderAsync` — of an **empty scene**, before Venus, before the
+cloth, before physics, before shadows. Every later GPU call, including the
+readback, then failed with the same message, which is why the readback looked
+like the culprit.
+
+Under the launch configuration every Breeze harness had inherited —
+`--use-gl=swiftshader --enable-unsafe-swiftshader --enable-unsafe-webgpu` —
+WebGPU answers `navigator.gpu`, returns a `google/swiftshader` adapter, creates
+a device, and dispatches compute passes that return correct values. It cannot
+present to a canvas. Nothing throws; `renderAsync` resolves; the canvas stays
+blank and the device is gone.
+
+Sweeping launch configurations found that SwiftShader's **Vulkan** path presents
+and keeps the device alive — and runs about ten times faster besides. The whole
+installation then built and rendered on the first attempt.
+
+**Classification.** ENVIRONMENT CONFIGURATION, misread first as a product
+limitation and then as an instrument bug in the readback.
+
+**Rule.** *"Is WebGPU supported" is three questions.* Is there an adapter; can it
+compute; can it present. An environment can answer yes, yes, no — this one did —
+and a probe that stops at the first or second will certify a capability the
+product cannot use. Probe the operation the product actually performs, which for
+a renderer means drawing a frame and then checking the device survived it.
+
+**Corollary, and the reason this cost a phase.** When a device is lost, every
+subsequent call reports the same error. The *last* thing to fail is the loudest
+and the least informative. Bisect forward from the first operation rather than
+debugging the one that happened to be in your hands.

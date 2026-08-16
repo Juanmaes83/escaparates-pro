@@ -35,6 +35,22 @@ export { StructuredArray } from './src/common/structuredArray.js';
 export { VerletPhysics } from './src/physics/verletPhysics.js';
 export { BVH } from './src/bvh.js';
 
+// The installation itself: the sculpture with its collision geometry, the cloth
+// with its fabric material and spring lattice, the wind noise field, and the
+// key light. These are the donor's, unmodified — the room is Breeze running,
+// not a Museum impression of Breeze.
+// Neutral studio IBL, from *this* bundle's Three rather than the Museum's.
+// Feeding a Scene built by the Museum's WebGL Three 0.185 into this renderer's
+// PMREM generator loses the WebGPU device outright — "a valid external Instance
+// reference no longer exists" — with no exception to catch. Two Three instances
+// in one page is fine; one object crossing between them is not.
+export { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+export { Statue } from './src/statue.js';
+export { ClothGeometry } from './src/clothGeometry.js';
+export { Lights } from './src/lights.js';
+export { triNoise3Dvec } from './src/common/noise.js';
+
 /** The physics parameter object (Museum shim, not the donor's Tweakpane panel). */
 export { conf as physicsConfig } from './src/conf.js';
 
@@ -48,7 +64,15 @@ export const BREEZE_SOURCE = Object.freeze({
   license: 'MIT — © 2025 Niklas Niehus',
   three: '0.176.0',
   threeMeshBvh: '0.9.0',
-  extracted: ['src/common/structuredArray.js', 'src/physics/verletPhysics.js', 'src/bvh.js'],
+  extracted: [
+    'src/common/structuredArray.js', 'src/physics/verletPhysics.js', 'src/bvh.js',
+    'src/statue.js', 'src/clothGeometry.js', 'src/lights.js', 'src/common/noise.js'
+  ],
+  assets: [
+    'venus_de_milo.glb', 'venus_simple2.obj',
+    'Fabric_Lace_038_basecolor.png', 'Fabric_Lace_038_normal.png',
+    'Fabric_Lace_038_opacity.png', 'Fabric_Lace_038_roughness.png'
+  ],
   // Deliberately does not name the donor's GUI library: the provenance check
   // greps the built bundle for app-shell identifiers, and a string here saying
   // the panel was removed would trip the very check that proves it was.

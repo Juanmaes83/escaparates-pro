@@ -127,8 +127,15 @@ const MOMENT = () => {
     // The label card is sampled with everything else because a stop and the
     // label describing it must never come from different instants — the defect
     // family already recorded as L-18.
-    labelTitle: q('detailTitle')?.textContent?.trim() || null,
-    labelCount: q('detailCount')?.textContent?.trim() || null,
+    // `detailTitle` keeps its text when the card is hidden, so reading it alone
+    // cannot tell a stale label from a correctly dismissed one. Both were being
+    // reported as the same failure.
+    labelVisible: q('detail') ? !q('detail').hidden : null,
+    labelTitle: q('detail') && !q('detail').hidden
+      ? (q('detailTitle')?.textContent?.trim() || null) : null,
+    labelCount: q('detail') && !q('detail').hidden
+      ? (q('detailCount')?.textContent?.trim() || null) : null,
+    focusedEntityId: rt.state.focusedEntityId || null,
     transport: rt.experience.transport,
     pauseLabel: q('pauseBtn')?.textContent?.trim() || null,
     prevEnabled: q('prevBtn') ? !q('prevBtn').disabled : null,
@@ -338,9 +345,11 @@ say('el contador vuelve a su valor de ida', m3.counterText === m1.counterText,
 // The card and the stop must agree at every sampled instant, going back as well
 // as forward. A return that leaves the previous stop's label on screen is a
 // caption/state desync, not a camera problem.
-say('la ficha describe la parada en la que se está, no la anterior',
-  m2.labelTitle !== m1.labelTitle,
-  `ida «${m1.labelTitle}» ${m1.labelCount} → atrás «${m2.labelTitle}» ${m2.labelCount}`);
+// Either the card names this stop's work, or there is no card. What it must
+// never do is keep naming the stop the visitor just left.
+say('la ficha no describe la parada anterior',
+  m2.labelTitle === null || m2.labelTitle !== m1.labelTitle,
+  `ida «${m1.labelTitle}» ${m1.labelCount} → atrás ${m2.labelTitle ? `«${m2.labelTitle}» ${m2.labelCount}` : 'sin ficha'}`);
 
 /* ── 4. CROSSING B, THEN CROSS-ROOM BACK ────────────────────────────── */
 console.log('\n4 · TRAVESÍA B Y RETROCESO ENTRE SALAS');
@@ -396,9 +405,15 @@ say('el contador del HUD sigue al retroceso entre salas', m5.counterText !== m4.
 say('la guía sobrevive al cruce hacia atrás', m5.guideOpacity !== null, `opacidad ${m5.guideOpacity}`);
 // The same desync checked in the same room, checked again across the doorway:
 // a return that repaints the camera but not the card is wrong in both places.
-say('la ficha describe la parada tras el retroceso entre salas',
-  m5.labelTitle !== m4.labelTitle,
-  `«${m4.labelTitle}» ${m4.labelCount} → «${m5.labelTitle}» ${m5.labelCount}`);
+say('la ficha no sobrevive al cruce hacia atrás',
+  m5.labelTitle === null || m5.labelTitle !== m4.labelTitle,
+  `«${m4.labelTitle}» → ${m5.labelTitle ? `«${m5.labelTitle}»` : 'sin ficha'}`);
+// The forward arrival had the same defect and nobody had looked: the card kept
+// naming a Galería A sculpture from inside Galería B.
+say('la ficha no cruza la puerta hacia adelante',
+  m4.labelTitle === null || m4.focusedEntityId === null
+    || (m4.space === 'space.gallery-b' && m4.labelTitle !== 'Vasija de arenas'),
+  `en ${m4.space}: ${m4.labelTitle ? `«${m4.labelTitle}»` : 'sin ficha'}`);
 
 /* ── 6. CROSS-ROOM FORWARD AGAIN ────────────────────────────────────── */
 console.log('\n6 · ADELANTE ENTRE SALAS OTRA VEZ');

@@ -496,6 +496,38 @@ export class ExperienceDirector {
     return true;
   }
 
+  /**
+   * Put the beat's subject into World State, which is what the label card reads.
+   *
+   *   ACTIVE TOUR STOP → ACTIVE ENTITY → LABEL CARD
+   *
+   * The forward path established this on beat entry and the return path did not,
+   * so going back moved the camera, the stop and the counter correctly while the
+   * label kept describing the work the visitor had just left — across a room
+   * boundary, a work in the other gallery. The return was exact to four decimal
+   * places and still told the visitor the wrong thing.
+   *
+   * The fix is this one function called from both paths rather than a copy of
+   * the dispatch inside `_returnToSettle`: a second copy is how the two sides
+   * drift apart again the next time focus semantics change.
+   *
+   * A settle beat whose subject is not a work — an OVERVIEW of the room, say —
+   * releases focus instead of leaving the previous card up. A stop with no work
+   * to name should show no label, not the last one that happened to be on
+   * screen.
+   */
+  _focusSubject(step) {
+    const ref = step?.subjectRef;
+    if (ref && this.store.kindOf(ref) === 'ENTITY') {
+      this.ports.dispatch(
+        { type: ACTION.FOCUS_ENTITY, target: ref, params: { camera: false } },
+        { source: 'EXPERIENCE', sourceId: step.id }
+      );
+      return true;
+    }
+    return false;
+  }
+
   /** Fly to a stop's settled composition and leave the route ready to continue. */
   _returnToSettle(stopId, settle) {
     this.index = settle.beatIndex >= 0 ? settle.beatIndex : this.index;
@@ -512,6 +544,12 @@ export class ExperienceDirector {
     // from wherever the visitor came from.
     this.ports.stageGuide?.(settle.guide);
     this.ports.stageVisitor?.(settle.visitor);
+
+    // …and it includes what the visitor is looking at. Same rule as the guide:
+    // the composition is restored whole, not partly.
+    if (!this._focusSubject(beat)) {
+      this.ports.dispatch({ type: ACTION.RELEASE_FOCUS }, { source: 'EXPERIENCE', sourceId: beat.id });
+    }
 
     this.ports.requestAuthority(CAMERA_AUTHORITY.DIRECTED, { reason: `route:${this.routeId}:back` });
     const shape = TRANSITION_SHAPE[TRANSITION.LOCAL];
@@ -688,10 +726,7 @@ export class ExperienceDirector {
     } else if (step.subjectRef && this.store.kindOf(step.subjectRef) === 'ENTITY') {
       // A shot about a work is also a focus of that work: Guided and Explore
       // leave the same trace in World State.
-      this.ports.dispatch(
-        { type: ACTION.FOCUS_ENTITY, target: step.subjectRef, params: { camera: false } },
-        { source: 'EXPERIENCE', sourceId: step.id }
-      );
+      this._focusSubject(step);
     }
 
     // Entering a Space is asynchronous — it may have to build and warm. The shot

@@ -65,6 +65,7 @@ import fsSync from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { WEBGPU_ARGS } from './lib/webgpu-launch.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const MODULE_ROOT = path.resolve(HERE, '..', '..');
@@ -93,7 +94,7 @@ const browser = await chromium.launch({
   // WebGPU is gated on a secure context. Served over http://127.0.0.1 with
   // --enable-unsafe-webgpu the adapter is google/swiftshader and compute works;
   // an earlier probe reported WebGPU missing only because it ran on about:blank.
-  args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--disable-gpu-sandbox', '--enable-unsafe-webgpu']
+  args: WEBGPU_ARGS
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 page.setDefaultTimeout(600000);

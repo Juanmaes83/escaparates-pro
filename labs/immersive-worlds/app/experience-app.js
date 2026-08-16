@@ -25,6 +25,7 @@ import { InputSystem } from './ui/input.js';
 import { DETERMINISTIC_STATES, STATE_NAMES } from '../qa/deterministic-states.js';
 import { applyConfigToWorld, baseConfigFromWorld, normaliseConfig } from '../authoring/experience-config.js';
 import { MediaVault } from '../authoring/media-vault.js';
+import { NestedRoomController } from './nested/nested-room-controller.js';
 import { ConfigStore } from '../authoring/config-store.js';
 
 const params = new URLSearchParams(location.search);
@@ -154,8 +155,21 @@ export async function boot() {
     if (to !== CAMERA_AUTHORITY.EXPLORE && document.pointerLockElement) document.exitPointerLock();
   });
 
+  // Rooms the Museum does not render itself. A no-op until the visitor reaches
+  // one; the world graph decides which Spaces those are, not this file.
+  const nested = new NestedRoomController({
+    runtime,
+    stage: document.getElementById('iw-stage'),
+    museumCanvas: canvas
+  }).listen(runtime.bus, EVENTS);
+
   runtime.onFrame = (pose, dt) => {
     input.update(dt);
+    // Exactly one presentation is authoritative. While a guest is up the Museum
+    // still runs its simulation — the route keeps playing, the Director keeps
+    // deciding, the HUD keeps updating — but it does not draw, and the pose it
+    // resolved is handed to whoever is drawing instead.
+    if (nested.frame(pose)) return;
     renderHost.applyPose(pose);
     // Variant D's destination pass sits exactly where the owned Infinite Worlds
     // render loop puts it: after the visitor camera is placed, before the frame
@@ -249,6 +263,7 @@ const portalVariant = (params.get('portalVariant') || 'D').toUpperCase();
 
   const requestedState = params.get('state');
   installProbe({ runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion });
+  window.__IW.nested = nested;
 
   if (requestedState && DETERMINISTIC_STATES[requestedState]) {
     // A QA run enters directly, without the human "enter" gesture.
