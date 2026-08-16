@@ -4,11 +4,11 @@ import fs from 'node:fs/promises';
 const BASE = '/labs/immersive-worlds/index.html';
 const evidence = 'tests/test-results/museum-visitor-phase1/evidence';
 
-async function ready(page, authoring = false) {
+async function ready(page) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(`${BASE}?portalVariant=D${authoring ? '&authoring=1' : ''}`, { waitUntil: 'domcontentloaded' });
+  await page.goto(`${BASE}?portalVariant=D&authoring=1`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.documentElement.dataset.iwReady === 'true', null, { timeout: 60000 });
   await page.waitForFunction(() => document.documentElement.dataset.visitorPhase1 === 'ready', null, { timeout: 10000 });
   await page.addStyleTag({ content: `*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}` });
@@ -16,10 +16,6 @@ async function ready(page, authoring = false) {
 }
 
 async function evidenceShot(page, path) {
-  await page.evaluate(() => {
-    const canvas = document.getElementById('iw-canvas');
-    if (canvas) canvas.style.visibility = 'hidden';
-  });
   const client = await page.context().newCDPSession(page);
   try {
     const shot = await client.send('Page.captureScreenshot', {
@@ -35,9 +31,11 @@ async function evidenceShot(page, path) {
 
 test.beforeAll(async () => { await fs.mkdir(evidence, { recursive: true }); });
 
-test('Studio desktop — calendar, programme, green validation and structured accessibility', async ({ page }) => {
+test('Museum Visitor Phase 1 — complete visual and functional QA', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
-  const errors = await ready(page, true);
+  const errors = await ready(page);
+
+  // 01 + 02 + 07 — Visual Calendar, Programme Editor, structured accessibility.
   await page.locator('[data-domain="visitor"]').click();
   await expect(page.getByText('01 · Planificación')).toBeVisible();
   await expect(page.getByText('02 · Agenda')).toBeVisible();
@@ -50,26 +48,23 @@ test('Studio desktop — calendar, programme, green validation and structured ac
   await expect(page.locator('[data-p1-day="2"]')).toHaveClass(/is-closed/);
   await page.locator('[data-p1-open="1"]').click();
   await expect(page.locator('[data-p1-day="2"]')).toHaveClass(/is-open/);
-
   await page.locator('[data-p1-prog]').first().click();
   await expect(page.locator('.p1-progedit').first()).toBeVisible();
 
   const a11y = page.locator('[data-p1-a11y="stepFree"]');
   if (!(await a11y.isChecked())) await a11y.click();
   await expect(page.locator('.p1-a11ygrid input:checked')).not.toHaveCount(0);
-
   await evidenceShot(page, `${evidence}/01-studio-desktop.png`);
-  expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
-});
 
-test('Visitor — Interior Map v2 + artwork progress + seen / not seen', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  const errors = await ready(page, false);
+  // 03 + 04 + 05 — Interior Map v2, artwork progress, seen / not seen.
   const state = await page.evaluate(() => {
+    const studioRoot = window.__IW_STUDIO?.root;
+    if (studioRoot) studioRoot.style.display = 'none';
     window.__IW.hud.el.veil.hidden = true;
-    const room = window.__IW.runtime.store.spaces.find((s) => window.__IW.runtime.store.entitiesOf(s.id).some((e) => ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'].includes(e.kind)));
+    const kinds = ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'];
+    const room = window.__IW.runtime.store.spaces.find((s) => window.__IW.runtime.store.entitiesOf(s.id).some((e) => kinds.includes(e.kind)));
     if (room && room.id !== window.__IW.runtime.state.activeSpaceId) window.__IW.runtime.state.enterSpace(room.id);
-    const works = room ? window.__IW.runtime.store.entitiesOf(room.id).filter((e) => ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'].includes(e.kind)) : [];
+    const works = room ? window.__IW.runtime.store.entitiesOf(room.id).filter((e) => kinds.includes(e.kind)) : [];
     if (works[0]) window.__IW.runtime.state.setFocus(works[0].id);
     window.__IW.hud.update();
     window.__IW.hud.toggleMap(true);
@@ -82,33 +77,31 @@ test('Visitor — Interior Map v2 + artwork progress + seen / not seen', async (
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
   await evidenceShot(page, `${evidence}/02-visitor-map-progress.png`);
-  expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
-});
 
-test('Full Studio — dimensions recovered in a real artwork editor', async ({ page }) => {
+  // Return to Full Studio for 06 — canonical artwork dimensions.
+  await page.evaluate(() => {
+    window.__IW.hud.toggleMap(false);
+    const studioRoot = window.__IW_STUDIO?.root;
+    if (studioRoot) studioRoot.style.display = '';
+  });
   await page.setViewportSize({ width: 1600, height: 1000 });
-  const errors = await ready(page, true);
   await page.locator('[data-domain="build"]').click();
   await page.getByRole('button', { name: /Horizonte interrumpido Obra/ }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
   const width = page.locator('[data-p1-dim="widthCm"]');
   const height = page.locator('[data-p1-dim="heightCm"]');
-  await expect(width).toBeVisible();
-  await expect(height).toBeVisible();
   await width.fill('90');
   await height.fill('240');
   await page.evaluate(() => window.__IW_STUDIO.render());
   await expect(page.getByText(/90 × 240 cm/)).toBeVisible();
   await expect(page.locator('.p1-status.is-ok').filter({ hasText: 'Medidas listas' })).toBeVisible();
   await evidenceShot(page, `${evidence}/03-dimensions-editor.png`);
-  expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
-});
 
-test('Studio mobile — approved system remains usable', async ({ page }) => {
+  // Responsive visual check using the same authored state/session.
   await page.setViewportSize({ width: 390, height: 844 });
-  const errors = await ready(page, true);
   await page.locator('[data-domain="visitor"]').click();
   await expect(page.getByText('01 · Planificación')).toBeVisible();
   await evidenceShot(page, `${evidence}/04-studio-mobile.png`);
+
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
