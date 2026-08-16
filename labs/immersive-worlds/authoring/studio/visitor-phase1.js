@@ -10,7 +10,7 @@ const A11Y = [
   ['hearingLoop','Bucle auditivo'],['audioDescription','Audiodescripción'],['signLanguage','Lengua de signos'],
   ['quietSpace','Zona tranquila'],['seating','Asientos / descanso']
 ];
-const esc = (v) => String(v ?? '').replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 
 function defaultSidecar(){
   return {
@@ -96,7 +96,6 @@ function visitorHTML(studio){
   const f=(label,key,opts={})=>studio._field(label,`visitor.${key}`,v[key],opts);
   const prog=items.length?items.map((item,i)=>{
     const open=studio.opened.has(`p1:prog:${item.id}`),ok=programmeReady(item);
-    const when=[item.start,item.end].filter(Boolean).join(' — ');
     return `<li class="p1-progitem"><div class="p1-progline"><span class="p1-progdate">${esc(item.start||'Sin fecha')}</span><div class="p1-progmeta"><b>${esc(item.title||'Actividad sin título')}</b><span>${esc(PROGRAMME_TYPE[item.type]||'Actividad')}${item.location?` · ${esc(item.location)}`:''}</span>${status(ok,'Listo','Completar')}</div><button class="p1-editbtn" data-p1-prog="${esc(item.id)}">${open?'Cerrar':'Editar'}</button></div>${open?`<div class="p1-progedit"><div class="st-vform">${studio._field('Título',`visitor.programme.${i}.title`,item.title)}${studio._selectField('Tipo',`visitor.programme.${i}.type`,item.type,PROGRAMME_TYPE)}${studio._field('Empieza',`visitor.programme.${i}.start`,item.start,{hint:'Fecha/hora o texto publicado'})}${studio._field('Termina',`visitor.programme.${i}.end`,item.end)}${studio._field('Lugar',`visitor.programme.${i}.location`,item.location)}${studio._field('Reserva',`visitor.programme.${i}.bookingUrl`,item.bookingUrl)}${studio._field('Descripción',`visitor.programme.${i}.description`,item.description,{area:true,rows:2})}${studio._field('Nota accesible',`visitor.programme.${i}.accessibilityNote`,item.accessibilityNote,{area:true,rows:2})}<button class="st-b st-b--small" data-prog-remove="${esc(item.id)}">Quitar actividad</button></div></div>`:''}</li>`;
   }).join(''):'<p class="st-note">Todavía no hay actividades.</p>';
   const checks=A11Y.map(([k,label])=>`<label class="p1-check"><input type="checkbox" data-p1-a11y="${k}" ${sidecar.accessibility[k]?'checked':''}><span>${label}</span></label>`).join('');
@@ -115,6 +114,16 @@ function entityExtra(studio,node){
   return `${studio._group('Medidas físicas',`<div class="p1-cap__head"><p class="st-note">Verdad física de la pieza. La representación visual sigue siendo independiente.</p>${status(dimsOk,'Medidas listas','Completar')}</div><div class="p1-dims"><label>Ancho · cm<input data-p1-dim="widthCm" inputmode="decimal" value="${esc(d.widthCm)}"></label><label>Alto · cm<input data-p1-dim="heightCm" inputmode="decimal" value="${esc(d.heightCm)}"></label><label>Profundidad · cm<input data-p1-dim="depthCm" inputmode="decimal" value="${esc(d.depthCm)}" placeholder="Opcional"></label></div><div class="p1-inlineok">${dimsOk?status(true,`${d.widthCm} × ${d.heightCm}${d.depthCm?` × ${d.depthCm}`:''} cm`):''}</div>`)}${studio._group('Accesibilidad de la obra',`<div class="p1-cap__head"><p class="st-note">La misma semántica que alimenta Contenido en texto.</p>${status(a11yOk,'Accesibilidad lista','Completar')}</div><label class="st-f"><span class="st-l">Etiqueta accesible</span><input data-p1-entity-a11y="accessibilityLabel" value="${esc(d.accessibilityLabel)}"></label><label class="st-f"><span class="st-l">Descripción accesible</span><textarea rows="3" data-p1-entity-a11y="accessibilityDescription">${esc(d.accessibilityDescription)}</textarea></label><label class="st-f"><span class="st-l">Transcripción</span><textarea rows="3" data-p1-entity-a11y="transcript">${esc(d.transcript)}</textarea></label>`)}`;
 }
 
+function refreshDimensionValidation(studio,el){
+  const d=ensureEntity(studio,studio.selectedId);
+  const ok=Number(d.widthCm)>0&&Number(d.heightCm)>0;
+  const group=el.closest('.st-group')||el.parentElement?.parentElement?.parentElement;
+  const inline=group?.querySelector('.p1-inlineok');
+  const badge=group?.querySelector('.p1-cap__head .p1-status');
+  if(inline) inline.innerHTML=ok?status(true,`${d.widthCm} × ${d.heightCm}${d.depthCm?` × ${d.depthCm}`:''} cm`):'';
+  if(badge){ badge.className=`p1-status ${ok?'is-ok':'is-warn'}`; badge.textContent=ok?'Medidas listas':'Completar'; }
+}
+
 function bindP1(studio,scope){
   const root=scope||studio.root;
   root.querySelectorAll('[data-p1-day]').forEach((el)=>el.addEventListener('click',()=>{studio._p1SelectedDay=Number(el.dataset.p1Day);studio.render();}));
@@ -124,7 +133,7 @@ function bindP1(studio,scope){
   root.querySelectorAll('[data-p1-prog]').forEach((el)=>el.addEventListener('click',()=>{const k=`p1:prog:${el.dataset.p1Prog}`;studio.opened.has(k)?studio.opened.delete(k):studio.opened.add(k);studio.render();}));
   root.querySelectorAll('[data-p1-scrollcal]').forEach((el)=>el.addEventListener('click',()=>studio.root.querySelector('.p1-calendar')?.scrollIntoView({behavior:'smooth',block:'center'})));
   root.querySelectorAll('[data-p1-a11y]').forEach((el)=>el.addEventListener('change',()=>{sidecar.accessibility[el.dataset.p1A11y]=el.checked;save(sidecar);studio._markDirty();studio.render();}));
-  root.querySelectorAll('[data-p1-dim]').forEach((el)=>el.addEventListener('input',()=>{const d=ensureEntity(studio,studio.selectedId);d[el.dataset.p1Dim]=el.value;save(sidecar);applyEntityTruth(studio,studio.selectedId);studio._markDirty();}));
+  root.querySelectorAll('[data-p1-dim]').forEach((el)=>el.addEventListener('input',()=>{const d=ensureEntity(studio,studio.selectedId);d[el.dataset.p1Dim]=el.value;save(sidecar);applyEntityTruth(studio,studio.selectedId);studio._markDirty();refreshDimensionValidation(studio,el);}));
   root.querySelectorAll('[data-p1-entity-a11y]').forEach((el)=>el.addEventListener('input',()=>{const d=ensureEntity(studio,studio.selectedId);d[el.dataset.p1EntityA11y]=el.value;save(sidecar);applyEntityTruth(studio,studio.selectedId);studio._markDirty();}));
 }
 
