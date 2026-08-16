@@ -54,9 +54,6 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   await expect(page.locator('[data-capability="P1-07"] .p1-status.is-ok')).toBeVisible();
   await evidenceShot(page, `${evidence}/01-capability-index-desktop.png`);
 
-  // P1-06 stays exactly in Builder. Smoke-check discoverability/location without
-  // repeating the known headless multi-field edit sequence that previously
-  // blocked the suite and is documented for human QA before merge.
   await page.locator('[data-domain="build"]').click();
   await page.getByRole('button', { name: 'Horizonte interrumpido Obra', exact: true }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
@@ -87,7 +84,6 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   await expect(page.getByText('Mi visita')).toBeVisible();
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
-  await evidenceShot(page, `${evidence}/04-runtime-map-progress.png`);
 
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
