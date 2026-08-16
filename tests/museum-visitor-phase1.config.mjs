@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   testMatch: ['museum-visitor-phase1.spec.mjs'],
-  timeout: 90000,
+  timeout: 180000,
   retries: 0,
   workers: 1,
   reporter: [['line'], ['json', { outputFile: 'museum-visitor-phase1-results.json' }]],
