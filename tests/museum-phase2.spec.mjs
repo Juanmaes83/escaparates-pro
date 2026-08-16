@@ -11,6 +11,7 @@ async function ready(page){
   await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}'});
   return errors;
 }
+async function settle(page){await page.waitForFunction(()=>document.documentElement.dataset.iwReady==='true'&&document.documentElement.dataset.museumPhase2==='ready',null,{timeout:60000});}
 async function shot(page,name){const client=await page.context().newCDPSession(page);try{const s=await client.send('Page.captureScreenshot',{format:'png',fromSurface:true,captureBeyondViewport:false});await fs.writeFile(`${evidence}/${name}`,Buffer.from(s.data,'base64'));}finally{await client.detach();}}
 test.beforeAll(async()=>fs.mkdir(evidence,{recursive:true}));
 
@@ -22,17 +23,38 @@ test('Museum Phase 2 — navigation contract, schema 3 and six capability system
   for(const id of ['P2-MEMORY','P2-RESOURCES','P2-LANG','P2-SHOP','P2-SUPPORT'])await expect(page.locator(`[data-capability="${id}"]`)).toBeVisible();
   await shot(page,'01-visitor-capability-systems.png');
 
-  // Preview is reversible and resumes exact authoring context.
+  // Full visitor preview: ENTER → USE → EXIT → RESUME.
   await page.locator('[data-p1-action="preview-visit"]').click();
   await expect(page.locator('#p2-previewbar')).toBeVisible();
+  await expect(page.locator('#p2-previewbar')).toContainText('VISITANTE');
   await expect(page.locator('#st')).toBeHidden();
-  await expect(page.locator('[data-p2-return]')).toBeVisible();
+  await page.evaluate(()=>{
+    const runtime=window.__IW.runtime,kinds=['ARTWORK','SCULPTURE','PROJECTION','AUDIO'];
+    const work=runtime.store.entities.find((e)=>kinds.includes(e.kind)&&e.content?.title);
+    if(work){if(work.spaceId!==runtime.state.activeSpaceId)runtime.state.enterSpace(work.spaceId);runtime.state.setFocus(work.id);window.__IW.hud.update();window.__IW.hud._showDetail?.(work.id);}
+  });
+  const favorite=page.locator('[data-p2-favorite]');
+  await expect(favorite).toBeVisible();
+  await favorite.click();
+  const favoriteCount=await page.evaluate(()=>JSON.parse(localStorage.getItem('iw.museum.visitor.memory.v1')||'{}').favorites?.length||0);
+  expect(favoriteCount).toBeGreaterThan(0);
   await page.locator('[data-p2-return]').click();
   await expect(page.locator('#st')).toBeVisible();
   await expect(page.locator('[data-domain="visitor"]')).toHaveClass(/is-on/);
   await expect(page.locator('[data-capability="P2-MEMORY"]')).toBeVisible();
 
-  // Content system: artists, documents, multilingual model.
+  // Orientation preview follows the same reversible contract and keeps its mode identity.
+  await page.locator('[data-p1-action="preview-map"]').click();
+  await expect(page.locator('#p2-previewbar')).toContainText('ORIENTACIÓN');
+  await page.locator('[data-p2-return]').click();
+  await expect(page.locator('[data-domain="visitor"]')).toHaveClass(/is-on/);
+
+  // Cross-session memory survives a reload; project authoring remains a separate truth.
+  await page.reload({waitUntil:'domcontentloaded'});await settle(page);
+  const persistedFavoriteCount=await page.evaluate(()=>JSON.parse(localStorage.getItem('iw.museum.visitor.memory.v1')||'{}').favorites?.length||0);
+  expect(persistedFavoriteCount).toBe(favoriteCount);
+
+  // Content system: artists, documents, multilingual model live inside one scrollable workspace.
   await page.locator('[data-domain="content"]').click();
   for(const id of ['P2-ARTISTS','P2-DOCS','P2-LANG-MODEL'])await expect(page.locator(`[data-capability="${id}"]`)).toBeVisible();
   await page.locator('[data-p2-add-artist]').click();
@@ -41,7 +63,7 @@ test('Museum Phase 2 — navigation contract, schema 3 and six capability system
   await expect(page.locator('[data-p2-remove-doc]')).toHaveCount(1);
   await shot(page,'02-content-artists-documents-languages.png');
 
-  // Builder: presentation physical + canonical artist/document links remain contextual to artwork.
+  // Builder: dimensions stay where approved; physical presentation and links are contextual to artwork.
   await page.locator('[data-domain="build"]').click();
   await page.getByRole('button',{name:'Horizonte interrumpido Obra',exact:true}).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
@@ -56,7 +78,7 @@ test('Museum Phase 2 — navigation contract, schema 3 and six capability system
   await page.locator('[data-p2-calc-route]').click();
   await expect(page.locator('.p2-route')).toBeVisible();
 
-  // Publish is now an active capability/readiness workspace, including round-trip proof.
+  // Publish: active readiness workspace and canonical schema round-trip proof.
   await page.locator('[data-domain="publish"]').click();
   await expect(page.getByRole('heading',{name:'Publicar',exact:true})).toBeVisible();
   await expect(page.getByText('Export / Publish')).toBeVisible();
