@@ -27,6 +27,11 @@
     import { boot } from './app/experience-app.js';
     import { installVisitorPhase1 } from './authoring/studio/visitor-phase1.js';
 
+    document.addEventListener('change', (event) => {
+      if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
+      requestAnimationFrame(() => window.__IW_STUDIO?.render?.());
+    });
+
     boot().then(() => installVisitorPhase1()).catch((error) => {
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
