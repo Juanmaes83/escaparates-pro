@@ -25,6 +25,7 @@
     import { boot } from './app/experience-app.js';
     import { installVisitorPhase1 } from './authoring/studio/visitor-phase1.js';
     import { installMuseumPhase2 } from './authoring/studio/museum-phase2.js';
+    import { installMuseumPhase2LayoutFix } from './authoring/studio/museum-phase2-layout-fix.js';
 
     document.addEventListener('change', (event) => {
       if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
@@ -34,6 +35,7 @@
     boot().then(() => {
       installVisitorPhase1();
       installMuseumPhase2();
+      installMuseumPhase2LayoutFix();
     }).catch((error) => {
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
