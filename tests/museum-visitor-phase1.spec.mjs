@@ -78,7 +78,9 @@ test('Museum Visitor Phase 1 — complete visual and functional QA', async ({ pa
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
   await evidenceShot(page, `${evidence}/02-visitor-map-progress.png`);
 
-  // Return to Full Studio for 06 — canonical artwork dimensions.
+  // 06 — physical dimensions. Exercise the real user flow: input updates the
+  // validation immediately; leaving the field fires the Studio's change->render
+  // path, after which the authored dimensions must still be present.
   await page.evaluate(() => {
     window.__IW.hud.toggleMap(false);
     const studioRoot = window.__IW_STUDIO?.root;
@@ -92,7 +94,15 @@ test('Museum Visitor Phase 1 — complete visual and functional QA', async ({ pa
   const height = page.locator('[data-p1-dim="heightCm"]');
   await width.fill('90');
   await height.fill('240');
-  await page.evaluate(() => window.__IW_STUDIO.render());
+
+  // Immediate green confirmation while the editor is still active.
+  await expect(page.locator('.p1-status.is-ok').filter({ hasText: 'Medidas listas' })).toBeVisible();
+  await expect(page.getByText(/90 × 240 cm/)).toBeVisible();
+
+  // Real blur/change path: this triggers the product's rerender, not a test-only render.
+  await height.press('Tab');
+  await expect(page.locator('[data-p1-dim="widthCm"]')).toHaveValue('90');
+  await expect(page.locator('[data-p1-dim="heightCm"]')).toHaveValue('240');
   await expect(page.getByText(/90 × 240 cm/)).toBeVisible();
   await expect(page.locator('.p1-status.is-ok').filter({ hasText: 'Medidas listas' })).toBeVisible();
   await evidenceShot(page, `${evidence}/03-dimensions-editor.png`);
