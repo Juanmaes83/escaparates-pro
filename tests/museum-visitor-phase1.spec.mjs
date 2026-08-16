@@ -86,7 +86,7 @@ test('Museum Visitor Phase 1 — complete visual and functional QA', async ({ pa
   });
   await page.setViewportSize({ width: 1600, height: 1000 });
   await page.locator('[data-domain="build"]').click();
-  await page.getByRole('button', { name: /Horizonte interrumpido Obra/ }).click();
+  await page.getByRole('button', { name: 'Horizonte interrumpido Obra', exact: true }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
   const width = page.locator('[data-p1-dim="widthCm"]');
   const height = page.locator('[data-p1-dim="heightCm"]');
