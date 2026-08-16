@@ -9,6 +9,8 @@
   <meta name="description" content="Prototipo aislado del módulo Immersive Worlds de Escaparates Pro. Mundo, obras e institución ficticios.">
   <link rel="stylesheet" href="./app/ui/styles.css">
   <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
 </head>
 <body>
   <main id="iw-stage">
@@ -17,37 +19,31 @@
   <div id="iw-ui"></div>
 
   <noscript>
-    <p style="padding:2rem;font-family:Georgia,serif">
-      Este prototipo necesita JavaScript y WebGL. El contenido de la colección está descrito en
-      <code>worlds/museum-v1.world.json</code>.
-    </p>
+    <p style="padding:2rem;font-family:Georgia,serif">Este prototipo necesita JavaScript y WebGL. El contenido de la colección está descrito en <code>worlds/museum-v1.world.json</code>.</p>
   </noscript>
 
   <script type="module">
     import { boot } from './app/experience-app.js';
     import { installVisitorPhase1 } from './authoring/studio/visitor-phase1.js';
+    import { installMuseumPhase2 } from './authoring/studio/museum-phase2.js';
+    import { installMuseumPhase2LayoutFix } from './authoring/studio/museum-phase2-layout-fix.js';
+    import { installMuseumPhase2Hardening } from './authoring/studio/museum-phase2-hardening.js';
 
     document.addEventListener('change', (event) => {
       if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
       requestAnimationFrame(() => window.__IW_STUDIO?.render?.());
     });
 
-    boot().then(() => installVisitorPhase1()).catch((error) => {
+    boot().then(() => {
+      installVisitorPhase1();
+      installMuseumPhase2();
+      installMuseumPhase2LayoutFix();
+      installMuseumPhase2Hardening();
+    }).catch((error) => {
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
       const ui = document.getElementById('iw-ui');
-      ui.innerHTML = `
-        <div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908">
-          <div style="max-width:34rem">
-            <p style="font:400 .7rem/1 'Helvetica Neue',sans-serif;letter-spacing:.4em;text-transform:uppercase;color:#a49d92">Fundación Arenas</p>
-            <h1 style="font:400 1.4rem/1.3 Georgia,serif;margin:1.4rem 0">No se pudo iniciar la sala</h1>
-            <p style="font:400 .86rem/1.7 'Helvetica Neue',sans-serif;color:#cfc9be">
-              Este prototipo requiere WebGL2. Todo el contenido de la exposición está disponible como texto en
-              <code>worlds/museum-v1.world.json</code>.
-            </p>
-            <pre style="margin-top:1.4rem;padding:1rem;border:1px solid rgba(240,236,228,.16);font-size:.74rem;color:#a49d92;white-space:pre-wrap">${String(error?.message || error)}</pre>
-          </div>
-        </div>`;
+      ui.innerHTML = `<div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908"><div style="max-width:34rem"><p style="font:400 .7rem/1 'Helvetica Neue',sans-serif;letter-spacing:.4em;text-transform:uppercase;color:#a49d92">Fundación Arenas</p><h1 style="font:400 1.4rem/1.3 Georgia,serif;margin:1.4rem 0">No se pudo iniciar la sala</h1><p style="font:400 .86rem/1.7 'Helvetica Neue',sans-serif;color:#cfc9be">Este prototipo requiere WebGL2. Todo el contenido de la exposición está disponible como texto en <code>worlds/museum-v1.world.json</code>.</p><pre style="margin-top:1.4rem;padding:1rem;border:1px solid rgba(240,236,228,.16);font-size:.74rem;color:#a49d92;white-space:pre-wrap">${String(error?.message || error)}</pre></div></div>`;
     });
   </script>
 </body>
