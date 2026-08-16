@@ -91,7 +91,7 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   });
   expect(runtimeState.total).toBeGreaterThan(0);
   expect(runtimeState.seen).toBeGreaterThan(0);
-  await expect(page.getByText('Mi visita')).toBeVisible();
+  await expect(page.locator('.iw-p1-progress').getByRole('heading', { name: 'Mi visita', exact: true })).toBeVisible();
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
 
