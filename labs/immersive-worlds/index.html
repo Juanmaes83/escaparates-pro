@@ -8,6 +8,9 @@
   <meta name="robots" content="noindex">
   <meta name="description" content="Prototipo aislado del módulo Immersive Worlds de Escaparates Pro. Mundo, obras e institución ficticios.">
   <link rel="stylesheet" href="./app/ui/styles.css">
+  <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
 </head>
 <body>
   <main id="iw-stage">
@@ -24,8 +27,22 @@
 
   <script type="module">
     import { boot } from './app/experience-app.js';
+    import { installVisitorPhase1 } from './authoring/studio/visitor-phase1.js';
+    import { installMuseumPhase2 } from './authoring/studio/museum-phase2.js';
+    import { installMuseumPhase2LayoutFix } from './authoring/studio/museum-phase2-layout-fix.js';
+    import { installMuseumPhase2Hardening } from './authoring/studio/museum-phase2-hardening.js';
 
-    boot().catch((error) => {
+    document.addEventListener('change', (event) => {
+      if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
+      requestAnimationFrame(() => window.__IW_STUDIO?.render?.());
+    });
+
+    boot().then(() => {
+      installVisitorPhase1();
+      installMuseumPhase2();
+      installMuseumPhase2LayoutFix();
+      installMuseumPhase2Hardening();
+    }).catch((error) => {
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
       const ui = document.getElementById('iw-ui');
