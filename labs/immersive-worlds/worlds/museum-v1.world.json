@@ -989,9 +989,9 @@
     -10
    ],
    "normal": [
-    -0.75,
     0,
-    -0.66
+    1,
+    0
    ],
    "label": "Posición de la escultura"
   },

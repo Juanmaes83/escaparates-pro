@@ -113,7 +113,7 @@ const anchors = [
     // designed to be read from — the first run of this room framed Venus from
     // behind and to the right, with the cloth entirely out of shot.
     id: 'anchor.breeze.venus', kind: 'PLINTH',
-    position: M(0, 0, 0), normal: [-0.75, 0, -0.66],
+    position: M(0, 0, 0), normal: [0, 1, 0],
     label: 'Posición de la escultura'
   },
   {

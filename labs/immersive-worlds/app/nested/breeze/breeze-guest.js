@@ -44,7 +44,7 @@ export const BREEZE_CORE_URL = new URL(
   '../../../vendor/breeze-core/breeze-core.js', import.meta.url
 ).href;
 
-export const PHASE = '1B-1E';
+export const PHASE = '1B-2A';
 
 /**
  * Product-facing wind, as the spec asks for: named strengths rather than a raw
@@ -58,6 +58,8 @@ export const WIND = Object.freeze({
   BREEZE: 1,
   GUST: 1.8
 });
+
+const RELAUNCH_SECONDS = 16;
 
 export class BreezeGuest {
   constructor({
@@ -86,6 +88,7 @@ export class BreezeGuest {
     this._stepping = false;
     this._reading = false;
     this._suspended = false;
+    this._relaunching = false;
     this._elapsed = 0;
     this._sinceLaunch = 0;
 
@@ -207,7 +210,7 @@ export class BreezeGuest {
     await this.clothGeometry.bake();
     this.scene.add(this.clothGeometry.object);
 
-    this._spawn = new THREE.Vector3(...(config.clothSpawn ?? [-10, 5.0, 0]));
+    this._spawn = new THREE.Vector3(...(config.clothSpawn ?? [-6, 5.5, 0]));
     await this.physics.resetObject(this.cloth.id, this._spawn, new THREE.Quaternion());
 
     await this.physics.bake();
@@ -231,9 +234,58 @@ export class BreezeGuest {
     this.core.physicsConfig.friction = config.friction ?? 0.25;
     this.core.physicsConfig.stiffness = config.stiffness ?? 0.25;
 
+    this._buildRoom(THREE, config);
+
     this.resize();
     this.stats.activated += 1;
     return true;
+  }
+
+  _buildRoom(THREE, config) {
+    const floorGeo = new THREE.PlaneGeometry(40, 30);
+    floorGeo.rotateX(-Math.PI / 2);
+    const floorMat = new THREE.MeshStandardMaterial({
+      color: 0x181614,
+      roughness: 0.85,
+      metalness: 0.0
+    });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.receiveShadow = true;
+    floor.position.set(0, 0, 0);
+    this.scene.add(floor);
+
+    const shadowGeo = new THREE.PlaneGeometry(3.0, 2.4);
+    shadowGeo.rotateX(-Math.PI / 2);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.35,
+      depthWrite: false
+    });
+    const shadow = new THREE.Mesh(shadowGeo, shadowMat);
+    shadow.position.set(0, 0.003, 0);
+    this.scene.add(shadow);
+
+    const wallHeight = config.wallHeight ?? 9;
+    const wallMat = new THREE.MeshStandardMaterial({
+      color: 0x1a1816,
+      roughness: 0.92,
+      metalness: 0.0
+    });
+
+    const backWall = new THREE.Mesh(new THREE.PlaneGeometry(40, wallHeight), wallMat);
+    backWall.position.set(0, wallHeight / 2, -15);
+    this.scene.add(backWall);
+
+    const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(30, wallHeight), wallMat);
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-20, wallHeight / 2, 0);
+    this.scene.add(leftWall);
+
+    const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(30, wallHeight), wallMat);
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(20, wallHeight / 2, 0);
+    this.scene.add(rightWall);
   }
 
   /**
@@ -313,6 +365,10 @@ export class BreezeGuest {
     this._stepping = true;
     this._elapsed += dt;
     this._sinceLaunch += dt;
+    if (this._sinceLaunch > RELAUNCH_SECONDS && !this._relaunching) {
+      this._relaunching = true;
+      this.relaunch().finally(() => { this._relaunching = false; });
+    }
     this.stats.frames += 1;
     this._step(dt).catch((e) => { this.lastError = String(e?.message || e); })
       .finally(() => { this._stepping = false; });

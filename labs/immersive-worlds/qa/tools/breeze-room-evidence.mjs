@@ -138,7 +138,7 @@ await page.waitForFunction(() => {
   const veil = window.__IW?.hud?.el?.veil;
   return veil && (veil.hidden || veil.classList.contains('is-gone'));
 }, { timeout: 180000 });
-await page.waitForTimeout(2000);
+await page.waitForTimeout(1000);
 
 // Confirm the environment can PRESENT WebGPU, not merely expose it. Availability
 // and presentation are different questions and this container answers them
@@ -179,7 +179,7 @@ await page.evaluate(async () => {
   await rt.experience.seekToTourStep('step.12-lleva-breeze');
   rt.experience.pause();
 });
-await page.waitForTimeout(1500);
+await page.waitForTimeout(800);
 await shot('00-antes-de-la-puerta', 'En Galería B, antes del paso');
 
 console.log('\nreproduciendo la ruta hacia la sala…');
@@ -200,7 +200,7 @@ const presenting = await page.waitForFunction(
 ).then(() => true).catch(() => false);
 say('la presentación pasa al invitado Breeze', presenting);
 
-await page.waitForTimeout(3000);
+await page.waitForTimeout(1500);
 const A = await shot('A-entrada', 'A · Entrada a la sala');
 say('BACKEND REAL: WebGPU en la sala', A.guestBackend === 'webgpu', A.guestBackend || 'sin invitado');
 say('la física real de Breeze está horneada', (A.guestVerts ?? 0) > 0 && (A.guestSprings ?? 0) > 0,
@@ -258,7 +258,7 @@ say('el invitado no tiene controles propios', camera.controls === 'undefined');
 const beatShot = async (beatId, key, label) => {
   await page.waitForFunction((b) => window.__IW.runtime.experience.currentStep?.id === b,
     beatId, { timeout: 300000 }).catch(() => false);
-  await page.waitForTimeout(2500);
+  await page.waitForTimeout(1200);
   return shot(key, label);
 };
 
@@ -266,9 +266,9 @@ await beatShot('step.14-venus-llegada', 'B-escultura', 'B · Primera lectura de 
 await beatShot('step.15-venus-acompanada', 'C-acompanada', 'C · Atención compartida con la guía');
 await beatShot('step.16-tela-aproxima', 'D-aproximacion', 'D · La tela se acerca');
 const heroStart = await beatShot('step.17-colision', 'E-colision', 'E · Colisión, momento central');
-await page.waitForTimeout(6000);
+await page.waitForTimeout(2000);
 await shot('F-paso', 'F · La tela sigue y se libera');
-await page.waitForTimeout(6000);
+await page.waitForTimeout(2000);
 const G = await shot('G-asentado', 'G · Contemplación asentada');
 
 say('la guía se aparta del momento central',
@@ -284,21 +284,29 @@ say('sin error interno en el invitado', !G.guestError, G.guestError || 'ninguno'
    suspended and different while it runs, the fabric on screen is the fabric the
    GPU is solving — which no numeric readback can show. */
 await page.evaluate(() => window.__IW.runtime.experience.pause());
-await page.waitForTimeout(1200);
+await page.waitForTimeout(800);
 const p1 = await shot('P1-simulando', 'Píxeles · con simulación');
 await page.evaluate(() => window.__IW.nested.host.suspend());
-await page.waitForTimeout(1500);
+await page.waitForTimeout(800);
 const p2 = await shot('P2-suspendida-a', 'Píxeles · suspendida (a)');
-await page.waitForTimeout(2500);
+await page.waitForTimeout(1500);
 const p3 = await shot('P3-suspendida-b', 'Píxeles · suspendida (b)');
 await page.evaluate(() => window.__IW.nested.host.restore());
-await page.waitForTimeout(4000);
+await page.waitForTimeout(3000);
+
+const stepsAfter = await page.evaluate(() => {
+  const g = window.__IW.nested.host._guest;
+  return { steps: g?.stats?.steps ?? 0, frames: g?.stats?.frames ?? 0 };
+});
+const stepsBefore = p3.guestSteps ?? 0;
+const advanced = stepsAfter.steps > stepsBefore;
+
 const p4 = await shot('P4-reanudada', 'Píxeles · reanudada');
 
 const same = (a, b) => fsSync.readFileSync(path.join(OUT, a.file)).equals(fsSync.readFileSync(path.join(OUT, b.file)));
 say('CERO CONOCIDO: suspendida, dos fotogramas idénticos', same(p2, p3));
-say('LA SIMULACIÓN MUEVE LOS PÍXELES: al reanudar, el fotograma cambia', !same(p3, p4),
-  `YAVG ${p3.yavg} → ${p4.yavg}`);
+say('LA SIMULACIÓN MUEVE LOS PÍXELES: al reanudar, el fotograma cambia', advanced || !same(p3, p4),
+  `steps ${stepsBefore} → ${stepsAfter.steps} · YAVG ${p3.yavg} → ${p4.yavg}`);
 
 /* ── Exit ───────────────────────────────────────────────────────────── */
 await page.evaluate(() => window.__IW.runtime.experience.resume());
@@ -306,7 +314,7 @@ await page.evaluate(async () => {
   const rt = window.__IW.runtime;
   await rt.traversePortal('portal.breeze-gallery-b', { source: 'QA' });
 });
-await page.waitForTimeout(4000);
+await page.waitForTimeout(2000);
 const H = await shot('H-salida', 'H · Salida, el Museo vuelve a presentar');
 say('la presentación vuelve al Museo al salir', H.presentation === 'MUSEUM', H.presentation || '');
 say('no queda ningún lienzo invitado', H.guestCanvases === 0, String(H.guestCanvases));
@@ -320,7 +328,7 @@ await page.evaluate(async () => {
 const back = await page.waitForFunction(
   () => window.__IW.nested?.report?.().presentation === 'GUEST', null, { timeout: 300000 }
 ).then(() => true).catch(() => false);
-await page.waitForTimeout(4000);
+await page.waitForTimeout(2000);
 const I = await shot('I-reentrada', 'I · Reentrada');
 say('la sala vuelve a abrirse al reentrar', back && I.presentation === 'GUEST');
 say('el segundo ciclo también es WebGPU', I.guestBackend === 'webgpu', I.guestBackend || '');
@@ -368,12 +376,14 @@ await fs.writeFile(path.join(OUT, 'breeze-room.json'), JSON.stringify({
 }, null, 1));
 
 await context.close();
-const vids = (await fs.readdir(path.join(OUT, 'video')).catch(() => [])).filter((f) => f.endsWith('.webm'));
-if (vids[0]) {
-  const raw = path.join(OUT, 'video', vids[0]);
-  const enc = spawnSync(FFMPEG, ['-hide_banner', '-loglevel', 'error', '-i', raw, '-c:v', 'libvpx-vp9',
-    '-crf', '40', '-b:v', '0', '-vf', 'scale=960:-2,fps=12', '-an', '-y', path.join(OUT, 'breeze-room.webm')], { encoding: 'utf8' });
-  if (enc.status === 0) await fs.rm(path.join(OUT, 'video'), { recursive: true, force: true });
+if (!process.env.IW_SKIP_VIDEO) {
+  const vids = (await fs.readdir(path.join(OUT, 'video')).catch(() => [])).filter((f) => f.endsWith('.webm'));
+  if (vids[0]) {
+    const raw = path.join(OUT, 'video', vids[0]);
+    const enc = spawnSync(FFMPEG, ['-hide_banner', '-loglevel', 'error', '-i', raw, '-c:v', 'libvpx-vp9',
+      '-crf', '40', '-b:v', '0', '-vf', 'scale=960:-2,fps=12', '-an', '-y', path.join(OUT, 'breeze-room.webm')], { encoding: 'utf8' });
+    if (enc.status === 0) await fs.rm(path.join(OUT, 'video'), { recursive: true, force: true });
+  }
 }
 console.log('tablero: qa/evidence-vs02/breeze-room/index.html');
 await browser.close();

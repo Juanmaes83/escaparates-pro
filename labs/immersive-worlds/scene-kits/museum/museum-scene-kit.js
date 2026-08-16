@@ -1723,6 +1723,16 @@ export class MuseumSceneKit extends SceneKit {
     const figure = this._anchorPoses.get(viewport.visitorAnchorId || viewport.guideAnchorId);
     if (!figure) return null;
 
+    if (viewport.visitorAnchorId && !viewport.guideAnchorId) {
+      const centre = this._subjectCentre(anchor, record);
+      const eyeHeight = Math.max(1.62, Math.min(record.size[1] * 0.35, 3.0));
+      return {
+        position: [figure.position[0], figure.position[1] + eyeHeight, figure.position[2]],
+        target: centre,
+        subjectSize: record.size
+      };
+    }
+
     const [w, h] = record.size;
     const centre = this._subjectCentre(anchor, record);
     // A hung work is seen from in front of its wall. A free-standing piece has no

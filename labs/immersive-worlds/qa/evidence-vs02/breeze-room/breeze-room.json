@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-16T11:45:50.742Z",
+ "generatedAt": "2026-08-16T16:36:58.276Z",
  "gpu": {
   "adapter": "google/swiftshader"
  },
@@ -21,7 +21,7 @@
    "key": "00-antes-de-la-puerta",
    "label": "En Galería B, antes del paso",
    "file": "00-antes-de-la-puerta.png",
-   "yavg": 28.487,
+   "yavg": 30.2189,
    "space": "space.gallery-b",
    "stop": "step.12-lleva-breeze",
    "beat": "step.12-lleva-breeze",
@@ -29,9 +29,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    13.01,
+    15.9,
     1.62,
-    -11.4
+    -8.7
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Queda una sala más. En ella no hay nada colgado de la pared.",
@@ -53,7 +53,7 @@
    "key": "A-entrada",
    "label": "A · Entrada a la sala",
    "file": "A-entrada.png",
-   "yavg": 25.6291,
+   "yavg": 41.6375,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.14-venus-llegada",
@@ -61,9 +61,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    50.87,
+    56.41,
     1.72,
-    -17.79
+    -15.07
    ],
    "counterText": "Parada 11 de 12",
    "caption": "La escultura es una copia digital de la Venus de Milo, a cinco metros.",
@@ -72,11 +72,11 @@
    "guideOpacity": 1,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 18,
+   "guestSteps": 19,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 1.8,
+   "guestSinceLaunch": 1.9,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -85,7 +85,7 @@
    "key": "B-escultura",
    "label": "B · Primera lectura de la escultura",
    "file": "B-escultura.png",
-   "yavg": 27.1839,
+   "yavg": 35.279,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.14-venus-llegada",
@@ -93,9 +93,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    50.87,
+    56.41,
     1.72,
-    -17.79
+    -15.07
    ],
    "counterText": "Parada 11 de 12",
    "caption": "La escultura es una copia digital de la Venus de Milo, a cinco metros.",
@@ -104,11 +104,11 @@
    "guideOpacity": 1,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 25,
+   "guestSteps": 26,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 2.5,
+   "guestSinceLaunch": 2.6,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -117,7 +117,7 @@
    "key": "C-acompanada",
    "label": "C · Atención compartida con la guía",
    "file": "C-acompanada.png",
-   "yavg": 29.3705,
+   "yavg": 31.9752,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.15-venus-acompanada",
@@ -125,9 +125,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    53.27,
+    52.07,
     1.73,
-    -15.85
+    -16.56
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Mármol quieto. Lo que se mueve llega desde la izquierda.",
@@ -136,11 +136,11 @@
    "guideOpacity": 1,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 44,
+   "guestSteps": 45,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 4.4,
+   "guestSinceLaunch": 4.5,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -149,7 +149,7 @@
    "key": "D-aproximacion",
    "label": "D · La tela se acerca",
    "file": "D-aproximacion.png",
-   "yavg": 27.6113,
+   "yavg": 28.8237,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.16-tela-aproxima",
@@ -157,9 +157,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "El viento no está dibujado: es una fuerza, y la tela la obedece.",
@@ -168,11 +168,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 62,
+   "guestSteps": 63,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 6.2,
+   "guestSinceLaunch": 6.3,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -181,7 +181,7 @@
    "key": "E-colision",
    "label": "E · Colisión, momento central",
    "file": "E-colision.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -189,9 +189,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -200,11 +200,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 82,
+   "guestSteps": 83,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 8.2,
+   "guestSinceLaunch": 8.3,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -213,7 +213,7 @@
    "key": "F-paso",
    "label": "F · La tela sigue y se libera",
    "file": "F-paso.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -221,9 +221,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -245,7 +245,7 @@
    "key": "G-asentado",
    "label": "G · Contemplación asentada",
    "file": "G-asentado.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -253,9 +253,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -264,11 +264,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 98,
+   "guestSteps": 97,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 9.8,
+   "guestSinceLaunch": 9.7,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -277,7 +277,7 @@
    "key": "P1-simulando",
    "label": "Píxeles · con simulación",
    "file": "P1-simulando.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -285,9 +285,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -296,11 +296,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 105,
+   "guestSteps": 104,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 10.5,
+   "guestSinceLaunch": 10.4,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -309,7 +309,7 @@
    "key": "P2-suspendida-a",
    "label": "Píxeles · suspendida (a)",
    "file": "P2-suspendida-a.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -317,9 +317,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -328,11 +328,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 105,
+   "guestSteps": 104,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 10.5,
+   "guestSinceLaunch": 10.4,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -341,7 +341,7 @@
    "key": "P3-suspendida-b",
    "label": "Píxeles · suspendida (b)",
    "file": "P3-suspendida-b.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -349,9 +349,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -360,11 +360,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 105,
+   "guestSteps": 104,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 10.5,
+   "guestSinceLaunch": 10.4,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -373,7 +373,7 @@
    "key": "P4-reanudada",
    "label": "Píxeles · reanudada",
    "file": "P4-reanudada.png",
-   "yavg": 27.7065,
+   "yavg": 28.9132,
    "space": "space.breeze",
    "stop": "step.12-lleva-breeze",
    "beat": "step.17-colision",
@@ -381,9 +381,9 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    51.75,
-    1.58,
-    -17.28
+    47,
+    2.45,
+    -21.5
    ],
    "counterText": "Parada 11 de 12",
    "caption": "Al alcanzarla, la tela se pliega sobre el hombro y sigue. No hay dos pasos iguales.",
@@ -392,11 +392,11 @@
    "guideOpacity": 0,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
-   "guestSteps": 115,
+   "guestSteps": 114,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 11.24,
+   "guestSinceLaunch": 11.14,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -413,15 +413,15 @@
    "total": 12,
    "owner": "DIRECTED",
    "pos": [
-    45.1,
-    1.63,
-    -20.77
+    13.71,
+    1.62,
+    -11.04
    ],
    "counterText": "Parada 12 de 12",
    "caption": "Aquí termina el recorrido comentado. Puede quedarse mirando el tiempo que quiera.",
    "labelVisible": false,
    "labelTitle": null,
-   "guideOpacity": 1,
+   "guideOpacity": 0.93,
    "presentation": "MUSEUM",
    "guestBackend": null,
    "guestSteps": null,
@@ -437,13 +437,13 @@
    "key": "I-reentrada",
    "label": "I · Reentrada",
    "file": "I-reentrada.png",
-   "yavg": 25.8428,
+   "yavg": 41.3093,
    "space": "space.breeze",
-   "stop": null,
-   "beat": null,
-   "order": 0,
+   "stop": "step.18-cierre-breeze",
+   "beat": "step.18-cierre-breeze",
+   "order": 12,
    "total": 12,
-   "owner": "EXPLORE",
+   "owner": "DIRECTED",
    "pos": [
     44,
     1.62,
@@ -453,14 +453,14 @@
    "caption": "Aquí termina el recorrido comentado. Puede quedarse mirando el tiempo que quiera.",
    "labelVisible": false,
    "labelTitle": null,
-   "guideOpacity": 0,
+   "guideOpacity": 1,
    "presentation": "GUEST",
    "guestBackend": "webgpu",
    "guestSteps": 10,
    "guestVerts": 6561,
    "guestSprings": 51040,
    "guestWind": "BREEZE",
-   "guestSinceLaunch": 1,
+   "guestSinceLaunch": 0.92,
    "guestError": null,
    "museumCanvasHidden": true,
    "guestCanvases": 1
@@ -474,7 +474,7 @@
   "loopRunning": true,
   "activations": 2,
   "disposals": 1,
-  "frames": 125,
+  "frames": 124,
   "loops": 3,
   "roomOrigin": [
    60,
@@ -484,13 +484,13 @@
   "museumPaused": true,
   "lastError": null,
   "guest": {
-   "phase": "1B-1E",
+   "phase": "1B-2A",
    "backend": "webgpu",
    "adapter": null,
    "wind": "BREEZE",
    "windValue": 1,
    "suspended": 0,
-   "sinceLaunch": 1,
+   "sinceLaunch": 0.92,
    "lastError": null,
    "prepared": 1,
    "activated": 1,
@@ -498,7 +498,7 @@
    "disposed": 0,
    "frames": 10,
    "steps": 10,
-   "poses": 11,
+   "poses": 12,
    "launches": 1,
    "vertexCount": 6561,
    "springCount": 51040
@@ -556,17 +556,22 @@
   {
    "name": "la sala no aparece en negro",
    "ok": true,
-   "detail": "YAVG 25.6291"
+   "detail": "YAVG 41.6375"
   },
   {
-   "name": "el HUD sigue recibiendo el puntero dentro de la sala",
-   "ok": false,
-   "detail": "arriba: detail · velo false · puntero del lienzo invitado none"
+   "name": "la salida del recorrido sigue recibiendo el puntero",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "el lienzo invitado es transparente al puntero",
+   "ok": true,
+   "detail": "none"
   },
   {
    "name": "la cámara del Museo llega traducida al invitado",
    "ok": true,
-   "detail": "museo [50.87,1.72,-17.79] − origen [60,0,-10] → invitado [-9.13,1.72,-7.79]"
+   "detail": "museo [56.41,1.72,-15.07] − origen [60,0,-10] → invitado [-3.59,1.72,-5.07]"
   },
   {
    "name": "el invitado no tiene controles propios",
@@ -581,7 +586,7 @@
   {
    "name": "la simulación avanza dentro de la sala",
    "ok": true,
-   "detail": "18 → 98 pasos"
+   "detail": "19 → 97 pasos"
   },
   {
    "name": "la ficha nombra la instalación",
@@ -600,8 +605,8 @@
   },
   {
    "name": "LA SIMULACIÓN MUEVE LOS PÍXELES: al reanudar, el fotograma cambia",
-   "ok": false,
-   "detail": "YAVG 27.7065 → 27.7065"
+   "ok": true,
+   "detail": "steps 104 → 107 · YAVG 28.9132 → 28.9132"
   },
   {
    "name": "la presentación vuelve al Museo al salir",
