@@ -63,7 +63,7 @@ test('Museum Phase 2 closure — integration, UX hardening and reversible runtim
   const quiet=page.locator('[data-p2h-room-a11y="quiet"]');if(!(await quiet.isChecked()))await quiet.check();
 
   // ARTIST → ARTWORK and DOCUMENT → ENTITY connections through the real contextual editor.
-  await page.getByRole('button',{name:'Horizonte interrumpido Obra',exact:true}).click();
+  await page.locator('.st-nodebtn[data-node="entity.artwork.horizonte-interrumpido"]').click();
   await expect(page.getByText('Presentación física')).toBeVisible();await expect(page.getByText('Autor y documentación')).toBeVisible();
   await page.locator('[data-p2-artist-link]').selectOption({index:1});
   const docLink=page.locator('[data-p2-doc-link]').first();if(!(await docLink.isChecked()))await docLink.check();
