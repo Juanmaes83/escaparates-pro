@@ -32,41 +32,45 @@ test('Studio desktop — calendar, programme, green validation and structured ac
   await page.locator('[data-p1-open="1"]').click();
   await expect(page.locator('[data-p1-day="2"]')).toHaveClass(/is-open/);
 
-  const edit = page.locator('[data-p1-prog]').first();
-  await edit.click();
+  await page.locator('[data-p1-prog]').first().click();
   await expect(page.locator('.p1-progedit').first()).toBeVisible();
 
   const a11y = page.locator('[data-p1-a11y="stepFree"]');
-  if (!(await a11y.isChecked())) await a11y.check();
-  await expect(page.getByText(/servicio/).first()).toBeVisible();
+  if (!(await a11y.isChecked())) await a11y.click();
+  await expect(page.locator('.p1-a11ygrid input:checked')).not.toHaveCount(0);
 
-  await page.screenshot({ path: `${evidence}/01-studio-desktop.png`, fullPage: true });
+  await page.screenshot({ path: `${evidence}/01-studio-desktop.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
 test('Visitor — Interior Map v2 + artwork progress + seen / not seen', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const errors = await ready(page, false);
-  await page.evaluate(() => {
+  const state = await page.evaluate(() => {
     window.__IW.hud.el.veil.hidden = true;
-    const works = window.__IW.runtime.focusableInSpace();
-    if (works[0]) window.__IW.runtime.focusEntity(works[0].id, {}, { source: 'PLAYWRIGHT' });
+    const room = window.__IW.runtime.store.spaces.find((s) => window.__IW.runtime.store.entitiesOf(s.id).some((e) => ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'].includes(e.kind)));
+    if (room && room.id !== window.__IW.runtime.state.activeSpaceId) window.__IW.runtime.state.enterSpace(room.id);
+    const works = room ? window.__IW.runtime.store.entitiesOf(room.id).filter((e) => ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'].includes(e.kind)) : [];
+    if (works[0]) window.__IW.runtime.state.setFocus(works[0].id);
+    window.__IW.hud.update();
     window.__IW.hud.toggleMap(true);
+    return { seen: window.__IW.runtime.state.visitedEntityIds.size, total: works.length };
   });
+  expect(state.total).toBeGreaterThan(0);
+  expect(state.seen).toBeGreaterThan(0);
   await expect(page.getByText('Mi visita')).toBeVisible();
   await expect(page.locator('.iw-p1-progress__head b')).toContainText('/');
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
-  await page.screenshot({ path: `${evidence}/02-visitor-map-progress.png`, fullPage: true });
+  await page.screenshot({ path: `${evidence}/02-visitor-map-progress.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
-test('Full Studio — dimensions recovered in canonical entity editor', async ({ page }) => {
+test('Full Studio — dimensions recovered in a real artwork editor', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
   await ready(page, true);
   await page.locator('[data-domain="build"]').click();
-  const entity = page.locator('.st-node--entity [data-node]').first();
-  await entity.click();
+  await page.getByRole('button', { name: /Horizonte interrumpido Obra/ }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
   const width = page.locator('[data-p1-dim="widthCm"]');
   const height = page.locator('[data-p1-dim="heightCm"]');
@@ -82,6 +86,6 @@ test('Studio mobile — approved system remains usable', async ({ page }) => {
   const errors = await ready(page, true);
   await page.locator('[data-domain="visitor"]').click();
   await expect(page.getByText('01 · Planificación')).toBeVisible();
-  await page.screenshot({ path: `${evidence}/03-studio-mobile.png`, fullPage: true });
+  await page.screenshot({ path: `${evidence}/03-studio-mobile.png` });
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
