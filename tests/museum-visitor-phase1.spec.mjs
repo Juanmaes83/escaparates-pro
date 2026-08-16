@@ -11,7 +11,16 @@ async function ready(page, authoring = false) {
   await page.goto(`${BASE}?portalVariant=D${authoring ? '&authoring=1' : ''}`, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => document.documentElement.dataset.iwReady === 'true', null, { timeout: 60000 });
   await page.waitForFunction(() => document.documentElement.dataset.visitorPhase1 === 'ready', null, { timeout: 10000 });
+  await page.addStyleTag({ content: `*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}` });
   return errors;
+}
+
+async function evidenceShot(page, path) {
+  await page.evaluate(() => {
+    const canvas = document.getElementById('iw-canvas');
+    if (canvas) canvas.style.visibility = 'hidden';
+  });
+  await page.screenshot({ path, animations: 'disabled', timeout: 15000 });
 }
 
 test.beforeAll(async () => { await fs.mkdir(evidence, { recursive: true }); });
@@ -39,7 +48,7 @@ test('Studio desktop — calendar, programme, green validation and structured ac
   if (!(await a11y.isChecked())) await a11y.click();
   await expect(page.locator('.p1-a11ygrid input:checked')).not.toHaveCount(0);
 
-  await page.locator('.st-tree').screenshot({ path: `${evidence}/01-studio-desktop.png` });
+  await evidenceShot(page, `${evidence}/01-studio-desktop.png`);
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
@@ -62,13 +71,13 @@ test('Visitor — Interior Map v2 + artwork progress + seen / not seen', async (
   await expect(page.locator('.iw-p1-progress__head b')).toContainText('/');
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
-  await page.locator('.iw-map__panel').screenshot({ path: `${evidence}/02-visitor-map-progress.png` });
+  await evidenceShot(page, `${evidence}/02-visitor-map-progress.png`);
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
 test('Full Studio — dimensions recovered in a real artwork editor', async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
-  await ready(page, true);
+  const errors = await ready(page, true);
   await page.locator('[data-domain="build"]').click();
   await page.getByRole('button', { name: /Horizonte interrumpido Obra/ }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
@@ -78,9 +87,11 @@ test('Full Studio — dimensions recovered in a real artwork editor', async ({ p
   await expect(height).toBeVisible();
   await width.fill('90');
   await height.fill('240');
-  await height.press('Tab');
+  await page.evaluate(() => window.__IW_STUDIO.render());
   await expect(page.getByText(/90 × 240 cm/)).toBeVisible();
-  await page.locator('.st-ed').screenshot({ path: `${evidence}/03-dimensions-editor.png` });
+  await expect(page.locator('.p1-status.is-ok').filter({ hasText: 'Medidas listas' })).toBeVisible();
+  await evidenceShot(page, `${evidence}/03-dimensions-editor.png`);
+  expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
 
 test('Studio mobile — approved system remains usable', async ({ page }) => {
@@ -88,6 +99,6 @@ test('Studio mobile — approved system remains usable', async ({ page }) => {
   const errors = await ready(page, true);
   await page.locator('[data-domain="visitor"]').click();
   await expect(page.getByText('01 · Planificación')).toBeVisible();
-  await page.locator('.st-tree').screenshot({ path: `${evidence}/04-studio-mobile.png` });
+  await evidenceShot(page, `${evidence}/04-studio-mobile.png`);
   expect(errors.filter((x) => !x.includes('favicon'))).toEqual([]);
 });
