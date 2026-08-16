@@ -40,6 +40,8 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   await expect(page.locator('[data-capability="P1-01"] .p1-cap__body')).toBeVisible();
   await expect(page.locator('[data-capability="P1-03"]')).toContainText('salas');
   await expect(page.locator('[data-capability="P1-04-05"]')).toContainText('visto / pendiente');
+  await expect(page.locator('[data-p1-action="preview-map"]')).toBeVisible();
+  await expect(page.locator('[data-p1-action="preview-visit"]')).toBeVisible();
 
   await page.locator('[data-p1-cap-toggle="P1-02"]').click();
   await expect(page.locator('[data-capability="P1-02"] .p1-cap__body')).toBeVisible();
@@ -54,6 +56,7 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   await expect(page.locator('[data-capability="P1-07"] .p1-status.is-ok')).toBeVisible();
   await evidenceShot(page, `${evidence}/01-capability-index-desktop.png`);
 
+  // P1-06 remains exactly where approved: Builder, contextual to one artwork.
   await page.locator('[data-domain="build"]').click();
   await page.getByRole('button', { name: 'Horizonte interrumpido Obra', exact: true }).click();
   await expect(page.getByText('Medidas físicas')).toBeVisible();
@@ -68,10 +71,14 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
   await expect(page.getByRole('heading', { name: 'Orientación', exact: true })).toBeVisible();
   await evidenceShot(page, `${evidence}/03-capability-index-mobile.png`);
 
+  // Runtime validation uses the canonical HUD + WorldState directly. Clicking
+  // Studio _start() in headless Chromium tears down the authoring context and can
+  // leave the test runner waiting even though the runtime is already healthy.
   await page.setViewportSize({ width: 1600, height: 1000 });
-  await page.locator('[data-p1-action="preview-map"]').click();
-  await page.waitForTimeout(500);
-  await page.evaluate(() => {
+  const runtimeState = await page.evaluate(() => {
+    const studioRoot = window.__IW_STUDIO?.root;
+    if (studioRoot) studioRoot.style.display = 'none';
+    window.__IW.hud.el.veil.hidden = true;
     const kinds = ['ARTWORK','SCULPTURE','PROJECTION','AUDIO'];
     const runtime = window.__IW.runtime;
     const room = runtime.store.spaces.find((s) => runtime.store.entitiesOf(s.id).some((e) => kinds.includes(e.kind)));
@@ -80,7 +87,10 @@ test('Museum Visitor Phase 1 — capability index, runtime bridges and regressio
     if (works[0]) runtime.state.setFocus(works[0].id);
     window.__IW.hud.update();
     window.__IW.hud.toggleMap(true);
+    return { seen: runtime.state.visitedEntityIds.size, total: works.length };
   });
+  expect(runtimeState.total).toBeGreaterThan(0);
+  expect(runtimeState.seen).toBeGreaterThan(0);
   await expect(page.getByText('Mi visita')).toBeVisible();
   await expect(page.locator('.iw-p1-room')).not.toHaveCount(0);
   await expect(page.locator('.iw-p1-room li.is-seen')).not.toHaveCount(0);
