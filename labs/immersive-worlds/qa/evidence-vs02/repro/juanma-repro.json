@@ -1,0 +1,252 @@
+{
+ "generatedAt": "2026-08-14T12:08:24.320Z",
+ "passed": 49,
+ "total": 49,
+ "results": [
+  {
+   "name": "TOP · institución · campo editable en el DOM",
+   "ok": true,
+   "detail": "disabled=false readOnly=false pointer-events=auto"
+  },
+  {
+   "name": "TOP · institución · nada tapa el campo",
+   "ok": true,
+   "detail": "encima: input"
+  },
+  {
+   "name": "TOP · institución · el clic da el foco",
+   "ok": true,
+   "detail": "activeElement=institution.name"
+  },
+  {
+   "name": "TOP · institución · el campo conserva lo escrito",
+   "ok": true,
+   "detail": "valor=\"Museo Atlántico de Vigo\""
+  },
+  {
+   "name": "TOP · institución · el foco sobrevive a la escritura",
+   "ok": true,
+   "detail": "foco=true caret=23"
+  },
+  {
+   "name": "TOP · institución · llega al proyecto",
+   "ok": true,
+   "detail": "config=\"Museo Atlántico de Vigo\" dirty=true"
+  },
+  {
+   "name": "FRAME · institución · campo editable en el DOM",
+   "ok": true,
+   "detail": "disabled=false readOnly=false pointer-events=auto"
+  },
+  {
+   "name": "FRAME · institución · nada tapa el campo",
+   "ok": true,
+   "detail": "encima: input"
+  },
+  {
+   "name": "FRAME · institución · el clic da el foco",
+   "ok": true,
+   "detail": "activeElement=institution.name"
+  },
+  {
+   "name": "FRAME · institución · el campo conserva lo escrito",
+   "ok": true,
+   "detail": "valor=\"Museo Atlántico de Vigo\""
+  },
+  {
+   "name": "FRAME · institución · el foco sobrevive a la escritura",
+   "ok": true,
+   "detail": "foco=true caret=23"
+  },
+  {
+   "name": "FRAME · institución · llega al proyecto",
+   "ok": true,
+   "detail": "config=\"Museo Atlántico de Vigo\" dirty=true"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.webm · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 82 kB\""
+  },
+  {
+   "name": "TOP · proyección · qa-motion.webm · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.814,0] (dio la vuelta) cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "231274 vs 232193 bytes"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.webm · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 82 kB\""
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.webm · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[3.055,0] (dio la vuelta) cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "218495 vs 220541 bytes"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.mp4 · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 73 kB\""
+  },
+  {
+   "name": "TOP · proyección · qa-motion.mp4 · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.409,3.868] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "225530 vs 225039 bytes"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 73 kB\""
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.mp4 · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.882,3.976] cambióImagen=true playError=null"
+  },
+  {
+   "name": "TOP · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "217278 vs 218717 bytes"
+  },
+  {
+   "name": "TOP · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
+   "ok": true,
+   "detail": "estado=\"No se pudo usar · El vídeo no se pudo decodificar. Prueba con un MP4 (H.264) o un WebM.\""
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.webm · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 82 kB\""
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.webm · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.408,3.884] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.webm · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "229330 vs 232136 bytes"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.webm · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 82 kB\""
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.webm · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.webm · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[3.409,0] (dio la vuelta) cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.webm · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "218374 vs 218216 bytes"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.mp4 · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 73 kB\""
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.mp4 · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.448,3.937] cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · proyección · qa-motion.mp4 · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "229113 vs 232056 bytes"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.mp4 · aceptado por el almacén",
+   "ok": true,
+   "detail": "estado=\"Listo · 640×360 · 4.0 s · 73 kB\""
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.mp4 · el archivo del autor está en la pared",
+   "ok": true,
+   "detail": "640×360"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.mp4 · se está reproduciendo",
+   "ok": true,
+   "detail": "paused=false t=[2.853,0] (dio la vuelta) cambióImagen=true playError=null"
+  },
+  {
+   "name": "FRAME · obra enmarcada · qa-motion.mp4 · el lienzo cambia con el tiempo",
+   "ok": true,
+   "detail": "218425 vs 217240 bytes"
+  },
+  {
+   "name": "FRAME · proyección · qa-broken.mp4 · el decodificador lo rechaza con motivo",
+   "ok": true,
+   "detail": "estado=\"No se pudo usar · El vídeo no se pudo decodificar. Prueba con un MP4 (H.264) o un WebM.\""
+  },
+  {
+   "name": "obra · la imagen sigue aceptándose",
+   "ok": true,
+   "detail": "{\"image\":\"qa-artwork.jpg\",\"video\":null}"
+  },
+  {
+   "name": "obra · elegir vídeo retira la imagen",
+   "ok": true,
+   "detail": "{\"image\":null,\"video\":\"qa-motion.mp4\",\"assets\":[\"video:READY\"]}"
+  },
+  {
+   "name": "obra · el archivo retirado se libera",
+   "ok": true,
+   "detail": "en el almacén: [\"video:READY\"]"
+  }
+ ]
+}

@@ -1,0 +1,3974 @@
+{
+ "label": "lobby",
+ "beat": "step.02-paso-galeria-a",
+ "generatedAt": "2026-08-13T12:40:11.914Z",
+ "parkedAt": "step.01-entrada",
+ "nextBeat": "step.02-paso-galeria-a",
+ "portalId": "portal.lobby-gallery-a",
+ "hint": "DOOR",
+ "behaviour": "CONTINUOUS",
+ "fromSpace": "space.lobby",
+ "toSpace": "space.gallery-a",
+ "destinationState": "READY",
+ "frames": 300,
+ "owners": [
+  "TRANSITION"
+ ],
+ "handoffIndex": 222,
+ "exposureFrom": 0.95,
+ "exposureTo": 0.95,
+ "worstExposureJump": 0,
+ "shots": [
+  {
+   "id": "00_before",
+   "file": "lobby_00_before.png",
+   "caption": "before the crossing — departure pose"
+  },
+  {
+   "id": "01_flight",
+   "file": "lobby_01_flight.png",
+   "caption": "17% through the crossing"
+  },
+  {
+   "id": "02_flight",
+   "file": "lobby_02_flight.png",
+   "caption": "33% through the crossing"
+  },
+  {
+   "id": "03_flight",
+   "file": "lobby_03_flight.png",
+   "caption": "50% through the crossing"
+  },
+  {
+   "id": "04_flight",
+   "file": "lobby_04_flight.png",
+   "caption": "67% through the crossing"
+  },
+  {
+   "id": "05_flight",
+   "file": "lobby_05_flight.png",
+   "caption": "83% through the crossing"
+  },
+  {
+   "id": "99_after",
+   "file": "lobby_99_after.png",
+   "caption": "after the crossing — arrival pose"
+  }
+ ],
+ "trace": [
+  {
+   "position": [
+    0,
+    1.62,
+    3.199985279236466
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1998832762970117
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.199609576886569
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.19908289920705
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1982251003373183
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1969611845902484
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1952193135202442
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1929308172676523
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.190030206939548
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.186455187739461
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1821466725716623
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.177048795858694
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.17110892732391
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.164277685503833
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1565089507682247
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1477598776388094
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1379909062106783
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1271657724934516
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1152515175023434
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.1022184949423455
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.0880403773418097
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.0726941605047733
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.056160166164435
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.038422042733258
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    3.0194667640582407
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.999284626102965
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.977869241491089
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.955217531859026
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.9313297179786124
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.9062093076236315
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.8798630811671266
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.852301074909514
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.823536562150539
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.7935860320312353
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.7624691661850616
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.730208813250481
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.696830961310325
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.6623647083363213
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.6268422307302477
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.5902987500662378
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.5527724981518323
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.5143046805384275
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.474939438624833
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.434723810510749
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.393707690769994
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.3519437893264064
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.3094875896284104
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.266397306331285
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.2227338427092636
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.1785607480326243
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.133944175158044
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.0889528385934972
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    2.043657973312103
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.9981332946023458
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.9524549592551854
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.9067015284016255
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.8609539323273863
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.8152812706396353
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.7696975181628791
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.7242026748971164
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.6787967408423483
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.633479715998575
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.5882516003657954
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.5431123939440101
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.4980620967332192
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.453100708733423
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.4082282299446207
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.3634446603668127
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.3187499999999985
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.2741442488441792
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.229627406899354
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.1851994741655227
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.1408604506426863
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.0966103363308437
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.0524491312299946
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    1.008376835340141
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.9643934486612818
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.9204989711934162
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.8766934029365447
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.8329767438906672
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.7893489940557845
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.7458101534318969
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.7023602220190021
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.6589991998171026
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.6157270868261961
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.5725438830462855
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.529449588477368
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.48644420311944514
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.4435277269725165
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.400700160036582
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.35796150231164187
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.31531175379769677
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.27275091449474437
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.23027898440278705
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.18789596352182397
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.14560185185185504
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.10339664939288101
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.061280356144900294
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    0.019252972107914212
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.022685502718078454
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.06453506833307521
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.10629572473707849
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.14796747193008786
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.1895503099121022
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.23104423868312374
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.27244925824314936
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.3137653685921812
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.35499256973021853
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.3961308616572621
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.43718024437331227
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.4781407178783671
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.5190122821724275
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.5597949372554937
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.6004886831275655
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.6410935197886446
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.6816094472387281
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.7220364654778175
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.762374574505912
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.8026237743230128
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.8427840649291206
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.8828554463242325
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.9228379185083505
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -0.9627314814814737
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.0025361352436037
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.04225187979474
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.081878715134881
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.1214166412640272
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.1608656581821797
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.2002257658893374
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.2394969643855025
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.2786792536706724
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.3177726337448479
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.3567771046080286
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.3956926662602158
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.4345193187014094
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.4732570619316072
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.5119058959508116
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.550465820759021
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.5889368363562366
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.627318942742459
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.6656121399176864
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.7038164278819186
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.741931806635158
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.7799582761774015
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.8178958365086526
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.8557444876289084
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.8935042295381703
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.9311750622364372
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -1.9687569857237104
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.00624999999999
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.0436541050652743
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.0809693009195644
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.1181955875628606
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.155332964995164
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.1923814332164713
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.2293409922267835
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.2662116420261027
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.3029933826144275
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.339686213991759
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.3762901361580955
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.412805149113437
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.449231252857784
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.4855684473911377
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.521816732713498
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.557976108824863
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.594046575725234
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.63002813341461
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.6659207818929915
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.70172452116038
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.7374393512167736
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.7730652720621736
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.8086022836965787
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.8440503861199886
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.879409579332406
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.9146798633338284
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.9498612381242575
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -2.984953703703691
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.01995726007213
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.054871907229577
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.0896976451760265
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.1244344739114838
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.1590823934359467
+   ],
+   "fov": 55.000975295540925,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.1936414037494147
+   ],
+   "fov": 55.01125580278285,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.2281115048518894
+   ],
+   "fov": 55.03207822628122,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.2624926967433696
+   ],
+   "fov": 55.062630807821186,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.296784979423854
+   ],
+   "fov": 55.10212239218827,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.3309883528933457
+   ],
+   "fov": 55.14978242716839,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.3651028171518425
+   ],
+   "fov": 55.204860963547816,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.3991283721993466
+   ],
+   "fov": 55.266628655113216,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.4330650180358546
+   ],
+   "fov": 55.33437675865162,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.466912754661369
+   ],
+   "fov": 55.407417133950446,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.500671582075888
+   ],
+   "fov": 55.485082243797486,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.534341500279414
+   ],
+   "fov": 55.56672515398089,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.5679225092719467
+   ],
+   "fov": 55.651719533289224,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.601414609053484
+   ],
+   "fov": 55.739459653511396,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.6348177996240265
+   ],
+   "fov": 55.82936038943671,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.6681320809835753
+   ],
+   "fov": 55.92085721885483,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.7013574531321294
+   ],
+   "fov": 56.01340622255581,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.7344939160696904
+   ],
+   "fov": 56.106484084330084,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.767541469796256
+   ],
+   "fov": 56.199588090968454,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.8005001143118284
+   ],
+   "fov": 56.2922361322621,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.8333698496164055
+   ],
+   "fov": 56.38396670100258,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.8661506757099886
+   ],
+   "fov": 56.47433889298183,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.8988425925925783
+   ],
+   "fov": 56.56293240699217,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.9314456002641727
+   ],
+   "fov": 56.64934754482627,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.9639596987247727
+   ],
+   "fov": 56.73320521127721,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -3.9963848879743784
+   ],
+   "fov": 56.81414691413843,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.028721168012991
+   ],
+   "fov": 56.89183476420375,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.060968538840609
+   ],
+   "fov": 56.96595147526737,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.0931270004572315
+   ],
+   "fov": 57.03620036412385,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.125196552862861
+   ],
+   "fov": 57.10230535056816,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.157177196057495
+   ],
+   "fov": 57.16401095739561,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.189068930041136
+   ],
+   "fov": 57.22108231040191,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.220871754813784
+   ],
+   "fov": 57.273305138383144,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.252585670375434
+   ],
+   "fov": 57.320485773135765,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.284210676726093
+   ],
+   "fov": 57.362451149456604,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.315746773865755
+   ],
+   "fov": 57.39904880514288,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.347193961794425
+   ],
+   "fov": 57.43014688099218,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.378552240512102
+   ],
+   "fov": 57.45563412080247,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.409821610018781
+   ],
+   "fov": 57.47541987137208,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.441002070314469
+   ],
+   "fov": 57.48943408249974,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.47209362139916
+   ],
+   "fov": 57.49762730698455,
+   "owner": "TRANSITION",
+   "space": "space.lobby",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.503096263272859
+   ],
+   "fov": 57.49997070062597,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.534009995935563
+   ],
+   "fov": 57.49645602222385,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.564834819387271
+   ],
+   "fov": 57.48709563357843,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.595570733627988
+   ],
+   "fov": 57.4719224994903,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.626217738657707
+   ],
+   "fov": 57.450990187760446,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.656775834476434
+   ],
+   "fov": 57.424372869190215,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.687245021084168
+   ],
+   "fov": 57.39216531758135,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.717625298480905
+   ],
+   "fov": 57.354482909735964,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.74791666666665
+   ],
+   "fov": 57.31146162545653,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.778119125641399
+   ],
+   "fov": 57.26325804754593,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.808232675405156
+   ],
+   "fov": 57.21004936180739,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.838257315957917
+   ],
+   "fov": 57.152033357044544,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.868193047299683
+   ],
+   "fov": 57.08942842506137,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.898039869430456
+   ],
+   "fov": 57.02247356066225,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.9277977823502335
+   ],
+   "fov": 56.95142836165192,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.957466786059019
+   ],
+   "fov": 56.87657302883552,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -4.987046880556809
+   ],
+   "fov": 56.79820836601854,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.016538065843603
+   ],
+   "fov": 56.71665578000688,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.0459403419194055
+   ],
+   "fov": 56.63225728060677,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.075253708784214
+   ],
+   "fov": 56.545375480624855,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.104478166438026
+   ],
+   "fov": 56.45639359586814,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.133604839558516
+   ],
+   "fov": 56.36574332593747,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.162590194728188
+   ],
+   "fov": 56.27398906753399,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.191384127762413
+   ],
+   "fov": 56.181741436261966,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.219939018450382
+   ],
+   "fov": 56.089621329087535,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.248209695369773
+   ],
+   "fov": 55.99825120445349,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.276153398724319
+   ],
+   "fov": 55.908246413329,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.30372974153092
+   ],
+   "fov": 55.82020673257614,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.3309006694698615
+   ],
+   "fov": 55.734708245053966,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.35763041969866
+   ],
+   "fov": 55.65229570124998,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.3838854789169694
+   ],
+   "fov": 55.57347548521826,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.409634540956928
+   ],
+   "fov": 55.498709293543506,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.434848464160253
+   ],
+   "fov": 55.428408620298384,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.459500228790333
+   ],
+   "fov": 55.362930123894664,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.483564894714507
+   ],
+   "fov": 55.30257193373424,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.507019559578625
+   ],
+   "fov": 55.24757093603405,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.529843317682947
+   ],
+   "fov": 55.19810105950996,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.552017219755378
+   ],
+   "fov": 55.15427256313053,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.573524233804936
+   ],
+   "fov": 55.116132310239564,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.594349207225319
+   ],
+   "fov": 55.08366499632031,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.6144788303053454
+   ],
+   "fov": 55.05679528182783,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.633901601290014
+   ],
+   "fov": 55.035390767105085,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.6526077931228
+   ],
+   "fov": 55.019265733645035,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.670589421986817
+   ],
+   "fov": 55.00818556504292,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.687840217749339
+   ],
+   "fov": 55.00187175203887,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.704355596401169
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.720132634569215
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.735170046167629
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.749468161239766
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.763028907030134
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.775855791312519
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.787953887987289
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.799329824947918
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.80999177420366
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.819949444232222
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.829214074523258
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.837798432260421
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.845716811076626
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.852985031804161
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.859620445128161
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.865641936038931
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.87106992996553
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.875926400459951
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.880234878288194
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.884020461771424
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.887309828207369
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.890131246189054
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.892514588624864
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.894491346250906
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.896094641413546
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.89735924188694
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.898321574477318
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.8990197381527185
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.8994935164237665
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.899784388688085
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.899935540237819
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.8999918706167005
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": true
+  },
+  {
+   "position": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "fov": 55,
+   "owner": "DIRECTED",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": null,
+   "crossing": false
+  }
+ ],
+ "errors": []
+}

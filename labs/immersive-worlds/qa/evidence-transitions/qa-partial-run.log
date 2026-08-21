@@ -1,0 +1,61 @@
+  ok   ENGINE-PURITY              engine/ no importa Three.js ni toca el DOM  — 22 archivos revisados
+  ok   PROTECTED-PATHS            Las rutas protegidas siguen presentes
+  ok   BOOT                       El prototipo arranca sin errores de consola
+  ok   SCHEMA-VALID               El mundo cumple todas las invariantes del esquema  — 0 errores, 0 avisos, {"spaces":4,"anchors":41,"entities":11,"hotspots":16,"portals":6,"chapters":3,"storySteps":33,"routes":1}
+  ok   INV-CANONICAL              Cada id resuelve a exactamente un registro canónico  — 115 registros; 0 violaciones
+  ok   INV-BY-REFERENCE           Las Spaces referencian entidades, no copias
+  ok   INV-WORLD-NOT-CAMERA       World State no contiene estado de cámara
+  ok   INV-ONE-CAMERA-WRITER      Un único controlador de cámara autoritativo por frame  — 2 frames, 0 violaciones
+  ok   INV-HOTSPOT-NOT-PORTAL     Hotspot dispara, Portal conecta: sin solape de responsabilidad
+  ok   INV-SEMANTIC-NOT-VISUAL    Ningún registro semántico contiene implementación de render
+  ok   INV-SHARED-ACTIONS         Hotspots y pasos guiados usan el mismo vocabulario declarado de Action  — 4 acciones en uso: START_ROUTE, ACTIVATE_PORTAL, FOCUS_ENTITY, PLAY_MEDIA
+  ok   INV-SCENEKIT-CONTRACT      El motor sólo habla con el Scene Kit por contrato
+  ok   INV-GRAPH-CONNECTED        Todas las salas son alcanzables desde el inicio
+  ok   FOCUS-AUTHORITY            Al enfocar, la autoridad de cámara pasa a FOCUS  — FOCUS
+  ok   FOCUS-MOVED                El encuadre de foco mueve realmente la cámara  — z -12.40 → -12.20
+  ok   FOCUS-RETURN               Al salir del foco el visitante vuelve exactamente donde estaba  — [-4.8,1.62,-12.4]
+  ok   PORTAL-TRAVERSE            Un Portal cambia la Space activa  — space.gallery-b
+  ok   PORTAL-PREWARMED           La sala vecina ya estaba precargada al cruzar  — 0 ms de espera
+  ok   LIFECYCLE-COOLING          La sala anterior queda en COOLING, no destruida ni activa  — space.gallery-a:COOLING, space.gallery-b:ACTIVE
+  ok   GUIDED-AUTHORITY           El recorrido guiado toma la cámara como DIRECTED  — DIRECTED/GUIDED
+  ok   SHARED-WORLD-STATE         Explore y Guided operan sobre el mismo World State  — visitadas 1 → 2
+  ok   SHARED-ACTION-PATH         Hotspot y Experiencia despachan las mismas Actions  — {"QA":{"FOCUS_ENTITY":1},"EXPERIENCE":{"ACTIVATE_PORTAL":1,"FOCUS_ENTITY":1}}
+  ok   GUIDED-RETURN              Al salir del recorrido la cámara vuelve al visitante  — EXPLORE/EXPLORE
+  ok   CAMERA-NO-VIOLATIONS       Ni una sola escritura de cámara en conflicto en toda la sesión  — 0 violaciones
+  ok   HANDOFF-VALID-POSE         Tras la cesión el visitante queda dentro de la sala activa, no dentro de un muro  — Galería A — Horizontes · [-2.60, 1.62, -11.98] · EXPLORE
+  ok   PROXIMITY-SPATIAL          La proximidad es espacial: acercarse y alejarse cambian el estado del hotspot  — hotspot.art.division-tercera/NEAR → null/AVAILABLE
+  ok   MEDIA-LOADED               Las obras se cargan desde archivos propios declarados en el mundo  — 7 archivos, 0 fallos, más lento 3773 ms
+  ok   MEDIA-FALLBACK             Un archivo que falla degrada a lámina generada, sin romper la sala
+  ok   PROJECTION-FROM-DATA       La proyección toma tamaño, luz e imagen del mundo, no de una constante  — 4.6×2.6 m, media cuaderno-de-luz.webm, variantes 4.6/7.2 m y bbaf9b/2a41aa
+  ok   PROJECTION-NO-PANEL        La proyección no monta ningún objeto en el muro: sin marco, sin bisel, sin pantalla  — 0 volúmenes en el grupo
+  ok   TOUR-ONE-START             El recorrido tiene exactamente un inicio canónico  — abre en el beat 0 (step.01-entrada)
+  ok   TOUR-ONE-END               El recorrido tiene exactamente un final canónico  — cierra en el beat 32 de 32
+  ok   TOUR-ORDER-UNIQUE          Ningún número de parada está duplicado  — 10 pasos
+  ok   TOUR-ORDER-CONTIGUOUS      La numeración va de 01 a N sin huecos  — 1,2,3,4,5,6,7,8,9,10
+  ok   TOUR-IDS-UNIQUE            Cada parada tiene una identidad técnica única  — 10 identidades
+  ok   TOUR-NO-ORPHANS            Todo beat pertenece exactamente a una parada canónica  — 33 beats asignados
+  ok   TOUR-NEXT-PREV-CONSISTENT  Siguiente y anterior son mutuamente consistentes  — 10 enlaces
+  ok   TOUR-NO-UNEXPECTED-CYCLES  El recorrido no se cierra sobre sí mismo  — inicio.previous=—, fin.next=—
+  ok   TOUR-ALL-REACHABLE         Todas las paradas se alcanzan siguiendo «siguiente» desde el inicio  — 10/10 alcanzables desde el inicio
+  ok   TOUR-G-USES-CANONICAL-SEQUENCE El recorrido automático atraviesa exactamente la secuencia canónica  — esperado 1→2→3→4→5→6→7→8→9→10 · observado 1→2→3→4→5→6→7→8→9→10
+  ok   TOUR-MANUAL-NEXT-USES-CANONICAL-SEQUENCE SIGUIENTE recorre la misma secuencia canónica, de principio a fin  — observado 1→2→3→4→5→6→7→8→9→10
+  ok   TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE ANTERIOR retrocede por la secuencia canónica, sin saltarse ninguna parada  — esperado 10→9→8→7 · observado 10→9→8→7
+  ok   GRAMMAR-ARTWORK-ABCD       Cada parada de obra convencional recorre A → B → C → D en ese orden  — 02:·ABCD · 03:ABCD · 04:ABCD · 05:ABCD · 08:ABCD
+  ok   GRAMMAR-C-VISITOR-NOT-GUIDE En la contemplación humana hay una figura visitante y la guía ya no media  — 03c-campo-contemplacion visitante=true guía=false · 04c-horizonte-contemplacion visitante=true guía=false · 06c-division-contemplacion visitante=true guía=false · 06f-estudio-contemplacion visitante=true guía=false · 06j-vasija-escala visitante=true guía=false · 10f-noche-contemplacion visitante=true guía=false
+  ok   GRAMMAR-D-NO-VISITOR-FIGURE El POV puro de la obra no contiene la figura visitante  — 03d-campo-cesion · 04b-horizonte-cesion · 06b-division-cesion · 06g-estudio-cesion · 10b-noche-cesion
+  ok   GRAMMAR-SCULPTURE-ABCD     La escultura recorre contexto → atención → escala → detalle espacial, y su detalle queda sin figuras  — 06h-lleva-vasija:ABCD
+  ok   GRAMMAR-PROJECTION-D-NO-GUIDE En el dwell de la proyección no hay guía ni figura: sólo la obra  — guía=false visitante=false
+  ok   BROWSE-MOVES-THE-CAMERA    Navegar la colección lleva la cámara a la obra que dice la cartela  — campo-de-ceniza@-4.06,1.85,-12.4 · division-tercera@5.1,1.71,-12.59 · campo-de-ceniza@-3.94,1.85,-12.4
+  ok   BROWSE-DOES-NOT-MOVE-THE-TOUR La obra visitada no reescribe en silencio la posición del recorrido  — parada step.03-lleva-horizonte · beat 9 durante 3 saltos
+  ok   BROWSE-RETURNS-TO-ORIGIN   Salir de la colección devuelve exactamente a la parada y el beat de origen  — step.04b-horizonte-cesion · DIRECTED · pose -0.9,1.89,-12.09
+  ok   WARMUP-COMPILES            El warmup compila programas de verdad, no una escena vacía  — 208 programas compilados
+  ok   DETAIL-NAVIGATION          En detalle se pasa de una obra a la siguiente sin volver a la sala  — entity.artwork.horizonte-interrumpido → entity.artwork.campo-de-ceniza
+  ok   DETAIL-ZOOM                El zoom de inspección acerca realmente la cámara a la obra  — 3.80 m → 1.71 m
+  ok   ESCAPE-IN-FOCUS            Escape saca del detalle aunque el movimiento esté desactivado
+  ok   DETAIL-RETURN              Tras recorrer varias obras el visitante vuelve donde estaba de pie  — [-0.9,1.62,-12.09]
+  ok   DETAIL-NO-VIOLATIONS       La navegación en detalle no rompe la autoridad de cámara  — 0
+  ok   A11Y-OUTLINE               Todo el contenido existe como texto fuera del canvas  — 21 obras en 4 salas (11 entidades)
+[IW QA] runner failed: page.waitForFunction: Timeout 90000ms exceeded.
+    at main (/home/user/escaparates-pro/labs/immersive-worlds/qa/run-qa.mjs:771:18) {
+  name: 'TimeoutError'
+}

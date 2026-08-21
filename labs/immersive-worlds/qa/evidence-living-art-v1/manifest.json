@@ -1,0 +1,63 @@
+{
+  "captured": "2026-08-21T11:24:45.556Z",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "branch": "claude/museum-living-art-v1",
+  "experiment": "labs/immersive-worlds/experiments/living-painting",
+  "proofState": {
+    "boidsActive": 680,
+    "directionFieldSize": [
+      64,
+      64
+    ],
+    "poissonSeeds": 500,
+    "gradientMapActive": true,
+    "capabilities": [
+      "gpgpu-boids",
+      "direction-field",
+      "poisson-seeds",
+      "gradient-map"
+    ]
+  },
+  "statusText": "Living Painting active — 680 particles, 500 stroke seeds",
+  "runtimeErrors": [],
+  "scenes": [
+    {
+      "id": "S1",
+      "file": "S1_first-impression.png",
+      "description": "What the visitor sees on arrival — boids settled into natural formation after 2s"
+    },
+    {
+      "id": "S2",
+      "files": [
+        "S2_temporal-00.png",
+        "S2_temporal-01.png",
+        "S2_temporal-02.png",
+        "S2_temporal-03.png",
+        "S2_temporal-04.png"
+      ],
+      "description": "Temporal sequence — 5 frames at 400ms intervals proving particle motion"
+    },
+    {
+      "id": "S3",
+      "files": [
+        "S3_pointer-center.png",
+        "S3_pointer-corner.png",
+        "S3_pointer-away.png"
+      ],
+      "description": "Pointer/visitor response — flock avoids center pointer, redistributes when pointer moves, relaxes when pointer leaves"
+    },
+    {
+      "id": "S4",
+      "file": "S4_particle-density.png",
+      "description": "Particle density and spatial distribution at rest"
+    },
+    {
+      "id": "S5",
+      "file": "S5_status-readout.png",
+      "description": "Technical status readout — capability state summary"
+    }
+  ]
+}

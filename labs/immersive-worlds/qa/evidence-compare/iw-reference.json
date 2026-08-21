@@ -1,0 +1,43 @@
+{
+ "generatedAt": "2026-08-13T13:13:35.536Z",
+ "source": "Infinite Worlds V1.2.3",
+ "commit": "453ed40008f838d6187a7e85d93872f7866ad5cb",
+ "substitutions": [
+  "portal noise texture (assets.codepen.io) replaced with a locally generated stand-in — changes the shader noise PATTERN, not the choreography",
+  "webfonts stubbed"
+ ],
+ "fidelity": "dependencies are the pinned versions the source declares (three 0.172.0, gsap 3.12.5, events 3.3.0), served locally because esm.sh is blocked by policy",
+ "worldAfter": "THE GREY CITY",
+ "shots": [
+  {
+   "id": "00_before",
+   "file": "iw_00_before.png",
+   "caption": "THE GREY CITY — portal visible, destination world live inside it"
+  },
+  {
+   "id": "01_flight",
+   "file": "iw_01_flight.png",
+   "caption": "crossing, sample 1 of 4"
+  },
+  {
+   "id": "02_flight",
+   "file": "iw_02_flight.png",
+   "caption": "crossing, sample 2 of 4"
+  },
+  {
+   "id": "03_flight",
+   "file": "iw_03_flight.png",
+   "caption": "crossing, sample 3 of 4"
+  },
+  {
+   "id": "04_flight",
+   "file": "iw_04_flight.png",
+   "caption": "crossing, sample 4 of 4"
+  },
+  {
+   "id": "99_after",
+   "file": "iw_99_after.png",
+   "caption": "after the crossing — destination world"
+  }
+ ]
+}

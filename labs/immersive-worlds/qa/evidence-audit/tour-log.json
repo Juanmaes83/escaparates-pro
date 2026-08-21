@@ -1,0 +1,1490 @@
+[
+ {
+  "t": 0,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.23,
+   "walking": false
+  }
+ },
+ {
+  "t": 2,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.93,
+   "walking": false
+  }
+ },
+ {
+  "t": 4,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.99,
+   "walking": false
+  }
+ },
+ {
+  "t": 6,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 8,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 10,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 12,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 14,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 16,
+  "step": "step.02-paso-galeria-a",
+  "intent": "PORTAL",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   -5.9
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.27,
+   "walking": false
+  }
+ },
+ {
+  "t": 18,
+  "step": "step.02-paso-galeria-a",
+  "intent": "PORTAL",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   -5.9
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.03,
+   "walking": false
+  }
+ },
+ {
+  "t": 20,
+  "step": "step.02-paso-galeria-a",
+  "intent": "PORTAL",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   -5.9
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 22,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   -5.9
+  ],
+  "guide": {
+   "p": [
+    -0.94,
+    0.09
+   ],
+   "o": 0.54,
+   "walking": true
+  }
+ },
+ {
+  "t": 24,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.08,
+   1.62,
+   -6.13
+  ],
+  "guide": {
+   "p": [
+    -1.05,
+    -0.85
+   ],
+   "o": 0.96,
+   "walking": true
+  }
+ },
+ {
+  "t": 26,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.44,
+   1.62,
+   -7.13
+  ],
+  "guide": {
+   "p": [
+    -1.16,
+    -1.79
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 28,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -1.29,
+   1.62,
+   -9.49
+  ],
+  "guide": {
+   "p": [
+    -1.27,
+    -2.73
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 30,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.41,
+   1.62,
+   -12.59
+  ],
+  "guide": {
+   "p": [
+    -1.37,
+    -3.56
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 32,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.1,
+   1.62,
+   -14.52
+  ],
+  "guide": {
+   "p": [
+    -1.47,
+    -4.4
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 34,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.42,
+   1.62,
+   -15.41
+  ],
+  "guide": {
+   "p": [
+    -1.57,
+    -5.23
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 36,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.5,
+   1.62,
+   -15.65
+  ],
+  "guide": {
+   "p": [
+    -1.66,
+    -5.96
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 38,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.51,
+   1.62,
+   -15.67
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -6.69
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 40,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.51,
+   1.62,
+   -15.64
+  ],
+  "guide": {
+   "p": [
+    -1.84,
+    -7.42
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 42,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.36,
+   1.64,
+   -14.97
+  ],
+  "guide": {
+   "p": [
+    -1.94,
+    -8.25
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 44,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.88,
+   1.7,
+   -12.79
+  ],
+  "guide": {
+   "p": [
+    -2.04,
+    -9.09
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 46,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.64,
+   1.73,
+   -11.73
+  ],
+  "guide": {
+   "p": [
+    -2.15,
+    -10.03
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 48,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.26,
+    -10.96
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 50,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.37,
+    -11.9
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 52,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.47,
+    -12.73
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 54,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.5,
+    -12.95
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 56,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.5,
+    -12.95
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 58,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.5,
+    -12.95
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 60,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.55,
+   1.74,
+   -11.7
+  ],
+  "guide": {
+   "p": [
+    -1.98,
+    -12.59
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 62,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -1.58,
+   1.82,
+   -11.99
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 64,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.91,
+   1.88,
+   -12.19
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 66,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 68,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 70,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 72,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 74,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 76,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   -0.89,
+   1.88,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.12,
+    -12.48
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 78,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   -0.79,
+   1.87,
+   -12.22
+  ],
+  "guide": {
+   "p": [
+    -0.18,
+    -12.57
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 80,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   -0.51,
+   1.84,
+   -12.28
+  ],
+  "guide": {
+   "p": [
+    0.66,
+    -12.65
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 82,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   0.06,
+   1.78,
+   -12.41
+  ],
+  "guide": {
+   "p": [
+    1.49,
+    -12.73
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 84,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   0.79,
+   1.7,
+   -12.58
+  ],
+  "guide": {
+   "p": [
+    2.33,
+    -12.81
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 86,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.22,
+   1.65,
+   -12.67
+  ],
+  "guide": {
+   "p": [
+    3.17,
+    -12.89
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 88,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.41,
+   1.63,
+   -12.72
+  ],
+  "guide": {
+   "p": [
+    4,
+    -12.97
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 90,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.46,
+   1.62,
+   -12.73
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 92,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.46,
+   1.62,
+   -12.73
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 94,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.57,
+   1.62,
+   -12.69
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 96,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   2.53,
+   1.66,
+   -12.39
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 98,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.16,
+   1.72,
+   -11.87
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 100,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.57,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 102,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 104,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 106,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 108,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 110,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 112,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 114,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.61,
+   1.73,
+   -11.79
+  ],
+  "guide": {
+   "p": [
+    4.95,
+    -12.8
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 116,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.94,
+   1.71,
+   -12.39
+  ],
+  "guide": {
+   "p": [
+    5.22,
+    -12.71
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 118,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.1,
+   1.71,
+   -12.67
+  ],
+  "guide": {
+   "p": [
+    5.22,
+    -12.71
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 120,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.1,
+   1.71,
+   -12.67
+  ],
+  "guide": {
+   "p": [
+    5.22,
+    -12.71
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 122,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.1,
+   1.71,
+   -12.67
+  ],
+  "guide": {
+   "p": [
+    5.22,
+    -12.71
+   ],
+   "o": 1,
+   "walking": false
+  }
+ }
+]

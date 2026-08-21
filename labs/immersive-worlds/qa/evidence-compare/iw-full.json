@@ -1,0 +1,58 @@
+{
+ "generatedAt": "2026-08-13T13:36:34.160Z",
+ "source": "Infinite Worlds V1.2.3",
+ "commit": "453ed40008f838d6187a7e85d93872f7866ad5cb",
+ "worldBefore": "THE GREY CITY",
+ "worldAfter": "THE LIVING VALLEY",
+ "swapped": true,
+ "timeScale": 0.08,
+ "transitionDurationSeconds": 1.5,
+ "interaction": "app raycast hover reported via #portalHint, then real mousedown — the runtime path, not synthetic coordinates",
+ "substitutions": [
+  "portal noise texture replaced with a locally generated stand-in (assets.codepen.io blocked)",
+  "webfonts stubbed"
+ ],
+ "fidelity": "MECHANISM COMPARISON = VALID · ART-DIRECTION FIDELITY = LIMITED",
+ "shots": [
+  {
+   "id": "1_legible",
+   "file": "iwfull_1_legible.png",
+   "caption": "destination first legible — the other world rendered inside the portal surface"
+  },
+  {
+   "id": "2_approach",
+   "file": "iwfull_2_approach.png",
+   "caption": "portal hover — the app reports its own raycast hit, hint shown"
+  },
+  {
+   "id": "3_anticipation",
+   "file": "iwfull_3_anticipation.png",
+   "caption": "threshold anticipation — camera begins moving to the portal"
+  },
+  {
+   "id": "4_crossing",
+   "file": "iwfull_4_crossing.png",
+   "caption": "crossing begins"
+  },
+  {
+   "id": "5_mid",
+   "file": "iwfull_5_mid.png",
+   "caption": "mid-crossing"
+  },
+  {
+   "id": "6_takeover",
+   "file": "iwfull_6_takeover.png",
+   "caption": "spatial takeover — destination fills the view"
+  },
+  {
+   "id": "7_handoff",
+   "file": "iwfull_7_handoff.png",
+   "caption": "handoff — world swap"
+  },
+  {
+   "id": "8_stable",
+   "file": "iwfull_8_stable.png",
+   "caption": "stable destination — THE LIVING VALLEY"
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+<!doctype html><meta charset="utf-8">
+<title>Guided Back — evidencia en movimiento</title>
+<style>
+ body{margin:0;padding:2rem;background:#0c0b0a;color:#e8e3d9;font:400 14px/1.6 'Helvetica Neue',sans-serif}
+ h1{font:400 1.5rem/1.3 Georgia,serif;margin:0 0 .4rem}
+ p.lede{color:#a49d92;max-width:62ch;margin:0 0 2rem}
+ .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:1.4rem}
+ figure{margin:0}img{width:100%;display:block;border:1px solid rgba(240,236,228,.14)}
+ figcaption{padding:.6rem 0;display:grid;gap:.15rem}
+ figcaption b{font-weight:500}figcaption span{color:#a49d92;font-size:.82rem}
+ h2{font:400 1rem/1.3 Georgia,serif;margin:2.4rem 0 .6rem}
+ .strip{display:flex;gap:4px;overflow-x:auto;padding-bottom:.6rem}
+ .strip img{width:170px;flex:0 0 auto}
+ video{width:100%;max-width:900px;border:1px solid rgba(240,236,228,.14)}
+</style>
+<h1>Guided Back — evidencia en movimiento</h1>
+<p class="lede">Ruta real del producto. Toda navegación es un clic en ← ANTERIOR o Siguiente;
+no se llama a la API del motor para moverse. Contador y guía se leen del DOM en el mismo
+instante que la captura.</p>
+<div class="grid"><figure>
+  <img src="01-parada-adelante.png" alt="Parada hacia adelante, asentada">
+  <figcaption>
+    <b>Parada hacia adelante, asentada</b>
+    <span>parada 4/10 · HUD «Parada 4 de 10»</span>
+    <span>space.gallery-a · cámara DIRECTED · guía 0</span>
+  </figcaption>
+</figure><figure>
+  <img src="02-atras-misma-sala.png" alt="Tras ← ANTERIOR, misma sala">
+  <figcaption>
+    <b>Tras ← ANTERIOR, misma sala</b>
+    <span>parada 3/10 · HUD «Parada 3 de 10»</span>
+    <span>space.gallery-a · cámara DIRECTED · guía 0</span>
+  </figcaption>
+</figure><figure>
+  <img src="03-adelante-tras-atras.png" alt="Adelante otra vez, misma parada">
+  <figcaption>
+    <b>Adelante otra vez, misma parada</b>
+    <span>parada 4/10 · HUD «Parada 4 de 10»</span>
+    <span>space.gallery-a · cámara DIRECTED · guía 0</span>
+  </figcaption>
+</figure><figure>
+  <img src="04-llegada-galeria-b.png" alt="Llegada a Galería B, tras la travesía">
+  <figcaption>
+    <b>Llegada a Galería B, tras la travesía</b>
+    <span>parada 7/10 · HUD «Parada 7 de 10»</span>
+    <span>space.gallery-b · cámara DIRECTED · guía 0</span>
+  </figcaption>
+</figure><figure>
+  <img src="05-atras-entre-salas.png" alt="Tras ← ANTERIOR, de vuelta en Galería A">
+  <figcaption>
+    <b>Tras ← ANTERIOR, de vuelta en Galería A</b>
+    <span>parada 6/10 · HUD «Parada 6 de 10»</span>
+    <span>space.gallery-a · cámara DIRECTED · guía 0</span>
+  </figcaption>
+</figure><figure>
+  <img src="06-adelante-entre-salas.png" alt="Adelante entre salas otra vez">
+  <figcaption>
+    <b>Adelante entre salas otra vez</b>
+    <span>parada 8/10 · HUD «Parada 8 de 10»</span>
+    <span>space.gallery-b · cámara DIRECTED · guía 1</span>
+  </figcaption>
+</figure></div>
+<h2>Retroceso en la misma sala, fotograma a fotograma</h2>
+<p class="lede">8 posiciones de cámara distintas a lo largo de
+7892 ms · recorrido 6 m frente a
+6 m en línea recta.</p><div class="strip"><img src="film/02-atras-misma-sala-00.png" alt=""><img src="film/02-atras-misma-sala-01.png" alt=""><img src="film/02-atras-misma-sala-02.png" alt=""><img src="film/02-atras-misma-sala-03.png" alt=""><img src="film/02-atras-misma-sala-04.png" alt=""><img src="film/02-atras-misma-sala-05.png" alt=""><img src="film/02-atras-misma-sala-06.png" alt=""><img src="film/02-atras-misma-sala-07.png" alt=""><img src="film/02-atras-misma-sala-08.png" alt=""><img src="film/02-atras-misma-sala-09.png" alt=""></div>
+<h2>Retroceso entre salas, fotograma a fotograma</h2>
+<p class="lede">17 posiciones de cámara distintas a lo largo de
+254929 ms · recorrido 15.035 m frente a
+6.766 m en línea recta · salas space.gallery-b → space.gallery-a.</p><div class="strip"><img src="film/05-atras-entre-salas-00.png" alt=""><img src="film/05-atras-entre-salas-01.png" alt=""><img src="film/05-atras-entre-salas-02.png" alt=""><img src="film/05-atras-entre-salas-03.png" alt=""><img src="film/05-atras-entre-salas-04.png" alt=""><img src="film/05-atras-entre-salas-05.png" alt=""><img src="film/05-atras-entre-salas-06.png" alt=""><img src="film/05-atras-entre-salas-07.png" alt=""><img src="film/05-atras-entre-salas-08.png" alt=""><img src="film/05-atras-entre-salas-09.png" alt=""><img src="film/05-atras-entre-salas-10.png" alt=""><img src="film/05-atras-entre-salas-11.png" alt=""><img src="film/05-atras-entre-salas-12.png" alt=""><img src="film/05-atras-entre-salas-13.png" alt=""></div>
+<p class="lede">Las tiras son para mirar, no para medir: cada captura cuesta segundos en este
+entorno. El movimiento se mide con una traza de cámara en rAF dentro de la página.</p>
+<h2>Grabación continua</h2><video src="guided-back.webm" controls muted></video>

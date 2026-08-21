@@ -1,0 +1,86 @@
+{
+  "experiment": "painterly-chain",
+  "capturedAt": "2026-08-21T15:34:13.313Z",
+  "url": "http://localhost:4200/labs/immersive-worlds/experiments/painterly-chain/",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "screenshots": [
+    {
+      "name": "S1_first-impression",
+      "label": "Initial painterly surface with impasto composite"
+    },
+    {
+      "name": "S2_temporal-00",
+      "label": "Living marks frame 0"
+    },
+    {
+      "name": "S2_temporal-01",
+      "label": "Living marks frame 1"
+    },
+    {
+      "name": "S2_temporal-02",
+      "label": "Living marks frame 2"
+    },
+    {
+      "name": "S2_temporal-03",
+      "label": "Living marks frame 3"
+    },
+    {
+      "name": "S3_pointer-center",
+      "label": "Living marks scatter from center pointer"
+    },
+    {
+      "name": "S4_pointer-corner",
+      "label": "Living marks scatter from corner pointer"
+    },
+    {
+      "name": "S5_relaxed",
+      "label": "Marks returned to painting surface"
+    },
+    {
+      "name": "S6_status-readout",
+      "label": "Status bar with chain metrics"
+    }
+  ],
+  "proofState": {
+    "artworkSize": [
+      256,
+      256
+    ],
+    "directionFieldSize": [
+      256,
+      256
+    ],
+    "poissonSeeds": 3000,
+    "bezierStrokes": 3000,
+    "strokeRTSize": [
+      1024,
+      1024
+    ],
+    "heightRTSize": [
+      1024,
+      1024
+    ],
+    "impastoActive": true,
+    "boidsActive": 160,
+    "crossCoupling": "direction-field → boid-mark-orientation",
+    "capabilities": [
+      "direction-field",
+      "poisson-seeds",
+      "bezier-strokes",
+      "impasto-material",
+      "gpgpu-boids",
+      "gradient-map"
+    ],
+    "causalChain": [
+      "procedural-artwork",
+      "direction-field-analysis",
+      "poisson-seed-distribution",
+      "bezier-stroke-geometry",
+      "impasto-three-pass-composite",
+      "direction-field-coupled-boid-marks"
+    ]
+  }
+}

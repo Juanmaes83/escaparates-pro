@@ -1,0 +1,82 @@
+{
+ "generatedAt": "2026-08-14T23:06:06.535Z",
+ "passed": 15,
+ "total": 15,
+ "results": [
+  {
+   "name": "el área Visitante abre su panel",
+   "ok": true,
+   "detail": "sí"
+  },
+  {
+   "name": "la vista esencial se queda en lo esencial",
+   "ok": true,
+   "detail": "hours, address, admission, accessibility, ticketUrl, bookingUrl"
+  },
+  {
+   "name": "el resto vive tras Personalizar más · Visitante",
+   "ok": true,
+   "detail": "Personalizar más · Visitante · 0 campos visibles cerrados"
+  },
+  {
+   "name": "la programación son registros, no campos numerados",
+   "ok": true,
+   "detail": "2 actividades"
+  },
+  {
+   "name": "el visitante puede abrir la información de visita",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "lo escrito en el Estudio llega al visitante",
+   "ok": true,
+   "detail": "Jueves de 11:00 a 21:00, entrada libre desde las 19:00"
+  },
+  {
+   "name": "el panel lleva el nombre de la institución",
+   "ok": true,
+   "detail": "Visitar Fundación Arenas (institución ficticia)"
+  },
+  {
+   "name": "la programación llega como actividades",
+   "ok": true,
+   "detail": "2 actividades"
+  },
+  {
+   "name": "sin enlace no hay botón",
+   "ok": true,
+   "detail": "Reservar visita"
+  },
+  {
+   "name": "la superficie del visitante no tiene ni un control de autoría",
+   "ok": true,
+   "detail": "0 campos · 0 acciones"
+  },
+  {
+   "name": "la segunda institución trae sus propios horarios",
+   "ok": true,
+   "detail": " HorariosMartes a domingo, 10:00 – 19:00Lunes cerrado Direcc"
+  },
+  {
+   "name": "su propia dirección",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "su propia programación",
+   "ok": true,
+   "detail": "3 actividades"
+  },
+  {
+   "name": "sus propias acciones — vende entrada donde la otra no",
+   "ok": true,
+   "detail": "Comprar entrada · Reservar visita · Cómo llegar"
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ]
+}

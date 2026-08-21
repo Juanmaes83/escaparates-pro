@@ -1,0 +1,3960 @@
+{
+ "label": "variantAcheck",
+ "variant": "A",
+ "beat": "step.08-paso-galeria-b",
+ "generatedAt": "2026-08-13T16:18:17.664Z",
+ "parkedAt": "step.07-lleva-umbral",
+ "nextBeat": "step.08-paso-galeria-b",
+ "portalId": "portal.gallery-a-gallery-b",
+ "hint": "OPENING",
+ "behaviour": "CONTINUOUS",
+ "fromSpace": "space.gallery-a",
+ "toSpace": "space.gallery-b",
+ "destinationState": "READY",
+ "frames": 300,
+ "owners": [
+  "TRANSITION"
+ ],
+ "handoffIndex": 209,
+ "exposureFrom": 0.95,
+ "exposureTo": 1.05,
+ "worstExposureJump": 0.0013,
+ "shots": [
+  {
+   "id": "00_before",
+   "file": "variantAcheck_00_before.png",
+   "caption": "before the crossing — departure pose"
+  },
+  {
+   "id": "01_flight",
+   "file": "variantAcheck_01_flight.png",
+   "caption": "33% through the crossing"
+  },
+  {
+   "id": "02_flight",
+   "file": "variantAcheck_02_flight.png",
+   "caption": "67% through the crossing"
+  },
+  {
+   "id": "99_after",
+   "file": "variantAcheck_99_after.png",
+   "caption": "after the crossing — arrival pose"
+  }
+ ],
+ "trace": [
+  {
+   "position": [
+    3.003802528284087,
+    1.642994030556367,
+    -8.600020017923542
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0038607828168917,
+    1.642994030556367,
+    -8.600048520558735
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0040170954266263,
+    1.642994030556367,
+    -8.600124999406255
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.004317891181579,
+    1.642994030556367,
+    -8.600272163562396
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.00480780957049,
+    1.642994030556367,
+    -8.600511839651693
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0055297045025484,
+    1.642994030556367,
+    -8.6008649658533
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0065246443073943,
+    1.642994030556367,
+    -8.60135158474767
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0078319117351167,
+    1.642994030556367,
+    -8.601990835207603
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0094890039562574,
+    1.642994030556367,
+    -8.602800943548507
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.011531632561808,
+    1.642994030556367,
+    -8.603799214143324
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.01399372356321,
+    1.642994030556367,
+    -8.605002019698231
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0169074173923547,
+    1.642994030556367,
+    -8.606424791375925
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0203030689015855,
+    1.642994030556367,
+    -8.608082008943908
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0242092473636957,
+    1.642994030556367,
+    -8.609987191115923
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.028652736471927,
+    1.642994030556367,
+    -8.612152886245232
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0336585343399753,
+    1.642994030556367,
+    -8.614590663519257
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0392498535019836,
+    1.642994030556367,
+    -8.617311104795595
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0454481209125475,
+    1.642994030556367,
+    -8.620323797210194
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.052272977946711,
+    1.642994030556367,
+    -8.623637326679098
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.059742280399971,
+    1.642994030556367,
+    -8.627259272405823
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0678720984882726,
+    1.642994030556367,
+    -8.631196202497081
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.076676716848013,
+    1.642994030556367,
+    -8.635453670780288
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.0861686345360386,
+    1.642994030556367,
+    -8.640036214906877
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.096358565029647,
+    1.642994030556367,
+    -8.6449473558161
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.107255436226586,
+    1.642994030556367,
+    -8.65018959862478
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.1188663904450538,
+    1.642994030556367,
+    -8.655764434998968
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.131196784423699,
+    1.642994030556367,
+    -8.661672347054214
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.1442501893216215,
+    1.642994030556367,
+    -8.667912812821871
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.1580283907183686,
+    1.642994030556367,
+    -8.674484313309357
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.172531388613944,
+    1.642994030556367,
+    -8.681384341173121
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.1877573974287943,
+    1.642994030556367,
+    -8.688609411013632
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.2037028460038233,
+    1.642994030556367,
+    -8.696155071292388
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.2203623776003805,
+    1.642994030556367,
+    -8.704015917861591
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.2377288499002685,
+    1.642994030556367,
+    -8.71218560908786
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.2557933350057398,
+    1.642994030556367,
+    -8.720656882541897
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.274545119439496,
+    1.642994030556367,
+    -8.729421573216793
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.2939717041446896,
+    1.642994030556367,
+    -8.738470633228282
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.3140588044849277,
+    1.642994030556367,
+    -8.74779415294088
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.3347903502442597,
+    1.642994030556367,
+    -8.757381383454534
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.3561484856271933,
+    1.642994030556367,
+    -8.767220760377125
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.378113569258681,
+    1.642994030556367,
+    -8.777299928798666
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4006641741841293,
+    1.642994030556367,
+    -8.787605769373922
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4237770878693934,
+    1.642994030556367,
+    -8.798124425410634
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.447427312200781,
+    1.642994030556367,
+    -8.808841330851306
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.471588063485046,
+    1.642994030556367,
+    -8.81974123902715
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.4962307724493975,
+    1.642994030556367,
+    -8.830808252053448
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5213250842414925,
+    1.642994030556367,
+    -8.842025850726197
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5468388584294384,
+    1.642994030556367,
+    -8.853376924770686
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.572738169001795,
+    1.642994030556367,
+    -8.864843803283147
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.5989873043675678,
+    1.642994030556367,
+    -8.876408285197467
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.625548767356219,
+    1.642994030556367,
+    -8.88805166959944
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.652383275217657,
+    1.642994030556367,
+    -8.89975478570181
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.6794497596222437,
+    1.642994030556367,
+    -8.91149802228399
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.706705366660786,
+    1.642994030556367,
+    -8.92326135639097
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7341054568445484,
+    1.642994030556367,
+    -8.935024381076625
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7616036051052406,
+    1.642994030556367,
+    -8.946766331967284
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.7891516007950243,
+    1.642994030556367,
+    -8.958466112412067
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.816708003588521,
+    1.642994030556367,
+    -8.970105921122316
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.8442644063820173,
+    1.642994030556367,
+    -8.981682177861884
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.871820809175514,
+    1.642994030556367,
+    -8.993194882630764
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.8993772119690098,
+    1.642994030556367,
+    -9.00464403542896
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.926933614762506,
+    1.642994030556367,
+    -9.01602963625647
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.9544900175560027,
+    1.642994030556367,
+    -9.027351685113294
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    3.9820464203494983,
+    1.642994030556367,
+    -9.038610181999431
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.009602823142995,
+    1.642994030556367,
+    -9.049805126914885
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.037159225936492,
+    1.642994030556367,
+    -9.060936519859652
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.064715628729988,
+    1.642994030556367,
+    -9.072004360833732
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.092272031523484,
+    1.642994030556367,
+    -9.08300864983713
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.11982843431698,
+    1.642994030556367,
+    -9.093949386869838
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.147384837110477,
+    1.642994030556367,
+    -9.104826571931865
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.174941239903972,
+    1.642994030556367,
+    -9.115640205023203
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.20249764269747,
+    1.642994030556367,
+    -9.12639028614386
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.230054045490966,
+    1.642994030556367,
+    -9.137076815293826
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.257610448284462,
+    1.642994030556367,
+    -9.147699792473109
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.285166851077958,
+    1.642994030556367,
+    -9.158259217681705
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.312723253871455,
+    1.642994030556367,
+    -9.168755090919618
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.340279656664951,
+    1.642994030556367,
+    -9.179187412186844
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.3678360594584476,
+    1.642994030556367,
+    -9.189556181483386
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.395392462251944,
+    1.642994030556367,
+    -9.199861398809242
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.4229488650454405,
+    1.642994030556367,
+    -9.210103064164409
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.450505267838936,
+    1.642994030556367,
+    -9.220281177548891
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.4780616706324325,
+    1.642994030556367,
+    -9.230395738962695
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.505618073425929,
+    1.642994030556367,
+    -9.240446748405807
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.5331744762194255,
+    1.642994030556367,
+    -9.250434205878234
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.560730879012921,
+    1.642994030556367,
+    -9.260358111379976
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.5882872818064175,
+    1.642994030556367,
+    -9.270218464911032
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.615843684599913,
+    1.642994030556367,
+    -9.280015266471402
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.6434000873934105,
+    1.642994030556367,
+    -9.289748516061088
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.6709564901869065,
+    1.642994030556367,
+    -9.299418213680088
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.6985128929804025,
+    1.642994030556367,
+    -9.309024359328404
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.726069295773899,
+    1.642994030556367,
+    -9.318566953006032
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.7536256985673955,
+    1.642994030556367,
+    -9.328045994712975
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.781182101360892,
+    1.642994030556367,
+    -9.337461484449234
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.8087385041543875,
+    1.642994030556367,
+    -9.346813422214804
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.836294906947884,
+    1.642994030556367,
+    -9.356101808009692
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.8638513097413805,
+    1.642994030556367,
+    -9.365326641833894
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.8914077125348765,
+    1.642994030556367,
+    -9.374487923687408
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.918964115328373,
+    1.642994030556367,
+    -9.38358565357024
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.946520518121869,
+    1.642994030556367,
+    -9.392619831482383
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    4.974076920915366,
+    1.642994030556367,
+    -9.401590457423842
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.0016333237088615,
+    1.642994030556367,
+    -9.410497531394617
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.029189726502358,
+    1.642994030556367,
+    -9.419341053394705
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.056746129295855,
+    1.642994030556367,
+    -9.428121023424106
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.0843025320893505,
+    1.642994030556367,
+    -9.436837441482822
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.111858934882847,
+    1.642994030556367,
+    -9.445490307570854
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.139415337676343,
+    1.642994030556367,
+    -9.4540796216882
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.16697174046984,
+    1.642994030556367,
+    -9.462605383834862
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.1945281432633355,
+    1.642994030556367,
+    -9.471067594010837
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.2220845460568315,
+    1.642994030556367,
+    -9.479466252216124
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.249640948850329,
+    1.642994030556367,
+    -9.487801358450728
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.277197351643825,
+    1.642994030556367,
+    -9.496072912714647
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.304753754437321,
+    1.642994030556367,
+    -9.504280915007877
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.332310157230818,
+    1.642994030556367,
+    -9.512425365330428
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.359866560024313,
+    1.642994030556367,
+    -9.520506263682286
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.38742296281781,
+    1.642994030556367,
+    -9.528523610063466
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.414979365611307,
+    1.642994030556367,
+    -9.536477404473954
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.442535768404803,
+    1.642994030556367,
+    -9.54436764691376
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.470092171198298,
+    1.642994030556367,
+    -9.552194337382877
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.497648573991796,
+    1.642994030556367,
+    -9.559957475881314
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.525204976785293,
+    1.642994030556367,
+    -9.567657062409062
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.552761379578787,
+    1.642994030556367,
+    -9.575293096966124
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.580317782372284,
+    1.642994030556367,
+    -9.582865579552502
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.607874185165781,
+    1.642994030556367,
+    -9.590374510168193
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.635430587959275,
+    1.642994030556367,
+    -9.597819888813198
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.662986990752774,
+    1.642994030556367,
+    -9.605201715487519
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.690543393546271,
+    1.642994030556367,
+    -9.612519990191156
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.718099796339766,
+    1.642994030556367,
+    -9.619774712924105
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.745656199133262,
+    1.642994030556367,
+    -9.626965883686369
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.773212601926758,
+    1.642994030556367,
+    -9.634093502477949
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.800769004720256,
+    1.642994030556367,
+    -9.64115756929884
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.82832540751375,
+    1.642994030556367,
+    -9.648158084149047
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.855881810307248,
+    1.642994030556367,
+    -9.65509504702857
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.883438213100744,
+    1.642994030556367,
+    -9.661968457937407
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.91099461589424,
+    1.642994030556367,
+    -9.668778316875558
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.938551018687737,
+    1.642994030556367,
+    -9.675524623843025
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.966107421481233,
+    1.642994030556367,
+    -9.682207378839802
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    5.993663824274728,
+    1.642994030556367,
+    -9.688826581865897
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.021220227068224,
+    1.642994030556367,
+    -9.695382232921308
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.048776629861721,
+    1.642994030556367,
+    -9.70187433200603
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.076333032655218,
+    1.642994030556367,
+    -9.708302879120067
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.103889435448714,
+    1.642994030556367,
+    -9.71466787426342
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.131445838242211,
+    1.642994030556367,
+    -9.720969317436086
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.159002241035706,
+    1.642994030556367,
+    -9.727207208638067
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.186558643829203,
+    1.642994030556367,
+    -9.733381547869362
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.2141150466227,
+    1.642994030556367,
+    -9.739492335129974
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.241671449416196,
+    1.642994030556367,
+    -9.745539570419899
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.269227852209692,
+    1.642994030556367,
+    -9.751523253739137
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.296784255003189,
+    1.642994030556367,
+    -9.75744338508769
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 4000,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.324340657796684,
+    1.642994030556367,
+    -9.763299964465556
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.95,
+   "fogFar": 3999.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.351897060590181,
+    1.642994030556367,
+    -9.76909299187274
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9501,
+   "fogFar": 3997.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.379453463383677,
+    1.642994030556367,
+    -9.774822467309237
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9502,
+   "fogFar": 3993.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.407009866177174,
+    1.642994030556367,
+    -9.780488390775048
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9503,
+   "fogFar": 3988.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.43456626897067,
+    1.642994030556367,
+    -9.786090762270174
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9505,
+   "fogFar": 3981.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.462122671764167,
+    1.642994030556367,
+    -9.791629581794615
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9507,
+   "fogFar": 3973.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.489679074557664,
+    1.642994030556367,
+    -9.797104849348369
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9509,
+   "fogFar": 3964.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.517235477351159,
+    1.642994030556367,
+    -9.802516564931437
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9512,
+   "fogFar": 3953.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.544791880144654,
+    1.642994030556367,
+    -9.807864728543821
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9515,
+   "fogFar": 3941.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.572348282938151,
+    1.642994030556367,
+    -9.81314934018552
+   ],
+   "fov": 55.00142412320594,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9518,
+   "fogFar": 3927.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.599904685731648,
+    1.642994030556367,
+    -9.818370399856532
+   ],
+   "fov": 55.00935934774401,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9522,
+   "fogFar": 3913.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.627461088525145,
+    1.642994030556367,
+    -9.823527907556858
+   ],
+   "fov": 55.023901115635304,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9526,
+   "fogFar": 3897,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.65501749131864,
+    1.642994030556367,
+    -9.8286218632865
+   ],
+   "fov": 55.04465020896773,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.953,
+   "fogFar": 3879.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.682573894112136,
+    1.642994030556367,
+    -9.833652267045457
+   ],
+   "fov": 55.071215345249946,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9535,
+   "fogFar": 3861,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.710130296905633,
+    1.642994030556367,
+    -9.838619118833726
+   ],
+   "fov": 55.10321317741134,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.954,
+   "fogFar": 3841.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.73768669969913,
+    1.642994030556367,
+    -9.843522418651313
+   ],
+   "fov": 55.14026829380208,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9545,
+   "fogFar": 3820.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.765243102492626,
+    1.642994030556367,
+    -9.848362166498212
+   ],
+   "fov": 55.18201321819308,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9551,
+   "fogFar": 3798.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.792799505286122,
+    1.6429939563442508,
+    -9.853138362374427
+   ],
+   "fov": 55.228088409775985,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9557,
+   "fogFar": 3774.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.820355908079618,
+    1.642993441290012,
+    -9.857851006279954
+   ],
+   "fov": 55.27814226316323,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9563,
+   "fogFar": 3750.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.847912310873113,
+    1.6429920567356067,
+    -9.862500098214797
+   ],
+   "fov": 55.33183110838798,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.957,
+   "fogFar": 3724.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.875468713666611,
+    1.6429893873147128,
+    -9.867085638178954
+   ],
+   "fov": 55.38881921090417,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9576,
+   "fogFar": 3698.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.903025116460107,
+    1.6429850309527314,
+    -9.871607626172425
+   ],
+   "fov": 55.448778771586454,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9583,
+   "fogFar": 3670.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.930581519253604,
+    1.6429785988667853,
+    -9.876066062195212
+   ],
+   "fov": 55.51138992673029,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.959,
+   "fogFar": 3642.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.9581379220471,
+    1.6429697155657197,
+    -9.880460946247313
+   ],
+   "fov": 55.576340748051834,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9598,
+   "fogFar": 3612.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    6.985694324840596,
+    1.6429580188501023,
+    -9.884792278328728
+   ],
+   "fov": 55.643327242688045,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9606,
+   "fogFar": 3582.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.013250727634093,
+    1.6429431598122226,
+    -9.889060058439458
+   ],
+   "fov": 55.71205335319661,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9614,
+   "fogFar": 3550.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.040807130427588,
+    1.642924802836093,
+    -9.893264286579502
+   ],
+   "fov": 55.78223095755597,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9622,
+   "fogFar": 3518.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.068363533221085,
+    1.6429026255974477,
+    -9.89740496274886
+   ],
+   "fov": 55.85357986916532,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.963,
+   "fogFar": 3485.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.09591993601458,
+    1.6428763190637437,
+    -9.901482086947533
+   ],
+   "fov": 55.925827836844626,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9639,
+   "fogFar": 3451.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.123476338808077,
+    1.6428455874941594,
+    -9.905495659175521
+   ],
+   "fov": 55.99871054483458,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9648,
+   "fogFar": 3416.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.151032741601574,
+    1.6428101484395967,
+    -9.909445679432823
+   ],
+   "fov": 56.07197161279664,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9657,
+   "fogFar": 3380.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.17858914439507,
+    1.642769732742679,
+    -9.913332147719437
+   ],
+   "fov": 56.14536259581302,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9666,
+   "fogFar": 3344,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.206145547188566,
+    1.642724084537752,
+    -9.91715506403537
+   ],
+   "fov": 56.21864298438669,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9675,
+   "fogFar": 3306.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.233701949982063,
+    1.642672961250884,
+    -9.920914428380614
+   ],
+   "fov": 56.29158020444136,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9685,
+   "fogFar": 3268.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.261258352775559,
+    1.6426161335998655,
+    -9.924610240755175
+   ],
+   "fov": 56.36394961732151,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9695,
+   "fogFar": 3230.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.288814755569057,
+    1.642553385594209,
+    -9.928242501159051
+   ],
+   "fov": 56.43553451979236,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9705,
+   "fogFar": 3190.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.316371158362552,
+    1.6424845145351497,
+    -9.931811209592238
+   ],
+   "fov": 56.5061261440399,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9715,
+   "fogFar": 3150.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.343927561156047,
+    1.642409331015645,
+    -9.935316366054742
+   ],
+   "fov": 56.57552365767084,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9725,
+   "fogFar": 3110.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.371483963949544,
+    1.6423276589203744,
+    -9.93875797054656
+   ],
+   "fov": 56.64353416371269,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9735,
+   "fogFar": 3069,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.399040366743041,
+    1.6422393354257399,
+    -9.942136023067691
+   ],
+   "fov": 56.70997270061367,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9746,
+   "fogFar": 3027.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.426596769536538,
+    1.6421442109998656,
+    -9.945450523618138
+   ],
+   "fov": 56.77466224224278,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9757,
+   "fogFar": 2984.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.454153172330034,
+    1.6420421494025983,
+    -9.9487014721979
+   ],
+   "fov": 56.83743369788977,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9767,
+   "fogFar": 2941.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.48170957512353,
+    1.6419330276855064,
+    -9.951888868806975
+   ],
+   "fov": 56.89812591226513,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9778,
+   "fogFar": 2898.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.509265977917025,
+    1.6418167361918812,
+    -9.955012713445363
+   ],
+   "fov": 56.95658566550012,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.979,
+   "fogFar": 2854.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.536822380710521,
+    1.641693178556736,
+    -9.958073006113068
+   ],
+   "fov": 57.012667673146744,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9801,
+   "fogFar": 2810.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.564378783504019,
+    1.6415622717068064,
+    -9.96106974681009
+   ],
+   "fov": 57.066234586177764,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9812,
+   "fogFar": 2765.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.591935186297515,
+    1.6414239458605506,
+    -9.96400293553642
+   ],
+   "fov": 57.117156990986686,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9823,
+   "fogFar": 2720.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.619491589091011,
+    1.6412781445281486,
+    -9.966872572292068
+   ],
+   "fov": 57.165313409387785,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9835,
+   "fogFar": 2675,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.647047991884508,
+    1.641124824511503,
+    -9.969678657077031
+   ],
+   "fov": 57.210590298616076,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9847,
+   "fogFar": 2629.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.674604394678003,
+    1.640963955904239,
+    -9.972421189891309
+   ],
+   "fov": 57.252882051327326,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9858,
+   "fogFar": 2583,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.7021607974715,
+    1.6407955220917034,
+    -9.9751001707349
+   ],
+   "fov": 57.29209099559807,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.987,
+   "fogFar": 2536.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.729717200264996,
+    1.6406195197509656,
+    -9.977715599607805
+   ],
+   "fov": 57.328127394925595,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9882,
+   "fogFar": 2489.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.7572736030584934,
+    1.6404359588508173,
+    -9.980267476510027
+   ],
+   "fov": 57.360909448227915,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9894,
+   "fogFar": 2442.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.784830005851989,
+    1.6402448626517727,
+    -9.98275580144156
+   ],
+   "fov": 57.39036328984383,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9906,
+   "fogFar": 2395.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.8123864086454855,
+    1.640046267706068,
+    -9.98518057440241
+   ],
+   "fov": 57.41642298953288,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9918,
+   "fogFar": 2348.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.839942811438981,
+    1.6398402238576617,
+    -9.987541795392573
+   ],
+   "fov": 57.43903055247536,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.993,
+   "fogFar": 2300.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.8674992142324776,
+    1.639626794242235,
+    -9.98983946441205
+   ],
+   "fov": 57.4581359192723,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9942,
+   "fogFar": 2252.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.895055617025974,
+    1.6394060552871907,
+    -9.992073581460843
+   ],
+   "fov": 57.47369696594552,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9954,
+   "fogFar": 2204.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.92261201981947,
+    1.6391780967116547,
+    -9.99424414653895
+   ],
+   "fov": 57.485679503937575,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9966,
+   "fogFar": 2157,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.9501684226129665,
+    1.6389430215264742,
+    -9.996351159646373
+   ],
+   "fov": 57.494057280111754,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.9978,
+   "fogFar": 2108.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    7.977724825406463,
+    1.63870094603422,
+    -9.99839462078311
+   ],
+   "fov": 57.49881197675213,
+   "owner": "TRANSITION",
+   "space": "space.gallery-a",
+   "exposure": 0.999,
+   "fogFar": 2060.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.005281228199959,
+    1.6384519998291835,
+    -10.000374529949159
+   ],
+   "fov": 57.499933211563516,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0002,
+   "fogFar": 2012.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.032837630993455,
+    1.6381963257973802,
+    -10.002290887144524
+   ],
+   "fov": 57.497418537671486,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0014,
+   "fogFar": 1964.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.06039403378695,
+    1.6379340801165467,
+    -10.004143692369203
+   ],
+   "fov": 57.49127344362235,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0027,
+   "fogFar": 1916.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.087950436580448,
+    1.6376654322561421,
+    -10.005932945623197
+   ],
+   "fov": 57.481511353383176,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0039,
+   "fogFar": 1868.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.115506839373944,
+    1.6373905649773484,
+    -10.007658646906505
+   ],
+   "fov": 57.46815362634181,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0051,
+   "fogFar": 1820.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.14306324216744,
+    1.6371096743330689,
+    -10.009320796219129
+   ],
+   "fov": 57.451229557306824,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0063,
+   "fogFar": 1772.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.170619644960937,
+    1.6368229696679297,
+    -10.010919393561064
+   ],
+   "fov": 57.43077637650755,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0075,
+   "fogFar": 1725.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.198176047754432,
+    1.6365306736182796,
+    -10.012454438932316
+   ],
+   "fov": 57.40683924959409,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0087,
+   "fogFar": 1677.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.225732450547929,
+    1.6362330221121892,
+    -10.013925932332883
+   ],
+   "fov": 57.379471277637265,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0099,
+   "fogFar": 1630.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.253288853341425,
+    1.6359302643694513,
+    -10.015333873762764
+   ],
+   "fov": 57.348733497128684,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0111,
+   "fogFar": 1583.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.28084525613492,
+    1.6356226629015813,
+    -10.016678263221959
+   ],
+   "fov": 57.31469487998069,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0123,
+   "fogFar": 1536.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.308401658928418,
+    1.6353104935118166,
+    -10.017959100710469
+   ],
+   "fov": 57.277432333526384,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0135,
+   "fogFar": 1489.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.335958061721913,
+    1.6349940452951173,
+    -10.019176386228292
+   ],
+   "fov": 57.237030700519625,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0146,
+   "fogFar": 1443.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.36351446451541,
+    1.6346736206381653,
+    -10.02033011977543
+   ],
+   "fov": 57.19358275913502,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0158,
+   "fogFar": 1397.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.391070867308908,
+    1.6343495352193653,
+    -10.021420301351883
+   ],
+   "fov": 57.147189222967924,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0169,
+   "fogFar": 1351.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.418627270102402,
+    1.6340221180088441,
+    -10.02244693095765
+   ],
+   "fov": 57.09795874103447,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0181,
+   "fogFar": 1306.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.4461836728959,
+    1.6336917112684504,
+    -10.023410008592734
+   ],
+   "fov": 57.0460078977715,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0192,
+   "fogFar": 1261.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.473740075689394,
+    1.6333586705517558,
+    -10.024309534257128
+   ],
+   "fov": 56.991461213036665,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0204,
+   "fogFar": 1216.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.501296478482892,
+    1.6330233647040537,
+    -10.02514550795084
+   ],
+   "fov": 56.934451142108315,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0215,
+   "fogFar": 1172.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.52885288127639,
+    1.6326861758623603,
+    -10.025917929673867
+   ],
+   "fov": 56.87511807568559,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0226,
+   "fogFar": 1128.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.556409284069884,
+    1.6323474994554137,
+    -10.026626799426205
+   ],
+   "fov": 56.813610339888385,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0237,
+   "fogFar": 1085.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.583965686863381,
+    1.6320077442036742,
+    -10.027272117207858
+   ],
+   "fov": 56.75008419625731,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0247,
+   "fogFar": 1042.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.611522089656876,
+    1.6316673321193247,
+    -10.027853883018828
+   ],
+   "fov": 56.68470384175378,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0258,
+   "fogFar": 1000.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.639078492450373,
+    1.6313266984370427,
+    -10.028372096859112
+   ],
+   "fov": 56.617641408759916,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0269,
+   "fogFar": 959.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.66663489524387,
+    1.6309862863526934,
+    -10.028826758728709
+   ],
+   "fov": 56.549076965078626,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0279,
+   "fogFar": 918.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.694191298037365,
+    1.630646531100954,
+    -10.029217868627622
+   ],
+   "fov": 56.47919851393356,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0289,
+   "fogFar": 877.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.721747700830862,
+    1.630307854694007,
+    -10.029545426555847
+   ],
+   "fov": 56.408201993969115,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0299,
+   "fogFar": 838,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.749304103624358,
+    1.6299706658523136,
+    -10.029809432513389
+   ],
+   "fov": 56.336291279250446,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0309,
+   "fogFar": 798.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.776860506417854,
+    1.6296353600046116,
+    -10.030009886500245
+   ],
+   "fov": 56.26367817926347,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0319,
+   "fogFar": 760.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.804416909211351,
+    1.629302319287917,
+    -10.030146788516413
+   ],
+   "fov": 56.190582438914845,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0328,
+   "fogFar": 722.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.831973312004848,
+    1.6289719125475235,
+    -10.030220138561898
+   ],
+   "fov": 56.11723173853199,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0338,
+   "fogFar": 685.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.859529714798343,
+    1.628644495337002,
+    -10.030229936636697
+   ],
+   "fov": 56.04386169386307,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0347,
+   "fogFar": 649.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.887086117591842,
+    1.628320409918202,
+    -10.030176182740812
+   ],
+   "fov": 55.97071585607702,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0356,
+   "fogFar": 614.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.914642520385337,
+    1.6279999852612503,
+    -10.03005887687424
+   ],
+   "fov": 55.8980457117635,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0365,
+   "fogFar": 579.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.94219051607512,
+    1.6276835370445508,
+    -10.029878083905865
+   ],
+   "fov": 55.82613249030624,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0373,
+   "fogFar": 546,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.969688664335814,
+    1.6273713676547863,
+    -10.02963427716356
+   ],
+   "fov": 55.755348290623644,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0381,
+   "fogFar": 513.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    8.997088754519575,
+    1.6270637661869163,
+    -10.029328394377934
+   ],
+   "fov": 55.686081075606005,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0389,
+   "fogFar": 481.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.024344361558118,
+    1.6267610084441784,
+    -10.028961787629067
+   ],
+   "fov": 55.61870747989612,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0397,
+   "fogFar": 450.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.051410845962703,
+    1.6264633569380877,
+    -10.028536198196168
+   ],
+   "fov": 55.55358840649074,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0405,
+   "fogFar": 421,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.07824535382414,
+    1.6261710608884377,
+    -10.028053729994008
+   ],
+   "fov": 55.49106483264164,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0412,
+   "fogFar": 392.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.104806816812793,
+    1.6258843562232985,
+    -10.027516821829613
+   ],
+   "fov": 55.431453890942755,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0419,
+   "fogFar": 365.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.131055952178567,
+    1.625603465579019,
+    -10.026928218703347
+   ],
+   "fov": 55.375045285696565,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0425,
+   "fogFar": 339.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.156955262750921,
+    1.6253285983002252,
+    -10.02629094236921
+   ],
+   "fov": 55.32209809795699,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0432,
+   "fogFar": 314.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.182469036938869,
+    1.6250599504398207,
+    -10.025608261359789
+   ],
+   "fov": 55.272838025185166,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0438,
+   "fogFar": 291.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.207563348730963,
+    1.6247977047589872,
+    -10.024883660671987
+   ],
+   "fov": 55.22745509338011,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0443,
+   "fogFar": 268.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.232206057695317,
+    1.6245420307271838,
+    -10.024120811300344
+   ],
+   "fov": 55.18610187101488,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0448,
+   "fogFar": 248.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.25636680897958,
+    1.6242930845221477,
+    -10.023323539795353
+   ],
+   "fov": 55.14889220528297,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0453,
+   "fogFar": 228.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.280017033310967,
+    1.6240510090298932,
+    -10.02249579801491
+   ],
+   "fov": 55.11590049220063,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0458,
+   "fogFar": 210.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.303129946996233,
+    1.623815933844713,
+    -10.02164163322765
+   ],
+   "fov": 55.087161483178996,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0462,
+   "fogFar": 193.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.32568055192168,
+    1.6235879752691766,
+    -10.0207651587176
+   ],
+   "fov": 55.06267062192932,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0466,
+   "fogFar": 177.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.347645635553167,
+    1.6233672363141325,
+    -10.019870525030221
+   ],
+   "fov": 55.04238489714219,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.047,
+   "fogFar": 162.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.369003770936102,
+    1.6231538066987057,
+    -10.018961891990633
+   ],
+   "fov": 55.026224188422496,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0473,
+   "fogFar": 149.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.389735316695436,
+    1.6229477628502993,
+    -10.018043401615373
+   ],
+   "fov": 55.01407307559112,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0477,
+   "fogFar": 136.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.409822417035672,
+    1.6227491679045947,
+    -10.017119152029801
+   ],
+   "fov": 55.00578307479018,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0479,
+   "fogFar": 125.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.429249001740867,
+    1.62255807170555,
+    -10.016193172493871
+   ],
+   "fov": 55.00117525894602,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0482,
+   "fogFar": 115.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.448000786174624,
+    1.6223745108054017,
+    -10.015269399629666
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0484,
+   "fogFar": 106,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.466065271280094,
+    1.622198508464664,
+    -10.014351654934707
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0486,
+   "fogFar": 97.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.483431743579983,
+    1.6220300746521283,
+    -10.013443623655846
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0488,
+   "fogFar": 90.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.50009127517654,
+    1.621869206044864,
+    -10.012548835088992
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.049,
+   "fogFar": 83.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.51603672375157,
+    1.6217158860282186,
+    -10.01167064436083
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0492,
+   "fogFar": 77.5,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.53126273256642,
+    1.6215700846958168,
+    -10.01081221573912
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0493,
+   "fogFar": 72.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.545765730461996,
+    1.6214317588495608,
+    -10.009976507509016
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0494,
+   "fogFar": 67.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.559543931858745,
+    1.6213008519996315,
+    -10.009166258443372
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0495,
+   "fogFar": 63.7,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.572597336756665,
+    1.6211772943644862,
+    -10.008383975885733
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0496,
+   "fogFar": 60.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.584927730735313,
+    1.621061002870861,
+    -10.007631925455362
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0497,
+   "fogFar": 57.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.59653868495378,
+    1.620951881153769,
+    -10.006912122374263
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0497,
+   "fogFar": 54.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.60743555615072,
+    1.6208498195565015,
+    -10.006226324406908
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0498,
+   "fogFar": 52.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.617625486644329,
+    1.6207546951306273,
+    -10.005576026393959
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0498,
+   "fogFar": 50.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.627117404332354,
+    1.6206663716359928,
+    -10.004962456351972
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0499,
+   "fogFar": 49.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.635922022692096,
+    1.6205846995407223,
+    -10.004386573101755
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0499,
+   "fogFar": 48.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.644051840780397,
+    1.6205095160212175,
+    -10.003849065378615
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0499,
+   "fogFar": 47.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.65152114323366,
+    1.6204406449621582,
+    -10.003350352368548
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.0499,
+   "fogFar": 46.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.658346000267823,
+    1.620377896956502,
+    -10.002890585604925
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 45.8,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.664544267678385,
+    1.6203210693054833,
+    -10.002469652151003
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 45.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.670135586840395,
+    1.6202699460186152,
+    -10.002087178984182
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.9,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.675141384708445,
+    1.6202242978136883,
+    -10.00174253848863
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.6,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.679584873816676,
+    1.6201838821167704,
+    -10.001434854953546
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.4,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.683491052278786,
+    1.6201484430622077,
+    -10.001163011964984
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.3,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.686886703788018,
+    1.6201177114926237,
+    -10.000925660569823
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.2,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.689800397617162,
+    1.6200914049589195,
+    -10.000721228081158
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.692262488618564,
+    1.6200692277202742,
+    -10.000547927384982
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44.1,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.694305117224115,
+    1.6200508707441446,
+    -10.00040376659878
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.695962209445256,
+    1.6200360117062649,
+    -10.000286558923229
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.697269476872979,
+    1.6200243149906475,
+    -10.000193932518918
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.698264416677825,
+    1.6200154316895818,
+    -10.000123340230653
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.698986311609882,
+    1.6200089996036358,
+    -10.000072068972516
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699476229998794,
+    1.6200046432416544,
+    -10.000037248577618
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699777025753747,
+    1.6200019738207605,
+    -10.000015859907043
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699933338363483,
+    1.6200005892663552,
+    -10.000004742003174
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.699991592896287,
+    1.6200000742121163,
+    -10.000000598063306
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "fov": 55,
+   "owner": "TRANSITION",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": true
+  },
+  {
+   "position": [
+    9.7,
+    1.62,
+    -10
+   ],
+   "fov": 55,
+   "owner": "DIRECTED",
+   "space": "space.gallery-b",
+   "exposure": 1.05,
+   "fogFar": 44,
+   "crossing": false
+  }
+ ],
+ "errors": []
+}

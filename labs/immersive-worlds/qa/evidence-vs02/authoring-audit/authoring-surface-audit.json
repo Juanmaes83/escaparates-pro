@@ -1,0 +1,70 @@
+{
+ "generatedAt": "2026-08-15T15:40:46.095Z",
+ "surfaces": [
+  {
+   "id": "engine-editor",
+   "label": "author.html — editor de mundo",
+   "url": "labs/immersive-worlds/author.html",
+   "mounted": {
+    "engineEditor": true,
+    "vs01Panel": false,
+    "vs02Shell": false,
+    "railLabels": [],
+    "hasFileInput": 0,
+    "bodyAttr": "",
+    "firstText": "Immersive Worlds Capa de autoría · V1 mínima Cámara: AUTHOR Sala en edición VestíbuloGalería A — HorizontesGalería B — Cámara oscuraArchivo "
+   },
+   "errors": []
+  },
+  {
+   "id": "vs01",
+   "label": "VS01 — panel fino",
+   "url": "labs/immersive-worlds/index.html?tier=LOW&authoring=1&shell=vs01",
+   "mounted": {
+    "engineEditor": false,
+    "vs01Panel": true,
+    "vs02Shell": false,
+    "railLabels": [
+     "Institución",
+     "Obra",
+     "Medios",
+     "Experiencia",
+     "Vista previa"
+    ],
+    "hasFileInput": 3,
+    "bodyAttr": "",
+    "firstText": "Fundación Arenas La sala está preparada Entrar en vestíbulo Contenido y obras ficticios, generados en tiempo de ejecución. Fundación Arenas "
+   },
+   "errors": []
+  },
+  {
+   "id": "vs02",
+   "label": "VS02 — Museum Studio",
+   "url": "labs/immersive-worlds/index.html?tier=LOW&authoring=1",
+   "mounted": {
+    "engineEditor": false,
+    "vs01Panel": false,
+    "vs02Shell": true,
+    "railLabels": [
+     "ConstruirInstitución, exposición, salas y piezas Espacios y salasEstructura de la exposiciónColección y piezas",
+     "ConstruirInstitución, exposición, salas y piezas",
+     "Espacios y salas",
+     "Estructura de la exposición",
+     "Colección y piezas",
+     "ContenidoCartelas, medios e interpretación",
+     "ContenidoCartelas, medios e interpretación",
+     "ExperienciaLuz, proyección, recorridos",
+     "ExperienciaLuz, proyección, recorridos",
+     "VisitanteHorarios, cómo llegar, programación",
+     "VisitanteHorarios, cómo llegar, programación",
+     "PublicarValidación, derechos, publicación Pronto",
+     "PublicarValidación, derechos, publicación Pronto"
+    ],
+    "hasFileInput": 1,
+    "bodyAttr": "on",
+    "firstText": "Fundación Arenas Compilando materiales… Entrar en vestíbulo Contenido y obras ficticios, generados en tiempo de ejecución. Fundación Arenas "
+   },
+   "errors": []
+  }
+ ]
+}

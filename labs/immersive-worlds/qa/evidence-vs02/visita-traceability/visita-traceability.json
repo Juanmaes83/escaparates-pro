@@ -1,0 +1,94 @@
+{
+ "generatedAt": "2026-08-15T16:45:15.760Z",
+ "token": "QAMSULVXVC",
+ "rows": [
+  {
+   "field": "Horarios",
+   "configPath": "visitor.hours",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Horarios",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Dirección",
+   "configPath": "visitor.address",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Dirección",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Entrada",
+   "configPath": "visitor.admission",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Entrada",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Accesibilidad",
+   "configPath": "visitor.accessibility",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Accesibilidad",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Cómo llegar",
+   "configPath": "visitor.transport",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Cómo llegar",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Aparcamiento",
+   "configPath": "visitor.parking",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Aparcamiento",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Contacto",
+   "configPath": "visitor.contact",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Contacto",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Más información",
+   "configPath": "visitor.notes",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Más información",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Reservar visita",
+   "configPath": "visitor.bookingUrl",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · CTA Reservar",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Comprar entrada",
+   "configPath": "visitor.ticketUrl",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · CTA Comprar",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Cómo llegar (enlace)",
+   "configPath": "visitor.directionsUrl",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · CTA Cómo llegar",
+   "status": "CONNECTED"
+  },
+  {
+   "field": "Programación",
+   "configPath": "visitor.programme[]",
+   "consumer": "hud.setVisitorInfo()",
+   "surface": "VISITA · Programación",
+   "status": "CONNECTED"
+  }
+ ],
+ "counts": {
+  "CONNECTED": 12
+ },
+ "consoleErrors": []
+}

@@ -1,0 +1,568 @@
+{
+ "generatedAt": "2026-08-15T18:36:02.682Z",
+ "settleMs": 3200,
+ "tour": [
+  {
+   "id": "step.01-entrada",
+   "order": 1,
+   "title": "Bienvenida",
+   "space": "space.lobby"
+  },
+  {
+   "id": "step.02-paso-galeria-a",
+   "order": 2,
+   "title": "Campo de ceniza",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.03-lleva-horizonte",
+   "order": 3,
+   "title": "Horizonte interrumpido",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.05-lleva-division",
+   "order": 4,
+   "title": "División tercera",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.06d-lleva-estudio",
+   "order": 5,
+   "title": "Estudio de figura, IV",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.06h-lleva-vasija",
+   "order": 6,
+   "title": "Vasija de arenas",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.07-lleva-umbral",
+   "order": 7,
+   "title": "La cámara oscura",
+   "space": "space.gallery-a"
+  },
+  {
+   "id": "step.09-lleva-noche",
+   "order": 8,
+   "title": "Noche de invierno",
+   "space": "space.gallery-b"
+  },
+  {
+   "id": "step.10c-lleva-cuaderno",
+   "order": 9,
+   "title": "Cuaderno de luz",
+   "space": "space.gallery-b"
+  },
+  {
+   "id": "step.11-cierre",
+   "order": 10,
+   "title": "Cierre",
+   "space": "space.gallery-b"
+  }
+ ],
+ "rows": [
+  {
+   "label": "preparar · parada 3",
+   "stopId": "step.03-lleva-horizonte",
+   "ms": 5819,
+   "stop": "step.03-lleva-horizonte",
+   "order": 3,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    -0.558,
+    1.62,
+    -5.246
+   ],
+   "tgt": [
+    -0.852,
+    1.613,
+    -13.444
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     -1.22,
+     0,
+     -2.26
+    ]
+   },
+   "counters": {
+    "beats": 6,
+    "portals": 1,
+    "rooms": 1,
+    "guides": 4,
+    "travel": 9.9
+   }
+  },
+  {
+   "label": "ADELANTE 3→4 (referencia)",
+   "stopId": "step.05-lleva-division",
+   "ms": 4032,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    1.652,
+    1.62,
+    -7.713
+   ],
+   "tgt": [
+    3.668,
+    1.573,
+    -15.192
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     0.25,
+     0,
+     -6.02
+    ]
+   },
+   "counters": {
+    "beats": 4,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 3,
+    "travel": 3.5
+   }
+  },
+  {
+   "label": "BACK 4→3 (control real)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4164,
+   "stop": "step.03-lleva-horizonte",
+   "order": 3,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    -1.383,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    -1.383,
+    1.585,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 0,
+    "at": [
+     2.57,
+     0,
+     -9.97
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 4.7
+   }
+  },
+  {
+   "label": "ADELANTE otra vez 3→4",
+   "stopId": "step.05-lleva-division",
+   "ms": 4278,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    1.783,
+    1.58,
+    -9.613
+   ],
+   "tgt": [
+    4.379,
+    1.553,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     4.35,
+     0,
+     -13
+    ]
+   },
+   "counters": {
+    "beats": 2,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 2,
+    "travel": 3.2
+   }
+  },
+  {
+   "label": "ADELANTE 4→5",
+   "stopId": "step.06d-lleva-estudio",
+   "ms": 4513,
+   "stop": "step.06d-lleva-estudio",
+   "order": 5,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    2.83,
+    1.635,
+    -11.137
+   ],
+   "tgt": [
+    6.168,
+    1.55,
+    -14.586
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     5.95,
+     0,
+     -14.28
+    ]
+   },
+   "counters": {
+    "beats": 4,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 3,
+    "travel": 1.9
+   }
+  },
+  {
+   "label": "BACK 5→4 (control real)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4647,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    4.617,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    4.617,
+    1.47,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 0,
+    "at": [
+     5.95,
+     0,
+     -14.28
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 3.8
+   }
+  },
+  {
+   "label": "BACK 4→3 (segunda vez)",
+   "via": "prevBtn",
+   "clicked": true,
+   "disabled": false,
+   "ms": 4101,
+   "stop": "step.03-lleva-horizonte",
+   "order": 3,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    -1.383,
+    1.58,
+    -9.1
+   ],
+   "tgt": [
+    -1.383,
+    1.585,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 0,
+    "at": [
+     5.95,
+     0,
+     -14.28
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 6
+   }
+  },
+  {
+   "label": "ADELANTE tras dos BACK",
+   "stopId": "step.05-lleva-division",
+   "ms": 3787,
+   "stop": "step.05-lleva-division",
+   "order": 4,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    1.274,
+    1.58,
+    -9.531
+   ],
+   "tgt": [
+    3.512,
+    1.558,
+    -15.24
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     4.35,
+     0,
+     -13
+    ]
+   },
+   "counters": {
+    "beats": 2,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 2,
+    "travel": 2.7
+   }
+  },
+  {
+   "label": "preparar · parada 1",
+   "stopId": "step.01-entrada",
+   "ms": 4830,
+   "stop": "step.01-entrada",
+   "order": 1,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    0.624,
+    1.61,
+    -0.203
+   ],
+   "tgt": [
+    1.297,
+    1.513,
+    -4.607
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     3.58,
+     0,
+     -11.04
+    ]
+   },
+   "counters": {
+    "beats": 1,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 1,
+    "travel": 10.2
+   }
+  },
+  {
+   "label": "BACK en la primera parada",
+   "via": "prevBtn",
+   "clicked": false,
+   "disabled": true,
+   "ms": 4742,
+   "stop": "step.01-entrada",
+   "order": 1,
+   "space": "space.gallery-a",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     2.63,
+     0,
+     -8.6
+    ]
+   },
+   "counters": {
+    "beats": 0,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 0.9
+   }
+  },
+  {
+   "label": "preparar · parada 8 (otra sala)",
+   "stopId": "step.09-lleva-noche",
+   "ms": 4526,
+   "stop": "step.09-lleva-noche",
+   "order": 8,
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    9.552,
+    1.631,
+    -9.186
+   ],
+   "tgt": [
+    13.428,
+    1.516,
+    -10.8
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     3.55,
+     0,
+     -8.34
+    ]
+   },
+   "counters": {
+    "beats": 24,
+    "portals": 2,
+    "rooms": 2,
+    "guides": 16,
+    "travel": 17.1
+   }
+  },
+  {
+   "label": "BACK entre salas",
+   "via": "prevBtn",
+   "clicked": false,
+   "disabled": true,
+   "ms": 3887,
+   "stop": "step.09-lleva-noche",
+   "order": 8,
+   "space": "space.gallery-b",
+   "owner": "DIRECTED",
+   "transport": "PAUSED",
+   "pos": [
+    11.552,
+    1.715,
+    -9.232
+   ],
+   "tgt": [
+    12.088,
+    1.593,
+    -14.74
+   ],
+   "fov": 55,
+   "guide": {
+    "visible": 1,
+    "at": [
+     7.39,
+     0,
+     -10.46
+    ]
+   },
+   "counters": {
+    "beats": 0,
+    "portals": 0,
+    "rooms": 0,
+    "guides": 0,
+    "travel": 3.4
+   }
+  }
+ ],
+ "verdicts": {
+  "backLandsOnPreviousStop": true,
+  "backPortals": [
+   0,
+   0,
+   0
+  ],
+  "backRoomEntries": [
+   0,
+   0,
+   0
+  ],
+  "backBeats": [
+   1,
+   1,
+   1
+  ],
+  "forwardReferencePortals": 0,
+  "forwardReferenceBeats": 4,
+  "repeatedBackWorks": true,
+  "forwardAfterBackWorks": true,
+  "firstStopControlDisabled": true,
+  "crossRoomControlDisabled": true,
+  "framing": {
+   "stop": "step.06d-lleva-estudio",
+   "forward": {
+    "pos": [
+     0.11,
+     1.621,
+     -5.965
+    ],
+    "tgt": [
+     0.082,
+     1.501,
+     -9.941
+    ],
+    "fov": 55
+   },
+   "backward": {
+    "pos": [
+     0.338,
+     1.632,
+     -6.886
+    ],
+    "tgt": [
+     1.469,
+     1.509,
+     -10.633
+    ],
+    "fov": 55
+   },
+   "deltaPosM": 0.949,
+   "deltaTgtM": 1.55,
+   "fovEqual": true,
+   "sameSpace": true
+  }
+ },
+ "errors": []
+}
