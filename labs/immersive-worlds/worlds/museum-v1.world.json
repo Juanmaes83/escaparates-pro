@@ -105,7 +105,8 @@
     "anchor.gallery-a.guide-estudio",
     "anchor.gallery-a.visitor-estudio",
     "anchor.gallery-a.guide-vasija",
-    "anchor.gallery-a.visitor-vasija"
+    "anchor.gallery-a.visitor-vasija",
+    "anchor.gallery-a.door-living-art"
    ],
    "hotspotRefs": [
     "hotspot.art.horizonte-interrumpido",
@@ -115,12 +116,14 @@
     "hotspot.art.vasija-de-arenas",
     "hotspot.gallery-a.to-lobby",
     "hotspot.gallery-a.to-gallery-b",
-    "hotspot.gallery-a.to-archive"
+    "hotspot.gallery-a.to-archive",
+    "hotspot.gallery-a.to-living-art"
    ],
    "portalRefs": [
     "portal.gallery-a-lobby",
     "portal.gallery-a-gallery-b",
-    "portal.gallery-a-archive"
+    "portal.gallery-a-archive",
+    "portal.gallery-a-living-art"
    ],
    "metadata": {
     "bench": [
@@ -263,6 +266,50 @@
     "nestedRuntime": "room.breeze",
     "roomOrigin": [
      60,
+     0,
+     -10
+    ]
+   }
+  },
+  {
+   "id": "space.living-art",
+   "title": "Sala Living Art — Campo de ceniza viviente",
+   "type": "GALLERY",
+   "bounds": {
+    "size": [
+     14,
+     4.8,
+     11
+    ],
+    "origin": [
+     -26,
+     0,
+     -10
+    ]
+   },
+   "sceneProfile": "dark-exhibition",
+   "lightingProfile": "museum-low-light",
+   "ambience": "ambience.dark-room",
+   "defaultSpawnAnchorId": "anchor.living-art.arrive-from-gallery-a",
+   "entityRefs": [
+    "entity.installation.campo-viviente"
+   ],
+   "anchorRefs": [
+    "anchor.living-art.arrive-from-gallery-a",
+    "anchor.living-art.door-gallery-a",
+    "anchor.living-art.painting",
+    "anchor.living-art.visitor-hero"
+   ],
+   "hotspotRefs": [
+    "hotspot.living-art.to-gallery-a"
+   ],
+   "portalRefs": [
+    "portal.living-art-gallery-a"
+   ],
+   "metadata": {
+    "nestedRuntime": "room.living-art",
+    "roomOrigin": [
+     -26,
      0,
      -10
     ]
@@ -1074,6 +1121,90 @@
     0
    ],
    "label": "Paso a la sala Breeze"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.arrive-from-gallery-a",
+   "kind": "SPAWN",
+   "position": [
+    -22,
+    0,
+    -10
+   ],
+   "normal": [
+    -1,
+    0,
+    0
+   ],
+   "label": "Llegada a la sala Living Art"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.door-gallery-a",
+   "kind": "WALL",
+   "position": [
+    -20,
+    0,
+    -10
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "label": "Paso a la Galería A"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.painting",
+   "kind": "WALL",
+   "position": [
+    -30,
+    1.6,
+    -10
+   ],
+   "normal": [
+    1,
+    0,
+    0
+   ],
+   "extent": [
+    3.0,
+    3.0
+   ],
+   "label": "Posición de la pintura viviente"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.visitor-hero",
+   "kind": "VIEWPOINT",
+   "position": [
+    -25,
+    0,
+    -10
+   ],
+   "normal": [
+    -1,
+    0,
+    0
+   ],
+   "label": "Punto de contemplación de la pintura viviente"
+  },
+  {
+   "spaceId": "space.gallery-a",
+   "id": "anchor.gallery-a.door-living-art",
+   "kind": "WALL",
+   "position": [
+    -8,
+    0,
+    -14
+   ],
+   "normal": [
+    -1,
+    0,
+    0
+   ],
+   "label": "Paso a la sala Living Art"
   }
  ],
  "entities": [
@@ -1572,6 +1703,47 @@
     "label": "Viento sobre mármol, Niklas Niehus, 2025",
     "description": "Instalación digital: una réplica de la Venus de Milo, de unos siete metros, y una tela de ocho metros que el viento arrastra hasta rozarla y la deforma al pasar."
    }
+  },
+  {
+   "id": "entity.installation.campo-viviente",
+   "kind": "OBJECT_3D",
+   "subtype": "installation",
+   "spaceId": "space.living-art",
+   "anchorId": "anchor.living-art.painting",
+   "size": [
+    3,
+    3,
+    0.1
+   ],
+   "content": {
+    "title": "Campo de ceniza — viviente",
+    "creator": "Amalia Serrat (original) · Escaparates Pro Living Art (transformación)",
+    "year": "1974 / 2026",
+    "medium": "Pintura viva en tiempo real · WebGL",
+    "description": "La obra Campo de ceniza de Serrat, transformada en pintura viva: los trazos se reconstruyen como curvas Bézier con material impasto, y un enjambre de marcas boid responde al movimiento del visitante.",
+    "media": {
+     "kind": "IMAGE",
+     "src": "../assets/collection/campo-de-ceniza.jpg",
+     "aspect": 0.814,
+     "credit": "Fundación Arenas — colección ficticia (imagen propia)",
+     "rights": "Obra propia. Generada por Escaparates Pro para la colección ficticia Fundación Arenas. Uso libre dentro del producto."
+    }
+   },
+   "representation": {
+    "profile": "nested-runtime",
+    "hints": {
+     "runtimeId": "room.living-art",
+     "artwork": "campo-de-ceniza.jpg"
+    }
+   },
+   "interaction": {
+    "focusable": true,
+    "focusDistance": 5
+   },
+   "accessibility": {
+    "label": "Campo de ceniza viviente, Serrat / Living Art, 1974/2026",
+    "description": "Instalación digital: la obra Campo de ceniza transformada en pintura viva con trazos Bézier, material impasto y marcas boid reactivas al visitante."
+   }
   }
  ],
  "hotspots": [
@@ -1846,6 +2018,40 @@
     "target": "portal.archive-gallery-a"
    },
    "accessibilityLabel": "Volver a la Galería A"
+  },
+  {
+   "id": "hotspot.gallery-a.to-living-art",
+   "spaceId": "space.gallery-a",
+   "anchorId": "anchor.gallery-a.door-living-art",
+   "type": "PORTAL",
+   "interactionVolume": {
+    "shape": "SPHERE",
+    "radius": 2.3
+   },
+   "triggerDistance": 2.3,
+   "visualPolicy": "NEAR",
+   "action": {
+    "type": "ACTIVATE_PORTAL",
+    "target": "portal.gallery-a-living-art"
+   },
+   "accessibilityLabel": "Pasar a la sala de pintura viviente"
+  },
+  {
+   "id": "hotspot.living-art.to-gallery-a",
+   "spaceId": "space.living-art",
+   "anchorId": "anchor.living-art.door-gallery-a",
+   "type": "PORTAL",
+   "interactionVolume": {
+    "shape": "SPHERE",
+    "radius": 2.3
+   },
+   "triggerDistance": 2.3,
+   "visualPolicy": "NEAR",
+   "action": {
+    "type": "ACTIVATE_PORTAL",
+    "target": "portal.living-art-gallery-a"
+   },
+   "accessibilityLabel": "Volver a la Galería A"
   }
  ],
  "portals": [
@@ -1944,6 +2150,30 @@
    "prefetchPolicy": "ON_APPROACH",
    "returnPolicy": "RETURN_TO_SOURCE",
    "accessibilityLabel": "Paso abierto de la sala Breeze a la Galería B"
+  },
+  {
+   "id": "portal.gallery-a-living-art",
+   "fromSpaceId": "space.gallery-a",
+   "toSpaceId": "space.living-art",
+   "sourceAnchorId": "anchor.gallery-a.door-living-art",
+   "destinationSpawnId": "anchor.living-art.arrive-from-gallery-a",
+   "transitionBehaviour": "CONTINUOUS",
+   "representationHint": "OPENING",
+   "prefetchPolicy": "ON_APPROACH",
+   "returnPolicy": "RETURN_TO_SOURCE",
+   "accessibilityLabel": "Paso de la Galería A a la sala de pintura viviente"
+  },
+  {
+   "id": "portal.living-art-gallery-a",
+   "fromSpaceId": "space.living-art",
+   "toSpaceId": "space.gallery-a",
+   "sourceAnchorId": "anchor.living-art.door-gallery-a",
+   "destinationSpawnId": "anchor.gallery-a.arrive-from-archive",
+   "transitionBehaviour": "CONTINUOUS",
+   "representationHint": "OPENING",
+   "prefetchPolicy": "ON_APPROACH",
+   "returnPolicy": "RETURN_TO_SOURCE",
+   "accessibilityLabel": "Paso de la sala de pintura viviente a la Galería A"
   }
  ],
  "chapters": [
