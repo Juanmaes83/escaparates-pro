@@ -30,7 +30,9 @@
 | Wet Paint Flow | Vite/Three.js SPA | `npm run dev` | Three.js ^0.185.1 (MIT) | WebGL2 required | Monolithic `main.js` (3603 lines) |
 | Van Gogh Crows | No-build static HTML | Direct serve | Vendored Three.js core (MIT) + lil-gui | WebGL2 required | Single `index.html` (3506 lines) + 2 ES modules |
 
-**Stone 1 (Donor Runs Unchanged)**: Not yet executed in this environment. Next action.
+**Stone 1 (Donor Runs Unchanged)**: VERIFIED 2026-08-21.
+- WPF: 35/35 Vitest, clean Vite build
+- VGC: 14/14 Node tests, 2/2 Playwright browser tests (WebGL boot + preset switching + mobile layout)
 
 ## 4. Wet Paint Flow — Capability Inventory
 
