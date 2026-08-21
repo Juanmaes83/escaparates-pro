@@ -45,6 +45,14 @@
             icon: 'PIN',
             desc: 'Herramienta visual de hotspots: compara dos crops, mantiene posicion y escala, permite lupa, arrastre y JSON final.',
             src: 'labs/rubik-sota-tools/pin-mapping-studio-pro/'
+        },
+        {
+            id: 'infinite-display-studio-pro',
+            name: 'Infinite Display Studio PRO',
+            icon: '∞',
+            desc: 'Advanced Integrated Tool Type B con 12 modos 3D, media, branding, cámara, geometría, post FX, proyectos y outputs.',
+            integrationType: 'type-b',
+            src: 'advanced-tool.html?tool=infinite-display-studio-pro'
         }
     ];
 
