@@ -110,7 +110,7 @@ async function main() {
     // -- Assertions --
 
     assert(proofState.boidsActive > 0, `Boids simulation active (${proofState.boidsActive} particles)`);
-    assert(proofState.boidsActive === 420, 'Boids active count matches config (420)');
+    assert(proofState.boidsActive === 680, 'Boids active count matches config (680)');
 
     assert(Array.isArray(proofState.directionFieldSize), 'Direction field was computed');
     assert(proofState.directionFieldSize[0] === 64 && proofState.directionFieldSize[1] === 64,

@@ -32,7 +32,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1814);
+scene.background = new THREE.Color(0x1c1610);
 
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
 camera.position.z = 10;
@@ -68,9 +68,11 @@ uniform float fieldHeight;
 uniform float bounds;
 
 attribute vec2 reference;
+attribute float sizeJitter;
 
 varying vec3 vColor;
 varying float vAlpha;
+varying float vSpeed;
 
 void main() {
   vec4 posData = texture2D( texturePosition, reference );
@@ -78,19 +80,31 @@ void main() {
   vec3 pos = posData.xyz;
   float phase = posData.w;
 
-  // Map boid world position to screen space.
   float screenX = pos.x / bounds;
   float screenY = pos.y / bounds;
 
-  // Flap-like alpha variation from phase.
-  vAlpha = 0.4 + 0.35 * sin( phase * 2.0 );
-
-  // Velocity-based color: faster = warmer.
   float speed = length( velData.xyz );
-  vColor = mix( vec3(0.85, 0.82, 0.76), vec3(1.0, 0.92, 0.78), clamp(speed / 8.0, 0.0, 1.0) );
+  vSpeed = speed;
+
+  // Breathing alpha — slower particles are more opaque (settled paint),
+  // faster ones are translucent (paint in motion).
+  float breathe = 0.55 + 0.25 * sin( phase * 1.4 );
+  float motionFade = mix( 0.85, 0.45, clamp( speed / 7.0, 0.0, 1.0 ) );
+  vAlpha = breathe * motionFade;
+
+  // Color driven by speed: resting = warm amber, moving = bright cream.
+  vColor = mix(
+    vec3(0.76, 0.55, 0.28),
+    vec3(1.0, 0.93, 0.80),
+    clamp( speed / 6.0, 0.0, 1.0 )
+  );
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4( screenX, screenY, 0.0, 1.0 );
-  gl_PointSize = particleSize * ( 1.0 + sin( phase ) * 0.3 );
+
+  // Size: base + velocity-driven growth + per-particle jitter + phase pulse.
+  float velocityGrow = 1.0 + clamp( speed / 5.0, 0.0, 1.5 );
+  float phasePulse = 1.0 + sin( phase ) * 0.2;
+  gl_PointSize = particleSize * velocityGrow * phasePulse * ( 0.7 + sizeJitter * 0.6 );
 }
 `;
 
@@ -100,14 +114,23 @@ ${GRADIENT_MAP_FUNCTION}
 
 varying vec3 vColor;
 varying float vAlpha;
+varying float vSpeed;
 
 void main() {
-  // Soft circular particle.
-  float dist = length( gl_PointCoord - vec2(0.5) );
-  if ( dist > 0.5 ) discard;
-  float alpha = vAlpha * smoothstep( 0.5, 0.2, dist );
+  vec2 uv = gl_PointCoord - vec2(0.5);
 
-  // Apply gradient-map recoloring for painterly palette.
+  // Elongate along horizontal to suggest brushstroke directionality.
+  // Faster particles stretch more, settled ones stay rounder.
+  float stretch = 1.0 + clamp( vSpeed / 8.0, 0.0, 0.6 );
+  float dist = length( vec2( uv.x * stretch, uv.y ) );
+  if ( dist > 0.5 ) discard;
+
+  // Soft edge with painterly falloff — sharper core, feathered rim.
+  float coreMask = smoothstep( 0.5, 0.12, dist );
+  // Subtle grain to break the CG-perfect circle.
+  float grain = fract( sin( dot( gl_PointCoord, vec2(12.9898, 78.233) ) ) * 43758.5453 );
+  float alpha = vAlpha * coreMask * ( 0.88 + grain * 0.12 );
+
   float luma = dot( vColor, vec3(0.299, 0.587, 0.114) );
   vec3 recolored = gradientMapRecolor( luma );
   vec3 finalColor = mix( vColor, recolored, gradientMapStrength );
@@ -121,12 +144,12 @@ async function init() {
 
   // Initialize GPGPU boids.
   boids = new BoidsSimulation(renderer, GPUComputationRenderer, {
-    gridWidth: 24,
-    activeCount: 420,
-    bounds: 600,
-    separationDistance: 18,
-    alignmentDistance: 22,
-    cohesionDistance: 18,
+    gridWidth: 28,
+    activeCount: 680,
+    bounds: 550,
+    separationDistance: 14,
+    alignmentDistance: 20,
+    cohesionDistance: 22,
   });
 
   status.textContent = 'Building particle system…';
@@ -135,38 +158,40 @@ async function init() {
   const count = boids.activeCount;
   const geometry = new THREE.BufferGeometry();
   const references = new Float32Array(count * 2);
+  const sizeJitter = new Float32Array(count);
   for (let i = 0; i < count; i++) {
     const x = (i % boids.gridWidth) / boids.gridWidth;
     const y = Math.floor(i / boids.gridWidth) / boids.gridWidth;
     references[i * 2] = x + 0.5 / boids.gridWidth;
     references[i * 2 + 1] = y + 0.5 / boids.gridWidth;
+    sizeJitter[i] = Math.random();
   }
   geometry.setAttribute('reference', new THREE.BufferAttribute(references, 2));
+  geometry.setAttribute('sizeJitter', new THREE.BufferAttribute(sizeJitter, 1));
   geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
 
   const material = new THREE.ShaderMaterial({
     uniforms: {
       texturePosition: { value: null },
       textureVelocity: { value: null },
-      particleSize: { value: 4.5 },
+      particleSize: { value: 14.0 },
       fieldWidth: { value: 0 },
       fieldHeight: { value: 0 },
-      bounds: { value: 600 },
-      // Gradient-map uniforms — warm, painterly palette.
-      gradientMapShadowColor: { value: new THREE.Color(0x2d1b0e) },
-      gradientMapMidtoneColor: { value: new THREE.Color(0xc4873a) },
-      gradientMapHighlightColor: { value: new THREE.Color(0xfff4d6) },
-      gradientMapShadowPosition: { value: 0.15 },
-      gradientMapMidpoint: { value: 0.5 },
-      gradientMapHighlightPosition: { value: 0.85 },
+      bounds: { value: 550 },
+      gradientMapShadowColor: { value: new THREE.Color(0x3d200a) },
+      gradientMapMidtoneColor: { value: new THREE.Color(0xc98b3e) },
+      gradientMapHighlightColor: { value: new THREE.Color(0xfff0c8) },
+      gradientMapShadowPosition: { value: 0.18 },
+      gradientMapMidpoint: { value: 0.48 },
+      gradientMapHighlightPosition: { value: 0.82 },
       gradientMapReverse: { value: 0.0 },
-      gradientMapStrength: { value: 0.7 },
+      gradientMapStrength: { value: 0.95 },
     },
     vertexShader: particleVS,
     fragmentShader: particleFS,
     transparent: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: THREE.NormalBlending,
   });
 
   particleMesh = new THREE.Points(geometry, material);
@@ -203,7 +228,7 @@ async function init() {
   material.uniforms.fieldHeight.value = fieldH;
 
   // Set a central obstacle for the boids to avoid (like an artwork on the wall).
-  boids.setObstacle(0, 0, 0, 0, 120, 1.2);
+  boids.setObstacle(0, 0, 0, 0, 90, 0.8);
   boids.obstacleCount = 1;
 
   status.textContent = `Living Painting active — ${count} particles, ${seeds.length} stroke seeds`;
