@@ -165,7 +165,8 @@
     "anchor.gallery-b.guide-cuaderno",
     "anchor.gallery-b.visitor-noche",
     "anchor.gallery-b.guide-noche-llegada",
-    "anchor.gallery-b.door-breeze"
+    "anchor.gallery-b.door-breeze",
+    "anchor.gallery-b.door-living-art"
    ],
    "hotspotRefs": [
     "hotspot.art.noche-de-invierno",
@@ -175,7 +176,8 @@
    ],
    "portalRefs": [
     "portal.gallery-b-gallery-a",
-    "portal.gallery-b-breeze"
+    "portal.gallery-b-breeze",
+    "portal.gallery-b-living-art"
    ],
    "metadata": {}
   },
@@ -265,6 +267,49 @@
      60,
      0,
      -10
+    ]
+   }
+  },
+  {
+   "id": "space.living-art",
+   "title": "Sala Living Art — Pintura viva",
+   "type": "GALLERY",
+   "bounds": {
+    "size": [
+     14,
+     4.8,
+     10
+    ],
+    "origin": [
+     0,
+     0,
+     -36
+    ]
+   },
+   "sceneProfile": "dark-exhibition",
+   "lightingProfile": "museum-low-light",
+   "ambience": "ambience.dark-room",
+   "defaultSpawnAnchorId": "anchor.living-art.arrive-from-gallery-b",
+   "entityRefs": [
+    "entity.installation.pintura-viva"
+   ],
+   "anchorRefs": [
+    "anchor.living-art.arrive-from-gallery-b",
+    "anchor.living-art.door-gallery-b",
+    "anchor.living-art.painting-center",
+    "anchor.living-art.guide-entrada",
+    "anchor.living-art.visitor-contemplation"
+   ],
+   "hotspotRefs": [],
+   "portalRefs": [
+    "portal.living-art-gallery-b"
+   ],
+   "metadata": {
+    "nestedRuntime": "room.living-art",
+    "roomOrigin": [
+     0,
+     0,
+     -36
     ]
    }
   }
@@ -1074,6 +1119,102 @@
     0
    ],
    "label": "Paso a la sala Breeze"
+  },
+  {
+   "spaceId": "space.gallery-b",
+   "id": "anchor.gallery-b.door-living-art",
+   "kind": "WALL",
+   "position": [
+    20,
+    0,
+    -22
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "label": "Paso a la sala Living Art"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.arrive-from-gallery-b",
+   "kind": "SPAWN",
+   "position": [
+    0,
+    0,
+    -28
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "label": "Llegada a la sala Living Art"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.door-gallery-b",
+   "kind": "WALL",
+   "position": [
+    0,
+    0,
+    -26
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "label": "Paso a la Galería B"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.painting-center",
+   "kind": "WALL",
+   "position": [
+    0,
+    2.1,
+    -41
+   ],
+   "normal": [
+    0,
+    0,
+    1
+   ],
+   "label": "Centro de la pintura viva"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.guide-entrada",
+   "kind": "FLOOR",
+   "position": [
+    -2,
+    0,
+    -30
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "label": "La guía, al entrar"
+  },
+  {
+   "spaceId": "space.living-art",
+   "id": "anchor.living-art.visitor-contemplation",
+   "kind": "VIEWPOINT",
+   "position": [
+    0,
+    1.6,
+    -32
+   ],
+   "normal": [
+    0,
+    0,
+    -1
+   ],
+   "label": "Contemplación de la pintura"
   }
  ],
  "entities": [
@@ -1572,6 +1713,39 @@
     "label": "Viento sobre mármol, Niklas Niehus, 2025",
     "description": "Instalación digital: una réplica de la Venus de Milo, de unos siete metros, y una tela de ocho metros que el viento arrastra hasta rozarla y la deforma al pasar."
    }
+  },
+  {
+   "id": "entity.installation.pintura-viva",
+   "kind": "OBJECT_3D",
+   "subtype": "installation",
+   "spaceId": "space.living-art",
+   "anchorId": "anchor.living-art.painting-center",
+   "size": [
+    3,
+    3,
+    0.1
+   ],
+   "content": {
+    "title": "Pintura viva",
+    "creator": "Juanma Escaparates (capacidades donantes MIT)",
+    "year": "2026",
+    "medium": "Pintura generativa en tiempo real · WebGL · GPGPU",
+    "description": "Una imagen se transforma en pintura viva: trazos Bézier con material impasto siguen un campo de dirección extraído de la obra original, mientras una bandada de marcas vivas reacciona a la presencia del visitante. Nada es un vídeo: cada trazo y cada marca se calculan en cada fotograma."
+   },
+   "representation": {
+    "profile": "nested-runtime",
+    "hints": {
+     "runtimeId": "room.living-art"
+    }
+   },
+   "interaction": {
+    "focusable": true,
+    "focusDistance": 5
+   },
+   "accessibility": {
+    "label": "Pintura viva, instalación generativa, 2026",
+    "description": "Instalación digital que transforma una imagen en pintura viva con trazos Bézier, material impasto y marcas de flock reactivas al cursor del visitante."
+   }
   }
  ],
  "hotspots": [
@@ -1944,6 +2118,30 @@
    "prefetchPolicy": "ON_APPROACH",
    "returnPolicy": "RETURN_TO_SOURCE",
    "accessibilityLabel": "Paso abierto de la sala Breeze a la Galería B"
+  },
+  {
+   "id": "portal.gallery-b-living-art",
+   "fromSpaceId": "space.gallery-b",
+   "toSpaceId": "space.living-art",
+   "sourceAnchorId": "anchor.gallery-b.door-living-art",
+   "destinationSpawnId": "anchor.living-art.arrive-from-gallery-b",
+   "transitionBehaviour": "CONTINUOUS",
+   "representationHint": "OPENING",
+   "prefetchPolicy": "ON_APPROACH",
+   "returnPolicy": "RETURN_TO_SOURCE",
+   "accessibilityLabel": "Paso abierto de la Galería B a la sala Living Art"
+  },
+  {
+   "id": "portal.living-art-gallery-b",
+   "fromSpaceId": "space.living-art",
+   "toSpaceId": "space.gallery-b",
+   "sourceAnchorId": "anchor.living-art.door-gallery-b",
+   "destinationSpawnId": "anchor.gallery-b.arrive-from-gallery-a",
+   "transitionBehaviour": "CONTINUOUS",
+   "representationHint": "OPENING",
+   "prefetchPolicy": "ON_APPROACH",
+   "returnPolicy": "RETURN_TO_SOURCE",
+   "accessibilityLabel": "Paso abierto de la sala Living Art a la Galería B"
   }
  ],
  "chapters": [

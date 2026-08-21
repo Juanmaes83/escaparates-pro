@@ -35,6 +35,7 @@
 
 import { NestedRoomHost } from './nested-room-host.js';
 import { BreezeGuest } from './breeze/breeze-guest.js';
+import { LivingArtGuest } from './living-art/living-art-guest.js';
 
 export class NestedRoomController {
   /**
@@ -58,6 +59,7 @@ export class NestedRoomController {
     this.stats = { entered: 0, left: 0, failed: 0 };
 
     this.host.register('room.breeze', () => new BreezeGuest());
+    this.host.register('room.living-art', () => new LivingArtGuest());
   }
 
   get isPresenting() { return this.host.isGuestActive; }
