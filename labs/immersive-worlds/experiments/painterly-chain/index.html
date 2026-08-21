@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painterly Chain — Full Causal Pipeline</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0908; color: #e8e4dc; font-family: system-ui, sans-serif; overflow: hidden; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    #status {
+      position: fixed; bottom: 16px; left: 16px; font-size: 13px;
+      opacity: 0.6; pointer-events: none; z-index: 10;
+      line-height: 1.5;
+    }
+    #status.ready { opacity: 0.4; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="status">Initializing full causal chain…</div>
+  <script type="module" src="painterly-chain.js"></script>
+</body>
+</html>
