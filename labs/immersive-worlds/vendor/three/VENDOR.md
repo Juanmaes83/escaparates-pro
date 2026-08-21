@@ -47,3 +47,25 @@ The reuse register in `REFERENCE_LEDGER.md` §22 therefore still contains no row
 | License | MIT — same `LICENSE` as the core, copied verbatim |
 | Modification | one line: the bare `'three'` specifier rewritten to `'../../three.module.min.js'`, the same rewrite already applied to `addons/environments/RoomEnvironment.js` |
 | Required by | Portal variant D — `CameraUtils.frameCorners` reproduces the off-axis portal projection of the owned Infinite Worlds transition engine |
+
+## `examples/jsm/misc/GPUComputationRenderer.js`
+
+| Field | Value |
+|---|---|
+| Package | `three` (addon) |
+| Version | `0.185.1` (exact, matches the pinned core above) |
+| Source | npm registry, `three-0.185.1.tgz`, `examples/jsm/misc/GPUComputationRenderer.js` |
+| License | MIT — same `LICENSE` as the core, copied verbatim |
+| Modification | the bare `'three'` specifier rewritten to `'../../three.module.min.js'`. Brought via donor Juanmaes83/van-gogh-crows which vendored the same Three.js revision. |
+| Required by | `engine/capabilities/gpgpu-boids/boids-simulation.js` — GPU ping-pong FBO simulation for the Living Art flock capability |
+
+## `examples/jsm/postprocessing/Pass.js`
+
+| Field | Value |
+|---|---|
+| Package | `three` (addon) |
+| Version | `0.185.1` (exact, matches the pinned core above) |
+| Source | npm registry, `three-0.185.1.tgz`, `examples/jsm/postprocessing/Pass.js` |
+| License | MIT — same `LICENSE` as the core, copied verbatim |
+| Modification | the bare `'three'` specifier rewritten to `'../../three.module.min.js'` |
+| Required by | `GPUComputationRenderer.js` depends on `FullScreenQuad` from this file |

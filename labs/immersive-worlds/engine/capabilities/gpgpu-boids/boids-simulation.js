@@ -13,7 +13,7 @@
 import {
   RepeatWrapping,
   Vector3,
-} from 'three';
+} from '../../../vendor/three/three.module.min.js';
 
 const POSITION_SHADER = /* glsl */`
 uniform float time;

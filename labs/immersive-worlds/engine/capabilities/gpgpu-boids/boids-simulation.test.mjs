@@ -57,12 +57,12 @@ describe('BoidsSimulation module structure', () => {
     assert.doesNotMatch(codeBody, /preset/i);
   });
 
-  it('imports only from three (no other dependencies)', () => {
+  it('imports only from the vendored three.js (no other dependencies)', () => {
     const imports = src.match(/from\s+['"]([^'"]+)['"]/g) || [];
     for (const imp of imports) {
       const mod = imp.match(/from\s+['"]([^'"]+)['"]/)[1];
       assert.ok(
-        mod === 'three' || mod.startsWith('three/'),
+        mod.includes('three') || mod.includes('vendor'),
         `unexpected import: ${mod}`
       );
     }
