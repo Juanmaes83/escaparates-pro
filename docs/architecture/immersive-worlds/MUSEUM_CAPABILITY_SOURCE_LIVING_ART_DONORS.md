@@ -1,6 +1,6 @@
 # Museum — Capability Source: Living Art Donors
 
-> **Status:** PROVEN CAPABILITIES — EXTRACTED AND TESTED
+> **Status:** PROVEN CAPABILITIES — EXTRACTED, TESTED, AND INTEGRATION-PROVEN (Stone 4)
 >
 > **Target:** Escaparates Pro → Immersive Worlds → Museum / Institutional
 >
@@ -109,6 +109,36 @@ These assets are BLOCKED from Museum use.
 | Donor content removed | Bird-specific uniform names, crow atlas references |
 | Generalization | Renamed uniforms to generic `gradientMap*` prefix |
 
+### 3.5 Bézier Ribbon Stroke Geometry
+
+| Field | Value |
+|-------|-------|
+| Source | Wet Paint Flow (WPF-3) |
+| Module | `engine/capabilities/painterly/bezier-strokes.js` |
+| Classification | GRAFT |
+| Dependencies | Three.js (InstancedBufferGeometry), direction-field, poisson-seeds |
+| Tests | 12/12 (structural + functional: vertex/fragment shaders, stroke tracing, instanced geometry) |
+| Capability | Direction-field-traced cubic Bézier ribbons: 8-segment strips with variable-width pressure profile, bristle wobble, fiber simulation, pigment break. Instanced rendering (18 vertices, 48 indices per instance). |
+| Museum value | Procedural brushstroke generation for any artwork — the core "painterly rendering" primitive |
+| Donor content removed | WPF-specific scene setup, UI controls, preset-dependent parameters |
+| Generalization | `buildStrokesFromField(field, seeds, options)` — takes any direction field + seed array, returns instanced stroke geometry |
+| Integration proof | Painterly Chain experiment (Stone 4): 3000 strokes from procedural artwork |
+
+### 3.6 Impasto Material (Three-Pass Composite)
+
+| Field | Value |
+|-------|-------|
+| Source | Wet Paint Flow (WPF-4) |
+| Module | `engine/capabilities/painterly/impasto-material.glsl.js` |
+| Classification | GRAFT |
+| Dependencies | Three.js (ShaderMaterial, render targets) |
+| Tests | 9/9 (structural: vertex/fragment shaders, uniform presence, GGX specular, Sobel normals) |
+| Capability | Three-pass impasto pipeline: (1) stroke pigment → RGBA render target, (2) stroke height → height/wet/furrow render target with additive blending, (3) full-screen composite with GGX microfacet specular, Sobel-derived normals, clearcoat, canvas weave, variable roughness |
+| Museum value | Physical paint surface simulation — makes digital strokes look like real impasto oil paint |
+| Donor content removed | WPF-specific render loop, camera setup, UI-driven parameter binding |
+| Generalization | `IMPASTO_COMPOSITE_VERTEX` + `IMPASTO_COMPOSITE_FRAGMENT` + `IMPASTO_UNIFORMS` — composable shader components for any stroke render target pair |
+| Integration proof | Painterly Chain experiment (Stone 4): 1024×1024 pigment + height render targets |
+
 ---
 
 ## 4. Capabilities NOT extracted (classified DEFER or REJECT)
@@ -119,8 +149,6 @@ These assets are BLOCKED from Museum use.
 | Painterly radial sky generator | VGC-5 | SCULPT (deferred) | Technique transferable but asset-coupled; VGC art rights unclear |
 | Responsive mobile UI collapse | VGC-7 | DEFER | Museum has own responsive strategy |
 | Preset/undo/persistence system | VGC-6 | KEEP WITH ADAPTER (deferred) | Valuable but needs Museum state management integration |
-| Bézier ribbon stroke geometry | WPF-3 | GRAFT (next) | Depends on direction field + seeding (now extracted) |
-| GGX wet-paint PBR shading | WPF-4 | GRAFT WITH ADAPTER (next) | Needs semantic authoring wrapper |
 | G-buffer capture pipeline | WPF-5 | GRAFT (next) | Depends on Three.js render pipeline |
 
 ---
