@@ -380,7 +380,8 @@
             { id: 'rope-gallery-pro', src: 'js/website-modules-rope-gallery-pro.js' },
             { id: 'vinyl-player-pro', src: 'js/website-modules-vinyl-player-pro.js' },
             { id: 'kinetic-letter-curtain-pro', src: 'js/website-modules-kinetic-letter-curtain-pro.js' },
-            { id: 'kinetic-letter-curtain-pro-v2-video-projection', src: 'js/website-modules-kinetic-letter-curtain-pro-v2-video-projection.js' }
+            { id: 'kinetic-letter-curtain-pro-v2-video-projection', src: 'js/website-modules-kinetic-letter-curtain-pro-v2-video-projection.js' },
+            { id: 'living-art-pro', src: 'js/website-modules-living-art-pro.js' }
         ];
         var index = 0;
 

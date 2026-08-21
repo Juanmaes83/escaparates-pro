@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Living Art PRO — Escaparates Pro</title>
+<style>
+:root {
+  --bg: #0a0908;
+  --panel: #151310;
+  --border: rgba(255,255,255,.10);
+  --text: #e8e0d4;
+  --muted: rgba(232,224,212,.55);
+  --accent: #d7a86e;
+  --accent-dim: rgba(215,168,110,.22);
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; -webkit-font-smoothing: antialiased; }
+
+.app { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 1fr auto; height: 100vh; }
+
+/* ── Left Panel ────────────────────────────────── */
+.panel { background: var(--panel); border-right: 1px solid var(--border); overflow-y: auto; padding: 0; display: flex; flex-direction: column; }
+.panel-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+.panel-header h1 { font-size: 14px; font-weight: 800; letter-spacing: .04em; color: var(--accent); margin: 0 0 2px; }
+.panel-header small { color: var(--muted); font-size: 11px; }
+
+.panel-section { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.panel-section h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 800; margin: 0 0 10px; }
+
+/* Image upload */
+.drop-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 20px 12px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; position: relative; }
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: var(--accent-dim); }
+.drop-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop-zone p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.drop-zone p strong { color: var(--text); }
+.image-preview { width: 100%; border-radius: 8px; margin-top: 8px; display: none; }
+
+/* Controls */
+.control { margin-bottom: 10px; }
+.control label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 12px; font-weight: 600; }
+.control label span { color: var(--muted); font-weight: 400; font-size: 11px; }
+.control input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; outline: none; }
+.control input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--panel); }
+.control select { width: 100%; padding: 6px 8px; background: rgba(255,255,255,.06); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; outline: none; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,.04); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; width: 100%; gap: 6px; }
+.btn:hover { background: var(--accent-dim); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: #0a0908; border-color: var(--accent); }
+.btn-primary:hover { background: #e5b87e; }
+
+/* ── Canvas Area ──────────────────────────────── */
+.canvas-area { position: relative; overflow: hidden; background: var(--bg); }
+#canvas { width: 100%; height: 100%; display: block; }
+.canvas-overlay { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; z-index: 10; }
+.mode-chip { padding: 5px 10px; border-radius: 6px; background: rgba(0,0,0,.6); border: 1px solid var(--border); color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; backdrop-filter: blur(8px); transition: all .15s; }
+.mode-chip.active { color: var(--accent); border-color: var(--accent); background: rgba(215,168,110,.12); }
+
+/* ── Status Bar ───────────────────────────────── */
+.status-bar { grid-column: 1 / -1; padding: 6px 16px; background: rgba(0,0,0,.6); border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.status-bar .ready { color: var(--accent); }
+
+/* Loading overlay */
+.loading-overlay { position: absolute; inset: 0; background: rgba(10,9,8,.92); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; transition: opacity .4s; }
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
+.loading-overlay p { color: var(--text); font-size: 14px; margin-top: 16px; }
+.loading-bar { width: 200px; height: 3px; background: rgba(255,255,255,.12); border-radius: 3px; overflow: hidden; }
+.loading-fill { height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Left Panel -->
+  <div class="panel">
+    <div class="panel-header">
+      <h1>LIVING ART PRO</h1>
+      <small>Painterly + Living Marks</small>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="panel-section">
+      <h2>Source Image</h2>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" accept="image/*" id="fileInput">
+        <p><strong>Drop image here</strong><br>or click to browse</p>
+      </div>
+      <img class="image-preview" id="imagePreview" alt="Source">
+      <div style="margin-top:8px">
+        <button class="btn" id="btnRebuild" style="display:none">Rebuild with current image</button>
+      </div>
+    </div>
+
+    <!-- Mode -->
+    <div class="panel-section">
+      <h2>Mode</h2>
+      <div class="control">
+        <select id="modeSelect">
+          <option value="combined" selected>Combined — Painterly + Living</option>
+          <option value="painterly">Painterly Only — Static Strokes</option>
+          <option value="living">Living Marks Only — Boid Flock</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Semantic Controls -->
+    <div class="panel-section">
+      <h2>Paint</h2>
+      <div class="control">
+        <label>Paint Intensity <span id="valIntensity">1.0</span></label>
+        <input type="range" id="ctrlIntensity" min="0.2" max="2" step="0.05" value="1">
+      </div>
+      <div class="control">
+        <label>Stroke Scale <span id="valStrokeScale">1.0</span></label>
+        <input type="range" id="ctrlStrokeScale" min="0.3" max="2.5" step="0.05" value="1">
+      </div>
+      <div class="control">
+        <label>Stroke Count <span id="valStrokeCount">3000</span></label>
+        <input type="range" id="ctrlStrokeCount" min="500" max="6000" step="100" value="3000">
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Impasto</h2>
+      <div class="control">
+        <label>Wetness <span id="valWetness">0.38</span></label>
+        <input type="range" id="ctrlWetness" min="0" max="1" step="0.02" value="0.38">
+      </div>
+      <div class="control">
+        <label>Impasto Height <span id="valImpasto">0.06</span></label>
+        <input type="range" id="ctrlImpasto" min="0" max="0.2" step="0.005" value="0.06">
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Living</h2>
+      <div class="control">
+        <label>Living Amount <span id="valLiving">160</span></label>
+        <input type="range" id="ctrlLiving" min="20" max="300" step="10" value="160">
+      </div>
+      <div class="control">
+        <label>Mark Scale <span id="valMarkScale">36</span></label>
+        <input type="range" id="ctrlMarkScale" min="10" max="80" step="2" value="36">
+      </div>
+      <div class="control">
+        <label>Motion Character <span id="valMotion">0.5</span></label>
+        <input type="range" id="ctrlMotion" min="0" max="1" step="0.05" value="0.5">
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <h2>Interaction</h2>
+      <div class="control">
+        <label>Response Strength <span id="valResponse">0.5</span></label>
+        <input type="range" id="ctrlResponse" min="0" max="1" step="0.05" value="0.5">
+      </div>
+    </div>
+
+    <div class="panel-section" style="flex:1"></div>
+
+    <div class="panel-section">
+      <button class="btn" id="btnReset">Reset Defaults</button>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-area">
+    <canvas id="canvas"></canvas>
+    <div class="canvas-overlay">
+      <div class="mode-chip active" data-mode="combined">Combined</div>
+      <div class="mode-chip" data-mode="painterly">Painterly</div>
+      <div class="mode-chip" data-mode="living">Living</div>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+      <p id="loadingText">Initializing...</p>
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span id="statusText">Ready</span>
+    <span id="statusFPS"></span>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from '../../immersive-worlds/vendor/three/three.module.min.js';
+import { GPUComputationRenderer } from '../../immersive-worlds/vendor/three/addons/misc/GPUComputationRenderer.js';
+import { buildDirectionField } from '../../immersive-worlds/engine/capabilities/painterly/direction-field.js';
+import { generatePoissonSeeds } from '../../immersive-worlds/engine/capabilities/painterly/poisson-seeds.js';
+import {
+  STROKE_VERTEX_SHADER, STROKE_FRAGMENT_SHADER, HEIGHT_FRAGMENT_SHADER,
+  buildStrokesFromField,
+} from '../../immersive-worlds/engine/capabilities/painterly/bezier-strokes.js';
+import {
+  IMPASTO_COMPOSITE_VERTEX, IMPASTO_COMPOSITE_FRAGMENT,
+} from '../../immersive-worlds/engine/capabilities/painterly/impasto-material.glsl.js';
+import { BoidsSimulation } from '../../immersive-worlds/engine/capabilities/gpgpu-boids/boids-simulation.js';
+import {
+  GRADIENT_MAP_UNIFORM_DECLARATIONS, GRADIENT_MAP_FUNCTION,
+} from '../../immersive-worlds/engine/capabilities/painterly/gradient-map.glsl.js';
+
+// ── Configuration ──────────────────────────────────────────
+
+const CONFIG = {
+  artSize: 256,
+  rtSize: 1024,
+  seedCount: 3000,
+  boidGrid: 14,
+  boidActive: 160,
+  boidBounds: 400,
+  intensity: 1.0,
+  strokeScale: 1.0,
+  wetness: 0.38,
+  impasto: 0.06,
+  markScale: 36,
+  motion: 0.5,
+  response: 0.5,
+  mode: 'combined',
+};
+
+// ── DOM References ─────────────────────────────────────────
+
+const canvas = document.getElementById('canvas');
+const statusText = document.getElementById('statusText');
+const statusFPS = document.getElementById('statusFPS');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadingFill = document.getElementById('loadingFill');
+const loadingText = document.getElementById('loadingText');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const imagePreview = document.getElementById('imagePreview');
+const btnRebuild = document.getElementById('btnRebuild');
+const modeSelect = document.getElementById('modeSelect');
+const btnReset = document.getElementById('btnReset');
+
+// ── Three.js State ─────────────────────────────────────────
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.autoClear = false;
+
+let compositeScene, compositeCamera, compositeMat;
+let boidScene, boidCamera, boidMarkMesh;
+let boids = null;
+let pointerNorm = new THREE.Vector2(999, 999);
+let animating = true;
+let elapsed = 0;
+let lastTime = 0;
+let frameCount = 0;
+let fpsTimer = 0;
+let currentImageData = null;
+
+function resize() {
+  const area = canvas.parentElement;
+  const w = area.clientWidth, h = area.clientHeight;
+  renderer.setSize(w, h);
+  if (boidCamera) {
+    const a = w / h;
+    boidCamera.left = -a;
+    boidCamera.right = a;
+    boidCamera.top = 1;
+    boidCamera.bottom = -1;
+    boidCamera.updateProjectionMatrix();
+  }
+}
+window.addEventListener('resize', resize);
+
+// ── Progress ───────────────────────────────────────────────
+
+function setProgress(pct, text) {
+  loadingFill.style.width = pct + '%';
+  loadingText.textContent = text;
+}
+
+// ── Image Loading ──────────────────────────────────────────
+
+function generateProceduralArtwork(w, h) {
+  const pixels = new Uint8Array(w * h * 4);
+  const centers = [
+    { cx: 0.42, cy: 0.48, twist: 11, sigma: 0.38, r: 0.82, g: 0.58, b: 0.28 },
+    { cx: 0.72, cy: 0.32, twist: -8, sigma: 0.25, r: 0.65, g: 0.35, b: 0.15 },
+    { cx: 0.28, cy: 0.72, twist: 6,  sigma: 0.30, r: 0.90, g: 0.75, b: 0.50 },
+    { cx: 0.55, cy: 0.20, twist: -5, sigma: 0.20, r: 0.50, g: 0.28, b: 0.12 },
+  ];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const u = x / w, v = y / h;
+      let rr = 0, gg = 0, bb = 0, totalW = 0;
+      for (const c of centers) {
+        const dx = u - c.cx, dy = v - c.cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) + dist * c.twist;
+        const weight = Math.exp(-dist * dist / (2 * c.sigma * c.sigma));
+        const wave = 0.5 + 0.35 * Math.sin(angle * 3.5);
+        rr += wave * c.r * weight;
+        gg += wave * c.g * weight;
+        bb += wave * c.b * weight;
+        totalW += weight;
+      }
+      if (totalW > 0.001) { rr /= totalW; gg /= totalW; bb /= totalW; }
+      const band = Math.sin(u * 8 + v * 5) * 0.06;
+      rr = Math.min(1, Math.max(0, rr + band + 0.08));
+      gg = Math.min(1, Math.max(0, gg + band * 0.7 + 0.04));
+      bb = Math.min(1, Math.max(0, bb + band * 0.3 + 0.02));
+      const off = (y * w + x) * 4;
+      pixels[off]     = Math.round(rr * 255);
+      pixels[off + 1] = Math.round(gg * 255);
+      pixels[off + 2] = Math.round(bb * 255);
+      pixels[off + 3] = 255;
+    }
+  }
+  return pixels;
+}
+
+function loadImageFromFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const size = CONFIG.artSize;
+        const c = document.createElement('canvas');
+        c.width = size; c.height = size;
+        const ctx = c.getContext('2d');
+        const scale = Math.max(size / img.width, size / img.height);
+        const sw = img.width * scale, sh = img.height * scale;
+        ctx.drawImage(img, (size - sw) / 2, (size - sh) / 2, sw, sh);
+        const idata = ctx.getImageData(0, 0, size, size);
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        btnRebuild.style.display = 'block';
+        resolve(new Uint8Array(idata.data.buffer));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Stroke Geometry Builder ────────────────────────────────
+
+function buildStrokeGeometry(strokeData) {
+  const segments = 8;
+  const positions = [];
+  const indices = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    positions.push(t, -1, 0, t, 1, 0);
+  }
+  for (let i = 0; i < segments; i++) {
+    const a = i * 2, b = i * 2 + 1, c = (i + 1) * 2, d = (i + 1) * 2 + 1;
+    indices.push(a, c, b, b, c, d);
+  }
+  const geo = new THREE.InstancedBufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setIndex(indices);
+  geo.instanceCount = strokeData.count;
+  geo.setAttribute('aP0', new THREE.InstancedBufferAttribute(strokeData.p0, 2));
+  geo.setAttribute('aP1', new THREE.InstancedBufferAttribute(strokeData.p1, 2));
+  geo.setAttribute('aP2', new THREE.InstancedBufferAttribute(strokeData.p2, 2));
+  geo.setAttribute('aP3', new THREE.InstancedBufferAttribute(strokeData.p3, 2));
+  geo.setAttribute('aColor', new THREE.InstancedBufferAttribute(strokeData.colors, 3));
+  geo.setAttribute('aWidth', new THREE.InstancedBufferAttribute(strokeData.widths, 1));
+  geo.setAttribute('aSeed', new THREE.InstancedBufferAttribute(strokeData.randoms, 1));
+  geo.setAttribute('aBrushLayer', new THREE.InstancedBufferAttribute(strokeData.brushLayers, 1));
+  return geo;
+}
+
+// ── Boid Mark Shaders ──────────────────────────────────────
+
+const boidMarkVS = /* glsl */`
+uniform sampler2D texturePosition;
+uniform sampler2D textureVelocity;
+uniform sampler2D dirFieldTex;
+uniform sampler2D artworkTex;
+uniform float bounds;
+uniform float markScale;
+
+attribute vec2 reference;
+
+varying vec3 vColor;
+varying float vAlpha;
+varying vec2 vLocalUV;
+
+void main() {
+  vec4 posData = texture2D(texturePosition, reference);
+  vec4 velData = texture2D(textureVelocity, reference);
+  vec3 boidPos = posData.xyz;
+  float speed = length(velData.xyz);
+
+  vec2 artUV = clamp(boidPos.xy / (bounds * 2.0) + 0.5, 0.0, 1.0);
+
+  vec4 fieldData = texture2D(dirFieldTex, artUV);
+  float angle = fieldData.r * 6.28318 - 3.14159;
+  float confidence = fieldData.g;
+
+  vec3 artColor = texture2D(artworkTex, artUV).rgb;
+
+  float c = cos(angle), s = sin(angle);
+  vec2 corner = position.xy;
+  vec2 rotated = vec2(corner.x * c - corner.y * s,
+                      corner.x * s + corner.y * c);
+  rotated.x *= 2.2;
+
+  vec2 screenPos = boidPos.xy / bounds;
+  screenPos += rotated * markScale / bounds;
+
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(screenPos, 0.0, 1.0);
+
+  vec3 wetTint = vec3(artColor.r * 0.92, artColor.g * 1.0, artColor.b * 1.3 + 0.08);
+  vColor = wetTint * 1.15;
+  vAlpha = (0.20 + confidence * 0.32) * mix(1.0, 0.35, clamp(speed / 5.0, 0.0, 1.0));
+  vLocalUV = corner;
+}
+`;
+
+const boidMarkFS = /* glsl */`
+${GRADIENT_MAP_UNIFORM_DECLARATIONS}
+${GRADIENT_MAP_FUNCTION}
+
+varying vec3 vColor;
+varying float vAlpha;
+varying vec2 vLocalUV;
+
+void main() {
+  float dist = length(vLocalUV);
+  if (dist > 1.0) discard;
+
+  float coreFalloff = smoothstep(1.0, 0.15, dist);
+  float grain = fract(sin(dot(vLocalUV * 7.0, vec2(12.9898, 78.233))) * 43758.5453);
+
+  float ring = smoothstep(0.92, 0.72, dist) * smoothstep(0.52, 0.72, dist);
+  float wetHighlight = smoothstep(0.40, 0.0, dist) * 0.30;
+
+  float alpha = vAlpha * coreFalloff * (0.92 + grain * 0.08);
+
+  float luma = dot(vColor, vec3(0.299, 0.587, 0.114));
+  vec3 recolored = gradientMapRecolor(luma);
+  vec3 color = mix(vColor, recolored, gradientMapStrength * 0.4);
+
+  color = color * (1.0 + wetHighlight);
+  color = mix(color, vec3(0.08, 0.05, 0.02), ring * 0.65);
+
+  gl_FragColor = vec4(color, alpha);
+}
+`;
+
+// ── Pipeline State ─────────────────────────────────────────
+
+let strokeRT, heightRT;
+
+function disposePipeline() {
+  if (compositeScene) {
+    compositeScene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+  }
+  if (boidScene) {
+    boidScene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+  }
+  if (boids) { boids.dispose(); boids = null; }
+  if (strokeRT) { strokeRT.dispose(); strokeRT = null; }
+  if (heightRT) { heightRT.dispose(); heightRT = null; }
+  compositeScene = null;
+  boidScene = null;
+  boidMarkMesh = null;
+  compositeMat = null;
+}
+
+async function buildPipeline(artPixels) {
+  disposePipeline();
+
+  const ART_SIZE = CONFIG.artSize;
+  const RT_SIZE = CONFIG.rtSize;
+
+  setProgress(10, 'Analyzing direction field...');
+  await tick();
+
+  const artworkTex = new THREE.DataTexture(artPixels, ART_SIZE, ART_SIZE, THREE.RGBAFormat);
+  artworkTex.minFilter = THREE.LinearFilter;
+  artworkTex.magFilter = THREE.LinearFilter;
+  artworkTex.needsUpdate = true;
+
+  const field = buildDirectionField(artPixels, ART_SIZE, ART_SIZE);
+
+  const fieldTexData = new Float32Array(ART_SIZE * ART_SIZE * 4);
+  for (let i = 0; i < ART_SIZE * ART_SIZE; i++) {
+    fieldTexData[i * 4]     = (field.angle[i] + Math.PI) / (2 * Math.PI);
+    fieldTexData[i * 4 + 1] = field.confidence[i];
+    fieldTexData[i * 4 + 2] = field.luminance[i];
+    fieldTexData[i * 4 + 3] = 1;
+  }
+  const fieldTex = new THREE.DataTexture(fieldTexData, ART_SIZE, ART_SIZE, THREE.RGBAFormat, THREE.FloatType);
+  fieldTex.minFilter = THREE.LinearFilter;
+  fieldTex.magFilter = THREE.LinearFilter;
+  fieldTex.needsUpdate = true;
+
+  setProgress(30, 'Generating Poisson seeds...');
+  await tick();
+
+  const seeds = generatePoissonSeeds(ART_SIZE, ART_SIZE, field.confidence, {
+    totalCount: CONFIG.seedCount, generation: 0,
+  });
+
+  setProgress(45, `Building ${seeds.length} strokes...`);
+  await tick();
+
+  const strokeData = buildStrokesFromField(
+    seeds, field, ART_SIZE, ART_SIZE, artPixels,
+    { lengthScale: 1.1 * CONFIG.strokeScale, layerWidths: [13, 6.5, 3.2], layerLengths: [26, 15, 7.5] }
+  );
+  const strokeGeo = buildStrokeGeometry(strokeData);
+
+  setProgress(60, 'Rendering paint buffers...');
+  await tick();
+
+  strokeRT = new THREE.WebGLRenderTarget(RT_SIZE, RT_SIZE, {
+    minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+    type: THREE.HalfFloatType,
+  });
+  heightRT = new THREE.WebGLRenderTarget(RT_SIZE, RT_SIZE, {
+    minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+    type: THREE.HalfFloatType,
+  });
+
+  const strokeScene = new THREE.Scene();
+  const rtCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
+  rtCamera.position.z = 5;
+
+  const uniforms = {
+    uResolution: { value: new THREE.Vector2(RT_SIZE, RT_SIZE) },
+    uStrokeScale: { value: CONFIG.strokeScale },
+    uBrushSize: { value: CONFIG.intensity },
+    uBrushLayerVisibility: { value: new THREE.Vector3(1, 1, 1) },
+    uCoverage: { value: 0.92 },
+    uViscosity: { value: 0.55 },
+    uBristleDetail: { value: 0.72 },
+  };
+
+  const pigmentMat = new THREE.ShaderMaterial({
+    vertexShader: STROKE_VERTEX_SHADER,
+    fragmentShader: STROKE_FRAGMENT_SHADER,
+    uniforms, transparent: true, depthWrite: false, depthTest: false,
+    side: THREE.DoubleSide,
+  });
+  const pigmentMesh = new THREE.Mesh(strokeGeo, pigmentMat);
+  strokeScene.add(pigmentMesh);
+  renderer.setRenderTarget(strokeRT);
+  renderer.setClearColor(0x000000, 0);
+  renderer.clear();
+  renderer.render(strokeScene, rtCamera);
+
+  setProgress(75, 'Rendering height buffer...');
+  await tick();
+
+  strokeScene.remove(pigmentMesh);
+  const heightMat = new THREE.ShaderMaterial({
+    vertexShader: STROKE_VERTEX_SHADER,
+    fragmentShader: HEIGHT_FRAGMENT_SHADER,
+    uniforms, transparent: true, depthWrite: false, depthTest: false,
+    side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+  });
+  const heightMesh = new THREE.Mesh(strokeGeo, heightMat);
+  strokeScene.add(heightMesh);
+  renderer.setRenderTarget(heightRT);
+  renderer.clear();
+  renderer.render(strokeScene, rtCamera);
+  renderer.setRenderTarget(null);
+  strokeScene.remove(heightMesh);
+  pigmentMat.dispose();
+  heightMat.dispose();
+
+  setProgress(85, 'Setting up impasto composite...');
+  await tick();
+
+  compositeScene = new THREE.Scene();
+  compositeCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
+  compositeCamera.position.z = 5;
+
+  compositeMat = new THREE.ShaderMaterial({
+    vertexShader: IMPASTO_COMPOSITE_VERTEX,
+    fragmentShader: IMPASTO_COMPOSITE_FRAGMENT,
+    uniforms: {
+      uBase:       { value: artworkTex },
+      uStroke:     { value: strokeRT.texture },
+      uHeight:     { value: heightRT.texture },
+      uTexel:      { value: new THREE.Vector2(1 / RT_SIZE, 1 / RT_SIZE) },
+      uImpasto:    { value: CONFIG.impasto },
+      uWetness:    { value: CONFIG.wetness },
+      uLightAngle: { value: 0.8 },
+      uTime:       { value: 0 },
+    },
+    depthWrite: false, depthTest: false,
+  });
+
+  compositeScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), compositeMat));
+
+  setProgress(92, 'Initializing boid simulation...');
+  await tick();
+
+  const sep = lerp(18, 38, CONFIG.motion);
+  const coh = lerp(22, 8, CONFIG.motion);
+  boids = new BoidsSimulation(renderer, GPUComputationRenderer, {
+    gridWidth: CONFIG.boidGrid,
+    activeCount: Math.min(CONFIG.boidActive, CONFIG.boidGrid * CONFIG.boidGrid),
+    bounds: CONFIG.boidBounds,
+    separationDistance: sep,
+    alignmentDistance: 22,
+    cohesionDistance: coh,
+  });
+
+  boidScene = new THREE.Scene();
+  boidCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
+  boidCamera.position.z = 5;
+  resize();
+
+  const activeCount = Math.min(CONFIG.boidActive, CONFIG.boidGrid * CONFIG.boidGrid);
+  const markGeo = new THREE.InstancedBufferGeometry();
+  markGeo.setAttribute('position', new THREE.Float32BufferAttribute([-1,-1,0, 1,-1,0, 1,1,0, -1,1,0], 3));
+  markGeo.setIndex([0,1,2, 0,2,3]);
+  markGeo.instanceCount = activeCount;
+
+  const markRefs = new Float32Array(activeCount * 2);
+  for (let i = 0; i < activeCount; i++) {
+    markRefs[i * 2]     = (i % CONFIG.boidGrid + 0.5) / CONFIG.boidGrid;
+    markRefs[i * 2 + 1] = (Math.floor(i / CONFIG.boidGrid) + 0.5) / CONFIG.boidGrid;
+  }
+  markGeo.setAttribute('reference', new THREE.InstancedBufferAttribute(markRefs, 2));
+
+  const markMat = new THREE.ShaderMaterial({
+    vertexShader: boidMarkVS,
+    fragmentShader: boidMarkFS,
+    uniforms: {
+      texturePosition: { value: null },
+      textureVelocity: { value: null },
+      dirFieldTex:     { value: fieldTex },
+      artworkTex:      { value: artworkTex },
+      bounds:          { value: CONFIG.boidBounds },
+      markScale:       { value: CONFIG.markScale },
+      gradientMapShadowColor:      { value: new THREE.Color(0x3d200a) },
+      gradientMapMidtoneColor:     { value: new THREE.Color(0xc98b3e) },
+      gradientMapHighlightColor:   { value: new THREE.Color(0xfff0c8) },
+      gradientMapShadowPosition:   { value: 0.18 },
+      gradientMapMidpoint:         { value: 0.48 },
+      gradientMapHighlightPosition:{ value: 0.82 },
+      gradientMapReverse:          { value: 0.0 },
+      gradientMapStrength:         { value: 0.85 },
+    },
+    transparent: true, depthWrite: false, depthTest: false,
+  });
+
+  boidMarkMesh = new THREE.Mesh(markGeo, markMat);
+  boidScene.add(boidMarkMesh);
+
+  setProgress(100, 'Ready');
+  await tick();
+
+  loadingOverlay.classList.add('hidden');
+
+  currentImageData = artPixels;
+  const count = seeds.length;
+  statusText.innerHTML = `<span class="ready">Active</span> — ${count} strokes, ${activeCount} living marks`;
+
+  window.__livingArtProof = {
+    strokeCount: count,
+    boidCount: activeCount,
+    mode: CONFIG.mode,
+    capabilities: ['direction-field','poisson-seeds','bezier-strokes','impasto-material','gpgpu-boids','gradient-map'],
+  };
+}
+
+function tick() { return new Promise(r => requestAnimationFrame(r)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// ── Pointer Tracking ───────────────────────────────────────
+
+canvas.addEventListener('pointermove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  pointerNorm.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  pointerNorm.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+});
+canvas.addEventListener('pointerleave', () => pointerNorm.set(999, 999));
+document.addEventListener('visibilitychange', () => { animating = !document.hidden; });
+
+// ── Animation Loop ─────────────────────────────────────────
+
+function animate(time) {
+  requestAnimationFrame(animate);
+  if (!animating || !boids) return;
+
+  const dt = Math.min((time - lastTime) / 1000, 0.05);
+  lastTime = time;
+  if (dt <= 0) return;
+  elapsed += dt;
+
+  frameCount++;
+  fpsTimer += dt;
+  if (fpsTimer >= 1) {
+    statusFPS.textContent = Math.round(frameCount / fpsTimer) + ' fps';
+    frameCount = 0;
+    fpsTimer = 0;
+  }
+
+  const resp = CONFIG.response;
+  boids.setPredator(pointerNorm.x * resp, pointerNorm.y * resp, 0);
+  boids.compute(dt);
+
+  if (compositeMat) {
+    compositeMat.uniforms.uLightAngle.value = 0.8 + Math.sin(elapsed * 0.12) * 0.35;
+    compositeMat.uniforms.uTime.value = elapsed;
+    compositeMat.uniforms.uImpasto.value = CONFIG.impasto;
+    compositeMat.uniforms.uWetness.value = CONFIG.wetness;
+  }
+
+  if (boidMarkMesh) {
+    boidMarkMesh.material.uniforms.texturePosition.value = boids.positionTexture;
+    boidMarkMesh.material.uniforms.textureVelocity.value = boids.velocityTexture;
+    boidMarkMesh.material.uniforms.markScale.value = CONFIG.markScale;
+  }
+
+  renderer.setClearColor(0x0a0908, 1);
+  renderer.clear();
+
+  const showPainterly = CONFIG.mode === 'combined' || CONFIG.mode === 'painterly';
+  const showLiving = CONFIG.mode === 'combined' || CONFIG.mode === 'living';
+
+  if (showPainterly && compositeScene) renderer.render(compositeScene, compositeCamera);
+  if (showLiving && boidScene) renderer.render(boidScene, boidCamera);
+}
+
+// ── Control Binding ────────────────────────────────────────
+
+function bindControl(id, configKey, valId, formatter) {
+  const el = document.getElementById(id);
+  const val = document.getElementById(valId);
+  if (!el) return;
+  el.addEventListener('input', () => {
+    CONFIG[configKey] = parseFloat(el.value);
+    if (val) val.textContent = formatter ? formatter(CONFIG[configKey]) : CONFIG[configKey].toFixed(2);
+  });
+}
+
+bindControl('ctrlIntensity', 'intensity', 'valIntensity', v => v.toFixed(1));
+bindControl('ctrlStrokeScale', 'strokeScale', 'valStrokeScale', v => v.toFixed(1));
+bindControl('ctrlStrokeCount', 'seedCount', 'valStrokeCount', v => Math.round(v).toString());
+bindControl('ctrlWetness', 'wetness', 'valWetness', v => v.toFixed(2));
+bindControl('ctrlImpasto', 'impasto', 'valImpasto', v => v.toFixed(3));
+bindControl('ctrlLiving', 'boidActive', 'valLiving', v => Math.round(v).toString());
+bindControl('ctrlMarkScale', 'markScale', 'valMarkScale', v => Math.round(v).toString());
+bindControl('ctrlMotion', 'motion', 'valMotion', v => v.toFixed(2));
+bindControl('ctrlResponse', 'response', 'valResponse', v => v.toFixed(2));
+
+modeSelect.addEventListener('change', () => {
+  CONFIG.mode = modeSelect.value;
+  document.querySelectorAll('.mode-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === CONFIG.mode));
+});
+
+document.querySelectorAll('.mode-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    CONFIG.mode = chip.dataset.mode;
+    modeSelect.value = CONFIG.mode;
+    document.querySelectorAll('.mode-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === CONFIG.mode));
+  });
+});
+
+// ── Image Upload ───────────────────────────────────────────
+
+function handleFiles(files) {
+  const file = files && files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  loadingOverlay.classList.remove('hidden');
+  loadImageFromFile(file).then(pixels => {
+    buildPipeline(pixels);
+  });
+}
+
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+btnRebuild.addEventListener('click', () => {
+  if (currentImageData) {
+    loadingOverlay.classList.remove('hidden');
+    buildPipeline(currentImageData);
+  }
+});
+
+btnReset.addEventListener('click', () => {
+  document.getElementById('ctrlIntensity').value = 1; CONFIG.intensity = 1;
+  document.getElementById('ctrlStrokeScale').value = 1; CONFIG.strokeScale = 1;
+  document.getElementById('ctrlStrokeCount').value = 3000; CONFIG.seedCount = 3000;
+  document.getElementById('ctrlWetness').value = 0.38; CONFIG.wetness = 0.38;
+  document.getElementById('ctrlImpasto').value = 0.06; CONFIG.impasto = 0.06;
+  document.getElementById('ctrlLiving').value = 160; CONFIG.boidActive = 160;
+  document.getElementById('ctrlMarkScale').value = 36; CONFIG.markScale = 36;
+  document.getElementById('ctrlMotion').value = 0.5; CONFIG.motion = 0.5;
+  document.getElementById('ctrlResponse').value = 0.5; CONFIG.response = 0.5;
+  document.querySelectorAll('.control label span').forEach(s => {
+    const id = s.id;
+    if (id === 'valIntensity') s.textContent = '1.0';
+    if (id === 'valStrokeScale') s.textContent = '1.0';
+    if (id === 'valStrokeCount') s.textContent = '3000';
+    if (id === 'valWetness') s.textContent = '0.38';
+    if (id === 'valImpasto') s.textContent = '0.060';
+    if (id === 'valLiving') s.textContent = '160';
+    if (id === 'valMarkScale') s.textContent = '36';
+    if (id === 'valMotion') s.textContent = '0.50';
+    if (id === 'valResponse') s.textContent = '0.50';
+  });
+});
+
+// ── Boot ───────────────────────────────────────────────────
+
+resize();
+const artPixels = generateProceduralArtwork(CONFIG.artSize, CONFIG.artSize);
+buildPipeline(artPixels).then(() => {
+  requestAnimationFrame(animate);
+}).catch(err => {
+  loadingText.textContent = 'Error: ' + err.message;
+  console.error(err);
+});
+</script>
+</body>
+</html>
