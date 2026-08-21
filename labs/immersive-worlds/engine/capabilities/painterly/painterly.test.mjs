@@ -187,3 +187,185 @@ describe('poisson-seeds module', () => {
     }
   });
 });
+
+// -- Bezier Strokes tests (source-level + functional) -------------------------
+
+describe('bezier-strokes module', () => {
+  const src = readFileSync(join(HERE, 'bezier-strokes.js'), 'utf8');
+
+  it('exports STROKE_VERTEX_SHADER and STROKE_FRAGMENT_SHADER', () => {
+    assert.match(src, /export\s*\{[\s\S]*STROKE_VERTEX_SHADER/);
+    assert.match(src, /export\s*\{[\s\S]*STROKE_FRAGMENT_SHADER/);
+  });
+
+  it('exports HEIGHT_FRAGMENT_SHADER', () => {
+    assert.match(src, /export\s*\{[\s\S]*HEIGHT_FRAGMENT_SHADER/);
+  });
+
+  it('exports traceDirectionField and buildStrokesFromField', () => {
+    assert.match(src, /export\s*\{[\s\S]*traceDirectionField/);
+    assert.match(src, /export\s*\{[\s\S]*buildStrokesFromField/);
+  });
+
+  it('vertex shader contains cubic Bezier evaluation', () => {
+    assert.match(src, /s\*s\*s\*aP0/);
+    assert.match(src, /3\.0\*s\*s\*t\*aP1/);
+  });
+
+  it('vertex shader has variable-width pressure profile', () => {
+    assert.match(src, /pressure/);
+    assert.match(src, /wobble/);
+  });
+
+  it('fragment shader has bristle fiber simulation', () => {
+    assert.match(src, /fibers/);
+    assert.match(src, /microFibers/);
+    assert.match(src, /bristle/);
+    assert.match(src, /pigmentBreak/);
+  });
+
+  it('height shader encodes height, wet, and furrow channels', () => {
+    assert.match(src, /ridgeWave/);
+    assert.match(src, /microRidge/);
+    assert.match(src, /centralLoad/);
+    assert.match(src, /vec4\(height, wet, furrow/);
+  });
+
+  it('does not contain donor-specific content outside provenance header', () => {
+    const body = src.replace(/^\/\*\*[\s\S]*?\*\//, '');
+    assert.doesNotMatch(body, /van.gogh/i);
+    assert.doesNotMatch(body, /crow/i);
+    assert.doesNotMatch(body, /semantic/i);
+    assert.doesNotMatch(body, /lil-gui/i);
+    assert.doesNotMatch(body, /I18N/);
+  });
+
+  it('traceDirectionField traces through a uniform field', async () => {
+    const { traceDirectionField } = await import('./bezier-strokes.js');
+    const w = 32, h = 32;
+    const field = {
+      angle: new Float32Array(w * h).fill(0),
+      confidence: new Float32Array(w * h).fill(1),
+    };
+    const result = traceDirectionField(field, w, h, 16, 16, 1, 10, 10);
+    assert.ok(result.count > 0, 'should trace at least one point');
+    assert.ok(result.points[0] > 16, 'trace should advance rightward (angle=0)');
+  });
+
+  it('traceDirectionField stops at field boundaries', async () => {
+    const { traceDirectionField } = await import('./bezier-strokes.js');
+    const w = 8, h = 8;
+    const field = {
+      angle: new Float32Array(w * h).fill(0),
+      confidence: new Float32Array(w * h).fill(1),
+    };
+    const result = traceDirectionField(field, w, h, 6, 4, 1, 100, 50);
+    for (let i = 0; i < result.count; i++) {
+      assert.ok(result.points[i * 2] < w, `x should stay in bounds`);
+    }
+  });
+
+  it('buildStrokesFromField produces correct array shapes', async () => {
+    const { buildStrokesFromField } = await import('./bezier-strokes.js');
+    const { buildDirectionField } = await import('./direction-field.js');
+    const { generatePoissonSeeds } = await import('./poisson-seeds.js');
+    const w = 32, h = 32;
+    const pixels = new Uint8Array(w * h * 4);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const off = (y * w + x) * 4;
+        pixels[off] = Math.round((x / w) * 255);
+        pixels[off + 1] = Math.round((y / h) * 200);
+        pixels[off + 2] = 100;
+        pixels[off + 3] = 255;
+      }
+    }
+    const field = buildDirectionField(pixels, w, h);
+    const seeds = generatePoissonSeeds(w, h, field.confidence, { totalCount: 50 });
+    const strokes = buildStrokesFromField(seeds, field, w, h, pixels);
+    assert.equal(strokes.count, seeds.length);
+    assert.equal(strokes.p0.length, seeds.length * 2);
+    assert.equal(strokes.p1.length, seeds.length * 2);
+    assert.equal(strokes.p2.length, seeds.length * 2);
+    assert.equal(strokes.p3.length, seeds.length * 2);
+    assert.equal(strokes.colors.length, seeds.length * 3);
+    assert.equal(strokes.widths.length, seeds.length);
+    assert.equal(strokes.randoms.length, seeds.length);
+    assert.equal(strokes.brushLayers.length, seeds.length);
+  });
+
+  it('buildStrokesFromField samples color from pixel data', async () => {
+    const { buildStrokesFromField } = await import('./bezier-strokes.js');
+    const w = 8, h = 8;
+    const field = {
+      angle: new Float32Array(w * h).fill(Math.PI / 4),
+      confidence: new Float32Array(w * h).fill(0.8),
+    };
+    const pixels = new Uint8Array(w * h * 4);
+    for (let i = 0; i < w * h; i++) {
+      pixels[i * 4] = 200;
+      pixels[i * 4 + 1] = 100;
+      pixels[i * 4 + 2] = 50;
+      pixels[i * 4 + 3] = 255;
+    }
+    const seeds = [{ x: 4, y: 4, layer: 1, random: 0.5 }];
+    const strokes = buildStrokesFromField(seeds, field, w, h, pixels);
+    assert.ok(strokes.colors[0] > 0.7, `red channel should be ~0.78, got ${strokes.colors[0]}`);
+    assert.ok(strokes.colors[1] > 0.3, `green channel should be ~0.39, got ${strokes.colors[1]}`);
+  });
+});
+
+// -- Impasto Material tests (source-level) ------------------------------------
+
+describe('impasto-material module', () => {
+  const src = readFileSync(join(HERE, 'impasto-material.glsl.js'), 'utf8');
+
+  it('exports IMPASTO_COMPOSITE_VERTEX and IMPASTO_COMPOSITE_FRAGMENT', () => {
+    assert.match(src, /export\s*\{[\s\S]*IMPASTO_COMPOSITE_VERTEX/);
+    assert.match(src, /export\s*\{[\s\S]*IMPASTO_COMPOSITE_FRAGMENT/);
+  });
+
+  it('exports IMPASTO_UNIFORMS', () => {
+    assert.match(src, /export\s*\{[\s\S]*IMPASTO_UNIFORMS/);
+  });
+
+  it('composite shader has GGX microfacet distribution', () => {
+    assert.match(src, /distributionGGX/);
+    assert.match(src, /alpha2/);
+  });
+
+  it('composite shader has Smith geometry occlusion', () => {
+    assert.match(src, /geometrySmith/);
+  });
+
+  it('composite shader derives normals from Sobel on height buffer', () => {
+    assert.match(src, /hTL/);
+    assert.match(src, /hBR/);
+    assert.match(src, /paintNormal\s*=\s*normalize/);
+    assert.match(src, /gradient/);
+  });
+
+  it('composite shader has clearcoat and grazing sheen', () => {
+    assert.match(src, /clearcoat/);
+    assert.match(src, /grazingSheen/);
+  });
+
+  it('composite shader has canvas weave texture', () => {
+    assert.match(src, /canvasWeave/);
+    assert.match(src, /warpFiber/);
+    assert.match(src, /weftFiber/);
+  });
+
+  it('composite shader has variable roughness (wet vs dry)', () => {
+    assert.match(src, /roughness\s*=\s*mix\(0\.44,\s*0\.11,\s*wet\)/);
+  });
+
+  it('does not contain donor-specific content outside provenance header', () => {
+    const body = src.replace(/^\/\*\*[\s\S]*?\*\//, '');
+    assert.doesNotMatch(body, /van.gogh/i);
+    assert.doesNotMatch(body, /semantic/i);
+    assert.doesNotMatch(body, /uMode/);
+    assert.doesNotMatch(body, /pencil/i);
+    assert.doesNotMatch(body, /I18N/);
+  });
+});
