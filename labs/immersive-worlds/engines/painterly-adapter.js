@@ -147,7 +147,14 @@ export function installPainterly(runtime) {
 }
 
 export function updatePainterly() {
-    if (!engine || !animationActive) return;
+    if (!engine) return;
+
+    if (plateRef?.material && plateRef.material.map !== engine.outputTexture) {
+        plateRef.material.map = engine.outputTexture;
+        plateRef.material.needsUpdate = true;
+    }
+
+    if (!animationActive) return;
 
     const now = performance.now() / 1000;
     const stillGrowing = engine.update(now);
