@@ -13,3 +13,13 @@ node_modules/
 # evidence — the beat stills and the state JSON are.
 labs/immersive-worlds/qa/evidence-vs02/crossing/mframe-*.png
 labs/immersive-worlds/qa/evidence-vs02/crossing/museum-sheet-*.png
+
+# npm lockfile — dev tooling only, not part of the product
+package-lock.json
+
+# Playwright test runner artifacts
+test-results/
+
+# EP Standalone module (prior mission, not part of Museum Living Art graft)
+js/website-modules-living-art-pro.js
+labs/website-modules-source/living-art-pro/
