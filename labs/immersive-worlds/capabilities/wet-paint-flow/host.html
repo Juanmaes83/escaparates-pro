@@ -3,7 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="https://raw.githubusercontent.com/Juanmaes83/wet-paint-flow/0b9ba9a5be665f3a2a8b2450945ec5006e61e2de/">
   <title>OREJA · RUBIK SOTA — Wet Paint</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "/labs/immersive-worlds/vendor/three/three.module.min.js",
+        "three/addons/": "https://unpkg.com/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
   <style>
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#d9d9d4;color:#202020;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     #boot{position:fixed;inset:0;display:grid;place-items:center;background:#d9d9d4;z-index:9999;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
@@ -60,19 +69,9 @@
       style.textContent=cssText+'\nhtml,body,#app,.stage,#canvas-mount{background:#d9d9d4!important;}';
       document.head.appendChild(style);
 
-      const origin=location.origin;
-      const three=`${origin}/labs/immersive-worlds/vendor/three/three.module.min.js`;
-      const addons=`${origin}/labs/immersive-worlds/vendor/three/addons/`;
-      let source=mainText
-        .replace("from 'three';",`from '${three}';`)
-        .replaceAll("three/addons/",addons);
-
-      source=source
-        .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
-        .replaceAll('"./public/',`"${DONOR_BASE}/public/`);
-
+      // Stone-first: mainText is imported byte-for-byte. Import-map and <base> are the seams.
       try{localStorage.setItem('wet-paint-flow-language','en');}catch{}
-      const blob=new Blob([source],{type:'text/javascript'});
+      const blob=new Blob([mainText],{type:'text/javascript'});
       const moduleUrl=URL.createObjectURL(blob);
       await import(moduleUrl);
       applySpanish();
