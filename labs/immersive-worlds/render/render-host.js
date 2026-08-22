@@ -11,10 +11,11 @@ export class RenderHost {
     this.canvas = canvas;
     this.quality = quality;
 
-    // Studio preview rebuilds re-enter boot() on the same canvas. The old host
-    // must be released before a new WebGLRenderer is created or repeated Apply
-    // operations accumulate GPU contexts/resources until the preview goes black.
+    // Studio preview rebuilds re-enter boot() on the same canvas. The old input
+    // system and host must be released before a new WebGLRenderer is created or
+    // repeated Apply operations accumulate DOM listeners and GPU resources.
     if (typeof window !== 'undefined') {
+      try { window.__IW?.input?.dispose?.(); } catch { /* previous input already gone */ }
       const previous = window.__IW_ACTIVE_RENDER_HOST;
       if (previous && previous !== this) {
         try { previous.dispose(); } catch { /* previous host already gone */ }
