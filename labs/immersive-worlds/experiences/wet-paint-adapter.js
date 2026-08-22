@@ -1,32 +1,34 @@
 /**
- * Wet Paint adapter — the thin, donor-specific mapping for the Experience Bridge,
- * plus the Museum-room wiring that connects it to the itinerant lab.
+ * Wet Paint — Museum-native integration (re-skin, not rebuild).
  *
- * The donor (`wet-paint-flow` @ 0b9ba9a, preserved under
- * ./wet-paint-flow/) already exposes everything the host needs, so it is hosted
- * intact — ZERO donor edits:
+ * The donor (`wet-paint-flow` @ 0b9ba9a, preserved under ./wet-paint-flow/) runs
+ * intact as the technical brain. This module:
+ *   1. drives the donor's REAL controls (no reconstruction) — same sliders,
+ *      tabs, Growth, modes, logic;
+ *   2. presents them re-skinned as Museum and in Spanish (wet-paint-museum-skin.js);
+ *   3. binds 01 ORIGINAL → donor source, and the donor result → 02 WET PAINT plate;
+ *   4. persists the personalization so authoring and the visitor see one truth.
  *
- *   input   : <input id="source-upload" type="file">   (drive it, same-origin)
- *   status  : window.__vangoghFlowState { ready, sourceMode, strokes, sourceSize }
- *             document.documentElement.dataset.growthProgress (0→1)
- *             window.__vangoghFlowErrors []
- *   result  : the WebGL canvas at #canvas-mount (one still after RESULT_READY)
- *
- * The adapter maps the generic bridge contract onto exactly those surfaces.
+ * Habitación 3 philosophy: DONOR = specialized technology, MUSEUM = the visible
+ * experience. The visitor never perceives the donor.
  */
 
 import { THREE } from '../render/render-host.js';
 import { createExperienceBridge, STATUS } from './experience-bridge.js';
 import { StudioShell } from '../authoring/studio/studio-shell.js';
+import { applyMuseumSkin } from './wet-paint-museum-skin.js';
+import { WetPaintStore } from './wet-paint-store.js';
 
 const EXPERIENCE_ID = 'wet-paint-flow';
 const STANDALONE_URL = './experiences/wet-paint-flow/index.html';
 const ORIGINAL_ENTITY_ID = 'entity.itinerant.original';
 const PAINTERLY_ENTITY_ID = 'entity.itinerant.painterly';
 
-// ── Donor mapping (generic contract → donor surfaces) ──────────────────────
+// ── Donor mapping (generic contract → donor surfaces), zero donor edits ─────
 
 const donorAdapter = {
+    onLoad(iframe) { applyMuseumSkin(iframe); },
+
     isReady(iframe) {
         const win = iframe.contentWindow;
         const doc = iframe.contentDocument;
@@ -36,12 +38,9 @@ const donorAdapter = {
     setSource(iframe, file) {
         const doc = iframe.contentDocument;
         const input = doc?.getElementById('source-upload');
-        if (!input) throw new Error('wet-paint standalone: #source-upload not found');
-        // Baselines used by readStatus to detect the fresh growth cycle for THIS source.
+        if (!input) throw new Error('wet-paint: #source-upload not found');
         iframe.__wpErrBaseline = (iframe.contentWindow.__vangoghFlowErrors || []).length;
         iframe.__wpSawRestart = false;
-        // Drive the donor's own upload control (same-origin), exactly like Rope
-        // Gallery delegates to a standalone's internal controls.
         const dt = new DataTransfer();
         dt.items.add(file);
         input.files = dt.files;
@@ -53,46 +52,102 @@ const donorAdapter = {
         const doc = iframe.contentDocument;
         const state = win?.__vangoghFlowState;
         const errs = win?.__vangoghFlowErrors || [];
-        if ((iframe.__wpErrBaseline ?? 0) < errs.length) {
-            return { status: STATUS.ERROR, error: errs[errs.length - 1] };
-        }
+        if ((iframe.__wpErrBaseline ?? 0) < errs.length) return { status: STATUS.ERROR, error: errs[errs.length - 1] };
         if (!state?.ready) return { status: STATUS.BOOTING };
-
         const progress = Number(doc?.documentElement?.dataset?.growthProgress || 0);
         const strokes = state.strokes || 0;
-        // A brand-new source restarts growth from 0; observing progress < 1 once
-        // proves we are in the NEW cycle and not reading a stale, already-complete
-        // progress value from the previous source.
         if (progress < 1) iframe.__wpSawRestart = true;
-
-        const elapsed = performance.now() - (sinceTs || 0);
-        const settled = iframe.__wpSawRestart || elapsed > 1500;
+        const settled = iframe.__wpSawRestart || (performance.now() - (sinceTs || 0)) > 1500;
         if (state.sourceMode === 'image' && strokes > 0 && progress >= 1 && settled) {
-            return { status: STATUS.RESULT_READY, strokes, sourceSize: state.sourceSize, progress };
+            return { status: STATUS.RESULT_READY, strokes, progress };
         }
         return { status: STATUS.PROCESSING, strokes, progress };
     },
 
     async captureResult(iframe) {
-        const doc = iframe.contentDocument;
-        const canvas = doc?.querySelector('#canvas-mount canvas');
+        const canvas = iframe.contentDocument?.querySelector('#canvas-mount canvas');
         if (!canvas) return null;
-        // Single explicit frame capture, timed inside a render tick — the same
-        // toBlob/toDataURL-on-canvas the donor's own "Export PNG" proves works.
         await new Promise((r) => (iframe.contentWindow || window).requestAnimationFrame(r));
-        try {
-            return canvas.toDataURL('image/png');
-        } catch {
-            return null;
+        try { return canvas.toDataURL('image/png'); } catch { return null; }
+    },
+
+    // Read the donor's real control values (for persistence).
+    getParams(iframe) {
+        const doc = iframe.contentDocument;
+        if (!doc) return null;
+        const params = {};
+        doc.querySelectorAll('input[data-param]').forEach((i) => { params[i.dataset.param] = i.value; });
+        const q = doc.getElementById('quality-mode');
+        if (q) params.quality = q.value;
+        const vm = doc.querySelector('input[name="layer-mode"]:checked');
+        if (vm) params.viewMode = vm.value;
+        params.brushLayers = [...doc.querySelectorAll('input[data-brush-layer]')].map((c) => c.checked);
+        return params;
+    },
+
+    // Drive the donor's real controls from a saved set (for restore).
+    applyParams(iframe, params) {
+        const doc = iframe.contentDocument;
+        if (!doc || !params) return;
+        const fire = (el, types) => types.forEach((t) => el.dispatchEvent(new Event(t, { bubbles: true })));
+        Object.entries(params).forEach(([k, v]) => {
+            if (['quality', 'viewMode', 'brushLayers'].includes(k)) return;
+            const i = doc.querySelector(`input[data-param="${k}"]`);
+            if (i) { i.value = v; fire(i, ['input', 'change']); }
+        });
+        if (params.quality) {
+            const q = doc.getElementById('quality-mode');
+            if (q) { q.value = params.quality; fire(q, ['change']); }
+        }
+        if (params.viewMode) {
+            const r = doc.querySelector(`input[name="layer-mode"][value="${params.viewMode}"]`);
+            if (r && !r.checked) { r.checked = true; fire(r, ['change']); }
+        }
+        if (Array.isArray(params.brushLayers)) {
+            doc.querySelectorAll('input[data-brush-layer]').forEach((c, idx) => {
+                const want = params.brushLayers[idx];
+                if (typeof want === 'boolean' && c.checked !== want) { c.checked = want; fire(c, ['change']); }
+            });
         }
     },
 
-    replay(iframe) {
-        iframe.contentDocument?.getElementById('replay-growth-button')?.click();
+    // Reliable capture. The donor renders ONLY while something is dirty or growth
+    // is active (see its animate loop); once growth completes it stops drawing, so
+    // an external read of an un-preserved buffer comes back black. So: force a
+    // fresh growth cycle (its own Reproducir button) and capture on the donor's
+    // OWN rAF DURING active growth — every such frame is freshly painted. We keep
+    // the latest frame as growth approaches 1, which is the (near-)complete image.
+    refreshResult(iframe, timeoutMs = 10000) {
+        return new Promise((resolve) => {
+            const win = iframe.contentWindow;
+            const doc = iframe.contentDocument;
+            const canvas = doc?.querySelector('#canvas-mount canvas');
+            if (!win || !canvas) { resolve(null); return; }
+            doc.getElementById('replay-growth-button')?.click();
+            const startedAt = performance.now();
+            let best = null;
+            let sawGrowth = false;
+            const step = () => {
+                const gp = Number(doc.documentElement.dataset.growthProgress || 0);
+                // While growth is running the back buffer holds a freshly drawn
+                // frame — grab it. Registered after the donor's own rAF, so its
+                // draw for this frame has already happened.
+                if (gp > 0.05 && gp <= 1) {
+                    sawGrowth = true;
+                    try { best = canvas.toDataURL('image/png'); } catch { /* transient */ }
+                }
+                if ((gp >= 1 && best && sawGrowth) || performance.now() - startedAt > timeoutMs) {
+                    resolve(best);
+                    return;
+                }
+                win.requestAnimationFrame(step);
+            };
+            win.requestAnimationFrame(step);
+        });
     },
 };
 
-// ── Museum-room wiring ─────────────────────────────────────────────────────
+// ── Museum-room helpers ────────────────────────────────────────────────────
 
 function findArtworkPlate(sceneKit, entityId) {
     const record = sceneKit?._entityIndex?.get(entityId);
@@ -110,88 +165,195 @@ function findArtworkPlate(sceneKit, entityId) {
 }
 
 function applyResultToPlate(plate, dataUrl) {
-    if (!plate?.material || !dataUrl) return;
-    const image = new Image();
-    image.onload = () => {
-        const texture = new THREE.Texture(image);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.anisotropy = 8;
-        texture.needsUpdate = true;
-        const previous = plate.material.map;
-        plate.material.map = texture;
-        plate.material.needsUpdate = true;
-        if (previous && previous !== texture) { try { previous.dispose?.(); } catch { /* noop */ } }
-    };
-    image.src = dataUrl;
+    return new Promise((resolve) => {
+        if (!plate?.material || !dataUrl) { resolve(false); return; }
+        const image = new Image();
+        image.onload = () => {
+            const texture = new THREE.Texture(image);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.anisotropy = 8;
+            texture.needsUpdate = true;
+            const previous = plate.material.map;
+            plate.material.map = texture;
+            plate.material.needsUpdate = true;
+            if (previous && previous !== texture) { try { previous.dispose?.(); } catch { /* noop */ } }
+            resolve(true);
+        };
+        image.onerror = () => resolve(false);
+        image.src = dataUrl;
+    });
 }
 
-function addExperienceButton(bridge) {
-    if (document.getElementById('wp-open-experience')) return;
-    const btn = document.createElement('button');
-    btn.id = 'wp-open-experience';
-    btn.type = 'button';
-    btn.textContent = 'Ver Wet Paint · experiencia real';
-    Object.assign(btn.style, {
-        position: 'fixed', bottom: '16px', right: '16px', zIndex: '55',
-        padding: '10px 16px', borderRadius: '999px', cursor: 'pointer',
-        border: '1px solid rgba(236,231,221,.4)', background: 'rgba(16,15,14,.92)',
-        color: '#ece7dd', font: '500 12px/1 system-ui, sans-serif', letterSpacing: '.06em',
-    });
-    btn.addEventListener('click', () => bridge.open());
-    document.body.appendChild(btn);
+// ── Museum chrome (edit overlay header, launch button, toast) ──────────────
+
+const BTN = 'padding:9px 15px;border-radius:999px;cursor:pointer;border:1px solid rgba(226,219,205,.3);'
+    + "background:transparent;color:#ece7dd;font:500 12px/1 'Helvetica Neue',Inter,system-ui,sans-serif;letter-spacing:.05em;";
+const BTN_ACCENT = 'padding:9px 15px;border-radius:999px;cursor:pointer;border:1px solid #bfa06a;'
+    + "background:rgba(191,160,106,.16);color:#ece7dd;font:600 12px/1 'Helvetica Neue',Inter,system-ui,sans-serif;letter-spacing:.05em;";
+
+function toast(message, kind = 'ok') {
+    let el = document.getElementById('wp-toast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'wp-toast';
+        Object.assign(el.style, {
+            position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)',
+            zIndex: '80', padding: '11px 18px', borderRadius: '10px',
+            background: '#1a1917', color: '#ece7dd', border: '1px solid rgba(226,219,205,.3)',
+            font: "500 13px/1.2 'Helvetica Neue', Inter, system-ui, sans-serif",
+            boxShadow: '0 8px 30px rgba(0,0,0,.5)', opacity: '0', transition: 'opacity .2s',
+        });
+        document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.style.borderColor = kind === 'ok' ? 'rgba(143,191,149,.55)' : 'rgba(224,138,128,.55)';
+    el.style.opacity = '1';
+    clearTimeout(el.__t);
+    el.__t = setTimeout(() => { el.style.opacity = '0'; }, 2600);
 }
 
 let bridge = null;
+let sceneKitRef = null;
+
+function paintaryPlate() { return findArtworkPlate(sceneKitRef, PAINTERLY_ENTITY_ID); }
+
+async function saveAndApply() {
+    const iframe = bridge.element;
+    toast('Aplicando personalización…', 'ok');
+    const dataUrl = await donorAdapter.refreshResult(iframe);
+    const applied = await applyResultToPlate(paintaryPlate(), dataUrl);
+    if (!applied) { toast('No se pudo aplicar el resultado', 'bad'); return; }
+    const params = donorAdapter.getParams(iframe);
+    WetPaintStore.save(PAINTERLY_ENTITY_ID, { params, resultDataUrl: dataUrl });
+    toast('Personalización aplicada a la obra 02', 'ok');
+}
+
+function buildEditChrome() {
+    const container = bridge.container;
+    // Re-purpose the bridge's default close button into our header; hide the raw one.
+    const rawClose = container.querySelector('#experience-close');
+    if (rawClose) rawClose.style.display = 'none';
+
+    if (container.querySelector('#wp-edit-header')) return;
+    const header = document.createElement('div');
+    header.id = 'wp-edit-header';
+    Object.assign(header.style, {
+        position: 'absolute', top: '0', left: '0', right: '0', height: '56px', zIndex: '2',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 16px', background: '#100f0e', borderBottom: '1px solid rgba(226,219,205,.14)',
+        color: '#ece7dd', font: "600 14px/1 'Helvetica Neue', Inter, system-ui, sans-serif",
+    });
+    const title = document.createElement('div');
+    title.innerHTML = '<span style="letter-spacing:.04em">Editar obra · 02 — Wet Paint</span>'
+        + '<span style="display:block;font-weight:400;font-size:11px;color:#9a9389;margin-top:3px">Personaliza el efecto y aplícalo a la sala</span>';
+    const actions = document.createElement('div');
+    actions.style.display = 'flex';
+    actions.style.gap = '10px';
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.textContent = 'Guardar y aplicar';
+    saveBtn.style.cssText = BTN_ACCENT;
+    saveBtn.addEventListener('click', () => saveAndApply());
+    const backBtn = document.createElement('button');
+    backBtn.type = 'button';
+    backBtn.textContent = 'Volver a la sala';
+    backBtn.style.cssText = BTN;
+    backBtn.addEventListener('click', () => bridge.close());
+    actions.append(saveBtn, backBtn);
+    header.append(title, actions);
+    container.appendChild(header);
+    // Push the donor iframe below the header.
+    bridge.element.style.marginTop = '56px';
+    bridge.element.style.height = 'calc(100% - 56px)';
+}
+
+function addLaunchButton() {
+    if (document.getElementById('wp-personalize')) return;
+    const btn = document.createElement('button');
+    btn.id = 'wp-personalize';
+    btn.type = 'button';
+    btn.textContent = 'Personalizar 02 · Wet Paint';
+    Object.assign(btn.style, {
+        position: 'fixed', bottom: '16px', right: '16px', zIndex: '55',
+    });
+    btn.style.cssText += BTN_ACCENT + 'position:fixed;bottom:16px;right:16px;z-index:55;';
+    btn.addEventListener('click', async () => {
+        await bridge.waitReady();
+        applyMuseumSkin(bridge.element);
+        buildEditChrome();
+        bridge.open();
+    });
+    document.body.appendChild(btn);
+}
+
+// ── Install ────────────────────────────────────────────────────────────────
 
 export function installWetPaint(runtime) {
     const sceneKit = runtime?.sceneKit;
-    if (!sceneKit) {
-        console.error('[WetPaintBridge] runtime.sceneKit not available');
-        return null;
-    }
+    if (!sceneKit) { console.error('[WetPaint] runtime.sceneKit not available'); return null; }
+    sceneKitRef = sceneKit;
 
     bridge = createExperienceBridge({
         id: EXPERIENCE_ID,
         url: STANDALONE_URL,
         adapter: donorAdapter,
-        onStatus: (status, extra) => {
-            console.log(`[WetPaintBridge] ${status}${extra?.strokes ? ` · ${extra.strokes} strokes` : ''}`);
-        },
+        onStatus: (status, extra) => console.log(`[WetPaint] ${status}${extra?.strokes ? ` · ${extra.strokes} trazos` : ''}`),
     });
-    addExperienceButton(bridge);
 
-    // Input seam: when an image is uploaded to 01 ORIGINAL, hand that exact file
-    // to the donor and, when it finishes, place the captured result on 02.
-    // 01 ORIGINAL's own raw-image plate is handled by wet-paint-visible-media.js;
-    // this bridge only drives the donor and the 02 plate.
+    addLaunchButton();
+
+    // Dress the donor document as soon as it loads (no chrome flash) and restore
+    // any saved personalization onto 02 so authoring and visitor show one truth.
+    bridge.waitReady().then(async () => {
+        applyMuseumSkin(bridge.element);
+        const saved = WetPaintStore.get(PAINTERLY_ENTITY_ID);
+        if (saved?.resultDataUrl) {
+            await applyResultToPlate(paintaryPlate(), saved.resultDataUrl);
+            console.log('[WetPaint] 02 restaurado desde personalización guardada');
+        }
+    });
+
+    // 01 ORIGINAL upload → donor source → 02 result. 01's own raw plate is
+    // handled by wet-paint-visible-media.js; here we only feed the donor and 02.
     const originalTakeFile = StudioShell.prototype._takeFile;
-    StudioShell.prototype._takeFile = async function wetPaintBridgeTakeFile(slot, file) {
+    StudioShell.prototype._takeFile = async function wetPaintTakeFile(slot, file) {
         await originalTakeFile.call(this, slot, file);
         if (!file || this.selectedId !== ORIGINAL_ENTITY_ID) return;
         const entity = (this.world.entities || []).find((item) => item.id === this.selectedId);
-        if (entity?.kind !== 'ARTWORK') return;
-        if (!String(file.type || '').startsWith('image/')) return;
+        if (entity?.kind !== 'ARTWORK' || !String(file.type || '').startsWith('image/')) return;
 
         try {
+            toast('Wet Paint está procesando la imagen…', 'ok');
+            const saved = WetPaintStore.get(PAINTERLY_ENTITY_ID);
             const result = await bridge.process(file);
             if (result.status === STATUS.RESULT_READY && result.resultDataUrl) {
-                const plate = findArtworkPlate(sceneKit, PAINTERLY_ENTITY_ID);
-                applyResultToPlate(plate, result.resultDataUrl);
-                console.log('[WetPaintBridge] 02 WET PAINT updated from real donor result');
+                // Re-apply saved params (if any) on top of the fresh source, then recapture.
+                let dataUrl = result.resultDataUrl;
+                if (saved?.params) {
+                    donorAdapter.applyParams(bridge.element, saved.params);
+                    dataUrl = (await donorAdapter.refreshResult(bridge.element)) || dataUrl;
+                }
+                await applyResultToPlate(paintaryPlate(), dataUrl);
+                WetPaintStore.save(PAINTERLY_ENTITY_ID, { params: donorAdapter.getParams(bridge.element), resultDataUrl: dataUrl });
+                toast('02 Wet Paint actualizado', 'ok');
+                console.log('[WetPaint] 02 actualizado desde el donor real');
             } else {
-                console.warn('[WetPaintBridge] donor did not produce a result:', result.status);
+                toast('El donor no produjo resultado', 'bad');
             }
         } catch (error) {
-            console.error('[WetPaintBridge] processing failed:', error);
+            console.error('[WetPaint] processing failed:', error);
+            toast('Error al procesar', 'bad');
         }
     };
 
     window.__WET_PAINT_BRIDGE = {
         bridge,
         process: (file) => bridge.process(file),
-        applyResultToPlate: (dataUrl) => applyResultToPlate(findArtworkPlate(sceneKit, PAINTERLY_ENTITY_ID), dataUrl),
-        open: () => bridge.open(),
+        saveAndApply,
+        open: async () => { await bridge.waitReady(); applyMuseumSkin(bridge.element); buildEditChrome(); bridge.open(); },
         close: () => bridge.close(),
+        getParams: () => donorAdapter.getParams(bridge.element),
+        applyParams: (p) => donorAdapter.applyParams(bridge.element, p),
     };
 
     return { bridge };

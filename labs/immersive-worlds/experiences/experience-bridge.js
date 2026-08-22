@@ -59,6 +59,7 @@ export function createExperienceBridge({ id, url, adapter, onStatus }) {
     const container = document.createElement('section');
     container.className = 'experience-host';
     container.dataset.experienceId = id;
+    container.style.background = '#100f0e';
     styleClosed(container);
 
     const iframe = document.createElement('iframe');
@@ -70,6 +71,7 @@ export function createExperienceBridge({ id, url, adapter, onStatus }) {
 
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
+    closeBtn.id = 'experience-close';
     closeBtn.textContent = 'Volver a la sala';
     Object.assign(closeBtn.style, {
         position: 'absolute', top: '12px', right: '12px', zIndex: '1',
@@ -94,9 +96,12 @@ export function createExperienceBridge({ id, url, adapter, onStatus }) {
 
     async function waitReady(timeoutMs = 30000) {
         await loaded();
+        // Let the adapter dress the freshly loaded document (e.g. inject a skin
+        // and relabel) before anything is revealed, so no donor chrome flashes.
+        try { adapter.onLoad?.(iframe); } catch { /* noop */ }
         const start = performance.now();
         while (performance.now() - start < timeoutMs) {
-            if (adapter.isReady(iframe)) return true;
+            if (adapter.isReady(iframe)) { try { adapter.onLoad?.(iframe); } catch { /* noop */ } return true; }
             await new Promise((r) => setTimeout(r, 150));
         }
         return false;
