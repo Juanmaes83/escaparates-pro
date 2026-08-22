@@ -1,24 +1,9 @@
 /**
  * Immersive Worlds — Media loader
  *
- * The step that turns Immersive Worlds from a demo into a template: an
- * institution declares its own images and videos in the world file, and they
- * appear on the walls.
- *
- * Two rules shape this file.
- *
- *   1. **A broken file never leaves a hole in a wall.** Every load has a
- *      timeout and a fallback. If the image 404s, the entity still hangs, using
- *      the generated placeholder plate, and `asset:error` is emitted so QA and
- *      the authoring layer can see it. A gallery with one missing file is a
- *      gallery with a placeholder, not a gallery with a black rectangle.
- *
- *   2. **The engine never loads anything.** It declares what an entity is made
- *      of; this file — inside the render layer — resolves it. Swap the Scene
- *      Kit and the same declarations still work.
- *
- * Textures are cached and reference-counted, because the same file may hang in
- * two Spaces and Space disposal must not free a texture another Space is using.
+ * Resolves declared image/video media into Three.js textures. Broken media falls
+ * back instead of leaving a hole in the room, and cached resources are
+ * reference-counted across Spaces.
  */
 
 import { THREE } from './render-host.js';
@@ -26,20 +11,25 @@ import { THREE } from './render-host.js';
 const DEFAULT_TIMEOUT_MS = 12000;
 
 export class MediaLoader {
-  /**
-   * @param {{bus:import('../engine/core/event-bus.js').EventBus, baseUrl?:string, timeoutMs?:number}} deps
-   */
   constructor({ bus, baseUrl = '', timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
     this.bus = bus;
     this.baseUrl = baseUrl;
     this.timeoutMs = timeoutMs;
-
-    /** @type {Map<string, {texture:THREE.Texture, refs:number, video?:HTMLVideoElement}>} */
     this._cache = new Map();
-    /** @type {Map<string, Promise<any>>} */
     this._inflight = new Map();
-    /** Every load attempt, for the evidence bundle. */
     this.log = [];
+    this._disposed = false;
+
+    // Studio preview rebuilds create another loader on the same page. Any
+    // leftover loader from the previous preview must release VideoTextures and
+    // HTMLVideoElements before the new one starts decoding media.
+    if (typeof window !== 'undefined') {
+      const previous = window.__IW_ACTIVE_MEDIA_LOADER;
+      if (previous && previous !== this) {
+        try { previous.disposeAll(); } catch { /* already released */ }
+      }
+      window.__IW_ACTIVE_MEDIA_LOADER = this;
+    }
   }
 
   _resolve(src) {
@@ -53,12 +43,8 @@ export class MediaLoader {
     if (this.log.length > 200) this.log.shift();
   }
 
-  /**
-   * @param {import('../engine/schema/types.js').Media} media
-   * @param {{entityId:string}} context
-   * @returns {Promise<{texture:THREE.Texture|null, aspect:number|null, kind:string, fallback:boolean, video?:HTMLVideoElement}>}
-   */
   async load(media, context = {}) {
+    if (this._disposed) throw new Error('media loader disposed');
     if (!media || media.kind === 'GENERATED' || !media.src) {
       return { texture: null, aspect: media?.aspect ?? null, kind: 'GENERATED', fallback: false };
     }
@@ -81,6 +67,11 @@ export class MediaLoader {
     const started = performance.now();
     const promise = (media.kind === 'VIDEO' ? this._loadVideo(url, media, context) : this._loadImage(url))
       .then((result) => {
+        if (this._disposed) {
+          releaseVideo(result.video);
+          result.texture?.dispose?.();
+          throw new Error('media loader disposed during load');
+        }
         this._cache.set(url, { ...result, refs: 1 });
         this._record({
           entityId: context.entityId ?? null, url, kind: media.kind,
@@ -90,7 +81,6 @@ export class MediaLoader {
         return { ...result, kind: media.kind, fallback: false };
       })
       .catch((error) => {
-        // The world keeps working. This is the whole point of the fallback.
         this._record({
           entityId: context.entityId ?? null, url, kind: media.kind,
           ok: false, ms: Math.round(performance.now() - started), error: String(error?.message || error)
@@ -139,8 +129,6 @@ export class MediaLoader {
       const video = document.createElement('video');
       video.crossOrigin = 'anonymous';
       video.loop = media.loop !== false;
-      // Muted is not a style choice: an unmuted video cannot autoplay, and a
-      // gallery where the screens are frozen until someone clicks is broken.
       video.muted = media.muted !== false;
       video.playsInline = true;
       video.preload = 'auto';
@@ -158,20 +146,10 @@ export class MediaLoader {
         video.play().then(
           () => { texture.userData.playing = true; },
           (error) => {
-            // Autoplay can still be refused — by a policy, by a frame without
-            // the permission, by a hostile tab. The frame stays visible, so the
-            // wall does not go black, but the refusal is recorded rather than
-            // swallowed: a projection that is frozen must not report success.
             texture.userData.playing = false;
             texture.userData.playError = error?.name || String(error);
             this._record({ entityId: context.entityId ?? null, url, kind: media.kind,
               ok: true, ms: 0, error: `autoplay refused: ${error?.name || error}` });
-            // Recording it is not enough on its own: a refusal leaves a still
-            // frame on the wall for the rest of the visit, which looks exactly
-            // like a video that is playing very slowly. A refused policy is
-            // satisfied by the visitor's first gesture, so the retry rides on
-            // it — the pattern `breeze-studio-pro` already uses. The visitor
-            // never learns there was a problem; the screen simply starts.
             this._retryOnGesture(video, texture);
           }
         );
@@ -187,10 +165,6 @@ export class MediaLoader {
     });
   }
 
-  /**
-   * Wait for the visitor's first gesture, then start the video they cannot yet
-   * see is stopped. One listener per refused video, removed once it has served.
-   */
   _retryOnGesture(video, texture) {
     const events = ['pointerdown', 'keydown', 'touchstart'];
     const attempt = () => {
@@ -200,13 +174,12 @@ export class MediaLoader {
           texture.userData.playError = null;
           for (const type of events) window.removeEventListener(type, attempt);
         },
-        () => { /* still refused; the next gesture tries again */ }
+        () => { /* next gesture tries again */ }
       );
     };
     for (const type of events) window.addEventListener(type, attempt, { passive: true });
   }
 
-  /** Release one reference; the texture is freed when the last Space lets go. */
   release(src) {
     const url = this._resolve(src);
     const entry = this._cache.get(url);
@@ -218,7 +191,6 @@ export class MediaLoader {
     this._cache.delete(url);
   }
 
-  /** QA evidence: what loaded, what fell back, and how long it took. */
   report() {
     const attempts = this.log.length;
     const failures = this.log.filter((entry) => !entry.ok);
@@ -233,29 +205,25 @@ export class MediaLoader {
   }
 
   disposeAll() {
+    if (this._disposed) return;
+    this._disposed = true;
     for (const [, entry] of this._cache) {
       releaseVideo(entry.video);
       entry.texture.dispose();
     }
     this._cache.clear();
+    this._inflight.clear();
+    if (typeof window !== 'undefined' && window.__IW_ACTIVE_MEDIA_LOADER === this) {
+      window.__IW_ACTIVE_MEDIA_LOADER = null;
+    }
   }
 }
 
-/**
- * Let a video element go the way the proven modules in this repository do.
- *
- * `video.src = ''` does not clear the source: an empty string resolves against
- * the document's own address, so the element dutifully fetches the page and
- * tries to decode HTML as video — a wasted request and an error event fired at
- * teardown, when nobody is listening for a reason. Removing the attribute and
- * calling `load()` is the teardown `js/media-manager.js`, `breeze-studio-pro`
- * and `kinetic-letter-curtain-pro-v2` all use.
- */
 function releaseVideo(video) {
   if (!video) return;
   try {
     video.pause();
     video.removeAttribute('src');
     video.load();
-  } catch { /* the element is already beyond caring */ }
+  } catch { /* already released */ }
 }
