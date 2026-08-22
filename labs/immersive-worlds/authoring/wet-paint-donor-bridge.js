@@ -9,19 +9,30 @@ const HOST_URL = './capabilities/wet-paint-flow/host.html';
 let iframe = null;
 let overlay = null;
 let toggle = null;
+let donorStarted = false;
 let donorReady = false;
+let donorError = '';
 let outputTexture = null;
 let outputCanvas = null;
 let raf = 0;
 let lastFileName = '';
+
+function startDonor() {
+  ensureUi();
+  if (donorStarted) return;
+  donorStarted = true;
+  donorError = '';
+  toggle.textContent = 'OREJA · RUBIK SOTA · CARGANDO…';
+  iframe.src = HOST_URL;
+}
 
 function ensureUi() {
   if (iframe) return iframe;
 
   iframe = document.createElement('iframe');
   iframe.id = 'oreja-wet-paint-runtime';
-  iframe.src = HOST_URL;
   iframe.title = 'OREJA · RUBIK SOTA — Wet Paint';
+  iframe.src = 'about:blank';
   Object.assign(iframe.style, {
     width: 'min(1440px, 94vw)', height: 'min(900px, 88vh)', border: '0',
     background: '#d9d9d4', display: 'block'
@@ -66,35 +77,41 @@ function ensureUi() {
     color: '#f1f1ed', padding: '10px 14px', cursor: 'pointer', letterSpacing: '.08em',
     font: '600 10px/1 system-ui,sans-serif', backdropFilter: 'blur(10px)'
   });
-  toggle.addEventListener('click', () => { overlay.style.display = 'grid'; });
+  toggle.addEventListener('click', () => {
+    startDonor();
+    overlay.style.display = 'grid';
+  });
   document.body.append(toggle);
 
   window.addEventListener('message', (event) => {
     if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
     if (event.data?.type === 'OREJA_WET_PAINT_READY') {
       donorReady = true;
+      donorError = '';
       toggle.dataset.ready = 'true';
       toggle.textContent = 'OREJA · RUBIK SOTA · WET PAINT ✓';
       console.log('[Wet Paint donor bridge] donor ready');
     }
     if (event.data?.type === 'OREJA_WET_PAINT_ERROR') {
       donorReady = false;
+      donorError = String(event.data.message || 'Wet Paint donor error');
       toggle.dataset.error = 'true';
       toggle.textContent = 'WET PAINT · ERROR';
-      console.error('[Wet Paint donor bridge]', event.data.message);
+      console.error('[Wet Paint donor bridge]', donorError);
     }
   });
 
   return iframe;
 }
 
-async function waitForDonor(timeoutMs = 15000) {
-  ensureUi();
+async function waitForDonor(timeoutMs = 45000) {
+  startDonor();
   const started = performance.now();
   while (performance.now() - started < timeoutMs) {
+    if (donorError) throw new Error(donorError);
     const api = iframe?.contentWindow?.__OREJA_WET_PAINT;
     if (donorReady && api?.ready) return api;
-    await new Promise((resolve) => setTimeout(resolve, 80));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error('Wet Paint donor no estuvo listo dentro del tiempo esperado');
 }
@@ -146,13 +163,12 @@ async function processOriginalFile(file) {
   const api = await waitForDonor();
   await api.loadFile(file);
 
-  // Donor decodes asynchronously. Wait until its real output canvas exists and is sized.
   const started = performance.now();
   let canvas = null;
-  while (performance.now() - started < 12000) {
+  while (performance.now() - started < 20000) {
     canvas = api.getCanvas?.();
     if (canvas && canvas.width > 1 && canvas.height > 1) break;
-    await new Promise((resolve) => setTimeout(resolve, 80));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
   if (!canvas || canvas.width < 2) throw new Error('Wet Paint donor no produjo canvas');
 
@@ -166,8 +182,6 @@ async function processOriginalFile(file) {
 
 ensureUi();
 
-// Chain AFTER wet-paint-visible-media.js: Museum keeps its normal upload/catalogue/01 ORIGINAL behavior,
-// then this seam forwards only ORIGINAL images to the real pinned donor.
 const previousTakeFile = StudioShell.prototype._takeFile;
 StudioShell.prototype._takeFile = async function wetPaintDonorTakeFile(slot, file) {
   await previousTakeFile.call(this, slot, file);
@@ -186,12 +200,14 @@ StudioShell.prototype._takeFile = async function wetPaintDonorTakeFile(slot, fil
 
 window.__OREJA_WET_PAINT_BRIDGE = {
   processOriginalFile,
-  openControls() { ensureUi(); overlay.style.display = 'grid'; },
+  openControls() { startDonor(); overlay.style.display = 'grid'; },
   closeControls() { if (overlay) overlay.style.display = 'none'; },
   replay() { iframe?.contentWindow?.__OREJA_WET_PAINT?.replay?.(); },
+  get donorStarted() { return donorStarted; },
   get donorReady() { return donorReady; },
+  get donorError() { return donorError; },
   get lastFileName() { return lastFileName; },
   get outputCanvas() { return outputCanvas; }
 };
 
-console.log('[Wet Paint donor bridge] installed — stone-first / pinned donor');
+console.log('[Wet Paint donor bridge] installed — stone-first / lazy donor');
