@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Museum — Exposición Itinerante · Wet Paint Studio</title>
+</head>
+<body>
+  <script>
+    const target = new URL('./index.html', location.href);
+    target.searchParams.set('authoring', '1');
+    target.searchParams.set('world', './worlds/itinerant-wet-paint-lab.world.json');
+    location.replace(target.href);
+  </script>
+  <p><a href="./index.html?authoring=1&world=./worlds/itinerant-wet-paint-lab.world.json">Abrir Wet Paint Studio</a></p>
+</body>
+</html>
