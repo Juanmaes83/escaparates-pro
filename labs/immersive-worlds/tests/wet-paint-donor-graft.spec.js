@@ -7,13 +7,18 @@ const ARTIFACTS = path.resolve('qa-artifacts/wet-paint-donor-graft');
 
 fs.mkdirSync(ARTIFACTS, { recursive: true });
 
+test.setTimeout(90_000);
+
 test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', async ({ page }) => {
   const consoleErrors = [];
+  const consoleLines = [];
   const requestFailures = [];
 
   page.on('console', (msg) => {
+    consoleLines.push(`[${msg.type()}] ${msg.text()}`);
     if (msg.type() === 'error') consoleErrors.push(msg.text());
   });
+  page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
   page.on('requestfailed', (request) => {
     requestFailures.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || 'failed'}`);
   });
@@ -21,7 +26,25 @@ test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', a
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
   await page.waitForFunction(() => Boolean(window.__IW?.runtime), null, { timeout: 20_000 });
   await page.waitForFunction(() => Boolean(window.__OREJA_WET_PAINT_BRIDGE), null, { timeout: 20_000 });
-  await page.waitForFunction(() => window.__OREJA_WET_PAINT_BRIDGE?.donorReady === true, null, { timeout: 25_000 });
+
+  const donorState = await page.waitForFunction(() => {
+    const bridge = window.__OREJA_WET_PAINT_BRIDGE;
+    const frame = document.getElementById('oreja-wet-paint-runtime');
+    const errorButton = document.getElementById('oreja-wet-paint-controls');
+    const hostBoot = frame?.contentDocument?.getElementById('boot');
+    if (bridge?.donorReady === true) return { done: true, ready: true };
+    if (errorButton?.dataset?.error === 'true' || hostBoot?.dataset?.error) {
+      return { done: true, ready: false, hostText: hostBoot?.textContent || '', buttonText: errorButton?.textContent || '' };
+    }
+    return null;
+  }, null, { timeout: 30_000 });
+
+  const donor = await donorState.jsonValue();
+  if (!donor.ready) {
+    await page.screenshot({ path: path.join(ARTIFACTS, '00-donor-error.png'), fullPage: true });
+    fs.writeFileSync(path.join(ARTIFACTS, '00-console.txt'), consoleLines.join('\n'));
+    throw new Error(`DONOR HOST FAILED\n${donor.hostText || donor.buttonText || 'unknown'}\n\nConsole:\n${consoleLines.join('\n')}\n\nNetwork:\n${requestFailures.join('\n')}`);
+  }
 
   await page.screenshot({ path: path.join(ARTIFACTS, '01-boot.png'), fullPage: true });
 
@@ -89,7 +112,6 @@ test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', a
 
   await page.screenshot({ path: path.join(ARTIFACTS, '02-upload-and-painterly.png'), fullPage: true });
 
-  // Real temporal proof: replay the donor growth and prove the Museum canvas changes over time.
   await page.evaluate(() => window.__OREJA_WET_PAINT_BRIDGE.replay());
   await page.waitForTimeout(350);
   const frameA = await page.locator('#iw-canvas').screenshot({ path: path.join(ARTIFACTS, '03-growth-a.png') });
