@@ -1353,15 +1353,27 @@ export function createWetPaintPipeline(renderer) {
 
     resize(image.width, image.height);
     renderSceneTo(sceneTarget);
+    // SEAM (lifecycle): the donor drives growth from a single free-running
+    // monotonic clock (`growthTimeline += rawDelta` in its animate loop) and
+    // captures `growthStartTimeline = growthTimeline` inside generatePersistentSeeds.
+    // Feed that same clock here so the reseed about to happen anchors growth to
+    // performance.now(); update() then advances it on the identical time base.
+    growthTimeline = performance.now();
     updateAnalysis(true);
     renderStrokeLayers();
-    renderComposite(performance.now());
+    renderComposite(growthTimeline);
 
     return seeds.length;
   }
 
-  function update(timeSeconds) {
-    growthTimeline = timeSeconds * 1000;
+  // SEAM (lifecycle): `nowMs` is the shared monotonic clock (performance.now()),
+  // the same one processImage anchors growthStartTimeline to. The donor's animate
+  // loop accumulated growthTimeline from frame deltas; the adapter drives it from
+  // the Museum frame loop instead, but the single-clock invariant is preserved:
+  // growthTimeline and growthStartTimeline always live on the same time base, so
+  // currentGrowthTime = (nowMs - startTimeline)/1000 is correct after every reseed.
+  function update(nowMs) {
+    growthTimeline = nowMs;
     const growthTime = currentGrowthTime();
     if (growthTime >= GROWTH_DURATION && !strokeTargetsDirty) {
       return false;
@@ -1374,8 +1386,10 @@ export function createWetPaintPipeline(renderer) {
   }
 
   function replay() {
-    growthTimeline = 0;
-    growthStartTimeline = 0;
+    // Re-anchor the growth origin to now on the shared monotonic clock, so the
+    // reveal restarts from 0 exactly as a fresh reseed would.
+    growthTimeline = performance.now();
+    growthStartTimeline = growthTimeline;
     growthWasActive = false;
     params.growthPlayback = true;
     strokeTargetsDirty = true;

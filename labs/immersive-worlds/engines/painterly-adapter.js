@@ -32,7 +32,6 @@ let originalPlateRef = null;
 let lastOriginalMap = null;
 let reprocessScheduled = false;
 let sourceReady = false;
-let growthStartTime = 0;
 
 function findArtworkPlate(sceneKit, entityId) {
     const record = sceneKit?._entityIndex?.get(entityId);
@@ -106,7 +105,6 @@ function processAndApply(image) {
         plateRef.material.needsUpdate = true;
         animationActive = true;
         sourceReady = true;
-        growthStartTime = performance.now() / 1000;
 
         return strokeCount;
     } finally {
@@ -189,9 +187,10 @@ export function updatePainterly() {
 
     const saved = saveRendererState(renderer);
     try {
-        const now = performance.now() / 1000;
-        const elapsed = now - growthStartTime;
-        const stillGrowing = pipeline.update(elapsed);
+        // Feed the pipeline the shared monotonic clock (performance.now(), ms).
+        // processImage anchored growthStartTimeline to this same clock, so the
+        // pipeline computes growth elapsed itself — no second origin here.
+        const stillGrowing = pipeline.update(performance.now());
 
         if (plateRef?.material) {
             plateRef.material.map = pipeline.getOutputTexture();
@@ -223,7 +222,6 @@ export function reprocessSource(runtime) {
 export function replayGrowth() {
     if (!pipeline) return;
     pipeline.replay();
-    growthStartTime = performance.now() / 1000;
     animationActive = true;
 }
 
