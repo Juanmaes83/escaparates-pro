@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OREJA · RUBIK SOTA — Wet Paint</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#d9d9d4;color:#202020;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    #boot{position:fixed;inset:0;display:grid;place-items:center;background:#d9d9d4;z-index:9999;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+    #boot[data-error]{color:#8b1e1e;padding:32px;text-align:center;white-space:pre-wrap}
+    .oreja-brand{position:fixed;left:18px;top:14px;z-index:9000;padding:8px 11px;border:1px solid rgba(0,0,0,.14);background:rgba(235,235,231,.86);backdrop-filter:blur(10px);font-size:11px;letter-spacing:.13em;text-transform:uppercase;pointer-events:none}
+    html.oreja-ready body,html.oreja-ready #app{background:#d9d9d4!important}
+    html.oreja-ready .stage,html.oreja-ready #canvas-mount{background:#d9d9d4!important}
+    html.oreja-ready .panel{background:#e6e6e2!important}
+    html.oreja-ready .language-toggle{display:none!important}
+  </style>
+</head>
+<body>
+  <div id="boot">Cargando piedra Wet Paint…</div>
+  <div class="oreja-brand">OREJA · RUBIK SOTA</div>
+  <script type="module">
+    const DONOR_SHA = '0b9ba9a5';
+    const DONOR_BASE = `https://raw.githubusercontent.com/Juanmaes83/wet-paint-flow/${DONOR_SHA}`;
+    const boot = document.getElementById('boot');
+    let ready = false;
+
+    const ES = Object.freeze({
+      growthControl:'Crecimiento',restartGrowth:'Regenerar',growthTimeline:'Línea de crecimiento',pause:'Pausa',resume:'Continuar',waiting:'Esperando',growthComplete:'Completo',growthCoarse:'Capa gruesa',growthMediumFine:'Media + fina',growthFinishing:'Acabado',source:'Fuente',importSource:'Importar imagen o GLB',localProcessing:'JPG / PNG / WebP / GLB · Procesado local',defaultGeometry:'Geometría base',liveStrokeFollow:'Seguimiento de pincelada',sphere:'Esfera',cube:'Cubo',torus:'Toro',knot:'Nudo',modelColor:'Color del modelo',preview3d:'Vista 3D',strokeResult:'Resultado pictórico',builtInWorks:'Obras de prueba',strokeMorph:'Transición de pinceladas',startTour:'Tour automático',stopTour:'Detener tour',loadingScenes:'Cargando escenas…',loadingWork:'Cargando',selectWork:'Seleccionar obra',restoreScene:'Restaurar escena',display:'Vista',brushOnly:'Pinceladas',beigeCanvas:'Lienzo gris perla',original:'Original',noStrokes:'Sin pinceladas',model3d:'Modelo 3D',dragToRotate:'Arrastra para rotar',brushAndOriginal:'Pinceladas + original',blendedView:'Vista fusionada',flowSketch:'Mapa de flujo',pencilFlow:'Direcciones',brushLayers:'Capas de pincel',coarse:'Gruesa',structure:'Estructura',medium:'Media',shaping:'Forma',fine:'Fina',texture:'Textura',strokeEffects:'Efectos de pincel',previewQuality:'Calidad',qualityBalanced:'Fluida',qualityHigh:'Alta',qualityUltra:'Ultra',strokeSize:'Tamaño de pincel',strokeLength:'Longitud de pincel',strokeCount:'Cantidad de pinceladas',paintThickness:'Espesor de pintura',paintDryness:'Secado',paintViscosity:'Viscosidad',generateExport:'Generar y exportar',exportPng:'Exportar PNG 4K',exportVideo:'Exportar vídeo de crecimiento',checkingPerformance:'Comprobando rendimiento…',recording:'Grabando',seconds:'s',canvasHint:'Rueda: zoom · Doble clic: restaurar · Línea: navegar',lightAngle:'Ángulo de luz',resizePanel:'Redimensionar panel'
+    });
+
+    function applySpanish(){
+      document.documentElement.lang='es';
+      document.title='OREJA · RUBIK SOTA — Wet Paint';
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const key=el.dataset.i18n;
+        if(ES[key]) el.textContent=ES[key];
+      });
+      const kicker=document.querySelector('.panel-kicker');
+      if(kicker) kicker.textContent='OREJA · RUBIK SOTA';
+      document.documentElement.classList.add('oreja-ready');
+    }
+
+    async function fetchText(path){
+      const res=await fetch(`${DONOR_BASE}/${path}`,{cache:'no-store'});
+      if(!res.ok) throw new Error(`Donor ${path}: HTTP ${res.status}`);
+      return res.text();
+    }
+
+    async function bootDonor(){
+      const [htmlText,cssText,mainText]=await Promise.all([
+        fetchText('index.html'),fetchText('styles.css'),fetchText('main.js')
+      ]);
+
+      const parsed=new DOMParser().parseFromString(htmlText,'text/html');
+      const app=parsed.querySelector('#app');
+      if(!app) throw new Error('El donor no contiene #app');
+      document.body.insertBefore(document.importNode(app,true),boot);
+
+      const style=document.createElement('style');
+      style.textContent=cssText+'\nhtml,body,#app,.stage,#canvas-mount{background:#d9d9d4!important;}';
+      document.head.appendChild(style);
+
+      const origin=location.origin;
+      const three=`${origin}/labs/immersive-worlds/vendor/three/three.module.min.js`;
+      const addons=`${origin}/labs/immersive-worlds/vendor/three/addons/`;
+      let source=mainText
+        .replace("from 'three';",`from '${three}';`)
+        .replaceAll("three/addons/",addons);
+
+      // Keep scene/demo asset URLs pinned to the donor instead of copying them into Museum.
+      source=source
+        .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
+        .replaceAll('"./public/',`"${DONOR_BASE}/public/`);
+
+      try{localStorage.setItem('wet-paint-flow-language','en');}catch{}
+      const blob=new Blob([source],{type:'text/javascript'});
+      const moduleUrl=URL.createObjectURL(blob);
+      await import(moduleUrl);
+      applySpanish();
+      new MutationObserver(applySpanish).observe(document.body,{subtree:true,childList:true});
+      ready=true;
+      boot.remove();
+      window.parent?.postMessage({type:'OREJA_WET_PAINT_READY'},location.origin);
+    }
+
+    async function loadFile(file){
+      if(!ready) throw new Error('Wet Paint donor aún no está listo');
+      const input=document.getElementById('source-upload');
+      if(!input) throw new Error('No existe source-upload en donor');
+      const transfer=new DataTransfer();
+      transfer.items.add(file);
+      input.files=transfer.files;
+      input.dispatchEvent(new Event('change',{bubbles:true}));
+      return true;
+    }
+
+    function getCanvas(){return document.querySelector('#canvas-mount canvas');}
+    function replay(){document.getElementById('replay-growth-button')?.click();}
+    window.__OREJA_WET_PAINT={get ready(){return ready;},loadFile,getCanvas,replay,applySpanish,DONOR_SHA};
+
+    bootDonor().catch(error=>{
+      console.error('[OREJA Wet Paint host]',error);
+      boot.dataset.error='1';
+      boot.textContent=`No se pudo iniciar la piedra Wet Paint.\n${String(error?.message||error)}`;
+      window.parent?.postMessage({type:'OREJA_WET_PAINT_ERROR',message:String(error?.message||error)},location.origin);
+    });
+  </script>
+</body>
+</html>
