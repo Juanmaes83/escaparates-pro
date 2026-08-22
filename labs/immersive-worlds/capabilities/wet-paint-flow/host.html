@@ -19,7 +19,7 @@
   <div id="boot">Cargando piedra Wet Paint…</div>
   <div class="oreja-brand">OREJA · RUBIK SOTA</div>
   <script type="module">
-    const DONOR_SHA = '0b9ba9a5';
+    const DONOR_SHA = '0b9ba9a5be665f3a2a8b2450945ec5006e61e2de';
     const DONOR_BASE = `https://raw.githubusercontent.com/Juanmaes83/wet-paint-flow/${DONOR_SHA}`;
     const boot = document.getElementById('boot');
     let ready = false;
@@ -67,7 +67,6 @@
         .replace("from 'three';",`from '${three}';`)
         .replaceAll("three/addons/",addons);
 
-      // Keep scene/demo asset URLs pinned to the donor instead of copying them into Museum.
       source=source
         .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
         .replaceAll('"./public/',`"${DONOR_BASE}/public/`);
