@@ -217,5 +217,6 @@ window.__PAINTERLY_ADAPTER = {
     replay: replayGrowth,
     dispose: disposePainterly,
     reprocess: reprocessSource,
-    get sourceReady() { return sourceReady; }
+    get sourceReady() { return sourceReady; },
+    get engine() { return engine; }
 };

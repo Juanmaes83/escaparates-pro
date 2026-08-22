@@ -25,7 +25,7 @@ import * as THREE from '../vendor/three/three.module.min.js';
 
 const PI = Math.PI;
 const GROWTH_DURATION = 5.0;
-const SEGMENTS = 8;
+const SEGMENTS = 12;
 
 // ═══════════════════════════════════════════════════════════════════
 //  SHADERS
@@ -82,7 +82,8 @@ void main() {
 
     vec2 pos = bezier(t);
     vec2 tang = bezierTangent(t);
-    vec2 norm = normalize(vec2(-tang.y, tang.x));
+    float tangLen = length(tang);
+    vec2 norm = tangLen > 0.001 ? normalize(vec2(-tang.y, tang.x)) : vec2(0.0, 1.0);
     vec2 offset = norm * side * w * 0.5;
     vec2 screenPos = (pos + offset) / uResolution * 2.0 - 1.0;
 
@@ -119,11 +120,13 @@ void main() {
     float edgePool = smoothstep(0.3, 0.0, abs(vT - 0.5) - 0.3);
     float cohesion = 0.7 + 0.3 * bristle;
 
-    float alpha = cohesion * (0.85 + 0.15 * pigmentBreak) * (0.9 + 0.1 * edgePool);
-    alpha *= smoothstep(0.0, 1.5, vWidthPx);
+    float alpha = cohesion * (0.92 + 0.08 * pigmentBreak) * (0.95 + 0.05 * edgePool);
+    alpha *= smoothstep(0.0, 1.0, vWidthPx);
 
-    float wetGleam = vFreshness * 0.12 * (0.5 + 0.5 * bristle);
-    vec3 color = vColor * (1.0 + wetGleam);
+    float wetGleam = vFreshness * 0.18 * (0.5 + 0.5 * bristle);
+    float satBoost = 1.0 + 0.12 * bristle;
+    vec3 boosted = mix(vColor, vColor * satBoost, 0.5);
+    vec3 color = boosted * (1.0 + wetGleam);
 
     gl_FragColor = vec4(color, alpha);
 }
@@ -227,7 +230,7 @@ void main() {
     vec3 F = fresnelSchlick(HdotV, F0);
 
     vec3 spec = (D * G * F) / max(4.0 * NdotV * NdotL, 0.001);
-    vec3 diffuse = brushColor.rgb * NdotL;
+    vec3 diffuse = brushColor.rgb * (NdotL * 0.6 + 0.4);
     float clearcoat = pow(NdotH, 32.0) * 0.15 * (1.0 + uWetness);
     float grazeSheen = pow(1.0 - NdotV, 4.0) * 0.06;
     float ridgeCatch = pow(max(dot(N, H), 0.0), 8.0) * h * 0.3;
@@ -239,6 +242,32 @@ void main() {
 
     vec3 lit = (diffuse + spec * uImpastoStrength + clearcoat + grazeSheen + ridgeCatch) * weave * grain;
     gl_FragColor = vec4(lit, max(brushColor.a, 0.05));
+}
+`;
+
+const underpaintingVertexShader = /* glsl */`
+varying vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+}
+`;
+
+const underpaintingFragmentShader = /* glsl */`
+precision highp float;
+uniform sampler2D tSource;
+uniform vec2 uTexel;
+varying vec2 vUv;
+
+void main() {
+    vec3 col = texture2D(tSource, vUv).rgb * 0.36
+             + texture2D(tSource, vUv + vec2(uTexel.x, 0.0)).rgb * 0.16
+             + texture2D(tSource, vUv - vec2(uTexel.x, 0.0)).rgb * 0.16
+             + texture2D(tSource, vUv + vec2(0.0, uTexel.y)).rgb * 0.16
+             + texture2D(tSource, vUv - vec2(0.0, uTexel.y)).rgb * 0.16;
+    float lum = dot(col, vec3(0.299, 0.587, 0.114));
+    vec3 muted = mix(col, vec3(lum), 0.30) * 0.58;
+    gl_FragColor = vec4(muted, 1.0);
 }
 `;
 
@@ -272,7 +301,7 @@ function buildDirectionField(imageData, w, h) {
         Jyy[i] = gy[i] * gy[i];
     }
 
-    const radius = 5;
+    const radius = 9;
     const boxBlur = (src, w, h, r) => {
         const dst = new Float32Array(w * h);
         const tmp = new Float32Array(w * h);
@@ -306,12 +335,15 @@ function buildDirectionField(imageData, w, h) {
     const sJyy = boxBlur(Jyy, w, h, radius);
 
     const angles = new Float32Array(w * h);
+    const aniso = new Float32Array(w * h);
     for (let i = 0; i < w * h; i++) {
         const a = sJxx[i], b = sJxy[i], c = sJyy[i];
         const trace = a + c;
         const det = a * c - b * b;
         const disc = Math.sqrt(Math.max(trace * trace * 0.25 - det, 0));
         const l1 = trace * 0.5 + disc;
+        const l2 = trace * 0.5 - disc;
+        aniso[i] = trace > 1e-8 ? (l1 - l2) / (l1 + l2) : 0;
         if (Math.abs(b) > 1e-8) {
             angles[i] = Math.atan2(l1 - a, b);
         } else {
@@ -319,7 +351,16 @@ function buildDirectionField(imageData, w, h) {
         }
     }
 
-    return { angles, w, h };
+    let sumSin = 0, sumCos = 0;
+    for (let i = 0; i < w * h; i++) {
+        if (aniso[i] > 0.3) {
+            sumSin += Math.sin(2 * angles[i]) * aniso[i];
+            sumCos += Math.cos(2 * angles[i]) * aniso[i];
+        }
+    }
+    const dominantAngle = Math.atan2(sumSin, sumCos) * 0.5;
+
+    return { angles, aniso, dominantAngle, w, h };
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -382,11 +423,11 @@ function poissonLayer(w, h, minDist, maxSeeds) {
 
 function generateSeeds(w, h) {
     const area = w * h;
-    const baseCount = Math.round(area / 400);
+    const baseCount = Math.round(area / 150);
     return {
-        coarse: poissonLayer(w, h, Math.max(w, h) * 0.04, Math.round(baseCount * 0.06)),
-        medium: poissonLayer(w, h, Math.max(w, h) * 0.018, Math.round(baseCount * 0.225)),
-        fine: poissonLayer(w, h, Math.max(w, h) * 0.007, Math.round(baseCount * 0.715))
+        coarse: poissonLayer(w, h, Math.max(w, h) * 0.032, Math.round(baseCount * 0.06)),
+        medium: poissonLayer(w, h, Math.max(w, h) * 0.013, Math.round(baseCount * 0.24)),
+        fine: poissonLayer(w, h, Math.max(w, h) * 0.005, Math.round(baseCount * 0.70))
     };
 }
 
@@ -395,13 +436,25 @@ function generateSeeds(w, h) {
 // ═══════════════════════════════════════════════════════════════════
 
 function traceStreamline(seed, field, pixels, length, step) {
-    const { angles, w, h } = field;
+    const { angles, aniso, dominantAngle, w, h } = field;
     const points = [];
+    const margin = 30;
+    const anisoThreshold = 0.18;
+    const seedNoise = (Math.sin(seed.x * 12.9898 + seed.y * 78.233) * 43758.5453) % 1;
+    const fallbackAngle = dominantAngle + seedNoise * 0.3 - 0.15;
 
-    const getAngle = (px, py) => {
+    const getDirection = (px, py) => {
         const ix = Math.max(0, Math.min(w - 1, Math.floor(px)));
         const iy = Math.max(0, Math.min(h - 1, Math.floor(py)));
-        return angles[iy * w + ix];
+        const idx = iy * w + ix;
+        const a = angles[idx] + PI * 0.5;
+        const c = aniso[idx];
+        if (c >= anisoThreshold) return a;
+        const fa = fallbackAngle + PI * 0.5;
+        const t = c / anisoThreshold;
+        const dx = Math.cos(a) * t + Math.cos(fa) * (1 - t);
+        const dy = Math.sin(a) * t + Math.sin(fa) * (1 - t);
+        return Math.atan2(dy, dx);
     };
 
     const sampleColor = (px, py) => {
@@ -415,20 +468,33 @@ function traceStreamline(seed, field, pixels, length, step) {
         let cx = seed.x, cy = seed.y;
         const half = Math.floor(length / 2);
         for (let i = 0; i < half; i++) {
-            const a1 = getAngle(cx, cy) + PI * 0.5;
+            const a1 = getDirection(cx, cy);
             const mx = cx + Math.cos(a1) * step * 0.5 * dir;
             const my = cy + Math.sin(a1) * step * 0.5 * dir;
-            const a2 = getAngle(mx, my) + PI * 0.5;
+            const a2 = getDirection(mx, my);
             cx += Math.cos(a2) * step * dir;
             cy += Math.sin(a2) * step * dir;
-            if (cx < 0 || cx >= w || cy < 0 || cy >= h) break;
+            if (cx < -margin || cx >= w + margin || cy < -margin || cy >= h + margin) break;
             if (dir === -1) points.unshift({ x: cx, y: cy });
             else points.push({ x: cx, y: cy });
         }
     }
     points.splice(Math.floor(points.length / 2), 0, { x: seed.x, y: seed.y });
 
-    return { points, color: sampleColor(seed.x, seed.y) };
+    const colorSamples = [sampleColor(seed.x, seed.y)];
+    const sampleInterval = Math.max(1, Math.floor(points.length / 5));
+    for (let i = 0; i < points.length; i += sampleInterval) {
+        colorSamples.push(sampleColor(points[i].x, points[i].y));
+    }
+    const avgColor = [0, 0, 0];
+    for (const c of colorSamples) {
+        avgColor[0] += c[0]; avgColor[1] += c[1]; avgColor[2] += c[2];
+    }
+    avgColor[0] /= colorSamples.length;
+    avgColor[1] /= colorSamples.length;
+    avgColor[2] /= colorSamples.length;
+
+    return { points, color: avgColor };
 }
 
 function fitBezier(pts) {
@@ -436,12 +502,26 @@ function fitBezier(pts) {
     const n = pts.length - 1;
     const p0 = pts[0];
     const p3 = pts[n];
-    const i1 = Math.max(0, Math.min(n, Math.round(n / 3)));
-    const i2 = Math.max(0, Math.min(n, Math.round(n * 2 / 3)));
+
+    const dx = p3.x - p0.x;
+    const dy = p3.y - p0.y;
+    const chord = Math.sqrt(dx * dx + dy * dy);
+    if (chord < 5) return null;
+
+    const t0i = Math.min(Math.max(1, Math.round(n * 0.15)), n);
+    const t3i = Math.max(0, Math.min(n - 1, Math.round(n * 0.85)));
+
+    const t0x = pts[t0i].x - p0.x, t0y = pts[t0i].y - p0.y;
+    const t0l = Math.sqrt(t0x * t0x + t0y * t0y) || 1;
+    const t3x = p3.x - pts[t3i].x, t3y = p3.y - pts[t3i].y;
+    const t3l = Math.sqrt(t3x * t3x + t3y * t3y) || 1;
+
+    const armLen = chord * 0.35;
+
     return {
         p0,
-        p1: { x: p0.x + (pts[i1].x - p0.x) * 1.5, y: p0.y + (pts[i1].y - p0.y) * 1.5 },
-        p2: { x: p3.x + (pts[i2].x - p3.x) * 1.5, y: p3.y + (pts[i2].y - p3.y) * 1.5 },
+        p1: { x: p0.x + t0x / t0l * armLen, y: p0.y + t0y / t0l * armLen },
+        p2: { x: p3.x - t3x / t3l * armLen, y: p3.y - t3y / t3l * armLen },
         p3
     };
 }
@@ -528,13 +608,13 @@ export class PainterlyEngine {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
             format: THREE.RGBAFormat,
-            type: THREE.HalfFloatType
+            type: THREE.UnsignedByteType
         });
         this._heightTarget = new THREE.WebGLRenderTarget(width, height, {
             minFilter: THREE.LinearFilter,
             magFilter: THREE.LinearFilter,
             format: THREE.RGBAFormat,
-            type: THREE.HalfFloatType
+            type: THREE.UnsignedByteType
         });
         this._outputTarget = new THREE.WebGLRenderTarget(width, height, {
             minFilter: THREE.LinearFilter,
@@ -577,7 +657,7 @@ export class PainterlyEngine {
             uniforms: {
                 tBrush: { value: this._brushTarget.texture },
                 tHeight: { value: this._heightTarget.texture },
-                uImpastoStrength: { value: 1.0 },
+                uImpastoStrength: { value: 1.2 },
                 uWetness: { value: 0.3 },
                 uResolution: { value: new THREE.Vector2(width, height) },
                 uLightDir: { value: new THREE.Vector3(0.3, 0.5, 1.0).normalize() }
@@ -590,6 +670,25 @@ export class PainterlyEngine {
         const quadGeo = new THREE.PlaneGeometry(2, 2);
         this._compositeQuad = new THREE.Mesh(quadGeo, this._compositeMaterial);
         this._compositeScene.add(this._compositeQuad);
+
+        this._underpaintingMaterial = new THREE.ShaderMaterial({
+            vertexShader: underpaintingVertexShader,
+            fragmentShader: underpaintingFragmentShader,
+            uniforms: {
+                tSource: { value: null },
+                uTexel: { value: new THREE.Vector2(2.0 / width, 2.0 / height) }
+            },
+            transparent: false,
+            depthTest: false,
+            depthWrite: false
+        });
+        this._underpaintingScene = new THREE.Scene();
+        this._underpaintingQuad = new THREE.Mesh(
+            new THREE.PlaneGeometry(2, 2),
+            this._underpaintingMaterial
+        );
+        this._underpaintingScene.add(this._underpaintingQuad);
+        this._sourceTexture = null;
 
         this._strokeMesh = null;
     }
@@ -607,13 +706,20 @@ export class PainterlyEngine {
         const w = imageData.width;
         const h = imageData.height;
 
+        if (this._sourceTexture) this._sourceTexture.dispose();
+        this._sourceTexture = new THREE.DataTexture(
+            new Uint8Array(data), w, h, THREE.RGBAFormat
+        );
+        this._sourceTexture.needsUpdate = true;
+        this._underpaintingMaterial.uniforms.tSource.value = this._sourceTexture;
+
         const field = buildDirectionField(imageData, w, h);
         const seeds = generateSeeds(w, h);
         const allStrokes = [];
 
         const processLayer = (layerSeeds, layer, widthBase, lengthBase) => {
             for (const seed of layerSeeds) {
-                const streamline = traceStreamline(seed, field, data, lengthBase, 2);
+                const streamline = traceStreamline(seed, field, data, lengthBase, 2.0);
                 if (streamline.points.length < 3) continue;
                 const bezier = fitBezier(streamline.points);
                 if (!bezier) continue;
@@ -640,9 +746,9 @@ export class PainterlyEngine {
             }
         };
 
-        processLayer(seeds.coarse, 0, w * 0.025, 30);
-        processLayer(seeds.medium, 1, w * 0.012, 18);
-        processLayer(seeds.fine, 2, w * 0.005, 10);
+        processLayer(seeds.coarse, 0, w * 0.055, 90);
+        processLayer(seeds.medium, 1, w * 0.028, 55);
+        processLayer(seeds.fine, 2, w * 0.014, 30);
 
         if (this._strokeMesh) {
             this._strokeScene.remove(this._strokeMesh);
@@ -685,10 +791,13 @@ export class PainterlyEngine {
         const prevAutoClear = renderer.autoClear;
         renderer.autoClear = false;
 
-        // Brush pass
+        // Brush pass — underpainting base + strokes on top
         renderer.setRenderTarget(this._brushTarget);
         renderer.setClearColor(0x000000, 0);
         renderer.clear();
+        if (this._sourceTexture) {
+            renderer.render(this._underpaintingScene, this._orthoCamera);
+        }
         this._strokeMesh.material = this._strokeMaterial;
         renderer.render(this._strokeScene, this._orthoCamera);
 
@@ -724,9 +833,12 @@ export class PainterlyEngine {
         this._strokeMaterial.dispose();
         this._heightMaterial.dispose();
         this._compositeMaterial.dispose();
+        this._underpaintingMaterial.dispose();
+        if (this._sourceTexture) this._sourceTexture.dispose();
         if (this._strokeMesh) {
             this._strokeMesh.geometry.dispose();
         }
         this._compositeQuad.geometry.dispose();
+        this._underpaintingQuad.geometry.dispose();
     }
 }
