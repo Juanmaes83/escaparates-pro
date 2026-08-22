@@ -212,10 +212,71 @@ function toast(message, kind = 'ok') {
     el.__t = setTimeout(() => { el.style.opacity = '0'; }, 2600);
 }
 
+const SCENE_BASE = './experiences/wet-paint-flow/scenes/full/';
+
 let bridge = null;
 let sceneKitRef = null;
+let libraryHooked = false;
 
 function paintaryPlate() { return findArtworkPlate(sceneKitRef, PAINTERLY_ENTITY_ID); }
+function originalPlate() { return findArtworkPlate(sceneKitRef, ORIGINAL_ENTITY_ID); }
+
+function setPlateFromUrl(plate, url) {
+    return new Promise((resolve) => {
+        if (!plate?.material || !url) { resolve(false); return; }
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.onload = () => {
+            const texture = new THREE.Texture(image);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.anisotropy = 8;
+            texture.needsUpdate = true;
+            const previous = plate.material.map;
+            plate.material.map = texture;
+            plate.material.needsUpdate = true;
+            if (previous && previous !== texture) { try { previous.dispose?.(); } catch { /* noop */ } }
+            resolve(true);
+        };
+        image.onerror = () => resolve(false);
+        image.src = url;
+    });
+}
+
+// A Van Gogh work chosen from the collection: the donor loads it as its source;
+// Museum mirrors the source onto 01 and the Wet Paint result onto 02, so the
+// gallery reads 01 = obra elegida, 02 = Wet Paint(obra) — one truth.
+async function syncFromLibrary(sceneId) {
+    const iframe = bridge.element;
+    const doc = iframe.contentDocument;
+    toast('Cargando obra de la colección…', 'ok');
+    const start = performance.now();
+    while (performance.now() - start < 12000) {
+        if (doc?.documentElement?.dataset?.activeSceneId === sceneId) break;
+        await new Promise((r) => setTimeout(r, 150));
+    }
+    const dataUrl = await donorAdapter.refreshResult(iframe);
+    await setPlateFromUrl(originalPlate(), `${SCENE_BASE}${sceneId}.webp`);
+    if (dataUrl) await applyResultToPlate(paintaryPlate(), dataUrl);
+    WetPaintStore.save(PAINTERLY_ENTITY_ID, {
+        params: donorAdapter.getParams(iframe), resultDataUrl: dataUrl, sourceName: sceneId,
+    });
+    toast('Obra de la colección aplicada · 01 y 02 actualizados', 'ok');
+    console.log(`[WetPaint] colección → ${sceneId} aplicada a 01 y 02`);
+}
+
+function hookLibrary(iframe) {
+    if (libraryHooked) return;
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+    // Delegated: survives the donor re-rendering the collection grid.
+    doc.addEventListener('click', (event) => {
+        const card = event.target?.closest?.('.scene-card[data-scene-id]');
+        if (!card) return;
+        const sceneId = card.getAttribute('data-scene-id');
+        if (sceneId) syncFromLibrary(sceneId);
+    }, true);
+    libraryHooked = true;
+}
 
 async function saveAndApply() {
     const iframe = bridge.element;
@@ -306,9 +367,13 @@ export function installWetPaint(runtime) {
     // any saved personalization onto 02 so authoring and visitor show one truth.
     bridge.waitReady().then(async () => {
         applyMuseumSkin(bridge.element);
+        hookLibrary(bridge.element);
         const saved = WetPaintStore.get(PAINTERLY_ENTITY_ID);
         if (saved?.resultDataUrl) {
             await applyResultToPlate(paintaryPlate(), saved.resultDataUrl);
+            // Restore 01 too when the saved source was a collection work (uploads
+            // are restored by Museum's own media config).
+            if (saved.sourceName) await setPlateFromUrl(originalPlate(), `${SCENE_BASE}${saved.sourceName}.webp`);
             console.log('[WetPaint] 02 restaurado desde personalización guardada');
         }
     });
@@ -350,7 +415,8 @@ export function installWetPaint(runtime) {
         bridge,
         process: (file) => bridge.process(file),
         saveAndApply,
-        open: async () => { await bridge.waitReady(); applyMuseumSkin(bridge.element); buildEditChrome(); bridge.open(); },
+        syncFromLibrary,
+        open: async () => { await bridge.waitReady(); applyMuseumSkin(bridge.element); hookLibrary(bridge.element); buildEditChrome(); bridge.open(); },
         close: () => bridge.close(),
         getParams: () => donorAdapter.getParams(bridge.element),
         applyParams: (p) => donorAdapter.applyParams(bridge.element, p),
