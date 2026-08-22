@@ -112,7 +112,7 @@ function generateFallbackImageData() {
 
 export function installPainterly(runtime) {
     const sceneKit = runtime?.sceneKit;
-    const renderer = runtime?.renderHost?.renderer;
+    const renderer = window.__IW?.renderHost?.renderer;
     if (!sceneKit || !renderer) {
         console.error('[PainterlyAdapter] runtime.sceneKit or renderer not available');
         return null;

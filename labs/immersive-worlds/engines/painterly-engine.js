@@ -34,6 +34,7 @@ const SEGMENTS = 8;
 const strokeVertexShader = /* glsl */`
 precision highp float;
 
+attribute vec3 position;
 attribute vec2 aP0;
 attribute vec2 aP1;
 attribute vec2 aP2;

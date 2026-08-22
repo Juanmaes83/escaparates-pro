@@ -70,8 +70,8 @@
             // Hook into the render loop: wrap the existing onFrame to also update painterly
             const originalOnFrame = runtime.onFrame;
             runtime.onFrame = (pose, dt) => {
-              originalOnFrame(pose, dt);
               updatePainterly();
+              originalOnFrame(pose, dt);
             };
           } else {
             console.warn('[Wet Paint Studio] PainterlyEngine deferred — plate not ready');
