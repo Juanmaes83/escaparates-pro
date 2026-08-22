@@ -62,32 +62,26 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      // — Living Art graft: install PainterlyEngine on the PAINTERLY entity —
-      // Deferred until Museum is fully booted so sceneKit has built the entities.
+      // — Standalone Experience host: 01 ORIGINAL drives the REAL Wet Paint —
+      // Museum hosts the preserved wet-paint-flow standalone (donor @ 0b9ba9a)
+      // in an isolated iframe and bridges to it. It does NOT reimplement the
+      // donor. Uploads to 01 ORIGINAL are handed to the donor; the captured
+      // result is placed on 02 WET PAINT.
       try {
-        const { installPainterly, updatePainterly } = await import('./engines/painterly-adapter.js');
+        const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
         const runtime = window.__IW?.runtime;
         if (runtime) {
-          // Wait one frame for sceneKit to finish building artwork meshes
+          // Wait one frame for sceneKit to finish building artwork meshes.
           await new Promise((resolve) => requestAnimationFrame(resolve));
-          const result = installPainterly(runtime);
+          const result = installWetPaint(runtime);
           if (result) {
-            if (result.waiting) {
-              console.log('[Wet Paint Studio] PainterlyEngine installed — waiting for ORIGINAL source');
-            } else {
-              console.log(`[Wet Paint Studio] PainterlyEngine installed — ${result.strokeCount} strokes`);
-            }
-            const originalOnFrame = runtime.onFrame;
-            runtime.onFrame = (pose, dt) => {
-              updatePainterly();
-              originalOnFrame(pose, dt);
-            };
+            console.log('[Wet Paint Studio] Wet Paint experience bridge installed');
           } else {
-            console.warn('[Wet Paint Studio] PainterlyEngine deferred — plate not ready');
+            console.warn('[Wet Paint Studio] Wet Paint bridge deferred — runtime not ready');
           }
         }
-      } catch (painterlyError) {
-        console.error('[Wet Paint Studio] PainterlyEngine graft failed (non-fatal):', painterlyError);
+      } catch (bridgeError) {
+        console.error('[Wet Paint Studio] Wet Paint bridge install failed (non-fatal):', bridgeError);
       }
     } catch (error) {
       console.error('[Wet Paint Studio] boot failed', error);
