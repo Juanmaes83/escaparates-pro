@@ -1,0 +1,242 @@
+import { THREE } from '../render/render-host.js';
+import { StudioShell } from './studio/studio-shell.js';
+import { findArtworkPlate } from './wet-paint-visible-media.js';
+
+const ORIGINAL_ID = 'entity.itinerant.original';
+const PAINTERLY_ID = 'entity.itinerant.painterly';
+const HOST_URL = './capabilities/wet-paint-flow/host.html';
+
+let iframe = null;
+let overlay = null;
+let toggle = null;
+let donorStarted = false;
+let donorReady = false;
+let donorError = '';
+let donorStatus = '';
+let outputTexture = null;
+let outputCanvas = null;
+let raf = 0;
+let lastFileName = '';
+
+function startDonor() {
+  ensureUi();
+  if (donorStarted) return;
+  donorStarted = true;
+  donorError = '';
+  donorStatus = 'Cargando piedra Wet Paint…';
+  toggle.textContent = 'OREJA · RUBIK SOTA · CARGANDO…';
+  iframe.src = HOST_URL;
+}
+
+function ensureUi() {
+  if (iframe) return iframe;
+
+  iframe = document.createElement('iframe');
+  iframe.id = 'oreja-wet-paint-runtime';
+  iframe.title = 'OREJA · RUBIK SOTA — Wet Paint';
+  iframe.src = 'about:blank';
+  Object.assign(iframe.style, {
+    width: 'min(1440px, 94vw)', height: 'min(900px, 88vh)', border: '0',
+    background: '#d9d9d4', display: 'block'
+  });
+
+  overlay = document.createElement('div');
+  overlay.id = 'oreja-wet-paint-overlay';
+  Object.assign(overlay.style, {
+    position: 'fixed', inset: '0', zIndex: '2147483000', display: 'none',
+    placeItems: 'center', background: 'rgba(13,13,13,.72)', backdropFilter: 'blur(8px)',
+    padding: '3vh 3vw'
+  });
+
+  const shell = document.createElement('div');
+  Object.assign(shell.style, {
+    position: 'relative', width: 'min(1440px,94vw)', height: 'min(900px,88vh)',
+    background: '#d9d9d4', boxShadow: '0 32px 90px rgba(0,0,0,.42)', overflow: 'hidden'
+  });
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = 'Cerrar';
+  close.setAttribute('aria-label', 'Cerrar controles Wet Paint');
+  Object.assign(close.style, {
+    position: 'absolute', right: '12px', top: '12px', zIndex: '5', border: '1px solid rgba(0,0,0,.22)',
+    borderRadius: '999px', background: 'rgba(242,242,239,.94)', color: '#171717', padding: '9px 14px',
+    cursor: 'pointer', font: '600 12px/1 system-ui,sans-serif'
+  });
+  close.addEventListener('click', () => { overlay.style.display = 'none'; });
+
+  shell.append(iframe, close);
+  overlay.append(shell);
+  document.body.append(overlay);
+
+  toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.id = 'oreja-wet-paint-controls';
+  toggle.textContent = 'OREJA · RUBIK SOTA · WET PAINT';
+  Object.assign(toggle.style, {
+    position: 'fixed', left: '18px', bottom: '18px', zIndex: '2147482000',
+    border: '1px solid rgba(255,255,255,.28)', borderRadius: '999px', background: 'rgba(20,20,20,.88)',
+    color: '#f1f1ed', padding: '10px 14px', cursor: 'pointer', letterSpacing: '.08em',
+    font: '600 10px/1 system-ui,sans-serif', backdropFilter: 'blur(10px)'
+  });
+  toggle.addEventListener('click', () => {
+    startDonor();
+    overlay.style.display = 'grid';
+  });
+  document.body.append(toggle);
+
+  window.addEventListener('message', (event) => {
+    if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
+    if (event.data?.type === 'OREJA_WET_PAINT_STATUS') {
+      donorStatus = String(event.data.message || '');
+      console.log('[Wet Paint donor bridge]', donorStatus);
+    }
+    if (event.data?.type === 'OREJA_WET_PAINT_READY') {
+      donorReady = true;
+      donorError = '';
+      donorStatus = 'Wet Paint listo';
+      toggle.dataset.ready = 'true';
+      toggle.textContent = 'OREJA · RUBIK SOTA · WET PAINT ✓';
+      console.log('[Wet Paint donor bridge] donor ready');
+    }
+    if (event.data?.type === 'OREJA_WET_PAINT_ERROR') {
+      donorReady = false;
+      donorError = String(event.data.message || 'Wet Paint donor error');
+      donorStatus = donorError;
+      toggle.dataset.error = 'true';
+      toggle.textContent = 'WET PAINT · ERROR';
+      console.error('[Wet Paint donor bridge]', donorError);
+    }
+  });
+
+  return iframe;
+}
+
+async function waitForDonor(timeoutMs = 45000) {
+  startDonor();
+  const started = performance.now();
+  while (performance.now() - started < timeoutMs) {
+    if (donorError) throw new Error(donorError);
+    const api = iframe?.contentWindow?.__OREJA_WET_PAINT;
+    if (donorReady && api?.ready) return api;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(`Wet Paint donor no estuvo listo. Último estado: ${donorStatus || 'sin señal'}`);
+}
+
+function painterlyPlate() {
+  const sceneKit = window.__IW?.runtime?.sceneKit;
+  if (!sceneKit) throw new Error('MuseumSceneKit no disponible');
+  return findArtworkPlate(sceneKit, PAINTERLY_ID);
+}
+
+function bindCanvasToPainterly(canvas) {
+  if (!canvas) throw new Error('El donor no expone canvas de salida');
+  if (outputCanvas === canvas && outputTexture) return outputTexture;
+
+  outputTexture?.dispose?.();
+  outputCanvas = canvas;
+  outputTexture = new THREE.CanvasTexture(canvas);
+  outputTexture.colorSpace = THREE.SRGBColorSpace;
+  outputTexture.minFilter = THREE.LinearFilter;
+  outputTexture.magFilter = THREE.LinearFilter;
+  outputTexture.generateMipmaps = false;
+
+  const plate = painterlyPlate();
+  plate.material.map = outputTexture;
+  plate.material.needsUpdate = true;
+  plate.userData.orejaWetPaintDonor = { donor: 'Juanmaes83/wet-paint-flow', canvas };
+  return outputTexture;
+}
+
+function startTexturePump() {
+  if (raf) return;
+  const tick = () => {
+    raf = requestAnimationFrame(tick);
+    if (!outputTexture || !outputCanvas) return;
+    outputTexture.needsUpdate = true;
+    try {
+      const plate = painterlyPlate();
+      if (plate.material.map !== outputTexture) {
+        plate.material.map = outputTexture;
+        plate.material.needsUpdate = true;
+      }
+    } catch { /* Museum may be rebuilding; next frame retries. */ }
+  };
+  raf = requestAnimationFrame(tick);
+}
+
+async function processOriginalFile(file) {
+  if (!file || !String(file.type || '').startsWith('image/')) return false;
+  const runtime = window.__IW?.runtime;
+  runtime?.stopLoop?.();
+  document.documentElement.dataset.wetPaintProcessing = 'true';
+
+  try {
+    const api = await waitForDonor();
+    await api.loadFile(file);
+
+    // Never bind the donor's initial canvas. Its own source metadata must prove
+    // that THIS exact uploaded file has been decoded first.
+    const sourceStarted = performance.now();
+    while (performance.now() - sourceStarted < 30000) {
+      if (api.hasSource?.(file.name)) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!api.hasSource?.(file.name)) {
+      throw new Error(`Wet Paint no confirmó la fuente ${file.name}. Estado: ${api.getSourceMeta?.() || 'sin metadata'}`);
+    }
+
+    const started = performance.now();
+    let canvas = null;
+    while (performance.now() - started < 30000) {
+      canvas = api.getCanvas?.();
+      if (canvas && canvas.width > 1 && canvas.height > 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!canvas || canvas.width < 2) throw new Error('Wet Paint donor no produjo canvas');
+
+    bindCanvasToPainterly(canvas);
+    startTexturePump();
+    lastFileName = file.name || 'imagen';
+    api.replay?.();
+    console.log(`[Wet Paint donor bridge] ${lastFileName} → donor real → 02 PAINTERLY`);
+    return true;
+  } finally {
+    delete document.documentElement.dataset.wetPaintProcessing;
+    runtime?.startLoop?.();
+  }
+}
+
+ensureUi();
+
+const previousTakeFile = StudioShell.prototype._takeFile;
+StudioShell.prototype._takeFile = async function wetPaintDonorTakeFile(slot, file) {
+  await previousTakeFile.call(this, slot, file);
+  if (!file || this.selectedId !== ORIGINAL_ID) return;
+  if (!String(file.type || '').startsWith('image/')) return;
+
+  try {
+    this._say('Original listo. Procesando con la piedra Wet Paint real…');
+    await processOriginalFile(file);
+    this._say('02 Painterly conectado al Wet Paint Flow real.');
+  } catch (error) {
+    console.error('[Wet Paint donor bridge]', error);
+    this._say(`Original cargado, pero Wet Paint no pudo procesarlo: ${String(error?.message || error)}`, true);
+  }
+};
+
+window.__OREJA_WET_PAINT_BRIDGE = {
+  processOriginalFile,
+  openControls() { startDonor(); overlay.style.display = 'grid'; },
+  closeControls() { if (overlay) overlay.style.display = 'none'; },
+  replay() { iframe?.contentWindow?.__OREJA_WET_PAINT?.replay?.(); },
+  get donorStarted() { return donorStarted; },
+  get donorReady() { return donorReady; },
+  get donorError() { return donorError; },
+  get donorStatus() { return donorStatus; },
+  get lastFileName() { return lastFileName; },
+  get outputCanvas() { return outputCanvas; }
+};
+
+console.log('[Wet Paint donor bridge] installed — stone-first / lazy donor');
