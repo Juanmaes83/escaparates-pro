@@ -1,31 +1,26 @@
 /**
  * Immersive Worlds — Render Host
  *
- * Owns the renderer and the camera *object*. Nothing else may create either.
- *
- * Note the split this file exists to make real:
- *
- *   engine/camera/camera-authority.js  decides the pose   (semantic, no Three.js)
- *   render/render-host.js              applies the pose   (graphics, no semantics)
- *
- * The host is a passive surface: it never decides where the camera should be,
- * and it knows nothing about Museums, Spaces or Entities. A future Showroom
- * Scene Kit reuses it unchanged.
- *
- * Quality policy is applied here because DPR, antialiasing, shadow maps and
- * tone mapping are renderer facts (Constitution §21 — a tier must change what
- * is actually done, not just label the device).
+ * Owns the renderer and the camera object. Nothing else may create either.
  */
 
 import * as THREE from '../vendor/three/three.module.min.js';
 
 export class RenderHost {
-  /**
-   * @param {{canvas:HTMLCanvasElement, quality:import('../engine/core/device-tier.js').QualityPolicy}} options
-   */
   constructor({ canvas, quality }) {
     this.canvas = canvas;
     this.quality = quality;
+
+    // Studio preview rebuilds re-enter boot() on the same canvas. The old host
+    // must be released before a new WebGLRenderer is created or repeated Apply
+    // operations accumulate GPU contexts/resources until the preview goes black.
+    if (typeof window !== 'undefined') {
+      const previous = window.__IW_ACTIVE_RENDER_HOST;
+      if (previous && previous !== this) {
+        try { previous.dispose(); } catch { /* previous host already gone */ }
+      }
+      window.__IW_ACTIVE_RENDER_HOST = this;
+    }
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
@@ -46,15 +41,16 @@ export class RenderHost {
     this.pixelRatio = 1;
     this.width = 1;
     this.height = 1;
+    this._disposed = false;
     this.resize();
   }
 
-  /** @returns {{aspect:number, vfov:number}} what the framing maths needs */
   viewport() {
     return { aspect: this.camera.aspect, vfov: this.camera.fov };
   }
 
   resize() {
+    if (this._disposed) return false;
     const rect = this.canvas.getBoundingClientRect();
     const width = Math.max(Math.floor(rect.width || this.canvas.clientWidth || 1), 1);
     const height = Math.max(Math.floor(rect.height || this.canvas.clientHeight || 1), 1);
@@ -69,21 +65,16 @@ export class RenderHost {
     this.renderer.setPixelRatio(ratio);
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
-
-    // A portrait phone framing a 2 m painting needs a wider lens, or the visitor
-    // is pushed unusably far back. Vertical FOV adapts to aspect, once, here.
     this.camera.fov = this.camera.aspect < 1 ? 66 : this.camera.aspect < 1.4 ? 58 : 52;
     this.camera.updateProjectionMatrix();
     return true;
   }
 
-  /** @param {{position:number[], target:number[], fov:number}} pose */
   applyPose(pose) {
+    if (this._disposed) return;
     this.camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
     this._target.set(pose.target[0], pose.target[1], pose.target[2]);
     this.camera.lookAt(this._target);
-    // The pose's fov is an authored intent; the host reconciles it with the
-    // aspect-driven baseline rather than letting either win outright.
     const base = this.camera.aspect < 1 ? 66 : this.camera.aspect < 1.4 ? 58 : 52;
     const wanted = pose.fov ? (pose.fov + base) / 2 : base;
     if (Math.abs(this.camera.fov - wanted) > 0.05) {
@@ -93,18 +84,15 @@ export class RenderHost {
   }
 
   applyQuality(policy) {
+    if (this._disposed) return;
     this.quality = policy;
     this.renderer.shadowMap.enabled = policy.shadows;
-    this.pixelRatio = -1; // force a resize recompute
+    this.pixelRatio = -1;
     this.resize();
   }
 
-  /**
-   * Compile shaders and upload textures before a Space is shown.
-   * This is the warmup step that keeps first entry into a gallery from
-   * stalling on shader compilation (pattern reference IW-REF-002).
-   */
   async warm(scene) {
+    if (this._disposed) return;
     if (typeof this.renderer.compileAsync === 'function') {
       await this.renderer.compileAsync(scene, this.camera);
     } else {
@@ -113,11 +101,13 @@ export class RenderHost {
   }
 
   render(scene) {
+    if (this._disposed) return;
     this.renderer.info.reset();
     this.renderer.render(scene, this.camera);
   }
 
   stats() {
+    if (this._disposed) return { disposed: true };
     const info = this.renderer.info;
     return {
       drawCalls: info.render.calls,
@@ -132,7 +122,13 @@ export class RenderHost {
   }
 
   dispose() {
-    this.renderer.dispose();
+    if (this._disposed) return;
+    this._disposed = true;
+    try { this.renderer.renderLists?.dispose?.(); } catch { /* optional */ }
+    try { this.renderer.dispose(); } catch { /* already disposed */ }
+    if (typeof window !== 'undefined' && window.__IW_ACTIVE_RENDER_HOST === this) {
+      window.__IW_ACTIVE_RENDER_HOST = null;
+    }
   }
 }
 
