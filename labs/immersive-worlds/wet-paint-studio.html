@@ -55,6 +55,31 @@
       phase2.installMuseumPhase2();
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
+
+      // — Living Art graft: install PainterlyEngine on the PAINTERLY entity —
+      // Deferred until Museum is fully booted so sceneKit has built the entities.
+      try {
+        const { installPainterly, updatePainterly } = await import('./engines/painterly-adapter.js');
+        const runtime = window.__IW?.runtime;
+        if (runtime) {
+          // Wait one frame for sceneKit to finish building artwork meshes
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          const result = installPainterly(runtime);
+          if (result) {
+            console.log(`[Wet Paint Studio] PainterlyEngine installed — ${result.strokeCount} strokes`);
+            // Hook into the render loop: wrap the existing onFrame to also update painterly
+            const originalOnFrame = runtime.onFrame;
+            runtime.onFrame = (pose, dt) => {
+              originalOnFrame(pose, dt);
+              updatePainterly();
+            };
+          } else {
+            console.warn('[Wet Paint Studio] PainterlyEngine deferred — plate not ready');
+          }
+        }
+      } catch (painterlyError) {
+        console.error('[Wet Paint Studio] PainterlyEngine graft failed (non-fatal):', painterlyError);
+      }
     } catch (error) {
       console.error('[Wet Paint Studio] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
