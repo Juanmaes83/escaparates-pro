@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <base href="https://raw.githubusercontent.com/Juanmaes83/wet-paint-flow/0b9ba9a5be665f3a2a8b2450945ec5006e61e2de/">
   <title>OREJA · RUBIK SOTA — Wet Paint</title>
   <script type="importmap">
     {
@@ -69,9 +68,13 @@
       style.textContent=cssText+'\nhtml,body,#app,.stage,#canvas-mount{background:#d9d9d4!important;}';
       document.head.appendChild(style);
 
-      // Stone-first: mainText is imported byte-for-byte. Import-map and <base> are the seams.
+      // Stone-first: preserve donor algorithms/shaders/parameters. Only relative asset URLs
+      // are pinned to the donor SHA so the module can execute under Museum's URL.
+      const source=mainText
+        .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
+        .replaceAll('"./public/',`"${DONOR_BASE}/public/`);
       try{localStorage.setItem('wet-paint-flow-language','en');}catch{}
-      const blob=new Blob([mainText],{type:'text/javascript'});
+      const blob=new Blob([source],{type:'text/javascript'});
       const moduleUrl=URL.createObjectURL(blob);
       await import(moduleUrl);
       applySpanish();
