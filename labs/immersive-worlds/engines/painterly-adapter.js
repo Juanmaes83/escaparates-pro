@@ -18,20 +18,21 @@
  */
 
 import * as THREE from '../vendor/three/three.module.min.js';
-import { PainterlyEngine } from './painterly-engine.js';
+import { createWetPaintPipeline } from './wet-paint-pipeline.js';
 
 const PAINTERLY_ENTITY_ID = 'entity.itinerant.painterly';
 const ORIGINAL_ENTITY_ID = 'entity.itinerant.original';
 const RENDER_WIDTH = 1024;
 const RENDER_HEIGHT = 720;
 
-let engine = null;
+let pipeline = null;
 let animationActive = false;
 let plateRef = null;
 let originalPlateRef = null;
 let lastOriginalMap = null;
 let reprocessScheduled = false;
 let sourceReady = false;
+let growthStartTime = 0;
 
 function findArtworkPlate(sceneKit, entityId) {
     const record = sceneKit?._entityIndex?.get(entityId);
@@ -52,63 +53,79 @@ function findArtworkPlate(sceneKit, entityId) {
     return best;
 }
 
-function readPlatePixels(plate, width, height) {
+function readPlateImage(plate) {
     const texture = plate.material?.map;
-    if (!texture) return null;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    if (texture.image instanceof HTMLImageElement || texture.image instanceof HTMLCanvasElement) {
-        ctx.drawImage(texture.image, 0, 0, width, height);
-        return ctx.getImageData(0, 0, width, height);
+    if (!texture || !texture.image) return null;
+    const img = texture.image;
+    if (img instanceof HTMLImageElement || img instanceof HTMLCanvasElement || img instanceof ImageBitmap) {
+        return img;
     }
-
-    if (texture.image instanceof ImageBitmap) {
-        ctx.drawImage(texture.image, 0, 0, width, height);
-        return ctx.getImageData(0, 0, width, height);
-    }
-
     return null;
 }
 
 function readOriginalSource(sceneKit) {
     const originalPlate = findArtworkPlate(sceneKit, ORIGINAL_ENTITY_ID);
     if (originalPlate) {
-        const imageData = readPlatePixels(originalPlate, RENDER_WIDTH, RENDER_HEIGHT);
-        if (imageData) return imageData;
+        return readPlateImage(originalPlate);
     }
     return null;
 }
 
-function processAndApply(imageData) {
-    if (!engine || !plateRef) return 0;
+function saveRendererState(renderer) {
+    const currentTarget = renderer.getRenderTarget();
+    const vp = new THREE.Vector4();
+    renderer.getViewport(vp);
+    const sc = new THREE.Vector4();
+    renderer.getScissor(sc);
+    const scissorTest = renderer.getScissorTest();
+    const clearColor = new THREE.Color();
+    renderer.getClearColor(clearColor);
+    const clearAlpha = renderer.getClearAlpha();
+    return { currentTarget, vp, sc, scissorTest, clearColor, clearAlpha };
+}
 
-    const strokeCount = engine.processImage(imageData);
-    console.log(`[PainterlyAdapter] processed ${strokeCount} strokes`);
+function restoreRendererState(renderer, state) {
+    renderer.setRenderTarget(state.currentTarget);
+    renderer.setViewport(state.vp);
+    renderer.setScissor(state.sc);
+    renderer.setScissorTest(state.scissorTest);
+    renderer.setClearColor(state.clearColor, state.clearAlpha);
+}
 
-    plateRef.material.map = engine.outputTexture;
-    plateRef.material.needsUpdate = true;
-    animationActive = true;
-    sourceReady = true;
+function processAndApply(image) {
+    if (!pipeline || !plateRef) return 0;
+    const renderer = window.__IW?.renderHost?.renderer;
+    if (!renderer) return 0;
 
-    return strokeCount;
+    const saved = saveRendererState(renderer);
+    try {
+        const strokeCount = pipeline.processImage(image);
+        console.log(`[PainterlyAdapter] processed ${strokeCount} strokes`);
+
+        plateRef.material.map = pipeline.getOutputTexture();
+        plateRef.material.needsUpdate = true;
+        animationActive = true;
+        sourceReady = true;
+        growthStartTime = performance.now() / 1000;
+
+        return strokeCount;
+    } finally {
+        restoreRendererState(renderer, saved);
+    }
 }
 
 function doReprocess() {
     reprocessScheduled = false;
     const sceneKit = window.__IW?.runtime?.sceneKit;
-    if (!sceneKit || !engine) return;
+    if (!sceneKit || !pipeline) return;
 
-    const imageData = readOriginalSource(sceneKit);
-    if (!imageData) {
+    const image = readOriginalSource(sceneKit);
+    if (!image) {
         console.warn('[PainterlyAdapter] reprocess: source not readable yet — will retry on next change');
         return;
     }
 
-    const strokeCount = processAndApply(imageData);
+    const strokeCount = processAndApply(image);
     console.log(`[PainterlyAdapter] reprocessed from new ORIGINAL source — ${strokeCount} strokes`);
 }
 
@@ -130,25 +147,26 @@ export function installPainterly(runtime) {
     originalPlateRef = findArtworkPlate(sceneKit, ORIGINAL_ENTITY_ID);
     lastOriginalMap = originalPlateRef?.material?.map || null;
 
-    if (engine) engine.dispose();
-    engine = new PainterlyEngine(renderer, RENDER_WIDTH, RENDER_HEIGHT);
+    if (pipeline) pipeline.dispose();
+    pipeline = createWetPaintPipeline(renderer);
 
-    const imageData = readOriginalSource(sceneKit);
-    if (!imageData) {
+    const image = readOriginalSource(sceneKit);
+    if (!image) {
         console.warn('[PainterlyAdapter] waiting for ORIGINAL source — will process when available');
         sourceReady = false;
-        return { engine, strokeCount: 0, waiting: true };
+        return { pipeline, strokeCount: 0, waiting: true };
     }
 
-    const strokeCount = processAndApply(imageData);
-    return { engine, strokeCount };
+    const strokeCount = processAndApply(image);
+    return { pipeline, strokeCount };
 }
 
 export function updatePainterly() {
-    if (!engine) return;
+    if (!pipeline) return;
 
-    if (plateRef?.material && plateRef.material.map !== engine.outputTexture) {
-        plateRef.material.map = engine.outputTexture;
+    const outTex = pipeline.getOutputTexture();
+    if (plateRef?.material && outTex && plateRef.material.map !== outTex) {
+        plateRef.material.map = outTex;
         plateRef.material.needsUpdate = true;
     }
 
@@ -166,43 +184,53 @@ export function updatePainterly() {
 
     if (!animationActive) return;
 
-    const now = performance.now() / 1000;
-    const stillGrowing = engine.update(now);
+    const renderer = window.__IW?.renderHost?.renderer;
+    if (!renderer) return;
 
-    if (plateRef?.material) {
-        plateRef.material.needsUpdate = true;
-    }
+    const saved = saveRendererState(renderer);
+    try {
+        const now = performance.now() / 1000;
+        const elapsed = now - growthStartTime;
+        const stillGrowing = pipeline.update(elapsed);
 
-    if (!stillGrowing && animationActive) {
-        engine.update(now);
-        animationActive = false;
+        if (plateRef?.material) {
+            plateRef.material.map = pipeline.getOutputTexture();
+            plateRef.material.needsUpdate = true;
+        }
+
+        if (!stillGrowing && animationActive) {
+            animationActive = false;
+        }
+    } finally {
+        restoreRendererState(renderer, saved);
     }
 }
 
 export function reprocessSource(runtime) {
     const sceneKit = runtime?.sceneKit;
-    if (!sceneKit || !engine) return false;
+    if (!sceneKit || !pipeline) return false;
 
-    const imageData = readOriginalSource(sceneKit);
-    if (!imageData) {
+    const image = readOriginalSource(sceneKit);
+    if (!image) {
         console.warn('[PainterlyAdapter] reprocessSource: no readable source');
         return false;
     }
 
-    processAndApply(imageData);
+    processAndApply(image);
     return true;
 }
 
 export function replayGrowth() {
-    if (!engine) return;
-    engine.replay();
+    if (!pipeline) return;
+    pipeline.replay();
+    growthStartTime = performance.now() / 1000;
     animationActive = true;
 }
 
 export function disposePainterly() {
-    if (engine) {
-        engine.dispose();
-        engine = null;
+    if (pipeline) {
+        pipeline.dispose();
+        pipeline = null;
     }
     animationActive = false;
     plateRef = null;
@@ -218,5 +246,5 @@ window.__PAINTERLY_ADAPTER = {
     dispose: disposePainterly,
     reprocess: reprocessSource,
     get sourceReady() { return sourceReady; },
-    get engine() { return engine; }
+    get pipeline() { return pipeline; }
 };
