@@ -1,48 +1,83 @@
 /**
  * Museum — Authored media vault
  *
- * Holds the media an author supplies for the length of a session, and gives out
- * a durable reference (`authored:<id>`) that a config can store while the live
- * object URL stays here.
- *
- * REUSE NOTE. The lifecycle is `js/media-manager.js`'s, which this project has
- * already proven: create an object URL, load it through a real element, read the
- * dimensions or duration off that element as the readiness signal, and revoke on
- * replacement. Two of its decisions are worth naming because they are the ones
- * that stop leaks — the URL is revoked when a slot is *replaced*, not only when
- * it is removed; and a file that fails to decode revokes immediately rather than
- * lingering as a half-loaded slot.
- *
- * Adapted rather than imported for the same reason as the config model: that
- * file is an `EP.*` global outside this module's boundary.
- *
- * States, and none of them is skipped:
- *   SELECTED → LOADING → (DECODED) → READY → APPLIED, or → ERROR
- *   any state → RELEASED, exactly once
- *
- * DECODED exists only for video and is not ceremony: a video whose header has
- * parsed is not a video that can show a frame, and an author watching a slow
- * upload deserves to see the difference between "still arriving" and "arrived,
- * now decoding". Images go LOADING → READY because for an image those are the
- * same moment.
+ * Holds author supplied media during the session and persists the bytes in
+ * IndexedDB so a saved Museum project can really restore its image/video files
+ * after reload. Config JSON stores durable `authored:<id>` references; this
+ * vault owns the Blob/ObjectURL lifecycle behind those references.
  */
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/webm'];
-
-/** Long enough for a large file over a slow disk, short enough to be an answer. */
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'm4v'];
 const PROBE_TIMEOUT_MS = 20000;
-
-/** Wide enough to recognise a work, small enough to keep dozens in memory. */
 const THUMB_W = 200;
 
-/**
- * One frame of a video, as a data URL.
- *
- * Returns null rather than throwing: a poster is a convenience, and a file that
- * will not paint into a canvas — a cross-origin source, a codec the 2D context
- * declines — is still a perfectly good video for the wall.
- */
+const DB_NAME = 'iw-museum-authored-media';
+const DB_VERSION = 1;
+const DB_STORE = 'assets';
+let dbPromise = null;
+
+function openDb() {
+  if (dbPromise) return dbPromise;
+  dbPromise = new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        const store = db.createObjectStore(DB_STORE, { keyPath: 'key' });
+        store.createIndex('scope', 'scope');
+        store.createIndex('updatedAt', 'updatedAt');
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error('No se pudo abrir IndexedDB.'));
+  });
+  return dbPromise;
+}
+
+async function idbGet(key) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readonly');
+    const request = tx.objectStore(DB_STORE).get(key);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function idbPut(record) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error || new Error('No se pudo guardar el medio.'));
+    tx.objectStore(DB_STORE).put(record);
+  });
+}
+
+async function idbDelete(key) {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_STORE, 'readwrite');
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error || new Error('No se pudo retirar el medio guardado.'));
+    tx.objectStore(DB_STORE).delete(key);
+  });
+}
+
+function collectAssetIds(value, out = new Set()) {
+  if (!value || typeof value !== 'object') return out;
+  if (typeof value.assetId === 'string' && value.assetId) out.add(value.assetId);
+  if (Array.isArray(value)) {
+    for (const item of value) collectAssetIds(item, out);
+  } else {
+    for (const item of Object.values(value)) collectAssetIds(item, out);
+  }
+  return out;
+}
+
 function posterFrom(video) {
   try {
     const w = video.videoWidth;
@@ -58,39 +93,17 @@ function posterFrom(video) {
   }
 }
 
-/**
- * The browser fills `File.type` from the operating system, and the operating
- * system does not always know. On Windows the MIME for an extension comes from
- * the registry, and `.webm` and `.mp4` frequently have no entry — the file
- * arrives with `type: ''`. Judging only by MIME told an author their perfectly
- * good video was "not a video", which is why images worked and video did not:
- * `.jpg` and `.png` are registered on essentially every machine.
- *
- * So the extension is consulted when the MIME is missing or unhelpful. This does
- * not make acceptance loose — the decoder is still the final judge, and a file
- * that cannot produce a frame still fails, just with a truthful reason.
- */
-const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
-const VIDEO_EXTENSIONS = ['mp4', 'webm', 'm4v'];
-
 function looksLike(file, kind) {
   const types = kind === 'video' ? VIDEO_TYPES : IMAGE_TYPES;
   const extensions = kind === 'video' ? VIDEO_EXTENSIONS : IMAGE_EXTENSIONS;
   const type = String(file?.type || '').toLowerCase();
   if (types.includes(type)) return true;
-  // A type that names the right family but a codec we did not list is still
-  // worth handing to the decoder rather than refusing on a string comparison.
   if (type.startsWith(`${kind}/`)) return true;
   if (type) return false;
   const extension = String(file?.name || '').split('.').pop().toLowerCase();
   return extensions.includes(extension);
 }
 
-/**
- * What each state is called on screen. Internal enum names are for the code;
- * an author reads Spanish, and reads about their file rather than about our
- * state machine.
- */
 const COPY = {
   image: {
     SELECTED: 'Seleccionada', LOADING: 'Cargando…', DECODED: 'Decodificando…',
@@ -102,21 +115,12 @@ const COPY = {
   }
 };
 
-/** The ordered chain, so a UI can draw progress instead of a single word. */
 export const ASSET_CHAIN = Object.freeze({
   image: ['SELECTED', 'LOADING', 'READY'],
   video: ['SELECTED', 'LOADING', 'DECODED', 'READY']
 });
 
-/**
- * One asset, described for a person: state in words, the facts that prove the
- * file is real, and the reason when it is not.
- */
 export function describeAsset(asset, media = null) {
-  // A file that came with the project rather than from this session has no vault
-  // asset — it is a path the world already resolves. Reporting "Sin archivo"
-  // beside its own filename, under a button reading "Cambiar archivo", was three
-  // signals giving two different answers in one card.
   if (!asset && media?.src) {
     const chain = ASSET_CHAIN[media.kind] || ASSET_CHAIN.image;
     const facts = [];
@@ -133,6 +137,8 @@ export function describeAsset(asset, media = null) {
   if (asset.width && asset.height) facts.push(`${asset.width}×${asset.height}`);
   if (asset.duration) facts.push(`${asset.duration.toFixed(1)} s`);
   if (asset.bytes) facts.push(`${(asset.bytes / 1024).toFixed(0)} kB`);
+  if (asset.persisted) facts.push('guardado localmente');
+  if (asset.persistenceError) facts.push('no persistente');
   return {
     state: asset.state,
     label: copy[asset.state] || asset.state,
@@ -144,14 +150,24 @@ export function describeAsset(asset, media = null) {
 }
 
 export class MediaVault {
-  constructor({ onChange } = {}) {
-    /** @type {Map<string, object>} */
+  constructor({ onChange, scope = 'default' } = {}) {
     this.assets = new Map();
     this.onChange = onChange || (() => {});
     this._n = 0;
+    this.scope = this._safeScope(scope);
   }
 
-  /** `authored:<id>` in a config resolves to the live object URL, or null. */
+  _safeScope(value) {
+    return String(value || 'default').trim().replace(/[^a-z0-9._-]+/gi, '-') || 'default';
+  }
+
+  setScope(value) {
+    this.scope = this._safeScope(value);
+    return this.scope;
+  }
+
+  _storageKey(id) { return `${this.scope}:${id}`; }
+
   resolve(reference) {
     if (typeof reference !== 'string' || !reference.startsWith('authored:')) return null;
     const asset = this.assets.get(reference.slice(9));
@@ -160,12 +176,6 @@ export class MediaVault {
 
   get(id) { return this.assets.get(id) || null; }
 
-  /**
-   * Take a file from the author and drive it to READY.
-   *
-   * Rejects unsupported media loudly: silently accepting a `.mov` and rendering
-   * nothing is the failure mode this exists to prevent.
-   */
   async accept(file, { kind = 'image' } = {}) {
     const id = `a${(this._n += 1)}_${Date.now().toString(36)}`;
     const asset = {
@@ -181,7 +191,9 @@ export class MediaVault {
       width: 0,
       height: 0,
       duration: 0,
-      thumb: null
+      thumb: null,
+      persisted: false,
+      persistenceError: null
     };
     this.assets.set(id, asset);
     this.onChange(asset);
@@ -198,18 +210,18 @@ export class MediaVault {
 
     try {
       if (kind === 'video') {
-        // Readiness is metadata plus enough buffered data to draw, not the file
-        // handle existing. "Selected" is not "ready".
         const meta = await this._probeVideo(url, () => {
           asset.state = 'DECODED';
           this.onChange(asset);
         });
-        asset.width = meta.width; asset.height = meta.height; asset.duration = meta.duration;
+        asset.width = meta.width;
+        asset.height = meta.height;
+        asset.duration = meta.duration;
         asset.thumb = meta.thumb || null;
       } else {
         const meta = await this._probeImage(url);
-        asset.width = meta.width; asset.height = meta.height;
-        // An image is its own thumbnail; the object URL already points at it.
+        asset.width = meta.width;
+        asset.height = meta.height;
         asset.thumb = url;
       }
     } catch (error) {
@@ -220,7 +232,75 @@ export class MediaVault {
     asset.url = url;
     asset.state = 'READY';
     this.onChange(asset);
+
+    // Persist as soon as the file is proven decodable. "Guardar" then only has
+    // to persist the lightweight config reference; the bytes are already durable.
+    try {
+      await this._persistAsset(asset, file);
+      asset.persisted = true;
+      asset.persistenceError = null;
+    } catch (error) {
+      asset.persisted = false;
+      asset.persistenceError = String(error?.message || error);
+      console.warn('[IW MediaVault] media remains usable in this tab but could not be persisted', error);
+    }
+    this.onChange(asset);
     return asset;
+  }
+
+  async _persistAsset(asset, blob) {
+    await idbPut({
+      key: this._storageKey(asset.id),
+      scope: this.scope,
+      id: asset.id,
+      kind: asset.kind,
+      name: asset.name,
+      mimeType: asset.mimeType,
+      bytes: asset.bytes,
+      width: asset.width,
+      height: asset.height,
+      duration: asset.duration,
+      thumb: asset.thumb && asset.kind === 'video' ? asset.thumb : null,
+      blob,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  /** Restore all authored refs present in a saved config before Museum boot. */
+  async hydrateConfig(config) {
+    const ids = [...collectAssetIds(config)];
+    const restored = [];
+    for (const id of ids) {
+      if (this.assets.get(id)?.state === 'READY') continue;
+      try {
+        const record = await idbGet(this._storageKey(id));
+        if (!record?.blob) continue;
+        const url = URL.createObjectURL(record.blob);
+        const asset = {
+          id: record.id,
+          reference: `authored:${record.id}`,
+          kind: record.kind || 'image',
+          name: record.name || 'medio guardado',
+          mimeType: record.mimeType || record.blob.type || '',
+          bytes: record.bytes || record.blob.size || 0,
+          state: 'READY',
+          url,
+          error: null,
+          width: record.width || 0,
+          height: record.height || 0,
+          duration: record.duration || 0,
+          thumb: record.thumb || (record.kind === 'image' ? url : null),
+          persisted: true,
+          persistenceError: null
+        };
+        this.assets.set(id, asset);
+        restored.push(id);
+        this.onChange(asset);
+      } catch (error) {
+        console.warn(`[IW MediaVault] could not restore ${id}`, error);
+      }
+    }
+    return restored;
   }
 
   _probeImage(url) {
@@ -238,24 +318,14 @@ export class MediaVault {
       video.preload = 'auto';
       video.muted = true;
       video.playsInline = true;
-      // The header parsed: the file is a video and we know its shape. Not yet
-      // playable, and the author is told exactly that.
       video.onloadedmetadata = () => onDecoded();
       let settled = false;
-      // A codec the browser half-recognises can leave a load neither resolved
-      // nor errored, and the author waits on "Cargando…" with no way to tell a
-      // slow file from a dead one. Every proven implementation in this
-      // repository bounds the wait; this one did not.
       const timer = setTimeout(() => {
         if (settled) return;
         settled = true;
         teardown();
         reject(new Error('El vídeo tardó demasiado en abrirse. Puede que el códec no sea compatible.'));
       }, PROBE_TIMEOUT_MS);
-      // `src = ''` resolves against the page's own address, so the element goes
-      // off and loads the document as if it were a video — a wasted request and
-      // a spurious error. Removing the attribute and reloading is how the four
-      // implementations this was adapted from let a video element go.
       const teardown = () => {
         clearTimeout(timer);
         try { video.pause(); video.removeAttribute('src'); video.load(); } catch { /* already gone */ }
@@ -272,17 +342,11 @@ export class MediaVault {
           width: video.videoWidth,
           height: video.videoHeight,
           duration: video.duration || 0,
-          // A still, taken while the element is still alive. A catalogue that
-          // shows a filename for every video and a picture for every image is
-          // a catalogue you cannot skim, and the frame is free here — the
-          // decoder has just produced one.
           thumb: posterFrom(video)
         };
         teardown();
         resolve(meta);
       };
-      // canplaythrough, not loadedmetadata: metadata alone means the header
-      // parsed, which is not the same as being able to show a frame.
       video.oncanplaythrough = done;
       video.onloadeddata = () => { if (video.readyState >= 2) done(); };
       video.onerror = () => {
@@ -302,7 +366,6 @@ export class MediaVault {
     return asset;
   }
 
-  /** Revoke and forget. Called on replacement as well as on removal. */
   release(id) {
     const asset = this.assets.get(id);
     if (!asset) return false;
@@ -310,18 +373,31 @@ export class MediaVault {
     asset.url = null;
     asset.state = 'RELEASED';
     this.assets.delete(id);
+    idbDelete(this._storageKey(id)).catch(() => {});
     this.onChange(asset);
     return true;
   }
 
-  releaseAll() {
-    for (const id of [...this.assets.keys()]) this.release(id);
+  releaseAll({ forgetPersisted = false } = {}) {
+    for (const id of [...this.assets.keys()]) {
+      const asset = this.assets.get(id);
+      if (asset?.url) URL.revokeObjectURL(asset.url);
+      if (asset) {
+        asset.url = null;
+        asset.state = 'RELEASED';
+        this.onChange(asset);
+      }
+      this.assets.delete(id);
+      if (forgetPersisted) idbDelete(this._storageKey(id)).catch(() => {});
+    }
   }
 
   report() {
     return [...this.assets.values()].map((a) => ({
       id: a.id, kind: a.kind, name: a.name, state: a.state,
-      width: a.width, height: a.height, duration: a.duration, error: a.error
+      width: a.width, height: a.height, duration: a.duration,
+      persisted: !!a.persisted, persistenceError: a.persistenceError || null,
+      error: a.error
     }));
   }
 }
