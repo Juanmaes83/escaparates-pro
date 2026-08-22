@@ -2,11 +2,16 @@
  * PainterlyAdapter — connects PainterlyEngine to the itinerant wet-paint lab.
  *
  * Architecture seam:
- *   MUSEUM AUTHORED MEDIA → source texture on entity plate
+ *   MUSEUM AUTHORED MEDIA → source texture on ORIGINAL entity plate
  *   → readPixels into ImageData
  *   → PainterlyEngine.processImage()
  *   → engine.outputTexture replaces the PAINTERLY entity's plate map
  *   → engine.update() called each frame during growth
+ *
+ * Source-change seam:
+ *   When the user uploads a new image to ORIGINAL (via Studio _takeFile),
+ *   wet-paint-visible-media.js updates the 3D plate texture. This adapter
+ *   detects the texture reference change each frame and re-processes.
  *
  * The adapter is installed once the Museum runtime and sceneKit are ready.
  * It does NOT modify Museum's renderer, scene kit, or camera authority.
@@ -23,6 +28,10 @@ const RENDER_HEIGHT = 720;
 let engine = null;
 let animationActive = false;
 let plateRef = null;
+let originalPlateRef = null;
+let lastOriginalMap = null;
+let reprocessScheduled = false;
+let sourceReady = false;
 
 function findArtworkPlate(sceneKit, entityId) {
     const record = sceneKit?._entityIndex?.get(entityId);
@@ -43,7 +52,7 @@ function findArtworkPlate(sceneKit, entityId) {
     return best;
 }
 
-function readPlatePixels(renderer, plate, width, height) {
+function readPlatePixels(plate, width, height) {
     const texture = plate.material?.map;
     if (!texture) return null;
 
@@ -65,49 +74,42 @@ function readPlatePixels(renderer, plate, width, height) {
     return null;
 }
 
-function readOriginalSource(sceneKit, renderer) {
+function readOriginalSource(sceneKit) {
     const originalPlate = findArtworkPlate(sceneKit, ORIGINAL_ENTITY_ID);
     if (originalPlate) {
-        const imageData = readPlatePixels(renderer, originalPlate, RENDER_WIDTH, RENDER_HEIGHT);
+        const imageData = readPlatePixels(originalPlate, RENDER_WIDTH, RENDER_HEIGHT);
         if (imageData) return imageData;
     }
-
-    const painterlyPlate = findArtworkPlate(sceneKit, PAINTERLY_ENTITY_ID);
-    if (painterlyPlate) {
-        return readPlatePixels(renderer, painterlyPlate, RENDER_WIDTH, RENDER_HEIGHT);
-    }
-
     return null;
 }
 
-function generateFallbackImageData() {
-    const canvas = document.createElement('canvas');
-    canvas.width = RENDER_WIDTH;
-    canvas.height = RENDER_HEIGHT;
-    const ctx = canvas.getContext('2d');
+function processAndApply(imageData) {
+    if (!engine || !plateRef) return 0;
 
-    const grad = ctx.createLinearGradient(0, 0, RENDER_WIDTH, RENDER_HEIGHT);
-    grad.addColorStop(0, '#1a237e');
-    grad.addColorStop(0.3, '#4a148c');
-    grad.addColorStop(0.5, '#b71c1c');
-    grad.addColorStop(0.7, '#e65100');
-    grad.addColorStop(1, '#f9a825');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, RENDER_WIDTH, RENDER_HEIGHT);
+    const strokeCount = engine.processImage(imageData);
+    console.log(`[PainterlyAdapter] processed ${strokeCount} strokes`);
 
-    for (let i = 0; i < 6; i++) {
-        const cx = Math.random() * RENDER_WIDTH;
-        const cy = Math.random() * RENDER_HEIGHT;
-        const r = 40 + Math.random() * 100;
-        const rGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        const hue = Math.random() * 360;
-        rGrad.addColorStop(0, `hsla(${hue}, 80%, 50%, 0.6)`);
-        rGrad.addColorStop(1, `hsla(${hue}, 60%, 30%, 0)`);
-        ctx.fillStyle = rGrad;
-        ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+    plateRef.material.map = engine.outputTexture;
+    plateRef.material.needsUpdate = true;
+    animationActive = true;
+    sourceReady = true;
+
+    return strokeCount;
+}
+
+function doReprocess() {
+    reprocessScheduled = false;
+    const sceneKit = window.__IW?.runtime?.sceneKit;
+    if (!sceneKit || !engine) return;
+
+    const imageData = readOriginalSource(sceneKit);
+    if (!imageData) {
+        console.warn('[PainterlyAdapter] reprocess: source not readable yet — will retry on next change');
+        return;
     }
 
-    return ctx.getImageData(0, 0, RENDER_WIDTH, RENDER_HEIGHT);
+    const strokeCount = processAndApply(imageData);
+    console.log(`[PainterlyAdapter] reprocessed from new ORIGINAL source — ${strokeCount} strokes`);
 }
 
 export function installPainterly(runtime) {
@@ -125,24 +127,20 @@ export function installPainterly(runtime) {
     }
 
     plateRef = painterlyPlate;
+    originalPlateRef = findArtworkPlate(sceneKit, ORIGINAL_ENTITY_ID);
+    lastOriginalMap = originalPlateRef?.material?.map || null;
 
     if (engine) engine.dispose();
     engine = new PainterlyEngine(renderer, RENDER_WIDTH, RENDER_HEIGHT);
 
-    let imageData = readOriginalSource(sceneKit, renderer);
+    const imageData = readOriginalSource(sceneKit);
     if (!imageData) {
-        console.warn('[PainterlyAdapter] no source image readable — using fallback gradient');
-        imageData = generateFallbackImageData();
+        console.warn('[PainterlyAdapter] waiting for ORIGINAL source — will process when available');
+        sourceReady = false;
+        return { engine, strokeCount: 0, waiting: true };
     }
 
-    const strokeCount = engine.processImage(imageData);
-    console.log(`[PainterlyAdapter] processed ${strokeCount} strokes`);
-
-    painterlyPlate.material.map = engine.outputTexture;
-    painterlyPlate.material.needsUpdate = true;
-
-    animationActive = true;
-
+    const strokeCount = processAndApply(imageData);
     return { engine, strokeCount };
 }
 
@@ -152,6 +150,18 @@ export function updatePainterly() {
     if (plateRef?.material && plateRef.material.map !== engine.outputTexture) {
         plateRef.material.map = engine.outputTexture;
         plateRef.material.needsUpdate = true;
+    }
+
+    if (originalPlateRef?.material?.map) {
+        const currentMap = originalPlateRef.material.map;
+        if (currentMap !== lastOriginalMap) {
+            lastOriginalMap = currentMap;
+            if (!reprocessScheduled) {
+                reprocessScheduled = true;
+                console.log('[PainterlyAdapter] ORIGINAL source changed — scheduling reprocess');
+                setTimeout(doReprocess, 200);
+            }
+        }
     }
 
     if (!animationActive) return;
@@ -169,6 +179,20 @@ export function updatePainterly() {
     }
 }
 
+export function reprocessSource(runtime) {
+    const sceneKit = runtime?.sceneKit;
+    if (!sceneKit || !engine) return false;
+
+    const imageData = readOriginalSource(sceneKit);
+    if (!imageData) {
+        console.warn('[PainterlyAdapter] reprocessSource: no readable source');
+        return false;
+    }
+
+    processAndApply(imageData);
+    return true;
+}
+
 export function replayGrowth() {
     if (!engine) return;
     engine.replay();
@@ -182,11 +206,16 @@ export function disposePainterly() {
     }
     animationActive = false;
     plateRef = null;
+    originalPlateRef = null;
+    lastOriginalMap = null;
+    sourceReady = false;
 }
 
 window.__PAINTERLY_ADAPTER = {
     install: installPainterly,
     update: updatePainterly,
     replay: replayGrowth,
-    dispose: disposePainterly
+    dispose: disposePainterly,
+    reprocess: reprocessSource,
+    get sourceReady() { return sourceReady; }
 };

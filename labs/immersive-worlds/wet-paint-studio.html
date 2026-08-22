@@ -42,6 +42,12 @@
       // instance. Upload/select -> visible central image/video; no Museum reboot.
       await import('./authoring/wet-paint-media-inspector.js');
 
+      // Wire uploads to the 3D artwork plates: when a file is assigned to an
+      // entity, its visible texture updates immediately in the gallery view.
+      // PainterlyAdapter watches ORIGINAL's plate texture and re-processes
+      // automatically when the reference changes.
+      await import('./authoring/wet-paint-visible-media.js');
+
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
         import('./authoring/studio/visitor-phase1.js'),
@@ -66,8 +72,11 @@
           await new Promise((resolve) => requestAnimationFrame(resolve));
           const result = installPainterly(runtime);
           if (result) {
-            console.log(`[Wet Paint Studio] PainterlyEngine installed — ${result.strokeCount} strokes`);
-            // Hook into the render loop: wrap the existing onFrame to also update painterly
+            if (result.waiting) {
+              console.log('[Wet Paint Studio] PainterlyEngine installed — waiting for ORIGINAL source');
+            } else {
+              console.log(`[Wet Paint Studio] PainterlyEngine installed — ${result.strokeCount} strokes`);
+            }
             const originalOnFrame = runtime.onFrame;
             runtime.onFrame = (pose, dt) => {
               updatePainterly();
