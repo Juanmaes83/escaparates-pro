@@ -12,6 +12,7 @@ let toggle = null;
 let donorStarted = false;
 let donorReady = false;
 let donorError = '';
+let donorStatus = '';
 let outputTexture = null;
 let outputCanvas = null;
 let raf = 0;
@@ -22,6 +23,7 @@ function startDonor() {
   if (donorStarted) return;
   donorStarted = true;
   donorError = '';
+  donorStatus = 'Cargando piedra Wet Paint…';
   toggle.textContent = 'OREJA · RUBIK SOTA · CARGANDO…';
   iframe.src = HOST_URL;
 }
@@ -85,9 +87,14 @@ function ensureUi() {
 
   window.addEventListener('message', (event) => {
     if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
+    if (event.data?.type === 'OREJA_WET_PAINT_STATUS') {
+      donorStatus = String(event.data.message || '');
+      console.log('[Wet Paint donor bridge]', donorStatus);
+    }
     if (event.data?.type === 'OREJA_WET_PAINT_READY') {
       donorReady = true;
       donorError = '';
+      donorStatus = 'Wet Paint listo';
       toggle.dataset.ready = 'true';
       toggle.textContent = 'OREJA · RUBIK SOTA · WET PAINT ✓';
       console.log('[Wet Paint donor bridge] donor ready');
@@ -95,6 +102,7 @@ function ensureUi() {
     if (event.data?.type === 'OREJA_WET_PAINT_ERROR') {
       donorReady = false;
       donorError = String(event.data.message || 'Wet Paint donor error');
+      donorStatus = donorError;
       toggle.dataset.error = 'true';
       toggle.textContent = 'WET PAINT · ERROR';
       console.error('[Wet Paint donor bridge]', donorError);
@@ -113,7 +121,7 @@ async function waitForDonor(timeoutMs = 45000) {
     if (donorReady && api?.ready) return api;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw new Error('Wet Paint donor no estuvo listo dentro del tiempo esperado');
+  throw new Error(`Wet Paint donor no estuvo listo. Último estado: ${donorStatus || 'sin señal'}`);
 }
 
 function painterlyPlate() {
@@ -163,9 +171,20 @@ async function processOriginalFile(file) {
   const api = await waitForDonor();
   await api.loadFile(file);
 
+  // The donor has an initial canvas. Never bind that by mistake. Wait until its
+  // own source metadata confirms THIS exact uploaded file was decoded.
+  const sourceStarted = performance.now();
+  while (performance.now() - sourceStarted < 30000) {
+    if (api.hasSource?.(file.name)) break;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  if (!api.hasSource?.(file.name)) {
+    throw new Error(`Wet Paint no confirmó la fuente ${file.name}. Estado: ${api.getSourceMeta?.() || 'sin metadata'}`);
+  }
+
   const started = performance.now();
   let canvas = null;
-  while (performance.now() - started < 20000) {
+  while (performance.now() - started < 30000) {
     canvas = api.getCanvas?.();
     if (canvas && canvas.width > 1 && canvas.height > 1) break;
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -206,6 +225,7 @@ window.__OREJA_WET_PAINT_BRIDGE = {
   get donorStarted() { return donorStarted; },
   get donorReady() { return donorReady; },
   get donorError() { return donorError; },
+  get donorStatus() { return donorStatus; },
   get lastFileName() { return lastFileName; },
   get outputCanvas() { return outputCanvas; }
 };
