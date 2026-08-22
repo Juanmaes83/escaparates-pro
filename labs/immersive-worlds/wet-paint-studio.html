@@ -18,12 +18,28 @@
   <div id="iw-ui"></div>
 
   <script type="module">
+    const WORLD = './worlds/itinerant-wet-paint-lab.world.json';
     const url = new URL(location.href);
     url.searchParams.set('authoring', '1');
-    url.searchParams.set('world', './worlds/itinerant-wet-paint-lab.world.json');
+    url.searchParams.set('world', WORLD);
     history.replaceState(null, '', url);
 
     try {
+      // This dedicated lab must not inherit Museum's legacy single-key authoring
+      // state. Previous Full Studio sessions may contain presentation fields
+      // (for example `material`) that are valid authoring metadata but forbidden
+      // inside the semantic World record by INV-6. Keep that legacy state intact
+      // for the normal Museum; simply give this receiver its own clean in-memory
+      // base config until durable world-scoped persistence is introduced.
+      const [{ baseConfigFromWorld }] = await Promise.all([
+        import('./authoring/experience-config.js')
+      ]);
+      const cleanWorld = await fetch(WORLD, { cache: 'no-store' }).then((response) => {
+        if (!response.ok) throw new Error(`No se pudo cargar el mundo (${response.status})`);
+        return response.json();
+      });
+      window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
+
       // Install the visibility seam before Full Studio creates its instance.
       await import('./authoring/wet-paint-visible-media.js');
 
