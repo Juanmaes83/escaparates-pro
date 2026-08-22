@@ -78,16 +78,20 @@
       style.textContent=cssText+'\nhtml,body,#app,.stage,#canvas-mount{background:#d9d9d4!important;}';
       document.head.appendChild(style);
 
-      // Stone-first: preserve donor algorithms, shaders and tuned parameters.
-      // Museum-specific sculpture only removes the donor's built-in demo boot so
-      // the engine wakes on the user's uploaded artwork instead of rendering a
-      // heavy default scene first. Asset URLs stay pinned to the exact donor SHA.
+      // STONE-FIRST SCULPTURE:
+      // Keep the donor image pipeline byte-for-byte in behavior (field, seeds,
+      // Bezier ribbons, wet/impasto shaders, growth). Remove only the standalone
+      // procedural demo scene and its eager preview boot; Museum supplies the source.
       const source=mainText
         .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
         .replaceAll('"./public/',`"${DONOR_BASE}/public/`)
         .replace(
-          'requestFrame();\ninitializeSceneLibrary();',
-          '/* Museum host: defer default demo render/library; real upload triggers requestFrame. */'
+          'createScene();\nconst proceduralSceneRoots = scene.children.filter((child) => child !== hemi && child !== sunLight);',
+          '/* Museum image-only host: procedural demo scene intentionally not constructed. */\nconst proceduralSceneRoots = [];'
+        )
+        .replace(
+          "applyLanguage();\nupdatePanelResizeAria();\nsetSourceUi();\nsetLayerMode(5);\nupdateGrowthControls(prefersReducedMotion ? GROWTH_DURATION : 0);\ninitializeVideoExport();\nsetCanvasZoom(1);\nsetModelLightAngle(params.modelLightAngle);\nrequestFrame();\ninitializeSceneLibrary();",
+          "applyLanguage();\nupdatePanelResizeAria();\nsetSourceUi();\nsetLayerMode(5);\nupdateGrowthControls(0);\nsetCanvasZoom(1);\n/* Museum image-only host: no demo frame/library/video boot. Upload drives resetForSourceChange(). */"
         );
 
       try{localStorage.setItem('wet-paint-flow-language','en');}catch{}
