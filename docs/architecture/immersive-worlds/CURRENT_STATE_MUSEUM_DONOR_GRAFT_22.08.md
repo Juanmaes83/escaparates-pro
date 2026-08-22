@@ -1,18 +1,14 @@
-# CURRENT STATE — MUSEUM DONOR GRAFT — 22.08.2026
+# CURRENT STATE — MUSEUM DONOR / STANDALONE EXPERIENCE — 22.08.2026
 
 **Estado:** CANÓNICO / FUENTE DE VERDAD PARA REANUDAR EL TRABAJO
-**Objetivo:** evitar reconstrucciones de contexto, arqueología repetida y nuevas reimplementaciones.
+**Decisión vigente:** `STANDALONE PRESERVATION + MUSEUM SHELL/BRIDGE`
+**Contrato arquitectónico:** `docs/architecture/immersive-worlds/MUSEUM_STANDALONE_EXPERIENCE_ARCHITECTURE_V1.md`
 
 ---
 
 ## OBJETIVO FINAL
 
-Integrar en el Museum y en la sala itinerante ya creada y funcional los dos donors reales:
-
-1. `Juanmaes83/wet-paint-flow`
-2. `Juanmaes83/van-gogh-crows`
-
-Destino visual de la sala:
+Integrar en Museum y en la sala itinerante cinco estados/experiencias:
 
 - `01 ORIGINAL`
 - `02 WET PAINT`
@@ -20,383 +16,331 @@ Destino visual de la sala:
 - `04 COMBINED`
 - `05 EXPERIMENTAL`
 
-La meta NO es reconstruir estos motores. La meta es **portarlos al Museum, verlos funcionar allí y después esculpirlos/personalizarlos**.
+Donors principales:
+
+1. `Juanmaes83/wet-paint-flow`
+2. `Juanmaes83/van-gogh-crows`
+
+Museum es el host, la sala, la navegación y la presentación. Los donors se preservan como experiencias/runtimes autónomos y se conectan mediante una costura mínima.
 
 ---
 
-## BASE MUSEUM QUE FUNCIONA
+## CAMBIO DE ESTRATEGIA APROBADO
+
+### Estrategia anterior — RECHAZADA COMO PRIMARIA
+
+```text
+DONOR
+→ extraer pipeline
+→ adaptarlo al renderer Museum
+→ reconstruir engine interno
+→ intentar recuperar comportamiento/visual
+```
+
+El intento demostró que una integración técnicamente activa puede seguir siendo una mala solución de producto y alejarse del donor validado.
+
+No seguir invirtiendo en absorber Wet Paint dentro del renderer Museum como arquitectura principal.
+
+### Estrategia vigente — APROBADA
+
+```text
+DONOR STANDALONE VALIDADO
+→ PRESERVARLO
+→ EJECUTARLO AISLADO
+→ CONECTARLO A MUSEUM CON BRIDGE PEQUEÑO
+→ VERLO FUNCIONAR
+→ DESPUÉS ESCULPIR SHELL / PRESENTACIÓN
+```
+
+Regla:
+
+> **Museum no reescribe el cerebro del donor. Museum lo aloja, lo conecta y lo presenta.**
+
+Arquitectura completa:
+
+`docs/architecture/immersive-worlds/MUSEUM_STANDALONE_EXPERIENCE_ARCHITECTURE_V1.md`
+
+---
+
+## PRECEDENTES INTERNOS OBLIGATORIOS
+
+Claude no debe leer todo Escaparates Pro. Sólo estudiar estos patrones:
+
+### Casebook PRO
+
+- `labs/interactive-boards-source/casebook-pro-v1-1/README.md`
+- `js/interactive-boards-ui.js` sólo si necesita confirmar el mecanismo de hosting.
+
+Patrón validado:
+
+- standalone canónico;
+- iframe aislado;
+- runtime propio preservado;
+- plataforma registra/aloja en vez de reimplementar.
+
+### Rope Gallery PRO
+
+- `labs/website-modules-source/rope-gallery-pro/README.md`
+- `labs/website-modules-source/rope-gallery-pro/index.html` sólo si hace falta comprobar ejecución.
+
+Patrón validado:
+
+- standalone aprobado como fuente canónica;
+- Website Modules Lab lo carga directamente;
+- funciones globales delegan en la pieza;
+- no se recrea/simplifica la física al integrarla.
+
+---
+
+## BASE MUSEUM SEGURA
 
 Repositorio:
 
 `Juanmaes83/escaparates-pro`
 
-Rama receptora segura:
+Rama de documentación/rollback:
 
 `chatgpt/museum-itinerant-media-visible-v3`
 
-SHA:
+Checkpoint funcional de producto:
 
 `b9389f05af3eab1db4a7dc39cc88a2390eb63e3d`
 
-Estado humano confirmado en esta base:
+En esa base quedaron humanamente confirmados:
 
-- nueva sala itinerante funcionando;
+- sala itinerante;
 - cinco slots de obra;
-- upload de imagen funcionando;
-- upload de vídeo funcionando;
-- visor central funcionando;
-- Museum navegable;
-- base aislada, sin merge a `main/master`.
+- upload imagen;
+- upload vídeo;
+- visor central;
+- navegación Museum;
+- aislamiento respecto a `main/master`.
 
-Esta rama es el **rollback seguro**.
+El HEAD de la rama puede avanzar por documentación. El SHA anterior sigue siendo el rollback funcional de producto.
 
 ---
 
-## ESTADO CLAUDE
+## ESTADO CLAUDE ACTUAL
 
-Rama de trabajo actual:
+Rama:
 
 `claude/museum-itinerant-living-art-graft-v1`
 
-GitHub confirma que esta rama está **7 commits por delante y 0 por detrás** de `chatgpt/museum-itinerant-media-visible-v3`.
+Commit verificado:
 
-Último SHA funcional confirmado antes del WIP visual posterior:
+`c12b04a64f52a9ae1b9fe564fb1c066448ce2508`
 
-`72267d760226f937531245b4c6e1ea0099562401`
+Ese commit corrigió la costura temporal Growth entre `01 ORIGINAL` y `02 PAINTERLY` y aportó evidencia automatizada A→B.
 
-En ese punto quedó confirmada técnicamente la costura:
+**Pero no cambia la decisión de producto:** el enfoque de pipeline Wet Paint absorbido dentro de Museum queda retirado como arquitectura principal.
 
-`upload → 01 ORIGINAL → detección de cambio → reprocess → destino PAINTERLY`.
-
-Después Claude hizo un commit WIP adicional con iteraciones visuales del `PainterlyEngine` reescrito. El conector actual no expone el SHA exacto de ese HEAD posterior, por lo que **NO se inventa** aquí.
-
-Antes de cualquier nueva modificación Claude debe ejecutar y registrar:
-
-```bash
-git rev-parse HEAD
-```
-
-Ese valor sustituirá esta nota como `CURRENT CLAUDE HEAD`.
-
-### Qué conservar de Claude
-
-Conservar, salvo que una prueba concreta demuestre lo contrario:
-
-- `painterly-adapter.js` como concepto/costura Museum;
-- conexión con el media real de `01 ORIGINAL`;
-- detección de cambio de fuente después del upload;
-- reprocess al cambiar ORIGINAL;
-- conexión hacia la superficie `02 PAINTERLY`;
-- workflow de prueba/QA que sea reutilizable sin falsear el resultado.
-
-### Qué descartar de Claude
-
-NO utilizar como motor final:
-
-`labs/immersive-worlds/engines/painterly-engine.js`
-
-Claude auditó su propio trabajo y confirmó:
-
-- donor real: `main.js` de ~3.603 líneas;
-- `painterly-engine.js`: ~844 líneas;
-- port literal aproximado: `0%`;
-- reimplementación/inspiración aproximada: `100%`.
-
-Por tanto el `PainterlyEngine` nuevo queda **RETIRADO COMO ESTRATEGIA**. No seguir corrigiéndolo visualmente.
-
-Claude identificó además módulos donor ya extraídos anteriormente en `claude/museum-living-art-v1`:
-
-- `direction-field.js` — WPF-1
-- `poisson-seeds.js` — WPF-2
-- `bezier-strokes.js` — WPF-3
-- `impasto-material.glsl.js` — WPF-4
-
-Estos módulos pueden ser útiles, pero **no se debe asumir automáticamente que representan toda la piedra**. Deben compararse con el donor completo antes de decidir si bastan. Si son una extracción parcial o con pérdida de comportamiento, se debe portar un bloque mayor del donor real.
+Mantener la rama como evidencia/experimento hasta decidir limpieza. No continuar extendiendo `wet-paint-pipeline.js` ni `painterly-engine.js` como destino arquitectónico.
 
 ---
 
-## DONOR 1 — WET PAINT FLOW
+## DONOR 01 — WET PAINT FLOW
 
 Repositorio:
 
 `Juanmaes83/wet-paint-flow`
 
-SHA canónico validado:
+Commit canónico:
 
 `0b9ba9a5be665f3a2a8b2450945ec5006e61e2de`
 
-### Validación humana ya realizada
-
-Runtime local validado por Juanma:
+Runtime humano validado:
 
 `http://127.0.0.1:4186/`
 
-Arranque usado:
+Estado:
 
-```bash
-npm ci
-npm run dev -- --port 4186
+**DONOR REAL FUNCIONA. NO RECONSTRUIRLO.**
+
+Objetivo de fase:
+
+```text
+01 ORIGINAL
+→ bridge mínimo
+→ Wet Paint standalone real
+→ 02 WET PAINT
 ```
 
-Resultado:
-
-**DONOR FUNCIONAL Y VISUALMENTE VALIDADO.**
-
-No volver a investigar si Wet Paint “funciona”. Funciona.
-
-La misión es integrarlo en Museum conservando su ADN visual y su pipeline real.
-
-Capacidades que deben conservarse al máximo posible:
-
-- lectura estructural/direction field;
-- seeds/Poisson;
-- strokes Bézier coarse / medium / fine;
-- composición Wet Paint / impasto;
-- Growth / replay;
-- modos Brushes / Original / Blend / Flow Sketch;
-- controles visuales útiles del donor.
+El usuario debe poder abrir/ver la experiencia Wet Paint real desde el contexto Museum.
 
 ---
 
-## DONOR 2 — VAN GOGH CROWS
+## DONOR 02 — VAN GOGH CROWS
 
 Repositorio:
 
 `Juanmaes83/van-gogh-crows`
 
-SHA canónico:
+Commit canónico:
 
 `1240c1feb2983c945c81671aa594498ea0fbdfce`
 
-Capacidad principal que interesa portar:
+No implementar todavía.
 
-- sistema real GPGPU / flock / swarm;
-- movimiento de agentes;
-- avoidance / attractor / interacción reutilizable;
-- single-draw-call / sistema de bandada cuando aplique.
+Sólo garantizar que el registry/bridge que se diseñe para Wet Paint no quede acoplado a un único donor.
 
-NO crear un `LivingEngine` genérico inspirado en el donor.
-
-Primero portar/graft el sistema real; después eliminar identidad/asset de cuervo o elementos no deseados y esculpirlo para Museum.
-
-Los assets artísticos específicos del donor no deben asumirse reutilizables sin revisar procedencia/derechos.
+Cuando llegue la fase `03 LIVING`, preservar el runtime real GPGPU/flock. No crear un `LivingEngine` genérico inspirado en él.
 
 ---
 
-## QUÉ DESCARTAMOS DE CHATGPT
+## MUSEUM EXPERIENCE BRIDGE
 
-Rama experimental:
+La nueva costura puede gestionar únicamente:
 
-`chatgpt/museum-wet-paint-donor-graft-v1`
+Museum → donor:
 
-**NO USAR COMO BASE DE IMPLEMENTACIÓN.**
+- source/media de `01 ORIGINAL`;
+- play/replay/reset;
+- parámetros explícitamente expuestos en fases posteriores.
 
-No mergear.
-No cherry-pick automático.
-No continuar parcheándola.
+Donor → Museum:
 
-El trabajo realizado allí puede consultarse únicamente como **evidencia diagnóstica / tests / ideas descartadas**.
+- READY;
+- PROCESSING;
+- RESULT_READY;
+- resultado visual compatible;
+- errores.
 
-No se considera avance de producto.
-
-La rama receptora segura continúa siendo:
-
-`chatgpt/museum-itinerant-media-visible-v3 @ b9389f05af3eab1db4a7dc39cc88a2390eb63e3d`
-
----
-
-## METODOLOGÍA OBLIGATORIA
-
-# PORT FIRST → SEE → SCULPT
-
-También expresado como:
-
-# TRAER LA PIEDRA → VERLA FUNCIONAR → ESCULPIR
-
-Orden obligatorio para donors que ya funcionan:
-
-```text
-DONOR FUNCIONANDO
-↓
-TRAER EL BLOQUE COHERENTE MÁS GRANDE POSIBLE
-↓
-HACERLO FUNCIONAR CASI TAL CUAL EN EL RECEPTOR
-↓
-VERLO
-↓
-RECORTAR UI / SHELL / DEPENDENCIAS QUE SOBRAN
-↓
-ADAPTAR COSTURAS
-↓
-PERSONALIZAR / ESCULPIR
-```
-
-NO:
-
-```text
-DONOR
-↓
-ENTENDER IDEAS
-↓
-REESCRIBIR MOTOR
-↓
-DEBUG
-↓
-INTENTAR RECUPERAR EL ASPECTO DEL DONOR
-```
+El bridge NO contiene shaders, GBuffer, seeds, stroke geometry, impasto, flock ni física donor.
 
 ---
 
-## MISIÓN INMEDIATA
+## MISION INMEDIATA
 
-### 02 WET PAINT REAL DENTRO DE MUSEUM
+### GATE 0 — SIN CODIGO
 
-Objetivo único inmediato:
+Claude debe estudiar únicamente:
 
-```text
-01 ORIGINAL
-    ↓
-imagen real subida en Museum
-    ↓
-WET PAINT FLOW REAL
-    ↓
-02 WET PAINT / PAINTERLY
-```
+1. `MUSEUM_STANDALONE_EXPERIENCE_ARCHITECTURE_V1.md`;
+2. README de Casebook PRO;
+3. README de Rope Gallery PRO;
+4. sólo archivos mínimos de registro/hosting si son necesarios;
+5. `wet-paint-flow @ 0b9ba9a...` sólo para localizar seams de entrada/salida;
+6. conocer `van-gogh-crows @ 1240c1f...` como siguiente donor, sin implementarlo.
 
-Definition of Done mínima:
+Debe responder y STOP con:
 
-1. abrir la sala Museum real;
-2. cargar una imagen en `01 ORIGINAL` con el flujo real de authoring;
-3. `01 ORIGINAL` conserva esa imagen;
-4. `02 WET PAINT` muestra transformación producida por el donor real, no por un engine reescrito;
-5. si Growth forma parte del output, la evolución se puede observar;
-6. Playwright valida el flujo técnico que pueda validar sin falsear GPU/visual;
-7. URL/runtime reproducible para Human Review;
-8. Juanma decide `KEEP / ADJUST / REJECT`;
-9. no avanzar a Living antes de esta revisión.
+A. patrón Casebook reutilizado;
+B. patrón Rope reutilizado;
+C. preservación Wet Paint;
+D. input bridge;
+E. output bridge;
+F. archivos a tocar;
+G. archivos protegidos;
+H. estrategia de preservación A/B y justificación;
+I. generalidad mínima para VGC.
 
-No buscar perfección visual en esta fase. Primero demostrar el injerto real.
+Sólo después de `KEEP — IMPLEMENTA` puede escribir código.
 
 ---
 
-## DESPUÉS — 03 LIVING
+## DEFINITION OF DONE — 02 WET PAINT
 
-Sólo después de validar `02 WET PAINT`:
+1. Museum abre.
+2. Sala itinerante abre.
+3. `01 ORIGINAL` acepta fuente real A.
+4. `02 WET PAINT` recibe A.
+5. Desde Museum se abre/visualiza el Wet Paint standalone real.
+6. El comportamiento observado corresponde al donor real validado.
+7. A→B funciona sin reload.
+8. `02` cambia a transformación de B.
+9. `03/04/05` permanecen intactos.
+10. runtime local reproducible entregado.
+11. Juanma hace Human Review y decide `KEEP / ADJUST / REJECT`.
 
-```text
-VAN GOGH CROWS REAL
-↓
-PORT GPGPU / FLOCK
-↓
-QUITAR IDENTIDAD / ASSETS QUE SOBRAN
-↓
-ADAPTAR A OBRA / MUSEUM
-↓
-03 LIVING
-```
-
-No nuevo `LivingEngine` inspirado en boids.
-
----
-
-## DESPUÉS — 04 COMBINED
-
-Sólo después de que `02 WET PAINT` y `03 LIVING` funcionen por separado:
-
-```text
-WET PAINT REAL
-+
-LIVING REAL
-↓
-04 COMBINED
-```
-
-El Combined se construye por composición de capacidades ya verificadas, no por un tercer engine reescrito desde cero.
+No existe PASS sólo porque Playwright, strokes, píxeles o consola den verde.
 
 ---
 
 ## NO HACER
 
-- NO arqueología general nueva.
-- NO revisar cientos de repositorios.
-- NO engines nuevos que reimplementen donors funcionales.
-- NO refactors generales antes de ver el injerto.
-- NO perfeccionar el `PainterlyEngine` reescrito.
-- NO construir `LivingEngine` genérico inspirado en Van Gogh Crows.
+- NO leer todo Escaparates Pro.
+- NO arqueología general.
+- NO reimplementar donors funcionales.
+- NO engines genéricos nuevos.
+- NO seguir perfeccionando `painterly-engine.js`.
+- NO seguir haciendo de `wet-paint-pipeline.js` la arquitectura principal.
+- NO Living todavía.
+- NO Combined todavía.
+- NO refactor general.
 - NO tocar `main`.
 - NO tocar `master`.
 - NO merge sin aprobación explícita de Juanma.
 - NO tocar Breeze.
 - NO tocar Full Studio global.
-- NO modificar RenderHost / MediaLoader / MuseumSceneKit salvo que una causa demostrada lo haga imprescindible y Juanma lo apruebe.
-- NO presentar `compila` o `Playwright PASS` como equivalente a Human Review.
-- NO entregar fase visual sin URL/runtime reproducible.
+- NO modificar RenderHost / MediaLoader / MuseumSceneKit salvo causa demostrada + aprobación explícita.
+- NO confundir QA técnica con Human Review.
 
 ---
 
-## CONTRATO DE VALIDACIÓN
+## CONTRATO DE VALIDACION
 
 ```text
-CONSTRUIR
-→ EJECUTAR
-→ PLAYWRIGHT / QA TÉCNICO
-→ URL / RUNTIME REAL
+ARQUITECTURA
+→ GATE 0
+→ CHATGPT AUDITA
+→ KEEP / ADJUST / STOP
+→ IMPLEMENTACION MINIMA
+→ EJECUCION
+→ QA TECNICA
+→ RUNTIME REAL
 → JUANMA VE
 → CHATGPT AUDITA
 → CORREGIR
-→ URL NUEVA
+→ NUEVO RUNTIME
 → JUANMA APRUEBA
 ```
 
-Movimiento requiere evidencia temporal. Una captura estática no basta para validar Growth, flock o animación.
-
-Human Review es autoridad final de la fase visual.
+Movimiento requiere evidencia temporal.
+Una captura no valida Growth, interacción o flock.
 
 ---
 
-## CHECKPOINT DE REANUDACIÓN
+## CHECKPOINT DE REANUDACION
 
 ```text
-REPO ACTIVO:
+REPO:
 Juanmaes83/escaparates-pro
 
-BASE MUSEUM SEGURA:
+ARQUITECTURA VIGENTE:
+MUSEUM_STANDALONE_EXPERIENCE_ARCHITECTURE_V1.md
+
+BASE MUSEUM / ROLLBACK FUNCIONAL:
 chatgpt/museum-itinerant-media-visible-v3
 b9389f05af3eab1db4a7dc39cc88a2390eb63e3d
 
-RAMA CLAUDE ACTUAL:
+RAMA CLAUDE EXPERIMENTAL ACTUAL:
 claude/museum-itinerant-living-art-graft-v1
-
-ÚLTIMO SHA FUNCIONAL CONFIRMADO DE LA COSTURA:
-72267d760226f937531245b4c6e1ea0099562401
-
-CURRENT CLAUDE HEAD:
-Claude debe registrar `git rev-parse HEAD` antes de cualquier nueva modificación; existe al menos un WIP posterior al SHA anterior.
+c12b04a64f52a9ae1b9fe564fb1c066448ce2508
 
 DONOR WET PAINT:
 Juanmaes83/wet-paint-flow
 0b9ba9a5be665f3a2a8b2450945ec5006e61e2de
-HUMAN VALIDATED LOCAL: http://127.0.0.1:4186/ ✅
+HUMAN VALIDATED: http://127.0.0.1:4186/
 
-DONOR LIVING:
+DONOR LIVING SIGUIENTE:
 Juanmaes83/van-gogh-crows
 1240c1feb2983c945c81671aa594498ea0fbdfce
 
-MISIÓN ACTUAL:
-02 WET PAINT REAL DENTRO DEL MUSEUM
+ESTRATEGIA RETIRADA:
+internal donor graft / reimplementation as Museum engine
 
-MÉTODO:
-PORT FIRST → SEE → SCULPT
+ESTRATEGIA ACTIVA:
+standalone preservation + Museum shell/bridge
 
-DESCARTAR COMO BASE:
-chatgpt/museum-wet-paint-donor-graft-v1
-PainterlyEngine reescrito
-
-NO FASE 03 hasta Human Review de 02.
+MISION AHORA:
+GATE 0 de Wet Paint standalone.
+NO código hasta auditoría KEEP.
+NO Living.
+NO Combined.
 NO main/master.
-NO merge sin Juanma.
+NO merge.
 ```
 
 ---
 
-**Este documento sustituye reconstrucciones de memoria de conversación cuando entren en conflicto con este estado. Si una rama o SHA avanza, actualizar este mismo checkpoint antes de iniciar otra sesión o conversación.**
+**Este documento y `MUSEUM_STANDALONE_EXPERIENCE_ARCHITECTURE_V1.md` son la fuente de verdad vigente. Si una memoria de conversación entra en conflicto con ellos, prevalece esta decisión hasta una nueva aprobación explícita de Juanma.**
