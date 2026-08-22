@@ -41,7 +41,13 @@ jobs:
           cat /tmp/wet-paint-http.log
           exit 1
 
-      - name: Run Playwright visual QA
+      - name: Prove donor host standalone
+        working-directory: labs/immersive-worlds
+        env:
+          WET_PAINT_HOST_URL: http://127.0.0.1:8000/capabilities/wet-paint-flow/host.html
+        run: npx playwright test tests/wet-paint-donor-host.spec.js --browser=chromium --workers=1 --reporter=line
+
+      - name: Run integrated Playwright visual QA
         working-directory: labs/immersive-worlds
         env:
           WET_PAINT_URL: http://127.0.0.1:8000/wet-paint-studio.html?authoring=1&world=.%2Fworlds%2Fitinerant-wet-paint-lab.world.json&portalVariant=D
@@ -53,6 +59,7 @@ jobs:
         with:
           name: wet-paint-donor-graft-visual-qa
           path: |
+            labs/immersive-worlds/qa-artifacts/wet-paint-donor-host/**
             labs/immersive-worlds/qa-artifacts/wet-paint-donor-graft/**
             labs/immersive-worlds/test-results/**
             /tmp/wet-paint-http.log
