@@ -7,7 +7,8 @@ const ARTIFACTS = path.resolve('qa-artifacts/wet-paint-donor-graft');
 
 fs.mkdirSync(ARTIFACTS, { recursive: true });
 
-test.setTimeout(90_000);
+test.use({ launchOptions: { args: ['--enable-unsafe-swiftshader'] } });
+test.setTimeout(120_000);
 
 test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', async ({ page }) => {
   const consoleErrors = [];
@@ -18,35 +19,53 @@ test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', a
     consoleLines.push(`[${msg.type()}] ${msg.text()}`);
     if (msg.type() === 'error') consoleErrors.push(msg.text());
   });
-  page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
+  page.on('pageerror', (error) => {
+    consoleErrors.push(`pageerror: ${error.message}`);
+    consoleLines.push(`[pageerror] ${error.message}`);
+  });
   page.on('requestfailed', (request) => {
     requestFailures.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || 'failed'}`);
   });
+
+  const dumpFailure = async (label) => {
+    const frame = page.locator('#oreja-wet-paint-runtime');
+    const state = await page.evaluate(() => {
+      const bridge = window.__OREJA_WET_PAINT_BRIDGE;
+      const iframe = document.getElementById('oreja-wet-paint-runtime');
+      const button = document.getElementById('oreja-wet-paint-controls');
+      let hostText = '';
+      let sourceMeta = '';
+      try {
+        hostText = iframe?.contentDocument?.getElementById('boot')?.textContent || '';
+        sourceMeta = iframe?.contentDocument?.getElementById('source-meta')?.textContent || '';
+      } catch {}
+      return {
+        donorStarted: bridge?.donorStarted,
+        donorReady: bridge?.donorReady,
+        donorError: bridge?.donorError,
+        lastFileName: bridge?.lastFileName,
+        buttonText: button?.textContent,
+        hostText,
+        sourceMeta,
+        iframeSrc: iframe?.src
+      };
+    }).catch(() => ({}));
+    await page.screenshot({ path: path.join(ARTIFACTS, `${label}.png`), fullPage: true }).catch(() => {});
+    fs.writeFileSync(path.join(ARTIFACTS, `${label}.txt`), [
+      JSON.stringify(state, null, 2),
+      '\nCONSOLE\n' + consoleLines.join('\n'),
+      '\nNETWORK FAILURES\n' + requestFailures.join('\n')
+    ].join('\n'));
+    return state;
+  };
 
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 30_000 });
   await page.waitForFunction(() => Boolean(window.__IW?.runtime), null, { timeout: 20_000 });
   await page.waitForFunction(() => Boolean(window.__OREJA_WET_PAINT_BRIDGE), null, { timeout: 20_000 });
 
-  const donorState = await page.waitForFunction(() => {
-    const bridge = window.__OREJA_WET_PAINT_BRIDGE;
-    const frame = document.getElementById('oreja-wet-paint-runtime');
-    const errorButton = document.getElementById('oreja-wet-paint-controls');
-    const hostBoot = frame?.contentDocument?.getElementById('boot');
-    if (bridge?.donorReady === true) return { done: true, ready: true };
-    if (errorButton?.dataset?.error === 'true' || hostBoot?.dataset?.error) {
-      return { done: true, ready: false, hostText: hostBoot?.textContent || '', buttonText: errorButton?.textContent || '' };
-    }
-    return null;
-  }, null, { timeout: 30_000 });
-
-  const donor = await donorState.jsonValue();
-  if (!donor.ready) {
-    await page.screenshot({ path: path.join(ARTIFACTS, '00-donor-error.png'), fullPage: true });
-    fs.writeFileSync(path.join(ARTIFACTS, '00-console.txt'), consoleLines.join('\n'));
-    throw new Error(`DONOR HOST FAILED\n${donor.hostText || donor.buttonText || 'unknown'}\n\nConsole:\n${consoleLines.join('\n')}\n\nNetwork:\n${requestFailures.join('\n')}`);
-  }
-
-  await page.screenshot({ path: path.join(ARTIFACTS, '01-boot.png'), fullPage: true });
+  // Lazy boot contract: Museum is usable before the donor starts.
+  expect(await page.evaluate(() => window.__OREJA_WET_PAINT_BRIDGE.donorStarted)).toBe(false);
+  await page.screenshot({ path: path.join(ARTIFACTS, '01-museum-before-donor.png'), fullPage: true });
 
   await page.locator('[data-node="entity.itinerant.original"]').first().click();
   const upload = page.locator('input[data-media="ARTWORK_IMAGE"]').first();
@@ -84,6 +103,41 @@ test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', a
     buffer: Buffer.from(pngBase64, 'base64')
   });
 
+  // Upload must start the real donor; READY is allowed only after that.
+  await page.waitForFunction(() => window.__OREJA_WET_PAINT_BRIDGE?.donorStarted === true, null, { timeout: 10_000 });
+
+  try {
+    await page.waitForFunction(() => {
+      const bridge = window.__OREJA_WET_PAINT_BRIDGE;
+      return bridge?.donorReady === true || Boolean(bridge?.donorError);
+    }, null, { timeout: 60_000 });
+  } catch {
+    const state = await dumpFailure('02-donor-stuck-loading');
+    throw new Error(`DONOR STUCK LOADING\n${JSON.stringify(state, null, 2)}`);
+  }
+
+  const donorState = await page.evaluate(() => ({
+    ready: window.__OREJA_WET_PAINT_BRIDGE?.donorReady,
+    error: window.__OREJA_WET_PAINT_BRIDGE?.donorError || '',
+    button: document.getElementById('oreja-wet-paint-controls')?.textContent || ''
+  }));
+  if (!donorState.ready) {
+    await dumpFailure('02-donor-error');
+    throw new Error(`DONOR HOST FAILED: ${donorState.error || donorState.button}`);
+  }
+
+  // Prove the donor itself received THIS uploaded file, not its initial built-in scene.
+  try {
+    await page.waitForFunction((name) => {
+      const frame = document.getElementById('oreja-wet-paint-runtime');
+      const meta = frame?.contentDocument?.getElementById('source-meta')?.textContent || '';
+      return meta.includes(name);
+    }, 'oreja-rubik-sota-qa.png', { timeout: 30_000 });
+  } catch {
+    const state = await dumpFailure('03-donor-did-not-accept-upload');
+    throw new Error(`DONOR DID NOT ACCEPT UPLOADED SOURCE\n${JSON.stringify(state, null, 2)}`);
+  }
+
   await page.waitForFunction(() => window.__OREJA_WET_PAINT_BRIDGE?.lastFileName === 'oreja-rubik-sota-qa.png', null, { timeout: 30_000 });
   await page.waitForFunction(() => {
     const bridge = window.__OREJA_WET_PAINT_BRIDGE;
@@ -108,15 +162,15 @@ test('01 ORIGINAL -> pinned donor -> 02 PAINTERLY, with real motion evidence', a
       p.userData?.orejaWetPaintDonor?.donor === 'Juanmaes83/wet-paint-flow' &&
       p.material.map !== o.material.map
     );
-  }, null, { timeout: 20_000 });
+  }, null, { timeout: 30_000 });
 
-  await page.screenshot({ path: path.join(ARTIFACTS, '02-upload-and-painterly.png'), fullPage: true });
+  await page.screenshot({ path: path.join(ARTIFACTS, '04-upload-and-painterly.png'), fullPage: true });
 
   await page.evaluate(() => window.__OREJA_WET_PAINT_BRIDGE.replay());
   await page.waitForTimeout(350);
-  const frameA = await page.locator('#iw-canvas').screenshot({ path: path.join(ARTIFACTS, '03-growth-a.png') });
+  const frameA = await page.locator('#iw-canvas').screenshot({ path: path.join(ARTIFACTS, '05-growth-a.png') });
   await page.waitForTimeout(1400);
-  const frameB = await page.locator('#iw-canvas').screenshot({ path: path.join(ARTIFACTS, '04-growth-b.png') });
+  const frameB = await page.locator('#iw-canvas').screenshot({ path: path.join(ARTIFACTS, '06-growth-b.png') });
   expect(frameA.equals(frameB)).toBeFalsy();
 
   const state = await page.evaluate(() => ({
