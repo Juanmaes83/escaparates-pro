@@ -36,6 +36,11 @@
       growthControl:'Crecimiento',restartGrowth:'Regenerar',growthTimeline:'Línea de crecimiento',pause:'Pausa',resume:'Continuar',waiting:'Esperando',growthComplete:'Completo',growthCoarse:'Capa gruesa',growthMediumFine:'Media + fina',growthFinishing:'Acabado',source:'Fuente',importSource:'Importar imagen o GLB',localProcessing:'JPG / PNG / WebP / GLB · Procesado local',defaultGeometry:'Geometría base',liveStrokeFollow:'Seguimiento de pincelada',sphere:'Esfera',cube:'Cubo',torus:'Toro',knot:'Nudo',modelColor:'Color del modelo',preview3d:'Vista 3D',strokeResult:'Resultado pictórico',builtInWorks:'Obras de prueba',strokeMorph:'Transición de pinceladas',startTour:'Tour automático',stopTour:'Detener tour',loadingScenes:'Cargando escenas…',loadingWork:'Cargando',selectWork:'Seleccionar obra',restoreScene:'Restaurar escena',display:'Vista',brushOnly:'Pinceladas',beigeCanvas:'Lienzo gris perla',original:'Original',noStrokes:'Sin pinceladas',model3d:'Modelo 3D',dragToRotate:'Arrastra para rotar',brushAndOriginal:'Pinceladas + original',blendedView:'Vista fusionada',flowSketch:'Mapa de flujo',pencilFlow:'Direcciones',brushLayers:'Capas de pincel',coarse:'Gruesa',structure:'Estructura',medium:'Media',shaping:'Forma',fine:'Fina',texture:'Textura',strokeEffects:'Efectos de pincel',previewQuality:'Calidad',qualityBalanced:'Fluida',qualityHigh:'Alta',qualityUltra:'Ultra',strokeSize:'Tamaño de pincel',strokeLength:'Longitud de pincel',strokeCount:'Cantidad de pinceladas',paintThickness:'Espesor de pintura',paintDryness:'Secado',paintViscosity:'Viscosidad',generateExport:'Generar y exportar',exportPng:'Exportar PNG 4K',exportVideo:'Exportar vídeo de crecimiento',checkingPerformance:'Comprobando rendimiento…',recording:'Grabando',seconds:'s',canvasHint:'Rueda: zoom · Doble clic: restaurar · Línea: navegar',lightAngle:'Ángulo de luz',resizePanel:'Redimensionar panel'
     });
 
+    function status(text){
+      if (boot?.isConnected) boot.textContent=text;
+      window.parent?.postMessage({type:'OREJA_WET_PAINT_STATUS',message:text},location.origin);
+    }
+
     function applySpanish(){
       document.documentElement.lang='es';
       document.title='OREJA · RUBIK SOTA — Wet Paint';
@@ -49,12 +54,17 @@
     }
 
     async function fetchText(path){
-      const res=await fetch(`${DONOR_BASE}/${path}`,{cache:'no-store'});
-      if(!res.ok) throw new Error(`Donor ${path}: HTTP ${res.status}`);
-      return res.text();
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),15000);
+      try{
+        const res=await fetch(`${DONOR_BASE}/${path}`,{cache:'no-store',signal:controller.signal});
+        if(!res.ok) throw new Error(`Donor ${path}: HTTP ${res.status}`);
+        return await res.text();
+      } finally { clearTimeout(timer); }
     }
 
     async function bootDonor(){
+      status('Cargando piedra Wet Paint · archivos…');
       const [htmlText,cssText,mainText]=await Promise.all([
         fetchText('index.html'),fetchText('styles.css'),fetchText('main.js')
       ]);
@@ -68,12 +78,20 @@
       style.textContent=cssText+'\nhtml,body,#app,.stage,#canvas-mount{background:#d9d9d4!important;}';
       document.head.appendChild(style);
 
-      // Stone-first: preserve donor algorithms/shaders/parameters. Only relative asset URLs
-      // are pinned to the donor SHA so the module can execute under Museum's URL.
+      // Stone-first: preserve donor algorithms, shaders and tuned parameters.
+      // Museum-specific sculpture only removes the donor's built-in demo boot so
+      // the engine wakes on the user's uploaded artwork instead of rendering a
+      // heavy default scene first. Asset URLs stay pinned to the exact donor SHA.
       const source=mainText
         .replaceAll("'./public/",`'${DONOR_BASE}/public/`)
-        .replaceAll('"./public/',`"${DONOR_BASE}/public/`);
+        .replaceAll('"./public/',`"${DONOR_BASE}/public/`)
+        .replace(
+          'requestFrame();\ninitializeSceneLibrary();',
+          '/* Museum host: defer default demo render/library; real upload triggers requestFrame. */'
+        );
+
       try{localStorage.setItem('wet-paint-flow-language','en');}catch{}
+      status('Cargando piedra Wet Paint · motor real…');
       const blob=new Blob([source],{type:'text/javascript'});
       const moduleUrl=URL.createObjectURL(blob);
       await import(moduleUrl);
@@ -96,8 +114,10 @@
     }
 
     function getCanvas(){return document.querySelector('#canvas-mount canvas');}
+    function getSourceMeta(){return document.getElementById('source-meta')?.textContent||'';}
+    function hasSource(name){return Boolean(name&&getSourceMeta().includes(name));}
     function replay(){document.getElementById('replay-growth-button')?.click();}
-    window.__OREJA_WET_PAINT={get ready(){return ready;},loadFile,getCanvas,replay,applySpanish,DONOR_SHA};
+    window.__OREJA_WET_PAINT={get ready(){return ready;},loadFile,getCanvas,getSourceMeta,hasSource,replay,applySpanish,DONOR_SHA};
 
     bootDonor().catch(error=>{
       console.error('[OREJA Wet Paint host]',error);
