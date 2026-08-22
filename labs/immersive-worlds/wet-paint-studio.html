@@ -27,10 +27,8 @@
     try {
       // This dedicated lab must not inherit Museum's legacy single-key authoring
       // state. Previous Full Studio sessions may contain presentation fields
-      // (for example `material`) that are valid authoring metadata but forbidden
-      // inside the semantic World record by INV-6. Keep that legacy state intact
-      // for the normal Museum; simply give this receiver its own clean in-memory
-      // base config until durable world-scoped persistence is introduced.
+      // forbidden inside the semantic World record. Keep that legacy state
+      // intact for the normal Museum; give this receiver a clean in-memory base.
       const [{ baseConfigFromWorld }] = await Promise.all([
         import('./authoring/experience-config.js')
       ]);
@@ -40,8 +38,9 @@
       });
       window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
 
-      // Install the visibility seam before Full Studio creates its instance.
-      await import('./authoring/wet-paint-visible-media.js');
+      // Install the media-inspection contract before Full Studio creates its
+      // instance. Upload/select -> visible central image/video; no Museum reboot.
+      await import('./authoring/wet-paint-media-inspector.js');
 
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
