@@ -168,35 +168,44 @@ function startTexturePump() {
 
 async function processOriginalFile(file) {
   if (!file || !String(file.type || '').startsWith('image/')) return false;
-  const api = await waitForDonor();
-  await api.loadFile(file);
+  const runtime = window.__IW?.runtime;
+  runtime?.stopLoop?.();
+  document.documentElement.dataset.wetPaintProcessing = 'true';
 
-  // The donor has an initial canvas. Never bind that by mistake. Wait until its
-  // own source metadata confirms THIS exact uploaded file was decoded.
-  const sourceStarted = performance.now();
-  while (performance.now() - sourceStarted < 30000) {
-    if (api.hasSource?.(file.name)) break;
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  if (!api.hasSource?.(file.name)) {
-    throw new Error(`Wet Paint no confirmó la fuente ${file.name}. Estado: ${api.getSourceMeta?.() || 'sin metadata'}`);
-  }
+  try {
+    const api = await waitForDonor();
+    await api.loadFile(file);
 
-  const started = performance.now();
-  let canvas = null;
-  while (performance.now() - started < 30000) {
-    canvas = api.getCanvas?.();
-    if (canvas && canvas.width > 1 && canvas.height > 1) break;
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  if (!canvas || canvas.width < 2) throw new Error('Wet Paint donor no produjo canvas');
+    // Never bind the donor's initial canvas. Its own source metadata must prove
+    // that THIS exact uploaded file has been decoded first.
+    const sourceStarted = performance.now();
+    while (performance.now() - sourceStarted < 30000) {
+      if (api.hasSource?.(file.name)) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!api.hasSource?.(file.name)) {
+      throw new Error(`Wet Paint no confirmó la fuente ${file.name}. Estado: ${api.getSourceMeta?.() || 'sin metadata'}`);
+    }
 
-  bindCanvasToPainterly(canvas);
-  startTexturePump();
-  lastFileName = file.name || 'imagen';
-  api.replay?.();
-  console.log(`[Wet Paint donor bridge] ${lastFileName} → donor real → 02 PAINTERLY`);
-  return true;
+    const started = performance.now();
+    let canvas = null;
+    while (performance.now() - started < 30000) {
+      canvas = api.getCanvas?.();
+      if (canvas && canvas.width > 1 && canvas.height > 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!canvas || canvas.width < 2) throw new Error('Wet Paint donor no produjo canvas');
+
+    bindCanvasToPainterly(canvas);
+    startTexturePump();
+    lastFileName = file.name || 'imagen';
+    api.replay?.();
+    console.log(`[Wet Paint donor bridge] ${lastFileName} → donor real → 02 PAINTERLY`);
+    return true;
+  } finally {
+    delete document.documentElement.dataset.wetPaintProcessing;
+    runtime?.startLoop?.();
+  }
 }
 
 ensureUi();
