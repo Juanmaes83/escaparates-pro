@@ -641,3 +641,45 @@ export function projectionTextTexture(text, { size = 1024, aspect = 1.78, color 
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
+
+/**
+ * A door name-plate: a warm bronze plaque with an engraved room name, drawn to
+ * be read unlit (MeshBasic) so it is legible in the white cube and the dark
+ * chamber alike. `aspect` is width/height of the target plane.
+ */
+export function signPlateTexture(text, aspect = 5.5) {
+  const w = 1024;
+  const h = Math.max(2, Math.round(w / aspect));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Bronze plate with a soft vertical sheen.
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#241d15');
+  grad.addColorStop(0.5, '#342a1e');
+  grad.addColorStop(1, '#1d1710');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Engraved inner rule.
+  ctx.strokeStyle = 'rgba(190,168,120,0.55)';
+  ctx.lineWidth = Math.max(2, h * 0.03);
+  const m = h * 0.16;
+  ctx.strokeRect(m, m, w - m * 2, h - m * 2);
+
+  // Room name.
+  ctx.fillStyle = '#f2ecdc';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `500 ${Math.round(h * 0.4)}px Georgia, 'Times New Roman', serif`;
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = h * 0.03;
+  ctx.fillText(String(text), w / 2, h * 0.54, w - m * 3);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  return texture;
+}

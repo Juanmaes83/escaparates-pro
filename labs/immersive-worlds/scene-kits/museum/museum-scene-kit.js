@@ -24,7 +24,7 @@ import { PortalSurface } from './portal-surface.js';
 import { profileFor } from './profiles.js';
 import {
   artworkTexture, createGeneratedVideoTexture, floorTexture, labelTexture, plasterTexture,
-  projectionMask, projectionFloorMask, projectionTextTexture
+  projectionMask, projectionFloorMask, projectionTextTexture, signPlateTexture
 } from './textures.js';
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
@@ -258,6 +258,32 @@ export class MuseumSceneKit extends SceneKit {
       threshold.position.set(opening.worldPosition[0], origin[1], opening.worldPosition[2]);
       if (opening.wall === 'EAST' || opening.wall === 'WEST') threshold.rotation.y = Math.PI / 2;
       group.add(threshold);
+
+      // A name plate over the lintel: the room this doorway leads to, legible
+      // before you cross. Unlit (MeshBasic) so it reads the same in the white
+      // cube and in the dark chamber — a lit sign, independent of room lighting.
+      if (opening.label) {
+        const signW = Math.min(Math.max(opening.width - 0.1, 1.4), 2.4);
+        const signH = 0.46;
+        const tex = signPlateTexture(opening.label.toUpperCase(), signW / signH);
+        const sign = new THREE.Mesh(
+          new THREE.PlaneGeometry(signW, signH),
+          new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide, toneMapped: false })
+        );
+        // Sit clearly above the opening's top reveal (its soffit occludes anything
+        // hugging the lintel), and stand the plate proud of the wall on a small
+        // bracket so a visitor looking up from below sees it clear of the jamb.
+        const y = origin[1] + Math.min(opening.height + 0.5, h - signH / 2 - 0.1);
+        const off = WALL_THICKNESS / 2 + 0.22;
+        const [ox2, , oz2] = origin;
+        // PlaneGeometry's readable face is +z; a Y-rotation of θ turns it to
+        // (sinθ, 0, cosθ). Turn each plate to face into the room.
+        if (opening.wall === 'NORTH') { sign.position.set(opening.worldPosition[0], y, oz2 - d / 2 + off); sign.rotation.y = 0; }
+        else if (opening.wall === 'SOUTH') { sign.position.set(opening.worldPosition[0], y, oz2 + d / 2 - off); sign.rotation.y = Math.PI; }
+        else if (opening.wall === 'WEST') { sign.position.set(ox2 - w / 2 + off, y, opening.worldPosition[2]); sign.rotation.y = Math.PI / 2; }
+        else { sign.position.set(ox2 + w / 2 - off, y, opening.worldPosition[2]); sign.rotation.y = -Math.PI / 2; }
+        group.add(sign);
+      }
     }
 
     const spots = [];
@@ -2034,12 +2060,20 @@ export class MuseumSceneKit extends SceneKit {
       const width = portal.representationHint === REPRESENTATION_HINT.OPENING ? 2.6 : 1.5;
       const height = Math.min(portal.representationHint === REPRESENTATION_HINT.OPENING ? 3.0 : 2.35, h - 0.4);
 
+      // The name of the room this doorway leads to, so a visitor reads the
+      // access before crossing it. Short form, matching the World Map: the
+      // part before the em-dash subtitle ("Galería B — Cámara oscura" → "Galería B").
+      let label = '';
+      try { label = String(store.require(portal.toSpaceId)?.title || '').replace(/\s+—.*$/, '').trim(); } catch { /* */ }
+
       openings.push({
         wall,
         offset,
         width,
         height,
         portalId: portal.id,
+        toSpaceId: portal.toSpaceId,
+        label,
         worldPosition: [ax, oy, az]
       });
     }
