@@ -114,13 +114,14 @@ function pinceladaBody(params) {
     return quality + sliders;
 }
 
-function crecimientoBody() {
-    return `<label class="st-f wp-slider"><span class="st-l">Línea de tiempo</span>
-        <input type="range" min="0" max="5" step="0.01" value="5" data-wp-timeline></label>
+function crecimientoBody(direction) {
+    return `<span class="st-l">Dirección de la transición</span>
       <div class="wp-row">
-        <button type="button" class="st-b st-b--small" data-wp-act="replay">Reproducir crecimiento</button>
-        <button type="button" class="st-b st-b--small" data-wp-act="pause">Pausa</button>
-      </div>`;
+        <button type="button" class="wp-chip" data-wp-dir="normal" aria-pressed="${direction !== 'inverted'}">Imagen → efecto</button>
+        <button type="button" class="wp-chip" data-wp-dir="inverted" aria-pressed="${direction === 'inverted'}">Efecto → imagen</button>
+      </div>
+      <div class="wp-row"><button type="button" class="st-b wp-primary" data-wp-act="play">▶ Reproducir transición</button></div>
+      <p class="st-note">La animación se ve en el cuadro, en la sala.</p>`;
 }
 
 function salidaBody() {
@@ -140,14 +141,15 @@ function wetPaintEditor(studio, node) {
     const stored = WetPaintStore.get(node.id) || {};
     const params = { ...DEFAULTS, ...(stored.params || {}) };
     const hasSource = Boolean(stored.resultDataUrl);
+    const direction = eng()?.getDirection?.() || 'normal';
     const hint = hasSource
-        ? ''
-        : '<p class="st-note" style="color:var(--st-warn,#d8b45e)">Sube una imagen o elige una obra en “Fuente y biblioteca” para empezar.</p>';
+        ? '<p class="st-note">Proceso: <b>1</b> Fuente · <b>2</b> Efecto · <b>3</b> Reproducir transición · <b>4</b> Guardar y aplicar.</p>'
+        : '<p class="st-note" style="color:var(--st-warn,#d8b45e)"><b>Paso 1:</b> sube una imagen o elige una obra en “Fuente y biblioteca”. El cuadro animará la imagen → efecto automáticamente.</p>';
     const secBody = {
         fuente: fuenteBody(),
         visual: visualBody(params),
         pincelada: pinceladaBody(params),
-        crecimiento: crecimientoBody(),
+        crecimiento: crecimientoBody(direction),
         salida: salidaBody(),
     };
     const body = ACC.map((sec) => group(studio, sec, secBody[sec.id])).join('');
@@ -189,11 +191,14 @@ function bindWetPaint(studio, scope) {
         const out = root.querySelector(`[data-wp-out="${el.dataset.wpSlider}"]`); if (out) out.textContent = el.value;
         e.setParam(el.dataset.wpSlider, el.value);
     }));
-    root.querySelectorAll('[data-wp-timeline]').forEach((el) => el.addEventListener('input', () => e.setTimeline(el.value)));
+    root.querySelectorAll('[data-wp-dir]').forEach((el) => el.addEventListener('click', () => {
+        e.setDirection(el.dataset.wpDir);
+        root.querySelectorAll('[data-wp-dir]').forEach((b) => b.setAttribute('aria-pressed', b === el));
+        e.playTransition();
+    }));
     root.querySelectorAll('[data-wp-act]').forEach((el) => el.addEventListener('click', () => {
         const a = el.dataset.wpAct;
-        if (a === 'replay') e.replay();
-        else if (a === 'pause') e.pause();
+        if (a === 'play') e.playTransition();
         else if (a === 'save') e.saveAndApply();
         else if (a === 'exportpng') e.exportPng();
         else if (a === 'exportvideo') e.exportVideo();
@@ -204,7 +209,7 @@ function bindWetPaint(studio, scope) {
     if (status && !statusListener) {
         statusListener = (ev) => {
             const el2 = document.querySelector('[data-wp-status]'); if (!el2) return;
-            const map = { processing: 'Procesando el efecto…', result: 'Resultado aplicado a la obra ✓', saved: 'Guardado y aplicado ✓', error: 'No se pudo aplicar', nosource: 'Elige o sube una fuente primero', ready: '' };
+            const map = { processing: 'Preparando la fuente…', playing: 'Reproduciendo transición…', result: 'Transición lista ✓ (pulsa Guardar y aplicar para fijarla)', saved: 'Guardado y aplicado ✓', error: 'No se pudo aplicar', nosource: 'Elige o sube una fuente primero', ready: '' };
             el2.textContent = map[ev.detail?.kind] ?? '';
         };
         window.addEventListener('wetpaint:status', statusListener);

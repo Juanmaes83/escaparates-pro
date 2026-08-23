@@ -176,64 +176,141 @@ function toStoredJpeg(src, maxDim = 1024, q = 0.86) {
 
 let bridge = null;
 let sceneKitRef = null;
-let activeEntityId = ARTWORK_IDS[1];
+let runtimeRef = null;
+let activeEntityId = ARTWORK_IDS[0];
 let loadedSourceEntityId = null;
-let refreshTimer = 0;
-const sourceSet = new Set(); // entities that have a source loaded/known this session
+let direction = 'normal';        // 'normal' = imagen→efecto · 'inverted' = efecto→imagen
+let stream = null;               // { entityId, tex } while a live transition plays
+let paramTimer = 0;
+const sourceSet = new Set();
 
 const plateOf = (id) => findArtworkPlate(sceneKitRef, id);
 const rec = (id) => WetPaintStore.get(id) || null;
+const donorCanvas = () => bridge?.element?.contentDocument?.querySelector('#canvas-mount canvas') || null;
 function notify(kind, detail) { try { window.dispatchEvent(new CustomEvent('wetpaint:status', { detail: { kind, entityId: activeEntityId, ...detail } })); } catch { /* noop */ } }
 async function ensureReady() { return bridge.waitReady(); }
+async function persist(id, patch) { WetPaintStore.save(id, { ...(rec(id) || {}), ...patch }); }
 
-async function persist(id, patch) {
-    const prev = rec(id) || {};
-    WetPaintStore.save(id, { ...prev, ...patch });
+// Called every Museum frame: while a transition plays, COPY the donor's current
+// frame into this cuadro's OWN offscreen canvas and show it on the plate. Each
+// cuadro is backed by its own canvas, so cuadros can never share pixels even if a
+// freeze momentarily fails — no cross-cuadro contamination.
+function tick() {
+    if (!stream) return;
+    const src = donorCanvas();
+    if (!src) return;
+    try { stream.sctx.drawImage(src, 0, 0, stream.dst.width, stream.dst.height); stream.tex.needsUpdate = true; } catch { /* transient */ }
 }
 
-// Reprocess the active cuadro from its currently-loaded donor source and paint it.
-async function captureAndApply(id, { persistResult = true } = {}) {
-    const dataUrl = await donor.refreshResult(bridge.element);
-    if (!dataUrl) { notify('error', { message: 'sin resultado' }); return false; }
-    await applyImageToPlate(plateOf(id), dataUrl);
-    if (persistResult) persist(id, { params: donor.getParams(bridge.element), resultDataUrl: await toStoredJpeg(dataUrl) });
-    notify('result', {});
-    return true;
+function stopStream() { stream = null; }
+
+// If a transition is still streaming a cuadro, freeze its OWN canvas onto its
+// texture before we touch the donor for anything else.
+async function freezeStreamIfAny() {
+    if (!stream) return;
+    const sid = stream.entityId;
+    let still = null;
+    try { stream.sctx.drawImage(donorCanvas(), 0, 0, stream.dst.width, stream.dst.height); still = stream.dst.toDataURL('image/png'); } catch { still = null; }
+    stopStream();
+    if (still) { await applyImageToPlate(plateOf(sid), still); await persist(sid, { resultDataUrl: await toStoredJpeg(still) }); }
 }
 
-function scheduleLiveRefresh() {
-    // Only reflect edits when the active cuadro actually has its source loaded.
-    if (loadedSourceEntityId !== activeEntityId || !sourceSet.has(activeEntityId)) return;
-    clearTimeout(refreshTimer);
-    notify('processing', {});
-    refreshTimer = setTimeout(() => captureAndApply(activeEntityId), 700);
+function waitGrowth(target, timeoutMs) {
+    return new Promise((resolve) => {
+        const doc = bridge.element.contentDocument;
+        const start = performance.now();
+        const poll = () => {
+            const gp = Number(doc.documentElement.dataset.growthProgress || 0);
+            if ((target >= 1 ? gp >= 0.999 : gp <= target + 0.001) || performance.now() - start > timeoutMs) return resolve();
+            setTimeout(poll, 80);
+        };
+        poll();
+    });
 }
 
-// Load a cuadro's stored source back into the donor (so param edits reprocess the
-// right image after switching cuadros or reloading).
+// Drive the donor's real growth timeline from a→b over ms (used for the inverted
+// direction, effect→image).
+function animateTimeline(from, to, ms) {
+    return new Promise((resolve) => {
+        const start = performance.now();
+        const stepFn = () => {
+            const t = Math.min(1, (performance.now() - start) / ms);
+            donor.setTimeline(bridge.element, from + (to - from) * t);
+            if (t >= 1) return resolve();
+            requestAnimationFrame(stepFn);
+        };
+        stepFn();
+    });
+}
+
+// Freeze the current donor frame into the cuadro's own texture (so it survives
+// switching cuadros) and persist it.
+async function freezeActive(id, extra = {}) {
+    let still = null;
+    try {
+        if (stream?.dst) { stream.sctx.drawImage(donorCanvas(), 0, 0, stream.dst.width, stream.dst.height); still = stream.dst.toDataURL('image/png'); }
+        else { const c = donorCanvas(); still = c ? c.toDataURL('image/png') : null; }
+    } catch { still = null; }
+    stopStream();
+    if (still) {
+        await applyImageToPlate(plateOf(id), still);
+        await persist(id, { params: donor.getParams(bridge.element), resultDataUrl: await toStoredJpeg(still), ...extra });
+        notify('result', {});
+        return true;
+    }
+    notify('error', {});
+    return false;
+}
+
+// Play the live transition on the ACTIVE cuadro and freeze at the end.
+async function playTransition() {
+    const id = activeEntityId;
+    if (!sourceSet.has(id)) { notify('nosource', {}); return false; }
+    await freezeStreamIfAny();
+    const canvas = donorCanvas();
+    if (!canvas) { notify('error', {}); return false; }
+    stopStream();
+    // Per-cuadro offscreen canvas: the plate is backed by THIS canvas, fed from the
+    // donor each frame. Isolated per cuadro → no contamination between artworks.
+    const dst = document.createElement('canvas');
+    dst.width = canvas.width || 1024; dst.height = canvas.height || 768;
+    const sctx = dst.getContext('2d');
+    try { sctx.drawImage(canvas, 0, 0, dst.width, dst.height); } catch { /* first frame */ }
+    const tex = new THREE.CanvasTexture(dst);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const plate = plateOf(id);
+    if (plate?.material) { const prev = plate.material.map; plate.material.map = tex; plate.material.needsUpdate = true; if (prev && prev !== tex) { try { prev.dispose?.(); } catch { /* noop */ } } }
+    stream = { entityId: id, dst, sctx, tex };
+    notify('playing', {});
+    // Drive the donor's real growth timeline over a fixed wall-clock duration so
+    // the transition is smooth and clearly visible on every machine (the donor's
+    // own growth speed varies with GPU). We stream each frame to the plate.
+    const DUR = 3800;
+    if (direction === 'inverted') await animateTimeline(5, 0, DUR); // efecto → imagen
+    else await animateTimeline(0, 5, DUR);                          // imagen → efecto
+    await new Promise((r) => setTimeout(r, 120));
+    return freezeActive(id);
+}
+
+// Load a cuadro's stored source back into the donor so its transition can replay
+// after switching cuadros or reloading.
 async function loadSourceInto(id) {
     const r = rec(id);
-    if (!r) return false;
+    if (!r?.sourceKind) return false;
+    const doc = bridge.element.contentDocument;
     if (r.sourceKind === 'scene' && r.sceneId) {
-        const doc = bridge.element.contentDocument;
         doc.querySelector(`.scene-card[data-scene-id="${r.sceneId}"]`)?.click();
         const start = performance.now();
         while (performance.now() - start < 12000) { if (doc.documentElement.dataset.activeSceneId === r.sceneId) break; await new Promise((res) => setTimeout(res, 150)); }
-        loadedSourceEntityId = id; sourceSet.add(id);
-        if (r.params) donor.applyParams(bridge.element, r.params);
-        return true;
-    }
-    if (r.sourceKind === 'upload' && r.sourceDataUrl) {
+    } else if (r.sourceKind === 'upload' && r.sourceDataUrl) {
         const blob = await (await fetch(r.sourceDataUrl)).blob();
         donor.setSource(bridge.element, new File([blob], `${id}.jpg`, { type: blob.type || 'image/jpeg' }));
-        // let it load
         const start = performance.now();
-        while (performance.now() - start < 12000) { const gp = Number(bridge.element.contentDocument.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((res) => setTimeout(res, 120)); }
-        loadedSourceEntityId = id; sourceSet.add(id);
-        if (r.params) donor.applyParams(bridge.element, r.params);
-        return true;
-    }
-    return false;
+        while (performance.now() - start < 12000) { const gp = Number(doc.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((res) => setTimeout(res, 120)); }
+    } else return false;
+    loadedSourceEntityId = id; sourceSet.add(id);
+    if (r.params) donor.applyParams(bridge.element, r.params);
+    return true;
 }
 
 const engine = {
@@ -242,28 +319,33 @@ const engine = {
     activeEntity: () => activeEntityId,
     getParams: () => donor.getParams(bridge.element),
     hasSource: (id) => sourceSet.has(id || activeEntityId) || Boolean(rec(id || activeEntityId)?.resultDataUrl),
+    getDirection: () => direction,
+    setDirection(d) { direction = d === 'inverted' ? 'inverted' : 'normal'; },
 
     async setActiveEntity(id) {
+        if (id === activeEntityId) return;
+        await freezeStreamIfAny();          // never leave a half-done cuadro streaming
         activeEntityId = id;
         if (!this.ready) return;
-        // Bring this cuadro's params + source into the donor so edits reprocess it.
         const r = rec(id);
         if (r?.params) donor.applyParams(bridge.element, r.params);
-        if (loadedSourceEntityId !== id && r && (r.sourceKind)) { notify('processing', {}); loadSourceInto(id).then(() => notify('ready', {})); }
+        if (loadedSourceEntityId !== id && r?.sourceKind) { notify('processing', {}); loadSourceInto(id).then(() => notify('ready', {})); }
     },
 
-    setParam(name, value) { donor.setParam(bridge.element, name, value); scheduleLiveRefresh(); },
-    setQuality(v) { donor.setQuality(bridge.element, v); scheduleLiveRefresh(); },
-    setViewMode(v) { donor.setViewMode(bridge.element, v); scheduleLiveRefresh(); },
-    setBrushLayer(i, on) { donor.setBrushLayer(bridge.element, i, on); scheduleLiveRefresh(); },
-    setTimeline(v) { donor.setTimeline(bridge.element, v); },
-    replay() { donor.replay(bridge.element); scheduleLiveRefresh(); },
-    pause() { donor.pause(bridge.element); },
+    // Editing a parameter re-runs the live transition (debounced) so you SEE it.
+    _paramTouched() { clearTimeout(paramTimer); paramTimer = setTimeout(() => { if (sourceSet.has(activeEntityId)) playTransition(); }, 650); },
+    setParam(name, value) { donor.setParam(bridge.element, name, value); this._paramTouched(); },
+    setQuality(v) { donor.setQuality(bridge.element, v); this._paramTouched(); },
+    setViewMode(v) { donor.setViewMode(bridge.element, v); this._paramTouched(); },
+    setBrushLayer(i, on) { donor.setBrushLayer(bridge.element, i, on); this._paramTouched(); },
+    replay() { return playTransition(); },
+    playTransition() { return playTransition(); },
     exportPng() { donor.exportPng(bridge.element); },
     exportVideo() { donor.exportVideo(bridge.element); },
 
     async syncFromLibrary(sceneId) {
         await ensureReady();
+        await freezeStreamIfAny();
         const id = activeEntityId;
         notify('processing', {});
         const doc = bridge.element.contentDocument;
@@ -271,44 +353,34 @@ const engine = {
         const start = performance.now();
         while (performance.now() - start < 12000) { if (doc.documentElement.dataset.activeSceneId === sceneId) break; await new Promise((r) => setTimeout(r, 150)); }
         loadedSourceEntityId = id; sourceSet.add(id);
-        const dataUrl = await donor.refreshResult(bridge.element);
-        if (dataUrl) {
-            await applyImageToPlate(plateOf(id), dataUrl);
-            persist(id, { sourceKind: 'scene', sceneId, params: donor.getParams(bridge.element), resultDataUrl: await toStoredJpeg(dataUrl) });
-            notify('result', {});
-        } else notify('error', {});
+        await persist(id, { sourceKind: 'scene', sceneId });
+        await playTransition();  // auto-play the transition on the plate
     },
 
     async processFromEditor(file) {
         await ensureReady();
+        await freezeStreamIfAny();
         const id = activeEntityId;
         notify('processing', {});
-        const result = await bridge.process(file);
+        donor.setSource(bridge.element, file);
+        const doc = bridge.element.contentDocument;
+        const start = performance.now();
+        while (performance.now() - start < 12000) { const gp = Number(doc.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((r) => setTimeout(r, 120)); }
         loadedSourceEntityId = id; sourceSet.add(id);
-        let dataUrl = result.status === STATUS.RESULT_READY ? result.resultDataUrl : (await donor.refreshResult(bridge.element));
-        if (dataUrl) {
-            await applyImageToPlate(plateOf(id), dataUrl);
-            const srcSmall = await toStoredJpeg(URL.createObjectURL(file));
-            persist(id, { sourceKind: 'upload', sourceDataUrl: srcSmall, params: donor.getParams(bridge.element), resultDataUrl: await toStoredJpeg(dataUrl) });
-            notify('result', {});
-        } else notify('error', {});
+        await persist(id, { sourceKind: 'upload', sourceDataUrl: await toStoredJpeg(URL.createObjectURL(file)) });
+        await playTransition();  // auto-play the transition on the plate
     },
 
     async saveAndApply() {
         if (!sourceSet.has(activeEntityId)) { notify('nosource', {}); return false; }
         notify('processing', {});
-        const ok = await captureAndApply(activeEntityId, { persistResult: true });
+        const ok = await freezeActive(activeEntityId);
         notify(ok ? 'saved' : 'error', {});
         return ok;
     },
 
-    // Re-apply every stored cuadro result to its plate (boot, and after any
-    // world rebuild / preview that reset the plates from config).
     async restoreAll() {
-        for (const id of ARTWORK_IDS) {
-            const r = rec(id);
-            if (r?.resultDataUrl) { sourceSet.add(id); await applyImageToPlate(plateOf(id), r.resultDataUrl); }
-        }
+        for (const id of ARTWORK_IDS) { const r = rec(id); if (r?.resultDataUrl) { sourceSet.add(id); await applyImageToPlate(plateOf(id), r.resultDataUrl); } }
     },
 };
 
@@ -318,12 +390,16 @@ export function installWetPaint(runtime) {
     const sceneKit = runtime?.sceneKit;
     if (!sceneKit) { console.error('[WetPaint] runtime.sceneKit not available'); return null; }
     sceneKitRef = sceneKit;
+    runtimeRef = runtime;
 
     bridge = createExperienceBridge({ id: EXPERIENCE_ID, url: STANDALONE_URL, adapter: donor, onStatus: () => {} });
 
+    // Stream live transitions to the plates on every Museum frame.
+    const originalOnFrame = runtime.onFrame;
+    runtime.onFrame = (pose, dt) => { try { tick(); } catch { /* noop */ } if (originalOnFrame) originalOnFrame(pose, dt); };
+
     bridge.waitReady().then(async () => { await engine.restoreAll(); notify('ready', {}); });
 
-    // Upload through the Studio media slot on any artwork → that cuadro's Wet Paint.
     const originalTakeFile = StudioShell.prototype._takeFile;
     StudioShell.prototype._takeFile = async function wetPaintTakeFile(slot, file) {
         await originalTakeFile.call(this, slot, file);
