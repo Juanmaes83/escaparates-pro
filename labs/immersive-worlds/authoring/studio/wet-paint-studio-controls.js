@@ -126,12 +126,34 @@ function crecimientoBody(direction) {
 
 function salidaBody() {
     return `<div class="wp-row">
+        <button type="button" class="st-b" data-wp-act="play">▶ Previsualizar transición</button>
+      </div>
+      <div class="wp-row">
         <button type="button" class="st-b wp-primary" data-wp-act="save">Guardar y aplicar</button>
       </div>
       <div class="wp-row">
         <button type="button" class="st-b st-b--small" data-wp-act="exportpng">Exportar PNG</button>
         <button type="button" class="st-b st-b--small" data-wp-act="exportvideo">Exportar vídeo</button>
       </div>`;
+}
+
+// Write the applied Wet Paint result into the Museum media of the artwork, so it
+// also shows in Contenido → Medios, in exports and after a preview rebuild.
+async function writeResultToMuseumMedia(studio, entityId, dataUrl) {
+    if (!studio || !entityId || !dataUrl) return;
+    try {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], `wetpaint-${entityId.split('.').pop()}.jpg`, { type: blob.type || 'image/jpeg' });
+        const asset = await studio.vault.accept(file, { kind: 'image' });
+        if (!asset || asset.state === 'ERROR') return;
+        const holder = studio._entityDraft(entityId);
+        holder.image = {
+            kind: 'image', src: asset.reference, assetId: asset.id, name: asset.name,
+            mimeType: asset.mimeType, bytes: asset.bytes, width: asset.width, height: asset.height, durationMs: 0,
+        };
+        studio._markDirty();
+        studio.render();
+    } catch (e) { console.warn('[WetPaint] write Museum media failed', e); }
 }
 
 function wetPaintEditor(studio, node) {
@@ -196,10 +218,11 @@ function bindWetPaint(studio, scope) {
         root.querySelectorAll('[data-wp-dir]').forEach((b) => b.setAttribute('aria-pressed', b === el));
         e.playTransition();
     }));
-    root.querySelectorAll('[data-wp-act]').forEach((el) => el.addEventListener('click', () => {
+    const entityId = group.dataset.wpEntity;
+    root.querySelectorAll('[data-wp-act]').forEach((el) => el.addEventListener('click', async () => {
         const a = el.dataset.wpAct;
         if (a === 'play') e.playTransition();
-        else if (a === 'save') e.saveAndApply();
+        else if (a === 'save') { await e.saveAndApply(); await writeResultToMuseumMedia(studio, entityId, e.getFinalFrame(entityId)); }
         else if (a === 'exportpng') e.exportPng();
         else if (a === 'exportvideo') e.exportVideo();
     }));

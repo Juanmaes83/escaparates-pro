@@ -172,6 +172,7 @@ function toStoredJpeg(src, maxDim = 1024, q = 0.86) {
     });
 }
 
+
 // ── engine state ─────────────────────────────────────────────────────────────
 
 let bridge = null;
@@ -179,10 +180,13 @@ let sceneKitRef = null;
 let runtimeRef = null;
 let activeEntityId = ARTWORK_IDS[0];
 let loadedSourceEntityId = null;
-let direction = 'normal';        // 'normal' = imagen→efecto · 'inverted' = efecto→imagen
-let stream = null;               // { entityId, tex } while a live transition plays
+let direction = 'normal';
+let stream = null;               // { entityId, dst, sctx, tex, frames[], lastCap } during a transition
 let paramTimer = 0;
 const sourceSet = new Set();
+const loops = new Map();          // entityId → looping transition player { frames, canvas, ctx, tex, idx, last, hold, holdUntil, w, h }
+const LOOP_STEP = 150;            // ms per frame
+const LOOP_HOLD = 900;            // ms to hold the final effect before restarting from the image
 
 const plateOf = (id) => findArtworkPlate(sceneKitRef, id);
 const rec = (id) => WetPaintStore.get(id) || null;
@@ -190,46 +194,64 @@ const donorCanvas = () => bridge?.element?.contentDocument?.querySelector('#canv
 function notify(kind, detail) { try { window.dispatchEvent(new CustomEvent('wetpaint:status', { detail: { kind, entityId: activeEntityId, ...detail } })); } catch { /* noop */ } }
 async function ensureReady() { return bridge.waitReady(); }
 async function persist(id, patch) { WetPaintStore.save(id, { ...(rec(id) || {}), ...patch }); }
+function loadImg(url) { return new Promise((resolve) => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => resolve(i); i.onerror = () => resolve(null); i.src = url; }); }
+function setPlateTexture(id, tex) { const plate = plateOf(id); if (plate?.material) { const prev = plate.material.map; plate.material.map = tex; plate.material.needsUpdate = true; if (prev && prev !== tex) { try { prev.dispose?.(); } catch { /* noop */ } } } }
 
-// Called every Museum frame: while a transition plays, COPY the donor's current
-// frame into this cuadro's OWN offscreen canvas and show it on the plate. Each
-// cuadro is backed by its own canvas, so cuadros can never share pixels even if a
-// freeze momentarily fails — no cross-cuadro contamination.
+// Museum frame loop: stream the live transition into the active cuadro's own
+// canvas AND advance every cuadro's looping transition so the room always shows
+// the transformation from the start (image → effect), not a frozen still.
 function tick() {
-    if (!stream) return;
-    const src = donorCanvas();
-    if (!src) return;
-    try { stream.sctx.drawImage(src, 0, 0, stream.dst.width, stream.dst.height); stream.tex.needsUpdate = true; } catch { /* transient */ }
+    const now = performance.now();
+    if (stream) {
+        const src = donorCanvas();
+        if (src) { try { stream.sctx.drawImage(src, 0, 0, stream.dst.width, stream.dst.height); stream.tex.needsUpdate = true; } catch { /* transient */ } }
+        if (now - (stream.lastCap || 0) > 250) { try { stream.frames.push(stream.dst.toDataURL('image/jpeg', 0.72)); } catch { /* noop */ } stream.lastCap = now; }
+    }
+    loops.forEach((lp, id) => {
+        if (stream && stream.entityId === id) return;   // it's currently (re)playing live
+        if (!lp.frames.length) return;
+        if (lp.hold) { if (now >= lp.holdUntil) { lp.hold = false; lp.idx = 0; } else return; }
+        if (now - lp.last < LOOP_STEP) return;
+        lp.last = now;
+        try { lp.ctx.drawImage(lp.frames[lp.idx], 0, 0, lp.w, lp.h); lp.tex.needsUpdate = true; } catch { /* noop */ }
+        if (lp.idx >= lp.frames.length - 1) { lp.hold = true; lp.holdUntil = now + LOOP_HOLD; }
+        else lp.idx += 1;
+    });
 }
 
 function stopStream() { stream = null; }
 
-// If a transition is still streaming a cuadro, freeze its OWN canvas onto its
-// texture before we touch the donor for anything else.
-async function freezeStreamIfAny() {
-    if (!stream) return;
-    const sid = stream.entityId;
-    let still = null;
-    try { stream.sctx.drawImage(donorCanvas(), 0, 0, stream.dst.width, stream.dst.height); still = stream.dst.toDataURL('image/png'); } catch { still = null; }
+// Build a looping player for a cuadro from a list of frame data-URLs.
+async function buildLoop(id, frameUrls) {
+    const imgs = (await Promise.all(frameUrls.map(loadImg))).filter(Boolean);
+    if (!imgs.length) return false;
+    const w = imgs[0].width || 1024;
+    const h = imgs[0].height || 768;
+    const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgs[0], 0, 0, w, h);
+    const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace;
+    setPlateTexture(id, tex);
+    loops.set(id, { frames: imgs, canvas, ctx, tex, idx: 0, last: performance.now(), hold: false, holdUntil: 0, w, h });
+    return true;
+}
+
+// End the current transition: turn the captured frames into a persisted loop.
+async function finishTransition(id, extra = {}) {
+    if (!stream) return false;
+    const frames = stream.frames.slice();
+    try { stream.sctx.drawImage(donorCanvas(), 0, 0, stream.dst.width, stream.dst.height); frames.push(stream.dst.toDataURL('image/jpeg', 0.85)); } catch { /* noop */ }
     stopStream();
-    if (still) { await applyImageToPlate(plateOf(sid), still); await persist(sid, { resultDataUrl: await toStoredJpeg(still) }); }
+    if (!frames.length) { notify('error', {}); return false; }
+    const compact = await Promise.all(frames.map((f) => toStoredJpeg(f, 640, 0.7)));
+    await buildLoop(id, compact);
+    await persist(id, { params: donor.getParams(bridge.element), frames: compact, resultDataUrl: compact[compact.length - 1], ...extra });
+    notify('result', {});
+    return true;
 }
 
-function waitGrowth(target, timeoutMs) {
-    return new Promise((resolve) => {
-        const doc = bridge.element.contentDocument;
-        const start = performance.now();
-        const poll = () => {
-            const gp = Number(doc.documentElement.dataset.growthProgress || 0);
-            if ((target >= 1 ? gp >= 0.999 : gp <= target + 0.001) || performance.now() - start > timeoutMs) return resolve();
-            setTimeout(poll, 80);
-        };
-        poll();
-    });
-}
+async function freezeStreamIfAny() { if (stream) await finishTransition(stream.entityId); }
 
-// Drive the donor's real growth timeline from a→b over ms (used for the inverted
-// direction, effect→image).
 function animateTimeline(from, to, ms) {
     return new Promise((resolve) => {
         const start = performance.now();
@@ -243,57 +265,29 @@ function animateTimeline(from, to, ms) {
     });
 }
 
-// Freeze the current donor frame into the cuadro's own texture (so it survives
-// switching cuadros) and persist it.
-async function freezeActive(id, extra = {}) {
-    let still = null;
-    try {
-        if (stream?.dst) { stream.sctx.drawImage(donorCanvas(), 0, 0, stream.dst.width, stream.dst.height); still = stream.dst.toDataURL('image/png'); }
-        else { const c = donorCanvas(); still = c ? c.toDataURL('image/png') : null; }
-    } catch { still = null; }
-    stopStream();
-    if (still) {
-        await applyImageToPlate(plateOf(id), still);
-        await persist(id, { params: donor.getParams(bridge.element), resultDataUrl: await toStoredJpeg(still), ...extra });
-        notify('result', {});
-        return true;
-    }
-    notify('error', {});
-    return false;
-}
-
-// Play the live transition on the ACTIVE cuadro and freeze at the end.
+// Play the live transition on the ACTIVE cuadro, then leave it looping.
 async function playTransition() {
     const id = activeEntityId;
     if (!sourceSet.has(id)) { notify('nosource', {}); return false; }
     await freezeStreamIfAny();
     const canvas = donorCanvas();
     if (!canvas) { notify('error', {}); return false; }
-    stopStream();
-    // Per-cuadro offscreen canvas: the plate is backed by THIS canvas, fed from the
-    // donor each frame. Isolated per cuadro → no contamination between artworks.
+    loops.delete(id);
     const dst = document.createElement('canvas');
     dst.width = canvas.width || 1024; dst.height = canvas.height || 768;
     const sctx = dst.getContext('2d');
     try { sctx.drawImage(canvas, 0, 0, dst.width, dst.height); } catch { /* first frame */ }
-    const tex = new THREE.CanvasTexture(dst);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    const plate = plateOf(id);
-    if (plate?.material) { const prev = plate.material.map; plate.material.map = tex; plate.material.needsUpdate = true; if (prev && prev !== tex) { try { prev.dispose?.(); } catch { /* noop */ } } }
-    stream = { entityId: id, dst, sctx, tex };
+    const tex = new THREE.CanvasTexture(dst); tex.colorSpace = THREE.SRGBColorSpace;
+    setPlateTexture(id, tex);
+    stream = { entityId: id, dst, sctx, tex, frames: [], lastCap: 0 };
     notify('playing', {});
-    // Drive the donor's real growth timeline over a fixed wall-clock duration so
-    // the transition is smooth and clearly visible on every machine (the donor's
-    // own growth speed varies with GPU). We stream each frame to the plate.
     const DUR = 3800;
-    if (direction === 'inverted') await animateTimeline(5, 0, DUR); // efecto → imagen
-    else await animateTimeline(0, 5, DUR);                          // imagen → efecto
+    if (direction === 'inverted') await animateTimeline(5, 0, DUR); else await animateTimeline(0, 5, DUR);
     await new Promise((r) => setTimeout(r, 120));
-    return freezeActive(id);
+    return finishTransition(id);
 }
 
-// Load a cuadro's stored source back into the donor so its transition can replay
-// after switching cuadros or reloading.
+// Reload a cuadro's stored source into the donor (so param edits reprocess it).
 async function loadSourceInto(id) {
     const r = rec(id);
     if (!r?.sourceKind) return false;
@@ -307,7 +301,7 @@ async function loadSourceInto(id) {
         donor.setSource(bridge.element, new File([blob], `${id}.jpg`, { type: blob.type || 'image/jpeg' }));
         const start = performance.now();
         while (performance.now() - start < 12000) { const gp = Number(doc.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((res) => setTimeout(res, 120)); }
-    } else return false;
+    } else return false;   // 'glb' sources are not reloaded in V1 (kept as their looped result)
     loadedSourceEntityId = id; sourceSet.add(id);
     if (r.params) donor.applyParams(bridge.element, r.params);
     return true;
@@ -319,20 +313,20 @@ const engine = {
     activeEntity: () => activeEntityId,
     getParams: () => donor.getParams(bridge.element),
     hasSource: (id) => sourceSet.has(id || activeEntityId) || Boolean(rec(id || activeEntityId)?.resultDataUrl),
+    getFinalFrame: (id) => rec(id || activeEntityId)?.resultDataUrl || null,
     getDirection: () => direction,
     setDirection(d) { direction = d === 'inverted' ? 'inverted' : 'normal'; },
 
     async setActiveEntity(id) {
         if (id === activeEntityId) return;
-        await freezeStreamIfAny();          // never leave a half-done cuadro streaming
+        await freezeStreamIfAny();
         activeEntityId = id;
         if (!this.ready) return;
         const r = rec(id);
         if (r?.params) donor.applyParams(bridge.element, r.params);
-        if (loadedSourceEntityId !== id && r?.sourceKind) { notify('processing', {}); loadSourceInto(id).then(() => notify('ready', {})); }
+        if (loadedSourceEntityId !== id && r?.sourceKind && r.sourceKind !== 'glb') { notify('processing', {}); loadSourceInto(id).then(() => notify('ready', {})); }
     },
 
-    // Editing a parameter re-runs the live transition (debounced) so you SEE it.
     _paramTouched() { clearTimeout(paramTimer); paramTimer = setTimeout(() => { if (sourceSet.has(activeEntityId)) playTransition(); }, 650); },
     setParam(name, value) { donor.setParam(bridge.element, name, value); this._paramTouched(); },
     setQuality(v) { donor.setQuality(bridge.element, v); this._paramTouched(); },
@@ -354,33 +348,39 @@ const engine = {
         while (performance.now() - start < 12000) { if (doc.documentElement.dataset.activeSceneId === sceneId) break; await new Promise((r) => setTimeout(r, 150)); }
         loadedSourceEntityId = id; sourceSet.add(id);
         await persist(id, { sourceKind: 'scene', sceneId });
-        await playTransition();  // auto-play the transition on the plate
+        await playTransition();
     },
 
     async processFromEditor(file) {
         await ensureReady();
         await freezeStreamIfAny();
         const id = activeEntityId;
+        const isGlb = /\.glb$/i.test(file.name || '') || /gltf/i.test(file.type || '');
         notify('processing', {});
-        donor.setSource(bridge.element, file);
+        donor.setSource(bridge.element, file);   // donor routes GLB → loadGlbModel, image → loadUploadedImage
         const doc = bridge.element.contentDocument;
         const start = performance.now();
-        while (performance.now() - start < 12000) { const gp = Number(doc.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((r) => setTimeout(r, 120)); }
+        while (performance.now() - start < 15000) { const gp = Number(doc.documentElement.dataset.growthProgress || 1); if (gp < 1) break; await new Promise((r) => setTimeout(r, 120)); }
         loadedSourceEntityId = id; sourceSet.add(id);
-        await persist(id, { sourceKind: 'upload', sourceDataUrl: await toStoredJpeg(URL.createObjectURL(file)) });
-        await playTransition();  // auto-play the transition on the plate
+        await persist(id, isGlb ? { sourceKind: 'glb' } : { sourceKind: 'upload', sourceDataUrl: await toStoredJpeg(URL.createObjectURL(file)) });
+        await playTransition();
     },
 
     async saveAndApply() {
         if (!sourceSet.has(activeEntityId)) { notify('nosource', {}); return false; }
-        notify('processing', {});
-        const ok = await freezeActive(activeEntityId);
-        notify(ok ? 'saved' : 'error', {});
-        return ok;
+        if (stream) await finishTransition(activeEntityId);   // finalize a preview in progress
+        notify('saved', {});
+        return true;
     },
 
+    // Re-apply every stored cuadro (looping transition, or a still fallback) after
+    // a rebuild / preview, so the room keeps showing the transformation.
     async restoreAll() {
-        for (const id of ARTWORK_IDS) { const r = rec(id); if (r?.resultDataUrl) { sourceSet.add(id); await applyImageToPlate(plateOf(id), r.resultDataUrl); } }
+        for (const id of ARTWORK_IDS) {
+            const r = rec(id);
+            if (r?.frames?.length) { sourceSet.add(id); await buildLoop(id, r.frames); }
+            else if (r?.resultDataUrl) { sourceSet.add(id); await applyImageToPlate(plateOf(id), r.resultDataUrl); }
+        }
     },
 };
 
@@ -394,7 +394,6 @@ export function installWetPaint(runtime) {
 
     bridge = createExperienceBridge({ id: EXPERIENCE_ID, url: STANDALONE_URL, adapter: donor, onStatus: () => {} });
 
-    // Stream live transitions to the plates on every Museum frame.
     const originalOnFrame = runtime.onFrame;
     runtime.onFrame = (pose, dt) => { try { tick(); } catch { /* noop */ } if (originalOnFrame) originalOnFrame(pose, dt); };
 
@@ -403,7 +402,10 @@ export function installWetPaint(runtime) {
     const originalTakeFile = StudioShell.prototype._takeFile;
     StudioShell.prototype._takeFile = async function wetPaintTakeFile(slot, file) {
         await originalTakeFile.call(this, slot, file);
-        if (!file || !ARTWORK_IDS.includes(this.selectedId) || !String(file.type || '').startsWith('image/')) return;
+        if (!file || !ARTWORK_IDS.includes(this.selectedId)) return;
+        const isImg = String(file.type || '').startsWith('image/');
+        const isGlb = /\.glb$/i.test(file.name || '') || /gltf/i.test(file.type || '');
+        if (!isImg && !isGlb) return;
         activeEntityId = this.selectedId;
         try { await engine.processFromEditor(file); } catch (e) { console.error('[WetPaint] upload failed', e); notify('error', {}); }
     };
