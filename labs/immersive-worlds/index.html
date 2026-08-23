@@ -37,11 +37,34 @@
       requestAnimationFrame(() => window.__IW_STUDIO?.render?.());
     });
 
-    boot().then(() => {
+    boot().then(async () => {
       installVisitorPhase1();
       installMuseumPhase2();
       installMuseumPhase2LayoutFix();
       installMuseumPhase2Hardening();
+
+      // — Wet Paint como capacidad nativa del Museo (Sala 4 — Exposición Itinerante) —
+      // El donante (wet-paint-flow @ 0b9ba9a) funciona como motor OCULTO; sus controles
+      // se presentan de forma nativa dentro del editor de Studio de las obras de la Sala 4
+      // (acordeón, español, piel Museum). Sin overlay, sin salir del panel. Las galerías
+      // clásicas (A/B) no muestran Wet Paint: el panel se limita a las obras itinerantes.
+      try {
+        const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
+        const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
+        const runtime = window.__IW?.runtime;
+        if (runtime) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          const result = installWetPaint(runtime);
+          installWetPaintStudioControls();
+          if (result) {
+            console.log('[Wet Paint] Motor + controles nativos de Studio instalados (Sala 4)');
+          } else {
+            console.warn('[Wet Paint] Motor diferido — runtime no listo');
+          }
+        }
+      } catch (bridgeError) {
+        console.error('[Wet Paint] Instalación fallida (no crítica):', bridgeError);
+      }
     }).catch((error) => {
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);

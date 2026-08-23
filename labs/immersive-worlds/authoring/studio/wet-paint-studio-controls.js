@@ -156,9 +156,14 @@ async function writeResultToMuseumMedia(studio, entityId, dataUrl) {
     } catch (e) { console.warn('[WetPaint] write Museum media failed', e); }
 }
 
+// Wet Paint is a capability of the itinerant room (Sala 4) only. Classic
+// galleries (A/B) keep their normal Studio editor with no Wet Paint controls.
+const WET_PAINT_ENTITY_PREFIX = 'entity.itinerant.';
+
 function wetPaintEditor(studio, node) {
-    // Every artwork is an independent Wet Paint cuadro.
+    // Every itinerant artwork is an independent Wet Paint cuadro.
     if (node?.kind !== 'ENTITY' || node.entityKind !== 'ARTWORK') return '';
+    if (!String(node.id || '').startsWith(WET_PAINT_ENTITY_PREFIX)) return '';
     ensureStyle();
     const stored = WetPaintStore.get(node.id) || {};
     const params = { ...DEFAULTS, ...(stored.params || {}) };
