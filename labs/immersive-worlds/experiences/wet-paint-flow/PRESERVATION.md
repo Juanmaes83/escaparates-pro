@@ -52,6 +52,17 @@ the standalone is modified:
 - **Result surface:** the WebGL canvas at `#canvas-mount` (`renderer.domElement`).
   Museum captures one still after RESULT_READY for the `02 WET PAINT` wall plate.
 
+## Museum seam added to index.html (documented, not donor logic)
+
+`index.html` carries ONE tiny inline `<script>` at the top of `<head>`, added by
+Museum: it patches `HTMLCanvasElement.prototype.getContext` to force
+`preserveDrawingBuffer: true` before the donor bundle creates its WebGL context,
+so the host can reliably read the painted frame (`toDataURL`) on real GPUs. This
+does not touch the donor bundle or its algorithm; it is the same "neutralise on
+the instance" discipline used by the Habitación 3 guest. Because of this line the
+entry-HTML SHA-256 differs from a pristine `vite build` output; the `assets/*`
+bundles are unchanged from the pinned build.
+
 ## Preservation rule
 
 This artifact is a frozen canonical baseline. Do not hand-edit it. To update,

@@ -12,8 +12,7 @@
  */
 
 import { StudioShell } from './studio-shell.js';
-
-const PAINTERLY_ENTITY_ID = 'entity.itinerant.painterly';
+import { WetPaintStore } from '../../experiences/wet-paint-store.js';
 const ACC = [
     { id: 'fuente', title: 'Fuente y biblioteca', open: true },
     { id: 'visual', title: 'Visualización', open: false },
@@ -126,7 +125,7 @@ function crecimientoBody() {
 
 function salidaBody() {
     return `<div class="wp-row">
-        <button type="button" class="st-b wp-primary" data-wp-act="save">Guardar y aplicar en 02</button>
+        <button type="button" class="st-b wp-primary" data-wp-act="save">Guardar y aplicar</button>
       </div>
       <div class="wp-row">
         <button type="button" class="st-b st-b--small" data-wp-act="exportpng">Exportar PNG</button>
@@ -135,9 +134,15 @@ function salidaBody() {
 }
 
 function wetPaintEditor(studio, node) {
-    if (node?.kind !== 'ENTITY' || node.id !== PAINTERLY_ENTITY_ID) return '';
+    // Every artwork is an independent Wet Paint cuadro.
+    if (node?.kind !== 'ENTITY' || node.entityKind !== 'ARTWORK') return '';
     ensureStyle();
-    const params = { ...DEFAULTS, ...(eng()?.getParams?.() || {}) };
+    const stored = WetPaintStore.get(node.id) || {};
+    const params = { ...DEFAULTS, ...(stored.params || {}) };
+    const hasSource = Boolean(stored.resultDataUrl);
+    const hint = hasSource
+        ? ''
+        : '<p class="st-note" style="color:var(--st-warn,#d8b45e)">Sube una imagen o elige una obra en “Fuente y biblioteca” para empezar.</p>';
     const secBody = {
         fuente: fuenteBody(),
         visual: visualBody(params),
@@ -146,9 +151,10 @@ function wetPaintEditor(studio, node) {
         salida: salidaBody(),
     };
     const body = ACC.map((sec) => group(studio, sec, secBody[sec.id])).join('');
-    return `<section class="wp-wetpaint" aria-label="Wet Paint">
+    return `<section class="wp-wetpaint" aria-label="Wet Paint" data-wp-entity="${node.id}">
       <h3 class="wp-title">Wet Paint</h3>
-      <p class="st-note">Personaliza el efecto por secciones. Abre solo lo que necesites; el resultado se refleja en la obra 02 de la sala.</p>
+      <p class="st-note">Personaliza el efecto por secciones. Abre solo lo que necesites; el resultado se refleja en esta obra en la sala.</p>
+      ${hint}
       ${body}
       <div class="wp-status" data-wp-status></div>
     </section>`;
@@ -157,8 +163,11 @@ function wetPaintEditor(studio, node) {
 let statusListener = null;
 function bindWetPaint(studio, scope) {
     const root = scope || studio.root;
-    if (!root.querySelector('.wp-wetpaint')) return;
+    const group = root.querySelector('.wp-wetpaint');
+    if (!group) return;
     const e = eng();
+    // Point the shared engine at the cuadro being edited.
+    if (e && group.dataset.wpEntity) e.setActiveEntity(group.dataset.wpEntity);
 
     root.querySelectorAll('[data-wp-acc]').forEach((el) => el.addEventListener('click', () => {
         const id = el.dataset.wpAcc;
@@ -195,7 +204,7 @@ function bindWetPaint(studio, scope) {
     if (status && !statusListener) {
         statusListener = (ev) => {
             const el2 = document.querySelector('[data-wp-status]'); if (!el2) return;
-            const map = { processing: 'Procesando el efecto…', result: 'Resultado aplicado en 02 ✓', saved: 'Guardado y aplicado en 02 ✓', error: 'No se pudo aplicar', ready: '' };
+            const map = { processing: 'Procesando el efecto…', result: 'Resultado aplicado a la obra ✓', saved: 'Guardado y aplicado ✓', error: 'No se pudo aplicar', nosource: 'Elige o sube una fuente primero', ready: '' };
             el2.textContent = map[ev.detail?.kind] ?? '';
         };
         window.addEventListener('wetpaint:status', statusListener);
@@ -215,6 +224,22 @@ export function installWetPaintStudioControls() {
         originalBind.call(this, scope);
         try { bindWetPaint(this, scope); } catch (e) { console.warn('[WetPaint controls] bind', e); }
     };
+    // A preview / apply rebuilds the room from config and resets the plates; re-apply
+    // the stored Wet Paint results so what you configured is what you see.
+    const originalApply = StudioShell.prototype._apply;
+    StudioShell.prototype._apply = async function (...args) {
+        const r = await originalApply.apply(this, args);
+        try { await window.__WET_PAINT_ENGINE?.restoreAll?.(); } catch { /* noop */ }
+        return r;
+    };
+    const originalStart = StudioShell.prototype._start;
+    if (originalStart) {
+        StudioShell.prototype._start = async function (...args) {
+            const r = await originalStart.apply(this, args);
+            setTimeout(() => { try { window.__WET_PAINT_ENGINE?.restoreAll?.(); } catch { /* noop */ } }, 1200);
+            return r;
+        };
+    }
     const studio = window.__IW_STUDIO;
     if (studio) studio.render();
 }

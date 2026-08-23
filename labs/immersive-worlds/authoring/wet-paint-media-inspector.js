@@ -175,8 +175,15 @@ function clearPreview(studio) {
 }
 
 function mountInspector(studio) {
-  ensureStyle();
+  // MUSEUM CHANGE: the 2D media-inspector overlay is retired. It covered the live
+  // 3D room (hiding the Wet Paint result on the plates) and, being pointer-opaque,
+  // swallowed clicks on the room's navigation arrows. The centre now always shows
+  // the live 3D room; any existing overlay is removed and none is mounted.
   const stage = studio.root?.querySelector('.st-stage');
+  stage?.querySelector('.wp-media-inspector')?.remove();
+  return;
+  /* eslint-disable no-unreachable */
+  // eslint-disable-next-line no-constant-condition
   if (!stage) return;
   stage.querySelector('.wp-media-inspector')?.remove();
 
