@@ -62,26 +62,27 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      // — Standalone Experience host: 01 ORIGINAL drives the REAL Wet Paint —
-      // Museum hosts the preserved wet-paint-flow standalone (donor @ 0b9ba9a)
-      // in an isolated iframe and bridges to it. It does NOT reimplement the
-      // donor. Uploads to 01 ORIGINAL are handed to the donor; the captured
-      // result is placed on 02 WET PAINT.
+      // — Wet Paint as a native Museum capability —
+      // The donor (wet-paint-flow @ 0b9ba9a) runs as a HIDDEN engine; its controls
+      // are presented natively inside the Studio editor of the 02 PAINTERLY artwork
+      // (accordion, Spanish, Museum skin). No overlay, no leaving the panel.
       try {
         const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
+        const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
         const runtime = window.__IW?.runtime;
         if (runtime) {
           // Wait one frame for sceneKit to finish building artwork meshes.
           await new Promise((resolve) => requestAnimationFrame(resolve));
           const result = installWetPaint(runtime);
+          installWetPaintStudioControls();
           if (result) {
-            console.log('[Wet Paint Studio] Wet Paint experience bridge installed');
+            console.log('[Wet Paint Studio] Wet Paint engine + native Studio controls installed');
           } else {
-            console.warn('[Wet Paint Studio] Wet Paint bridge deferred — runtime not ready');
+            console.warn('[Wet Paint Studio] Wet Paint engine deferred — runtime not ready');
           }
         }
       } catch (bridgeError) {
-        console.error('[Wet Paint Studio] Wet Paint bridge install failed (non-fatal):', bridgeError);
+        console.error('[Wet Paint Studio] Wet Paint install failed (non-fatal):', bridgeError);
       }
     } catch (error) {
       console.error('[Wet Paint Studio] boot failed', error);
