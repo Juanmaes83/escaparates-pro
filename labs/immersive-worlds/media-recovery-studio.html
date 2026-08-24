@@ -40,16 +40,18 @@
       // One media path only:
       // MediaVault READY URL -> shared MediaLoader -> live surface.
       await import('./authoring/museum-visible-media.js');
+      // This import also installs authored-projection cleanup before SceneKit boot.
       await import('./authoring/museum-video-entity-media.js');
       // Outer wrapper: after Studio records the authored binding and live surface
       // is updated, write the same media into the running WorldStore canonical
       // entity. SpaceLifecycle will then rebuild from the correct truth naturally.
       await import('./authoring/museum-canonical-media-binding.js');
 
-      // Keep the already human-tested validation UI; no durable round-trip or
-      // Runtime monkey-patch modules are installed in V2.
+      // Keep the human-tested flow, then harden only the exact surface checks
+      // needed to close Marea baja and Cuaderno de luz.
       await import('./authoring/studio/studio-validation-flow.js');
       await import('./authoring/studio/studio-validation-hardening.js');
+      await import('./authoring/studio/gallery-b-closeout-validation.js');
 
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
@@ -65,7 +67,7 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      console.log('[Museum Media Recovery V2] canonical session media ready');
+      console.log('[Museum Media Recovery V2] Gallery B closeout ready');
     } catch (error) {
       console.error('[Museum Media Recovery V2] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
