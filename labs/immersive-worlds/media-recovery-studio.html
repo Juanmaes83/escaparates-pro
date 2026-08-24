@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+  <link rel="stylesheet" href="./authoring/studio/studio-validation-flow.css">
 </head>
 <body>
   <main id="iw-stage">
@@ -36,13 +37,11 @@
       });
       window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
 
-      // Install the reusable ARTWORK media seam before Full Studio creates its
-      // instance. Upload image/video -> visible immediately on the live 3D work.
+      // Install reusable live media seams before Full Studio creates its instance.
       await import('./authoring/museum-visible-media.js');
-      // Gallery B contains a canonical VIDEO entity (`Cuaderno de luz`) which
-      // Full Studio does not yet expose as replaceable media. This adapter gives
-      // it the same proven MediaVault + live-surface contract for this human gate.
       await import('./authoring/museum-video-entity-media.js');
+      // Install the evidence-driven workflow before mountStudio constructs the shell.
+      await import('./authoring/studio/studio-validation-flow.js');
 
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
@@ -58,7 +57,7 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      console.log('[Museum Media Recovery] Gallery A/B receiver ready');
+      console.log('[Museum Media Recovery] staged validation receiver ready');
     } catch (error) {
       console.error('[Museum Media Recovery] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
