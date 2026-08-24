@@ -1,19 +1,13 @@
 /**
  * Breeze Studio PRO V4.1 — full-room nested guest.
  *
- * The Museum owns the WorldGraph and room lifecycle. Breeze Studio PRO owns
- * everything inside the specialised room: WebGPU, cloth, backgrounds, object
- * replacement and experience effects. The approved V4.1 build is presented as
- * one bounded guest; it does not create a second Museum route or camera.
- *
- * Human-gate donor is pinned to the immutable Vercel deployment for the
- * approved feature/breeze-studio-pro commit c86cd3e20d6f981c75f1e39d395c794ad104d802.
- * After the integrated room receives HUMAN PASS we can vendor the exact build
- * into the Museum line without changing this contract.
+ * Museum owns WorldGraph/lifecycle. Breeze Studio PRO owns the specialised room.
+ * The source donor c86cd3e remains frozen; this guest points to a dedicated
+ * Museum-bridge clone that adds only skin/state exchange around the approved app.
  */
 
 export const BREEZE_STUDIO_PRO_V41_URL =
-  'https://escaparates-gm7k9nc5h-juanma-espinosas-projects.vercel.app/labs/website-modules-source/breeze-studio-pro/index.html';
+  'https://escaparates-pro-git-chatgpt-br-0c9b14-juanma-espinosas-projects.vercel.app/labs/website-modules-source/breeze-studio-pro/index.html';
 
 export class BreezeStudioProGuest {
   constructor() {
@@ -28,9 +22,6 @@ export class BreezeStudioProGuest {
     this.canvas = canvas;
     const stage = canvas?.parentElement;
     if (!stage) throw new Error('Breeze Studio PRO guest requires a Museum stage');
-
-    // NestedRoomHost creates a canvas for ordinary rendering guests. Studio PRO
-    // is a complete bounded app, so the canvas becomes only a lifecycle token.
     canvas.style.display = 'none';
 
     const iframe = document.createElement('iframe');
@@ -40,21 +31,12 @@ export class BreezeStudioProGuest {
     iframe.allow = 'autoplay; fullscreen';
     iframe.setAttribute('allowfullscreen', '');
     Object.assign(iframe.style, {
-      position: 'absolute',
-      inset: '0',
-      width: '100%',
-      height: '100%',
-      border: '0',
-      display: 'block',
-      zIndex: '5',
-      background: '#000',
-      pointerEvents: 'auto'
+      position: 'absolute', inset: '0', width: '100%', height: '100%', border: '0',
+      display: 'block', zIndex: '5', background: '#000', pointerEvents: 'auto'
     });
     stage.appendChild(iframe);
     this.iframe = iframe;
 
-    // Do not hang Museum activation forever if the guest is slow. The original
-    // E1 contract keeps Museum visible until prepare resolves, then hands over.
     await new Promise((resolve) => {
       let done = false;
       const finish = (ok, error = null) => {
@@ -71,19 +53,10 @@ export class BreezeStudioProGuest {
     });
   }
 
-  async activate() {
-    return true;
-  }
+  async activate() { return true; }
 
   setCameraPose(pose) {
-    // Studio PRO V4.1 keeps its approved internal presentation. We retain the
-    // incoming Museum pose as evidence for the later Character/Avatar seam, but
-    // do not force a second camera authority into the guest during this gate.
-    this.lastPose = pose ? {
-      position: [...pose.position],
-      target: [...pose.target],
-      fov: pose.fov
-    } : null;
+    this.lastPose = pose ? { position: [...pose.position], target: [...pose.target], fov: pose.fov } : null;
   }
 
   update() {}
@@ -92,7 +65,7 @@ export class BreezeStudioProGuest {
 
   report() {
     return {
-      backend: 'webgpu-studio-pro-v4.1',
+      backend: 'webgpu-studio-pro-v4.1-museum-bridge',
       loaded: this.loaded,
       error: this.error,
       donorCommit: 'c86cd3e20d6f981c75f1e39d395c794ad104d802',
