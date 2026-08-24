@@ -29,6 +29,10 @@ function mediaRecord(asset, authored, previous = null) {
     aspect: asset.width && asset.height ? asset.width / asset.height : previous?.aspect,
     loop: isVideo ? previous?.loop !== false : undefined,
     muted: isVideo ? previous?.muted !== false : undefined,
+    // Renderer hint only for the running canonical record. It tells PROJECTION
+    // that the institution supplied real media, so the synthetic projection
+    // treatment must not wash over or compete with the authored image/video.
+    authored: true,
     credit: previous?.credit || 'Medio aportado en el Estudio del Museo',
     rights: previous?.rights || 'Medio aportado por la institución autora.'
   };
