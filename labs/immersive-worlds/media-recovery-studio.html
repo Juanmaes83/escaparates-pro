@@ -39,6 +39,10 @@
       // Install the reusable ARTWORK media seam before Full Studio creates its
       // instance. Upload image/video -> visible immediately on the live 3D work.
       await import('./authoring/museum-visible-media.js');
+      // Gallery B contains a canonical VIDEO entity (`Cuaderno de luz`) which
+      // Full Studio does not yet expose as replaceable media. This adapter gives
+      // it the same proven MediaVault + live-surface contract for this human gate.
+      await import('./authoring/museum-video-entity-media.js');
 
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
