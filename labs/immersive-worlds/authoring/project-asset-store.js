@@ -45,7 +45,9 @@ export const ProjectAssetStore = {
         width: asset.width || 0,
         height: asset.height || 0,
         duration: asset.duration || 0,
-        thumb: asset.thumb || null,
+        // Image thumbs are the session object URL and therefore not durable.
+        // Video posters are data URLs and can safely survive a reload.
+        thumb: asset.kind === 'video' && String(asset.thumb || '').startsWith('data:') ? asset.thumb : null,
         blob: file,
         savedAt: new Date().toISOString()
       };
