@@ -145,7 +145,7 @@ function validation() {
 
 function emitChanged(reason = 'CHANGE') {
   clearTimeout(changeTimer);
-  changeTimer = setTimeout(() => post({ type: 'BREEZE_STATE_CHANGED', reason, state: getState() }), 100);
+  changeTimer = setTimeout(() => post({ type: 'BREEZE_STATE_CHANGED', reason, state: getState({ includeFiles: false }) }), 100);
 }
 
 function setPanelOpen(open) {
@@ -207,7 +207,7 @@ async function install() {
   }
   installed = true;
   installSkin();
-  post({ type: 'BREEZE_BRIDGE_READY', state: getState() });
+  post({ type: 'BREEZE_BRIDGE_READY', state: getState({ includeFiles: false }) });
 }
 
 window.addEventListener('message', async (event) => {
