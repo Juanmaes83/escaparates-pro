@@ -1,14 +1,11 @@
-import { THREE } from '../render/render-host.js';
 import { StudioShell } from './studio/studio-shell.js';
 
 /**
- * Gallery B VIDEO surface adapter.
+ * Gallery B VIDEO surface adapter — V2.
  *
- * `Cuaderno de luz` is not an ARTWORK. MuseumSceneKit builds it as a bezel +
- * PlaneGeometry screen driven by a VideoTexture. The previous recovery adapter
- * reused the generic artwork-surface heuristic; that was enough to accept the
- * file but not reliable enough to target the screen itself. This adapter resolves
- * the canonical screen directly and swaps only its live texture.
+ * `Cuaderno de luz` is a canonical VIDEO entity. MediaVault owns its object URL;
+ * Museum MediaLoader owns decode/cache/playback; this adapter only targets the
+ * real screen mesh. No second File decode and no second object URL are created.
  */
 
 const IMAGE_SLOT = 'ARTWORK_IMAGE';
@@ -25,8 +22,6 @@ function findVideoScreen(sceneKit, entityId) {
     if (!node?.isMesh || node.geometry?.type !== 'PlaneGeometry' || !node.material) return;
     const p = node.geometry.parameters || {};
     const area = Number(p.width || 0) * Number(p.height || 0);
-    // The video panel is the large plane in the VIDEO entity. The neighbouring
-    // label is also a plane but is much smaller.
     if (area > bestArea) {
       best = node;
       bestArea = area;
@@ -37,96 +32,57 @@ function findVideoScreen(sceneKit, entityId) {
   return best;
 }
 
-function loadImage(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => resolve({ url, image });
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('La imagen seleccionada no pudo abrirse.'));
-    };
-    image.src = url;
-  });
+function mediaSpecFromAsset(asset) {
+  const isVideo = asset?.kind === 'video';
+  return {
+    kind: isVideo ? 'VIDEO' : 'IMAGE',
+    src: asset.url,
+    aspect: asset.width && asset.height ? asset.width / asset.height : undefined,
+    loop: isVideo,
+    muted: isVideo
+  };
 }
 
-function loadVideo(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement('video');
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.preload = 'auto';
-    video.addEventListener('loadeddata', () => resolve({ url, video }), { once: true });
-    video.addEventListener('error', () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('El vídeo seleccionado no pudo abrirse. Usa MP4 H.264 o WebM.'));
-    }, { once: true });
-    video.src = url;
-    video.load();
-  });
+function releaseLiveReference(sceneKit, entityId, screen) {
+  const previousSrc = screen.userData?.museumVideoScreenSrc;
+  if (!previousSrc) return;
+  sceneKit.mediaLoader?.release?.(previousSrc);
+  if (sceneKit._mediaRefs?.get?.(entityId) === previousSrc) sceneKit._mediaRefs.delete(entityId);
+  delete screen.userData.museumVideoScreenSrc;
 }
 
-function releasePrevious(screen) {
-  const previous = screen.userData?.museumVideoScreenMedia;
-  if (!previous) return;
-  try { previous.video?.pause?.(); } catch { /* noop */ }
-  try { previous.texture?.dispose?.(); } catch { /* noop */ }
-  if (previous.url) URL.revokeObjectURL(previous.url);
-  delete screen.userData.museumVideoScreenMedia;
-}
-
-async function showFileOnVideoScreen(entityId, file) {
+async function showAssetOnVideoScreen(entityId, asset) {
   const sceneKit = window.__IW?.runtime?.sceneKit;
-  if (!sceneKit) throw new Error('MuseumSceneKit no está disponible.');
+  if (!sceneKit?.mediaLoader) throw new Error('Museum MediaLoader no está disponible.');
+  if (!asset?.url || asset.state !== 'READY') throw new Error('El asset todavía no está READY.');
+
   const screen = findVideoScreen(sceneKit, entityId);
-  const isVideo = String(file?.type || '').startsWith('video/') || /\.(mp4|m4v|webm)$/i.test(file?.name || '');
+  const result = await sceneKit.mediaLoader.load(mediaSpecFromAsset(asset), { entityId });
+  if (!result?.texture || result.fallback) throw new Error('MediaLoader no pudo producir una textura válida para la pantalla.');
 
-  let resource;
-  let texture;
-  let video = null;
-  if (isVideo) {
-    resource = await loadVideo(file);
-    video = resource.video;
-    texture = new THREE.VideoTexture(video);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = false;
-  } else {
-    resource = await loadImage(file);
-    texture = new THREE.Texture(resource.image);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 8;
-    texture.needsUpdate = true;
-  }
-
-  releasePrevious(screen);
-  const generated = screen.material?.map;
-  // The synthetic fallback texture is owned by the Scene Kit animation registry.
-  // We only detach it from this screen; the room lifecycle remains responsible
-  // for disposing its own generated resources.
-  screen.material.map = texture;
+  releaseLiveReference(sceneKit, entityId, screen);
+  screen.material.map = result.texture;
   screen.material.needsUpdate = true;
-  screen.userData.museumVideoScreenMedia = { texture, url: resource.url, video, replacedMap: generated };
+  screen.userData.museumVideoScreenSrc = asset.url;
+  sceneKit._mediaRefs?.set?.(entityId, asset.url);
 
-  if (video) {
-    try {
-      await video.play();
-    } catch {
-      const start = () => {
-        video.play().finally(() => {
-          window.removeEventListener('pointerdown', start);
-          window.removeEventListener('keydown', start);
-        });
-      };
-      window.addEventListener('pointerdown', start, { once: true });
-      window.addEventListener('keydown', start, { once: true });
-    }
-  }
+  return {
+    entityId,
+    isVideo: asset.kind === 'video',
+    screen,
+    playing: result.video ? !result.video.paused : null
+  };
+}
 
-  return { entityId, isVideo, screen };
+/** Compatibility seam for any historical caller; V2 Studio uses asset-based API. */
+async function showFileOnVideoScreen(entityId, file) {
+  const url = URL.createObjectURL(file);
+  const asset = {
+    state: 'READY', url,
+    kind: String(file?.type || '').startsWith('video/') || /\.(mp4|m4v|webm)$/i.test(file?.name || '') ? 'video' : 'image',
+    width: 0, height: 0
+  };
+  return showAssetOnVideoScreen(entityId, asset);
 }
 
 function installVideoControls(studio) {
@@ -142,18 +98,14 @@ function installVideoControls(studio) {
   block.innerHTML = `
     <div class="st-gh" style="cursor:default"><span>Medios · pantalla</span></div>
     <div class="st-gb">
-      <p class="st-note">Esta pantalla admite una imagen fija o un vídeo. El archivo se muestra inmediatamente en la pantalla real de Galería B, sin reconstruir el Museo.</p>
+      <p class="st-note">Esta pantalla admite imagen o vídeo. El archivo se carga una vez en la biblioteca y se presenta en la pantalla real.</p>
       <div class="st-slot">
         <div class="st-slothead"><span class="st-l">Imagen de la pantalla</span><span class="st-h">JPG, PNG o WebP</span></div>
-        <div class="st-slotrow">
-          <label class="st-file"><input type="file" data-video-upload="${IMAGE_SLOT}" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><span>Elegir archivo</span></label>
-        </div>
+        <div class="st-slotrow"><label class="st-file"><input type="file" data-video-upload="${IMAGE_SLOT}" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><span>Elegir archivo</span></label></div>
       </div>
       <div class="st-slot">
         <div class="st-slothead"><span class="st-l">Vídeo de la pantalla</span><span class="st-h">MP4 o WebM</span></div>
-        <div class="st-slotrow">
-          <label class="st-file"><input type="file" data-video-upload="${VIDEO_SLOT}" accept=".mp4,.m4v,.webm,video/mp4,video/webm"><span>Elegir archivo</span></label>
-        </div>
+        <div class="st-slotrow"><label class="st-file"><input type="file" data-video-upload="${VIDEO_SLOT}" accept=".mp4,.m4v,.webm,video/mp4,video/webm"><span>Elegir archivo</span></label></div>
       </div>
     </div>`;
 
@@ -183,8 +135,13 @@ StudioShell.prototype._takeFile = async function museumVideoEntityTakeFile(slot,
   const entity = (this.world.entities || []).find((item) => item.id === this.selectedId);
   if (entity?.kind !== 'VIDEO') return;
 
+  const authored = this.config?.entities?.[entity.id] || {};
+  const media = authored.video?.assetId ? authored.video : authored.image?.assetId ? authored.image : null;
+  const asset = media?.assetId ? this.vault?.get?.(media.assetId) : null;
+
   try {
-    const result = await showFileOnVideoScreen(entity.id, file);
+    if (!asset) throw new Error('El archivo no está disponible en MediaVault.');
+    const result = await showAssetOnVideoScreen(entity.id, asset);
     this._say(result.isVideo
       ? 'Vídeo visible y reproduciéndose en la pantalla de Galería B.'
       : 'Imagen visible en la pantalla de Galería B.');
@@ -194,6 +151,6 @@ StudioShell.prototype._takeFile = async function museumVideoEntityTakeFile(slot,
   }
 };
 
-window.__MUSEUM_VIDEO_ENTITY_MEDIA = { installVideoControls, findVideoScreen, showFileOnVideoScreen };
+window.__MUSEUM_VIDEO_ENTITY_MEDIA = { installVideoControls, findVideoScreen, showAssetOnVideoScreen, showFileOnVideoScreen };
 
-export { installVideoControls, findVideoScreen, showFileOnVideoScreen };
+export { installVideoControls, findVideoScreen, showAssetOnVideoScreen, showFileOnVideoScreen };
