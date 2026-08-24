@@ -1,13 +1,15 @@
 /**
  * Breeze Studio PRO V4.1 — full-room nested guest.
  *
- * Museum owns WorldGraph/lifecycle. Breeze Studio PRO owns the specialised room.
- * The source donor c86cd3e remains frozen; this guest points to a dedicated
- * Museum-bridge clone that adds only skin/state exchange around the approved app.
+ * Phase 1 recovery gate: Museum owns WorldGraph/lifecycle, while the specialised
+ * room runs the exact frozen Breeze Studio PRO donor from c86cd3e. No Museum
+ * bridge, state synchronisation, skin injection or authoring interception is
+ * installed here. The only purpose of this guest is to mount/unmount the donor
+ * intact so its original controls can be human-tested inside Museum.
  */
 
 export const BREEZE_STUDIO_PRO_V41_URL =
-  'https://escaparates-pro-git-chatgpt-br-0c9b14-juanma-espinosas-projects.vercel.app/labs/website-modules-source/breeze-studio-pro/index.html';
+  '/labs/website-modules-source/breeze-studio-pro/index.html';
 
 export class BreezeStudioProGuest {
   constructor() {
@@ -26,7 +28,7 @@ export class BreezeStudioProGuest {
 
     const iframe = document.createElement('iframe');
     iframe.dataset.nestedRoomStudio = 'room.breeze';
-    iframe.title = 'Sala Breeze — Breeze Studio PRO V4.1';
+    iframe.title = 'Sala Breeze — Breeze Studio PRO V4.1 original';
     iframe.src = BREEZE_STUDIO_PRO_V41_URL;
     iframe.allow = 'autoplay; fullscreen';
     iframe.setAttribute('allowfullscreen', '');
@@ -65,11 +67,12 @@ export class BreezeStudioProGuest {
 
   report() {
     return {
-      backend: 'webgpu-studio-pro-v4.1-museum-bridge',
+      backend: 'webgpu-studio-pro-v4.1-original',
       loaded: this.loaded,
       error: this.error,
       donorCommit: 'c86cd3e20d6f981c75f1e39d395c794ad104d802',
       donorUrl: BREEZE_STUDIO_PRO_V41_URL,
+      bridge: false,
       hasIframe: Boolean(this.iframe?.isConnected),
       hasMuseumPose: Boolean(this.lastPose)
     };
