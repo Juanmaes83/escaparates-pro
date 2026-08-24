@@ -21,6 +21,7 @@ export const SLOT_MEDIA = Object.freeze({
 
 export const SLOTS_FOR_KIND = Object.freeze({
   ARTWORK: [MEDIA_SLOT.ARTWORK_IMAGE, MEDIA_SLOT.ARTWORK_VIDEO],
+  VIDEO: [MEDIA_SLOT.ARTWORK_IMAGE, MEDIA_SLOT.ARTWORK_VIDEO],
   SCULPTURE: [], PROJECTION: [MEDIA_SLOT.PROJECTION_VIDEO, MEDIA_SLOT.PROJECTION_IMAGE],
   AUDIO: [], TEXT: []
 });
@@ -294,6 +295,18 @@ function applyInstitutionSignage(world, config, resolveMedia) {
   }
 }
 
+function authoredAccessibility(base, authored) {
+  const next = { ...(base || {}) };
+  for (const [key, value] of Object.entries(authored || {})) {
+    if (typeof value === 'string') {
+      if (value.trim()) next[key] = value;
+    } else if (value !== null && value !== undefined) {
+      next[key] = value;
+    }
+  }
+  return next;
+}
+
 export function applyConfigToWorld(world, config, resolveMedia = () => null) {
   const c = normaliseConfig(config), next = structuredClone(world);
   next.metadata = { ...(next.metadata || {}), institution: c.institution.name || next.metadata?.institution, claim: c.institution.claim || next.metadata?.claim, description: c.institution.introduction || next.metadata?.description, visitor: c.visitor };
@@ -317,11 +330,13 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
       content.projection = { ...(content.projection || {}), ...authored.projection };
       if (content.media) content.media = { ...content.media, loop: authored.projection.loop };
     }
-    content.presentation = { ...(content.presentation || {}), ...authored.presentation };
+    // Presentation/material/frame are Scene Kit concerns. Keeping them in the
+    // serialisable authoring config is correct; copying them into semantic World
+    // content violates INV-6 and can prevent the Museum from booting.
     entity.content = content;
     const { width, height, depth } = authored.sizeCm;
     if (width > 0 && height > 0) entity.size = depth > 0 ? [width/100,height/100,depth/100] : [width/100,height/100];
-    entity.accessibility = { ...(entity.accessibility || {}), ...authored.accessibility };
+    entity.accessibility = authoredAccessibility(entity.accessibility, authored.accessibility);
   }
   return next;
 }
