@@ -11,7 +11,15 @@ function tabFor(id){
   }
   return Array.from(document.querySelectorAll('.tab')).find(function(button){return button.dataset&&button.dataset.templateId===id})||Array.from(document.querySelectorAll('.tab')).find(function(button){return button.textContent.trim()===label})||null;
 }
-function openTemplate(id){var tab=tabFor(id);if(tab&&!tab.classList.contains('active'))tab.click()}
+function openTemplate(id,tries){
+  tries=tries||0;
+  var tab=tabFor(id);
+  if(tab){
+    if(!tab.classList.contains('active'))tab.click();
+    return;
+  }
+  if(tries<30)setTimeout(function(){openTemplate(id,tries+1)},100);
+}
 function openPreset(id){if(!id)return;if(EP.StudioRuntime&&EP.StudioRuntime.applyPreset)EP.StudioRuntime.applyPreset(id)}
 function addProductNavigation(){
   var toolbar=document.querySelector('.toolbar');
