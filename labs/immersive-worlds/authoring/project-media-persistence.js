@@ -39,10 +39,11 @@ if (!MediaVault.prototype.__durablePersistenceInstalled) {
     for (const row of stored) {
       if (!row?.id || !row.blob || this.assets.has(row.id)) continue;
       const url = URL.createObjectURL(row.blob);
+      const kind = row.kind || 'image';
       const asset = {
         id: row.id,
         reference: row.reference || `authored:${row.id}`,
-        kind: row.kind || 'image',
+        kind,
         name: row.name || 'asset',
         mimeType: row.mimeType || row.blob.type || '',
         bytes: row.bytes || row.blob.size || 0,
@@ -52,7 +53,9 @@ if (!MediaVault.prototype.__durablePersistenceInstalled) {
         width: row.width || 0,
         height: row.height || 0,
         duration: row.duration || 0,
-        thumb: row.thumb || (row.kind === 'image' ? url : null),
+        // Every hydrated image gets the new live object URL. A video poster may
+        // use its durable data URL captured during the original decode.
+        thumb: kind === 'image' ? url : (row.thumb || null),
         durable: true,
         durableAt: row.savedAt || null
       };
