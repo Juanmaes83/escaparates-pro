@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0c0b0a">
+  <title>Museum — Media Contract Recovery Studio</title>
+  <link rel="stylesheet" href="./app/ui/styles.css">
+  <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+</head>
+<body>
+  <main id="iw-stage">
+    <canvas id="iw-canvas" tabindex="0" aria-label="Vista tridimensional del Museo para recuperación del contrato de medios."></canvas>
+  </main>
+  <div id="iw-ui"></div>
+
+  <script type="module">
+    const WORLD = './worlds/museum-v1.world.json';
+    const url = new URL(location.href);
+    url.searchParams.set('authoring', '1');
+    url.searchParams.set('world', WORLD);
+    history.replaceState(null, '', url);
+
+    try {
+      // Recovery receiver: do not inherit legacy local authoring state while we
+      // validate the Media Contract. This mirrors the Human-PASS Wet Paint Lab.
+      const [{ baseConfigFromWorld }] = await Promise.all([
+        import('./authoring/experience-config.js')
+      ]);
+      const cleanWorld = await fetch(WORLD, { cache: 'no-store' }).then((response) => {
+        if (!response.ok) throw new Error(`No se pudo cargar el mundo (${response.status})`);
+        return response.json();
+      });
+      window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
+
+      // Install the reusable ARTWORK media seam before Full Studio creates its
+      // instance. Upload image/video -> visible immediately on the live 3D work.
+      await import('./authoring/museum-visible-media.js');
+
+      const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
+        import('./app/experience-app.js'),
+        import('./authoring/studio/visitor-phase1.js'),
+        import('./authoring/studio/museum-phase2.js'),
+        import('./authoring/studio/museum-phase2-layout-fix.js'),
+        import('./authoring/studio/museum-phase2-hardening.js')
+      ]);
+
+      await app.boot();
+      visitor.installVisitorPhase1();
+      phase2.installMuseumPhase2();
+      layoutFix.installMuseumPhase2LayoutFix();
+      hardening.installMuseumPhase2Hardening();
+
+      console.log('[Museum Media Recovery] Gallery A/B receiver ready');
+    } catch (error) {
+      console.error('[Museum Media Recovery] boot failed', error);
+      document.documentElement.dataset.iwError = String(error?.message || error);
+      document.getElementById('iw-ui').innerHTML = `
+        <div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908;color:#ddd">
+          <div style="max-width:44rem"><h1>No se pudo iniciar Media Recovery Studio</h1><pre style="white-space:pre-wrap">${String(error?.message || error)}</pre></div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
