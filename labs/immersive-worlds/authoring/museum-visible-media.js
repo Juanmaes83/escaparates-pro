@@ -1,13 +1,12 @@
-import { THREE } from '../render/render-host.js';
 import { StudioShell } from './studio/studio-shell.js';
 
 /**
  * Museum Media Contract — live ARTWORK visibility seam.
  *
- * Donor lineage: the Human-PASS Wet Paint Studio receiver. This module removes
- * the Wet Paint ownership from the capability: any Museum ARTWORK selected in
- * Full Studio can receive an image or video immediately without rebuilding the
- * Museum. The durable MediaVault/config pipeline remains owned by Studio.
+ * V2 rule: MediaVault owns the object URL and MediaLoader owns decoding/cache.
+ * This seam never creates a second object URL and never owns/disposes a loader
+ * texture. The same src is also written into WorldStore by the canonical binding
+ * module, so a room rebuilt by SpaceLifecycle sees the same media declaration.
  */
 
 function findArtworkPlate(sceneKit, entityId) {
@@ -31,93 +30,62 @@ function findArtworkPlate(sceneKit, entityId) {
   return best;
 }
 
-function waitForImage(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => resolve({ url, image });
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('La imagen seleccionada no pudo abrirse.'));
-    };
-    image.src = url;
-  });
+function mediaSpecFromAsset(asset) {
+  const isVideo = asset?.kind === 'video';
+  return {
+    kind: isVideo ? 'VIDEO' : 'IMAGE',
+    src: asset.url,
+    aspect: asset.width && asset.height ? asset.width / asset.height : undefined,
+    loop: isVideo,
+    muted: isVideo
+  };
 }
 
-function waitForVideo(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement('video');
-    video.muted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.preload = 'auto';
-    video.addEventListener('loadeddata', () => resolve({ url, video }), { once: true });
-    video.addEventListener('error', () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('El vídeo seleccionado no pudo abrirse. Usa MP4 H.264 o WebM.'));
-    }, { once: true });
-    video.src = url;
-    video.load();
-  });
+function releaseLiveReference(sceneKit, entityId, surface) {
+  const previousSrc = surface.userData?.museumLiveMediaSrc;
+  if (!previousSrc) return;
+  sceneKit.mediaLoader?.release?.(previousSrc);
+  if (sceneKit._mediaRefs?.get?.(entityId) === previousSrc) sceneKit._mediaRefs.delete(entityId);
+  delete surface.userData.museumLiveMediaSrc;
 }
 
-function releasePrevious(plate) {
-  const previous = plate.userData?.museumLiveMedia;
-  if (!previous) return;
-  try { previous.video?.pause?.(); } catch { /* noop */ }
-  try { previous.texture?.dispose?.(); } catch { /* noop */ }
-  if (previous.url) URL.revokeObjectURL(previous.url);
-  delete plate.userData.museumLiveMedia;
-}
-
-async function showFileOnArtwork(entityId, file) {
+async function showAssetOnArtwork(entityId, asset) {
   const sceneKit = window.__IW?.runtime?.sceneKit;
-  if (!sceneKit) throw new Error('MuseumSceneKit no está disponible.');
+  if (!sceneKit?.mediaLoader) throw new Error('Museum MediaLoader no está disponible.');
+  if (!asset?.url || asset.state !== 'READY') throw new Error('El asset todavía no está READY.');
+
   const plate = findArtworkPlate(sceneKit, entityId);
+  const result = await sceneKit.mediaLoader.load(mediaSpecFromAsset(asset), { entityId });
+  if (!result?.texture || result.fallback) throw new Error('MediaLoader no pudo producir una textura válida.');
 
-  let resource;
-  let texture;
-  let video = null;
-  const isVideo = String(file?.type || '').startsWith('video/') || /\.(mp4|m4v|webm)$/i.test(file?.name || '');
-
-  if (isVideo) {
-    resource = await waitForVideo(file);
-    video = resource.video;
-    texture = new THREE.VideoTexture(video);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.minFilter = THREE.LinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = false;
-  } else {
-    resource = await waitForImage(file);
-    texture = new THREE.Texture(resource.image);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 8;
-    texture.needsUpdate = true;
-  }
-
-  releasePrevious(plate);
-  plate.material.map = texture;
+  releaseLiveReference(sceneKit, entityId, plate);
+  plate.material.map = result.texture;
   plate.material.needsUpdate = true;
-  plate.userData.museumLiveMedia = { texture, url: resource.url, video };
+  plate.userData.museumLiveMediaSrc = asset.url;
+  // SceneKit disposal already understands this map and releases the reference.
+  sceneKit._mediaRefs?.set?.(entityId, asset.url);
 
-  if (video) {
-    try {
-      await video.play();
-    } catch {
-      const start = () => {
-        video.play().finally(() => {
-          window.removeEventListener('pointerdown', start);
-          window.removeEventListener('keydown', start);
-        });
-      };
-      window.addEventListener('pointerdown', start, { once: true });
-      window.addEventListener('keydown', start, { once: true });
-    }
+  return {
+    entityId,
+    isVideo: asset.kind === 'video',
+    plateArea: plate.geometry.parameters.width * plate.geometry.parameters.height,
+    playing: result.video ? !result.video.paused : null
+  };
+}
+
+/** Compatibility seam for older callers; the V2 Studio uses showAssetOnArtwork. */
+async function showFileOnArtwork(entityId, file) {
+  const url = URL.createObjectURL(file);
+  const asset = {
+    state: 'READY', url,
+    kind: String(file?.type || '').startsWith('video/') || /\.(mp4|m4v|webm)$/i.test(file?.name || '') ? 'video' : 'image',
+    width: 0, height: 0
+  };
+  try {
+    return await showAssetOnArtwork(entityId, asset);
+  } finally {
+    // MediaLoader may still own the URL through its cache; do not revoke here.
   }
-
-  return { entityId, isVideo, plateArea: plate.geometry.parameters.width * plate.geometry.parameters.height };
 }
 
 const originalTakeFile = StudioShell.prototype._takeFile;
@@ -129,17 +97,22 @@ StudioShell.prototype._takeFile = async function museumVisibilityTakeFile(slot, 
   const entity = (this.world.entities || []).find((item) => item.id === entityId);
   if (entity?.kind !== 'ARTWORK') return;
 
+  const authored = this.config?.entities?.[entityId] || {};
+  const media = authored.video?.assetId ? authored.video : authored.image?.assetId ? authored.image : null;
+  const asset = media?.assetId ? this.vault?.get?.(media.assetId) : null;
+
   try {
-    const result = await showFileOnArtwork(entityId, file);
+    if (!asset) throw new Error('El archivo no está disponible en MediaVault.');
+    const result = await showAssetOnArtwork(entityId, asset);
     this._say(result.isVideo
-      ? 'Vídeo visible en la obra. No se ha reconstruido el museo.'
-      : 'Imagen visible en la obra. No se ha reconstruido el museo.');
+      ? 'Vídeo visible en la obra y enlazado al runtime actual.'
+      : 'Imagen visible en la obra y enlazada al runtime actual.');
   } catch (error) {
     console.error('[Museum visible media]', error);
     this._say(`El archivo se cargó pero no pudo dibujarse en la obra: ${String(error?.message || error)}`, true);
   }
 };
 
-window.__MUSEUM_VISIBLE_MEDIA = { showFileOnArtwork, findArtworkPlate };
+window.__MUSEUM_VISIBLE_MEDIA = { showAssetOnArtwork, showFileOnArtwork, findArtworkPlate };
 
-export { showFileOnArtwork, findArtworkPlate };
+export { showAssetOnArtwork, showFileOnArtwork, findArtworkPlate };
