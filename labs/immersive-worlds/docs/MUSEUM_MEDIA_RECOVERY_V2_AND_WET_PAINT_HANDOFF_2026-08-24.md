@@ -91,20 +91,12 @@ Keep the distinction between:
 
 Any later modification to a piece must invalidate its validation and any route approval that depended on it.
 
-## 3. NEXT CANONICAL DONOR — WET PAINT ITINERANT ROOM
+## 3. WET PAINT ITINERANT ROOM — HUMAN PASS
 
-Do NOT search for another Wet Paint implementation.
-
-The Human-validated standalone/isolated Museum receiver is already present on the current branch:
+The Human-validated standalone/isolated Museum receiver remains the canonical donor/reference:
 
 ```text
 labs/immersive-worlds/wet-paint-studio.html
-```
-
-Canonical local/browser reference previously validated by Juanma:
-
-```text
-http://localhost:8765/wet-paint-studio.html?authoring=1&world=.%2Fworlds%2Fitinerant-wet-paint-lab.world.json
 ```
 
 Canonical isolated World:
@@ -113,91 +105,76 @@ Canonical isolated World:
 labs/immersive-worlds/worlds/itinerant-wet-paint-lab.world.json
 ```
 
-This receiver is HUMAN-PASS evidence for:
-
-- image upload;
-- video upload/playback;
-- GLB/media-library capability already present in the Studio stack;
-- central media preview/inspection;
-- immediate visible 3D media replacement;
-- Wet Paint painterly engine;
-- native Wet Paint Studio controls;
-- painterly presets/effects previously visually validated by Juanma.
-
-The receiver explicitly installs:
+On 2026-08-24 Juanma validated the same Wet Paint capability connected inside the real Museum V2 runtime at commit:
 
 ```text
-wet-paint-media-inspector.js
-wet-paint-visible-media.js
-experience-app.js
-visitor-phase1.js
-museum-phase2.js
-museum-phase2-layout-fix.js
-museum-phase2-hardening.js
-experiences/wet-paint-adapter.js
-authoring/studio/wet-paint-studio-controls.js
+723b9df432b0af6e8cd6d0bc48ea66f03ec0211b
 ```
 
-The isolated World contains:
+Validated behavior inside the integrated Museum:
+
+- Gallery A remains functional;
+- Gallery B remains functional;
+- navigation reaches `space.itinerant-wet-paint` through the Museum WorldGraph/portal flow;
+- Wet Paint native Studio controls appear on itinerant artworks;
+- image source can be selected/uploaded;
+- painterly transformation/effects are visible in the real central 3D room;
+- effects and controls function as previously demonstrated in the standalone HUMAN-PASS donor;
+- the Wet Paint engine is hosted by the Museum lifecycle rather than a second visible application shell;
+- `SPACE_READY` / `SPACE_ENTERED` are used to restore Wet Paint only when the itinerant room actually exists.
+
+Current integrated milestone:
 
 ```text
-01 — Original
-02 — Painterly
-03 — Living
-04 — Combined
-05 — Experimental
+GALLERY A        ✅ HUMAN PASS
+GALLERY B        ✅ HUMAN PASS
+WET PAINT ROOM   ✅ HUMAN PASS
 ```
 
-Current product priority is NOT to expand all five surfaces. The immediate integration proof is to connect the already validated Wet Paint room into the recovered Museum without rebuilding its engine.
+### Known non-blocking bug — THUMBNAIL SYNC
 
-## 4. WET PAINT CONNECTION OBJECTIVE
+Observed in the final Wet Paint HUMAN-PASS browser validation:
 
-Target:
+- the central 3D artwork correctly shows the newly uploaded/authored image;
+- the small artwork thumbnails / filmstrip below the central viewport can continue showing the previous/default image instead of the current authored media.
+
+Classification:
 
 ```text
-GALLERY A — HUMAN PASS
-        ↓
-GALLERY B — HUMAN PASS
-        ↓
-PORTAL / ROOM ENTRY
-        ↓
-ITINERANT WET PAINT ROOM
-        ↓
-01 ORIGINAL receives authored media
-        ↓
-02 PAINTERLY consumes ORIGINAL
-        ↓
-existing Wet Paint controls/effects work
-        ↓
-leave room
-        ↓
-return
-        ↓
-media + Wet Paint state remain coherent
+BUG: WET-PAINT-THUMBNAIL-SYNC-01
+SEVERITY: LOW / NON-BLOCKING
+RUNTIME: PASS
+AUTHORING CENTRAL PREVIEW: PASS
+FILMSTRIP THUMBNAIL REPRESENTATION: STALE
 ```
 
-Integration rules:
+Do not reopen the Wet Paint integration to fix this while Breeze/Avatar remain unconnected. Fix later by making the filmstrip thumbnail renderer consume the same current authored/canonical media binding used by the central artwork instead of a stale/base media reference.
 
-1. Reuse the validated `wet-paint-studio.html` capability seams; do not rebuild Wet Paint.
-2. Reuse the V2 canonical media path where appropriate.
-3. Museum remains authority for WorldGraph, room lifecycle, camera, navigation and route.
-4. Wet Paint remains authority for painterly transformation/effect behavior.
-5. No iframe, no duplicate app shell, no second WorldGraph, no second camera authority.
-6. First gate is `01 ORIGINAL → 02 PAINTERLY`; Living/Combined/Experimental remain secondary unless needed for regression preservation.
-7. The isolated `wet-paint-studio.html` must remain available as the donor/reference lab and must not be broken by integration work.
+## 4. INTEGRATION RULES THAT ARE NOW FROZEN
 
-## 5. ORDER AFTER WET PAINT
+1. Museum remains authority for WorldGraph, room lifecycle, camera, navigation and route.
+2. Wet Paint remains authority for painterly transformation/effect behavior.
+3. No second WorldGraph, second camera authority or visible donor application shell.
+4. Preserve the standalone `wet-paint-studio.html` as the HUMAN-PASS reference lab.
+5. Preserve the V2 canonical media path for Gallery A/B.
+6. Do not replace this working three-room integration with historical persistence experiments.
+
+## 5. ORDER AFTER THREE-ROOM HUMAN PASS
 
 The approved order is now:
 
 ```text
-A + B MEDIA RECOVERY
+GALLERY A
+✅ HUMAN PASS
+        ↓
+GALLERY B
 ✅ HUMAN PASS
         ↓
 WET PAINT ITINERANT ROOM
-← NEXT
+✅ HUMAN PASS
         ↓
 BREEZE ROOM
+← NEXT
         ↓
 CHARACTER 2027 / AVATAR
 ```
@@ -205,6 +182,16 @@ CHARACTER 2027 / AVATAR
 ### Breeze
 
 Use the existing Breeze room/runtime and the documented bounded integration contract. Do not rebuild Breeze.
+
+Product authority remains:
+
+```text
+BREEZE STUDIO PRO V4 = PRODUCT AUTHORITY
+Juanmaes83/breeze = ENGINE DONOR
+Museum = EXPERIENCE / CAMERA / GUIDE / ROUTE / LIFECYCLE AUTHORITY
+```
+
+First mission: identify the exact Human-reviewed Breeze stone and graft only the required nested-room/runtime seams into the now stable Museum line.
 
 ### Avatar
 
@@ -216,11 +203,9 @@ Juanmaes83/CharacterStudio
 + Juanmaes83/VECINIA-WORLDS integration seams
 ```
 
-Do not attempt Avatar before Wet Paint and Breeze are connected and stable.
+Do not rebuild the avatar system from scratch.
 
 ## 6. OPERATING RULE FOR NEXT WORK
-
-We spent too long recovering media because multiple historical implementations and experimental persistence layers were mixed together.
 
 From this point:
 
@@ -242,4 +227,4 @@ No broad archaeology when a Human-PASS donor is already known.
 
 No rebuilding a capability already demonstrated working.
 
-No next-room work until the current room passes the agreed human gate.
+No next-room expansion beyond the currently approved order: Breeze, then Avatar.
