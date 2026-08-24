@@ -67,7 +67,29 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      console.log('[Museum Media Recovery V2] Gallery B closeout ready');
+      // Connect the already Human-PASS Wet Paint capability to the real Museum
+      // lifecycle. The standalone donor starts inside the itinerant room; the
+      // full Museum starts in Lobby, so restoration must follow SPACE_READY /
+      // SPACE_ENTERED instead of running blindly at boot.
+      try {
+        const [{ installWetPaintMuseumLifecycle }, { installWetPaintStudioControls }] = await Promise.all([
+          import('./experiences/wet-paint-museum-lifecycle.js'),
+          import('./authoring/studio/wet-paint-studio-controls.js')
+        ]);
+        const runtime = window.__IW?.runtime;
+        if (runtime) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          window.__IW_WET_PAINT_HOST = installWetPaintMuseumLifecycle(runtime);
+          installWetPaintStudioControls();
+          console.log('[Museum Media Recovery V2] Wet Paint itinerant room connected');
+        } else {
+          console.warn('[Museum Media Recovery V2] Wet Paint deferred: runtime unavailable');
+        }
+      } catch (wetPaintError) {
+        console.error('[Museum Media Recovery V2] Wet Paint connection failed (non-fatal)', wetPaintError);
+      }
+
+      console.log('[Museum Media Recovery V2] Gallery A + B + Wet Paint connection ready');
     } catch (error) {
       console.error('[Museum Media Recovery V2] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
