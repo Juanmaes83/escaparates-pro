@@ -5,14 +5,10 @@ import { StudioShell } from './studio/studio-shell.js';
  * Gallery B VIDEO surface adapter.
  *
  * `Cuaderno de luz` is not an ARTWORK. MuseumSceneKit builds it as a bezel +
- * PlaneGeometry screen driven by a VideoTexture. The previous recovery adapter
- * reused the generic artwork-surface heuristic; that was enough to accept the
- * file but not reliable enough to target the screen itself. This adapter resolves
- * the canonical screen directly and swaps only its live texture.
+ * PlaneGeometry screen driven by a VideoTexture. VIDEO is now a first-class
+ * media-capable kind in ExperienceConfig, so Full Studio owns the upload UI.
+ * This module only owns the representation seam: file -> real screen surface.
  */
-
-const IMAGE_SLOT = 'ARTWORK_IMAGE';
-const VIDEO_SLOT = 'ARTWORK_VIDEO';
 
 function findVideoScreen(sceneKit, entityId) {
   const record = sceneKit?._entityIndex?.get(entityId);
@@ -25,8 +21,6 @@ function findVideoScreen(sceneKit, entityId) {
     if (!node?.isMesh || node.geometry?.type !== 'PlaneGeometry' || !node.material) return;
     const p = node.geometry.parameters || {};
     const area = Number(p.width || 0) * Number(p.height || 0);
-    // The video panel is the large plane in the VIDEO entity. The neighbouring
-    // label is also a plane but is much smaller.
     if (area > bestArea) {
       best = node;
       bestArea = area;
@@ -104,9 +98,6 @@ async function showFileOnVideoScreen(entityId, file) {
 
   releasePrevious(screen);
   const generated = screen.material?.map;
-  // The synthetic fallback texture is owned by the Scene Kit animation registry.
-  // We only detach it from this screen; the room lifecycle remains responsible
-  // for disposing its own generated resources.
   screen.material.map = texture;
   screen.material.needsUpdate = true;
   screen.userData.museumVideoScreenMedia = { texture, url: resource.url, video, replacedMap: generated };
@@ -129,52 +120,6 @@ async function showFileOnVideoScreen(entityId, file) {
   return { entityId, isVideo, screen };
 }
 
-function installVideoControls(studio) {
-  const entity = studio.selectedEntity;
-  if (entity?.kind !== 'VIDEO') return;
-
-  const editor = studio.root?.querySelector('.st-ed');
-  if (!editor || editor.querySelector('[data-video-entity-media]')) return;
-
-  const block = document.createElement('section');
-  block.className = 'st-g';
-  block.dataset.videoEntityMedia = '1';
-  block.innerHTML = `
-    <div class="st-gh" style="cursor:default"><span>Medios · pantalla</span></div>
-    <div class="st-gb">
-      <p class="st-note">Esta pantalla admite una imagen fija o un vídeo. El archivo se muestra inmediatamente en la pantalla real de Galería B, sin reconstruir el Museo.</p>
-      <div class="st-slot">
-        <div class="st-slothead"><span class="st-l">Imagen de la pantalla</span><span class="st-h">JPG, PNG o WebP</span></div>
-        <div class="st-slotrow">
-          <label class="st-file"><input type="file" data-video-upload="${IMAGE_SLOT}" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"><span>Elegir archivo</span></label>
-        </div>
-      </div>
-      <div class="st-slot">
-        <div class="st-slothead"><span class="st-l">Vídeo de la pantalla</span><span class="st-h">MP4 o WebM</span></div>
-        <div class="st-slotrow">
-          <label class="st-file"><input type="file" data-video-upload="${VIDEO_SLOT}" accept=".mp4,.m4v,.webm,video/mp4,video/webm"><span>Elegir archivo</span></label>
-        </div>
-      </div>
-    </div>`;
-
-  for (const input of block.querySelectorAll('[data-video-upload]')) {
-    input.addEventListener('change', async (event) => {
-      const file = event.currentTarget.files?.[0];
-      if (!file) return;
-      await studio._takeFile(event.currentTarget.dataset.videoUpload, file);
-    });
-  }
-
-  editor.appendChild(block);
-}
-
-const originalRender = StudioShell.prototype.render;
-StudioShell.prototype.render = function museumVideoEntityRender(...args) {
-  const result = originalRender.apply(this, args);
-  installVideoControls(this);
-  return result;
-};
-
 const previousTakeFile = StudioShell.prototype._takeFile;
 StudioShell.prototype._takeFile = async function museumVideoEntityTakeFile(slot, file) {
   await previousTakeFile.call(this, slot, file);
@@ -194,6 +139,6 @@ StudioShell.prototype._takeFile = async function museumVideoEntityTakeFile(slot,
   }
 };
 
-window.__MUSEUM_VIDEO_ENTITY_MEDIA = { installVideoControls, findVideoScreen, showFileOnVideoScreen };
+window.__MUSEUM_VIDEO_ENTITY_MEDIA = { findVideoScreen, showFileOnVideoScreen };
 
-export { installVideoControls, findVideoScreen, showFileOnVideoScreen };
+export { findVideoScreen, showFileOnVideoScreen };
