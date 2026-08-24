@@ -40,8 +40,10 @@
       // Install reusable live media seams before Full Studio creates its instance.
       await import('./authoring/museum-visible-media.js');
       await import('./authoring/museum-video-entity-media.js');
-      // Install the evidence-driven workflow before mountStudio constructs the shell.
+      // Install the evidence-driven workflow and then the QA hardening learned
+      // from the Gallery A/B human pass: VIDEO screen targeting + route completion.
       await import('./authoring/studio/studio-validation-flow.js');
+      await import('./authoring/studio/studio-validation-hardening.js');
 
       const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
         import('./app/experience-app.js'),
@@ -57,7 +59,7 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      console.log('[Museum Media Recovery] staged validation receiver ready');
+      console.log('[Museum Media Recovery] Gallery A/B closure receiver ready');
     } catch (error) {
       console.error('[Museum Media Recovery] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
