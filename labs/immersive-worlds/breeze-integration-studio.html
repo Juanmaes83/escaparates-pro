@@ -27,7 +27,6 @@
     history.replaceState(null, '', url);
 
     try {
-      // Freeze the same clean Human-PASS authoring baseline used by A+B+Wet Paint.
       const [{ baseConfigFromWorld }] = await Promise.all([
         import('./authoring/experience-config.js')
       ]);
@@ -37,13 +36,14 @@
       });
       window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
 
-      // Preserve the accepted three-room media contract unchanged.
+      // Preserve A+B+Wet Paint and then install the specialised Breeze bridge.
       await import('./authoring/museum-visible-media.js');
       await import('./authoring/museum-video-entity-media.js');
       await import('./authoring/museum-canonical-media-binding.js');
       await import('./authoring/studio/studio-validation-flow.js');
       await import('./authoring/studio/studio-validation-hardening.js');
       await import('./authoring/studio/gallery-b-closeout-validation.js');
+      await import('./authoring/studio/breeze-museum-authoring-bridge.js');
 
       const [app, visitor, phase2, layoutFix, hardening, { EVENTS }] = await Promise.all([
         import('./app/experience-app.js'),
@@ -60,7 +60,6 @@
       layoutFix.installMuseumPhase2LayoutFix();
       hardening.installMuseumPhase2Hardening();
 
-      // Preserve the already Human-PASS Wet Paint room in this four-room gate.
       try {
         const [{ installWetPaintMuseumLifecycle }, { installWetPaintStudioControls }] = await Promise.all([
           import('./experiences/wet-paint-museum-lifecycle.js'),
@@ -75,15 +74,15 @@
         console.error('[Museum Breeze Gate] Wet Paint preservation failed (non-fatal)', wetPaintError);
       }
 
-      // Diagnostics only. Experience-app already owns the real E1 connection.
       const snapshot = (reason = 'SNAPSHOT') => {
         const nested = window.__IW?.nested;
         const report = nested?.report?.() || null;
         window.__IW_BREEZE_GATE = {
-          status: report?.guest?.backend === 'webgpu' ? 'WEBGPU_ACTIVE' : (report?.presentation || 'MUSEUM'),
+          status: String(report?.guest?.backend || '').includes('breeze') ? 'BREEZE_ACTIVE' : (report?.presentation || 'MUSEUM'),
           reason,
           activeSpaceId: runtime?.state?.activeSpaceId || runtime?.spaces?.activeSpaceId || null,
           nested: report,
+          bridge: window.__IW_BREEZE_AUTHORING_BRIDGE?.evidence?.() || null,
           at: new Date().toISOString()
         };
         return window.__IW_BREEZE_GATE;
@@ -100,7 +99,7 @@
       }, 1000);
       snapshot('READY');
 
-      console.log('[Museum Breeze Gate] A+B+Wet Paint preserved; existing Option E1 Breeze ready for Human WebGPU gate');
+      console.log('[Museum Breeze Gate] A+B+Wet Paint preserved; Breeze Studio PRO bridge installed');
     } catch (error) {
       console.error('[Museum Breeze Gate] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
