@@ -1,6 +1,8 @@
 # MUSEUM — CHARACTER / AVATAR 2027 SURGERY ROADMAP
 
 **Status:** APPROVED / ACTIVE  
+**Current phase:** **PHASE 2 — ANATOMY / COMPATIBILITY**  
+**Last closed gate:** **PHASE 1 — DONOR FREEZE = PASS / CLOSED**  
 **Purpose:** recover the best existing Character 2027 / Avatar capabilities from proven donor repositories, preserve them intact, then graft them into the current Museum without regressing the frozen four-room line.
 
 ---
@@ -11,7 +13,8 @@
 
 Repository: `Juanmaes83/escaparates-pro`  
 Integration line: `claude/museum-itinerant-living-art-graft-v1`  
-Character surgery branch: `chatgpt/museum-character-2027-integration-v1`
+Character surgery branch: `chatgpt/museum-character-2027-integration-v1`  
+Frozen comparison base: `4fbca5997beaf058543ee65d682f0adae89252e2`
 
 The Character branch is created from the frozen Museum integration line containing:
 
@@ -65,23 +68,31 @@ Frozen reference SHA: `f5a93a48ed0e3904fce58f08f7fbe08b5411b289`
 
 ### PIEDRA 1 — Character Runtime
 
-Bring the complete dependency closure required for:
+Frozen under:
 
-- `CharacterActionAPI`
-- `MotionController`
-- `MotionFoundationV2`
-- `MotionFoundationV2Extra`
-- `SocialMotionFoundationV3`
-- `BoneMap`
-- `Retargeter`
-- `LookAt`
-- `IK`
+`labs/immersive-worlds/donors-frozen/character-2027/characterstudio/`
 
-Also preserve the relevant source knowledge from:
+Complete approved runtime set:
 
-- `Create.jsx`
-- `Appearance.jsx`
-- `MotionLab.jsx`
+- `src/character2027/api/CharacterActionAPI.js`
+- `src/character2027/animation/MotionController.js`
+- `src/character2027/animation/MotionFoundationV2.js`
+- `src/character2027/animation/MotionFoundationV2Extra.js`
+- `src/character2027/animation/SocialMotionFoundationV3.js`
+- `src/character2027/animation/Retargeter.js`
+- `src/character2027/rig/BoneMap.js`
+- `src/character2027/interaction/LookAtController.js`
+- `src/character2027/ik/ContactIKController.js`
+- `src/character2027/ik/DonorTwoBoneIK.js`
+- `src/character2027/ik/HumanoidIKController.js`
+- `src/character2027/ik/LadderIKExtension.js`
+- `src/character2027/ik/TerrainSemanticIK.js`
+
+Knowledge donors preserved whole:
+
+- `src/pages/Create.jsx`
+- `src/pages/Appearance.jsx`
+- `src/pages/MotionLab.jsx`
 
 These UI pages are **knowledge donors**, not visitor runtime.
 
@@ -102,15 +113,18 @@ CharacterStudio remains PRIMARY for:
 ## DONOR B — VECINIA-WORLDS
 
 Repository: `Juanmaes83/VECINIA-WORLDS`  
-Primary branch: `feat/sculpture-navigation-character-v1`
+Primary branch: `feat/sculpture-navigation-character-v1`  
+Frozen reference SHA: `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1`
 
-### PIEDRA 2 + supporting stones — bring WHOLE
+### PIEDRA 2 + supporting stones — frozen WHOLE
 
-Preserve this complete family exactly before adaptation:
+Frozen under:
+
+`labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/`
+
+Preserved complete family:
 
 ```text
-visual/src/character2027/runtime/
-
 ExteriorCharacterPilot.js
 MuseumCharacterRuntimeAdapter.js
 PropertyRoomCharacterCapabilityBatches.js
@@ -235,13 +249,13 @@ Do not mount the CharacterStudio application wholesale inside Museum.
 
 Goal: protect the working Museum before any Character runtime change.
 
-Tasks:
+Completed:
 
-- confirm current Museum integration line
-- create Character surgery branch
-- record donor repository / branch / SHA provenance
-- create donor-freeze directories
-- create manifest/checksum inventory
+- current Museum integration line fixed
+- Character surgery branch created
+- donor repository / branch / SHA provenance recorded
+- roadmap and tracker created
+- rollback base fixed at `4fbca5997beaf058543ee65d682f0adae89252e2`
 
 Gate 0:
 
@@ -249,7 +263,7 @@ Gate 0:
 - donor references are reproducible
 - rollback point is explicit
 
-Status: **IN PROGRESS**
+**PHASE 0 — PASS / CLOSED**
 
 ---
 
@@ -257,39 +271,81 @@ Status: **IN PROGRESS**
 
 Goal: copy the complete approved donor stones into Museum without activating them.
 
-Tasks:
+### Completed CharacterStudio donor freeze
 
-### CharacterStudio donor freeze
+Complete runtime and knowledge donors are preserved under `donors-frozen/character-2027/characterstudio/**`.
 
-Bring the real dependency closure for:
+The final IK stone was correctly treated as a family, not as one file:
 
-- CharacterActionAPI
-- MotionController
-- MotionFoundationV2
-- MotionFoundationV2Extra
-- SocialMotionFoundationV3
-- BoneMap
-- Retargeter
-- LookAt
-- IK
+```text
+ContactIKController.js
+DonorTwoBoneIK.js
+HumanoidIKController.js
+LadderIKExtension.js
+TerrainSemanticIK.js
+```
 
-### VECINIA donor freeze
+### Completed VECINIA donor freeze
 
-Bring all ten files from `visual/src/character2027/runtime/` listed above.
+All ten files from `visual/src/character2027/runtime/` are preserved under `donors-frozen/character-2027/vecinia-worlds/**`.
 
-Rules:
+### Provenance / integrity
 
-- no functional rewrites during import
-- preserve filenames where possible
-- record original path and source SHA
-- adaptations go in new Museum-side seams
+Manifest:
+
+`labs/immersive-worlds/donors-frozen/character-2027/MANIFEST`
+
+Source commits:
+
+- CharacterStudio: `f5a93a48ed0e3904fce58f08f7fbe08b5411b289`
+- VECINIA-WORLDS: `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1`
+
+VECINIA transport was checked byte-for-byte by requiring destination Git blob SHAs to match source Git blob SHAs.
+
+### FINAL ISOLATION DIFF
+
+Comparison:
+
+`4fbca5997beaf058543ee65d682f0adae89252e2` → `chatgpt/museum-character-2027-integration-v1`
+
+GitHub compare + PR changed-filename enumeration prove that the changed files are restricted to:
+
+```text
+labs/immersive-worlds/donors-frozen/character-2027/**
+labs/immersive-worlds/docs/MUSEUM_CHARACTER_AVATAR_2027_SURGERY_ROADMAP.md
+labs/immersive-worlds/docs/MUSEUM_CHARACTER_AVATAR_2027_PROGRESS_TRACKER.md
+```
+
+Explicit isolation result:
+
+```text
+0 runtime imports
+0 WorldStore changes
+0 SceneKit changes
+0 Gallery A changes
+0 Gallery B changes
+0 Wet Paint changes
+0 Breeze changes
+```
+
+Character is **NOT ACTIVATED**.
+
+`master` is **NOT TOUCHED**.
 
 Gate 1:
 
-- every approved stone exists locally
-- donor manifest complete
-- no runtime activation yet
-- Museum baseline still builds/runs
+- [x] every approved CharacterStudio stone exists locally
+- [x] complete IK family preserved
+- [x] all ten VECINIA runtime stones exist locally
+- [x] donor manifest complete
+- [x] source repository / branch / SHA recorded
+- [x] no functional rewrite during transport
+- [x] no runtime import added
+- [x] no Museum authority modified
+- [x] no frozen room modified
+- [x] Character remains inactive
+
+**PHASE 1 — DONOR FREEZE = PASS / CLOSED**
 
 ---
 
@@ -333,6 +389,8 @@ Gate 2:
 
 - no unidentified authority conflict
 - exact minimal seam designed
+
+**PHASE 2 — CURRENT / NEXT**
 
 ---
 
