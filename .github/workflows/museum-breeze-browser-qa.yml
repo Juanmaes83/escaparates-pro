@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - chatgpt/museum-breeze-phase1-original-v41
+      - chatgpt/museum-breeze-persistence-v1
     paths:
       - 'labs/immersive-worlds/**'
       - 'labs/website-modules-source/breeze-studio-pro/**'
@@ -37,9 +38,9 @@ jobs:
           npm install --no-save @playwright/test@1.62.1
           npx playwright install --with-deps chromium
 
-      - name: Run Breeze browser interaction gate
+      - name: Run Breeze save / re-entry browser gate
         env:
-          BREEZE_MUSEUM_URL: https://escaparates-cfegbk7jv-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json
+          BREEZE_MUSEUM_URL: https://escaparates-pro-git-chatgpt-mu-5bfce9-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json
         run: npx playwright test tests/museum-breeze-interaction.spec.mjs --browser=chromium --reporter=line
 
       - name: Upload Breeze browser diagnostics
