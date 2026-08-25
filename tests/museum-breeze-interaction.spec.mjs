@@ -47,8 +47,43 @@ async function enterBreezeCanonically(page) {
   await traverseAndWait(page, 'portal.gallery-b-breeze', 'space.breeze');
 }
 
-test('Breeze saves real customisation and restores after canonical room re-entry', async ({ page }) => {
-  test.setTimeout(210_000);
+async function assertRestoredBreeze(page) {
+  const { iframe, frame } = await getBreezeFrame(page);
+  await expect.poll(async () => page.evaluate(() => {
+    const status = window.__IW_BREEZE_PERSISTENCE?.status;
+    return status === 'RESTORED' || status === 'RESTORE_ERROR';
+  }), { timeout: 50_000 }).toBe(true);
+
+  const diagnostic = await page.evaluate(() => window.__IW_BREEZE_PERSISTENCE || null);
+  console.log('BREEZE_RESTORE_DIAGNOSTIC', JSON.stringify(diagnostic));
+  expect(diagnostic?.status, `Restore failed: ${diagnostic?.error || 'unknown error'}`).toBe('RESTORED');
+
+  const restored = await page.evaluate(async () => {
+    const response = await window.__IW_BREEZE_PERSISTENCE_ADAPTER.request('GET_STATE');
+    return {
+      activeSpaceId: window.__IW.runtime.state.activeSpaceId,
+      status: window.__IW_BREEZE_PERSISTENCE?.status,
+      experience: response.state?.experience,
+      brightness: response.state?.cloth?.brightness,
+      saturation: response.state?.cloth?.saturation,
+      backgroundApplied: response.state?.background?.applied,
+      backgroundName: response.state?.background?.file?.name || response.state?.background?.meta?.name || null
+    };
+  });
+  expect(restored).toEqual({
+    activeSpaceId: 'space.breeze',
+    status: 'RESTORED',
+    experience: 'autumn',
+    brightness: 1.35,
+    saturation: 0.65,
+    backgroundApplied: true,
+    backgroundName: 'museum-breeze-proof.png'
+  });
+  return { iframe, frame, restored };
+}
+
+test('Breeze saves, restores on re-entry, and survives the canonical full route', async ({ page }) => {
+  test.setTimeout(300_000);
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForTimeout(2_000);
   await enterBreezeCanonically(page);
@@ -107,40 +142,65 @@ test('Breeze saves real customisation and restores after canonical room re-entry
     backgroundName: 'museum-breeze-proof.png'
   });
 
+  // Gate A: ordinary room lifecycle re-entry.
   await traverseAndWait(page, 'portal.breeze-gallery-b', 'space.gallery-b');
   await expect(iframe).toBeHidden({ timeout: 25_000 });
   await traverseAndWait(page, 'portal.gallery-b-breeze', 'space.breeze');
-  ({ iframe, frame } = await getBreezeFrame(page));
+  ({ iframe, frame } = await assertRestoredBreeze(page));
+  console.log('BREEZE_SAVE_REENTRY_RESULT', JSON.stringify(await page.evaluate(() => window.__IW_BREEZE_PERSISTENCE)));
 
-  await expect.poll(async () => page.evaluate(() => {
-    const status = window.__IW_BREEZE_PERSISTENCE?.status;
-    return status === 'RESTORED' || status === 'RESTORE_ERROR';
-  }), { timeout: 50_000 }).toBe(true);
+  // Return to the authored starting point without clearing the saved parent snapshot.
+  await traverseAndWait(page, 'portal.breeze-gallery-b', 'space.gallery-b');
+  await expect(iframe).toBeHidden({ timeout: 25_000 });
+  await traverseAndWait(page, 'portal.gallery-b-gallery-a', 'space.gallery-a');
+  await traverseAndWait(page, 'portal.gallery-a-lobby', 'space.lobby');
 
-  const restoreDiagnostic = await page.evaluate(() => window.__IW_BREEZE_PERSISTENCE || null);
-  console.log('BREEZE_RESTORE_DIAGNOSTIC', JSON.stringify(restoreDiagnostic));
-  expect(restoreDiagnostic?.status, `Restore failed: ${restoreDiagnostic?.error || 'unknown error'}`).toBe('RESTORED');
+  // Gate B: use the actual Director route containing Gallery B -> Breeze.
+  const routePlan = await page.evaluate(() => {
+    const runtime = window.__IW.runtime;
+    const route = runtime.store.routes.find((candidate) =>
+      runtime.store.routeSteps(candidate.id).some((step) => JSON.stringify(step).includes('portal.gallery-b-breeze'))
+    );
+    if (!route) throw new Error('No canonical route contains portal.gallery-b-breeze');
 
-  const restored = await page.evaluate(async () => {
-    const response = await window.__IW_BREEZE_PERSISTENCE_ADAPTER.request('GET_STATE');
+    runtime.experience.start(route.id);
+    const breezeBeat = runtime.experience.steps.find((step) => JSON.stringify(step).includes('portal.gallery-b-breeze'));
+    if (!breezeBeat) throw new Error('Breeze portal beat missing after route start');
+    const breezeTourStep = runtime.experience.manifest.steps.find((step) => step.beatIds.includes(breezeBeat.id));
+    if (!breezeTourStep) throw new Error('Breeze portal beat has no canonical tour step');
+    const finalTourStep = runtime.experience.manifest.steps[runtime.experience.manifest.steps.length - 1];
     return {
-      activeSpaceId: window.__IW.runtime.state.activeSpaceId,
-      status: window.__IW_BREEZE_PERSISTENCE?.status,
-      experience: response.state?.experience,
-      brightness: response.state?.cloth?.brightness,
-      saturation: response.state?.cloth?.saturation,
-      backgroundApplied: response.state?.background?.applied,
-      backgroundName: response.state?.background?.file?.name || response.state?.background?.meta?.name || null
+      routeId: route.id,
+      breezeTourStepId: breezeTourStep.id,
+      finalTourStepId: finalTourStep.id,
+      tourTotal: runtime.experience.manifest.steps.length
     };
   });
-  console.log('BREEZE_SAVE_REENTRY_RESULT', JSON.stringify(restored));
-  expect(restored).toEqual({
-    activeSpaceId: 'space.breeze',
-    status: 'RESTORED',
-    experience: 'autumn',
-    brightness: 1.35,
-    saturation: 0.65,
-    backgroundApplied: true,
-    backgroundName: 'museum-breeze-proof.png'
-  });
+  console.log('BREEZE_FULL_ROUTE_PLAN', JSON.stringify(routePlan));
+
+  const reachedBreeze = await page.evaluate(async (tourStepId) =>
+    window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.breezeTourStepId);
+  expect(reachedBreeze).toBe(true);
+  await expect.poll(async () => page.evaluate(() => window.__IW.runtime.state.activeSpaceId), { timeout: 50_000 }).toBe('space.breeze');
+
+  const routeRestore = await assertRestoredBreeze(page);
+  console.log('BREEZE_FULL_ROUTE_RESTORE', JSON.stringify(routeRestore.restored));
+
+  const reachedEnd = await page.evaluate(async (tourStepId) =>
+    window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.finalTourStepId);
+  expect(reachedEnd).toBe(true);
+
+  const fullRoute = await page.evaluate(() => ({
+    routeId: window.__IW.runtime.experience.routeId,
+    tourOrder: window.__IW.runtime.experience.tourOrder,
+    tourTotal: window.__IW.runtime.experience.tourTotal,
+    currentTourStepId: window.__IW.runtime.experience.currentTourStep?.id || null,
+    activeSpaceId: window.__IW.runtime.state.activeSpaceId,
+    persistenceStatus: window.__IW_BREEZE_PERSISTENCE?.status || null
+  }));
+  console.log('BREEZE_FULL_ROUTE_RESULT', JSON.stringify(fullRoute));
+  expect(fullRoute.routeId).toBe(routePlan.routeId);
+  expect(fullRoute.tourOrder).toBe(fullRoute.tourTotal);
+  expect(fullRoute.tourTotal).toBe(routePlan.tourTotal);
+  expect(fullRoute.currentTourStepId).toBe(routePlan.finalTourStepId);
 });
