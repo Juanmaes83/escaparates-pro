@@ -146,6 +146,28 @@ function evidence(studio) {
   };
 }
 
+async function saveCurrentBreeze(studio) {
+  if (!studio) throw new Error('Museum Studio no está montado.');
+  if (!(await waitReady())) throw new Error('Breeze Studio PRO no está abierto.');
+  const state = (await request('GET_STATE')).state;
+  savedState = state;
+  syncConfig(studio, state);
+  ConfigStore.save(studio.config);
+  studio.dirty = false;
+  studio.savedAt = new Date();
+  writeEvidence(studio, 'saved');
+  window.__IW_BREEZE_SAVED_STATE = savedState;
+  window.__IW_BREEZE_PERSISTENCE = {
+    status: 'SAVED',
+    state: cleanState(savedState),
+    hasBackgroundFile: Boolean(savedState?.background?.file),
+    hasClothFile: Boolean(savedState?.cloth?.file),
+    hasModelFile: Boolean(savedState?.object?.uploadedFile),
+    at: new Date().toISOString()
+  };
+  return savedState;
+}
+
 async function restoreSavedState(reason = 'REENTRY') {
   if (!savedState || restoreInFlight) return restoreInFlight;
   restoreInFlight = (async () => {
@@ -191,6 +213,35 @@ window.addEventListener('message', (event) => {
     return;
   }
 
+  if (msg.type === 'SAVE_REQUEST') {
+    const frame = iframe();
+    if (!frame?.contentWindow || event.source !== frame.contentWindow) return;
+    (async () => {
+      try {
+        const studio = window.__IW_STUDIO;
+        if (!studio) throw new Error('Museum Studio no está disponible.');
+        studio.selectedId = ENTITY_ID;
+        await saveCurrentBreeze(studio);
+        studio.render?.();
+        frame.contentWindow.postMessage({
+          bridge: BRIDGE,
+          type: 'SAVE_RESULT',
+          ok: true,
+          message: 'Guardado en Museum. Puedes salir de la sala sin perder esta personalización.'
+        }, '*');
+      } catch (error) {
+        console.error('[Museum Breeze persistence] in-panel save failed', error);
+        frame.contentWindow.postMessage({
+          bridge: BRIDGE,
+          type: 'SAVE_RESULT',
+          ok: false,
+          message: String(error?.message || error)
+        }, '*');
+      }
+    })();
+    return;
+  }
+
   if (msg.type === 'BOOT_ERROR') {
     console.error('[Museum Breeze persistence] child seam failed', msg.error);
     return;
@@ -231,23 +282,7 @@ StudioShell.prototype._validationSavePiece = async function breezeSavePiece() {
   this.busy = 'save';
   this.render();
   try {
-    if (!(await waitReady())) throw new Error('Breeze Studio PRO no está abierto.');
-    const state = (await request('GET_STATE')).state;
-    savedState = state;
-    syncConfig(this, state);
-    ConfigStore.save(this.config);
-    this.dirty = false;
-    this.savedAt = new Date();
-    writeEvidence(this, 'saved');
-    window.__IW_BREEZE_SAVED_STATE = savedState;
-    window.__IW_BREEZE_PERSISTENCE = {
-      status: 'SAVED',
-      state: cleanState(savedState),
-      hasBackgroundFile: Boolean(savedState?.background?.file),
-      hasClothFile: Boolean(savedState?.cloth?.file),
-      hasModelFile: Boolean(savedState?.object?.uploadedFile),
-      at: new Date().toISOString()
-    };
+    await saveCurrentBreeze(this);
     this._say('BREEZE GUARDADO · Museum conservará esta personalización al salir, volver y probar el recorrido.');
   } catch (error) {
     this._say(`NO SE PUDO GUARDAR BREEZE · ${String(error?.message || error)}`, true);
@@ -281,6 +316,7 @@ StudioShell.prototype._validationValidatePiece = async function breezeValidatePi
 window.__IW_BREEZE_PERSISTENCE_ADAPTER = {
   entityId: ENTITY_ID,
   request,
+  save: () => window.__IW_STUDIO ? saveCurrentBreeze(window.__IW_STUDIO) : Promise.reject(new Error('Museum Studio no está montado.')),
   restore: restoreSavedState,
   get savedState() { return savedState; },
   evidence: () => window.__IW_STUDIO ? evidence(window.__IW_STUDIO) : null
