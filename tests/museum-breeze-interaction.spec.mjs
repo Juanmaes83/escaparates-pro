@@ -1,10 +1,16 @@
 import { test, expect } from '@playwright/test';
 
-// Isolated QA run: prove native Breeze controls receive real browser input inside Museum.
 const URL = process.env.BREEZE_MUSEUM_URL ||
   'https://escaparates-cfegbk7jv-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json';
 
 const artifact = (name) => test.info().outputPath(name);
+
+async function enterBreezeRoom(page) {
+  const room = page.getByRole('button', { name: /Sala Breeze\s+—\s+Viento sobre mármol/i }).first();
+  await expect(room).toBeVisible({ timeout: 20_000 });
+  await room.click();
+  await page.waitForTimeout(2_000);
+}
 
 async function getBreezeFrame(page) {
   const iframe = page.locator('iframe[data-nested-room-studio="room.breeze"]');
@@ -41,6 +47,7 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
 
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForTimeout(5_000);
+  await enterBreezeRoom(page);
 
   const { iframe, frame } = await getBreezeFrame(page);
 
