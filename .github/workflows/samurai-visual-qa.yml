@@ -38,6 +38,8 @@ jobs:
           const fs = require('fs');
           const path = require('path');
 
+          test.use({ browserName: 'chromium' });
+
           const URL = 'http://127.0.0.1:4173/labs/premium-vault/visual-mechanics/puzzle-assembly-studio-pro/index.html';
           const OUT = path.join(process.cwd(), 'visual-qa-output');
           fs.mkdirSync(OUT, { recursive: true });
@@ -122,7 +124,7 @@ jobs:
             expect(hold.elements.samurai2.opacity, 'samurai2 must remain visible during final hold').toBeGreaterThan(0.9);
           });
           EOF
-          npx playwright test visual-qa/samurai-visual-check.spec.js --project=chromium --reporter=line
+          npx playwright test visual-qa/samurai-visual-check.spec.js --reporter=line
 
       - name: Upload visual QA artifacts
         if: always()
