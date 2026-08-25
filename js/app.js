@@ -31,6 +31,16 @@
         });
     }
 
+    function loadPremiumVault() {
+        loadScriptOnce('js/premium-vault-real.js', 'data-premium-vault-real', function() {
+            try {
+                var vault = EP.PremiumVault || EP.PremiumVaultReal;
+                if (vault && vault.init) vault.init();
+            }
+            catch (e) { console.error('PremiumVault.init failed:', e); }
+        });
+    }
+
     function boot() {
         try { EP.Core.init(); } catch(e) { console.error('Core.init failed:', e); }
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
@@ -53,6 +63,7 @@
         try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
         try { if (EP.SourceLabsUI) EP.SourceLabsUI.init(); } catch(e) { console.error('SourceLabsUI.init failed:', e); }
         try { if (EP.PlatformInfo) EP.PlatformInfo.init(); } catch(e) { console.error('PlatformInfo.init failed:', e); }
+        loadPremiumVault();
         loadProjectCloudProduct();
 
         EP.Media.onChange(function() {
@@ -60,6 +71,8 @@
             if (EP.UI.refreshCurrentControls) EP.UI.refreshCurrentControls();
             if (EP.WebsiteModulesUI && EP.WebsiteModulesUI.refresh) EP.WebsiteModulesUI.refresh();
             if (EP.SourceLabsUI && EP.SourceLabsUI.refresh) EP.SourceLabsUI.refresh();
+            var vault = EP.PremiumVault || EP.PremiumVaultReal;
+            if (vault && vault.refresh) vault.refresh();
         });
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080807">
+  <title>Luxury Real Estate Studio PRO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="realestate.css">
+  <link rel="stylesheet" href="realestate-studio.css">
+</head>
+<body data-preview="desktop">
+  <div class="page-progress" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand-lockup" href="#top" aria-label="Inicio"><span id="brand-mark">R</span><strong id="brand-name">Rubik Sota</strong></a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="#top" data-nav="home">Inicio</a>
+      <a href="#about" data-nav="about">Nosotros</a>
+      <a href="#properties" data-nav="properties">Propiedades</a>
+      <a href="#services" data-nav="services">Servicios</a>
+      <a href="#contact" data-nav="contact">Contacto</a>
+    </nav>
+    <div class="nav-actions"><button id="lang-toggle" class="ghost" type="button">ES</button><button class="studio-open pill" type="button">Studio</button></div>
+  </header>
+
+  <main id="top">
+    <section class="hero immersive" aria-label="Luxury real estate hero">
+      <div class="hero-media" data-media-host="hero"></div>
+      <div class="hero-fallback" data-media-host="heroFallback"></div>
+      <div class="hero-vignette"></div>
+      <div class="hero-copy" data-reveal>
+        <p id="hero-kicker" class="kicker"></p>
+        <h1 class="hero-title"><span id="hero-line1"></span><em id="hero-line2"></em></h1>
+        <p id="hero-subtitle" class="hero-subtitle"></p>
+        <a id="hero-cta" class="text-link" href="#properties"></a>
+      </div>
+      <div class="hero-scroll-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
+    </section>
+
+    <section id="about" class="about-section">
+      <article class="glass-panel" data-glass-panel>
+        <p id="about-kicker" class="kicker"></p>
+        <h2 id="about-title" class="display"></h2>
+        <p id="about-text"></p>
+      </article>
+    </section>
+
+    <section id="properties" class="properties-section">
+      <div class="section-head">
+        <p id="properties-kicker" class="kicker"></p>
+        <h2 id="properties-title" class="display"></h2>
+        <p id="properties-intro"></p>
+      </div>
+      <div id="properties-grid" class="properties-grid"></div>
+    </section>
+
+    <section id="services" class="services-section">
+      <div class="glass-panel services-panel">
+        <p id="services-kicker" class="kicker"></p>
+        <h2 id="services-title" class="display"></h2>
+        <div id="services-grid" class="services-grid"></div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+      <div class="contact-card">
+        <p id="contact-kicker" class="kicker"></p>
+        <h2 id="contact-title" class="display"></h2>
+        <p id="contact-text"></p>
+        <div class="contact-actions"><a id="contact-primary" class="pill dark" href="#"></a><a id="contact-secondary" class="ghost dark" href="#"></a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><strong id="footer-brand"></strong><span id="footer-credits"></span><span id="footer-rights"></span></footer>
+
+  <aside id="studio" class="studio" aria-hidden="true">
+    <div class="studio-head"><div><small>LUXURY REAL ESTATE STUDIO PRO</small><strong id="studio-project-name">Rubik Sota</strong></div><div class="studio-head-actions"><span id="studio-status" class="studio-status" data-state="saved">Guardado</span><button id="studio-close" type="button" aria-label="Cerrar Studio">×</button></div></div>
+    <nav class="studio-nav" aria-label="Secciones del Studio">
+      <button class="active" data-panel="brand">Marca</button><button data-panel="hero">Hero / Vídeo</button><button data-panel="about">About Glass</button><button data-panel="properties">Propiedades</button><button data-panel="services">Servicios</button><button data-panel="contact">Contacto</button><button data-panel="motion">Motion</button><button data-panel="project">Proyecto</button>
+    </nav>
+    <div id="studio-scroll" class="studio-scroll">
+      <section class="studio-panel" data-panel="brand"><div class="panel-intro"><p class="eyebrow">01 · Marca</p><h3>Identidad inmobiliaria premium</h3><p>Controla agencia, idioma, paleta y firma sin romper el tono oscuro/dorado.</p></div><div class="control-grid"><label>Nombre agencia<input data-path="brand.name"></label><label>Monograma<input data-path="brand.mark"></label><label>Idioma por defecto<select data-path="brand.lang"><option value="es">ES</option><option value="en">EN</option></select></label><label>Color acento<input type="color" data-path="brand.accent"></label><label>Fondo<input type="color" data-path="brand.ink"></label><label>Texto claro<input type="color" data-path="brand.text"></label><label class="full">Créditos footer<input data-path="brand.credits"></label></div></section>
+      <section class="studio-panel" data-panel="hero" hidden><div class="panel-intro"><p class="eyebrow">02 · Hero / Vídeo</p><h3>Vídeo atmosférico y claim principal</h3><p>El vídeo es la atmósfera madre. Siempre debe tener poster/fallback para evitar pantalla negra.</p><button class="panel-preview" data-preview-target="#top">Ver Hero ↗</button></div><div class="control-grid"><label class="full">Vídeo hero URL<input data-path="hero.videoUrl"></label><label class="full">Poster / fallback URL<input data-path="hero.posterUrl"></label><label>Eyebrow<input data-path="hero.kicker"></label><label>Línea 1<input data-path="hero.line1"></label><label>Línea 2<input data-path="hero.line2"></label><label class="full">Subtítulo<textarea rows="3" data-path="hero.subtitle"></textarea></label><label>CTA<input data-path="hero.ctaLabel"></label><label>CTA URL<input data-path="hero.ctaUrl"></label><label>Overlay<input type="range" min="0" max="90" step="1" data-path="motion.overlayStrength"></label><label>Escala vídeo<input type="range" min="100" max="160" step="1" data-path="motion.videoScale"></label><label class="full">Subir imagen/vídeo local<input class="media-upload" data-slot="hero" type="file" accept="image/*,video/*"></label></div></section>
+      <section class="studio-panel" data-panel="about" hidden><div class="panel-intro"><p class="eyebrow">03 · About Glass</p><h3>Panel editorial inmersivo</h3><p>Este bloque es parte del ADN: glass, profundidad y lujo contenido.</p><button class="panel-preview" data-preview-target="#about">Ver About ↗</button></div><div class="control-grid"><label>Kicker<input data-path="about.kicker"></label><label>Título<input data-path="about.title"></label><label class="full">Texto<textarea rows="5" data-path="about.text"></textarea></label><label>Blur glass<input type="range" min="0" max="90" step="1" data-path="motion.glassBlur"></label><label>Opacidad glass<input type="range" min="0" max="60" step="1" data-path="motion.glassOpacity"></label></div></section>
+      <section class="studio-panel" data-panel="properties" hidden><div class="panel-intro"><p class="eyebrow">04 · Propiedades</p><h3>Gestor de propiedades</h3><p>Equivalente inmobiliario al gestor de platos de Restaurante: añadir, duplicar, ocultar, ordenar y editar.</p><button class="panel-preview" data-preview-target="#properties">Ver propiedades ↗</button></div><div id="property-list" class="item-list"></div><div class="item-toolbar"><button id="property-add">+ Añadir</button><button id="property-duplicate">Duplicar</button><button id="property-up">↑ Subir</button><button id="property-down">↓ Bajar</button><button id="property-delete" class="studio-danger">Eliminar</button></div><div class="item-editor"><label class="inline-check"><input id="property-enabled" type="checkbox"> Visible</label><div class="control-grid"><label>Título<input data-property="title"></label><label>Ubicación<input data-property="location"></label><label>Precio<input data-property="price"></label><label>CTA<input data-property="cta"></label><label class="full">Imagen / vídeo URL<input data-property="mediaUrl"></label><label>Tipo media<select data-property="mediaType"><option value="image">Imagen</option><option value="video">Vídeo</option></select></label><label>URL destino<input data-property="url"></label><label class="full">Descripción<textarea rows="3" data-property="description"></textarea></label></div></div></section>
+      <section class="studio-panel" data-panel="services" hidden><div class="panel-intro"><p class="eyebrow">05 · Servicios</p><h3>Oferta premium</h3><p>Servicios breves, ordenables y orientados a comprador/vendedor de alto valor.</p><button class="panel-preview" data-preview-target="#services">Ver servicios ↗</button></div><div class="control-grid"><label>Kicker<input data-path="services.kicker"></label><label>Título<input data-path="services.title"></label><label class="full">Servicios, uno por línea<textarea rows="6" data-path="services.itemsText"></textarea></label></div></section>
+      <section class="studio-panel" data-panel="contact" hidden><div class="panel-intro"><p class="eyebrow">06 · Contacto</p><h3>Conversión sin romper la atmósfera</h3><p>CTA principal, WhatsApp/email y cierre de marca.</p><button class="panel-preview" data-preview-target="#contact">Ver contacto ↗</button></div><div class="control-grid"><label>Kicker<input data-path="contact.kicker"></label><label>Título<input data-path="contact.title"></label><label class="full">Texto<textarea rows="3" data-path="contact.text"></textarea></label><label>CTA principal<input data-path="contact.primaryLabel"></label><label>URL principal<input data-path="contact.primaryUrl"></label><label>CTA secundaria<input data-path="contact.secondaryLabel"></label><label>URL secundaria<input data-path="contact.secondaryUrl"></label></div></section>
+      <section class="studio-panel" data-panel="motion" hidden><div class="panel-intro"><p class="eyebrow">07 · Motion</p><h3>Coreografía protegida</h3><p>Controles seguros: intensidad, scrub y parallax sin destruir la experiencia.</p></div><div class="control-grid"><label>Scroll scrub<select data-path="motion.scrubMode"><option value="progress">Progress</option><option value="ambient">Ambient loop</option><option value="still">Still fallback</option></select></label><label>Suavizado<input type="range" min="1" max="24" step="1" data-path="motion.smoothing"></label><label>Parallax mouse<select data-path="motion.mouseParallax"><option value="true">Activo</option><option value="false">Inactivo</option></select></label><label>Reduced motion<select data-path="motion.reducedMode"><option value="auto">Auto</option><option value="still">Imagen fija</option></select></label></div></section>
+      <section class="studio-panel" data-panel="project" hidden><div class="panel-intro"><p class="eyebrow">08 · Proyecto</p><h3>Guardar, probar y transformar</h3><p>La web debe transformarse en otra inmobiliaria sin tocar código.</p></div><div class="project-actions"><button data-preview="desktop">Desktop</button><button data-preview="tablet">Tablet</button><button data-preview="mobile">Mobile</button><button id="export-json">Export JSON</button><label class="import-btn">Import JSON<input id="import-json" type="file" accept="application/json"></label><button id="reset-project" class="studio-danger">Reset</button></div><textarea id="project-json" readonly rows="10"></textarea></section>
+    </div>
+  </aside>
+
+  <script src="realestate-config.js"></script>
+  <script src="realestate-store.js"></script>
+  <script src="realestate-motion.js"></script>
+  <script src="realestate-app.js"></script>
+</body>
+</html>
