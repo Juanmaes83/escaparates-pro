@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050506">
+  <title>Real Estate Storytelling — Studio PRO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="story.css">
+  <link rel="stylesheet" href="story-studio.css">
+</head>
+<body data-preview="desktop">
+  <main id="top" class="story-stage">
+    <section class="story-scroll" id="story-scroll">
+      <div class="story-sticky">
+        <div class="story-media-layer" aria-hidden="true">
+          <div class="story-poster" data-media-host="poster"></div>
+          <div class="story-video-host" data-media-host="video"></div>
+          <div class="story-overlay"></div>
+          <div class="story-loader" id="story-loader">Cargando experiencia…</div>
+        </div>
+        <header class="story-header">
+          <strong id="brand-name">RUBIK SOTA</strong>
+          <div class="story-actions"><button id="lang-toggle" type="button">ES</button><button class="studio-open" type="button">Studio</button></div>
+        </header>
+        <div class="story-copy" aria-live="polite">
+          <p id="phase-kicker" class="kicker"></p>
+          <h1 id="phase-title"></h1>
+          <p id="phase-subtitle"></p>
+          <a id="phase-cta" class="phase-cta" href="#contact">Contactar</a>
+        </div>
+        <div class="story-dots" id="story-dots" aria-hidden="true"></div>
+        <div class="story-arrow" id="story-arrow">⌄</div>
+        <footer class="story-footer"><span id="story-footer"></span></footer>
+      </div>
+    </section>
+    <section id="contact" class="contact-panel"><p id="contact-kicker"></p><h2 id="contact-title"></h2><p id="contact-text"></p><a id="contact-link" href="#">Solicitar visita</a></section>
+  </main>
+
+  <aside id="studio" class="studio" aria-hidden="true">
+    <div class="studio-head"><div><small>STORYTELLING STUDIO PRO</small><strong id="studio-project-name">Rubik Sota</strong></div><span id="studio-status" data-state="saved">Guardado</span><button id="studio-close" type="button">×</button></div>
+    <nav class="studio-nav"><button class="active" data-panel="brand">Marca</button><button data-panel="video">Vídeo</button><button data-panel="phases">Fases</button><button data-panel="motion">Scroll & Motion</button><button data-panel="cta">CTA</button><button data-panel="project">Proyecto</button></nav>
+    <div class="studio-scroll">
+      <section class="studio-panel" data-panel="brand"><div class="panel-intro"><p>01 · Marca</p><h3>Identidad narrativa</h3><button data-preview-target="#top">Ver inicio ↗</button></div><label>Nombre<input data-path="brand.name"></label><label>Idioma<select data-path="brand.lang"><option value="es">ES</option><option value="en">EN</option></select></label><label>Color texto<input type="color" data-path="brand.text"></label><label>Color acento<input type="color" data-path="brand.accent"></label><label class="full">Footer<input data-path="brand.footer"></label></section>
+      <section class="studio-panel" data-panel="video" hidden><div class="panel-intro"><p>02 · Vídeo</p><h3>Media principal</h3><p>El vídeo es la cámara emocional. Nunca debe dejar la escena negra.</p></div><label class="full">URL vídeo<input data-path="video.url"></label><label class="full">Poster / fallback<input data-path="video.poster"></label><label>Overlay<input type="range" min="0" max=".85" step=".05" data-path="video.overlay"></label><label>Crop / escala<input type="range" min="1" max="1.45" step=".01" data-path="video.scale"></label><label>Subir vídeo / imagen<input class="media-upload" data-slot="video" type="file" accept="video/*,image/*"></label></section>
+      <section class="studio-panel" data-panel="phases" hidden><div class="panel-intro"><p>03 · Fases</p><h3>Coreografía narrativa</h3><p>Cuatro momentos por defecto: deseo, entrada, revelación y llamada final.</p></div><div id="phase-list"></div><div class="toolbar"><button id="phase-add" type="button">+ Añadir fase</button><button id="phase-up" type="button">↑ Subir</button><button id="phase-down" type="button">↓ Bajar</button><button id="phase-delete" type="button">Eliminar</button></div><div class="phase-editor"><label>Visible<input id="phase-enabled" type="checkbox"></label><label>Kicker<input data-phase="kicker"></label><label class="full">Título<textarea rows="2" data-phase="title"></textarea></label><label class="full">Subtítulo<textarea rows="2" data-phase="subtitle"></textarea></label><label>CTA label<input data-phase="ctaLabel"></label><label>CTA URL<input data-phase="ctaUrl"></label></div></section>
+      <section class="studio-panel" data-panel="motion" hidden><div class="panel-intro"><p>04 · Scroll & Motion</p><h3>Control cinematográfico</h3></div><label>Altura scroll vh<input type="range" min="250" max="900" step="50" data-path="motion.scrollVh"></label><label>Suavizado<input type="range" min="0.02" max="0.2" step="0.01" data-path="motion.smoothing"></label><label>Modo<select data-path="motion.mode"><option value="forwardReverse">Avanza y retrocede</option><option value="forward">Sólo avanza</option><option value="loop">Loop</option></select></label><label>Dots<select data-path="motion.showDots"><option value="true">Mostrar</option><option value="false">Ocultar</option></select></label><label>Reduced motion<select data-path="motion.reduced"><option value="auto">Auto</option><option value="on">Forzado</option><option value="off">Off</option></select></label></section>
+      <section class="studio-panel" data-panel="cta" hidden><div class="panel-intro"><p>05 · CTA final</p><h3>Conversión</h3></div><label>Contacto kicker<input data-path="contact.kicker"></label><label class="full">Título<input data-path="contact.title"></label><label class="full">Texto<textarea rows="3" data-path="contact.text"></textarea></label><label>Botón<input data-path="contact.label"></label><label>URL<input data-path="contact.url"></label></section>
+      <section class="studio-panel" data-panel="project" hidden><div class="panel-intro"><p>06 · Proyecto</p><h3>Persistencia y entrega</h3></div><div class="preview-row"><button data-preview="desktop">Desktop</button><button data-preview="tablet">Tablet</button><button data-preview="mobile">Mobile</button></div><div class="project-actions"><button id="export-json" type="button">Export JSON</button><label class="import-btn">Import JSON<input id="import-json" type="file" accept="application/json"></label><button id="reset-project" type="button">Reset</button></div><textarea id="project-json" rows="12" readonly></textarea></section>
+    </div>
+  </aside>
+  <script src="story-config.js"></script>
+  <script src="story-store.js"></script>
+  <script src="story-motion.js"></script>
+  <script src="story-app.js"></script>
+</body>
+</html>
