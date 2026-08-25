@@ -31,6 +31,13 @@
         });
     }
 
+    function loadPremiumVaultV2() {
+        loadScriptOnce('js/premium-vault-internal-v2.js', 'data-premium-vault-v2', function() {
+            try { if (EP.PremiumVaultV2) EP.PremiumVaultV2.init(); }
+            catch (e) { console.error('PremiumVaultV2.init failed:', e); }
+        });
+    }
+
     function boot() {
         try { EP.Core.init(); } catch(e) { console.error('Core.init failed:', e); }
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
@@ -53,6 +60,7 @@
         try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
         try { if (EP.SourceLabsUI) EP.SourceLabsUI.init(); } catch(e) { console.error('SourceLabsUI.init failed:', e); }
         try { if (EP.PlatformInfo) EP.PlatformInfo.init(); } catch(e) { console.error('PlatformInfo.init failed:', e); }
+        loadPremiumVaultV2();
         loadProjectCloudProduct();
 
         EP.Media.onChange(function() {
