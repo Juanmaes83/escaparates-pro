@@ -75,11 +75,17 @@ function readState({ includeFiles = true } = {}) {
   };
 }
 
-function setControl(id, value, eventName = 'input') {
+function setValue(id, value) {
   const el = byId(id);
   if (!el || value === undefined || value === null) return;
   if (el.type === 'checkbox') el.checked = Boolean(value);
   else el.value = String(value);
+}
+
+function dispatchControl(id, value, eventName = 'input') {
+  setValue(id, value);
+  const el = byId(id);
+  if (!el || value === undefined || value === null) return;
   el.dispatchEvent(new Event(eventName, { bubbles: true }));
 }
 
@@ -103,23 +109,32 @@ async function waitForExperience(value, timeout = 10000) {
   return byId('bsScene')?.value === value;
 }
 
+function softApply(label, fn) {
+  try {
+    return fn();
+  } catch (error) {
+    console.warn(`[Museum Breeze state seam] ${label} not supported by current experience`, error);
+    return null;
+  }
+}
+
 async function applyState(state) {
   const rt = await waitForRuntime();
   const app = rt.app;
 
   if (state?.experience && byId('bsScene')?.value !== state.experience) {
-    setControl('bsScene', state.experience, 'change');
+    dispatchControl('bsScene', state.experience, 'change');
     await waitForExperience(state.experience);
   }
 
-  setControl('bsRotate', state?.autoRotate, 'change');
-  setControl('bsRun', state?.runSimulation, 'change');
-  setControl('bsWire', state?.wireframe, 'change');
+  dispatchControl('bsRotate', state?.autoRotate, 'change');
+  dispatchControl('bsRun', state?.runSimulation, 'change');
+  dispatchControl('bsWire', state?.wireframe, 'change');
 
   const bg = state?.background || {};
-  setControl('bsBgScale', bg.scale);
-  setControl('bsBgX', bg.x);
-  setControl('bsBgY', bg.y);
+  setValue('bsBgScale', bg.scale);
+  setValue('bsBgX', bg.x);
+  setValue('bsBgY', bg.y);
   if (bg.file) {
     app.backgroundTransform = {
       scale: Number(bg.scale ?? 1),
@@ -127,29 +142,36 @@ async function applyState(state) {
       y: Number(bg.y ?? 0)
     };
     await app.setAppliedBackgroundFile(bg.file);
-    app.applyBackgroundTransform?.();
+    softApply('background transform', () => app.applyBackgroundTransform?.());
   }
 
+  // Keep the authored controls exactly as saved, but do not blindly dispatch
+  // cloth-look input events: Autumn Leaves / Sakura do not expose applyUserLook.
   const cloth = state?.cloth || {};
-  setControl('bsScale', cloth.scale);
-  setControl('bsX', cloth.x);
-  setControl('bsY', cloth.y);
-  setControl('bsOpacity', cloth.opacity);
-  setControl('bsBrightness', cloth.brightness);
-  setControl('bsContrast', cloth.contrast);
-  setControl('bsSaturation', cloth.saturation);
-  app.setClothMediaTransform?.({
+  setValue('bsScale', cloth.scale);
+  setValue('bsX', cloth.x);
+  setValue('bsY', cloth.y);
+  setValue('bsOpacity', cloth.opacity);
+  setValue('bsBrightness', cloth.brightness);
+  setValue('bsContrast', cloth.contrast);
+  setValue('bsSaturation', cloth.saturation);
+
+  if (cloth.file) {
+    // A saved real cloth asset is a hard requirement: if it cannot be restored,
+    // the Museum must report restore failure rather than silently losing media.
+    await app.applyClothFile(cloth.file);
+  }
+  softApply('cloth media transform', () => app.setClothMediaTransform?.({
     scale: Number(cloth.scale ?? 1),
     x: Number(cloth.x ?? 0),
     y: Number(cloth.y ?? 0)
-  });
-  app.setClothLook?.({
+  }));
+  softApply('cloth look', () => app.setClothLook?.({
     opacity: Number(cloth.opacity ?? 1),
     brightness: Number(cloth.brightness ?? 1),
     contrast: Number(cloth.contrast ?? 1),
     saturation: Number(cloth.saturation ?? 1)
-  });
-  if (cloth.file) await app.applyClothFile(cloth.file);
+  }));
 
   const object = state?.object || {};
   if (object.uploadedFile) {
@@ -161,8 +183,8 @@ async function applyState(state) {
   }
 
   const physics = state?.physics || {};
-  setControl('bsStiff', physics.stiffness);
-  setControl('bsFriction', physics.friction);
+  dispatchControl('bsStiff', physics.stiffness);
+  dispatchControl('bsFriction', physics.friction);
 
   return readState({ includeFiles: true });
 }
