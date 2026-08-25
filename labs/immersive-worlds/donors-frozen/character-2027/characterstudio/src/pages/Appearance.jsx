@@ -321,7 +321,7 @@ function Appearance() {
         </div>
       </div>
 
-      {/* Option Selection section */}
+      {/* Option Selection section */
       !!traits && selectedTraitGroup && (
         <div className={styles["selectorContainerPos"]}>
         
@@ -329,7 +329,7 @@ function Appearance() {
           <div
               className={styles["selectorPickerTabs"]}
               >
-            {/* color section */}
+            {/* color section */
               selectedTrait && traitView==TraitPage.TRAIT && (
                 <div className={styles["selectorColorPickerButton"]}
                   onClick={()=>{setIsPickingColor(!isPickingColor)}}
@@ -371,7 +371,7 @@ function Appearance() {
                   />
                 </div>
               }
-              {/* Null button section */}
+              {/* Null button section */
                 !characterManager.isTraitGroupRequired(selectedTraitGroup.trait) ? (
                   <div
                     key={"no-trait"}
@@ -389,7 +389,7 @@ function Appearance() {
                   <></>
                 )
               }
-              {/* All buttons section */}
+              {/* All buttons section */
               traits.map((trait, index) => {
                 let active = (trait.id === selectedTrait?.id && trait.collectionID === selectedTrait?.collectionID)
                 return (
