@@ -89,7 +89,7 @@ function dispatchControl(id, value, eventName = 'input') {
   el.dispatchEvent(new Event(eventName, { bubbles: true }));
 }
 
-async function waitForRuntime(timeout = 15000) {
+async function waitForRuntime(timeout = 60000) {
   const start = performance.now();
   while (performance.now() - start < timeout) {
     if (runtime()?.app && byId('breezeStudioPanel') && byId('bsScene')) return runtime();
