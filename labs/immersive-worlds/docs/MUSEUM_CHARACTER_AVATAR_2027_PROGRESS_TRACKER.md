@@ -25,10 +25,12 @@ Legend:
 | Roadmap saved | PASS | `MUSEUM_CHARACTER_AVATAR_2027_SURGERY_ROADMAP.md` |
 | Progress tracker saved | PASS | this file |
 | CharacterStudio donor provenance | PASS | PRIMARY `agent/character-2027-terrain-semantic-01`, frozen reference `f5a93a48ed0e3904fce58f08f7fbe08b5411b289` |
-| VECINIA donor provenance | PASS | PRIMARY `feat/sculpture-navigation-character-v1` |
+| VECINIA donor provenance | PASS | PRIMARY `feat/sculpture-navigation-character-v1`, frozen reference `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1` |
 | WORLD-COSTA-BLANCA deep audit | PASS | secondary donor; no stronger hidden Character runtime found than VECINIA |
-| Donor stones copied into Museum | PENDING | Phase 1 |
-| Donor manifest/checksums | PENDING | Phase 1 |
+| Donor stones copied into Museum | PASS | complete under `labs/immersive-worlds/donors-frozen/character-2027/**` |
+| Donor manifest/checksums | PASS | `labs/immersive-worlds/donors-frozen/character-2027/MANIFEST` |
+| Phase 1 scope diff | PASS | base `4fbca5997beaf058543ee65d682f0adae89252e2` → branch; only donor-freeze + docs |
+| Character runtime activation | NOT STARTED | no runtime imports; frozen donors only |
 | Anatomy/compatibility map | PENDING | Phase 2 |
 | Character visible in Museum | PENDING | Phase 3 |
 | IDLE / rig / grounding | PENDING | Phase 3 |
@@ -53,7 +55,7 @@ Legend:
 | Preserve Breeze PRO | PASS | HUMAN PASS + Museum save/re-entry/route |
 | Create Character surgery branch | PASS | `chatgpt/museum-character-2027-integration-v1` |
 | Record CharacterStudio source | PASS | `f5a93a48...` |
-| Record VECINIA source | PASS | `feat/sculpture-navigation-character-v1` |
+| Record VECINIA source | PASS | `45e454f...` / `feat/sculpture-navigation-character-v1` |
 | Re-audit WORLD-COSTA-BLANCA | PASS | no superior hidden Avatar runtime found |
 | Create roadmap | PASS | saved in GitHub |
 | Create progress tracker | PASS | saved in GitHub |
@@ -68,45 +70,88 @@ Legend:
 
 | Stone / capability | Import status | Activation status |
 |---|---|---|
-| CharacterActionAPI | PENDING | PENDING |
-| MotionController | PENDING | PENDING |
-| MotionFoundationV2 | PENDING | PENDING |
-| MotionFoundationV2Extra | PENDING | PENDING |
-| SocialMotionFoundationV3 | PENDING | PENDING |
-| BoneMap | PENDING | PENDING |
-| Retargeter | PENDING | PENDING |
-| LookAt | PENDING | PENDING |
-| IK | PENDING | PENDING |
-| Create.jsx knowledge donor | PENDING | NOT RUNTIME |
-| Appearance.jsx knowledge donor | PENDING | NOT RUNTIME |
-| MotionLab.jsx knowledge donor | PENDING | NOT VISITOR RUNTIME |
+| CharacterActionAPI | PASS | NOT ACTIVE |
+| MotionController | PASS | NOT ACTIVE |
+| MotionFoundationV2 | PASS | NOT ACTIVE |
+| MotionFoundationV2Extra | PASS | NOT ACTIVE |
+| SocialMotionFoundationV3 | PASS | NOT ACTIVE |
+| BoneMap | PASS | NOT ACTIVE |
+| Retargeter | PASS | NOT ACTIVE |
+| LookAtController | PASS | NOT ACTIVE |
+| ContactIKController | PASS | NOT ACTIVE |
+| DonorTwoBoneIK | PASS | NOT ACTIVE |
+| HumanoidIKController | PASS | NOT ACTIVE |
+| LadderIKExtension | PASS | NOT ACTIVE |
+| TerrainSemanticIK | PASS | NOT ACTIVE |
+| Create.jsx knowledge donor | PASS | NOT RUNTIME |
+| Appearance.jsx knowledge donor | PASS | NOT RUNTIME |
+| MotionLab.jsx knowledge donor | PASS | NOT VISITOR RUNTIME |
 
-## VECINIA runtime family — must be copied WHOLE first
+## VECINIA runtime family — copied WHOLE
 
 | File | Import status | Activation status |
 |---|---|---|
-| `ExteriorCharacterPilot.js` | PENDING | PENDING / late |
-| `MuseumCharacterRuntimeAdapter.js` | PENDING | FIRST ACTIVE STONE |
-| `PropertyRoomCharacterCapabilityBatches.js` | PENDING | PENDING / advanced |
-| `PropertyRoomCharacterCinematicCamera.js` | PENDING | PENDING / advanced |
-| `PropertyRoomCharacterFreeMobility.js` | PENDING | SECOND ACTIVE STONE |
-| `PropertyRoomCharacterTourBridge.js` | PENDING | PENDING / advanced |
-| `PropertyRoomSemanticAuthoring.js` | PENDING | PENDING / advanced |
-| `PropertyRoomSemanticAuthoringBridge.js` | PENDING | PENDING / advanced |
-| `exterior-pilot-skeleton.js` | PENDING | PENDING / late |
-| `full-world-c2-skeleton.js` | PENDING | PENDING / last |
+| `ExteriorCharacterPilot.js` | PASS | NOT ACTIVE / late |
+| `MuseumCharacterRuntimeAdapter.js` | PASS | NOT ACTIVE / first surgery stone |
+| `PropertyRoomCharacterCapabilityBatches.js` | PASS | NOT ACTIVE / advanced |
+| `PropertyRoomCharacterCinematicCamera.js` | PASS | NOT ACTIVE / advanced |
+| `PropertyRoomCharacterFreeMobility.js` | PASS | NOT ACTIVE / second surgery stone |
+| `PropertyRoomCharacterTourBridge.js` | PASS | NOT ACTIVE / advanced |
+| `PropertyRoomSemanticAuthoring.js` | PASS | NOT ACTIVE / advanced |
+| `PropertyRoomSemanticAuthoringBridge.js` | PASS | NOT ACTIVE / advanced |
+| `exterior-pilot-skeleton.js` | PASS | NOT ACTIVE / late |
+| `full-world-c2-skeleton.js` | PASS | NOT ACTIVE / last |
+
+## Phase 1 provenance / integrity evidence
+
+- CharacterStudio frozen commit: `f5a93a48ed0e3904fce58f08f7fbe08b5411b289`
+- VECINIA frozen commit: `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1`
+- Museum Phase 1 comparison base: `4fbca5997beaf058543ee65d682f0adae89252e2`
+- All donor files live only under `labs/immersive-worlds/donors-frozen/character-2027/**`
+- Manifest: `labs/immersive-worlds/donors-frozen/character-2027/MANIFEST`
+- VECINIA transport was verified byte-for-byte by matching Git blob SHAs in source and destination.
+- CharacterStudio donor paths and Git blob SHAs are recorded in the manifest.
+
+## Phase 1 final isolation diff
+
+The final base → branch diff was audited with GitHub compare and PR changed-filename enumeration.
+
+Explicit result:
+
+```text
+0 runtime imports
+0 WorldStore changes
+0 SceneKit changes
+0 Gallery A changes
+0 Gallery B changes
+0 Wet Paint changes
+0 Breeze changes
+```
+
+The only changed path families are:
+
+```text
+labs/immersive-worlds/donors-frozen/character-2027/**
+labs/immersive-worlds/docs/MUSEUM_CHARACTER_AVATAR_2027_SURGERY_ROADMAP.md
+labs/immersive-worlds/docs/MUSEUM_CHARACTER_AVATAR_2027_PROGRESS_TRACKER.md
+```
+
+Character is **not activated**. `master` is **not touched**.
 
 ## Phase 1 gate
 
-- [ ] all approved CharacterStudio stones copied
-- [ ] all ten VECINIA runtime files copied
-- [ ] original paths recorded
-- [ ] source branch/SHA recorded
-- [ ] checksum/manifest created
-- [ ] no donor stone edited during transport
-- [ ] Museum four-room smoke check still PASS
+- [x] all approved CharacterStudio stones copied
+- [x] complete CharacterStudio IK family copied, not reduced to one file
+- [x] all ten VECINIA runtime files copied
+- [x] original paths recorded
+- [x] source branch/SHA recorded
+- [x] checksum/manifest created
+- [x] no donor stone edited during transport
+- [x] no product runtime file changed
+- [x] no four-room file changed
+- [x] Character remains inactive
 
-**Phase 1 status: PENDING**
+**PHASE 1 — DONOR FREEZE = PASS / CLOSED**
 
 ---
 
@@ -256,9 +301,9 @@ Candidate semantic actions must be tracked individually as `PASS`, `PENDING` or 
 
 # CURRENT NEXT ACTION
 
-**NEXT:** Phase 1 — copy the approved donor stones whole and create provenance/checksum manifest.
+**NEXT:** Phase 2 — anatomy / compatibility map. Audit the frozen stones against the current Museum authorities before adding any runtime import.
 
-Do not begin runtime surgery before Phase 1 is complete and verified.
+Do not begin runtime surgery before Phase 2 is understood and the minimal seam is designed.
 
 ---
 
