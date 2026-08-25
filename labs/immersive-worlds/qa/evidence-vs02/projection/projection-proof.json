@@ -1,0 +1,67 @@
+{
+ "generatedAt": "2026-08-14T23:17:30.546Z",
+ "passed": 12,
+ "total": 12,
+ "results": [
+  {
+   "name": "la proyección ofrece encaje, brillo, derrame, reflejo y bucle",
+   "ok": true,
+   "detail": "Respetar proporciones / Ajustar a la superficie · intensity, spill, reflection · bucle=true"
+  },
+  {
+   "name": "sigue ofreciendo sus dos medios",
+   "ok": true,
+   "detail": "2 ranuras"
+  },
+  {
+   "name": "no expone la lámpara ni el trapecio",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "una obra enmarcada no recibe controles de proyección",
+   "ok": true,
+   "detail": "0 paneles"
+  },
+  {
+   "name": "la proyección lleva el vídeo del autor",
+   "ok": true,
+   "detail": "{\"repeat\":[0.9952,1],\"offset\":[0.0024,0],\"loop\":true}"
+  },
+  {
+   "name": "«respetar proporciones» recorta en lugar de deformar",
+   "ok": true,
+   "detail": "repeat=0.9952,1 offset=0.0024,0"
+  },
+  {
+   "name": "el recorte está centrado",
+   "ok": true,
+   "detail": "offset=0.0024,0"
+  },
+  {
+   "name": "«ajustar a la superficie» es la transformación identidad",
+   "ok": true,
+   "detail": "repeat=1,1 offset=0,0"
+  },
+  {
+   "name": "el brillo autorizado llega al registro del mundo",
+   "ok": true,
+   "detail": "0.35"
+  },
+  {
+   "name": "el bucle es una propiedad del medio, y viaja con él",
+   "ok": true,
+   "detail": "false"
+  },
+  {
+   "name": "el elemento de vídeo deja de repetirse",
+   "ok": true,
+   "detail": "false"
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ]
+}

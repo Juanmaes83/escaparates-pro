@@ -1,0 +1,95 @@
+{
+ "generatedAt": "2026-08-13T21:36:33.527Z",
+ "viewports": [
+  "1440x900",
+  "420x860"
+ ],
+ "fixtures": [
+  "marea-baja.jpg",
+  "cuaderno-de-luz.webm"
+ ],
+ "videoState": "Listo · cuaderno-de-luz.webm · 960×540 · 6.4 s",
+ "videoRouting": [
+  "entity.artwork.horizonte-interrumpido · ARTWORK · IMAGE",
+  "entity.video.cuaderno-de-luz · PROJECTION · VIDEO"
+ ],
+ "horizontalOverflowAt420": false,
+ "shots": [
+  {
+   "id": "01_museum_default",
+   "file": "01_museum_default.png",
+   "caption": "Museo por defecto — Fundación Arenas, editor cerrado"
+  },
+  {
+   "id": "02_editor_open",
+   "file": "02_editor_open.png",
+   "caption": "Editor abierto sobre la sala"
+  },
+  {
+   "id": "03_institution_edit",
+   "file": "03_institution_edit.png",
+   "caption": "Institución editada, cambios sin aplicar"
+  },
+  {
+   "id": "04_artwork_edit",
+   "file": "04_artwork_edit.png",
+   "caption": "Obra editada — un solo registro semántico"
+  },
+  {
+   "id": "05_media_selected",
+   "file": "05_media_selected.png",
+   "caption": "Imagen seleccionada — estado en el panel"
+  },
+  {
+   "id": "06_media_ready",
+   "file": "06_media_ready.png",
+   "caption": "Imagen lista, con nombre y dimensiones reales"
+  },
+  {
+   "id": "07_video_ready",
+   "file": "07_video_ready.png",
+   "caption": "Vídeo: Listo · cuaderno-de-luz.webm · 960×540 · 6.4 s"
+  },
+  {
+   "id": "08_applied_museum",
+   "file": "08_applied_museum.png",
+   "caption": "Aplicado — el vestíbulo con la institución autorizada"
+  },
+  {
+   "id": "09_focus_updated",
+   "file": "09_focus_updated.png",
+   "caption": "Focus sobre la obra autorizada — imagen y cartela del autor"
+  },
+  {
+   "id": "10_browse_updated",
+   "file": "10_browse_updated.png",
+   "caption": "Collection Browse tras la obra autorizada"
+  },
+  {
+   "id": "10b_projection_updated",
+   "file": "10b_projection_updated.png",
+   "caption": "Proyección de Galería B con el vídeo autorizado"
+  },
+  {
+   "id": "11_museum_b",
+   "file": "11_museum_b.png",
+   "caption": "Museo de la Bruma — segunda institución, mismo motor"
+  },
+  {
+   "id": "12_restored_original",
+   "file": "12_restored_original.png",
+   "caption": "Fundación Arenas restaurada"
+  },
+  {
+   "id": "12b_projection_original",
+   "file": "12b_projection_original.png",
+   "caption": "La misma proyección sin autoría — referencia de comparación"
+  },
+  {
+   "id": "13_mobile_editor",
+   "file": "13_mobile_editor.png",
+   "caption": "Editor a 420 px — comprobación de anchura"
+  }
+ ],
+ "errors": []
+}

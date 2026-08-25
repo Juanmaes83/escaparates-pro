@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0c0b0a">
+  <title>Museum — Exposición Itinerante · Wet Paint Studio</title>
+  <link rel="stylesheet" href="./app/ui/styles.css">
+  <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+</head>
+<body>
+  <main id="iw-stage">
+    <canvas id="iw-canvas" tabindex="0" aria-label="Vista tridimensional de la Sala de Exposición Itinerante — Wet Paint."></canvas>
+  </main>
+  <div id="iw-ui"></div>
+
+  <script type="module">
+    const WORLD = './worlds/itinerant-wet-paint-lab.world.json';
+    const url = new URL(location.href);
+    url.searchParams.set('authoring', '1');
+    url.searchParams.set('world', WORLD);
+    history.replaceState(null, '', url);
+
+    try {
+      // This dedicated lab must not inherit Museum's legacy single-key authoring
+      // state. Previous Full Studio sessions may contain presentation fields
+      // forbidden inside the semantic World record. Keep that legacy state
+      // intact for the normal Museum; give this receiver a clean in-memory base.
+      const [{ baseConfigFromWorld }] = await Promise.all([
+        import('./authoring/experience-config.js')
+      ]);
+      const cleanWorld = await fetch(WORLD, { cache: 'no-store' }).then((response) => {
+        if (!response.ok) throw new Error(`No se pudo cargar el mundo (${response.status})`);
+        return response.json();
+      });
+      window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
+
+      // Install the media-inspection contract before Full Studio creates its
+      // instance. Upload/select -> visible central image/video; no Museum reboot.
+      await import('./authoring/wet-paint-media-inspector.js');
+
+      // Wire uploads to the 3D artwork plates: when a file is assigned to an
+      // entity, its visible texture updates immediately in the gallery view.
+      // PainterlyAdapter watches ORIGINAL's plate texture and re-processes
+      // automatically when the reference changes.
+      await import('./authoring/wet-paint-visible-media.js');
+
+      const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
+        import('./app/experience-app.js'),
+        import('./authoring/studio/visitor-phase1.js'),
+        import('./authoring/studio/museum-phase2.js'),
+        import('./authoring/studio/museum-phase2-layout-fix.js'),
+        import('./authoring/studio/museum-phase2-hardening.js')
+      ]);
+
+      await app.boot();
+      visitor.installVisitorPhase1();
+      phase2.installMuseumPhase2();
+      layoutFix.installMuseumPhase2LayoutFix();
+      hardening.installMuseumPhase2Hardening();
+
+      // — Wet Paint as a native Museum capability —
+      // The donor (wet-paint-flow @ 0b9ba9a) runs as a HIDDEN engine; its controls
+      // are presented natively inside the Studio editor of the 02 PAINTERLY artwork
+      // (accordion, Spanish, Museum skin). No overlay, no leaving the panel.
+      try {
+        const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
+        const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
+        const runtime = window.__IW?.runtime;
+        if (runtime) {
+          // Wait one frame for sceneKit to finish building artwork meshes.
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          const result = installWetPaint(runtime);
+          installWetPaintStudioControls();
+          if (result) {
+            console.log('[Wet Paint Studio] Wet Paint engine + native Studio controls installed');
+          } else {
+            console.warn('[Wet Paint Studio] Wet Paint engine deferred — runtime not ready');
+          }
+        }
+      } catch (bridgeError) {
+        console.error('[Wet Paint Studio] Wet Paint install failed (non-fatal):', bridgeError);
+      }
+    } catch (error) {
+      console.error('[Wet Paint Studio] boot failed', error);
+      document.documentElement.dataset.iwError = String(error?.message || error);
+      document.getElementById('iw-ui').innerHTML = `
+        <div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908;color:#ddd">
+          <div><h1>No se pudo iniciar Wet Paint Studio</h1><pre>${String(error?.message || error)}</pre></div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

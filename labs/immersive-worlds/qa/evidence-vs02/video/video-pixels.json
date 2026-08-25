@@ -1,0 +1,38 @@
+{
+ "generatedAt": "2026-08-14T07:01:11.700Z",
+ "found": true,
+ "entity": null,
+ "element": {
+  "w": 960,
+  "h": 540,
+  "duration": 2,
+  "paused": false,
+  "readyState": 4,
+  "src": "blob:http://127.0.0."
+ },
+ "textureNeedsUpdateAuto": "ih",
+ "sampleA": {
+  "rgb": [
+   64,
+   71,
+   55
+  ],
+  "saturation": 59,
+  "hash": "12,12,126,254,55,159,12,254"
+ },
+ "sampleB": {
+  "rgb": [
+   62,
+   61,
+   45
+  ],
+  "saturation": 52,
+  "hash": "10,10,40,255,10,10,10,255"
+ },
+ "currentTime": [
+  0.418,
+  1.993
+ ],
+ "elementPictureChanged": true,
+ "looksLikeFixture": true
+}

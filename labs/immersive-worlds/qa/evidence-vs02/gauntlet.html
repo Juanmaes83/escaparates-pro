@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="60">
+<title>VS02 · Gauntlet</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#100f0e;color:#ece7dd;
+  font:400 15px/1.6 'Helvetica Neue',Helvetica,Arial,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:56px 28px 96px}
+h1{font:400 34px/1.2 Georgia,'Times New Roman',serif;color:#f2ede3;margin:0 0 6px}
+.eyebrow{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:#6f6960;margin:0 0 14px}
+.lede{max-width:72ch;color:#b3aca1;margin:0 0 8px}
+h2{font:400 12px/1.3 'Helvetica Neue',sans-serif;letter-spacing:.22em;text-transform:uppercase;
+  color:#c9bfa8;margin:56px 0 4px;padding-top:22px;border-top:1px solid rgba(226,219,205,.16)}
+h2+p{color:#6f6960;font-size:13px;max-width:72ch;margin:0 0 26px}
+h3.wave{font:400 15px/1.3 Georgia,serif;color:#ece7dd;margin:34px 0 16px;letter-spacing:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+figure{margin:0;background:#181716;border:1px solid rgba(226,219,205,.14);border-radius:5px;overflow:hidden}
+figure img{display:block;width:100%;height:auto;background:#0b0a0a}
+figcaption{padding:12px 14px 15px;font-size:12.5px;color:#b3aca1}
+figcaption b{display:block;color:#6f6960;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;margin-bottom:5px;font-weight:400}
+figcaption dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:9px 0 0;font-size:11.5px}
+figcaption dt{color:#6f6960;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding-top:2px}
+figcaption dd{margin:0;color:#9a9389}
+.d{border:1px solid rgba(226,219,205,.16);border-radius:5px;padding:20px 22px;margin-bottom:14px;background:#171615}
+.d h3{margin:0 0 10px;font:400 17px/1.35 Georgia,serif;color:#f0ebe1}
+.d dl{display:grid;grid-template-columns:104px 1fr;gap:6px 16px;margin:0;font-size:13.5px}
+.d dt{color:#6f6960;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding-top:3px}
+.d dd{margin:0;color:#c4bcae}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  border:1px solid rgba(226,219,205,.3);color:#c9bfa8}
+.t--BLOQUEANTE{background:#4a1f1c;border-color:#8a4038;color:#ffcdc6}
+.t--ALTA{background:#4a3a18;border-color:#8a6c2e;color:#f5dfa8}
+.t--MEDIA{background:#28313a;border-color:#4b5c6b;color:#cfe0ec}
+.t--BAJA,.t--INSTRUMENTO{background:#22211f}
+.t--CORREGIDO{background:#20351f;border-color:#456b41;color:#c4e6bd}
+.t--ABIERTO{background:#4a1f1c;border-color:#a8524a;color:#ffd4cd}
+code{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;background:rgba(255,252,246,.07);
+  padding:1px 5px;border-radius:3px;color:#e3dccd}
+.sum{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 0;padding:16px 20px;
+  background:#171615;border:1px solid rgba(226,219,205,.16);border-radius:5px}
+.sum div{font-size:12px;color:#6f6960}
+.sum b{display:block;font:400 26px/1.1 Georgia,serif;color:#f0ebe1;margin-bottom:3px}
+.gate{margin-top:56px;padding:22px 24px;border:1px solid rgba(226,219,205,.28);border-radius:5px}
+.gate p{margin:0 0 8px;color:#c4bcae}
+.gate p:last-child{margin:0}
+a{color:#d8cdb5}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(226,219,205,.14);vertical-align:top}
+th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6f6960;font-weight:400}
+.ok{color:#8fbf95}.bad{color:#e08a80}.warn{color:#d8b45e}
+@media(max-width:620px){.wrap{padding:34px 16px 64px}.d dl{grid-template-columns:1fr;gap:2px 0}
+.d dt{padding-top:9px}}
+
+.w{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;
+  padding:12px 0;border-bottom:1px solid rgba(226,219,205,.14)}
+.w b{font-weight:400;color:#ece7dd}
+.w i{font-style:normal;font-size:12px;color:#6f6960}
+.w em{font-style:normal;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+</style></head><body><div class="wrap">
+<p class="eyebrow">Escaparates Pro · Immersive Worlds · Museum</p>
+<h1>VS02 · Gauntlet</h1>
+<p class="lede">Estado de la vuelta en curso. Se refresca solo cada minuto, para que nadie tenga que
+interrumpir la ejecución para preguntar cómo va.</p>
+
+<div class="sum">
+  <div><b>e7a0a1d</b>HEAD actual</div>
+  <div><b>3/3</b>tandas capturadas</div>
+  <div><b>22</b>capturas</div>
+  <div><b>17</b>defectos corregidos</div>
+  <div><b>5</b>abiertos</div>
+</div>
+
+<h2>Tandas</h2>
+<p>Construir → navegador real → capturar → crítico fresco → mayor hueco primero → corregir.</p>
+<div class="w">
+    <em class="ok">capturada</em>
+    <div><b>W1 · Árbol de la experiencia y espacio de trabajo</b><br><i>6 capturas · run vs02_w1_mssmce8t</i></div>
+    <i>2026-08-14 07:28</i>
+  </div><div class="w">
+    <em class="ok">capturada</em>
+    <div><b>W2 · Medios, estados y recuperación</b><br><i>9 capturas · run vs02_w2_mssmmikt</i></div>
+    <i>2026-08-14 07:31</i>
+  </div><div class="w">
+    <em class="ok">capturada</em>
+    <div><b>W3–W4 · Guardar, validar, empezar y la segunda institución</b><br><i>7 capturas · run vs02_w3_mssmowyx</i></div>
+    <i>2026-08-14 07:34</i>
+  </div>
+<div class="w"><em class="ok">hecha</em><div><b>W5 · Integración y coherencia</b><br>
+  <i>crítico de integración sobre el producto completo</i></div><i></i></div>
+<div class="w"><em class="ok">hecha</em><div><b>W6 · Paquete de evidencia</b><br>
+  <i>tablero, página de progreso, URLs de revisión</i></div><i></i></div>
+
+<h2>Verdictos de los críticos</h2>
+<p>Críticos frescos: sólo ven los píxeles, las reglas de producto y la referencia aprobada. Nunca la
+justificación de quien construyó.</p>
+<table>
+  <tr><th>Pasada</th><th>Verdicto</th><th>Mayor hueco señalado</th></tr>
+  <tr><td>W1 · crítico visual</td><td class="ok">VS02 MEJOR que VS01</td>
+    <td>Editar no cambiaba nada visible; heredado indistinguible de vacío; 420 px sin ruta al editor</td></tr>
+  <tr><td>W5 · crítico de integración</td><td>ver tablero</td><td>—</td></tr>
+</table>
+
+<h2>Defectos abiertos</h2>
+<article class="d">
+  <div class="tags"><span class="t t--ALTA">ALTA</span>
+    <span class="t t--ABIERTO">ABIERTO — HEREDADO</span><span class="t">O1</span></div>
+  <h3>La proyección autorizada no se parece a la original y la causa sigue sin determinar</h3><dl><dt>Qué falta</dt><dd>Aplazado con trazabilidad, según §E7 del mandato: VS02 no toca la capacidad de Proyección más allá de encaminar el archivo correcto hacia ella, y ninguna tarea de aceptación queda bloqueada por esto. Sigue abierto y sigue siendo la primera pregunta pendiente del vertical.</dd></dl>
+</article><article class="d">
+  <div class="tags"><span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — A CRITERIO DE JUANMA</span><span class="t">O4</span></div>
+  <h3>Renombrar la institución no reescribe los textos libres que la nombran</h3><dl><dt>Qué falta</dt><dd>PROPUESTA: detectar el nombre anterior dentro de los textos libres y avisar en línea —«<em>Este texto todavía nombra a Fundación Arenas</em>»— con reemplazo en un clic. Avisar es del producto; reescribir la voz de una institución no lo es, y esa frontera la decide Juanma.</dd></dl>
+</article><article class="d">
+  <div class="tags"><span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — ACCESO DENEGADO</span><span class="t">O2</span></div>
+  <h3>La referencia externa de calidad no es accesible desde este entorno</h3><dl><dt>Qué falta</dt><dd>BARRA VISUAL EXTERNA — ACCESO BLOQUEADO / HUECO DE EVIDENCIA. La herramienta de captura queda escrita y comprobada; una sola ejecución produce la evidencia en cuanto el dominio se permita. Para esta vuelta la barra autorizada es la referencia de UI aprobada, el plano del sistema, VS01 y el Museo en funcionamiento.</dd></dl>
+</article><article class="d">
+  <div class="tags"><span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — FUERA DE ALCANCE VS02</span><span class="t">O3</span></div>
+  <h3>Tres de los cinco dominios están declarados y no implementados</h3><dl><dt>Qué falta</dt><dd>Se muestran en vez de ocultarse, para que la forma del producto sea legible, y se declaran incompletos en vez de fingirse. Si Juanma prefiere ocultarlos hasta que existan, es una línea.</dd></dl>
+</article><article class="d">
+  <div class="tags"><span class="t t--BAJA">BAJA</span>
+    <span class="t t--ABIERTO">ABIERTO — POR DISEÑO</span><span class="t">O5</span></div>
+  <h3>El Museo B es el mismo mundo con otra configuración</h3><dl><dt>Qué falta</dt><dd>Sin cambio de código. Difiere en nombre, claim, datación, marca, nombre de sala, una imagen de obra y los metadatos de dos obras. Si Juanma quiere que la demostración sea más evidente, se amplía la configuración —no el motor.</dd></dl>
+</article>
+
+<p style="margin-top:40px"><a href="./index.html">→ Tablero de revisión visual completo</a></p>
+</div></body></html>

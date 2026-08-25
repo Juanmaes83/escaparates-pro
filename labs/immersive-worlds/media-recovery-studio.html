@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0c0b0a">
+  <title>Museum — Media Recovery V2</title>
+  <link rel="stylesheet" href="./app/ui/styles.css">
+  <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
+  <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+  <link rel="stylesheet" href="./authoring/studio/studio-validation-flow.css">
+</head>
+<body>
+  <main id="iw-stage">
+    <canvas id="iw-canvas" tabindex="0" aria-label="Vista tridimensional del Museo para recuperación del contrato de medios."></canvas>
+  </main>
+  <div id="iw-ui"></div>
+
+  <script type="module">
+    const WORLD = './worlds/museum-v1.world.json';
+    const url = new URL(location.href);
+    url.searchParams.set('authoring', '1');
+    url.searchParams.set('world', WORLD);
+    history.replaceState(null, '', url);
+
+    try {
+      // Human-PASS baseline: start from a clean configuration so old local
+      // authoring experiments cannot corrupt the receiver during this gate.
+      const [{ baseConfigFromWorld }] = await Promise.all([
+        import('./authoring/experience-config.js')
+      ]);
+      const cleanWorld = await fetch(WORLD, { cache: 'no-store' }).then((response) => {
+        if (!response.ok) throw new Error(`No se pudo cargar el mundo (${response.status})`);
+        return response.json();
+      });
+      window.__IW_CONFIG = baseConfigFromWorld(cleanWorld);
+
+      // One media path only:
+      // MediaVault READY URL -> shared MediaLoader -> live surface.
+      await import('./authoring/museum-visible-media.js');
+      // This import also installs authored-projection cleanup before SceneKit boot.
+      await import('./authoring/museum-video-entity-media.js');
+      // Outer wrapper: after Studio records the authored binding and live surface
+      // is updated, write the same media into the running WorldStore canonical
+      // entity. SpaceLifecycle will then rebuild from the correct truth naturally.
+      await import('./authoring/museum-canonical-media-binding.js');
+
+      // Keep the human-tested flow, then harden only the exact surface checks
+      // needed to close Marea baja and Cuaderno de luz.
+      await import('./authoring/studio/studio-validation-flow.js');
+      await import('./authoring/studio/studio-validation-hardening.js');
+      await import('./authoring/studio/gallery-b-closeout-validation.js');
+
+      const [app, visitor, phase2, layoutFix, hardening] = await Promise.all([
+        import('./app/experience-app.js'),
+        import('./authoring/studio/visitor-phase1.js'),
+        import('./authoring/studio/museum-phase2.js'),
+        import('./authoring/studio/museum-phase2-layout-fix.js'),
+        import('./authoring/studio/museum-phase2-hardening.js')
+      ]);
+
+      await app.boot();
+      visitor.installVisitorPhase1();
+      phase2.installMuseumPhase2();
+      layoutFix.installMuseumPhase2LayoutFix();
+      hardening.installMuseumPhase2Hardening();
+
+      // Connect the already Human-PASS Wet Paint capability to the real Museum
+      // lifecycle. The standalone donor starts inside the itinerant room; the
+      // full Museum starts in Lobby, so restoration must follow SPACE_READY /
+      // SPACE_ENTERED instead of running blindly at boot.
+      try {
+        const [{ installWetPaintMuseumLifecycle }, { installWetPaintStudioControls }] = await Promise.all([
+          import('./experiences/wet-paint-museum-lifecycle.js'),
+          import('./authoring/studio/wet-paint-studio-controls.js')
+        ]);
+        const runtime = window.__IW?.runtime;
+        if (runtime) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          window.__IW_WET_PAINT_HOST = installWetPaintMuseumLifecycle(runtime);
+          installWetPaintStudioControls();
+          console.log('[Museum Media Recovery V2] Wet Paint itinerant room connected');
+        } else {
+          console.warn('[Museum Media Recovery V2] Wet Paint deferred: runtime unavailable');
+        }
+      } catch (wetPaintError) {
+        console.error('[Museum Media Recovery V2] Wet Paint connection failed (non-fatal)', wetPaintError);
+      }
+
+      console.log('[Museum Media Recovery V2] Gallery A + B + Wet Paint connection ready');
+    } catch (error) {
+      console.error('[Museum Media Recovery V2] boot failed', error);
+      document.documentElement.dataset.iwError = String(error?.message || error);
+      document.getElementById('iw-ui').innerHTML = `
+        <div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908;color:#ddd">
+          <div style="max-width:44rem"><h1>No se pudo iniciar Media Recovery V2</h1><pre style="white-space:pre-wrap">${String(error?.message || error)}</pre></div>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

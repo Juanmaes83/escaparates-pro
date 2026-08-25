@@ -1,0 +1,29 @@
+  23 deterministic states
+
+  ok    14773 ms  museum:lobby-entry                 lobby · EXPLORE
+  ok    12625 ms  museum:lobby-welcome               lobby · EXPLORE
+  ok    17471 ms  museum:gallery-a-overview          gallery-a · EXPLORE
+  ok    14894 ms  museum:artwork-horizonte-focus     gallery-a · FOCUS
+  ok    15210 ms  museum:sculpture-detail            gallery-a · FOCUS
+  ok    15307 ms  museum:gallery-a-oblique           gallery-a · EXPLORE
+  ok    14137 ms  museum:portal-a-b-before           gallery-a · EXPLORE
+  ok    27118 ms  museum:portal-a-b-after            gallery-b · EXPLORE
+  ok    17534 ms  museum:archive-teleport            archive · EXPLORE
+  ok    34052 ms  museum:journey-lead-horizonte      gallery-a · DIRECTED
+  ok    35874 ms  museum:guide-accompanied           gallery-a · DIRECTED
+  ok    38740 ms  museum:guide-handoff               gallery-a · DIRECTED
+  ok    40286 ms  museum:journey-lead-division       gallery-a · DIRECTED
+  ok    43402 ms  museum:journey-division            gallery-a · DIRECTED
+  ok    87712 ms  museum:journey-threshold           gallery-a · DIRECTED
+  ok    96352 ms  museum:journey-crossed             gallery-b · DIRECTED
+  ok    96832 ms  museum:journey-noche               gallery-b · DIRECTED
+  ok   105138 ms  museum:journey-proyeccion          gallery-b · DIRECTED
+  ok   104266 ms  museum:proyeccion-permanencia      gallery-b · DIRECTED
+  ok   104543 ms  museum:guide-released              gallery-b · EXPLORE
+  ok    17359 ms  museum:guide-turnaround            gallery-a · EXPLORE
+  ok    89917 ms  museum:guided-step-04              gallery-a · DIRECTED
+  ok   103393 ms  museum:guided-completed            gallery-b · EXPLORE
+
+  ready in: min 12625 ms · max 105138 ms · mean 49867 ms
+  first half mean 19909 ms · second half mean 77328 ms
+  23/23 states became ready

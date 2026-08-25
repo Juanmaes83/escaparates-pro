@@ -1,0 +1,1 @@
+Este archivo existe para probar el rechazo de formatos no admitidos.

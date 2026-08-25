@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crossing — Galería A → Galería B</title>
+<style>
+  :root {
+    --bg:#faf9f7; --panel:#fff; --ink:#1b1a18; --dim:#6f6a63; --edge:#d8d2c8;
+    --ok:#2f6b3f; --bad:#9c2b21; --hot:#a8621a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:#131211; --panel:#1c1b19; --ink:#efece6; --dim:#a09a91; --edge:#35322d;
+      --ok:#7fbf8e; --bad:#e08a80; --hot:#e0a45c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#131211; --panel:#1c1b19; --ink:#efece6; --dim:#a09a91; --edge:#35322d;
+    --ok:#7fbf8e; --bad:#e08a80; --hot:#e0a45c;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 ui-serif,Georgia,"Times New Roman",serif; padding:40px 24px 80px; }
+  main { max-width:1080px; margin:0 auto; }
+  h1 { font-size:28px; margin:0 0 4px; letter-spacing:-0.01em; }
+  .sub { color:var(--dim); margin:0 0 28px; font-size:14px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  h2 { font-size:19px; margin:38px 0 14px; border-bottom:1px solid var(--edge); padding-bottom:7px; }
+  .verdict { display:flex; flex-wrap:wrap; gap:10px; margin:0 0 8px; }
+  .chip { border:1px solid var(--edge); border-radius:999px; padding:5px 13px; font-size:13px;
+    background:var(--panel); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  .chip.ok { color:var(--ok); } .chip.bad { color:var(--bad); }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  td,th { border-bottom:1px solid var(--edge); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { color:var(--dim); font-weight:400; font-size:13px; }
+  td.n { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--dim); white-space:nowrap; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  figure { margin:0 0 26px; background:var(--panel); border:1px solid var(--edge); border-radius:8px; overflow:hidden; }
+  figure img { display:block; width:100%; height:auto; }
+  figcaption { padding:11px 14px; font-size:14px; }
+  figcaption b { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px;
+    color:var(--dim); font-weight:400; display:block; margin-bottom:2px; letter-spacing:0.04em; }
+  .panel { background:var(--panel); border:1px solid var(--edge); border-radius:8px; padding:16px 18px; }
+  .scroll { overflow-x:auto; }
+  p { max-width:70ch; }
+</style></head>
+<body><main>
+
+<h1>Crossing — Galería A → Galería B</h1>
+<p class="sub">RUN_ID crossing-2026-08-13T06-35-33-292Z · 2026-08-13T06:36:13.481Z · portal.gallery-a-gallery-b</p>
+
+<p>The room-to-room transition, replacing the cut. Every frame below was captured by
+stepping the runtime by hand with the render loop stopped, so each image is a named
+frame of one crossing rather than whatever the browser was showing.</p>
+
+<div class="verdict">
+  <span class="chip ok">19/19 checks</span>
+  <span class="chip">280 frames in flight</span>
+  <span class="chip">handoff 0.0222 m from the wall</span>
+  <span class="chip">endpoint Δ 0 m</span>
+  <span class="chip">max turn 0 °/frame</span>
+</div>
+
+<h2>The eight moments</h2>
+<figure>
+  <img src="01_departure.png" alt="Galería A — the threshold approach begins (T5)" loading="lazy">
+  <figcaption><b>01_departure</b>Galería A — the threshold approach begins (T5)</figcaption>
+</figure>
+<figure>
+  <img src="02_threshold.png" alt="T5 settled at the threshold — Galería B visible through the opening" loading="lazy">
+  <figcaption><b>02_threshold</b>T5 settled at the threshold — Galería B visible through the opening</figcaption>
+</figure>
+<figure>
+  <img src="04_portal_active.png" alt="Crossing under TRANSITION authority — the opening ahead" loading="lazy">
+  <figcaption><b>04_portal_active</b>Crossing under TRANSITION authority — the opening ahead</figcaption>
+</figure>
+<figure>
+  <img src="05_middle.png" alt="Mid-crossing — inside the aperture" loading="lazy">
+  <figcaption><b>05_middle</b>Mid-crossing — inside the aperture</figcaption>
+</figure>
+<figure>
+  <img src="06_handoff.png" alt="Room handoff — the active Space changes while the camera is in the doorway" loading="lazy">
+  <figcaption><b>06_handoff</b>Room handoff — the active Space changes while the camera is in the doorway</figcaption>
+</figure>
+<figure>
+  <img src="07_arrival.png" alt="Arrival — Galería B, on the pose the beat was authored to end on" loading="lazy">
+  <figcaption><b>07_arrival</b>Arrival — Galería B, on the pose the beat was authored to end on</figcaption>
+</figure>
+<figure>
+  <img src="08_continuation.png" alt="Galería B — the next beat continues from where the crossing left the camera" loading="lazy">
+  <figcaption><b>08_continuation</b>Galería B — the next beat continues from where the crossing left the camera</figcaption>
+</figure>
+
+<h2>Where the room changes</h2>
+<p>Exposure against the camera's position along the crossing axis. Galería A is lit at
+0.95 and the dark chamber at 1.05; the line shows the change resolving <em>across</em> the
+opening rather than on one frame. The marked point is where the active Space actually
+changes — inside the doorway, which is both the truthful moment and the invisible one.</p>
+<div class="panel">
+<svg viewBox="0 0 900 190" width="100%" role="img" aria-label="Exposure against camera position through the crossing">
+  <rect x="0" y="0" width="900" height="190" fill="none"/>
+  <line x1="633.8" y1="14" x2="633.8" y2="164" stroke="var(--edge)" stroke-width="2" stroke-dasharray="4 4"/>
+  <text x="641.8" y="26" fill="var(--dim)" font-size="12">wall plane x=8</text>
+  <circle cx="636.6" cy="98.8" r="5" fill="var(--hot)"/>
+  <text x="646.6" y="88.8" fill="var(--hot)" font-size="12">room handoff</text>
+  <path d="M50.7,160.0 L50.7,160.0 L50.7,160.0 L50.8,160.0 L50.9,160.0 L51.0,160.0 L51.1,160.0 L51.3,160.0 L51.5,160.0 L51.8,160.0 L52.2,160.0 L52.6,160.0 L53.1,160.0 L53.7,160.0 L54.3,160.0 L55.0,160.0 L55.8,160.0 L56.7,160.0 L57.7,160.0 L58.8,160.0 L60.0,160.0 L61.2,160.0 L62.6,160.0 L64.0,160.0 L65.6,160.0 L67.2,160.0 L69.0,160.0 L70.8,160.0 L72.8,160.0 L74.8,160.0 L77.0,160.0 L79.2,160.0 L81.5,160.0 L84.0,160.0 L86.5,160.0 L89.1,160.0 L91.8,160.0 L94.6,160.0 L97.5,160.0 L100.4,160.0 L103.4,160.0 L106.5,160.0 L109.6,160.0 L112.9,160.0 L116.1,160.0 L119.4,160.0 L122.8,160.0 L126.2,160.0 L129.7,160.0 L133.1,160.0 L136.6,160.0 L140.1,160.0 L143.7,160.0 L147.2,160.0 L150.7,160.0 L154.2,160.0 L157.7,160.0 L161.3,160.0 L164.8,160.0 L168.3,160.0 L171.8,160.0 L175.4,160.0 L178.9,160.0 L182.4,160.0 L185.9,160.0 L189.4,160.0 L193.0,160.0 L196.5,160.0 L200.0,160.0 L203.5,160.0 L207.0,160.0 L210.6,160.0 L214.1,160.0 L217.6,160.0 L221.1,160.0 L224.6,160.0 L228.2,160.0 L231.7,160.0 L235.2,160.0 L238.7,160.0 L242.3,160.0 L245.8,160.0 L249.3,160.0 L252.8,160.0 L256.3,160.0 L259.9,160.0 L263.4,160.0 L266.9,160.0 L270.4,160.0 L273.9,160.0 L277.5,160.0 L281.0,160.0 L284.5,160.0 L288.0,160.0 L291.5,160.0 L295.1,160.0 L298.6,160.0 L302.1,160.0 L305.6,160.0 L309.2,160.0 L312.7,160.0 L316.2,160.0 L319.7,160.0 L323.2,160.0 L326.8,160.0 L330.3,160.0 L333.8,160.0 L337.3,160.0 L340.8,160.0 L344.4,160.0 L347.9,160.0 L351.4,160.0 L354.9,160.0 L358.4,160.0 L362.0,160.0 L365.5,160.0 L369.0,160.0 L372.5,160.0 L376.1,160.0 L379.6,160.0 L383.1,160.0 L386.6,160.0 L390.1,160.0 L393.7,160.0 L397.2,160.0 L400.7,160.0 L404.2,160.0 L407.7,160.0 L411.3,160.0 L414.8,160.0 L418.3,160.0 L421.8,160.0 L425.4,159.9 L428.9,159.8 L432.4,159.6 L435.9,159.4 L439.4,159.2 L443.0,158.9 L446.5,158.6 L450.0,158.2 L453.5,157.7 L457.0,157.2 L460.6,156.8 L464.1,156.3 L467.6,155.7 L471.1,155.1 L474.6,154.4 L478.2,153.6 L481.7,152.9 L485.2,152.2 L488.7,151.5 L492.3,150.6 L495.8,149.8 L499.3,148.8 L502.8,148.0 L506.3,147.0 L509.9,146.1 L513.4,145.0 L516.9,144.0 L520.4,143.0 L523.9,141.9 L527.5,140.8 L531.0,139.7 L534.5,138.5 L538.0,137.3 L541.5,136.1 L545.1,134.9 L548.6,133.7 L552.1,132.5 L555.6,131.2 L559.2,129.9 L562.7,128.7 L566.2,127.4 L569.7,125.9 L573.2,124.6 L576.8,123.3 L580.3,121.8 L583.8,120.5 L587.3,119.1 L590.8,117.8 L594.4,116.3 L597.9,114.9 L601.4,113.4 L604.9,112.0 L608.5,110.6 L612.0,109.1 L615.5,107.7 L619.0,106.1 L622.5,104.7 L626.1,103.2 L629.6,101.8 L633.1,100.2 L636.6,98.8 L640.1,97.4 L643.7,95.9 L647.2,94.4 L650.7,92.9 L654.2,91.5 L657.7,90.0 L661.3,88.6 L664.8,87.2 L668.3,85.7 L671.8,84.3 L675.4,82.8 L678.9,81.4 L682.4,80.1 L685.9,78.6 L689.4,77.3 L693.0,75.9 L696.5,74.6 L700.0,73.2 L703.5,71.9 L707.0,70.6 L710.6,69.3 L714.1,68.1 L717.6,66.8 L721.1,65.6 L724.6,64.4 L728.2,63.2 L731.7,62.0 L735.2,60.8 L738.7,59.7 L742.3,58.5 L745.8,57.4 L749.3,56.4 L752.8,55.4 L756.3,54.3 L759.9,53.3 L763.4,52.4 L766.9,51.5 L770.3,50.6 L773.8,49.7 L777.2,49.0 L780.6,48.2 L783.9,47.4 L787.1,46.7 L790.4,46.1 L793.5,45.5 L796.6,44.9 L799.6,44.4 L802.5,44.0 L805.4,43.5 L808.2,43.1 L810.9,42.6 L813.5,42.4 L816.0,42.0 L818.5,41.8 L820.8,41.6 L823.0,41.3 L825.2,41.1 L827.2,41.0 L829.2,40.7 L831.0,40.6 L832.8,40.5 L834.4,40.4 L836.0,40.4 L837.4,40.2 L838.8,40.2 L840.0,40.1 L841.2,40.1 L842.3,40.1 L843.3,40.1 L844.2,40.0 L845.0,40.0 L845.7,40.0 L846.3,40.0 L846.9,40.0 L847.4,40.0 L847.8,40.0 L848.2,40.0 L848.5,40.0 L848.7,40.0 L848.9,40.0 L849.0,40.0 L849.1,40.0 L849.2,40.0 L849.3,40.0 L849.3,40.0 L849.3,40.0 L849.3,40.0" fill="none" stroke="var(--ink)" stroke-width="2.5"/>
+  <text x="4" y="182" fill="var(--dim)" font-size="12">x=3.0 m (Galería A)</text>
+  <text x="896" y="182" fill="var(--dim)" font-size="12" text-anchor="end">x=10.1 m (Galería B)</text>
+  <text x="4" y="26" fill="var(--dim)" font-size="12">exposure 0.95 → 1.05</text>
+</svg></div>
+
+<h2>Verdicts</h2>
+<div class="scroll"><table>
+<tr><th></th><th>check</th><th>measured</th></tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>one camera authority for the whole crossing</td><td class="n">TRANSITION</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>no camera authority violations</td><td class="n">0</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the crossing is a move, not a cut</td><td class="n">280 frames</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>handoff happens inside the doorway</td><td class="n">0.022 m from the wall plane</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>handoff happens mid-flight, not before</td><td class="n">frame 192 of 281</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>destination built and visible before the camera moves</td><td class="n">READY, visible=true, prefetch took 0 ms</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>camera stays inside the aperture</td><td class="n">0 of 36 wall frames outside</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>lands on the authored arrival pose</td><td class="n">Δ 0.0e+0 m / 0.0e+0 m</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the look never whips</td><td class="n">max 0.00 °/frame</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>atmosphere resolves gradually</td><td class="n">largest single-frame exposure step 0.00130</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>atmosphere lands on the destination room</td><td class="n">exposure 1.05</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>authority returns to the Director</td><td class="n">DIRECTED</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the crossing lands on the portal beat, not past it</td><td class="n">step.08-paso-galeria-b</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the tour continues in Galería B</td><td class="n">step.09-lleva-noche in space.gallery-b</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the next beat starts from where the crossing landed</td><td class="n">join Δ 0</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>the beat waited for the crossing instead of cutting it off</td><td class="n">281 frames on the portal beat</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>a repeated crossing lands where its own room says it should</td><td class="n">gallery-a · gallery-b</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>a repeated crossing is not faster than the first</td><td class="n">5000ms/0.8ms worst · 5000ms/0.6ms worst</td>
+</tr>
+<tr>
+  <td class="ok">✓</td>
+  <td>no console errors</td><td class="n">none</td>
+</tr>
+</table></div>
+
+<h2>First crossing against a repeated one</h2>
+<p>The destination is built, warmed and already visible through the opening before the
+camera commits to it, so the first crossing is not a cold path. These are the same
+mechanism run again, warm, for comparison.</p>
+<div class="scroll"><table>
+<tr><th>portal</th><th>warm wait</th><th>travel</th><th>frames</th><th>median frame</th><th>worst frame</th></tr>
+<tr>
+  <td>gallery-b-gallery-a</td>
+  <td class="n">130 ms</td><td class="n">5000 ms</td>
+  <td class="n">301</td><td class="n">0 ms</td><td class="n">0.8 ms</td>
+</tr>
+<tr>
+  <td>gallery-a-gallery-b</td>
+  <td class="n">101 ms</td><td class="n">5000 ms</td>
+  <td class="n">301</td><td class="n">0 ms</td><td class="n">0.6 ms</td>
+</tr>
+</table></div>
+
+<h2>Aperture and endpoint</h2>
+<div class="scroll"><table>
+<tr><td>opening</td><td class="n">2.6 × 3 m, EAST wall of space.gallery-a</td></tr>
+<tr><td>gate point</td><td class="n">[8.00, 1.62, -10.00]</td></tr>
+<tr><td>outward axis</td><td class="n">[1, 0, 0]</td></tr>
+<tr><td>arrival pose</td><td class="n">[9.700, 1.620, -10.000] → [13.700, 1.500, -10.000]</td></tr>
+<tr><td>landed at</td><td class="n">[9.700, 1.620, -10.000] → [13.700, 1.500, -10.000]</td></tr>
+<tr><td>frames outside the aperture</td><td class="n">0</td></tr>
+<tr><td>camera authority violations</td><td class="n">0</td></tr>
+</table></div>
+
+</main></body></html>

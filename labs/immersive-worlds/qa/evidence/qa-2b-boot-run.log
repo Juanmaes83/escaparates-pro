@@ -1,0 +1,32 @@
+  ok   ENGINE-PURITY              engine/ no importa Three.js ni toca el DOM  — 23 archivos revisados
+  ok   PROTECTED-PATHS            Las rutas protegidas siguen presentes
+  ok   BOOT                       El prototipo arranca sin errores de consola
+  ok   SCHEMA-VALID               El mundo cumple todas las invariantes del esquema  — 0 errores, 0 avisos, {"spaces":4,"anchors":41,"entities":11,"hotspots":16,"portals":6,"chapters":3,"storySteps":33,"routes":1}
+  ok   INV-CANONICAL              Cada id resuelve a exactamente un registro canónico  — 115 registros; 0 violaciones
+  ok   INV-BY-REFERENCE           Las Spaces referencian entidades, no copias
+  ok   INV-WORLD-NOT-CAMERA       World State no contiene estado de cámara
+  ok   INV-ONE-CAMERA-WRITER      Un único controlador de cámara autoritativo por frame  — 4 frames, 0 violaciones
+  ok   INV-HOTSPOT-NOT-PORTAL     Hotspot dispara, Portal conecta: sin solape de responsabilidad
+  ok   INV-SEMANTIC-NOT-VISUAL    Ningún registro semántico contiene implementación de render
+  ok   INV-SHARED-ACTIONS         Hotspots y pasos guiados usan el mismo vocabulario declarado de Action  — 4 acciones en uso: START_ROUTE, ACTIVATE_PORTAL, FOCUS_ENTITY, PLAY_MEDIA
+  ok   INV-SCENEKIT-CONTRACT      El motor sólo habla con el Scene Kit por contrato
+  ok   INV-GRAPH-CONNECTED        Todas las salas son alcanzables desde el inicio
+  ok   FOCUS-AUTHORITY            Al enfocar, la autoridad de cámara pasa a FOCUS  — FOCUS
+  ok   FOCUS-MOVED                El encuadre de foco mueve realmente la cámara  — z -12.40 → -12.20
+  ok   FOCUS-RETURN               Al salir del foco el visitante vuelve exactamente donde estaba  — [-4.8,1.62,-12.4]
+  ok   PORTAL-TRAVERSE            Un Portal cambia la Space activa  — space.gallery-b
+  ok   PORTAL-PREWARMED           La sala vecina ya estaba precargada al cruzar  — 0 ms de espera
+  ok   LIFECYCLE-COOLING          La sala anterior queda en COOLING, no destruida ni activa  — space.gallery-a:COOLING, space.gallery-b:ACTIVE
+  ok   GUIDED-AUTHORITY           El recorrido guiado toma la cámara como DIRECTED  — DIRECTED/GUIDED
+  ok   SHARED-WORLD-STATE         Explore y Guided operan sobre el mismo World State  — visitadas 1 → 2
+  ok   SHARED-ACTION-PATH         Hotspot y Experiencia despachan las mismas Actions  — {"QA":{"FOCUS_ENTITY":1},"EXPERIENCE":{"ACTIVATE_PORTAL":1,"FOCUS_ENTITY":1}}
+  ok   GUIDED-RETURN              Al salir del recorrido la cámara vuelve al visitante  — EXPLORE/EXPLORE
+  ok   CAMERA-NO-VIOLATIONS       Ni una sola escritura de cámara en conflicto en toda la sesión  — 0 violaciones
+  ok   HANDOFF-VALID-POSE         Tras la cesión el visitante queda dentro de la sala activa, no dentro de un muro  — Galería A — Horizontes · [-2.60, 1.62, -11.98] · EXPLORE
+  ok   PROXIMITY-SPATIAL          La proximidad es espacial: acercarse y alejarse cambian el estado del hotspot  — hotspot.art.division-tercera/NEAR → null/AVAILABLE
+  ok   MEDIA-LOADED               Las obras se cargan desde archivos propios declarados en el mundo  — 7 archivos, 0 fallos, más lento 5534 ms
+  ok   MEDIA-FALLBACK             Un archivo que falla degrada a lámina generada, sin romper la sala
+  ok   PROJECTION-FROM-DATA       La proyección toma tamaño, luz e imagen del mundo, no de una constante  — 4.6×2.6 m, media cuaderno-de-luz.webm, variantes 4.6/7.2 m y bbaf9b/2a41aa
+  ok   PROJECTION-NO-PANEL        La proyección no monta ningún objeto en el muro: sin marco, sin bisel, sin pantalla  — 0 volúmenes en el grupo
+[IW QA] runner failed: page.evaluate: Target page, context or browser has been closed
+    at main (/home/user/escaparates-pro/labs/immersive-worlds/qa/run-qa.mjs:465:31)

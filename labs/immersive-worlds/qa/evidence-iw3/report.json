@@ -1,0 +1,838 @@
+{
+  "startedAt": "2026-08-10T00:54:57.833Z",
+  "states": {
+    "museum:lobby-entry": {
+      "space": "space.lobby",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 149,
+        "triangles": 6870,
+        "programs": 27,
+        "textures": 26,
+        "geometries": 147,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 74.7,
+        "p50Ms": 3.2,
+        "p95Ms": 858.8,
+        "maxMs": 1056.4
+      }
+    },
+    "museum:lobby-welcome": {
+      "space": "space.lobby",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 24,
+        "triangles": 363,
+        "programs": 22,
+        "textures": 17,
+        "geometries": 51,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 33.34,
+        "p50Ms": 1.4,
+        "p95Ms": 417.8,
+        "maxMs": 475.7
+      }
+    },
+    "museum:gallery-a-overview": {
+      "space": "space.gallery-a",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 43,
+        "triangles": 1821,
+        "programs": 39,
+        "textures": 30,
+        "geometries": 162,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 113.76,
+        "p50Ms": 1.4,
+        "p95Ms": 975.8,
+        "maxMs": 1047.1
+      }
+    },
+    "museum:artwork-horizonte-focus": {
+      "space": "space.gallery-a",
+      "cameraOwner": "FOCUS",
+      "cameraViolations": 0,
+      "focus": "entity.artwork.horizonte-interrumpido",
+      "render": {
+        "drawCalls": 19,
+        "triangles": 402,
+        "programs": 37,
+        "textures": 30,
+        "geometries": 162,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 99.68,
+        "p50Ms": 1.1,
+        "p95Ms": 824,
+        "maxMs": 935.7
+      }
+    },
+    "museum:sculpture-detail": {
+      "space": "space.gallery-a",
+      "cameraOwner": "FOCUS",
+      "cameraViolations": 0,
+      "focus": "entity.sculpture.vasija-de-arenas",
+      "render": {
+        "drawCalls": 103,
+        "triangles": 5255,
+        "programs": 39,
+        "textures": 33,
+        "geometries": 178,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 115.2,
+        "p50Ms": 2.7,
+        "p95Ms": 996.8,
+        "maxMs": 1038.3
+      }
+    },
+    "museum:gallery-a-oblique": {
+      "space": "space.gallery-a",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 130,
+        "triangles": 5651,
+        "programs": 39,
+        "textures": 36,
+        "geometries": 195,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 117.62,
+        "p50Ms": 10.6,
+        "p95Ms": 943.2,
+        "maxMs": 1008.8
+      }
+    },
+    "museum:portal-a-b-before": {
+      "space": "space.gallery-a",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 74,
+        "triangles": 2830,
+        "programs": 38,
+        "textures": 38,
+        "geometries": 203,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 123.67,
+        "p50Ms": 11.4,
+        "p95Ms": 995.5,
+        "maxMs": 1135.9
+      }
+    },
+    "museum:portal-a-b-after": {
+      "space": "space.gallery-b",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 37,
+        "triangles": 1772,
+        "programs": 28,
+        "textures": 33,
+        "geometries": 151,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 44,
+        "meanMs": 92.62,
+        "p50Ms": 8.1,
+        "p95Ms": 704.6,
+        "maxMs": 1125.9
+      }
+    },
+    "museum:archive-teleport": {
+      "space": "space.archive",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 18,
+        "triangles": 384,
+        "programs": 28,
+        "textures": 32,
+        "geometries": 141,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 37,
+        "meanMs": 85.62,
+        "p50Ms": 1.3,
+        "p95Ms": 743.4,
+        "maxMs": 900.6
+      }
+    },
+    "museum:guided-step-04": {
+      "space": "space.gallery-a",
+      "cameraOwner": "DIRECTED",
+      "cameraViolations": 0,
+      "focus": "entity.artwork.horizonte-interrumpido",
+      "render": {
+        "drawCalls": 70,
+        "triangles": 2731,
+        "programs": 39,
+        "textures": 31,
+        "geometries": 175,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 36,
+        "meanMs": 120.03,
+        "p50Ms": 2,
+        "p95Ms": 1006.5,
+        "maxMs": 1125.5
+      }
+    },
+    "museum:guided-completed": {
+      "space": "space.gallery-b",
+      "cameraOwner": "EXPLORE",
+      "cameraViolations": 0,
+      "focus": null,
+      "render": {
+        "drawCalls": 33,
+        "triangles": 1380,
+        "programs": 29,
+        "textures": 33,
+        "geometries": 152,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "frame": {
+        "samples": 45,
+        "meanMs": 104.5,
+        "p50Ms": 8,
+        "p95Ms": 971.6,
+        "maxMs": 1119.5
+      }
+    }
+  },
+  "performance": {
+    "spaceTimings": {
+      "space.lobby": {
+        "build": 172,
+        "warm": 3404,
+        "total": 3576
+      },
+      "space.gallery-a": {
+        "build": 1683,
+        "warm": 5911,
+        "total": 7594
+      },
+      "space.gallery-b": {
+        "build": 5201,
+        "warm": 3903,
+        "total": 9104
+      }
+    },
+    "media": {
+      "attempts": 7,
+      "loaded": 7,
+      "failed": 0,
+      "cached": 7,
+      "slowestMs": 5179,
+      "failures": []
+    },
+    "desktop": {
+      "frame": {
+        "samples": 185,
+        "meanMs": 25.91,
+        "p50Ms": 1.4,
+        "p95Ms": 4.2,
+        "maxMs": 1089.3
+      },
+      "render": {
+        "drawCalls": 43,
+        "triangles": 1821,
+        "programs": 39,
+        "textures": 30,
+        "geometries": 162,
+        "pixelRatio": 1,
+        "width": 1440,
+        "height": 900
+      },
+      "quality": {
+        "bus": {
+          "_handlers": {},
+          "_recordHistory": true,
+          "_historyLimit": 500,
+          "history": [
+            {
+              "name": "space:preload-requested",
+              "payload": {
+                "spaceId": "space.lobby"
+              },
+              "t": 0
+            },
+            {
+              "name": "space:ready",
+              "payload": {
+                "spaceId": "space.lobby",
+                "timings": {
+                  "build": 138,
+                  "warm": 3391,
+                  "total": 3530
+                }
+              },
+              "t": 1
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "spaceId": "space.lobby",
+                "kind": "space"
+              },
+              "t": 2
+            },
+            {
+              "name": "space:preload-requested",
+              "payload": {
+                "spaceId": "space.gallery-a"
+              },
+              "t": 3
+            },
+            {
+              "name": "world:ready",
+              "payload": {
+                "worldId": "world.fundacion-arenas",
+                "spaceId": "space.lobby",
+                "tier": "HIGH"
+              },
+              "t": 4
+            },
+            {
+              "name": "portal:requested",
+              "payload": {
+                "portalId": "portal.lobby-gallery-a",
+                "from": "space.lobby",
+                "to": "space.gallery-a"
+              },
+              "t": 5
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.campo-de-ceniza",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/campo-de-ceniza.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 6
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.horizonte-interrumpido",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/horizonte-interrumpido.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 7
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.division-tercera",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/division-tercera.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 8
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.estudio-de-figura",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/estudio-de-figura.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 9
+            },
+            {
+              "name": "space:ready",
+              "payload": {
+                "spaceId": "space.gallery-a",
+                "timings": {
+                  "build": 2178,
+                  "warm": 6639,
+                  "total": 8817
+                }
+              },
+              "t": 10
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "spaceId": "space.gallery-a",
+                "kind": "space"
+              },
+              "t": 11
+            },
+            {
+              "name": "space:preload-requested",
+              "payload": {
+                "spaceId": "space.gallery-b"
+              },
+              "t": 12
+            },
+            {
+              "name": "space:left",
+              "payload": {
+                "spaceId": "space.lobby"
+              },
+              "t": 13
+            },
+            {
+              "name": "space:entered",
+              "payload": {
+                "spaceId": "space.gallery-a",
+                "arrivalAnchorId": "anchor.gallery-a.arrive-from-lobby",
+                "previousSpaceId": "space.lobby"
+              },
+              "t": 14
+            },
+            {
+              "name": "world:state-changed",
+              "payload": {
+                "reason": "space",
+                "revision": 1,
+                "spaceId": "space.gallery-a",
+                "previousSpaceId": "space.lobby"
+              },
+              "t": 15
+            },
+            {
+              "name": "portal:entered",
+              "payload": {
+                "portalId": "portal.lobby-gallery-a",
+                "spaceId": "space.gallery-a",
+                "behaviour": "CONTINUOUS",
+                "preparedOnDemand": true,
+                "waitedMs": 8811,
+                "source": "QA"
+              },
+              "t": 16
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.noche-de-invierno",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/noche-de-invierno.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 17
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.artwork.marea-baja",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/marea-baja.jpg",
+                "kind": "IMAGE"
+              },
+              "t": 18
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "entityId": "entity.video.cuaderno-de-luz",
+                "url": "http://127.0.0.1:4188/labs/immersive-worlds/assets/collection/cuaderno-de-luz.webm",
+                "kind": "VIDEO"
+              },
+              "t": 19
+            },
+            {
+              "name": "space:ready",
+              "payload": {
+                "spaceId": "space.gallery-b",
+                "timings": {
+                  "build": 5951,
+                  "warm": 4542,
+                  "total": 10493
+                }
+              },
+              "t": 20
+            },
+            {
+              "name": "asset:ready",
+              "payload": {
+                "spaceId": "space.gallery-b",
+                "kind": "space"
+              },
+              "t": 21
+            }
+          ],
+          "_emitting": 0
+        },
+        "env": {
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+          "deviceMemory": 8,
+          "hardwareConcurrency": 4,
+          "maxTouchPoints": 0,
+          "screenWidth": 1440,
+          "devicePixelRatio": 1
+        },
+        "mobile": false,
+        "tier": "HIGH",
+        "policy": {
+          "tier": "HIGH",
+          "dprCap": 2,
+          "shadows": true,
+          "shadowMapSize": 2048,
+          "maxShadowCasters": 4,
+          "environmentIBL": true,
+          "textureScale": 1,
+          "antialias": true,
+          "warmupBudgetMs": 16,
+          "warmupSpaces": true,
+          "mobile": false
+        }
+      }
+    },
+    "mobile": {
+      "tier": "LOW",
+      "shadows": false,
+      "dpr": 0.85,
+      "vfov": 66,
+      "distance": 8.317417826942572,
+      "horizontalOverflow": false
+    }
+  },
+  "checks": [
+    {
+      "id": "ENGINE-PURITY",
+      "claim": "engine/ no importa Three.js ni toca el DOM",
+      "pass": true,
+      "detail": "21 archivos revisados"
+    },
+    {
+      "id": "PROTECTED-PATHS",
+      "claim": "Las rutas protegidas siguen presentes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "BOOT",
+      "claim": "El prototipo arranca sin errores de consola",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "SCHEMA-VALID",
+      "claim": "El mundo cumple todas las invariantes del esquema",
+      "pass": true,
+      "detail": "0 errores, 0 avisos, {\"spaces\":4,\"anchors\":25,\"entities\":11,\"hotspots\":16,\"portals\":6,\"chapters\":3,\"storySteps\":8,\"routes\":1}"
+    },
+    {
+      "id": "INV-CANONICAL",
+      "claim": "Cada id resuelve a exactamente un registro canónico",
+      "pass": true,
+      "detail": "74 registros; 0 violaciones"
+    },
+    {
+      "id": "INV-BY-REFERENCE",
+      "claim": "Las Spaces referencian entidades, no copias",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "INV-WORLD-NOT-CAMERA",
+      "claim": "World State no contiene estado de cámara",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "INV-ONE-CAMERA-WRITER",
+      "claim": "Un único controlador de cámara autoritativo por frame",
+      "pass": true,
+      "detail": "5 frames, 0 violaciones"
+    },
+    {
+      "id": "INV-HOTSPOT-NOT-PORTAL",
+      "claim": "Hotspot dispara, Portal conecta: sin solape de responsabilidad",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "INV-SEMANTIC-NOT-VISUAL",
+      "claim": "Ningún registro semántico contiene implementación de render",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "INV-SHARED-ACTIONS",
+      "claim": "Hotspots y pasos guiados usan el mismo vocabulario declarado de Action",
+      "pass": true,
+      "detail": "4 acciones en uso: START_ROUTE, ACTIVATE_PORTAL, FOCUS_ENTITY, PLAY_MEDIA"
+    },
+    {
+      "id": "INV-SCENEKIT-CONTRACT",
+      "claim": "El motor sólo habla con el Scene Kit por contrato",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "INV-GRAPH-CONNECTED",
+      "claim": "Todas las salas son alcanzables desde el inicio",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "FOCUS-AUTHORITY",
+      "claim": "Al enfocar, la autoridad de cámara pasa a FOCUS",
+      "pass": true,
+      "detail": "FOCUS"
+    },
+    {
+      "id": "FOCUS-MOVED",
+      "claim": "El encuadre de foco mueve realmente la cámara",
+      "pass": true,
+      "detail": "z -12.40 → -12.20"
+    },
+    {
+      "id": "FOCUS-RETURN",
+      "claim": "Al salir del foco el visitante vuelve exactamente donde estaba",
+      "pass": true,
+      "detail": "[-4.8,1.62,-12.4]"
+    },
+    {
+      "id": "PORTAL-TRAVERSE",
+      "claim": "Un Portal cambia la Space activa",
+      "pass": true,
+      "detail": "space.gallery-b"
+    },
+    {
+      "id": "PORTAL-PREWARMED",
+      "claim": "La sala vecina ya estaba precargada al cruzar",
+      "pass": true,
+      "detail": "0 ms de espera"
+    },
+    {
+      "id": "LIFECYCLE-COOLING",
+      "claim": "La sala anterior queda en COOLING, no destruida ni activa",
+      "pass": true,
+      "detail": "space.gallery-a:COOLING, space.gallery-b:ACTIVE"
+    },
+    {
+      "id": "GUIDED-AUTHORITY",
+      "claim": "El recorrido guiado toma la cámara como DIRECTED",
+      "pass": true,
+      "detail": "DIRECTED/GUIDED"
+    },
+    {
+      "id": "SHARED-WORLD-STATE",
+      "claim": "Explore y Guided operan sobre el mismo World State",
+      "pass": true,
+      "detail": "visitadas 1 → 2"
+    },
+    {
+      "id": "SHARED-ACTION-PATH",
+      "claim": "Hotspot y Experiencia despachan las mismas Actions",
+      "pass": true,
+      "detail": "{\"QA\":{\"FOCUS_ENTITY\":1},\"EXPERIENCE\":{\"ACTIVATE_PORTAL\":1,\"FOCUS_ENTITY\":2}}"
+    },
+    {
+      "id": "GUIDED-RETURN",
+      "claim": "Al salir del recorrido la cámara vuelve al visitante",
+      "pass": true,
+      "detail": "EXPLORE/EXPLORE"
+    },
+    {
+      "id": "CAMERA-NO-VIOLATIONS",
+      "claim": "Ni una sola escritura de cámara en conflicto en toda la sesión",
+      "pass": true,
+      "detail": "0 violaciones"
+    },
+    {
+      "id": "PROXIMITY-SPATIAL",
+      "claim": "La proximidad es espacial: acercarse y alejarse cambian el estado del hotspot",
+      "pass": true,
+      "detail": "hotspot.art.division-tercera/NEAR → null/AVAILABLE"
+    },
+    {
+      "id": "MEDIA-LOADED",
+      "claim": "Las obras se cargan desde archivos propios declarados en el mundo",
+      "pass": true,
+      "detail": "7 archivos, 0 fallos, más lento 5179 ms"
+    },
+    {
+      "id": "MEDIA-FALLBACK",
+      "claim": "Un archivo que falla degrada a lámina generada, sin romper la sala",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "WARMUP-COMPILES",
+      "claim": "El warmup compila programas de verdad, no una escena vacía",
+      "pass": true,
+      "detail": "51 programas compilados"
+    },
+    {
+      "id": "DETAIL-NAVIGATION",
+      "claim": "En detalle se pasa de una obra a la siguiente sin volver a la sala",
+      "pass": true,
+      "detail": "entity.artwork.horizonte-interrumpido → entity.artwork.campo-de-ceniza"
+    },
+    {
+      "id": "DETAIL-ZOOM",
+      "claim": "El zoom de inspección acerca realmente la cámara a la obra",
+      "pass": true,
+      "detail": "3.61 m → 1.71 m"
+    },
+    {
+      "id": "ESCAPE-IN-FOCUS",
+      "claim": "Escape saca del detalle aunque el movimiento esté desactivado",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "DETAIL-RETURN",
+      "claim": "Tras recorrer varias obras el visitante vuelve donde estaba de pie",
+      "pass": true,
+      "detail": "[-2,1.62,-6]"
+    },
+    {
+      "id": "DETAIL-NO-VIOLATIONS",
+      "claim": "La navegación en detalle no rompe la autoridad de cámara",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "id": "A11Y-OUTLINE",
+      "claim": "Todo el contenido existe como texto fuera del canvas",
+      "pass": true,
+      "detail": "21 obras en 4 salas (11 entidades)"
+    },
+    {
+      "id": "STATES-DETERMINISTIC",
+      "claim": "Todos los estados nombrados se reproducen y capturan",
+      "pass": true,
+      "detail": "11/11 estados"
+    },
+    {
+      "id": "PERF-CAPTURED",
+      "claim": "Medición de rendimiento capturada (SwiftShader, sin GPU)",
+      "pass": true,
+      "detail": "p50 1.4 ms · p95 4.2 ms · 43 draws · 1821 tris"
+    },
+    {
+      "id": "MOBILE-TIER",
+      "claim": "El tier LOW desactiva realmente sombras y limita el DPR",
+      "pass": true,
+      "detail": "dpr 0.85, sombras false"
+    },
+    {
+      "id": "MOBILE-FRAMING",
+      "claim": "El encuadre se recalcula para pantalla vertical",
+      "pass": true,
+      "detail": "vfov 66°, distancia 8.32 m"
+    },
+    {
+      "id": "MOBILE-NO-OVERFLOW",
+      "claim": "Sin desbordamiento horizontal en móvil",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "SECOND-WORLD",
+      "claim": "Un segundo mundo funciona sobre el mismo motor y el mismo Scene Kit",
+      "pass": true,
+      "detail": "Sala de exposiciones — demostración institucional · 2 salas · 4 archivos"
+    },
+    {
+      "id": "WORLD-DRIVEN-IDENTITY",
+      "claim": "La interfaz toma la identidad del mundo, no de una constante",
+      "pass": true,
+      "detail": "Institución de demostración"
+    },
+    {
+      "id": "AUTHOR-EDITS-DATA",
+      "claim": "La autoría edita el registro canónico y reconstruye la sala",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "AUTHOR-SEPARATE-CAMERA",
+      "claim": "Author Mode usa su propia autoridad de cámara",
+      "pass": true,
+      "detail": "AUTHOR"
+    },
+    {
+      "id": "AUTHOR-NOT-EXPERIENCE",
+      "claim": "La superficie de autoría no contiene la UI del visitante",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "id": "AUTHOR-NO-ERRORS",
+      "claim": "La autoría arranca sin errores",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "secondWorld": {
+    "title": "Sala de exposiciones — demostración institucional",
+    "institution": "Institución de demostración",
+    "valid": true,
+    "invariants": true,
+    "media": {
+      "attempts": 4,
+      "loaded": 4,
+      "failed": 0,
+      "cached": 4,
+      "slowestMs": 2021,
+      "failures": []
+    },
+    "spaces": 2
+  },
+  "finishedAt": "2026-08-10T01:14:56.589Z",
+  "summary": {
+    "total": 45,
+    "failed": 0,
+    "passed": 45
+  }
+}

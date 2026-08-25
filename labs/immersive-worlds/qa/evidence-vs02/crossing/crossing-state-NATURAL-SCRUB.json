@@ -1,0 +1,6392 @@
+{
+ "generatedAt": "2026-08-15T09:02:58.385Z",
+ "pace": "NATURAL",
+ "reducedMotion": false,
+ "portalStep": "step.02-paso-galeria-a",
+ "flew": true,
+ "plan": {
+  "s": 0.8,
+  "via": [
+   0,
+   1.62,
+   -2.6624999999999974
+  ],
+  "gate": [
+   0,
+   1.62,
+   -4.5
+  ],
+  "window": 0.16999999999999996,
+  "durationMs": 5000,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "plan0": {
+  "s": 0.8,
+  "via": [
+   0,
+   1.62,
+   -2.6624999999999974
+  ],
+  "gate": [
+   0,
+   1.62,
+   -4.5
+  ],
+  "window": 0.16999999999999996,
+  "durationMs": 5000,
+  "reduced": false,
+  "recoil": 0.62
+ },
+ "lookBackWindow": {
+  "from": 0.83,
+  "to": 0.86,
+  "fractionOfMove": 0.03,
+  "approxMsAtAuthoredTempo": 150
+ },
+ "scrubbed": true,
+ "spaces": [
+  "space.lobby",
+  "space.gallery-a"
+ ],
+ "owners": [
+  "EXPLORE",
+  "DIRECTED",
+  "TRANSITION"
+ ],
+ "beats": [
+  {
+   "id": "01",
+   "label": "Mundo A, umbral en su contexto",
+   "file": "museum-NATURAL-SCRUB-01.png",
+   "state": {
+    "k": 0.02,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03a-lleva-campo",
+    "facing": 1,
+    "alongAxis": -7.697,
+    "effect": 1,
+    "surface": false,
+    "pos": [
+     0,
+     1.62,
+     3.197
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -0.812
+    ]
+   },
+   "after": {
+    "k": 0.0201,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "02",
+   "label": "Adquisición: el umbral es el sujeto",
+   "file": "museum-NATURAL-SCRUB-02.png",
+   "state": {
+    "k": 0.1,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03a-lleva-campo",
+    "facing": 1,
+    "alongAxis": -7.406,
+    "effect": 1,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     2.906
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -1.672
+    ]
+   },
+   "after": {
+    "k": 0.1001,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "03",
+   "label": "Aproximación A",
+   "file": "museum-NATURAL-SCRUB-03.png",
+   "state": {
+    "k": 0.25,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03b-campo",
+    "facing": 1,
+    "alongAxis": -5.552,
+    "effect": 0.997,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     1.052
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -4.576
+    ]
+   },
+   "after": {
+    "k": 0.2501,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "04",
+   "label": "Aproximación B — compromiso",
+   "file": "museum-NATURAL-SCRUB-04.png",
+   "state": {
+    "k": 0.4,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03b-campo",
+    "facing": 1,
+    "alongAxis": -3.657,
+    "effect": 0.951,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -0.843
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -7.481
+    ]
+   },
+   "after": {
+    "k": 0.4001,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "05",
+   "label": "Aproximación C — toma del encuadre",
+   "file": "museum-NATURAL-SCRUB-05.png",
+   "state": {
+    "k": 0.55,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03c-campo-contemplacion",
+    "facing": 1,
+    "alongAxis": -1.942,
+    "effect": 0.757,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -2.558
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -9.863
+    ]
+   },
+   "after": {
+    "k": 0.5501,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "06",
+   "label": "Umbral a pantalla completa",
+   "file": "museum-NATURAL-SCRUB-06.png",
+   "state": {
+    "k": 0.68,
+    "crossing": true,
+    "settled": false,
+    "space": "space.lobby",
+    "owner": "TRANSITION",
+    "step": "step.03d-campo-cesion",
+    "facing": 1,
+    "alongAxis": -0.601,
+    "effect": 0.336,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -3.899
+    ],
+    "tgt": [
+     0,
+     1.541,
+     -9.246
+    ]
+   },
+   "after": {
+    "k": 0.6801,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "07",
+   "label": "Cruce de la membrana — el cambio de mundo, oculto",
+   "file": "museum-NATURAL-SCRUB-07.png",
+   "state": {
+    "k": 0.75,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.04-horizonte",
+    "facing": -1,
+    "alongAxis": 0.065,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -4.565
+    ],
+    "tgt": [
+     0,
+     1.62,
+     -6.415
+    ]
+   },
+   "after": {
+    "k": 0.7501,
+    "facing": -1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "08",
+   "label": "Mundo B — el reverso del umbral, de frente",
+   "file": "museum-NATURAL-SCRUB-08.png",
+   "state": {
+    "k": 0.83,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.06-division",
+    "facing": 1,
+    "alongAxis": 0.776,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -5.276
+    ],
+    "tgt": [
+     0,
+     1.62,
+     -5.199
+    ]
+   },
+   "after": {
+    "k": 0.8301,
+    "facing": 1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "09",
+   "label": "Retroceso: el umbral todavía domina",
+   "file": "museum-NATURAL-SCRUB-09.png",
+   "state": {
+    "k": 0.8725,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.06d-lleva-estudio",
+    "facing": -1,
+    "alongAxis": 1.089,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -5.589
+    ],
+    "tgt": [
+     0,
+     1.582,
+     -6.286
+    ]
+   },
+   "after": {
+    "k": 0.8726,
+    "facing": -1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "10",
+   "label": "Retroceso medio: el destino empieza a aparecer",
+   "file": "museum-NATURAL-SCRUB-10.png",
+   "state": {
+    "k": 0.9235,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.06d-lleva-estudio",
+    "facing": -1,
+    "alongAxis": 1.32,
+    "effect": 0,
+    "surface": true,
+    "pos": [
+     0,
+     1.62,
+     -5.82
+    ],
+    "tgt": [
+     0,
+     1.508,
+     -9.526
+    ]
+   },
+   "after": {
+    "k": 0.9236,
+    "facing": -1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "11",
+   "label": "Fin del retroceso: el entorno ya está establecido",
+   "file": "museum-NATURAL-SCRUB-11.png",
+   "state": {
+    "k": 0.9745,
+    "crossing": true,
+    "settled": false,
+    "space": "space.gallery-a",
+    "owner": "TRANSITION",
+    "step": "step.06e-estudio",
+    "facing": -1,
+    "alongAxis": 1.397,
+    "effect": 0,
+    "surface": false,
+    "pos": [
+     0,
+     1.62,
+     -5.897
+    ],
+    "tgt": [
+     0,
+     1.5,
+     -9.899
+    ]
+   },
+   "after": {
+    "k": 0.9746,
+    "facing": -1
+   },
+   "note": null,
+   "drifted": false
+  },
+  {
+   "id": "12",
+   "label": "Asentamiento",
+   "file": "museum-NATURAL-SCRUB-12.png",
+   "state": {
+    "k": 1,
+    "crossing": false,
+    "settled": true,
+    "space": "space.gallery-a",
+    "owner": "DIRECTED",
+    "step": "step.06f-estudio-contemplacion",
+    "facing": null,
+    "alongAxis": null,
+    "effect": 0,
+    "surface": false,
+    "pos": [
+     2.05,
+     1.58,
+     -13.844
+    ],
+    "tgt": [
+     7.74,
+     1.47,
+     -13.844
+    ]
+   },
+   "after": {
+    "k": 1,
+    "facing": null
+   },
+   "note": "tempo real; la travesía ha aterrizado",
+   "drifted": false
+  }
+ ],
+ "marks": [
+  {
+   "t": 44294.5,
+   "phase": "REQUESTED",
+   "portalId": "portal.lobby-gallery-a",
+   "ms": 14047
+  },
+  {
+   "t": 359672.2000000002,
+   "phase": "CROSSED",
+   "crossing": true,
+   "spaceId": "space.gallery-a",
+   "ms": 329425
+  },
+  {
+   "t": 1194529.5999999996,
+   "phase": "LANDED",
+   "crossing": true,
+   "spaceId": "space.gallery-a",
+   "ms": 1164282
+  }
+ ],
+ "samples": [
+  {
+   "ms": 3,
+   "space": "space.lobby",
+   "step": null,
+   "owner": "EXPLORE",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.62,
+    2.2
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1158,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.617,
+    2.123
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 2362,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.6,
+    1.696
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 3524,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.567,
+    0.887
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 4792,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.532,
+    -0.009
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 5981,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -0.604
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 7114,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.795
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 8359,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 9493,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 10630,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 11774,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 12913,
+   "space": "space.lobby",
+   "step": "step.01-entrada",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 14052,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0,
+   "effect": null,
+   "surface": false,
+   "facing": null,
+   "distance": null,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 17117,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.671
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 19721,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2,
+   "effect": 0.999,
+   "surface": true,
+   "facing": 1,
+   "distance": 6.224,
+   "pos": [
+    0,
+    1.62,
+    1.724
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -3.607
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 22300,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.3,
+   "effect": 0.99,
+   "surface": true,
+   "facing": 1,
+   "distance": 4.901,
+   "pos": [
+    0,
+    1.62,
+    0.401
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -5.544
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 24808,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.7,
+   "pos": [
+    0,
+    1.62,
+    3.2
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.8
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 25921,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 27026,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 28112,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 29209,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 30334,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 31434,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 32548,
+   "space": "space.lobby",
+   "step": "step.02-paso-galeria-a",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 33655,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 34790,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 35958,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 37169,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 38297,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 39406,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 40529,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 41642,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.02,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 42771,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.0201,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 43880,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.0201,
+   "effect": 1,
+   "surface": false,
+   "facing": 1,
+   "distance": 7.697,
+   "pos": [
+    0,
+    1.62,
+    3.197
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -0.812
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 45007,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.671
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 47458,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 49919,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 52365,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 54828,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 57270,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 59722,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 62155,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 64626,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 67166,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1001,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 69645,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1001,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 72085,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.1001,
+   "effect": 1,
+   "surface": true,
+   "facing": 1,
+   "distance": 7.406,
+   "pos": [
+    0,
+    1.62,
+    2.906
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -1.672
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 74564,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.575
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 77029,
+   "space": "space.lobby",
+   "step": "step.03a-lleva-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.575
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 79493,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.575
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 81939,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 84436,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 86953,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 89393,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 91894,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 94414,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 96883,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.25,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 99357,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2501,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 101922,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.2501,
+   "effect": 0.997,
+   "surface": true,
+   "facing": 1,
+   "distance": 5.552,
+   "pos": [
+    0,
+    1.62,
+    1.052
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -4.576
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 104476,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 107338,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 110003,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 112696,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 115386,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 118065,
+   "space": "space.lobby",
+   "step": "step.03b-campo",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 120899,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 123525,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.481
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 126177,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.482
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 128852,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4001,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.482
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 131571,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4001,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.657,
+   "pos": [
+    0,
+    1.62,
+    -0.843
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.482
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 134229,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.4001,
+   "effect": 0.951,
+   "surface": true,
+   "facing": 1,
+   "distance": 3.656,
+   "pos": [
+    0,
+    1.62,
+    -0.844
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -7.482
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 136914,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 139471,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 141901,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 145266,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 149416,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 153087,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 157535,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 161705,
+   "space": "space.lobby",
+   "step": "step.03c-campo-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 166297,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.55,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.942,
+   "pos": [
+    0,
+    1.62,
+    -2.558
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 170936,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5501,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.941,
+   "pos": [
+    0,
+    1.62,
+    -2.559
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 175562,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5501,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.941,
+   "pos": [
+    0,
+    1.62,
+    -2.559
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 180124,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.5501,
+   "effect": 0.757,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.941,
+   "pos": [
+    0,
+    1.62,
+    -2.559
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.863
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 185122,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.247
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 190135,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.247
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 193975,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.247
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 198041,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 202490,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 206524,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 210489,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 214693,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 218731,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.68,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 222745,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6801,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 226888,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6801,
+   "effect": 0.336,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 230976,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.6801,
+   "effect": 0.335,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.601,
+   "pos": [
+    0,
+    1.62,
+    -3.899
+   ],
+   "tgt": [
+    0,
+    1.541,
+    -9.246
+   ],
+   "fov": 56.56
+  },
+  {
+   "ms": 235208,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 239131,
+   "space": "space.lobby",
+   "step": "step.03d-campo-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 243038,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 247332,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 251361,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7,
+   "effect": 0.24,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.407,
+   "pos": [
+    0,
+    1.62,
+    -4.093
+   ],
+   "tgt": [
+    0,
+    1.554,
+    -9.049
+   ],
+   "fov": 57.04
+  },
+  {
+   "ms": 255293,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.71,
+   "effect": 0.189,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.311,
+   "pos": [
+    0,
+    1.62,
+    -4.189
+   ],
+   "tgt": [
+    0,
+    1.559,
+    -8.972
+   ],
+   "fov": 57.22
+  },
+  {
+   "ms": 259321,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.71,
+   "effect": 0.189,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.311,
+   "pos": [
+    0,
+    1.62,
+    -4.189
+   ],
+   "tgt": [
+    0,
+    1.559,
+    -8.972
+   ],
+   "fov": 57.22
+  },
+  {
+   "ms": 263331,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.71,
+   "effect": 0.189,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.311,
+   "pos": [
+    0,
+    1.62,
+    -4.189
+   ],
+   "tgt": [
+    0,
+    1.559,
+    -8.971
+   ],
+   "fov": 57.22
+  },
+  {
+   "ms": 267088,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.71,
+   "effect": 0.189,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.311,
+   "pos": [
+    0,
+    1.62,
+    -4.189
+   ],
+   "tgt": [
+    0,
+    1.559,
+    -8.971
+   ],
+   "fov": 57.22
+  },
+  {
+   "ms": 270870,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.71,
+   "effect": 0.189,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.311,
+   "pos": [
+    0,
+    1.62,
+    -4.189
+   ],
+   "tgt": [
+    0,
+    1.559,
+    -8.971
+   ],
+   "fov": 57.22
+  },
+  {
+   "ms": 274754,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.72,
+   "effect": 0.135,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.216,
+   "pos": [
+    0,
+    1.62,
+    -4.284
+   ],
+   "tgt": [
+    0,
+    1.562,
+    -8.912
+   ],
+   "fov": 57.36
+  },
+  {
+   "ms": 278069,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.72,
+   "effect": 0.135,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.216,
+   "pos": [
+    0,
+    1.62,
+    -4.284
+   ],
+   "tgt": [
+    0,
+    1.562,
+    -8.912
+   ],
+   "fov": 57.36
+  },
+  {
+   "ms": 281816,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.72,
+   "effect": 0.135,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.216,
+   "pos": [
+    0,
+    1.62,
+    -4.284
+   ],
+   "tgt": [
+    0,
+    1.562,
+    -8.912
+   ],
+   "fov": 57.36
+  },
+  {
+   "ms": 285776,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.72,
+   "effect": 0.134,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.216,
+   "pos": [
+    0,
+    1.62,
+    -4.284
+   ],
+   "tgt": [
+    0,
+    1.562,
+    -8.912
+   ],
+   "fov": 57.36
+  },
+  {
+   "ms": 289823,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.72,
+   "effect": 0.134,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.216,
+   "pos": [
+    0,
+    1.62,
+    -4.284
+   ],
+   "tgt": [
+    0,
+    1.562,
+    -8.912
+   ],
+   "fov": 57.36
+  },
+  {
+   "ms": 293766,
+   "space": "space.lobby",
+   "step": "step.03-lleva-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.73,
+   "effect": 0.078,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.121,
+   "pos": [
+    0,
+    1.62,
+    -4.379
+   ],
+   "tgt": [
+    0,
+    1.565,
+    -8.874
+   ],
+   "fov": 57.46
+  },
+  {
+   "ms": 297803,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.73,
+   "effect": 0.078,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.121,
+   "pos": [
+    0,
+    1.62,
+    -4.379
+   ],
+   "tgt": [
+    0,
+    1.565,
+    -8.874
+   ],
+   "fov": 57.46
+  },
+  {
+   "ms": 301558,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.73,
+   "effect": 0.078,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.121,
+   "pos": [
+    0,
+    1.62,
+    -4.379
+   ],
+   "tgt": [
+    0,
+    1.565,
+    -8.874
+   ],
+   "fov": 57.46
+  },
+  {
+   "ms": 305560,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.73,
+   "effect": 0.078,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.121,
+   "pos": [
+    0,
+    1.62,
+    -4.379
+   ],
+   "tgt": [
+    0,
+    1.565,
+    -8.873
+   ],
+   "fov": 57.46
+  },
+  {
+   "ms": 309653,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.73,
+   "effect": 0.078,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.121,
+   "pos": [
+    0,
+    1.62,
+    -4.379
+   ],
+   "tgt": [
+    0,
+    1.565,
+    -8.873
+   ],
+   "fov": 57.46
+  },
+  {
+   "ms": 313727,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.74,
+   "effect": 0.018,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.028,
+   "pos": [
+    0,
+    1.62,
+    -4.472
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.856
+   ],
+   "fov": 57.5
+  },
+  {
+   "ms": 317112,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.74,
+   "effect": 0.018,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.028,
+   "pos": [
+    0,
+    1.62,
+    -4.472
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.856
+   ],
+   "fov": 57.5
+  },
+  {
+   "ms": 320186,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.74,
+   "effect": 0.018,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.028,
+   "pos": [
+    0,
+    1.62,
+    -4.472
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.856
+   ],
+   "fov": 57.5
+  },
+  {
+   "ms": 323445,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.74,
+   "effect": 0.018,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.028,
+   "pos": [
+    0,
+    1.62,
+    -4.472
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.856
+   ],
+   "fov": 57.5
+  },
+  {
+   "ms": 326373,
+   "space": "space.lobby",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.74,
+   "effect": 0.018,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.028,
+   "pos": [
+    0,
+    1.62,
+    -4.472
+   ],
+   "tgt": [
+    0,
+    1.566,
+    -8.856
+   ],
+   "fov": 57.5
+  },
+  {
+   "ms": 332196,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 335272,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 338853,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 342139,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 345611,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 349087,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 352651,
+   "space": "space.gallery-a",
+   "step": "step.04-horizonte",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 356226,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 359795,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 363153,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 366845,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7501,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 370253,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.7501,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 373525,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 376718,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 379936,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 383321,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 386815,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.75,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.065,
+   "pos": [
+    0,
+    1.62,
+    -4.565
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.415
+   ],
+   "fov": 57.49
+  },
+  {
+   "ms": 390423,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.76,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.157,
+   "pos": [
+    0,
+    1.62,
+    -4.657
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.367
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 402253,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.76,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.157,
+   "pos": [
+    0,
+    1.62,
+    -4.657
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.367
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 413240,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.76,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.157,
+   "pos": [
+    0,
+    1.62,
+    -4.657
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.367
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 425392,
+   "space": "space.gallery-a",
+   "step": "step.04c-horizonte-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.76,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.157,
+   "pos": [
+    0,
+    1.62,
+    -4.657
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.367
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 437498,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.76,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.157,
+   "pos": [
+    0,
+    1.62,
+    -4.657
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.367
+   ],
+   "fov": 57.42
+  },
+  {
+   "ms": 444472,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.77,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.248,
+   "pos": [
+    0,
+    1.62,
+    -4.748
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.28
+   ],
+   "fov": 57.31
+  },
+  {
+   "ms": 450838,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.77,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.248,
+   "pos": [
+    0,
+    1.62,
+    -4.748
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.28
+   ],
+   "fov": 57.31
+  },
+  {
+   "ms": 457283,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.77,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.248,
+   "pos": [
+    0,
+    1.62,
+    -4.748
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.28
+   ],
+   "fov": 57.31
+  },
+  {
+   "ms": 463651,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.77,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.248,
+   "pos": [
+    0,
+    1.62,
+    -4.748
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.28
+   ],
+   "fov": 57.31
+  },
+  {
+   "ms": 470089,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.77,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.248,
+   "pos": [
+    0,
+    1.62,
+    -4.748
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.28
+   ],
+   "fov": 57.31
+  },
+  {
+   "ms": 476504,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.78,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.338,
+   "pos": [
+    0,
+    1.62,
+    -4.838
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.157
+   ],
+   "fov": 57.15
+  },
+  {
+   "ms": 482849,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.78,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.338,
+   "pos": [
+    0,
+    1.62,
+    -4.838
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.157
+   ],
+   "fov": 57.15
+  },
+  {
+   "ms": 489275,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.78,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.338,
+   "pos": [
+    0,
+    1.62,
+    -4.838
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.157
+   ],
+   "fov": 57.15
+  },
+  {
+   "ms": 495722,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.78,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.338,
+   "pos": [
+    0,
+    1.62,
+    -4.838
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.157
+   ],
+   "fov": 57.15
+  },
+  {
+   "ms": 502184,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.78,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.338,
+   "pos": [
+    0,
+    1.62,
+    -4.838
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.157
+   ],
+   "fov": 57.15
+  },
+  {
+   "ms": 508643,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.79,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.428,
+   "pos": [
+    0,
+    1.62,
+    -4.928
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.003
+   ],
+   "fov": 56.95
+  },
+  {
+   "ms": 514956,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.79,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.428,
+   "pos": [
+    0,
+    1.62,
+    -4.928
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.002
+   ],
+   "fov": 56.95
+  },
+  {
+   "ms": 521284,
+   "space": "space.gallery-a",
+   "step": "step.04b-horizonte-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.79,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.428,
+   "pos": [
+    0,
+    1.62,
+    -4.928
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.002
+   ],
+   "fov": 56.95
+  },
+  {
+   "ms": 527562,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.79,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.428,
+   "pos": [
+    0,
+    1.62,
+    -4.928
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.002
+   ],
+   "fov": 56.95
+  },
+  {
+   "ms": 533914,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.79,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.428,
+   "pos": [
+    0,
+    1.62,
+    -4.928
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -6.002
+   ],
+   "fov": 56.95
+  },
+  {
+   "ms": 540112,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.822
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 546323,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.822
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 552503,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.822
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 558773,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 564976,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.517,
+   "pos": [
+    0,
+    1.62,
+    -5.017
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "fov": 56.72
+  },
+  {
+   "ms": 571183,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.81,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.605,
+   "pos": [
+    0,
+    1.62,
+    -5.105
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.621
+   ],
+   "fov": 56.46
+  },
+  {
+   "ms": 577383,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.81,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.605,
+   "pos": [
+    0,
+    1.62,
+    -5.105
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.621
+   ],
+   "fov": 56.46
+  },
+  {
+   "ms": 583573,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.81,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.605,
+   "pos": [
+    0,
+    1.62,
+    -5.105
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.621
+   ],
+   "fov": 56.46
+  },
+  {
+   "ms": 589743,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.81,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.605,
+   "pos": [
+    0,
+    1.62,
+    -5.105
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.621
+   ],
+   "fov": 56.46
+  },
+  {
+   "ms": 595893,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.81,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.605,
+   "pos": [
+    0,
+    1.62,
+    -5.105
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.621
+   ],
+   "fov": 56.46
+  },
+  {
+   "ms": 602090,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.82,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.691,
+   "pos": [
+    0,
+    1.62,
+    -5.191
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.41
+   ],
+   "fov": 56.18
+  },
+  {
+   "ms": 608257,
+   "space": "space.gallery-a",
+   "step": "step.05-lleva-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.82,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.691,
+   "pos": [
+    0,
+    1.62,
+    -5.191
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.41
+   ],
+   "fov": 56.18
+  },
+  {
+   "ms": 614361,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.82,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.692,
+   "pos": [
+    0,
+    1.62,
+    -5.192
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.41
+   ],
+   "fov": 56.18
+  },
+  {
+   "ms": 620526,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.82,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.692,
+   "pos": [
+    0,
+    1.62,
+    -5.192
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.41
+   ],
+   "fov": 56.18
+  },
+  {
+   "ms": 626849,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.82,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 0.692,
+   "pos": [
+    0,
+    1.62,
+    -5.192
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.409
+   ],
+   "fov": 56.18
+  },
+  {
+   "ms": 633238,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 640826,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 648142,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 655373,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 662763,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 670098,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 677542,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 684743,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 691951,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.777,
+   "pos": [
+    0,
+    1.62,
+    -5.277
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.198
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 699186,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.777,
+   "pos": [
+    0,
+    1.62,
+    -5.277
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.198
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 706465,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8301,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.777,
+   "pos": [
+    0,
+    1.62,
+    -5.277
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.198
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 713738,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8301,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.777,
+   "pos": [
+    0,
+    1.62,
+    -5.277
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.198
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 720988,
+   "space": "space.gallery-a",
+   "step": "step.06-division",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 728254,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 735504,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 742778,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 750071,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.83,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.776,
+   "pos": [
+    0,
+    1.62,
+    -5.276
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.199
+   ],
+   "fov": 55.91
+  },
+  {
+   "ms": 757357,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.84,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.858,
+   "pos": [
+    0,
+    1.62,
+    -5.358
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.002
+   ],
+   "fov": 55.65
+  },
+  {
+   "ms": 764656,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.84,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.858,
+   "pos": [
+    0,
+    1.62,
+    -5.358
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.002
+   ],
+   "fov": 55.65
+  },
+  {
+   "ms": 771969,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.84,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.858,
+   "pos": [
+    0,
+    1.62,
+    -5.358
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.002
+   ],
+   "fov": 55.65
+  },
+  {
+   "ms": 779243,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.84,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.858,
+   "pos": [
+    0,
+    1.62,
+    -5.358
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.002
+   ],
+   "fov": 55.65
+  },
+  {
+   "ms": 786527,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.84,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.858,
+   "pos": [
+    0,
+    1.62,
+    -5.358
+   ],
+   "tgt": [
+    0,
+    1.62,
+    -5.002
+   ],
+   "fov": 55.65
+  },
+  {
+   "ms": 793816,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 801309,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 808609,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 816024,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 823278,
+   "space": "space.gallery-a",
+   "step": "step.06c-division-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.85,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 0.935,
+   "pos": [
+    0,
+    1.62,
+    -5.435
+   ],
+   "tgt": [
+    0,
+    1.618,
+    -4.921
+   ],
+   "fov": 55.43
+  },
+  {
+   "ms": 830526,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.86,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.007,
+   "pos": [
+    0,
+    1.62,
+    -5.507
+   ],
+   "tgt": [
+    0,
+    1.606,
+    -5.324
+   ],
+   "fov": 55.25
+  },
+  {
+   "ms": 837804,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.86,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.007,
+   "pos": [
+    0,
+    1.62,
+    -5.507
+   ],
+   "tgt": [
+    0,
+    1.606,
+    -5.325
+   ],
+   "fov": 55.25
+  },
+  {
+   "ms": 845104,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.86,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.007,
+   "pos": [
+    0,
+    1.62,
+    -5.507
+   ],
+   "tgt": [
+    0,
+    1.606,
+    -5.325
+   ],
+   "fov": 55.25
+  },
+  {
+   "ms": 852395,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.86,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.007,
+   "pos": [
+    0,
+    1.62,
+    -5.507
+   ],
+   "tgt": [
+    0,
+    1.606,
+    -5.325
+   ],
+   "fov": 55.25
+  },
+  {
+   "ms": 859719,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.86,
+   "effect": 0,
+   "surface": true,
+   "facing": 1,
+   "distance": 1.007,
+   "pos": [
+    0,
+    1.62,
+    -5.507
+   ],
+   "tgt": [
+    0,
+    1.606,
+    -5.326
+   ],
+   "fov": 55.25
+  },
+  {
+   "ms": 866955,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.87,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.074,
+   "pos": [
+    0,
+    1.62,
+    -5.574
+   ],
+   "tgt": [
+    0,
+    1.587,
+    -6.07
+   ],
+   "fov": 55.12
+  },
+  {
+   "ms": 873004,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.87,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.074,
+   "pos": [
+    0,
+    1.62,
+    -5.574
+   ],
+   "tgt": [
+    0,
+    1.587,
+    -6.07
+   ],
+   "fov": 55.12
+  },
+  {
+   "ms": 879038,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.87,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.074,
+   "pos": [
+    0,
+    1.62,
+    -5.574
+   ],
+   "tgt": [
+    0,
+    1.587,
+    -6.07
+   ],
+   "fov": 55.12
+  },
+  {
+   "ms": 885152,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.87,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.074,
+   "pos": [
+    0,
+    1.62,
+    -5.574
+   ],
+   "tgt": [
+    0,
+    1.587,
+    -6.071
+   ],
+   "fov": 55.12
+  },
+  {
+   "ms": 891238,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.87,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.074,
+   "pos": [
+    0,
+    1.62,
+    -5.574
+   ],
+   "tgt": [
+    0,
+    1.587,
+    -6.071
+   ],
+   "fov": 55.12
+  },
+  {
+   "ms": 897159,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.284
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 903128,
+   "space": "space.gallery-a",
+   "step": "step.06b-division-cesion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.285
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 910144,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.285
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 920780,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.286
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 931711,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.286
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 942881,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.286
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 954038,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.287
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 964887,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.287
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 976162,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8725,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.089,
+   "pos": [
+    0,
+    1.62,
+    -5.589
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.288
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 987721,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8726,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.09,
+   "pos": [
+    0,
+    1.62,
+    -5.59
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.288
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 999014,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8726,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.09,
+   "pos": [
+    0,
+    1.62,
+    -5.59
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.289
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 1010286,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.8726,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.09,
+   "pos": [
+    0,
+    1.62,
+    -5.59
+   ],
+   "tgt": [
+    0,
+    1.582,
+    -6.289
+   ],
+   "fov": 55.09
+  },
+  {
+   "ms": 1021479,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.32,
+   "pos": [
+    0,
+    1.62,
+    -5.82
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1032655,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.32,
+   "pos": [
+    0,
+    1.62,
+    -5.82
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1042688,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.32,
+   "pos": [
+    0,
+    1.62,
+    -5.82
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1053847,
+   "space": "space.gallery-a",
+   "step": "step.06d-lleva-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.32,
+   "pos": [
+    0,
+    1.62,
+    -5.82
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1064871,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1075878,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1087041,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.526
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1098330,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.527
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1109523,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.527
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1120686,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9235,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.527
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1132018,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9236,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.527
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1142597,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9236,
+   "effect": 0,
+   "surface": true,
+   "facing": -1,
+   "distance": 1.321,
+   "pos": [
+    0,
+    1.62,
+    -5.821
+   ],
+   "tgt": [
+    0,
+    1.508,
+    -9.527
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1152831,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1153773,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1154646,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1155552,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1156525,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1157408,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1158368,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1159252,
+   "space": "space.gallery-a",
+   "step": "step.06e-estudio",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1160192,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9745,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1161200,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9746,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1162273,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9746,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1163226,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "TRANSITION",
+   "crossing": true,
+   "e": 0.9746,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.397,
+   "pos": [
+    0,
+    1.62,
+    -5.897
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.899
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1164286,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -1,
+   "distance": 1.4,
+   "pos": [
+    0,
+    1.62,
+    -5.9
+   ],
+   "tgt": [
+    0,
+    1.5,
+    -9.9
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1165247,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": 0.858,
+   "distance": 3.738,
+   "pos": [
+    0.48,
+    1.611,
+    -0.793
+   ],
+   "tgt": [
+    1.813,
+    1.493,
+    -3.856
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1167329,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.346,
+   "distance": 7.292,
+   "pos": [
+    1.777,
+    1.585,
+    -11.572
+   ],
+   "tgt": [
+    6.708,
+    1.474,
+    -12.105
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1168130,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1168986,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1169904,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1171827,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1175076,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1177735,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1180340,
+   "space": "space.gallery-a",
+   "step": "step.06f-estudio-contemplacion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.214,
+   "distance": 9.566,
+   "pos": [
+    2.05,
+    1.58,
+    -13.844
+   ],
+   "tgt": [
+    7.74,
+    1.47,
+    -13.844
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1182127,
+   "space": "space.gallery-a",
+   "step": "step.06g-estudio-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.298,
+   "distance": 9.727,
+   "pos": [
+    2.894,
+    1.601,
+    -13.787
+   ],
+   "tgt": [
+    7.74,
+    1.516,
+    -13.787
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1183911,
+   "space": "space.gallery-a",
+   "step": "step.06g-estudio-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.493,
+   "distance": 10.496,
+   "pos": [
+    5.173,
+    1.657,
+    -13.632
+   ],
+   "tgt": [
+    7.74,
+    1.642,
+    -13.632
+   ],
+   "fov": 55
+  },
+  {
+   "ms": 1186533,
+   "space": "space.gallery-a",
+   "step": "step.06g-estudio-cesion",
+   "owner": "DIRECTED",
+   "crossing": false,
+   "e": 0.84,
+   "effect": 0,
+   "surface": false,
+   "facing": -0.528,
+   "distance": 10.713,
+   "pos": [
+    5.653,
+    1.668,
+    -13.6
+   ],
+   "tgt": [
+    7.74,
+    1.668,
+    -13.6
+   ],
+   "fov": 55
+  }
+ ],
+ "sampleError": null,
+ "errors": []
+}

@@ -1,0 +1,1490 @@
+[
+ {
+  "t": 0,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0.73,
+   "walking": false
+  }
+ },
+ {
+  "t": 2,
+  "step": "step.01-entrada",
+  "intent": "ENTRY",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.lobby",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   3.2
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 4,
+  "step": "step.02-paso-galeria-a",
+  "intent": "PORTAL",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   0,
+   1.62,
+   -5.9
+  ],
+  "guide": {
+   "p": [
+    -0.9,
+    0.4
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 6,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.02,
+   1.62,
+   -11.52
+  ],
+  "guide": {
+   "p": [
+    -1.34,
+    -3.25
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 8,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.51,
+   1.62,
+   -15.67
+  ],
+  "guide": {
+   "p": [
+    -1.77,
+    -6.9
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 10,
+  "step": "step.03-lleva-horizonte",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.51,
+   1.62,
+   -15.67
+  ],
+  "guide": {
+   "p": [
+    -2.21,
+    -10.55
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 12,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -3.21,
+   1.66,
+   -14.3
+  ],
+  "guide": {
+   "p": [
+    -2.5,
+    -12.95
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 14,
+  "step": "step.04-horizonte",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -2.63,
+   1.73,
+   -11.68
+  ],
+  "guide": {
+   "p": [
+    -2.5,
+    -12.95
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 16,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.99,
+   1.88,
+   -12.17
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 18,
+  "step": "step.04b-horizonte-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.horizonte-interrumpido",
+  "viol": 0,
+  "cam": [
+   -0.9,
+   1.89,
+   -12.2
+  ],
+  "guide": {
+   "p": [
+    -1.75,
+    -12.42
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 20,
+  "step": "step.05-lleva-division",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   0.46,
+   1.73,
+   -12.5
+  ],
+  "guide": {
+   "p": [
+    1.91,
+    -12.77
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 22,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   1.5,
+   1.62,
+   -12.71
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 24,
+  "step": "step.06-division",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.58,
+   1.73,
+   -11.74
+  ],
+  "guide": {
+   "p": [
+    4.35,
+    -13
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 26,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   4.6,
+   1.73,
+   -11.77
+  ],
+  "guide": {
+   "p": [
+    4.85,
+    -12.83
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 28,
+  "step": "step.06b-division-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.1,
+   1.71,
+   -12.67
+  ],
+  "guide": {
+   "p": [
+    5.22,
+    -12.71
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 30,
+  "step": "step.07-lleva-umbral",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.15,
+   1.67,
+   -12.68
+  ],
+  "guide": {
+   "p": [
+    6.3,
+    -10
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 32,
+  "step": "step.07-lleva-umbral",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-a",
+  "focus": "entity.artwork.division-tercera",
+  "viol": 0,
+  "cam": [
+   5.23,
+   1.62,
+   -12.69
+  ],
+  "guide": {
+   "p": [
+    6.3,
+    -10
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 34,
+  "step": "step.09-lleva-noche",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   9.82,
+   1.62,
+   -9.98
+  ],
+  "guide": {
+   "p": [
+    7.76,
+    -10.6
+   ],
+   "o": 0.98,
+   "walking": true
+  }
+ },
+ {
+  "t": 36,
+  "step": "step.09-lleva-noche",
+  "intent": "LEAD",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   12.39,
+   1.62,
+   -9.6
+  ],
+  "guide": {
+   "p": [
+    12.13,
+    -12.39
+   ],
+   "o": 1,
+   "walking": true
+  }
+ },
+ {
+  "t": 38,
+  "step": "step.10-noche",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   13.02,
+   1.73,
+   -11.37
+  ],
+  "guide": {
+   "p": [
+    12.4,
+    -12.5
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 40,
+  "step": "step.10-noche",
+  "intent": "ACCOMPANIED",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   13.02,
+   1.73,
+   -11.38
+  ],
+  "guide": {
+   "p": [
+    12.4,
+    -12.5
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 42,
+  "step": "step.10b-noche-cesion",
+  "intent": "FOCUS",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   12.4,
+   1.74,
+   -12.41
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 1,
+   "walking": false
+  }
+ },
+ {
+  "t": 44,
+  "step": "step.11-cierre",
+  "intent": "EXIT",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   15.25,
+   1.72,
+   -11.72
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0.07,
+   "walking": false
+  }
+ },
+ {
+  "t": 46,
+  "step": "step.11-cierre",
+  "intent": "EXIT",
+  "transport": "PLAYING",
+  "mode": "GUIDED",
+  "owner": "DIRECTED",
+  "space": "space.gallery-b",
+  "focus": "entity.artwork.noche-de-invierno",
+  "viol": 0,
+  "cam": [
+   22.27,
+   1.68,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 48,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 50,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 52,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 54,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 56,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 58,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 60,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 62,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 64,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 66,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 68,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 70,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 72,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 74,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 76,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 78,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 80,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 82,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 84,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 86,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 88,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 90,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 92,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 94,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 96,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 98,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 100,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 102,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 104,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 106,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 108,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 110,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 112,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 114,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 116,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 118,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 120,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ },
+ {
+  "t": 122,
+  "step": null,
+  "intent": null,
+  "transport": "IDLE",
+  "mode": "EXPLORE",
+  "owner": "EXPLORE",
+  "space": "space.gallery-b",
+  "focus": null,
+  "viol": 0,
+  "cam": [
+   19.27,
+   1.62,
+   -10
+  ],
+  "guide": {
+   "p": [
+    13.32,
+    -12.5
+   ],
+   "o": 0,
+   "walking": false
+  }
+ }
+]

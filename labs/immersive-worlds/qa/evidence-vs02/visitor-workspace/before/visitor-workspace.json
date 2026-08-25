@@ -1,0 +1,147 @@
+{
+ "generatedAt": "2026-08-15T15:29:49.682Z",
+ "label": "before",
+ "viewports": [
+  {
+   "id": "1920",
+   "w": 1920,
+   "h": 1080,
+   "present": true,
+   "column": {
+    "width": 196,
+    "height": 1024
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "196px",
+    "editor": "306px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87
+   ],
+   "narrowestControl": 87,
+   "medianControl": 87,
+   "narrowInputs": 18,
+   "overflowingLabels": 2,
+   "scrollHeight": 2065,
+   "clientHeight": 1024,
+   "verticalOverflowPx": 1041,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 1080,
+   "errors": []
+  },
+  {
+   "id": "1440",
+   "w": 1440,
+   "h": 900,
+   "present": true,
+   "column": {
+    "width": 196,
+    "height": 844
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "196px",
+    "editor": "306px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87
+   ],
+   "narrowestControl": 87,
+   "medianControl": 87,
+   "narrowInputs": 18,
+   "overflowingLabels": 2,
+   "scrollHeight": 2065,
+   "clientHeight": 844,
+   "verticalOverflowPx": 1221,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 600,
+   "errors": []
+  },
+  {
+   "id": "1366",
+   "w": 1366,
+   "h": 768,
+   "present": true,
+   "column": {
+    "width": 196,
+    "height": 712
+   },
+   "tokens": {
+    "rail": "156px",
+    "left": "196px",
+    "editor": "306px",
+    "val": "182px"
+   },
+   "controls": 18,
+   "controlWidths": [
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87,
+    87
+   ],
+   "narrowestControl": 87,
+   "medianControl": 87,
+   "narrowInputs": 18,
+   "overflowingLabels": 2,
+   "scrollHeight": 2065,
+   "clientHeight": 712,
+   "verticalOverflowPx": 1353,
+   "documentHorizontalOverflow": 0,
+   "previewWidth": 526,
+   "errors": []
+  }
+ ]
+}

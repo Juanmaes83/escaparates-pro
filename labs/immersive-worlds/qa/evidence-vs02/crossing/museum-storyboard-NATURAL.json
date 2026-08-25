@@ -1,0 +1,153 @@
+{
+ "generatedAt": "2026-08-15T00:53:11.751Z",
+ "pace": "NATURAL",
+ "portalId": "portal.lobby-gallery-a",
+ "samples": 2,
+ "beats": [
+  {
+   "label": "01 · Mundo A, umbral en su contexto",
+   "index": 0,
+   "file": "museum-01.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "02 · Adquisición: el umbral es el sujeto",
+   "index": 1,
+   "file": "museum-02.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "03 · Aproximación A",
+   "index": 1,
+   "file": "museum-03.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "04 · Aproximación B — compromiso",
+   "index": 1,
+   "file": "museum-04.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "05 · Aproximación C — toma del encuadre",
+   "index": 1,
+   "file": "museum-05.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "06 · Umbral a pantalla completa",
+   "index": 0,
+   "file": "museum-06.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "07 · Cruce de la membrana — el cambio de mundo, oculto",
+   "index": 0,
+   "file": "museum-07.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "08 · Mundo B — el reverso del umbral, de frente",
+   "index": 0,
+   "file": "museum-08.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "09 · Retroceso: el umbral todavía domina",
+   "index": 0,
+   "file": "museum-09.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "10 · Retroceso medio: el destino empieza a aparecer",
+   "index": 1,
+   "file": "museum-10.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "11 · Fin del retroceso: el entorno ya está establecido",
+   "index": 0,
+   "file": "museum-11.png",
+   "ms": 9765,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  },
+  {
+   "label": "12 · Asentamiento",
+   "index": 1,
+   "file": "museum-12.png",
+   "ms": 18757,
+   "space": "space.gallery-a",
+   "coverage": 0,
+   "facing": 0,
+   "distance": null,
+   "effect": 0,
+   "surfaceVisible": false
+  }
+ ],
+ "errors": []
+}

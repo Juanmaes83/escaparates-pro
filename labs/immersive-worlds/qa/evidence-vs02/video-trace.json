@@ -1,0 +1,68 @@
+{
+ "generatedAt": "2026-08-14T06:17:14.927Z",
+ "saved": {
+  "savedLabel": "Guardado · 06:16",
+  "storedVideo": {
+   "kind": "video",
+   "src": "authored:a1_mssk0p99",
+   "assetId": "a1_mssk0p99",
+   "name": "qa-video.webm",
+   "mimeType": "video/webm",
+   "bytes": 132024,
+   "width": 960,
+   "height": 540,
+   "durationMs": 1997
+  }
+ },
+ "downstream": {
+  "entityMedia": "VIDEO",
+  "loaderReport": {
+   "attempts": 7,
+   "loaded": 7,
+   "failed": 0,
+   "cached": 7,
+   "slowestMs": 4786,
+   "failures": []
+  },
+  "videoTextureFoundInScene": true,
+  "materialsWithVideoMap": [
+   {
+    "node": "Mesh",
+    "mapType": "ih",
+    "hasImage": true,
+    "imageTag": "VIDEO",
+    "w": 960,
+    "h": 540
+   },
+   {
+    "node": "Mesh",
+    "mapType": "ih",
+    "hasImage": true,
+    "imageTag": "VIDEO",
+    "w": 960,
+    "h": 540
+   }
+  ],
+  "totalMappedMaterials": 17,
+  "documentVideos": [],
+  "playAttempt": "resolved",
+  "playback": {
+   "t0": 0.9252,
+   "t1": 0,
+   "advanced": -0.925
+  },
+  "paused": false,
+  "animated": 1
+ },
+ "log": [
+  "warning: THREE.WebGLRenderer: KHR_parallel_shader_compile extension not supported.",
+  "warning: [.WebGL-0x232c00135800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead.",
+  "warning: [.WebGL-0x232c00135800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x232c00135800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning: [.WebGL-0x232c00135800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning: WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures",
+  "warning: WebGL: INVALID_OPERATION: texImage3D: FLIP_Y or PREMULTIPLY_ALPHA isn't allowed for uploading 3D textures",
+  "warning: THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+ ]
+}

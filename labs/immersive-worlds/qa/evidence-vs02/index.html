@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Museum · Authoring VS02 — revisión visual</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#100f0e;color:#ece7dd;
+  font:400 15px/1.6 'Helvetica Neue',Helvetica,Arial,sans-serif}
+.wrap{max-width:1240px;margin:0 auto;padding:56px 28px 96px}
+h1{font:400 34px/1.2 Georgia,'Times New Roman',serif;color:#f2ede3;margin:0 0 6px}
+.eyebrow{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:#6f6960;margin:0 0 14px}
+.lede{max-width:72ch;color:#b3aca1;margin:0 0 8px}
+h2{font:400 12px/1.3 'Helvetica Neue',sans-serif;letter-spacing:.22em;text-transform:uppercase;
+  color:#c9bfa8;margin:56px 0 4px;padding-top:22px;border-top:1px solid rgba(226,219,205,.16)}
+h2+p{color:#6f6960;font-size:13px;max-width:72ch;margin:0 0 26px}
+h3.wave{font:400 15px/1.3 Georgia,serif;color:#ece7dd;margin:34px 0 16px;letter-spacing:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+figure{margin:0;background:#181716;border:1px solid rgba(226,219,205,.14);border-radius:5px;overflow:hidden}
+figure img{display:block;width:100%;height:auto;background:#0b0a0a}
+figcaption{padding:12px 14px 15px;font-size:12.5px;color:#b3aca1}
+figcaption b{display:block;color:#6f6960;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;margin-bottom:5px;font-weight:400}
+figcaption dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:9px 0 0;font-size:11.5px}
+figcaption dt{color:#6f6960;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding-top:2px}
+figcaption dd{margin:0;color:#9a9389}
+.d{border:1px solid rgba(226,219,205,.16);border-radius:5px;padding:20px 22px;margin-bottom:14px;background:#171615}
+.d h3{margin:0 0 10px;font:400 17px/1.35 Georgia,serif;color:#f0ebe1}
+.d dl{display:grid;grid-template-columns:104px 1fr;gap:6px 16px;margin:0;font-size:13.5px}
+.d dt{color:#6f6960;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;padding-top:3px}
+.d dd{margin:0;color:#c4bcae}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+.t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  border:1px solid rgba(226,219,205,.3);color:#c9bfa8}
+.t--BLOQUEANTE{background:#4a1f1c;border-color:#8a4038;color:#ffcdc6}
+.t--ALTA{background:#4a3a18;border-color:#8a6c2e;color:#f5dfa8}
+.t--MEDIA{background:#28313a;border-color:#4b5c6b;color:#cfe0ec}
+.t--BAJA,.t--INSTRUMENTO{background:#22211f}
+.t--CORREGIDO{background:#20351f;border-color:#456b41;color:#c4e6bd}
+.t--ABIERTO{background:#4a1f1c;border-color:#a8524a;color:#ffd4cd}
+code{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;background:rgba(255,252,246,.07);
+  padding:1px 5px;border-radius:3px;color:#e3dccd}
+.sum{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 0;padding:16px 20px;
+  background:#171615;border:1px solid rgba(226,219,205,.16);border-radius:5px}
+.sum div{font-size:12px;color:#6f6960}
+.sum b{display:block;font:400 26px/1.1 Georgia,serif;color:#f0ebe1;margin-bottom:3px}
+.gate{margin-top:56px;padding:22px 24px;border:1px solid rgba(226,219,205,.28);border-radius:5px}
+.gate p{margin:0 0 8px;color:#c4bcae}
+.gate p:last-child{margin:0}
+a{color:#d8cdb5}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(226,219,205,.14);vertical-align:top}
+th{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6f6960;font-weight:400}
+.ok{color:#8fbf95}.bad{color:#e08a80}.warn{color:#d8b45e}
+@media(max-width:620px){.wrap{padding:34px 16px 64px}.d dl{grid-template-columns:1fr;gap:2px 0}
+.d dt{padding-top:9px}}
+</style></head><body><div class="wrap">
+
+<p class="eyebrow">Escaparates Pro · Immersive Worlds · Museum</p>
+<h1>Authoring VS02 — revisión visual</h1>
+<p class="lede">El Estudio de Experiencia sobre el Museo real, capturado en un navegador real. Cada
+fotograma dice qué acción lo produjo, qué se esperaba y qué se observó, para que se pueda discrepar
+del resultado y no sólo de la foto.</p>
+<p class="lede">Superficie de revisión humana. No es una aprobación: el producto lo aprueba Juanma.</p>
+
+<div class="sum">
+  <div><b>22</b>capturas</div>
+  <div><b>22</b>defectos registrados</div>
+  <div><b>17</b>corregidos</div>
+  <div><b>5</b>abiertos</div>
+  <div><b>0</b>errores de consola</div>
+  <div><b>e7a0a1d</b>HEAD</div>
+</div>
+
+<h2>VS01 frente a VS02</h2>
+<p>Misma tarea, mismo viewport, mismo contenido. VS01 sigue siendo ejecutable en
+<code>?authoring=1&amp;shell=vs01</code>: una referencia que no se puede arrancar no es una referencia.</p>
+<table>
+  <tr><th>Criterio</th><th>VS01</th><th>VS02</th></tr>
+  <tr><td>Navegación</td><td>Un desplegable con una obra seleccionada</td><td class="ok">Árbol de 4 salas y 11 piezas, todas alcanzables</td></tr>
+  <tr><td>Relación con la sala</td><td>Panel superpuesto sobre la sala</td><td class="ok">Sala acoplada en el centro, con proporción de visitante</td></tr>
+  <tr><td>Destino de los medios</td><td>Una ranura ambigua; el vídeo borraba la imagen</td><td class="ok">Ranuras semánticas por tipo de pieza</td></tr>
+  <tr><td>Estado del archivo</td><td>Una palabra</td><td class="ok">Cadena de estados, en español, con datos reales</td></tr>
+  <tr><td>Preparación del proyecto</td><td>No existía</td><td class="ok">Obligatorio/opcional, por dominios, con bloqueo real</td></tr>
+  <tr><td>Vista previa y Empezar</td><td>El mismo botón</td><td class="ok">Actos distintos; Empezar entra en modo visitante limpio</td></tr>
+  <tr><td>Idioma</td><td>«CHOOSE FILE / No file chosen»</td><td class="ok">Español en todo el producto</td></tr>
+  <tr><td>420 px</td><td>El panel ocupaba la ventana</td><td class="ok">Un documento, vista previa fija, sin desbordamiento</td></tr>
+</table>
+
+<h2>Defectos encontrados por Claude</h2>
+<p>Ordenados por severidad de producto; los abiertos, primero dentro de su severidad. Encontrados
+mirando las capturas o midiendo las ejecuciones, no leyendo el código.</p>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BLOQUEANTE">BLOQUEANTE</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D1</span><span class="t">W2</span>
+    <span class="t"><a href="#w2_14_VIDEO_READY">w2/14_VIDEO_READY</a></span>
+  </div>
+  <h3>Cada archivo se aceptaba dos veces, y la cifra crecía con el uso</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El registro de transiciones mostraba SELECCIONADO → CARGANDO repetido: dos veces al principio de la sesión, doce veces después de unas cuantas selecciones.</dd>
+    <dt>Por qué</dt><dd>Un redibujado parcial volvía a enlazar todo el estudio, de modo que los controles que sobrevivían al redibujado acumulaban un oyente más cada vez. Una subida acababa ejecutándose seis veces: seis decodificaciones y seis object URL, cinco de ellos sin revocar.</dd>
+    <dt>Corrección</dt><dd>El enlazado es ahora local al fragmento redibujado. La suite de humo falla si un clic vuelve a producir dos aceptaciones — el defecto se escondía en un registro, no en un fotograma, y no debería depender de que alguien lo lea.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BLOQUEANTE">BLOQUEANTE</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D10</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>El porcentaje del proyecto contradecía las filas que tenía justo debajo</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La tarjeta decía «<em>100% · todo el contenido necesario está listo</em>» y cuarenta píxeles más abajo «<em>Identidad 4/5</em>». En la pantalla de recuperación decía 100% sobre «<em>Presentación 2/3</em>». En la del error decía «<em>27 / 28</em>» mientras las filas sumaban 31 de 32.</dd>
+    <dt>Por qué</dt><dd>El porcentaje contaba sólo los elementos obligatorios y las filas contaban todos. Dos contabilidades distintas dibujadas en la misma tarjeta.</dd>
+    <dt>Corrección</dt><dd>Las filas cuentan exactamente el conjunto del que sale el porcentaje, las cuatro categorías aparecen siempre en el mismo orden, y una categoría sin elementos no se dibuja en lugar de mostrar 0/0.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--ABIERTO">ABIERTO — HEREDADO</span>
+    <span class="t">O1</span><span class="t">VS01</span>
+    
+  </div>
+  <h3>La proyección autorizada no se parece a la original y la causa sigue sin determinar</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Defecto abierto de VS01. VS02 no lo ha investigado.</dd>
+    <dt>Por qué</dt><dd>NO DETERMINADA.</dd>
+    <dt>Qué falta</dt><dd>Aplazado con trazabilidad, según §E7 del mandato: VS02 no toca la capacidad de Proyección más allá de encaminar el archivo correcto hacia ella, y ninguna tarea de aceptación queda bloqueada por esto. Sigue abierto y sigue siendo la primera pregunta pendiente del vertical.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D2</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_04_INSTITUTION_EDIT">w1/04_INSTITUTION_EDIT</a></span>
+  </div>
+  <h3>Editar la institución no cambiaba nada visible</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Con «<em>Colección Marés</em>» ya escrito en el campo, la cabecera del editor, la miga de pan y la fila del árbol seguían diciendo «<em>Fundación Arenas</em>».</dd>
+    <dt>Por qué</dt><dd>Sólo la columna de proyecto se redibujaba al teclear.</dd>
+    <dt>Corrección</dt><dd>Cada superficie que nombra el registro sigue al campo que lo renombra, y seleccionar la institución lleva la vista previa a la cartela de entrada, que es donde esos campos se imprimen. El fotograma que debía demostrar «<em>qué va a cambiar</em>» demostraba lo contrario.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D3</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_08_ARTWORK_SELECTED">w1/08_ARTWORK_SELECTED</a></span>
+  </div>
+  <h3>No se distinguía un dato heredado de un campo vacío</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Los valores del registro se dibujaban como placeholder gris, igual que la ausencia de dato.</dd>
+    <dt>Por qué</dt><dd>El editor usaba <code>placeholder</code> para mostrar lo que la ficha ya contiene.</dd>
+    <dt>Corrección</dt><dd>Los valores heredados son valores, marcados «<em>del registro</em>» hasta que el autor toma el campo. En una herramienta de catalogación esto no es estética: es integridad del dato.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D4</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_25_NARROW_VIEW">w1/25_NARROW_VIEW</a></span>
+  </div>
+  <h3>A 420 px el editor era inalcanzable y la acción principal se salía</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Las columnas se recortaban a sí mismas —el editor mostraba una etiqueta y ningún campo—, «<em>Empezar experiencia</em>» quedaba cortada por el borde derecho, y desaparecían la miga de pan y el estado de guardado.</dd>
+    <dt>Por qué</dt><dd>Cada columna era un contenedor con scroll dentro de una pista de rejilla sin altura.</dd>
+    <dt>Corrección</dt><dd>Un solo documento que se desplaza, con la vista previa fija arriba, la miga y el estado anclados, y una barra inferior para saltar a cada sección.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D11</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>El logotipo del Museo B decía «<em>Sin archivo</em>» junto a su propio nombre de archivo</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Botón «<em>Cambiar archivo</em>», nombre «<em>bruma-logo.png</em>», los cuatro pasos apagados y debajo, en ámbar, «<em>Sin archivo</em>». Tres señales, dos respuestas, en una tarjeta.</dd>
+    <dt>Por qué</dt><dd>Un archivo que llega con el proyecto no pasa por el almacén de medios de la sesión, y la descripción de estado sólo sabía leer assets de sesión.</dd>
+    <dt>Corrección</dt><dd>Un medio que ya está en el proyecto se describe como tal: «<em>En el proyecto</em>», con la cadena completa y sus dimensiones.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D12</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La insignia decía «<em>vista en vivo</em>» al lado de un botón llamado «<em>Vista previa</em>»</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El centro se anunciaba como en vivo mientras una pulsación de tecla no llegaba a él, de modo que el botón que sí lo actualizaba parecía no hacer nada.</dd>
+    <dt>Por qué</dt><dd>La vista previa muestra el proyecto aplicado, no el borrador. La insignia decía otra cosa.</dd>
+    <dt>Corrección</dt><dd>«<em>Vista previa aplicada</em>» y, en cuanto hay cambios sin aplicar, «<em>Vista previa desactualizada</em>» en ámbar. El efecto del botón se ve.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--ALTA">ALTA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D13</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>Nombres de QA y jerga de motor impresos en contenido de cara al visitante</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El texto de la cartela de entrada del Museo B decía «<em>Esta configuración existe para probar que una segunda institución usa el mismo motor sin tocar una línea de código</em>». La obra en edición se llamaba «<em>Prueba de marea</em>». Los errores citaban «<em>text/plain</em>» y los avisos «<em>archivo 1.46 · soporte 0.81</em>».</dd>
+    <dt>Por qué</dt><dd>Texto de prueba escrito en campos de producto, y mensajes redactados para quien programa en lugar de para quien cataloga.</dd>
+    <dt>Corrección</dt><dd>El Museo B tiene ahora un texto institucional real. El error dice «<em>Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo</em>». El aviso dice «<em>La imagen es más ancha que el soporte y se recortará por los lados</em>». Las capturas escriben títulos que una institución escribiría.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — A CRITERIO DE JUANMA</span>
+    <span class="t">O4</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_04_INSTITUTION_EDIT">w1/04_INSTITUTION_EDIT</a></span>
+  </div>
+  <h3>Renombrar la institución no reescribe los textos libres que la nombran</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Tras cambiar el nombre a «<em>Colección Marés</em>», la introducción seguía diciendo «<em>La Fundación Arenas reúne pintura… entre 1958 y 1994</em>», y ese texto se imprime en la pared.</dd>
+    <dt>Por qué</dt><dd>Es contenido redactado por el autor. El producto no puede reescribirlo sin inventar prosa institucional en nombre de una institución.</dd>
+    <dt>Qué falta</dt><dd>PROPUESTA: detectar el nombre anterior dentro de los textos libres y avisar en línea —«<em>Este texto todavía nombra a Fundación Arenas</em>»— con reemplazo en un clic. Avisar es del producto; reescribir la voz de una institución no lo es, y esa frontera la decide Juanma.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — ACCESO DENEGADO</span>
+    <span class="t">O2</span><span class="t">Preflight</span>
+    
+  </div>
+  <h3>La referencia externa de calidad no es accesible desde este entorno</h3>
+  <dl>
+    <dt>Se ve</dt><dd>thevertmenthe.dault-lafon.fr responde 403 en el CONNECT de la pasarela de salida, tanto por navegador real como por descarga.</dd>
+    <dt>Por qué</dt><dd>Política de red del entorno. No es una caída del sitio.</dd>
+    <dt>Qué falta</dt><dd>BARRA VISUAL EXTERNA — ACCESO BLOQUEADO / HUECO DE EVIDENCIA. La herramienta de captura queda escrita y comprobada; una sola ejecución produce la evidencia en cuanto el dominio se permita. Para esta vuelta la barra autorizada es la referencia de UI aprobada, el plano del sistema, VS01 y el Museo en funcionamiento.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--ABIERTO">ABIERTO — FUERA DE ALCANCE VS02</span>
+    <span class="t">O3</span><span class="t">W1</span>
+    
+  </div>
+  <h3>Tres de los cinco dominios están declarados y no implementados</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Experiencia, Visitante y Publicar aparecen en la navegación marcados «<em>más adelante</em>» y deshabilitados.</dd>
+    <dt>Por qué</dt><dd>El mandato los describe; su alcance no está autorizado en VS02 (§A5).</dd>
+    <dt>Qué falta</dt><dd>Se muestran en vez de ocultarse, para que la forma del producto sea legible, y se declaran incompletos en vez de fingirse. Si Juanma prefiere ocultarlos hasta que existan, es una línea.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D5</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La navegación del visitante peleaba con el estudio por la misma sala</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Dentro de la columna más estrecha, la barra del visitante se envolvía en tres filas sobre la sala y duplicaba lo que ya hacía el árbol.</dd>
+    <dt>Por qué</dt><dd>El HUD del visitante estaba diseñado para una ventana completa.</dd>
+    <dt>Corrección</dt><dd>La navegación del visitante espera al visitante. La cartela y el transporte del recorrido se quedan: eso es la vista previa diciendo la verdad sobre la experiencia.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D6</span><span class="t">W2</span>
+    <span class="t"><a href="#w2_14_VIDEO_READY">w2/14_VIDEO_READY</a></span>
+  </div>
+  <h3>El estado final se pintaba como un paso pendiente</h3>
+  <dl>
+    <dt>Se ve</dt><dd>LISTO salía en ámbar, el mismo color que «<em>cargando</em>», mientras los pasos anteriores estaban en verde.</dd>
+    <dt>Por qué</dt><dd>El último eslabón de la cadena era también el eslabón «<em>actual</em>».</dd>
+    <dt>Corrección</dt><dd>LISTO es final y se pinta como tal. Un archivo terminado no debe parecer atascado.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D7</span><span class="t">W3</span>
+    <span class="t"><a href="#w3_15_CONFIG_SAVED">w3/15_CONFIG_SAVED</a></span>
+  </div>
+  <h3>«<em>Guardado</em>» aparecía en un proyecto que nunca se había guardado</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Tras aplicar una vista previa, la cadena marcaba GUARDADO como completado.</dd>
+    <dt>Por qué</dt><dd>El indicador miraba «<em>no hay cambios pendientes</em>» en lugar de «<em>lo almacenado coincide con lo que hay en pantalla</em>». Aplicar reconstruye el estudio, y un estudio recién creado no tiene cambios pendientes.</dd>
+    <dt>Corrección</dt><dd>Se compara el proyecto en pantalla con el almacenado. ASSET READY, CONFIG SAVED y PROJECT READY son tres cosas distintas y ahora se dicen por separado.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D8</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>Nombres de la base de datos y de QA a la vista de la institución</h3>
+  <dl>
+    <dt>Se ve</dt><dd><code>space.gallery-a</code>, <code>entity.artwork.division-tercera</code> y un botón «<em>CARGAR MUSEO B</em>» con el mismo peso visual que «<em>Exportar proyecto</em>».</dd>
+    <dt>Por qué</dt><dd>Identificadores del modelo y nombres de fixture usados como texto de producto.</dd>
+    <dt>Corrección</dt><dd>SALA 02 y OBRA 03 en pantalla, el identificador real en el tooltip; y los botones nombran instituciones: «<em>Abrir Museo de la Bruma (ejemplo)</em>», «<em>Restaurar la Fundación Arenas</em>».</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D14</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La pared decía «<em>Once obras</em>» y el Museo tiene nueve</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La cartela de entrada anunciaba once obras; el árbol suma nueve piezas en cuatro salas.</dd>
+    <dt>Por qué</dt><dd>Texto del mundo escrito antes de que existiera un árbol capaz de contarlo. VS02 no lo introdujo: lo hizo visible.</dd>
+    <dt>Corrección</dt><dd>Corregido el texto del mundo. Cuando la herramienta y la pared discrepan, una de las dos está mintiendo a un visitante.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--MEDIA">MEDIA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D15</span><span class="t">W5</span>
+    <span class="t"><a href="#w1_25_NARROW_VIEW">w1/25_NARROW_VIEW</a></span>
+  </div>
+  <h3>Vocabulario y estados inconsistentes entre pantallas</h3>
+  <dl>
+    <dt>Se ve</dt><dd>La misma pieza era OBRA en una pantalla y PIEZA en la siguiente; la barra inferior a 420 px no señalaba qué pestaña estaba activa; la introducción se cortaba por los descendentes en seis capturas.</dd>
+    <dt>Por qué</dt><dd>Dos vocabularios para un tipo de objeto, una barra sin estado y un textarea de cuatro líneas para un texto de cinco.</dd>
+    <dt>Corrección</dt><dd>Un solo sustantivo por tipo, el mismo que usa el árbol. Pestaña activa marcada. El campo de introducción cabe.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BAJA">BAJA</span>
+    <span class="t t--ABIERTO">ABIERTO — POR DISEÑO</span>
+    <span class="t">O5</span><span class="t">W5</span>
+    <span class="t"><a href="#w3_21_MUSEUM_B">w3/21_MUSEUM_B</a></span>
+  </div>
+  <h3>El Museo B es el mismo mundo con otra configuración</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Un crítico lo describió como «<em>la Fundación Arenas con tres cadenas renombradas</em>».</dd>
+    <dt>Por qué</dt><dd>Es exactamente lo que la prueba de la segunda institución comprueba: mismo motor, mismo mundo, otra configuración. Un mundo distinto probaría otra cosa.</dd>
+    <dt>Qué falta</dt><dd>Sin cambio de código. Difiere en nombre, claim, datación, marca, nombre de sala, una imagen de obra y los metadatos de dos obras. Si Juanma quiere que la demostración sea más evidente, se amplía la configuración —no el motor.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--BAJA">BAJA</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">D9</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_03_EXPERIENCE_TREE">w1/03_EXPERIENCE_TREE</a></span>
+  </div>
+  <h3>«<em>1 piezas</em>», y un punto de «<em>personalizado</em>» en todo lo que tuviera valor</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El árbol se pintaba verde entero en un proyecto que nadie había tocado.</dd>
+    <dt>Por qué</dt><dd>«<em>Personalizado</em>» significaba «<em>tiene un valor</em>» en lugar de «<em>difiere de lo que el Museo trae</em>».</dd>
+    <dt>Corrección</dt><dd>Compara contra el registro. Y el plural concuerda.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--INSTRUMENTO">INSTRUMENTO</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">I1</span><span class="t">W3</span>
+    <span class="t"><a href="#w3_17b_IDENTITY_ON_WALL">w3/17b_IDENTITY_ON_WALL</a></span>
+  </div>
+  <h3>Un fotograma titulado «<em>la cartela de entrada</em>» estaba en otra sala</h3>
+  <dl>
+    <dt>Se ve</dt><dd>Se fijaba la pose del vestíbulo mientras la vista previa seguía en Galería B.</dd>
+    <dt>Por qué</dt><dd>Fijar una pose no cambia de sala.</dd>
+    <dt>Corrección</dt><dd>Se cruza el portal y se encuadra con el propio encuadre semántico del motor, que no se desvía cuando cambia la forma del viewport.</dd>
+  </dl>
+</article>
+<article class="d">
+  <div class="tags">
+    <span class="t t--INSTRUMENTO">INSTRUMENTO</span>
+    <span class="t t--CORREGIDO">CORREGIDO</span>
+    <span class="t">I2</span><span class="t">W1</span>
+    <span class="t"><a href="#w1_02_VS02_DEFAULT">w1/02_VS02_DEFAULT</a></span>
+  </div>
+  <h3>La vista previa medía su columna antes de que existiera la hoja de estilos</h3>
+  <dl>
+    <dt>Se ve</dt><dd>El lienzo quedaba clavado en su altura mínima, 672×240 en vez de 672×420.</dd>
+    <dt>Por qué</dt><dd>El estudio se construía sin esperar a que cargara su CSS, y midió un div sin estilo.</dd>
+    <dt>Corrección</dt><dd>Se espera a la hoja, y la medida se repite en cada cambio de tamaño.</dd>
+  </dl>
+</article>
+
+<h2>El recorrido del autor</h2>
+<p>Abrir · navegar la exposición · editar la institución · subir marca, imagen y vídeo · guardar ·
+validar · vista previa · empezar como visitante · segunda institución · volver al original.</p>
+
+  <h3 class="wave">W1 · Árbol de la experiencia y espacio de trabajo — run <code>vs02_w1_mssmce8t</code> · HEAD <code>e7a0a1d</code></h3>
+  <div class="grid">
+  <figure id="w1_02_VS02_DEFAULT">
+    <img src="w1/02_VS02_DEFAULT.png" alt="Estudio recién abierto sobre el Museo por defecto" loading="lazy">
+    <figcaption>
+      <b>02_VS02_DEFAULT · 1440×900 · Fundación Arenas</b>
+      Estudio recién abierto sobre el Museo por defecto
+      <dl>
+        <dt>Acción</dt><dd>Abrir ?authoring=1</dd>
+        <dt>Se espera</dt><dd>La sala ocupa el centro a su propio tamaño; el editor no la tapa</dd>
+        <dt>Se observa</dt><dd>lienzo 656×525 · Todo el contenido necesario está listo · un solo estudio (1)</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w1_03_EXPERIENCE_TREE">
+    <img src="w1/03_EXPERIENCE_TREE.png" alt="Galería A seleccionada en el árbol" loading="lazy">
+    <figcaption>
+      <b>03_EXPERIENCE_TREE · 1440×900 · Fundación Arenas</b>
+      Galería A seleccionada en el árbol
+      <dl>
+        <dt>Acción</dt><dd>Clic en la sala «Galería A — Horizontes»</dd>
+        <dt>Se espera</dt><dd>El árbol muestra Institución → Exposición → Salas → Piezas y la vista previa camina hasta la sala</dd>
+        <dt>Se observa</dt><dd>seleccionado space.gallery-a · lienzo 656×524</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w1_08_ARTWORK_SELECTED">
+    <img src="w1/08_ARTWORK_SELECTED.png" alt="Una obra concreta seleccionada" loading="lazy">
+    <figcaption>
+      <b>08_ARTWORK_SELECTED · 1440×900 · Fundación Arenas</b>
+      Una obra concreta seleccionada
+      <dl>
+        <dt>Acción</dt><dd>Clic en «División tercera» dentro de Galería A</dd>
+        <dt>Se espera</dt><dd>El editor cambia a esa obra y dice de qué sala y soporte se trata</dd>
+        <dt>Se observa</dt><dd>seleccionado entity.artwork.division-tercera</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w1_04_INSTITUTION_EDIT">
+    <img src="w1/04_INSTITUTION_EDIT.png" alt="Identidad institucional editada, sin aplicar" loading="lazy">
+    <figcaption>
+      <b>04_INSTITUTION_EDIT · 1440×900 · Fundación Arenas</b>
+      Identidad institucional editada, sin aplicar
+      <dl>
+        <dt>Acción</dt><dd>Escribir nombre y claim</dd>
+        <dt>Se espera</dt><dd>El encabezado y el árbol siguen al autor; el proyecto se marca sin guardar</dd>
+        <dt>Se observa</dt><dd>sin guardar: true · Todo el contenido necesario está listo</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w1_25_NARROW_VIEW">
+    <img src="w1/25_NARROW_VIEW.png" alt="Estudio a 420 px" loading="lazy">
+    <figcaption>
+      <b>25_NARROW_VIEW · 420×860 · Fundación Arenas</b>
+      Estudio a 420 px
+      <dl>
+        <dt>Acción</dt><dd>Abrir el estudio en viewport estrecho</dd>
+        <dt>Se espera</dt><dd>Sin desbordamiento horizontal; la sala sigue visible; los controles siguen alcanzables</dd>
+        <dt>Se observa</dt><dd>lienzo 420×275 · desbordamiento false</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w1_01_VS01_BASELINE">
+    <img src="w1/01_VS01_BASELINE.png" alt="VS01 — el panel anterior, misma tarea y mismo viewport" loading="lazy">
+    <figcaption>
+      <b>01_VS01_BASELINE · 1440×900 · Fundación Arenas</b>
+      VS01 — el panel anterior, misma tarea y mismo viewport
+      <dl>
+        <dt>Acción</dt><dd>Abrir ?authoring=1&amp;shell=vs01 y abrir el editor</dd>
+        <dt>Se espera</dt><dd>Referencia de comparación, no un objetivo</dd>
+        <dt>Se observa</dt><dd>editor superpuesto sobre la sala</dd>
+      </dl>
+    </figcaption>
+  </figure></div>
+  
+  
+
+  <h3 class="wave">W2 · Medios, estados y recuperación — run <code>vs02_w2_mssmmikt</code> · HEAD <code>e7a0a1d</code></h3>
+  <div class="grid">
+  <figure id="w2_05_LOGO_SELECTED">
+    <img src="w2/05_LOGO_SELECTED.png" alt="Logotipo recién elegido — el fotograma inmediatamente posterior" loading="lazy">
+    <figcaption>
+      <b>05_LOGO_SELECTED · 1440×900 · Fundación Arenas</b>
+      Logotipo recién elegido — el fotograma inmediatamente posterior
+      <dl>
+        <dt>Acción</dt><dd>Elegir qa-logo.png en la ranura del logotipo</dd>
+        <dt>Se espera</dt><dd>La ranura nombra el archivo y dibuja la cadena. Un PNG de 9 kB decodifica antes de que se pueda fotografiar: la cadena SELECCIONADO → CARGANDO → LISTO queda registrada en transitions[], no simulada aquí</dd>
+        <dt>Se observa</dt><dd>Se conserva el medio original de la pieza.</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_07_LOGO_READY">
+    <img src="w2/07_LOGO_READY.png" alt="Logotipo listo" loading="lazy">
+    <figcaption>
+      <b>07_LOGO_READY · 1440×900 · Fundación Arenas</b>
+      Logotipo listo
+      <dl>
+        <dt>Acción</dt><dd>Esperar a que el archivo se decodifique</dd>
+        <dt>Se espera</dt><dd>Estado «Lista» con dimensiones reales; el paso «Guardado» sigue pendiente</dd>
+        <dt>Se observa</dt><dd>
+            Lista · 512×160 · 9 kB
+          </dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_09_ARTWORK_EDIT">
+    <img src="w2/09_ARTWORK_EDIT.png" alt="Obra con metadatos del autor" loading="lazy">
+    <figcaption>
+      <b>09_ARTWORK_EDIT · 1440×900 · Fundación Arenas</b>
+      Obra con metadatos del autor
+      <dl>
+        <dt>Acción</dt><dd>Escribir título y autoría sobre los valores del registro</dd>
+        <dt>Se espera</dt><dd>Los campos pasan de «del registro» a valor propio; el árbol y la tira siguen el cambio</dd>
+        <dt>Se observa</dt><dd>entity.artwork.horizonte-interrumpido</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_10_IMAGE_SELECTED">
+    <img src="w2/10_IMAGE_SELECTED.png" alt="Imagen recién elegida — el fotograma inmediatamente posterior" loading="lazy">
+    <figcaption>
+      <b>10_IMAGE_SELECTED · 1440×900 · Fundación Arenas</b>
+      Imagen recién elegida — el fotograma inmediatamente posterior
+      <dl>
+        <dt>Acción</dt><dd>Elegir qa-artwork.jpg</dd>
+        <dt>Se espera</dt><dd>La cadena real está en transitions[]; a 37 kB la decodificación no dura lo que tarda una captura</dd>
+        <dt>Se observa</dt><dd>Se conserva el medio original de la pieza.</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_12_IMAGE_READY">
+    <img src="w2/12_IMAGE_READY.png" alt="Imagen lista" loading="lazy">
+    <figcaption>
+      <b>12_IMAGE_READY · 1440×900 · Fundación Arenas</b>
+      Imagen lista
+      <dl>
+        <dt>Acción</dt><dd>Esperar la decodificación</dd>
+        <dt>Se espera</dt><dd>Dimensiones reales del archivo del autor</dd>
+        <dt>Se observa</dt><dd>
+            Lista · 1400×960 · 37 kB
+          </dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_13_VIDEO_SELECTED">
+    <img src="w2/13_VIDEO_SELECTED.png" alt="Vídeo recién elegido en la proyección" loading="lazy">
+    <figcaption>
+      <b>13_VIDEO_SELECTED · 1440×900 · Fundación Arenas</b>
+      Vídeo recién elegido en la proyección
+      <dl>
+        <dt>Acción</dt><dd>Elegir qa-video.webm en la pieza «Cuaderno de luz»</dd>
+        <dt>Se espera</dt><dd>La ranura pertenece a la proyección, no a un lienzo enmarcado</dd>
+        <dt>Se observa</dt><dd>Se conserva el medio original de la pieza.</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_14_VIDEO_READY">
+    <img src="w2/14_VIDEO_READY.png" alt="Vídeo listo" loading="lazy">
+    <figcaption>
+      <b>14_VIDEO_READY · 1440×900 · Fundación Arenas</b>
+      Vídeo listo
+      <dl>
+        <dt>Acción</dt><dd>Esperar a decodificar y poder dibujar un fotograma</dd>
+        <dt>Se espera</dt><dd>Cadena con paso DECODIFICADO propio del vídeo, y duración real</dd>
+        <dt>Se observa</dt><dd>
+            Listo · 960×540 · 2.0 s · 129 kB
+          </dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_23_INVALID_MEDIA_ERROR">
+    <img src="w2/23_INVALID_MEDIA_ERROR.png" alt="Archivo no admitido" loading="lazy">
+    <figcaption>
+      <b>23_INVALID_MEDIA_ERROR · 1440×900 · Fundación Arenas</b>
+      Archivo no admitido
+      <dl>
+        <dt>Acción</dt><dd>Elegir qa-not-media.txt como imagen de la obra</dd>
+        <dt>Se espera</dt><dd>Motivo legible y una salida ofrecida, sin fallo silencioso</dd>
+        <dt>Se observa</dt><dd>
+            No se pudo usar · Ese archivo no es una imagen JPG, PNG o WebP. Elige otro y vuelve a intentarlo.
+          </dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w2_24_RECOVERY">
+    <img src="w2/24_RECOVERY.png" alt="Recuperado con un archivo válido" loading="lazy">
+    <figcaption>
+      <b>24_RECOVERY · 1440×900 · Fundación Arenas</b>
+      Recuperado con un archivo válido
+      <dl>
+        <dt>Acción</dt><dd>Volver a elegir, esta vez qa-artwork.jpg</dd>
+        <dt>Se espera</dt><dd>El error desaparece y la pieza queda lista</dd>
+        <dt>Se observa</dt><dd>
+            Lista · 1400×960 · 37 kB
+          </dd>
+      </dl>
+    </figcaption>
+  </figure></div>
+  
+  <p style="font-size:12.5px;color:#9a9389;margin-top:10px">
+    Cadena de estados registrada en esta tanda:
+    <code>image:SELECTED</code> · <code>image:LOADING</code> · <code>image:READY</code> · <code>video:SELECTED</code> · <code>video:LOADING</code> · <code>video:DECODED</code> · <code>video:READY</code> · <code>image:ERROR</code> · <code>image:RELEASED</code></p>
+
+  <h3 class="wave">W3–W4 · Guardar, validar, empezar y la segunda institución — run <code>vs02_w3_mssmowyx</code> · HEAD <code>e7a0a1d</code></h3>
+  <div class="grid">
+  <figure id="w3_15_CONFIG_SAVED">
+    <img src="w3/15_CONFIG_SAVED.png" alt="Proyecto guardado" loading="lazy">
+    <figcaption>
+      <b>15_CONFIG_SAVED · 1440×900 · Fundación Arenas</b>
+      Proyecto guardado
+      <dl>
+        <dt>Acción</dt><dd>Pulsar GUARDAR</dd>
+        <dt>Se espera</dt><dd>La cabecera pasa de «Cambios sin guardar» a una hora de guardado; GUARDADO se completa en la cadena del archivo — guardar el proyecto no es lo mismo que decodificar un archivo</dd>
+        <dt>Se observa</dt><dd>Guardado · 07:32</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_16_PROJECT_READY">
+    <img src="w3/16_PROJECT_READY.png" alt="Validación del proyecto" loading="lazy">
+    <figcaption>
+      <b>16_PROJECT_READY · 1440×900 · Fundación Arenas</b>
+      Validación del proyecto
+      <dl>
+        <dt>Acción</dt><dd>Pulsar VALIDAR</dd>
+        <dt>Se espera</dt><dd>Recuento por dominios, obligatorio frente a opcional, y una sola frase de estado</dd>
+        <dt>Se observa</dt><dd>READY · Todo el contenido necesario está listo</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_17_PREVIEW_APPLIED">
+    <img src="w3/17_PREVIEW_APPLIED.png" alt="Vista previa aplicada" loading="lazy">
+    <figcaption>
+      <b>17_PREVIEW_APPLIED · 1440×900 · Fundación Arenas</b>
+      Vista previa aplicada
+      <dl>
+        <dt>Acción</dt><dd>Pulsar VISTA PREVIA</dd>
+        <dt>Se espera</dt><dd>La sala muestra el proyecto autorizado y el estudio sigue presente</dd>
+        <dt>Se observa</dt><dd>institución en el mundo: Colección Marés</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_17b_IDENTITY_ON_WALL">
+    <img src="w3/17b_IDENTITY_ON_WALL.png" alt="La cartela de entrada, con la identidad autorizada" loading="lazy">
+    <figcaption>
+      <b>17b_IDENTITY_ON_WALL · 1440×900 · Fundación Arenas</b>
+      La cartela de entrada, con la identidad autorizada
+      <dl>
+        <dt>Acción</dt><dd>Mirar la pared del vestíbulo tras aplicar</dd>
+        <dt>Se espera</dt><dd>Claim, fechas, firma institucional y la marca impresa sobre el claim</dd>
+        <dt>Se observa</dt><dd>space.lobby</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_18_VISITOR_START">
+    <img src="w3/18_VISITOR_START.png" alt="Experiencia del visitante" loading="lazy">
+    <figcaption>
+      <b>18_VISITOR_START · 1440×900 · Fundación Arenas</b>
+      Experiencia del visitante
+      <dl>
+        <dt>Acción</dt><dd>Pulsar EMPEZAR EXPERIENCIA</dd>
+        <dt>Se espera</dt><dd>El estudio desaparece, el lienzo vuelve a la ventana completa y la navegación del visitante regresa. Sin restos de autoría</dd>
+        <dt>Se observa</dt><dd>estudios 0 · acoplado off · lienzo 1440px · barra del visitante true · url ?tier=HIGH&amp;portalVariant=A</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_21_MUSEUM_B">
+    <img src="w3/21_MUSEUM_B.png" alt="Museo de la Bruma — segunda institución" loading="lazy">
+    <figcaption>
+      <b>21_MUSEUM_B · 1440×900 · Museo de la Bruma</b>
+      Museo de la Bruma — segunda institución
+      <dl>
+        <dt>Acción</dt><dd>Abrir la configuración de la segunda institución</dd>
+        <dt>Se espera</dt><dd>Otra identidad, otras cartelas y otro árbol, sin tocar una línea del motor</dd>
+        <dt>Se observa</dt><dd>institución en el mundo: Museo de la Bruma</dd>
+      </dl>
+    </figcaption>
+  </figure>
+  <figure id="w3_22_RESTORED_ORIGINAL">
+    <img src="w3/22_RESTORED_ORIGINAL.png" alt="Fundación Arenas, intacta" loading="lazy">
+    <figcaption>
+      <b>22_RESTORED_ORIGINAL · 1440×900 · Fundación Arenas</b>
+      Fundación Arenas, intacta
+      <dl>
+        <dt>Acción</dt><dd>Abrir el estudio sin configuración guardada</dd>
+        <dt>Se espera</dt><dd>El Museo que se envía vuelve palabra por palabra</dd>
+        <dt>Se observa</dt><dd>institución en el mundo: Fundación Arenas (institución ficticia)</dd>
+      </dl>
+    </figcaption>
+  </figure></div>
+  <p style="font-size:12.5px;color:#9a9389;margin-top:14px">
+    Medios autorizados presentes en el mundo tras aplicar, medidos y no fotografiados:
+    <code>entity.lobby.bienvenida · TEXT · IMAGE</code> · <code>entity.artwork.horizonte-interrumpido · ARTWORK · IMAGE</code> · <code>entity.video.cuaderno-de-luz · PROJECTION · VIDEO</code></p>
+  
+
+
+<h2>Condiciones</h2>
+<p>Chromium real, rasterizado por software. Fixtures generados para esta vuelta y deliberadamente
+distintos de la colección: en VS01 se probó una subida con el archivo que la sala ya usaba, y la
+captura de después salió idéntica a la de antes.
+Consola: limpia en las tres tandas.</p>
+
+<div class="gate">
+  <p><b>Puerta.</b> A la espera de revisión de Juanma y de ChatGPT. Sin merge, sin promoción, sin
+  tocar master. Rama <code>claude/immersive-worlds-module-c0d3f7</code>, HEAD <code>e7a0a1d</code>.</p>
+  <p>La evidencia de VS01 sigue intacta en <code>qa/evidence-authoring/</code> y su artifact no se ha
+  reemplazado.</p>
+</div>
+
+</div></body></html>
