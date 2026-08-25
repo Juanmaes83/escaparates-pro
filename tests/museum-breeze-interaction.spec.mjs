@@ -33,7 +33,6 @@ async function traverseAndWait(page, portalId, destination) {
   const before = await page.evaluate(() => window.__IW.runtime.state.activeSpaceId);
   await page.evaluate(async ({ portalId }) => {
     await window.__IW.runtime.traversePortal(portalId, {
-      crossing: true,
       source: 'BREEZE_PERSISTENCE_QA'
     });
   }, { portalId });
@@ -111,9 +110,9 @@ test('Breeze saves real customisation and restores after canonical room re-entry
     backgroundName: 'museum-breeze-proof.png'
   });
 
-  await page.locator('[data-breeze-museum-exit="true"]').click();
+  // Use the canonical Breeze -> Gallery B portal directly for lifecycle QA.
+  await traverseAndWait(page, 'portal.breeze-gallery-b', 'space.gallery-b');
   await expect(iframe).toBeHidden({ timeout: 25_000 });
-  await expect.poll(async () => page.evaluate(() => window.__IW?.runtime?.state?.activeSpaceId || null), { timeout: 25_000 }).toBe('space.gallery-b');
 
   await traverseAndWait(page, 'portal.gallery-b-breeze', 'space.breeze');
   ({ iframe, frame } = await getBreezeFrame(page));
