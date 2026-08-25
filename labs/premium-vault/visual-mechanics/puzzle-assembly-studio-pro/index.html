@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Puzzle Assembly Studio PRO — Samurai</title>
+  <link rel="stylesheet" href="./assembly.css" />
+  <link rel="stylesheet" href="./assembly-studio.css" />
+</head>
+<body>
+  <main class="assembly-page" id="assembly-page">
+    <section class="assembly-hero" id="assembly-hero">
+      <div class="assembly-stage" id="assembly-stage" aria-label="Puzzle assembly preview">
+        <div class="assembly-bg"></div>
+        <div class="assembly-copy">
+          <p class="eyebrow" data-bind="brand.eyebrow"></p>
+          <h1 data-bind="brand.title"></h1>
+          <p data-bind="brand.subtitle"></p>
+        </div>
+        <div class="assembly-figure" id="assembly-figure">
+          <img class="ghost-final" id="ghost-final" alt="Referencia final" />
+          <img class="base-image" id="base-image" alt="Base inicial" />
+          <div id="pieces-layer" class="pieces-layer"></div>
+          <img class="final-image" id="final-image" alt="Imagen final" />
+        </div>
+        <div class="assembly-progress"><span id="assembly-progress-bar"></span></div>
+      </div>
+    </section>
+
+    <section class="assembly-content">
+      <p class="eyebrow">PUZZLE ASSEMBLY</p>
+      <h2 data-bind="content.heading"></h2>
+      <p data-bind="content.body"></p>
+      <a class="assembly-cta" id="assembly-cta" href="#" data-bind="content.cta"></a>
+    </section>
+  </main>
+
+  <aside class="studio-panel" id="studio-panel" aria-label="Puzzle Assembly Studio">
+    <header class="studio-header">
+      <div>
+        <p class="studio-kicker">SAMURAI / PUZZLE ASSEMBLY</p>
+        <h2>Studio PRO</h2>
+      </div>
+      <button id="toggle-studio" class="ghost-btn">Cerrar</button>
+    </header>
+    <nav class="studio-tabs" id="studio-tabs"></nav>
+    <section class="studio-body" id="studio-body"></section>
+  </aside>
+
+  <button class="open-studio" id="open-studio">Abrir Studio</button>
+
+  <script src="./assembly-config.js"></script>
+  <script src="./assembly-store.js"></script>
+  <script src="./assembly-motion.js"></script>
+  <script src="./assembly-app.js"></script>
+</body>
+</html>
