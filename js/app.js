@@ -33,7 +33,10 @@
 
     function loadPremiumVault() {
         loadScriptOnce('js/premium-vault-real.js', 'data-premium-vault-real', function() {
-            try { if (EP.PremiumVault) EP.PremiumVault.init(); }
+            try {
+                var vault = EP.PremiumVault || EP.PremiumVaultReal;
+                if (vault && vault.init) vault.init();
+            }
             catch (e) { console.error('PremiumVault.init failed:', e); }
         });
     }
@@ -68,7 +71,8 @@
             if (EP.UI.refreshCurrentControls) EP.UI.refreshCurrentControls();
             if (EP.WebsiteModulesUI && EP.WebsiteModulesUI.refresh) EP.WebsiteModulesUI.refresh();
             if (EP.SourceLabsUI && EP.SourceLabsUI.refresh) EP.SourceLabsUI.refresh();
-            if (EP.PremiumVault && EP.PremiumVault.refresh) EP.PremiumVault.refresh();
+            var vault = EP.PremiumVault || EP.PremiumVaultReal;
+            if (vault && vault.refresh) vault.refresh();
         });
 
         EP.Timeline.onTick(function(time, dt, loopDuration) {
