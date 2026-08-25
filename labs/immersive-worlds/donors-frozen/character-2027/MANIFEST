@@ -1,0 +1,89 @@
+# CHARACTER / AVATAR 2027 — DONOR FREEZE MANIFEST
+
+**Status:** FROZEN / NOT ACTIVE  
+**Museum surgery branch:** `chatgpt/museum-character-2027-integration-v1`  
+**Museum protected baseline:** `4fbca5997beaf058543ee65d682f0adae89252e2`  
+**Rule:** files under this donor freeze are provenance stones. Do not edit them in place. Adapt through Museum-side seams/wrappers during surgery.
+
+## Frozen source authorities
+
+- **VECINIA PRIMARY integration donor:** `Juanmaes83/VECINIA-WORLDS` @ `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1` (`feat/sculpture-navigation-character-v1`)
+- **CharacterStudio PRIMARY Character donor:** `Juanmaes83/CharacterStudio` @ `f5a93a48ed0e3904fce58f08f7fbe08b5411b289` (`agent/character-2027-terrain-semantic-01` family)
+- **Exact CharacterStudio transport evidence:** GitHub Actions run `32884563421`, job `97921855373`, result `success`; all 16 `git hash-object` checks matched source.
+- **VECINIA transport evidence:** source blobs were recreated in `escaparates-pro` and required identical Git blob SHA before commit `2b13b556ba76ea61f24116c64377e2b8020181c0`.
+
+## Classification
+
+- `PRIMARY` — core stone expected to participate in the first Character/Museum graft.
+- `SUPPORT` — frozen capability/support stone; activation is later or conditional.
+- `KNOWLEDGE` — reference implementation/UI knowledge only; never visitor runtime as-is.
+
+## VECINIA runtime family — 10/10 frozen
+
+| Source repo | Source commit | Source path | Destination path | Source blob SHA | Destination blob SHA | Integrity | Type | Dependencies / authority assumptions | State |
+|---|---|---|---|---|---|---|---|---|---|
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/ExteriorCharacterPilot.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/ExteriorCharacterPilot.js` | `8b5c10ec527a6b1f798fe5a1dc836ff429d43fdf` | `8b5c10ec527a6b1f798fe5a1dc836ff429d43fdf` | BYTE_IDENTICAL ✅ | SUPPORT | `three`, GLTFLoader, CharacterActionAPI, MotionController, MotionFoundationV2, LookAtController, BoneMap, approved-avatar probe, `exterior-pilot-skeleton`; owns no Museum runtime | FROZEN / LATE |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/MuseumCharacterRuntimeAdapter.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/MuseumCharacterRuntimeAdapter.js` | `9d538ff40a9325f706ba18720bc603a409a2a674` | `9d538ff40a9325f706ba18720bc603a409a2a674` | BYTE_IDENTICAL ✅ | PRIMARY | `three185`, Museum `CAMERA_AUTHORITY`, existing Runtime/RenderHost/WorldStore/SceneKit/DirectedController, CharacterActionAPI, MotionController, MotionFoundationV2, LookAtController, BoneMap, approved-avatar probe, HumanSpatialContract | FROZEN / FIRST ACTIVE CANDIDATE |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomCharacterCapabilityBatches.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomCharacterCapabilityBatches.js` | `5699ce87ef0286b9fb6581193da5b214428614d3` | `5699ce87ef0286b9fb6581193da5b214428614d3` | BYTE_IDENTICAL ✅ | SUPPORT | FreeMobility READY API, CharacterActionAPI, real room semantic objects/sofa/contact affordances | FROZEN / ADVANCED |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomCharacterCinematicCamera.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomCharacterCinematicCamera.js` | `217e29413c6c3dd8c30978ba30b5e4364e0fe02b` | `217e29413c6c3dd8c30978ba30b5e4364e0fe02b` | BYTE_IDENTICAL ✅ | SUPPORT | Existing Museum CameraAuthority + DirectedController + RenderHost; FreeMobility; framing utility; must not create second camera authority | FROZEN / ADVANCED |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomCharacterFreeMobility.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomCharacterFreeMobility.js` | `dc8126ad02b6c3170dabe871b1fec1ffe9f723d6` | `dc8126ad02b6c3170dabe871b1fec1ffe9f723d6` | BYTE_IDENTICAL ✅ | PRIMARY | Museum `ExploreController._resolveCollision`, navigationVolume, CameraAuthority, RenderHost, MuseumCharacterRuntimeAdapter; Room owns collision, Character owns body/actions | FROZEN / SECOND ACTIVE CANDIDATE |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomCharacterTourBridge.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomCharacterTourBridge.js` | `27e851d28fba4e5f00d099946bf47665e0e18919` | `27e851d28fba4e5f00d099946bf47665e0e18919` | BYTE_IDENTICAL ✅ | SUPPORT | Existing ExperienceDirector/canonical route/tour, WorldStore, stageGuide seam, HumanSpatialContract, MuseumCharacterRuntimeAdapter | FROZEN / ADVANCED |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomSemanticAuthoring.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomSemanticAuthoring.js` | `aa7fc37ed294f3b40db335d285000af5d0ecdc6c` | `aa7fc37ed294f3b40db335d285000af5d0ecdc6c` | BYTE_IDENTICAL ✅ | SUPPORT | Canonical WorldStore entities/anchors/hotspots; derived semantic view only, never a second store | FROZEN / ADVANCED |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/PropertyRoomSemanticAuthoringBridge.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/PropertyRoomSemanticAuthoringBridge.js` | `450eac71ab6af7a81b90c411fa3e21589a11631e` | `450eac71ab6af7a81b90c411fa3e21589a11631e` | BYTE_IDENTICAL ✅ | SUPPORT | PropertyRoomSemanticAuthoring + FreeMobility + Character adapter contract | FROZEN / ADVANCED |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/exterior-pilot-skeleton.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/exterior-pilot-skeleton.js` | `b168632976f9b7e9b61c7de4c537bae084b26218` | `b168632976f9b7e9b61c7de4c537bae084b26218` | BYTE_IDENTICAL ✅ | SUPPORT | VECINIA Skeleton collision/world-slice port | FROZEN / LATE |
+| `Juanmaes83/VECINIA-WORLDS` | `45e454f...` | `visual/src/character2027/runtime/full-world-c2-skeleton.js` | `labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/full-world-c2-skeleton.js` | `49d69f7993e60c629ca946263e539741c0656e6c` | `49d69f7993e60c629ca946263e539741c0656e6c` | BYTE_IDENTICAL ✅ | SUPPORT | VECINIA Skeleton collision/world-slice port; full-world sectors/routes | FROZEN / LAST |
+
+## CharacterStudio runtime family — 13/13 frozen
+
+| Source repo | Source commit | Source path | Destination path | Source blob SHA | Destination blob SHA | Integrity | Type | Dependencies / authority assumptions | State |
+|---|---|---|---|---|---|---|---|---|---|
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/api/CharacterActionAPI.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/api/CharacterActionAPI.js` | `1107f6015dd16274105d16a71e950729b678f667` | `1107f6015dd16274105d16a71e950729b678f667` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, MotionController, optional LookAt/interaction targets | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/animation/MotionController.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/animation/MotionController.js` | `35a9182bd8cf378df6389fdc27f9fbd02a9b662b` | `35a9182bd8cf378df6389fdc27f9fbd02a9b662b` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, ContactIKController, LadderIKExtension; owns AnimationMixer/navigation state, not world collision authority | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/animation/MotionFoundationV2.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/animation/MotionFoundationV2.js` | `3ffa2617b107c1bdf885befce8bfcd4e0bda067c` | `3ffa2617b107c1bdf885befce8bfcd4e0bda067c` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, MotionController registration contract | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/animation/MotionFoundationV2Extra.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/animation/MotionFoundationV2Extra.js` | `f59c9e54fc4e4347f8a145e8e2b3e2a7bb57d848` | `f59c9e54fc4e4347f8a145e8e2b3e2a7bb57d848` | BYTE_IDENTICAL ✅ | SUPPORT | `three`, SocialMotionFoundationV3, `TerrainSemanticBenchmarks` (dependency not frozen in approved Phase-1 set; audit in Phase 2) | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/animation/SocialMotionFoundationV3.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/animation/SocialMotionFoundationV3.js` | `2490cc4e36e1464d237000caca457d5b73dd79ec` | `2490cc4e36e1464d237000caca457d5b73dd79ec` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, MotionController registration contract | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/animation/Retargeter.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/animation/Retargeter.js` | `a32c471eb67f4d3dd33b694e5317532b0ec753ef` | `a32c471eb67f4d3dd33b694e5317532b0ec753ef` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, BoneMap | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/rig/BoneMap.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/rig/BoneMap.js` | `0c74181afaaa64e34e3b8c03cfb042fb7fb27e12` | `0c74181afaaa64e34e3b8c03cfb042fb7fb27e12` | BYTE_IDENTICAL ✅ | PRIMARY | `../../library/VRMRigMapMixamo` (dependency to audit in Phase 2) | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/interaction/LookAtController.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/interaction/LookAtController.js` | `c5cb4f75694f31a04dadf7236cafece91e77acba` | `c5cb4f75694f31a04dadf7236cafece91e77acba` | BYTE_IDENTICAL ✅ | PRIMARY | `three`; humanoid `head`/`neck` bones | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/ik/ContactIKController.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/ik/ContactIKController.js` | `c4b0c14288f30d7d8178bc1dadc11a7f3c7d76ce` | `c4b0c14288f30d7d8178bc1dadc11a7f3c7d76ce` | BYTE_IDENTICAL ✅ | PRIMARY | HumanoidIKController, TerrainSemanticIK; state ownership rules | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/ik/DonorTwoBoneIK.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/ik/DonorTwoBoneIK.js` | `ea0e507a072d949bab8018b4ad27e7cc31392d26` | `ea0e507a072d949bab8018b4ad27e7cc31392d26` | BYTE_IDENTICAL ✅ | SUPPORT | `three`; framework-agnostic two-bone solver | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/ik/HumanoidIKController.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/ik/HumanoidIKController.js` | `c4e103dc3f2dddf341f2654d15e3e8909d676856` | `c4e103dc3f2dddf341f2654d15e3e8909d676856` | BYTE_IDENTICAL ✅ | PRIMARY | `three`, DonorTwoBoneIK; humanoid chains/root | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/ik/LadderIKExtension.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/ik/LadderIKExtension.js` | `242fb865fcd61fe573c85c1de8467778ea1a9c97` | `242fb865fcd61fe573c85c1de8467778ea1a9c97` | BYTE_IDENTICAL ✅ | SUPPORT | `three`, `TerrainSemanticBenchmarks` (audit/copy only if Phase 2 requires activation) | FROZEN |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/character2027/ik/TerrainSemanticIK.js` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/character2027/ik/TerrainSemanticIK.js` | `870d24744baae178acf0751d28d7e9b7d70d3560` | `870d24744baae178acf0751d28d7e9b7d70d3560` | BYTE_IDENTICAL ✅ | SUPPORT | `three`, `TerrainSemanticBenchmarks` (audit/copy only if Phase 2 requires activation) | FROZEN |
+
+## CharacterStudio knowledge donors — 3/3 frozen
+
+| Source repo | Source commit | Source path | Destination path | Source blob SHA | Destination blob SHA | Integrity | Type | Dependencies / knowledge carried | State |
+|---|---|---|---|---|---|---|---|---|---|
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/pages/Create.jsx` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/pages/Create.jsx` | `e70cf09eddd8c9c3df5c7d5c27fada75ed1b5979` | `e70cf09eddd8c9c3df5c7d5c27fada75ed1b5979` | BYTE_IDENTICAL ✅ | KNOWLEDGE | React UI; manifest/class selection; CharacterManager initial-trait loading; View/Scene/Sound/Audio/Language contexts | FROZEN / NOT RUNTIME |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/pages/Appearance.jsx` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/pages/Appearance.jsx` | `d1ec659da9f5702ca4a83483f3850675c30df949` | `d1ec659da9f5702ca4a83483f3850675c30df949` | BYTE_IDENTICAL ✅ | KNOWLEDGE | React UI; CharacterManager/AnimationManager; trait groups, randomization, colors, textures, VRM/custom trait upload, FBX animation, JSON, blendshapes, decals, camera targeting | FROZEN / NOT RUNTIME |
+| `Juanmaes83/CharacterStudio` | `f5a93a48...` | `src/pages/MotionLab.jsx` | `labs/immersive-worlds/donors-frozen/character-2027/characterstudio/src/pages/MotionLab.jsx` | `8e1fff64f882cfd2eff6837e19e93b4dbad70515` | `8e1fff64f882cfd2eff6837e19e93b4dbad70515` | BYTE_IDENTICAL ✅ | KNOWLEDGE | React + Three lab; GLTF/FBX/VRM loading, OrbitControls, rig inspection/normalization, MotionController, ActionAPI, motion foundations, IK/LookAt, test controls. Knowledge donor only; renderer/camera/lab UI must not be transplanted as visitor runtime | FROZEN / NOT RUNTIME |
+
+## Integrity summary
+
+- VECINIA files: **10 / 10 BYTE_IDENTICAL ✅**
+- CharacterStudio runtime files: **13 / 13 BYTE_IDENTICAL ✅**
+- CharacterStudio knowledge donors: **3 / 3 BYTE_IDENTICAL ✅**
+- Total physical frozen donor stones: **26 / 26 BYTE_IDENTICAL ✅**
+- Donor files activated by Museum runtime in Phase 1: **0**
+
+## Known dependency edges deliberately deferred to Phase 2 anatomy
+
+The freeze preserves the approved stones exactly; it does **not** claim the runtime closure is already self-contained. These imports must be mapped before activation:
+
+- `TerrainSemanticBenchmarks` used by MotionFoundationV2Extra / LadderIKExtension / TerrainSemanticIK.
+- `VRMRigMapMixamo` used by BoneMap.
+- VECINIA `APPROVED_AVATAR` compatibility probe.
+- VECINIA `HumanSpatialContract` / `MUSEUM_HUMAN_PROFILE`.
+- Museum-side `CAMERA_AUTHORITY`, ExploreController, Runtime, RenderHost, WorldStore, SceneKit, DirectedController and navigationVolume.
+- Property-room-specific sofa/fixture semantic helpers used by advanced capability batches.
+
+**Policy:** Phase 2 decides whether each dependency is already present in Museum, should be copied as an additional frozen dependency, or must be replaced by a Museum-side seam. Never edit the frozen stones to hide a missing dependency.
+
+## Phase 1 transport rule
+
+A donor is considered successfully transported only when:
+
+`source blob SHA == destination blob SHA`
+
+No semantic equivalence, prettification, transpilation or manual rewrite qualifies as a successful transport.
