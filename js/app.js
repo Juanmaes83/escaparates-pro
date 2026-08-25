@@ -35,6 +35,7 @@
         loadScriptOnce('js/premium-experiences-vault.js', 'data-premium-experiences-vault', function() {
             try { if (EP.PremiumExperiencesVault) EP.PremiumExperiencesVault.init(); }
             catch (e) { console.error('PremiumExperiencesVault.init failed:', e); }
+            loadScriptOnce('js/premium-experiences-vault-rescue-additions.js', 'data-premium-experiences-vault-rescue-additions');
         });
     }
 
