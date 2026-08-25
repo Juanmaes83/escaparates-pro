@@ -142,10 +142,6 @@ test('Breeze saved state survives entry through the canonical full route', async
     backgroundName: 'museum-breeze-proof.png'
   });
 
-  // Ordinary re-entry is already proven by the prior dedicated gate. This gate
-  // deliberately destroys Breeze once, returns to the authored start, then lets
-  // the real Director recreate Breeze through the canonical route. Avoiding an
-  // extra WebGL/WebGPU recreation keeps the headless test focused and stable.
   await traverseAndWait(page, 'portal.breeze-gallery-b', 'space.gallery-b');
   await expect(iframe).toBeHidden({ timeout: 25_000 });
   await traverseAndWait(page, 'portal.gallery-b-gallery-a', 'space.gallery-a');
@@ -163,19 +159,28 @@ test('Breeze saved state survives entry through the canonical full route', async
     if (!breezeBeat) throw new Error('Breeze portal beat missing after route start');
     const breezeTourStep = runtime.experience.manifest.steps.find((step) => step.beatIds.includes(breezeBeat.id));
     if (!breezeTourStep) throw new Error('Breeze portal beat has no canonical tour step');
+    if (!breezeTourStep.nextId) throw new Error('Breeze portal tour step has no following canonical step');
     const finalTourStep = runtime.experience.manifest.steps[runtime.experience.manifest.steps.length - 1];
     return {
       routeId: route.id,
       breezeTourStepId: breezeTourStep.id,
+      postBreezeTourStepId: breezeTourStep.nextId,
       finalTourStepId: finalTourStep.id,
       tourTotal: runtime.experience.manifest.steps.length
     };
   });
   console.log('BREEZE_FULL_ROUTE_PLAN', JSON.stringify(routePlan));
 
-  const reachedBreeze = await page.evaluate(async (tourStepId) =>
+  const reachedBreezeLead = await page.evaluate(async (tourStepId) =>
     window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.breezeTourStepId);
-  expect(reachedBreeze).toBe(true);
+  expect(reachedBreezeLead).toBe(true);
+
+  // seekToTourStep lands on the first beat of a canonical step. Seeking the next
+  // step forces every remaining beat of the Breeze threshold step to settle,
+  // including the actual portal action, before the assertion below.
+  const crossedIntoBreeze = await page.evaluate(async (tourStepId) =>
+    window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.postBreezeTourStepId);
+  expect(crossedIntoBreeze).toBe(true);
   await expect.poll(async () => page.evaluate(() => window.__IW.runtime.state.activeSpaceId), { timeout: 50_000 }).toBe('space.breeze');
 
   const routeRestore = await assertRestoredBreeze(page);
