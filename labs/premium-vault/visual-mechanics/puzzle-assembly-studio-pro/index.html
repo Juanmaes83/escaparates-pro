@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Samurai Scrollytelling — Prompt Faithful</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <nav class="navbar" id="navbar" aria-label="Samurai navigation">
+    <a href="#hero">Bushido</a>
+    <a href="#about">Legend</a>
+    <a href="#armor">Armor</a>
+  </nav>
+
+  <main>
+    <section class="hero-scroll" id="hero" aria-label="Samurai armor reveal">
+      <div class="sticky-frame">
+        <div class="samurai-container" id="samurai-container">
+          <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/samurai1.png" alt="Samurai base" class="samurai-base" id="samurai1" />
+          <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/samurai2.png" alt="Powered samurai" class="samurai-upgraded" id="samurai2" />
+
+          <div class="armor-layer" id="armor-parts" aria-hidden="true">
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/helmet.png" class="armor-part" id="part-helmet" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/body.png" class="armor-part" id="part-body" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/left_arm2.png" class="armor-part" id="part-left-arm" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/right_arm.png" class="armor-part" id="part-right-arm" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/shoulders.png" class="armor-part" id="part-shoulders" alt="" />
+          </div>
+        </div>
+
+        <div class="hero-overlay" id="hero-overlay">
+          <div class="text-mask"><h1 class="hero-title">BUSHIDO</h1></div>
+          <div class="text-mask"><p class="hero-subtitle">The Way of the Warrior</p></div>
+        </div>
+
+        <div class="scroll-meter" aria-hidden="true"><span id="scroll-meter-bar"></span></div>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="about-container">
+        <div class="reveal-mask"><h2 class="section-title">The Legend of the Unifier</h2></div>
+        <div class="reveal-mask"><p class="section-text">Beyond the edge of the blade lies the spirit of the warrior. In the heart of the Sengoku Jidai, honor was forged in blood and fire. To unify a nation, one must transcend the path of the sword and embrace the unyielding strength of an armored soul.</p></div>
+      </div>
+    </section>
+
+    <section class="armor-section" id="armor">
+      <h2 class="section-title main-title">The Warrior's Armor</h2>
+      <div class="armor-grid">
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/helmet.png" alt="Kabuto" class="card-img" /></div>
+          <div class="card-content"><h3>Kabuto</h3><span class="card-tag">Protection & Honor</span><p>The helmet was more than defense; it was a statement of lineage and fear. Forged from iron plates and decorated with elaborate crests, the Kabuto protected the mind that guided the blade.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/body.png" alt="Dō" class="card-img" /></div>
+          <div class="card-content"><h3>Dō</h3><span class="card-tag">The Iron Core</span><p>The cuirass formed the immovable heart of the samurai's defense. Whether of solid plate or scale, it deflected spears and arrows, shielding the warrior's life-force.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/left_arm.png" alt="Kote" class="card-img" /></div>
+          <div class="card-content"><h3>Kote</h3><span class="card-tag">Precision Shield</span><p>The armored sleeves provided flexibility and strength. Silk, mail, and iron plates protected the arms without hindering the swift movement of the katana.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/shoulders.png" alt="Sode" class="card-img" /></div>
+          <div class="card-content"><h3>Sode</h3><span class="card-tag">The Mantle of Steel</span><p>Broad shoulder plates acted as mobile shields. They guarded against descending strikes while sliding with the warrior through the flow of combat.</p></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="./main.js"></script>
+</body>
+</html>

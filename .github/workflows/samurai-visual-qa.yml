@@ -1,0 +1,141 @@
+name: Samurai Visual QA
+
+on:
+  push:
+    branches:
+      - feat/puzzle-assembly-studio-pro
+  workflow_dispatch:
+
+concurrency:
+  group: samurai-visual-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Samurai lab only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            labs/premium-vault/visual-mechanics/puzzle-assembly-studio-pro
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm i -D @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Start static server
+        run: |
+          python3 -m http.server 4173 > /tmp/samurai-server.log 2>&1 &
+          sleep 2
+
+      - name: Run Samurai visual QA
+        run: |
+          mkdir -p visual-qa
+          cat > visual-qa/samurai-visual-check.spec.js <<'EOF'
+          const { test, expect } = require('@playwright/test');
+          const fs = require('fs');
+          const path = require('path');
+
+          test.use({ browserName: 'chromium' });
+
+          const URL = 'http://127.0.0.1:4173/labs/premium-vault/visual-mechanics/puzzle-assembly-studio-pro/index.html';
+          const OUT = path.join(process.cwd(), 'visual-qa-output');
+          fs.mkdirSync(OUT, { recursive: true });
+
+          async function snapshot(page, label, raw) {
+            const max = await page.evaluate(() => {
+              const hero = document.getElementById('hero');
+              return Math.max(1, hero.offsetHeight - window.innerHeight);
+            });
+            await page.evaluate(({ max, raw }) => window.scrollTo(0, max * raw), { max, raw });
+            await page.waitForTimeout(500);
+            const metrics = await page.evaluate(() => {
+              const ids = ['samurai1','samurai2','part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders','hero-overlay'];
+              const out = { scrollY: window.scrollY, innerWidth: window.innerWidth, innerHeight: window.innerHeight, finalHold: document.querySelector('.sticky-frame')?.classList.contains('is-final-hold') || false, elements: {} };
+              for (const id of ids) {
+                const el = document.getElementById(id);
+                if (!el) continue;
+                const r = el.getBoundingClientRect();
+                const cs = getComputedStyle(el);
+                out.elements[id] = {
+                  opacity: Number(cs.opacity),
+                  top: r.top,
+                  bottom: r.bottom,
+                  left: r.left,
+                  right: r.right,
+                  width: r.width,
+                  height: r.height,
+                  centerX: r.left + r.width / 2,
+                  centerY: r.top + r.height / 2,
+                  visibleInViewport: Number(cs.opacity) > 0.05 && r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth
+                };
+              }
+              const aboutTitle = document.querySelector('#about .section-title');
+              if (aboutTitle) {
+                const r = aboutTitle.getBoundingClientRect();
+                out.aboutTitle = { top: r.top, bottom: r.bottom, visible: r.bottom > 0 && r.top < window.innerHeight };
+              }
+              return out;
+            });
+            await page.screenshot({ path: path.join(OUT, `${label}.png`), fullPage: false });
+            return { label, raw, metrics };
+          }
+
+          test('samurai assembly visual timeline', async ({ page }) => {
+            await page.setViewportSize({ width: 1365, height: 768 });
+            await page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 });
+            await page.waitForTimeout(1000);
+
+            const frames = [];
+            for (const [label, raw] of [
+              ['00-start', 0],
+              ['01-early-motion', 0.06],
+              ['02-motion-visible', 0.14],
+              ['03-assembly-main', 0.26],
+              ['04-snap', 0.40],
+              ['05-reveal', 0.52],
+              ['06-final-lock', 0.66],
+              ['07-final-hold', 0.84],
+              ['08-before-about', 0.96]
+            ]) frames.push(await snapshot(page, label, raw));
+
+            fs.writeFileSync(path.join(OUT, 'metrics.json'), JSON.stringify(frames, null, 2));
+
+            const early = frames.find(f => f.label === '01-early-motion').metrics;
+            const motion = frames.find(f => f.label === '02-motion-visible').metrics;
+            const lock = frames.find(f => f.label === '06-final-lock').metrics;
+            const hold = frames.find(f => f.label === '07-final-hold').metrics;
+            const beforeAbout = frames.find(f => f.label === '08-before-about').metrics;
+
+            const earlyVisibleParts = ['part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders'].filter(id => early.elements[id]?.visibleInViewport).length;
+            const motionVisibleParts = ['part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders'].filter(id => motion.elements[id]?.visibleInViewport).length;
+
+            expect(earlyVisibleParts, 'at least three armor pieces must already be visible at 6% scroll').toBeGreaterThanOrEqual(3);
+            expect(motionVisibleParts, 'all armor pieces must be visible by 14% scroll').toBeGreaterThanOrEqual(5);
+            expect(lock.finalHold, 'final lock must be active at 66% scroll').toBeTruthy();
+            expect(lock.elements.samurai2.opacity, 'samurai2 must be visible in final lock').toBeGreaterThan(0.9);
+            expect(lock.elements.samurai2.centerY, 'samurai2 must be vertically centered in final lock').toBeGreaterThan(330);
+            expect(lock.elements.samurai2.centerY, 'samurai2 must not escape below/above frame in final lock').toBeLessThan(470);
+            expect(hold.elements.samurai2.opacity, 'samurai2 must remain visible during final hold').toBeGreaterThan(0.9);
+            expect(beforeAbout.elements.samurai2.opacity, 'samurai2 must still be visible before About enters').toBeGreaterThan(0.85);
+          });
+          EOF
+          npx playwright test visual-qa/samurai-visual-check.spec.js --reporter=line
+
+      - name: Upload visual QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: samurai-visual-qa
+          path: visual-qa-output
