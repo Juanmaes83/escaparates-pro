@@ -6,13 +6,22 @@ on:
       - feat/puzzle-assembly-studio-pro
   workflow_dispatch:
 
+concurrency:
+  group: samurai-visual-qa-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   visual-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - name: Checkout
+      - name: Checkout Samurai lab only
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            labs/premium-vault/visual-mechanics/puzzle-assembly-studio-pro
+          sparse-checkout-cone-mode: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -50,7 +59,7 @@ jobs:
               return Math.max(1, hero.offsetHeight - window.innerHeight);
             });
             await page.evaluate(({ max, raw }) => window.scrollTo(0, max * raw), { max, raw });
-            await page.waitForTimeout(450);
+            await page.waitForTimeout(500);
             const metrics = await page.evaluate(() => {
               const ids = ['samurai1','samurai2','part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders','hero-overlay'];
               const out = { scrollY: window.scrollY, innerWidth: window.innerWidth, innerHeight: window.innerHeight, finalHold: document.querySelector('.sticky-frame')?.classList.contains('is-final-hold') || false, elements: {} };
@@ -101,16 +110,13 @@ jobs:
               ['08-before-about', 0.96]
             ]) frames.push(await snapshot(page, label, raw));
 
-            await page.evaluate(() => window.scrollTo(0, document.getElementById('hero').offsetHeight + 40));
-            await page.waitForTimeout(450);
-            frames.push(await snapshot(page, '09-about-entry', 1));
-
             fs.writeFileSync(path.join(OUT, 'metrics.json'), JSON.stringify(frames, null, 2));
 
             const early = frames.find(f => f.label === '01-early-motion').metrics;
             const motion = frames.find(f => f.label === '02-motion-visible').metrics;
             const lock = frames.find(f => f.label === '06-final-lock').metrics;
             const hold = frames.find(f => f.label === '07-final-hold').metrics;
+            const beforeAbout = frames.find(f => f.label === '08-before-about').metrics;
 
             const earlyVisibleParts = ['part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders'].filter(id => early.elements[id]?.visibleInViewport).length;
             const motionVisibleParts = ['part-helmet','part-body','part-left-arm','part-right-arm','part-shoulders'].filter(id => motion.elements[id]?.visibleInViewport).length;
@@ -122,6 +128,7 @@ jobs:
             expect(lock.elements.samurai2.centerY, 'samurai2 must be vertically centered in final lock').toBeGreaterThan(330);
             expect(lock.elements.samurai2.centerY, 'samurai2 must not escape below/above frame in final lock').toBeLessThan(470);
             expect(hold.elements.samurai2.opacity, 'samurai2 must remain visible during final hold').toBeGreaterThan(0.9);
+            expect(beforeAbout.elements.samurai2.opacity, 'samurai2 must still be visible before About enters').toBeGreaterThan(0.85);
           });
           EOF
           npx playwright test visual-qa/samurai-visual-check.spec.js --reporter=line
