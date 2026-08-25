@@ -118,6 +118,69 @@ function softApply(label, fn) {
   }
 }
 
+function setSaveUi(status, detail = '') {
+  const button = byId('bsMuseumSave');
+  const label = byId('bsMuseumSaveStatus');
+  if (!button || !label) return;
+  button.disabled = status === 'saving';
+  button.dataset.state = status;
+  if (status === 'saving') {
+    button.textContent = 'GUARDANDO…';
+    label.textContent = detail || 'Museum está capturando esta personalización.';
+  } else if (status === 'saved') {
+    button.textContent = 'GUARDADO ✓';
+    label.textContent = detail || 'La sala se conservará al salir y volver durante esta sesión.';
+  } else if (status === 'error') {
+    button.textContent = 'REINTENTAR GUARDADO';
+    label.textContent = detail || 'No se pudo guardar. Vuelve a intentarlo.';
+  } else {
+    button.textContent = 'GUARDAR EN MUSEUM';
+    label.textContent = detail || 'Conserva esta personalización antes de salir de la sala.';
+  }
+}
+
+function markUnsaved() {
+  const button = byId('bsMuseumSave');
+  if (!button || button.dataset.state === 'saving') return;
+  setSaveUi('dirty', 'Hay cambios sin guardar en esta sala.');
+}
+
+function installMuseumSaveControl() {
+  const panel = byId('breezeStudioPanel');
+  if (!panel || byId('bsMuseumSaveDock')) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    #bsMuseumSaveDock{position:sticky;bottom:0;z-index:20;margin:0;padding:12px 14px 14px;background:linear-gradient(180deg,rgba(15,14,12,.82),rgba(15,14,12,.99) 28%);border-top:1px solid rgba(197,172,112,.32);backdrop-filter:blur(10px)}
+    #bsMuseumSave{width:100%;min-height:42px;border:1px solid rgba(197,172,112,.58)!important;background:#c5ac70!important;color:#111!important;font:700 10px/1.1 Inter,system-ui,sans-serif!important;letter-spacing:.12em!important;text-transform:uppercase;cursor:pointer;transition:.16s ease}
+    #bsMuseumSave:hover{filter:brightness(1.08)}
+    #bsMuseumSave:disabled{cursor:wait;opacity:.72}
+    #bsMuseumSave[data-state="saved"]{background:#182319!important;color:#dce8d9!important;border-color:rgba(112,170,116,.55)!important}
+    #bsMuseumSave[data-state="error"]{background:#2b1715!important;color:#f0d7d1!important;border-color:rgba(196,99,79,.58)!important}
+    #bsMuseumSaveStatus{display:block;margin-top:7px;color:#938b7e;font:9px/1.35 Inter,system-ui,sans-serif;letter-spacing:.02em}
+  `;
+  document.head.appendChild(style);
+
+  const dock = document.createElement('div');
+  dock.id = 'bsMuseumSaveDock';
+  dock.innerHTML = '<button id="bsMuseumSave" type="button">GUARDAR EN MUSEUM</button><span id="bsMuseumSaveStatus">Conserva esta personalización antes de salir de la sala.</span>';
+  panel.appendChild(dock);
+
+  byId('bsMuseumSave').addEventListener('click', () => {
+    setSaveUi('saving');
+    post({ type: 'SAVE_REQUEST' });
+  });
+
+  panel.addEventListener('input', (event) => {
+    if (event.target?.id !== 'bsMuseumSave') markUnsaved();
+  }, true);
+  panel.addEventListener('change', () => markUnsaved(), true);
+  panel.addEventListener('click', (event) => {
+    const button = event.target?.closest?.('button');
+    if (button && button.id !== 'bsMuseumSave') setTimeout(markUnsaved, 140);
+  }, true);
+}
+
 async function applyState(state) {
   const rt = await waitForRuntime();
   const app = rt.app;
@@ -145,8 +208,6 @@ async function applyState(state) {
     softApply('background transform', () => app.applyBackgroundTransform?.());
   }
 
-  // Keep the authored controls exactly as saved, but do not blindly dispatch
-  // cloth-look input events: Autumn Leaves / Sakura do not expose applyUserLook.
   const cloth = state?.cloth || {};
   setValue('bsScale', cloth.scale);
   setValue('bsX', cloth.x);
@@ -156,11 +217,7 @@ async function applyState(state) {
   setValue('bsContrast', cloth.contrast);
   setValue('bsSaturation', cloth.saturation);
 
-  if (cloth.file) {
-    // A saved real cloth asset is a hard requirement: if it cannot be restored,
-    // the Museum must report restore failure rather than silently losing media.
-    await app.applyClothFile(cloth.file);
-  }
+  if (cloth.file) await app.applyClothFile(cloth.file);
   softApply('cloth media transform', () => app.setClothMediaTransform?.({
     scale: Number(cloth.scale ?? 1),
     x: Number(cloth.x ?? 0),
@@ -207,12 +264,20 @@ function validateState() {
 
 window.addEventListener('message', async (event) => {
   const msg = event.data;
-  if (!msg || msg.bridge !== BRIDGE || !msg.requestId) return;
+  if (!msg || msg.bridge !== BRIDGE) return;
+
+  if (msg.type === 'SAVE_RESULT') {
+    setSaveUi(msg.ok ? 'saved' : 'error', msg.message || '');
+    return;
+  }
+
+  if (!msg.requestId) return;
   try {
     if (msg.type === 'GET_STATE') {
       post({ type: 'STATE', requestId: msg.requestId, state: readState({ includeFiles: true }) });
     } else if (msg.type === 'APPLY_STATE') {
       const state = await applyState(msg.state || {});
+      setSaveUi('saved', 'Personalización restaurada por Museum.');
       post({ type: 'APPLY_RESULT', requestId: msg.requestId, state });
     } else if (msg.type === 'VALIDATE_STATE') {
       post({ type: 'VALIDATION', requestId: msg.requestId, result: validateState() });
@@ -225,6 +290,7 @@ window.addEventListener('message', async (event) => {
 (async () => {
   try {
     await waitForRuntime();
+    installMuseumSaveControl();
     post({ type: 'READY', state: readState({ includeFiles: false }) });
   } catch (error) {
     post({ type: 'BOOT_ERROR', error: String(error?.message || error) });
