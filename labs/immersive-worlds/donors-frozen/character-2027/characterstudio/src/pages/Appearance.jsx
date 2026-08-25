@@ -322,7 +322,7 @@ function Appearance() {
       </div>
 
       {/* Option Selection section */}
-      {!!traits && selectedTraitGroup && (
+      !!traits && selectedTraitGroup && (
         <div className={styles["selectorContainerPos"]}>
         
           <MenuTitle title={selectedTraitGroup.trait} width={130} left={20}/>
@@ -330,7 +330,7 @@ function Appearance() {
               className={styles["selectorPickerTabs"]}
               >
             {/* color section */}
-              {selectedTrait && traitView==TraitPage.TRAIT && (
+              selectedTrait && traitView==TraitPage.TRAIT && (
                 <div className={styles["selectorColorPickerButton"]}
                   onClick={()=>{setIsPickingColor(!isPickingColor)}}
                   >
@@ -343,7 +343,8 @@ function Appearance() {
                   <img className={styles["selectorColorPickerImg"]} src={decalPicker}/>
                 </div>}
             </div>
-            {traitView==TraitPage.TRAIT && !!isPickingColor && (<div 
+            {
+          traitView==TraitPage.TRAIT && !!isPickingColor && (<div 
             draggable = {false}
             className={styles["selectorColorPickerUI"]}>
             <ChromePicker 
@@ -371,7 +372,7 @@ function Appearance() {
                 </div>
               }
               {/* Null button section */}
-              {!characterManager.isTraitGroupRequired(selectedTraitGroup.trait) ? (
+                !characterManager.isTraitGroupRequired(selectedTraitGroup.trait) ? (
                   <div
                     key={"no-trait"}
                     className={`${styles["selectorButton"]}`}
@@ -386,9 +387,10 @@ function Appearance() {
                   </div>
                 ) : (
                   <></>
-                )}
+                )
+              }
               {/* All buttons section */}
-              {traits.map((trait, index) => {
+              traits.map((trait, index) => {
                 let active = (trait.id === selectedTrait?.id && trait.collectionID === selectedTrait?.collectionID)
                 return (
                   <div
