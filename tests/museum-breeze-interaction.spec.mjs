@@ -29,14 +29,33 @@ async function persistenceStatus(page, wanted, timeout = 50_000) {
   }).toBe(wanted);
 }
 
+async function enterBreezeCanonically(page) {
+  await page.waitForFunction(() => window.__IW?.ready && window.__IW?.runtime, null, { timeout: 35_000 });
+  await page.evaluate(async () => {
+    const runtime = window.__IW.runtime;
+    const path = [
+      ['space.lobby', 'portal.lobby-gallery-a'],
+      ['space.gallery-a', 'portal.gallery-a-gallery-b'],
+      ['space.gallery-b', 'portal.gallery-b-breeze']
+    ];
+    for (const [expectedSpace, portalId] of path) {
+      if (runtime.state.activeSpaceId !== expectedSpace) {
+        throw new Error(`Unexpected space before ${portalId}: ${runtime.state.activeSpaceId}`);
+      }
+      await runtime.traversePortal(portalId, { crossing: true, source: 'BREEZE_PERSISTENCE_QA_ENTRY' });
+    }
+  });
+  await expect.poll(async () => page.evaluate(() => window.__IW.runtime.state.activeSpaceId), { timeout: 30_000 }).toBe('space.breeze');
+}
+
 test('Breeze saves real customisation and restores after canonical room re-entry', async ({ page }) => {
-  test.setTimeout(150_000);
+  test.setTimeout(180_000);
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-  await page.waitForTimeout(4_000);
+  await page.waitForTimeout(2_000);
+  await enterBreezeCanonically(page);
 
   let { iframe, frame } = await getBreezeFrame(page);
 
-  // The specialised guest must own the centre interaction plane.
   const hit = await page.evaluate(() => {
     const iframe = document.querySelector('iframe[data-nested-room-studio="room.breeze"]');
     const body = document.querySelector('.st-body');
@@ -50,7 +69,6 @@ test('Breeze saves real customisation and restores after canonical room re-entry
   });
   expect(hit).toEqual({ owner: 'guest', bodyPointer: 'none', iframePointer: 'auto', hit: true });
 
-  // Real Breeze customisation.
   await frame.locator('#bsScene').selectOption('autumn');
   await expect(frame.locator('#bsScene')).toHaveValue('autumn');
   await frame.locator('#bsBrightness').evaluate((el) => { el.value = '1.35'; el.dispatchEvent(new Event('input', { bubbles: true })); });
@@ -58,8 +76,6 @@ test('Breeze saves real customisation and restores after canonical room re-entry
   await expect(frame.locator('#bsBrightness')).toHaveValue('1.35');
   await expect(frame.locator('#bsSaturation')).toHaveValue('0.65');
 
-  // Load and apply a real PNG background so re-entry proves binary File survival,
-  // not just scalar settings.
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9ZQmcAAAAASUVORK5CYII=', 'base64');
   const backgroundInput = frame.locator('#bsBackground');
   await backgroundInput.setInputFiles({ name: 'museum-breeze-proof.png', mimeType: 'image/png', buffer: png });
@@ -67,7 +83,6 @@ test('Breeze saves real customisation and restores after canonical room re-entry
   await backgroundSection.getByRole('button', { name: 'START' }).click();
   await expect.poll(async () => frame.evaluate(() => Boolean(window.__BREEZE_STUDIO_PRO__?.app?.appliedBackgroundFile)), { timeout: 20_000 }).toBe(true);
 
-  // Museum SAVE — use the actual Studio method behind GUARDAR PIEZA.
   await page.evaluate(async (entityId) => {
     const studio = window.__IW_STUDIO;
     if (!studio) throw new Error('Museum Studio not mounted');
@@ -94,15 +109,12 @@ test('Breeze saves real customisation and restores after canonical room re-entry
     backgroundName: 'museum-breeze-proof.png'
   });
 
-  // Canonical exit to Gallery B destroys the specialised guest.
   await page.locator('[data-breeze-museum-exit="true"]').click();
   await expect(iframe).toBeHidden({ timeout: 25_000 });
   await expect.poll(async () => page.evaluate(() => window.__IW?.runtime?.state?.activeSpaceId || null), { timeout: 25_000 }).toBe('space.gallery-b');
 
-  // Canonical Gallery B -> Breeze portal creates a fresh guest. The persistence
-  // adapter must automatically APPLY the saved snapshot when the child says READY.
   await page.evaluate(async () => {
-    await window.__IW.runtime.traversePortal('portal.gallery-b-breeze', { crossing: true, source: 'BREEZE_PERSISTENCE_QA' });
+    await window.__IW.runtime.traversePortal('portal.gallery-b-breeze', { crossing: true, source: 'BREEZE_PERSISTENCE_QA_REENTRY' });
   });
   ({ iframe, frame } = await getBreezeFrame(page));
   await persistenceStatus(page, 'RESTORED');
