@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Campaign Sequence Studio PRO</title>
+  <meta name="description" content="Pepsi Night preset converted into an editable Event Campaign Sequence Studio for Escaparates Pro." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./campaign.css" />
+  <link rel="stylesheet" href="./campaign-studio.css" />
+</head>
+<body>
+  <div id="app" class="campaign-app"></div>
+  <button id="studio-toggle" class="studio-toggle" type="button">Studio</button>
+  <aside id="studio" class="studio" aria-label="Event Campaign Sequence Studio">
+    <header class="studio-head">
+      <div>
+        <span class="studio-kicker">PREMIUM VISUAL MECHANICS</span>
+        <h2>Event Campaign Sequence</h2>
+      </div>
+      <button id="studio-close" type="button">×</button>
+    </header>
+    <nav class="studio-tabs" id="studio-tabs"></nav>
+    <section class="studio-body" id="studio-body"></section>
+  </aside>
+  <script src="./campaign-config.js"></script>
+  <script src="./campaign-store.js"></script>
+  <script src="./campaign-motion.js"></script>
+  <script src="./campaign-app.js"></script>
+</body>
+</html>
