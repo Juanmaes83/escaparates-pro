@@ -1,27 +1,16 @@
 /**
  * Breeze Studio PRO V4.1 — full-room nested guest.
  *
- * Phase 1 recovery gate: Museum owns WorldGraph/lifecycle, while the specialised
- * room runs the frozen Breeze Studio PRO V4.1 build. No Museum state bridge is
- * installed in this phase: the purpose is to prove that the donor's own controls
- * remain fully interactive when embedded in the Museum authoring workspace.
- *
- * IMPORTANT — INTERACTION OWNERSHIP
- * The generic Studio shell is a fixed z-index:40 overlay. Its root is pointer
- * transparent, but `.st-body` is made pointer-active by `#st > *`, so an empty,
- * transparent centre cell still sits above a nested guest and intercepts input.
- * Raising an iframe inside #iw-stage cannot escape that higher stacking context.
- *
- * While Breeze presents we therefore release the Studio body's centre input
- * plane and explicitly keep only the actual Museum furniture (rail/tree/editor/
- * validation) interactive. This is the same architectural rule used elsewhere:
- * one visible authoring surface owns input at a time, without synthetic clicks.
+ * Museum owns WorldGraph/lifecycle while the specialised room runs the frozen
+ * Breeze Studio PRO V4.1 build. Breeze owns centre-stage interaction only while
+ * it is active; Museum furniture remains available around it.
  */
 
 export const BREEZE_STUDIO_PRO_V41_URL =
   '/labs/website-modules-source/breeze-studio-pro/index.html';
 
 const STUDIO_INTERACTIVE_SELECTORS = ['.st-rail', '.st-tree', '.st-ed', '.st-val'];
+const MUSEUM_PASS_THROUGH_SELECTORS = ['.iw-prompt'];
 
 export class BreezeStudioProGuest {
   constructor() {
@@ -47,17 +36,25 @@ export class BreezeStudioProGuest {
         children: STUDIO_INTERACTIVE_SELECTORS.map((selector) => {
           const el = document.querySelector(selector);
           return { selector, el, pointerEvents: el?.style?.pointerEvents || '' };
-        })
+        }),
+        passThrough: MUSEUM_PASS_THROUGH_SELECTORS.flatMap((selector) =>
+          [...document.querySelectorAll(selector)].map((el) => ({ selector, el, pointerEvents: el.style.pointerEvents || '' }))
+        )
       };
     }
 
-    // The transparent workspace grid itself must not be a hit target over the
-    // Breeze iframe. Only the concrete Museum furniture remains interactive.
+    // The transparent Studio centre plane and transient Museum prompt must not
+    // steal pointer input from the specialised Breeze iframe. Only concrete
+    // Museum authoring furniture remains interactive while Breeze is active.
     body.style.pointerEvents = 'none';
     for (const selector of STUDIO_INTERACTIVE_SELECTORS) {
       const el = document.querySelector(selector);
       if (el) el.style.pointerEvents = 'auto';
     }
+    for (const selector of MUSEUM_PASS_THROUGH_SELECTORS) {
+      document.querySelectorAll(selector).forEach((el) => { el.style.pointerEvents = 'none'; });
+    }
+
     this._studioBody = body;
     document.body.dataset.breezeInputOwner = 'guest';
     return true;
@@ -68,6 +65,9 @@ export class BreezeStudioProGuest {
     if (snapshot) {
       snapshot.body.style.pointerEvents = snapshot.bodyPointerEvents;
       for (const item of snapshot.children) {
+        if (item.el) item.el.style.pointerEvents = item.pointerEvents;
+      }
+      for (const item of snapshot.passThrough || []) {
         if (item.el) item.el.style.pointerEvents = item.pointerEvents;
       }
     }
@@ -151,6 +151,7 @@ export class BreezeStudioProGuest {
 
   report() {
     const studioBody = document.querySelector('.st-body');
+    const prompt = document.querySelector('.iw-prompt');
     const iframeRect = this.iframe?.getBoundingClientRect?.();
     return {
       backend: 'webgpu-studio-pro-v4.1-original',
@@ -159,12 +160,13 @@ export class BreezeStudioProGuest {
       donorCommit: 'c86cd3e20d6f981c75f1e39d395c794ad104d802',
       donorUrl: BREEZE_STUDIO_PRO_V41_URL,
       bridge: false,
-      interactionMode: 'native-iframe-with-studio-center-pass-through',
+      interactionMode: 'native-iframe-with-museum-pass-through',
       pointerEvents: this.pointerEvents,
       focusEvents: this.focusEvents,
       iframeZIndex: this.iframe?.style?.zIndex || null,
       iframePointerEvents: this.iframe?.style?.pointerEvents || null,
       studioBodyPointerEvents: studioBody ? getComputedStyle(studioBody).pointerEvents : null,
+      museumPromptPointerEvents: prompt ? getComputedStyle(prompt).pointerEvents : null,
       inputOwner: document.body.dataset.breezeInputOwner || null,
       iframeRect: iframeRect ? {
         left: Math.round(iframeRect.left), top: Math.round(iframeRect.top),
