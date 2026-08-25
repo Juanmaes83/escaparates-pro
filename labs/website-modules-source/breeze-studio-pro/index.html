@@ -58,6 +58,46 @@
       color: #FFFFFF;
       visibility: hidden;
     }
+    #breezeStudioPanel.bs-museum-panel-hidden {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      transform: translateX(calc(100% + 24px)) !important;
+    }
+    #bsMuseumPanelHide,
+    #bsMuseumPanelShow {
+      box-sizing: border-box;
+      border: 1px solid rgba(197,172,112,.55);
+      background: rgba(15,14,12,.94);
+      color: #d9c895;
+      font: 700 9px/1 Inter,system-ui,sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      user-select: none;
+    }
+    #bsMuseumPanelHide {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      margin: 0;
+      padding: 10px 12px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    #bsMuseumPanelShow {
+      position: fixed;
+      top: 50%;
+      right: 8px;
+      z-index: 2147483646;
+      display: none;
+      padding: 12px 9px;
+      writing-mode: vertical-rl;
+      transform: translateY(-50%) rotate(180deg);
+      border-radius: 999px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.35);
+    }
+    body.bs-museum-panel-collapsed #bsMuseumPanelShow { display: block; }
   </style>
   <script defer src="https://s.holtsetio.com/script.js" data-website-id="cb36fa92-2381-4031-8f81-f430a473156d"></script>
   <script type="module" crossorigin src="./assets/index-NUwAD0i6.js"></script>
@@ -69,5 +109,71 @@
     <div id="progress-bar"><div id="progress"></div></div>
     <div id="error"></div>
   </div>
+</div>
+<script>
+(() => {
+  const KEY = 'iw:breeze:panelCollapsed';
+  const setCollapsed = (collapsed) => {
+    const panel = document.getElementById('breezeStudioPanel');
+    if (!panel) return false;
+    panel.classList.toggle('bs-museum-panel-hidden', collapsed);
+    document.body.classList.toggle('bs-museum-panel-collapsed', collapsed);
+    sessionStorage.setItem(KEY, collapsed ? '1' : '0');
+    const hide = document.getElementById('bsMuseumPanelHide');
+    if (hide) hide.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    return true;
+  };
+
+  const activate = (element, handler) => {
+    element.addEventListener('click', handler);
+    element.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handler();
+      }
+    });
+  };
+
+  const install = () => {
+    const panel = document.getElementById('breezeStudioPanel');
+    if (!panel) return false;
+
+    if (!document.getElementById('bsMuseumPanelHide')) {
+      const hide = document.createElement('div');
+      hide.id = 'bsMuseumPanelHide';
+      hide.setAttribute('role', 'button');
+      hide.setAttribute('tabindex', '0');
+      hide.setAttribute('aria-label', 'Ocultar panel Breeze Studio PRO');
+      hide.textContent = 'OCULTAR PANEL';
+      activate(hide, () => setCollapsed(true));
+      panel.prepend(hide);
+    }
+
+    if (!document.getElementById('bsMuseumPanelShow')) {
+      const show = document.createElement('div');
+      show.id = 'bsMuseumPanelShow';
+      show.setAttribute('role', 'button');
+      show.setAttribute('tabindex', '0');
+      show.setAttribute('aria-label', 'Mostrar panel Breeze Studio PRO');
+      show.textContent = 'MOSTRAR PANEL';
+      activate(show, () => setCollapsed(false));
+      document.body.appendChild(show);
+    }
+
+    setCollapsed(sessionStorage.getItem(KEY) === '1');
+    window.__BREEZE_MUSEUM_PANEL = {
+      hide: () => setCollapsed(true),
+      show: () => setCollapsed(false),
+      get collapsed() { return document.body.classList.contains('bs-museum-panel-collapsed'); }
+    };
+    return true;
+  };
+
+  const start = performance.now();
+  const timer = setInterval(() => {
+    if (install() || performance.now() - start > 60000) clearInterval(timer);
+  }, 100);
+})();
+</script>
 </body>
 </html>
