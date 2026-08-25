@@ -6,6 +6,7 @@ class ScrollPhysics {
     this.lerpedProgress = 0;
     this.noiseOffset = Math.random() * 1000;
     this.lastScrollY = window.scrollY;
+    this.afterHero = false;
 
     // Physical-scroll landmarks. Motion begins almost immediately,
     // assembles quickly, then leaves a long clean final lock for samurai2.
@@ -128,6 +129,7 @@ class ScrollPhysics {
     const rect = hero.getBoundingClientRect();
     this.scrollProgress = this.clamp(-rect.top / max, 0, 1);
     this.animProgress = this.clamp(this.scrollProgress / this.ANIMATION_END_RAW, 0, 1);
+    this.afterHero = rect.bottom <= 0;
   }
 
   recalculateResponsiveOffsets() {
@@ -159,7 +161,10 @@ class ScrollPhysics {
     const meter = document.getElementById('scroll-meter-bar');
     const frame = document.querySelector('.sticky-frame');
 
-    if (frame) frame.classList.toggle('is-final-hold', isFinalHold);
+    if (frame) {
+      frame.classList.toggle('is-final-hold', isFinalHold);
+      frame.classList.toggle('is-after-hero', this.afterHero);
+    }
     if (meter) meter.style.width = `${rawProgress * 100}%`;
 
     const titleP = this.clamp(p / 0.16, 0, 1);
