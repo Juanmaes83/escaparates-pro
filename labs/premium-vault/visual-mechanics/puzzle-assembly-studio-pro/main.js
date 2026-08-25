@@ -6,8 +6,8 @@ class ScrollPhysics {
     this.lerpedProgress = 0;
     this.noiseOffset = Math.random() * 1000;
     this.lastScrollY = window.scrollY;
-    this.ANIMATION_END_RAW = 0.50;
-    this.FINAL_LOCK_RAW = 0.50;
+    this.ANIMATION_END_RAW = 0.46;
+    this.FINAL_LOCK_RAW = 0.52;
     this.init();
   }
 
@@ -36,8 +36,6 @@ class ScrollPhysics {
         part.targetX = 0;
         part.targetY = -80;
         part.scale = 0.85;
-        part.startScroll = 0.15;
-        part.endScroll = 0.70;
       }
 
       if (el.id === 'part-body') {
@@ -47,8 +45,6 @@ class ScrollPhysics {
         part.targetX = 0;
         part.targetY = 330;
         part.scale = 1.25;
-        part.startScroll = 0.15;
-        part.endScroll = 0.70;
       }
 
       if (el.id === 'part-left-arm') {
@@ -58,8 +54,6 @@ class ScrollPhysics {
         part.targetX = 150;
         part.targetY = 280;
         part.scale = 0.85;
-        part.startScroll = 0.15;
-        part.endScroll = 0.70;
       }
 
       if (el.id === 'part-right-arm') {
@@ -69,8 +63,6 @@ class ScrollPhysics {
         part.targetX = -100;
         part.targetY = 360;
         part.scale = 0.85;
-        part.startScroll = 0.15;
-        part.endScroll = 0.70;
       }
 
       if (el.id === 'part-shoulders') {
@@ -80,8 +72,6 @@ class ScrollPhysics {
         part.targetX = 0;
         part.targetY = 80;
         part.scale = 0.95;
-        part.startScroll = 0.15;
-        part.endScroll = 0.70;
       }
 
       this.parts.push(part);
@@ -119,7 +109,7 @@ class ScrollPhysics {
     const raw = this.scrollProgress;
     const isFinalHold = raw >= this.FINAL_LOCK_RAW;
 
-    const lerp = isFinalHold ? 0.42 : 0.18;
+    const lerp = isFinalHold ? 0.50 : 0.22;
     this.lerpedProgress += (target - this.lerpedProgress) * lerp;
     if (isFinalHold) this.lerpedProgress = 1;
 
@@ -143,7 +133,7 @@ class ScrollPhysics {
     const titleP = this.clamp(p / 0.25, 0, 1);
     if (overlay) {
       overlay.style.opacity = String(1 - titleP);
-      overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 150}px))`;
+      overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 120}px))`;
     }
 
     const transStart = 0.85;
