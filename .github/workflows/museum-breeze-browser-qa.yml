@@ -1,0 +1,48 @@
+name: Museum Breeze Browser QA
+
+on:
+  push:
+    branches:
+      - chatgpt/museum-breeze-phase1-original-v41
+    paths:
+      - 'labs/immersive-worlds/**'
+      - 'labs/website-modules-source/breeze-studio-pro/**'
+      - 'tests/museum-breeze-interaction.spec.mjs'
+      - '.github/workflows/museum-breeze-browser-qa.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: museum-breeze-browser-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  breeze-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save @playwright/test@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Run Breeze browser interaction gate
+        env:
+          BREEZE_MUSEUM_URL: https://escaparates-cfegbk7jv-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json
+        run: npx playwright test tests/museum-breeze-interaction.spec.mjs --browser=chromium --reporter=line
+
+      - name: Upload Breeze browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: museum-breeze-browser-qa
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: warn
+          retention-days: 14
