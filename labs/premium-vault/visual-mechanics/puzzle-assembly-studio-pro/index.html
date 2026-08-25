@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puzzle Assembly Studio PRO — Samurai</title>
+  <title>Armor Reveal Scroll Studio PRO — Samurai</title>
   <link rel="stylesheet" href="./assembly.css" />
   <link rel="stylesheet" href="./assembly-studio.css" />
 </head>
 <body>
   <main class="assembly-page" id="assembly-page">
     <section class="assembly-hero" id="assembly-hero">
-      <div class="assembly-stage" id="assembly-stage" aria-label="Puzzle assembly preview">
+      <div class="assembly-stage" id="assembly-stage" aria-label="Armor Reveal Scroll preview">
         <div class="assembly-bg"></div>
         <div class="assembly-copy">
           <p class="eyebrow" data-bind="brand.eyebrow"></p>
@@ -18,27 +18,32 @@
           <p data-bind="brand.subtitle"></p>
         </div>
         <div class="assembly-figure" id="assembly-figure">
-          <img class="ghost-final" id="ghost-final" alt="Referencia final" />
-          <img class="base-image" id="base-image" alt="Base inicial" />
+          <img class="base-image" id="base-image" alt="Samurai base" />
           <div id="pieces-layer" class="pieces-layer"></div>
-          <img class="final-image" id="final-image" alt="Imagen final" />
+          <img class="final-image" id="final-image" alt="Samurai final reveal" />
         </div>
         <div class="assembly-progress"><span id="assembly-progress-bar"></span></div>
       </div>
     </section>
 
-    <section class="assembly-content">
-      <p class="eyebrow">PUZZLE ASSEMBLY</p>
+    <section class="assembly-content" id="about">
+      <p class="eyebrow">ARMOR REVEAL</p>
       <h2 data-bind="content.heading"></h2>
       <p data-bind="content.body"></p>
       <a class="assembly-cta" id="assembly-cta" href="#" data-bind="content.cta"></a>
     </section>
+
+    <section class="armor-cards" id="armor-cards">
+      <p class="eyebrow">ARMOUR SYSTEM</p>
+      <h2>La armadura del sabor</h2>
+      <div class="armor-grid" id="armor-grid"></div>
+    </section>
   </main>
 
-  <aside class="studio-panel" id="studio-panel" aria-label="Puzzle Assembly Studio">
+  <aside class="studio-panel" id="studio-panel" aria-label="Armor Reveal Studio">
     <header class="studio-header">
       <div>
-        <p class="studio-kicker">SAMURAI / PUZZLE ASSEMBLY</p>
+        <p class="studio-kicker">SAMURAI / ARMOR REVEAL</p>
         <h2>Studio PRO</h2>
       </div>
       <button id="toggle-studio" class="ghost-btn">Cerrar</button>
