@@ -9,6 +9,12 @@ on:
       - 'labs/website-modules-source/breeze-studio-pro/**'
       - 'tests/museum-breeze-interaction.spec.mjs'
       - '.github/workflows/museum-breeze-browser-qa.yml'
+  pull_request:
+    paths:
+      - 'labs/immersive-worlds/**'
+      - 'labs/website-modules-source/breeze-studio-pro/**'
+      - 'tests/museum-breeze-interaction.spec.mjs'
+      - '.github/workflows/museum-breeze-browser-qa.yml'
   workflow_dispatch:
 
 concurrency:
