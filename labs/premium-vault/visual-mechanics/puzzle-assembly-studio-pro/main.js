@@ -6,7 +6,8 @@ class ScrollPhysics {
     this.lerpedProgress = 0;
     this.noiseOffset = Math.random() * 1000;
     this.lastScrollY = window.scrollY;
-    this.ANIMATION_END_RAW = 0.62;
+    this.ANIMATION_END_RAW = 0.50;
+    this.FINAL_LOCK_RAW = 0.50;
     this.init();
   }
 
@@ -116,13 +117,11 @@ class ScrollPhysics {
   update() {
     const target = this.animProgress;
     const raw = this.scrollProgress;
-    const isFinalHold = raw >= this.ANIMATION_END_RAW;
+    const isFinalHold = raw >= this.FINAL_LOCK_RAW;
 
-    // Faster tracking in the final phase so the reveal cannot arrive late
-    // while the sticky hero is already leaving the viewport.
-    const lerp = isFinalHold ? 0.32 : 0.16;
+    const lerp = isFinalHold ? 0.42 : 0.18;
     this.lerpedProgress += (target - this.lerpedProgress) * lerp;
-    if (isFinalHold) this.lerpedProgress = Math.max(this.lerpedProgress, 0.985);
+    if (isFinalHold) this.lerpedProgress = 1;
 
     this.animateScene(raw, isFinalHold);
     this.handleSectionAnimations();
@@ -144,13 +143,9 @@ class ScrollPhysics {
     const titleP = this.clamp(p / 0.25, 0, 1);
     if (overlay) {
       overlay.style.opacity = String(1 - titleP);
-      overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 180}px))`;
+      overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 150}px))`;
     }
 
-    // Prompt-faithful internal timeline:
-    // 85%–100% of the visual animation crossfades to samurai2.
-    // The full visual animation is completed by 62% of physical scroll,
-    // leaving the remaining scroll as a real final hold.
     const transStart = 0.85;
     const transEnd = 1.0;
     const transP = this.clamp((p - transStart) / (transEnd - transStart), 0, 1);
