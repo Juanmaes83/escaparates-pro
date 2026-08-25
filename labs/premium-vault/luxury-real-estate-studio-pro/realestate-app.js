@@ -12,7 +12,7 @@
   function qsa(sel,root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
   function getPath(obj,path){ return path.split('.').reduce(function(acc,key){ return acc && acc[key]; }, obj); }
   function setPath(obj,path,value){ var parts=path.split('.'), cur=obj; parts.slice(0,-1).forEach(function(k){ cur[k]=cur[k]||{}; cur=cur[k]; }); cur[parts[parts.length-1]]=value; }
-  function esc(value){ return String(value==null?'':value').replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function esc(value){ return String(value==null?'':value).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function attr(value){ return esc(value).replace(/`/g,'&#96;'); }
   function isVideo(url,type){ return type==='video' || /\.(mp4|webm|mov)(\?|$)/i.test(url||''); }
   function mediaUrl(slot, fallback){ var rec=mediaRecords[slot]; if(rec && rec.file) return URL.createObjectURL(rec.file); return fallback || ''; }
