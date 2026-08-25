@@ -3,60 +3,71 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Armor Reveal Scroll Studio PRO — Samurai</title>
-  <link rel="stylesheet" href="./assembly.css" />
-  <link rel="stylesheet" href="./assembly-studio.css" />
+  <title>Samurai Scrollytelling — Prompt Faithful</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <main class="assembly-page" id="assembly-page">
-    <section class="assembly-hero" id="assembly-hero">
-      <div class="assembly-stage" id="assembly-stage" aria-label="Armor Reveal Scroll preview">
-        <div class="assembly-bg"></div>
-        <div class="assembly-copy">
-          <p class="eyebrow" data-bind="brand.eyebrow"></p>
-          <h1 data-bind="brand.title"></h1>
-          <p data-bind="brand.subtitle"></p>
+  <nav class="navbar" id="navbar" aria-label="Samurai navigation">
+    <a href="#hero">Bushido</a>
+    <a href="#about">Legend</a>
+    <a href="#armor">Armor</a>
+  </nav>
+
+  <main>
+    <section class="hero-scroll" id="hero" aria-label="Samurai armor reveal">
+      <div class="sticky-frame">
+        <div class="samurai-container" id="samurai-container">
+          <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/samurai1.png" alt="Samurai base" class="samurai-base" id="samurai1" />
+          <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/samurai2.png" alt="Powered samurai" class="samurai-upgraded" id="samurai2" />
+
+          <div class="armor-layer" id="armor-parts" aria-hidden="true">
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/helmet.png" class="armor-part" id="part-helmet" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/body.png" class="armor-part" id="part-body" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/left_arm2.png" class="armor-part" id="part-left-arm" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/right_arm.png" class="armor-part" id="part-right-arm" alt="" />
+            <img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/shoulders.png" class="armor-part" id="part-shoulders" alt="" />
+          </div>
         </div>
-        <div class="assembly-figure" id="assembly-figure">
-          <img class="base-image" id="base-image" alt="Samurai base" />
-          <div id="pieces-layer" class="pieces-layer"></div>
-          <img class="final-image" id="final-image" alt="Samurai final reveal" />
+
+        <div class="hero-overlay" id="hero-overlay">
+          <div class="text-mask"><h1 class="hero-title">BUSHIDO</h1></div>
+          <div class="text-mask"><p class="hero-subtitle">The Way of the Warrior</p></div>
         </div>
-        <div class="assembly-progress"><span id="assembly-progress-bar"></span></div>
+
+        <div class="scroll-meter" aria-hidden="true"><span id="scroll-meter-bar"></span></div>
       </div>
     </section>
 
-    <section class="assembly-content" id="about">
-      <p class="eyebrow">ARMOR REVEAL</p>
-      <h2 data-bind="content.heading"></h2>
-      <p data-bind="content.body"></p>
-      <a class="assembly-cta" id="assembly-cta" href="#" data-bind="content.cta"></a>
+    <section class="about-section" id="about">
+      <div class="about-container">
+        <div class="reveal-mask"><h2 class="section-title">The Legend of the Unifier</h2></div>
+        <div class="reveal-mask"><p class="section-text">Beyond the edge of the blade lies the spirit of the warrior. In the heart of the Sengoku Jidai, honor was forged in blood and fire. To unify a nation, one must transcend the path of the sword and embrace the unyielding strength of an armored soul.</p></div>
+      </div>
     </section>
 
-    <section class="armor-cards" id="armor-cards">
-      <p class="eyebrow">ARMOUR SYSTEM</p>
-      <h2>La armadura del sabor</h2>
-      <div class="armor-grid" id="armor-grid"></div>
+    <section class="armor-section" id="armor">
+      <h2 class="section-title main-title">The Warrior's Armor</h2>
+      <div class="armor-grid">
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/helmet.png" alt="Kabuto" class="card-img" /></div>
+          <div class="card-content"><h3>Kabuto</h3><span class="card-tag">Protection & Honor</span><p>The helmet was more than defense; it was a statement of lineage and fear. Forged from iron plates and decorated with elaborate crests, the Kabuto protected the mind that guided the blade.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/body.png" alt="Dō" class="card-img" /></div>
+          <div class="card-content"><h3>Dō</h3><span class="card-tag">The Iron Core</span><p>The cuirass formed the immovable heart of the samurai's defense. Whether of solid plate or scale, it deflected spears and arrows, shielding the warrior's life-force.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/left_arm.png" alt="Kote" class="card-img" /></div>
+          <div class="card-content"><h3>Kote</h3><span class="card-tag">Precision Shield</span><p>The armored sleeves provided flexibility and strength. Silk, mail, and iron plates protected the arms without hindering the swift movement of the katana.</p></div>
+        </article>
+        <article class="armor-card">
+          <div class="card-image-wrap"><img src="https://raw.githubusercontent.com/Juanmaes83/SAMURAI-KATANA-ALICANTE./main/public/shoulders.png" alt="Sode" class="card-img" /></div>
+          <div class="card-content"><h3>Sode</h3><span class="card-tag">The Mantle of Steel</span><p>Broad shoulder plates acted as mobile shields. They guarded against descending strikes while sliding with the warrior through the flow of combat.</p></div>
+        </article>
+      </div>
     </section>
   </main>
 
-  <aside class="studio-panel" id="studio-panel" aria-label="Armor Reveal Studio">
-    <header class="studio-header">
-      <div>
-        <p class="studio-kicker">SAMURAI / ARMOR REVEAL</p>
-        <h2>Studio PRO</h2>
-      </div>
-      <button id="toggle-studio" class="ghost-btn">Cerrar</button>
-    </header>
-    <nav class="studio-tabs" id="studio-tabs"></nav>
-    <section class="studio-body" id="studio-body"></section>
-  </aside>
-
-  <button class="open-studio" id="open-studio">Abrir Studio</button>
-
-  <script src="./assembly-config.js"></script>
-  <script src="./assembly-store.js"></script>
-  <script src="./assembly-motion.js"></script>
-  <script src="./assembly-app.js"></script>
+  <script src="./main.js"></script>
 </body>
 </html>
