@@ -29,27 +29,29 @@ async function persistenceStatus(page, wanted, timeout = 50_000) {
   }).toBe(wanted);
 }
 
+async function traverseAndWait(page, portalId, destination) {
+  const before = await page.evaluate(() => window.__IW.runtime.state.activeSpaceId);
+  await page.evaluate(async ({ portalId }) => {
+    await window.__IW.runtime.traversePortal(portalId, {
+      crossing: true,
+      source: 'BREEZE_PERSISTENCE_QA'
+    });
+  }, { portalId });
+  await expect.poll(async () => page.evaluate(() => window.__IW.runtime.state.activeSpaceId), {
+    timeout: 25_000,
+    message: `${portalId} must move Museum from ${before} to ${destination}`
+  }).toBe(destination);
+}
+
 async function enterBreezeCanonically(page) {
   await page.waitForFunction(() => window.__IW?.ready && window.__IW?.runtime, null, { timeout: 35_000 });
-  await page.evaluate(async () => {
-    const runtime = window.__IW.runtime;
-    const path = [
-      ['space.lobby', 'portal.lobby-gallery-a'],
-      ['space.gallery-a', 'portal.gallery-a-gallery-b'],
-      ['space.gallery-b', 'portal.gallery-b-breeze']
-    ];
-    for (const [expectedSpace, portalId] of path) {
-      if (runtime.state.activeSpaceId !== expectedSpace) {
-        throw new Error(`Unexpected space before ${portalId}: ${runtime.state.activeSpaceId}`);
-      }
-      await runtime.traversePortal(portalId, { crossing: true, source: 'BREEZE_PERSISTENCE_QA_ENTRY' });
-    }
-  });
-  await expect.poll(async () => page.evaluate(() => window.__IW.runtime.state.activeSpaceId), { timeout: 30_000 }).toBe('space.breeze');
+  await traverseAndWait(page, 'portal.lobby-gallery-a', 'space.gallery-a');
+  await traverseAndWait(page, 'portal.gallery-a-gallery-b', 'space.gallery-b');
+  await traverseAndWait(page, 'portal.gallery-b-breeze', 'space.breeze');
 }
 
 test('Breeze saves real customisation and restores after canonical room re-entry', async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(210_000);
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForTimeout(2_000);
   await enterBreezeCanonically(page);
@@ -113,9 +115,7 @@ test('Breeze saves real customisation and restores after canonical room re-entry
   await expect(iframe).toBeHidden({ timeout: 25_000 });
   await expect.poll(async () => page.evaluate(() => window.__IW?.runtime?.state?.activeSpaceId || null), { timeout: 25_000 }).toBe('space.gallery-b');
 
-  await page.evaluate(async () => {
-    await window.__IW.runtime.traversePortal('portal.gallery-b-breeze', { crossing: true, source: 'BREEZE_PERSISTENCE_QA_REENTRY' });
-  });
+  await traverseAndWait(page, 'portal.gallery-b-breeze', 'space.breeze');
   ({ iframe, frame } = await getBreezeFrame(page));
   await persistenceStatus(page, 'RESTORED');
 
