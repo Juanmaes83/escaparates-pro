@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cinematic Frame Sequence Studio PRO</title>
+  <meta name="description" content="Big Kahuna / McDonalds source converted into an editable cinematic frame sequence Studio for Escaparates Pro." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./frame.css" />
+  <link rel="stylesheet" href="./frame-studio.css" />
+</head>
+<body>
+  <div id="app" class="frame-app"></div>
+  <button id="studio-toggle" class="studio-toggle" type="button">Studio</button>
+  <aside id="studio" class="studio" aria-label="Cinematic Frame Sequence Studio">
+    <header class="studio-head">
+      <div>
+        <span class="studio-kicker">PREMIUM VISUAL MECHANICS</span>
+        <h2>Cinematic Frame Sequence</h2>
+      </div>
+      <button id="studio-close" type="button" aria-label="Cerrar panel">×</button>
+    </header>
+    <nav class="studio-tabs" id="studio-tabs"></nav>
+    <section class="studio-body" id="studio-body"></section>
+  </aside>
+  <script src="./frame-config.js"></script>
+  <script src="./frame-store.js"></script>
+  <script src="./frame-motion.js"></script>
+  <script src="./frame-app.js"></script>
+</body>
+</html>
