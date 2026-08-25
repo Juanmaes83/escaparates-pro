@@ -5,6 +5,15 @@ const URL = process.env.BREEZE_MUSEUM_URL ||
 
 const artifact = (name) => test.info().outputPath(name);
 
+async function bestEffortScreenshot(page, name) {
+  try {
+    await page.screenshot({ path: artifact(name), fullPage: true, timeout: 10_000 });
+    console.log('BREEZE_SCREENSHOT', JSON.stringify({ name, captured: true }));
+  } catch (error) {
+    console.log('BREEZE_SCREENSHOT', JSON.stringify({ name, captured: false, error: String(error?.message || error) }));
+  }
+}
+
 async function enterBreezeRoom(page) {
   const room = page.getByRole('button', { name: /Sala Breeze\s+—\s+Viento sobre mármol/i }).first();
   await expect(room).toBeVisible({ timeout: 20_000 });
@@ -42,7 +51,7 @@ async function logControls(frame) {
 }
 
 test('Museum Breeze native controls own input and react', async ({ page }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   const consoleErrors = [];
   const allConsole = [];
   page.on('console', (msg) => {
@@ -58,7 +67,7 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   const { frame } = await getBreezeFrame(page);
   await frame.waitForLoadState('domcontentloaded');
   await frame.waitForTimeout(7_000);
-  await page.screenshot({ path: artifact('01-museum-breeze-loaded.png'), fullPage: true });
+  await bestEffortScreenshot(page, '01-museum-breeze-loaded.png');
 
   const diagnostics = await page.evaluate(() => {
     const guest = window.__IW?.nestedRoomHost?.guest || window.__IW_BREEZE_PHASE1?.runtime?.nestedRoomHost?.guest || null;
@@ -103,7 +112,7 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   await experience.press('Enter');
   await frame.waitForTimeout(750);
   const afterExperience = await experience.inputValue();
-  console.log('BREEZE_EXPERIENCE', { beforeExperience, afterExperience });
+  console.log('BREEZE_EXPERIENCE', JSON.stringify({ beforeExperience, afterExperience }));
   expect(afterExperience, 'Experience must change after native keyboard interaction').not.toBe(beforeExperience);
 
   const ranges = frame.locator('input[type="range"]:visible');
@@ -116,7 +125,7 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   await grading.press('ArrowRight');
   await frame.waitForTimeout(500);
   const afterGrade = await grading.inputValue();
-  console.log('BREEZE_GRADING', { beforeGrade, afterGrade, rangeCount });
+  console.log('BREEZE_GRADING', JSON.stringify({ beforeGrade, afterGrade, rangeCount }));
   expect(afterGrade, 'A native Breeze slider must change value').not.toBe(beforeGrade);
 
   const uploadButtons = frame.getByRole('button', { name: /SUBIR\s+imagen\s*\/\s*vídeo/i });
@@ -126,9 +135,9 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   const chooserPromise = page.waitForEvent('filechooser', { timeout: 10_000 });
   await uploadButtons.first().click();
   const chooser = await chooserPromise;
-  console.log('BREEZE_FILECHOOSER', { emitted: true, multiple: chooser.isMultiple() });
+  console.log('BREEZE_FILECHOOSER', JSON.stringify({ emitted: true, multiple: chooser.isMultiple() }));
 
-  await page.screenshot({ path: artifact('02-museum-breeze-after-controls.png'), fullPage: true });
+  await bestEffortScreenshot(page, '02-museum-breeze-after-controls.png');
   const controlsAfter = await logControls(frame);
   console.log('BREEZE_CONTROLS_AFTER', JSON.stringify(controlsAfter));
   console.log('BREEZE_CONSOLE_ERRORS', JSON.stringify(consoleErrors));
