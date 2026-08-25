@@ -2,17 +2,17 @@ window.AssemblyConfig = {
   meta: {
     id: 'puzzle-assembly-studio-pro',
     name: 'Puzzle Assembly Studio PRO',
-    source: 'Juanmaes83/samurai-katana-alicante-landing',
+    source: 'Juanmaes83/samurai-katana-alicante-landing + SAMURAI-KATANA-ALICANTE.',
     status: 'REVIEW'
   },
   brand: {
     eyebrow: 'Puzzle Assembly Studio PRO',
     title: 'SAMURAI KATANA',
-    subtitle: 'Calibración visual de piezas hasta un encaje limpio.'
+    subtitle: 'Primero el orden perfecto. Después se diseña el desorden.'
   },
   content: {
-    heading: 'El puzzle sólo se aprueba cuando encaja.',
-    body: 'Esta versión no oculta el fallo con una imagen final. Primero separa las piezas, después las calibra contra una guía sutil y sólo revela el samurái final cuando el ensamblaje ya está limpio.',
+    heading: 'Primero ensamblar perfecto. Luego dispersar. Luego invertir.',
+    body: 'Esta fase no empieza por la animación. Empieza por el Estado B: las piezas reales deben encajar sobre samurai2.png. Sólo cuando el final sea limpio se diseñará el Estado A y la transición de desorden a orden.',
     cta: 'Reservar ritual',
     ctaUrl: 'tel:629554870'
   },
@@ -22,20 +22,22 @@ window.AssemblyConfig = {
     finalImage: 'samurai2.png'
   },
   motion: {
-    scrollMode: true,
-    manualProgress: 18,
-    ghostOpacity: 0.075,
-    baseGuideOpacity: 0.045,
+    mode: 'calibrate-final',
+    scrollMode: false,
+    manualProgress: 100,
+    ghostOpacity: 0.12,
+    finalReferenceOpacity: 0.32,
+    baseGuideOpacity: 0,
     finalRevealStart: 94,
-    snapStrength: 0.9,
-    stopMotion: 0.04,
+    snapStrength: 0.92,
+    stopMotion: 0.02,
     holdFinal: true
   },
   pieces: [
-    { id: 'body', name: 'Body / Dō', file: 'body.png', z: 14, start: 8, end: 58, fromX: 0, fromY: 760, fromRot: 4, x: 0, y: 326, scale: 1.24, rotation: 0 },
-    { id: 'shoulders', name: 'Shoulders / Sode', file: 'shoulders.png', z: 22, start: 18, end: 66, fromX: 0, fromY: -650, fromRot: -9, x: 0, y: 82, scale: 0.96, rotation: 0 },
-    { id: 'helmet', name: 'Helmet / Kabuto', file: 'helmet.png', z: 18, start: 28, end: 74, fromX: 0, fromY: -820, fromRot: -13, x: 0, y: -82, scale: 0.86, rotation: 0 },
-    { id: 'right-arm', name: 'Right arm', file: 'right_arm.png', z: 16, start: 38, end: 82, fromX: -640, fromY: 240, fromRot: -11, x: -100, y: 358, scale: 0.86, rotation: 0 },
-    { id: 'left-arm', name: 'Left arm', file: 'left_arm2.png', z: 17, start: 38, end: 82, fromX: 640, fromY: 210, fromRot: 11, x: 150, y: 280, scale: 0.86, rotation: 0 }
+    { id: 'body', name: 'Body / Dō', file: 'body.png', z: 14, start: 8, end: 58, fromX: 0, fromY: 760, fromRot: 4, fromScale: 1, x: 0, y: 0, scale: 1, rotation: 0 },
+    { id: 'shoulders', name: 'Shoulders / Sode', file: 'shoulders.png', z: 22, start: 18, end: 66, fromX: 0, fromY: -650, fromRot: -9, fromScale: 1, x: 0, y: 0, scale: 1, rotation: 0 },
+    { id: 'helmet', name: 'Helmet / Kabuto', file: 'helmet.png', z: 18, start: 28, end: 74, fromX: 0, fromY: -820, fromRot: -13, fromScale: 1, x: 0, y: 0, scale: 1, rotation: 0 },
+    { id: 'right-arm', name: 'Right arm', file: 'right_arm.png', z: 16, start: 38, end: 82, fromX: -640, fromY: 240, fromRot: -11, fromScale: 1, x: 0, y: 0, scale: 1, rotation: 0 },
+    { id: 'left-arm', name: 'Left arm', file: 'left_arm2.png', z: 17, start: 38, end: 82, fromX: 640, fromY: 210, fromRot: 11, fromScale: 1, x: 0, y: 0, scale: 1, rotation: 0 }
   ]
 };
