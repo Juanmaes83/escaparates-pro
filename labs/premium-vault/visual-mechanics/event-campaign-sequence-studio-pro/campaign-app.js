@@ -13,6 +13,20 @@
     EventCampaignStore.save(state);
     render();
   }
+  function sequenceHelp(){
+    return '<div class="studio-help">'
+      + '<span class="studio-help-kicker">GUÍA RÁPIDA</span>'
+      + '<h3>Convierte una secuencia de imágenes en una campaña controlada por scroll</h3>'
+      + '<p>Este módulo necesita una secuencia ordenada de frames. El usuario no tiene que entender código: sólo debe preparar imágenes numeradas o indicar una URL base donde ya estén alojadas.</p>'
+      + '<div class="help-grid">'
+      + '<section><h4>Qué necesitas preparar</h4><ul><li>Frames numerados en orden.</li><li>Mismo tamaño para todas las imágenes.</li><li>Un poster o frame inicial fuerte.</li><li>Opcional: vídeo fallback para móvil o carga rápida.</li></ul></section>'
+      + '<section><h4>Cómo nombrarlo</h4><pre>mi-campaña/\n  frame_001.jpg\n  frame_002.jpg\n  frame_003.jpg\n  ...\n  frame_180.jpg</pre></section>'
+      + '</div>'
+      + '<div class="help-checklist"><strong>Checklist antes de probar</strong><label><input type="checkbox"> He preparado mis frames</label><label><input type="checkbox"> He confirmado el patrón de nombre</label><label><input type="checkbox"> He indicado el número total de frames</label><label><input type="checkbox"> He añadido poster o vídeo fallback</label><label><input type="checkbox"> He probado el scroll completo</label></div>'
+      + '<p class="help-warning"><strong>Errores comunes:</strong> nombres no consecutivos, mezcla de tamaños, frame count incorrecto o una URL base que no coincide con el patrón.</p>'
+      + '<p class="help-tip"><strong>Consejo:</strong> empieza con 120–240 frames optimizados. Si pesa demasiado, reduce frames en móvil o usa vídeo fallback.</p>'
+      + '</div>';
+  }
   function render(){
     document.documentElement.style.setProperty('--campaign-primary', state.brand.primary);
     document.documentElement.style.setProperty('--campaign-secondary', state.brand.secondary);
@@ -54,7 +68,7 @@
     tabsEl.innerHTML = tabs.map(function(t){return '<button class="'+(activeTab===t[0]?'active':'')+'" data-tab="'+t[0]+'">'+t[1]+'</button>';}).join('');
     var html = '';
     if(activeTab==='brand') html = field('Nombre marca','brand.name',state.brand.name)+field('Eyebrow','brand.eyebrow',state.brand.eyebrow)+area('Headline','brand.headline',state.brand.headline)+area('Subheadline','brand.subheadline',state.brand.subheadline)+field('Color primario','brand.primary',state.brand.primary,'color')+field('Color fondo','brand.secondary',state.brand.secondary,'color')+field('Color acento','brand.accent',state.brand.accent,'color');
-    if(activeTab==='sequence') html = field('Base URL frames','sequence.baseUrl',state.sequence.baseUrl)+field('Patrón','sequence.pattern',state.sequence.pattern)+field('Frame count','sequence.frameCount',state.sequence.frameCount,'number')+field('Preload count','sequence.preloadCount',state.sequence.preloadCount,'number')+field('Frame poster','sequence.posterFrame',state.sequence.posterFrame,'number')+field('Video fallback','sequence.videoFallback',state.sequence.videoFallback)+'<p class="hint">Preset Pepsi usa WEBPEPSI/public/pepsi_animations sin copiar frames al repo.</p>';
+    if(activeTab==='sequence') html = sequenceHelp()+field('Base URL frames','sequence.baseUrl',state.sequence.baseUrl)+field('Patrón','sequence.pattern',state.sequence.pattern)+field('Frame count','sequence.frameCount',state.sequence.frameCount,'number')+field('Preload count','sequence.preloadCount',state.sequence.preloadCount,'number')+field('Frame poster','sequence.posterFrame',state.sequence.posterFrame,'number')+field('Video fallback','sequence.videoFallback',state.sequence.videoFallback)+'<p class="hint">Preset Pepsi usa WEBPEPSI/public/pepsi_animations sin copiar frames al repo. Para otra campaña, cambia la URL base, el patrón y el frame count.</p>';
     if(activeTab==='event') html = field('Título evento','event.title',state.event.title)+field('Fecha','event.date',state.event.date)+field('Lugar','event.location',state.event.location)+field('CTA label','event.ctaLabel',state.event.ctaLabel)+field('CTA URL','event.ctaUrl',state.event.ctaUrl);
     if(activeTab==='moments') html = state.moments.map(function(m,i){return '<div class="moment-editor"><h3>Momento '+(i+1)+'</h3>'+field('Label','moments.'+i+'.label',m.label)+field('Progreso 0-1','moments.'+i+'.at',m.at,'number')+field('Título','moments.'+i+'.title',m.title)+area('Texto','moments.'+i+'.text',m.text)+'</div>';}).join('')+'<button class="secondary" id="add-moment">Añadir momento</button>';
     if(activeTab==='motion') html = field('Longitud scroll vh','sequence.scrollLength',state.sequence.scrollLength,'number')+field('Mobile frame step','sequence.mobileFrameStep',state.sequence.mobileFrameStep,'number')+'<p class="hint">Controla cuánto dura la película al hacer scroll y cuántos frames se saltan en móvil.</p>';
