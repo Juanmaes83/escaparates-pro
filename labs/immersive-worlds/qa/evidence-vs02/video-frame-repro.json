@@ -1,0 +1,79 @@
+{
+ "generatedAt": "2026-08-14T06:32:08.456Z",
+ "results": [
+  {
+   "case": "top",
+   "label": "documento normal (referencia)",
+   "sandbox": null,
+   "allow": null,
+   "origin": "http://127.0.0.1:4712",
+   "vaultOnBlankType": {
+    "state": "ERROR",
+    "error": "Ese archivo no es un vídeo MP4 o WebM. Elige otro y vuelve a intentarlo."
+   },
+   "opaqueOrigin": false,
+   "plainVideo": {
+    "loaded": "loadeddata",
+    "play": "resolved",
+    "advanced": 2.131
+   },
+   "blobWithCrossOrigin": {
+    "loaded": "loadeddata",
+    "play": "resolved"
+   },
+   "errors": []
+  },
+  {
+   "case": "frame-allow",
+   "label": "iframe con allow=\"autoplay\"",
+   "sandbox": "allow-scripts allow-same-origin",
+   "allow": "autoplay",
+   "origin": "http://127.0.0.1:4712",
+   "vaultOnBlankType": {
+    "state": "ERROR",
+    "error": "Ese archivo no es un vídeo MP4 o WebM. Elige otro y vuelve a intentarlo."
+   },
+   "opaqueOrigin": false,
+   "plainVideo": {
+    "loaded": "loadeddata",
+    "play": "resolved",
+    "advanced": 2.113
+   },
+   "blobWithCrossOrigin": {
+    "loaded": "loadeddata",
+    "play": "resolved"
+   },
+   "errors": []
+  },
+  {
+   "case": "frame-noallow",
+   "label": "iframe SIN allow=\"autoplay\"",
+   "sandbox": "allow-scripts allow-same-origin",
+   "allow": "",
+   "origin": "http://127.0.0.1:4712",
+   "vaultOnBlankType": {
+    "state": "ERROR",
+    "error": "Ese archivo no es un vídeo MP4 o WebM. Elige otro y vuelve a intentarlo."
+   },
+   "opaqueOrigin": false,
+   "plainVideo": {
+    "loaded": "loadeddata",
+    "play": "resolved",
+    "advanced": 2.119
+   },
+   "blobWithCrossOrigin": {
+    "loaded": "loadeddata",
+    "play": "resolved"
+   },
+   "errors": []
+  },
+  {
+   "case": "frame-opaque",
+   "label": "iframe sin allow-same-origin (origen opaco)",
+   "sandbox": "allow-scripts",
+   "allow": "autoplay",
+   "failed": "frame.waitForFunction: Timeout 300000ms exceeded.",
+   "errors": []
+  }
+ ]
+}

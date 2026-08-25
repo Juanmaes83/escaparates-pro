@@ -1,0 +1,396 @@
+{
+ "manifest": [
+  {
+   "order": 1,
+   "id": "step.01-entrada",
+   "title": "Bienvenida",
+   "space": "space.lobby",
+   "beats": [
+    "step.01-entrada"
+   ],
+   "prev": null,
+   "next": "step.02-paso-galeria-a"
+  },
+  {
+   "order": 2,
+   "id": "step.02-paso-galeria-a",
+   "title": "Horizonte interrumpido",
+   "space": "space.gallery-a",
+   "beats": [
+    "step.02-paso-galeria-a",
+    "step.03-lleva-horizonte",
+    "step.04-horizonte",
+    "step.04b-horizonte-cesion"
+   ],
+   "prev": "step.01-entrada",
+   "next": "step.05-lleva-division"
+  },
+  {
+   "order": 3,
+   "id": "step.05-lleva-division",
+   "title": "División tercera",
+   "space": "space.gallery-a",
+   "beats": [
+    "step.05-lleva-division",
+    "step.06-division",
+    "step.06b-division-cesion"
+   ],
+   "prev": "step.02-paso-galeria-a",
+   "next": "step.07-lleva-umbral"
+  },
+  {
+   "order": 4,
+   "id": "step.07-lleva-umbral",
+   "title": "La cámara oscura",
+   "space": "space.gallery-a",
+   "beats": [
+    "step.07-lleva-umbral",
+    "step.08-paso-galeria-b"
+   ],
+   "prev": "step.05-lleva-division",
+   "next": "step.09-lleva-noche"
+  },
+  {
+   "order": 5,
+   "id": "step.09-lleva-noche",
+   "title": "Noche de invierno",
+   "space": "space.gallery-b",
+   "beats": [
+    "step.09-lleva-noche",
+    "step.10-noche",
+    "step.10b-noche-cesion"
+   ],
+   "prev": "step.07-lleva-umbral",
+   "next": "step.10c-lleva-cuaderno"
+  },
+  {
+   "order": 6,
+   "id": "step.10c-lleva-cuaderno",
+   "title": "Cuaderno de luz",
+   "space": "space.gallery-b",
+   "beats": [
+    "step.10c-lleva-cuaderno",
+    "step.10d-cuaderno",
+    "step.10e-cuaderno-permanencia"
+   ],
+   "prev": "step.09-lleva-noche",
+   "next": "step.11-cierre"
+  },
+  {
+   "order": 7,
+   "id": "step.11-cierre",
+   "title": "Cierre",
+   "space": "space.gallery-b",
+   "beats": [
+    "step.11-cierre"
+   ],
+   "prev": "step.10c-lleva-cuaderno",
+   "next": null
+  }
+ ],
+ "automatic": {
+  "expected": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "observed": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "beats": [
+   {
+    "beat": 1,
+    "beatId": "step.01-entrada",
+    "order": 1,
+    "stepId": "step.01-entrada",
+    "authority": "DIRECTED",
+    "space": "space.lobby"
+   },
+   {
+    "beat": 2,
+    "beatId": "step.02-paso-galeria-a",
+    "order": 2,
+    "stepId": "step.02-paso-galeria-a",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 3,
+    "beatId": "step.03-lleva-horizonte",
+    "order": 2,
+    "stepId": "step.02-paso-galeria-a",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 4,
+    "beatId": "step.04-horizonte",
+    "order": 2,
+    "stepId": "step.02-paso-galeria-a",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 5,
+    "beatId": "step.04b-horizonte-cesion",
+    "order": 2,
+    "stepId": "step.02-paso-galeria-a",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 6,
+    "beatId": "step.05-lleva-division",
+    "order": 3,
+    "stepId": "step.05-lleva-division",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 7,
+    "beatId": "step.06-division",
+    "order": 3,
+    "stepId": "step.05-lleva-division",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 8,
+    "beatId": "step.06b-division-cesion",
+    "order": 3,
+    "stepId": "step.05-lleva-division",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 9,
+    "beatId": "step.07-lleva-umbral",
+    "order": 4,
+    "stepId": "step.07-lleva-umbral",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "beat": 10,
+    "beatId": "step.08-paso-galeria-b",
+    "order": 4,
+    "stepId": "step.07-lleva-umbral",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 11,
+    "beatId": "step.09-lleva-noche",
+    "order": 5,
+    "stepId": "step.09-lleva-noche",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 12,
+    "beatId": "step.10-noche",
+    "order": 5,
+    "stepId": "step.09-lleva-noche",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 13,
+    "beatId": "step.10b-noche-cesion",
+    "order": 5,
+    "stepId": "step.09-lleva-noche",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 14,
+    "beatId": "step.10c-lleva-cuaderno",
+    "order": 6,
+    "stepId": "step.10c-lleva-cuaderno",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 15,
+    "beatId": "step.10d-cuaderno",
+    "order": 6,
+    "stepId": "step.10c-lleva-cuaderno",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 16,
+    "beatId": "step.10e-cuaderno-permanencia",
+    "order": 6,
+    "stepId": "step.10c-lleva-cuaderno",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "beat": 17,
+    "beatId": "step.11-cierre",
+    "order": 7,
+    "stepId": "step.11-cierre",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   }
+  ],
+  "pass": true
+ },
+ "manualNext": {
+  "expected": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "observed": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "rows": [
+   {
+    "from": 1,
+    "expectedNext": 2,
+    "observed": 2,
+    "expectedPrevId": "step.01-entrada",
+    "observedPrevId": "step.01-entrada",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "from": 2,
+    "expectedNext": 3,
+    "observed": 3,
+    "expectedPrevId": "step.02-paso-galeria-a",
+    "observedPrevId": "step.02-paso-galeria-a",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "from": 3,
+    "expectedNext": 4,
+    "observed": 4,
+    "expectedPrevId": "step.05-lleva-division",
+    "observedPrevId": "step.05-lleva-division",
+    "authority": "DIRECTED",
+    "space": "space.gallery-a"
+   },
+   {
+    "from": 4,
+    "expectedNext": 5,
+    "observed": 5,
+    "expectedPrevId": "step.07-lleva-umbral",
+    "observedPrevId": "step.07-lleva-umbral",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "from": 5,
+    "expectedNext": 6,
+    "observed": 6,
+    "expectedPrevId": "step.09-lleva-noche",
+    "observedPrevId": "step.09-lleva-noche",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   },
+   {
+    "from": 6,
+    "expectedNext": 7,
+    "observed": 7,
+    "expectedPrevId": "step.10c-lleva-cuaderno",
+    "observedPrevId": "step.10c-lleva-cuaderno",
+    "authority": "DIRECTED",
+    "space": "space.gallery-b"
+   }
+  ],
+  "pass": true
+ },
+ "manualPrev": {
+  "expected": [
+   7,
+   6,
+   5,
+   4,
+   3,
+   2,
+   1
+  ],
+  "observed": [
+   7,
+   6,
+   5,
+   4,
+   3,
+   2,
+   1
+  ],
+  "pass": true
+ },
+ "jumps": [
+  {
+   "from": 2,
+   "to": 7,
+   "reached": 7,
+   "ok": true,
+   "direction": "forward",
+   "beatsExecuted": 15,
+   "ms": 173946
+  },
+  {
+   "from": 7,
+   "to": 3,
+   "reached": 3,
+   "ok": true,
+   "direction": "backward",
+   "beatsExecuted": 6,
+   "ms": 114112
+  },
+  {
+   "from": 3,
+   "to": 6,
+   "reached": 6,
+   "ok": true,
+   "direction": "forward",
+   "beatsExecuted": 8,
+   "ms": 150730
+  },
+  {
+   "from": 6,
+   "to": 1,
+   "reached": 1,
+   "ok": true,
+   "direction": "backward",
+   "beatsExecuted": 1,
+   "ms": 1
+  },
+  {
+   "from": 1,
+   "to": 4,
+   "reached": 4,
+   "ok": true,
+   "direction": "forward",
+   "beatsExecuted": 8,
+   "ms": 239240
+  }
+ ],
+ "errors": []
+}

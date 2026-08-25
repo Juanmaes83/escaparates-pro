@@ -1,0 +1,23 @@
+{
+  "name": "museum-breeze-core-build",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Build recipe for the vendored Breeze core. Not part of the Museum runtime.",
+  "scripts": {
+    "build": "vite build --mode=production && node -e \"const fs=require('fs'),p=require('path');fs.rmSync('../assets',{recursive:true,force:true});fs.cpSync('dist/assets','../assets',{recursive:true});fs.copyFileSync('dist/breeze-core.js','../breeze-core.js')\"",
+    "build:readable": "vite build --mode=production --minify=false --outDir=dist-readable"
+  },
+  "dependencies": {
+    "three": "0.176.0",
+    "three-mesh-bvh": "0.9.0"
+  },
+  "devDependencies": {
+    "@babel/generator": "^7.26.9",
+    "@babel/parser": "^7.26.9",
+    "@babel/traverse": "^7.26.9",
+    "@babel/types": "^7.26.9",
+    "vite": "6.3.5",
+    "vite-plugin-tsl-operator": "1.3.0"
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "id": "world.itinerant-wet-paint-lab",
+  "schemaVersion": 1,
+  "title": "Exposición itinerante — Wet Paint Lab",
+  "sceneKit": "museum",
+  "startSpaceId": "space.itinerant-wet-paint",
+  "metadata": {
+    "institution": "Fundación Arenas — Sala de exposiciones temporales",
+    "contentRights": "CONTROLLED / FICTITIOUS / OWNED",
+    "language": "es",
+    "note": "Sala laboratorio aislada, clonada conceptualmente de Galería A, preparada para injertar capacidades Wet Paint Flow + Living Agents sin tocar el museo estable."
+  },
+  "spaces": [
+    {
+      "id": "space.itinerant-wet-paint",
+      "title": "Sala de Exposición Itinerante — Wet Paint",
+      "type": "GALLERY",
+      "bounds": { "size": [16, 4.8, 11], "origin": [0, 0, -10] },
+      "sceneProfile": "white-cube",
+      "lightingProfile": "museum-cove-track",
+      "ambience": "ambience.gallery",
+      "defaultSpawnAnchorId": "anchor.itinerant.spawn",
+      "entityRefs": [
+        "entity.itinerant.original",
+        "entity.itinerant.painterly",
+        "entity.itinerant.living",
+        "entity.itinerant.combined",
+        "entity.itinerant.experimental"
+      ],
+      "anchorRefs": [
+        "anchor.itinerant.spawn",
+        "anchor.itinerant.wall-1",
+        "anchor.itinerant.wall-2",
+        "anchor.itinerant.wall-3",
+        "anchor.itinerant.wall-4",
+        "anchor.itinerant.wall-5"
+      ],
+      "hotspotRefs": [
+        "hotspot.itinerant.original",
+        "hotspot.itinerant.painterly",
+        "hotspot.itinerant.living",
+        "hotspot.itinerant.combined",
+        "hotspot.itinerant.experimental"
+      ],
+      "portalRefs": [],
+      "metadata": {
+        "temporaryExhibition": true,
+        "labPurpose": "Wet Paint Flow + Van Gogh Crows capability graft",
+        "bench": [-4.4, -1],
+        "benchFacing": "NORTH"
+      }
+    }
+  ],
+  "anchors": [
+    {
+      "id": "anchor.itinerant.spawn",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "SPAWN",
+      "position": [0, 0, -5.9],
+      "normal": [0, 0, -1],
+      "label": "Entrada a la exposición itinerante"
+    },
+    {
+      "id": "anchor.itinerant.wall-1",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "WALL",
+      "position": [-4.9, 1.64, -15.5],
+      "normal": [0, 0, 1],
+      "extent": [2.6, 2.1],
+      "label": "Original"
+    },
+    {
+      "id": "anchor.itinerant.wall-2",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "WALL",
+      "position": [-1.65, 1.64, -15.5],
+      "normal": [0, 0, 1],
+      "extent": [2.6, 2.1],
+      "label": "Painterly"
+    },
+    {
+      "id": "anchor.itinerant.wall-3",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "WALL",
+      "position": [1.65, 1.64, -15.5],
+      "normal": [0, 0, 1],
+      "extent": [2.6, 2.1],
+      "label": "Living"
+    },
+    {
+      "id": "anchor.itinerant.wall-4",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "WALL",
+      "position": [4.9, 1.64, -15.5],
+      "normal": [0, 0, 1],
+      "extent": [2.6, 2.1],
+      "label": "Combined"
+    },
+    {
+      "id": "anchor.itinerant.wall-5",
+      "spaceId": "space.itinerant-wet-paint",
+      "kind": "WALL",
+      "position": [8, 1.55, -12.4],
+      "normal": [-1, 0, 0],
+      "extent": [2.4, 2.6],
+      "label": "Experimental"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity.itinerant.original",
+      "kind": "ARTWORK",
+      "subtype": "painting",
+      "spaceId": "space.itinerant-wet-paint",
+      "anchorId": "anchor.itinerant.wall-1",
+      "size": [2.35, 1.65, 0.06],
+      "content": {
+        "title": "01 — Original",
+        "creator": "Media del usuario",
+        "year": "",
+        "medium": "Referencia sin transformación",
+        "description": "Punto de control: la imagen o vídeo original antes de aplicar capacidades Living Art.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.4607,
+          "credit": "Fundación Arenas — asset de prueba propio",
+          "rights": "Obra propia de prueba. Sustituible desde la autoría Museum."
+        }
+      },
+      "representation": { "profile": "framed-canvas", "hints": { "composition": "horizon-bands", "palette": "umber", "mount": "framed" } },
+      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.itinerant.original"] },
+      "accessibility": { "label": "Original", "description": "Referencia original sin transformación." }
+    },
+    {
+      "id": "entity.itinerant.painterly",
+      "kind": "ARTWORK",
+      "subtype": "painting",
+      "spaceId": "space.itinerant-wet-paint",
+      "anchorId": "anchor.itinerant.wall-2",
+      "size": [2.35, 1.65, 0.06],
+      "content": {
+        "title": "02 — Painterly",
+        "creator": "Efecto pictórico Museum",
+        "year": "",
+        "medium": "Reconstrucción pictórica generativa",
+        "description": "Superficie receptora para reconstrucción pictórica, wet paint, impasto y growth/reveal.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.4607,
+          "credit": "Fundación Arenas — asset de prueba propio",
+          "rights": "Obra propia de prueba. Sustituible desde la autoría Museum."
+        }
+      },
+      "representation": { "profile": "framed-canvas", "hints": { "composition": "field", "palette": "ochre", "mount": "framed" } },
+      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.itinerant.painterly"] },
+      "accessibility": { "label": "Painterly", "description": "Superficie preparada para la transformación pictórica." }
+    },
+    {
+      "id": "entity.itinerant.living",
+      "kind": "ARTWORK",
+      "subtype": "painting",
+      "spaceId": "space.itinerant-wet-paint",
+      "anchorId": "anchor.itinerant.wall-3",
+      "size": [2.35, 1.65, 0.06],
+      "content": {
+        "title": "03 — Living",
+        "creator": "Living Agents",
+        "year": "",
+        "medium": "Destino de agentes procedurales",
+        "description": "Superficie receptora para movimiento, flocking, avoidance, attractors y respuesta al visitante.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.4607,
+          "credit": "Fundación Arenas — asset de prueba propio",
+          "rights": "Obra propia de prueba. Sustituible desde la autoría Museum."
+        }
+      },
+      "representation": { "profile": "framed-canvas", "hints": { "composition": "field", "palette": "prussian", "mount": "framed" } },
+      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.itinerant.living"] },
+      "accessibility": { "label": "Living", "description": "Superficie preparada para agentes y movimiento procedural." }
+    },
+    {
+      "id": "entity.itinerant.combined",
+      "kind": "ARTWORK",
+      "subtype": "painting",
+      "spaceId": "space.itinerant-wet-paint",
+      "anchorId": "anchor.itinerant.wall-4",
+      "size": [2.35, 1.65, 0.06],
+      "content": {
+        "title": "04 — Combined",
+        "creator": "Wet Paint + Living Agents",
+        "year": "",
+        "medium": "Destino combinado",
+        "description": "Superficie receptora para la síntesis painterly + procedural living.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/horizonte-interrumpido.jpg",
+          "aspect": 1.4607,
+          "credit": "Fundación Arenas — asset de prueba propio",
+          "rights": "Obra propia de prueba. Sustituible desde la autoría Museum."
+        }
+      },
+      "representation": { "profile": "framed-canvas", "hints": { "composition": "horizon-bands", "palette": "verdigris", "mount": "framed" } },
+      "interaction": { "focusable": true, "focusDistance": 2.4, "hotspotRefs": ["hotspot.itinerant.combined"] },
+      "accessibility": { "label": "Combined", "description": "Superficie preparada para combinar pintura y vida procedural." }
+    },
+    {
+      "id": "entity.itinerant.experimental",
+      "kind": "ARTWORK",
+      "subtype": "painting",
+      "spaceId": "space.itinerant-wet-paint",
+      "anchorId": "anchor.itinerant.wall-5",
+      "size": [1.75, 2.15, 0.06],
+      "content": {
+        "title": "05 — Experimental",
+        "creator": "Living Art Lab",
+        "year": "",
+        "medium": "Slot de evolución",
+        "description": "Superficie reservada para nuevas capacidades, presets y combinaciones futuras sin modificar las cuatro comparaciones base.",
+        "media": {
+          "kind": "IMAGE",
+          "src": "../assets/collection/campo-de-ceniza.jpg",
+          "aspect": 0.814,
+          "credit": "Fundación Arenas — asset de prueba propio",
+          "rights": "Obra propia de prueba. Sustituible desde la autoría Museum."
+        }
+      },
+      "representation": { "profile": "framed-canvas", "hints": { "composition": "field", "palette": "slate", "mount": "unframed" } },
+      "interaction": { "focusable": true, "focusDistance": 2.6, "hotspotRefs": ["hotspot.itinerant.experimental"] },
+      "accessibility": { "label": "Experimental", "description": "Slot reservado para futuras pruebas Living Art." }
+    }
+  ],
+  "hotspots": [
+    { "id": "hotspot.itinerant.original", "spaceId": "space.itinerant-wet-paint", "entityId": "entity.itinerant.original", "type": "INFO", "interactionVolume": { "shape": "SPHERE", "radius": 2.6 }, "triggerDistance": 2.6, "visualPolicy": "NEAR", "action": { "type": "FOCUS_ENTITY", "target": "entity.itinerant.original" }, "accessibilityLabel": "Observar Original" },
+    { "id": "hotspot.itinerant.painterly", "spaceId": "space.itinerant-wet-paint", "entityId": "entity.itinerant.painterly", "type": "INFO", "interactionVolume": { "shape": "SPHERE", "radius": 2.6 }, "triggerDistance": 2.6, "visualPolicy": "NEAR", "action": { "type": "FOCUS_ENTITY", "target": "entity.itinerant.painterly" }, "accessibilityLabel": "Observar Painterly" },
+    { "id": "hotspot.itinerant.living", "spaceId": "space.itinerant-wet-paint", "entityId": "entity.itinerant.living", "type": "INFO", "interactionVolume": { "shape": "SPHERE", "radius": 2.6 }, "triggerDistance": 2.6, "visualPolicy": "NEAR", "action": { "type": "FOCUS_ENTITY", "target": "entity.itinerant.living" }, "accessibilityLabel": "Observar Living" },
+    { "id": "hotspot.itinerant.combined", "spaceId": "space.itinerant-wet-paint", "entityId": "entity.itinerant.combined", "type": "INFO", "interactionVolume": { "shape": "SPHERE", "radius": 2.6 }, "triggerDistance": 2.6, "visualPolicy": "NEAR", "action": { "type": "FOCUS_ENTITY", "target": "entity.itinerant.combined" }, "accessibilityLabel": "Observar Combined" },
+    { "id": "hotspot.itinerant.experimental", "spaceId": "space.itinerant-wet-paint", "entityId": "entity.itinerant.experimental", "type": "INFO", "interactionVolume": { "shape": "SPHERE", "radius": 2.6 }, "triggerDistance": 2.6, "visualPolicy": "NEAR", "action": { "type": "FOCUS_ENTITY", "target": "entity.itinerant.experimental" }, "accessibilityLabel": "Observar Experimental" }
+  ],
+  "portals": [],
+  "chapters": [],
+  "storySteps": [],
+  "routes": []
+}

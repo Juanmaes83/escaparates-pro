@@ -1,0 +1,72 @@
+{
+ "generatedAt": "2026-08-14T15:53:22.803Z",
+ "passed": 13,
+ "total": 13,
+ "results": [
+  {
+   "name": "la biblioteca se abre desde el área Contenido",
+   "ok": true,
+   "detail": "7 archivos"
+  },
+  {
+   "name": "las tres estanterías están presentes",
+   "ok": true,
+   "detail": "Imágenes 6 · Vídeos 1 · Logotipos 0"
+  },
+  {
+   "name": "cada archivo se ve, no solo se nombra",
+   "ok": true,
+   "detail": "6 miniaturas de 7 archivos"
+  },
+  {
+   "name": "todas las miniaturas cargan de verdad",
+   "ok": true,
+   "detail": "ninguna rota"
+  },
+  {
+   "name": "la biblioteca dice dónde se usa cada archivo",
+   "ok": true,
+   "detail": "[{\"name\":\"campo-de-ceniza.jpg\",\"use\":\"Campo de ceniza\"},{\"name\":\"division-tercera.jpg\",\"use\":\"División tercera\"},{\"name\":\"estudio-de-figura.jpg\",\"use\":\"Estudio de figura, IV\"}]"
+  },
+  {
+   "name": "hay una obra sin medio propio para la prueba",
+   "ok": true,
+   "detail": "entity.artwork.horizonte-interrumpido"
+  },
+  {
+   "name": "la biblioteca ofrece reutilizar en la pieza seleccionada",
+   "ok": true,
+   "detail": "7 ofertas · ranuras: ARTWORK_IMAGE, ARTWORK_VIDEO"
+  },
+  {
+   "name": "ninguna oferta cruza el medio con la ranura",
+   "ok": true,
+   "detail": "ARTWORK_IMAGE, ARTWORK_VIDEO"
+  },
+  {
+   "name": "reutilizar asigna el archivo a la pieza",
+   "ok": true,
+   "detail": "antes=null después=campo-de-ceniza.jpg"
+  },
+  {
+   "name": "reutiliza la referencia, no una copia",
+   "ok": true,
+   "detail": "../assets/collection/campo-de-ceniza.jpg"
+  },
+  {
+   "name": "el archivo reutilizado llega a la pared",
+   "ok": true,
+   "detail": "{\"found\":true,\"hasTexture\":true,\"fromFile\":true,\"src\":\"rlds/assets/collection/campo-de-ceniza.jpg\"}"
+  },
+  {
+   "name": "la biblioteca refleja que ahora se usa en dos piezas",
+   "ok": true,
+   "detail": "En 2 piezas"
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ]
+}

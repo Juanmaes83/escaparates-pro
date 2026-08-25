@@ -1,0 +1,182 @@
+{
+ "generatedAt": "2026-08-14T07:09:37.229Z",
+ "head": "ca9efc9",
+ "playback": {
+  "found": true,
+  "picture": {
+   "a": {
+    "sat": 52,
+    "hash": "10,10,222,255,238,10,58,255"
+   },
+   "b": {
+    "sat": 48,
+    "hash": "10,10,58,255,223,10,10,255"
+   },
+   "changed": true,
+   "saturated": true
+  },
+  "w": 960,
+  "h": 540,
+  "duration": 2,
+  "paused": false,
+  "muted": true,
+  "loop": true,
+  "readyState": 4,
+  "samples": [
+   0.484,
+   1.246,
+   1.734,
+   0
+  ],
+  "advancing": true,
+  "playError": null
+ },
+ "landed": [
+  "entity.video.cuaderno-de-luz · PROJECTION · VIDEO"
+ ],
+ "stored": {
+  "kind": "video",
+  "src": "authored:a1_msslv29l",
+  "assetId": "a1_msslv29l",
+  "name": "entrevista-curador.webm",
+  "mimeType": null,
+  "bytes": 132024,
+  "width": 960,
+  "height": 540,
+  "durationMs": 1997
+ },
+ "checks": [
+  {
+   "name": "1 · un vídeo sin tipo MIME se acepta",
+   "ok": true,
+   "detail": "estados: SELECTED → LOADING → DECODED → READY"
+  },
+  {
+   "name": "2 · pasa por CARGANDO",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "3 · pasa por DECODIFICADO y llega a LISTO",
+   "ok": true,
+   "detail": "Listo · 960×540 · 2.0 s · 129 kB"
+  },
+  {
+   "name": "4 · el proyecto guarda la referencia del vídeo",
+   "ok": true,
+   "detail": "entrevista-curador.webm · 960×540 · 1997 ms"
+  },
+  {
+   "name": "5 · aplicar no falla",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "6 · el destino semántico correcto recibe VIDEO",
+   "ok": true,
+   "detail": "entity.video.cuaderno-de-luz · PROJECTION · VIDEO"
+  },
+  {
+   "name": "7 · el vídeo está en la superficie de proyección",
+   "ok": true,
+   "detail": "960×540 · 2 s"
+  },
+  {
+   "name": "8a · la imagen del vídeo cambia (no es un fotograma congelado)",
+   "ok": true,
+   "detail": "{\"a\":{\"sat\":52,\"hash\":\"10,10,222,255,238,10,58,255\"},\"b\":{\"sat\":48,\"hash\":\"10,10,58,255,223,10,10,255\"},\"changed\":true,\"saturated\":true}"
+  },
+  {
+   "name": "8b · lo que se ve es el archivo del autor, no el original",
+   "ok": true,
+   "detail": "saturación 52 (el original es gris azulado)"
+  },
+  {
+   "name": "8 · el vídeo avanza (reproduciéndose de verdad)",
+   "ok": true,
+   "detail": "currentTime: 0.484 → 1.246 → 1.734 → 0"
+  },
+  {
+   "name": "9 · sustituir libera el recurso anterior",
+   "ok": true,
+   "detail": "1 → 1 · segunda-toma.webm"
+  },
+  {
+   "name": "10 · un archivo que no es vídeo sigue fallando, con motivo",
+   "ok": true,
+   "detail": "No se pudo usar · El vídeo no se pudo decodificar."
+  },
+  {
+   "name": "11a · la imagen sigue funcionando",
+   "ok": true,
+   "detail": "Lista · 1400×960 · 37 kB"
+  },
+  {
+   "name": "11b · el texto sigue funcionando",
+   "ok": true,
+   "detail": "Marea de septiembre"
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ],
+ "shots": [
+  {
+   "id": "V1_VIDEO_SELECTED",
+   "file": "V1_VIDEO_SELECTED.png",
+   "caption": "Vídeo elegido — el archivo llega sin tipo MIME, como en Windows",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V3_VIDEO_READY",
+   "file": "V3_VIDEO_READY.png",
+   "caption": "Listo — Listo · 960×540 · 2.0 s · 129 kB",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V4_VIDEO_SAVED",
+   "file": "V4_VIDEO_SAVED.png",
+   "caption": "Guardado — la cadena marca GUARDADO",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V5_VIDEO_APPLIED",
+   "file": "V5_VIDEO_APPLIED.png",
+   "caption": "Aplicado al proyecto",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V6_VIDEO_PLAYING_IN_MUSEUM",
+   "file": "V6_VIDEO_PLAYING_IN_MUSEUM.png",
+   "caption": "Reproduciéndose en la sala — 0.484 → 1.246 → 1.734 → 0 s",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V6b_VIDEO_PLAYING_NEXT_FRAME",
+   "file": "V6b_VIDEO_PLAYING_NEXT_FRAME.png",
+   "caption": "El mismo plano, un instante después",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V7_VIDEO_REPLACED",
+   "file": "V7_VIDEO_REPLACED.png",
+   "caption": "Sustituido — segunda-toma.webm",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V8_INVALID_VIDEO_RECOVERY",
+   "file": "V8_INVALID_VIDEO_RECOVERY.png",
+   "caption": "Recuperación — No se pudo usar · El vídeo no se pudo decodificar.",
+   "head": "ca9efc9"
+  },
+  {
+   "id": "V9_IMAGE_AND_TEXT_STILL_WORK",
+   "file": "V9_IMAGE_AND_TEXT_STILL_WORK.png",
+   "caption": "Imagen y texto tras el arreglo del vídeo",
+   "head": "ca9efc9"
+  }
+ ],
+ "errors": []
+}

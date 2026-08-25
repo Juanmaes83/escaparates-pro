@@ -1,0 +1,170 @@
+{
+ "generatedAt": "2026-08-15T08:37:09.201Z",
+ "label": "current",
+ "viewports": [
+  {
+   "id": "desktop",
+   "label": "Escritorio 1440×900",
+   "width": 1440,
+   "height": 900,
+   "present": true,
+   "panel": {
+    "width": 736,
+    "height": 756,
+    "scrollHeight": 919,
+    "clientHeight": 754
+   },
+   "overflowPx": 165,
+   "sections": 7,
+   "headings": [
+    "Horarios",
+    "Dirección",
+    "Entrada",
+    "Programación",
+    "Accesibilidad",
+    "Cómo llegar",
+    "Contacto"
+   ],
+   "programmeItems": 2,
+   "ctaCount": 1,
+   "reachable": {
+    "hours": {
+     "top": 220,
+     "visible": true
+    },
+    "address": {
+     "top": 313,
+     "visible": true
+    },
+    "primaryCta": {
+     "top": 446,
+     "visible": true
+    }
+   },
+   "firstWords": "HorariosMiércoles a domingo, 11:00 – 20:00Lunes y martes cerrado DirecciónCalle del Horno 14, 28012 Madrid EntradaEntrad"
+  },
+  {
+   "id": "laptop",
+   "label": "Portátil 1280×800",
+   "width": 1280,
+   "height": 800,
+   "present": true,
+   "panel": {
+    "width": 736,
+    "height": 672,
+    "scrollHeight": 919,
+    "clientHeight": 670
+   },
+   "overflowPx": 249,
+   "sections": 7,
+   "headings": [
+    "Horarios",
+    "Dirección",
+    "Entrada",
+    "Programación",
+    "Accesibilidad",
+    "Cómo llegar",
+    "Contacto"
+   ],
+   "programmeItems": 2,
+   "ctaCount": 1,
+   "reachable": {
+    "hours": {
+     "top": 212,
+     "visible": true
+    },
+    "address": {
+     "top": 305,
+     "visible": true
+    },
+    "primaryCta": {
+     "top": 438,
+     "visible": true
+    }
+   },
+   "firstWords": "HorariosMiércoles a domingo, 11:00 – 20:00Lunes y martes cerrado DirecciónCalle del Horno 14, 28012 Madrid EntradaEntrad"
+  },
+  {
+   "id": "mobile",
+   "label": "Móvil 390×844",
+   "width": 390,
+   "height": 844,
+   "present": true,
+   "panel": {
+    "width": 359,
+    "height": 709,
+    "scrollHeight": 1168,
+    "clientHeight": 707
+   },
+   "overflowPx": 461,
+   "sections": 7,
+   "headings": [
+    "Horarios",
+    "Dirección",
+    "Entrada",
+    "Programación",
+    "Accesibilidad",
+    "Cómo llegar",
+    "Contacto"
+   ],
+   "programmeItems": 2,
+   "ctaCount": 1,
+   "reachable": {
+    "hours": {
+     "top": 300,
+     "visible": true
+    },
+    "address": {
+     "top": 392,
+     "visible": true
+    },
+    "primaryCta": {
+     "top": 551,
+     "visible": true
+    }
+   },
+   "firstWords": "HorariosMiércoles a domingo, 11:00 – 20:00Lunes y martes cerrado DirecciónCalle del Horno 14, 28012 Madrid EntradaEntrad"
+  },
+  {
+   "id": "small",
+   "label": "Móvil pequeño 360×800",
+   "width": 360,
+   "height": 800,
+   "present": true,
+   "panel": {
+    "width": 331,
+    "height": 672,
+    "scrollHeight": 1219,
+    "clientHeight": 670
+   },
+   "overflowPx": 549,
+   "sections": 7,
+   "headings": [
+    "Horarios",
+    "Dirección",
+    "Entrada",
+    "Programación",
+    "Accesibilidad",
+    "Cómo llegar",
+    "Contacto"
+   ],
+   "programmeItems": 2,
+   "ctaCount": 1,
+   "reachable": {
+    "hours": {
+     "top": 296,
+     "visible": true
+    },
+    "address": {
+     "top": 414,
+     "visible": true
+    },
+    "primaryCta": {
+     "top": 574,
+     "visible": true
+    }
+   },
+   "firstWords": "HorariosMiércoles a domingo, 11:00 – 20:00Lunes y martes cerrado DirecciónCalle del Horno 14, 28012 Madrid EntradaEntrad"
+  }
+ ]
+}

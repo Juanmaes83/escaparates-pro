@@ -1,1 +1,16 @@
-{"rewrites":[{"source":"/p/:slug","destination":"/publication.html?slug=:slug"},{"source":"/projects","destination":"/projects.html"},{"source":"/studio","destination":"/studio.html"}]}
+{
+  "headers": [
+    {
+      "source": "/labs/immersive-worlds/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Pragma", "value": "no-cache" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/p/:slug", "destination": "/publication.html?slug=:slug" },
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/studio", "destination": "/studio.html" }
+  ]
+}

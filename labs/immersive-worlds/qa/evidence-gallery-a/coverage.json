@@ -1,0 +1,178 @@
+{
+ "generatedAt": "2026-08-11T16:13:30.960Z",
+ "space": "space.gallery-a",
+ "inventory": {
+  "focusable": [
+   "entity.artwork.horizonte-interrumpido",
+   "entity.artwork.campo-de-ceniza",
+   "entity.artwork.division-tercera",
+   "entity.artwork.estudio-de-figura",
+   "entity.sculpture.vasija-de-arenas"
+  ],
+  "all": [
+   {
+    "id": "entity.artwork.horizonte-interrumpido",
+    "kind": "ARTWORK",
+    "title": "Horizonte interrumpido",
+    "focusable": true,
+    "size": [
+     2.6,
+     1.78,
+     0.06
+    ]
+   },
+   {
+    "id": "entity.artwork.campo-de-ceniza",
+    "kind": "ARTWORK",
+    "title": "Campo de ceniza",
+    "focusable": true,
+    "size": [
+     1.75,
+     2.15,
+     0.06
+    ]
+   },
+   {
+    "id": "entity.artwork.division-tercera",
+    "kind": "ARTWORK",
+    "title": "División tercera",
+    "focusable": true,
+    "size": [
+     2.1,
+     1.5,
+     0.06
+    ]
+   },
+   {
+    "id": "entity.artwork.estudio-de-figura",
+    "kind": "ARTWORK",
+    "title": "Estudio de figura, IV",
+    "focusable": true,
+    "size": [
+     0.95,
+     1.22,
+     0.04
+    ]
+   },
+   {
+    "id": "entity.sculpture.vasija-de-arenas",
+    "kind": "SCULPTURE",
+    "title": "Vasija de arenas",
+    "focusable": true,
+    "size": [
+     0.6,
+     0.88,
+     0.6
+    ]
+   }
+  ]
+ },
+ "shots": [
+  {
+   "id": "entity.artwork.horizonte-interrumpido",
+   "kind": "ARTWORK",
+   "settled": true,
+   "title": "Horizonte interrumpido",
+   "creator": "Amalia Serrat",
+   "year": "1971",
+   "medium": "Óleo sobre lienzo",
+   "size": [
+    2.6,
+    1.78,
+    0.06
+   ],
+   "authority": "FOCUS",
+   "pose": [
+    -0.9,
+    1.89,
+    -12.2
+   ],
+   "file": "piece_horizonte-interrumpido.png"
+  },
+  {
+   "id": "entity.artwork.campo-de-ceniza",
+   "kind": "ARTWORK",
+   "settled": true,
+   "title": "Campo de ceniza",
+   "creator": "Amalia Serrat",
+   "year": "1974",
+   "medium": "Óleo y ceniza sobre lienzo",
+   "size": [
+    1.75,
+    2.15,
+    0.06
+   ],
+   "authority": "FOCUS",
+   "pose": [
+    -4.06,
+    1.85,
+    -12.4
+   ],
+   "file": "piece_campo-de-ceniza.png"
+  },
+  {
+   "id": "entity.artwork.division-tercera",
+   "kind": "ARTWORK",
+   "settled": true,
+   "title": "División tercera",
+   "creator": "Bruno Ferrán",
+   "year": "1968",
+   "medium": "Acrílico sobre tabla",
+   "size": [
+    2.1,
+    1.5,
+    0.06
+   ],
+   "authority": "FOCUS",
+   "pose": [
+    5.1,
+    1.71,
+    -12.67
+   ],
+   "file": "piece_division-tercera.png"
+  },
+  {
+   "id": "entity.artwork.estudio-de-figura",
+   "kind": "ARTWORK",
+   "settled": true,
+   "title": "Estudio de figura, IV",
+   "creator": "Bruno Ferrán",
+   "year": "1963",
+   "medium": "Grafito sobre papel",
+   "size": [
+    0.95,
+    1.22,
+    0.04
+   ],
+   "authority": "FOCUS",
+   "pose": [
+    5.65,
+    1.67,
+    -13.6
+   ],
+   "file": "piece_estudio-de-figura.png"
+  },
+  {
+   "id": "entity.sculpture.vasija-de-arenas",
+   "kind": "SCULPTURE",
+   "settled": true,
+   "title": "Vasija de arenas",
+   "creator": "Teresa Miralles",
+   "year": "1986",
+   "medium": "Gres torneado y esmalte mate",
+   "size": [
+    0.6,
+    0.88,
+    0.6
+   ],
+   "authority": "FOCUS",
+   "pose": [
+    4.3,
+    1.46,
+    -5.04
+   ],
+   "file": "piece_vasija-de-arenas.png"
+  }
+ ],
+ "errors": []
+}

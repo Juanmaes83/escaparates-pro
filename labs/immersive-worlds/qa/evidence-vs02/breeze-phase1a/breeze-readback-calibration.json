@@ -1,0 +1,82 @@
+{
+ "generatedAt": "2026-08-16T09:49:19.450Z",
+ "purpose": "Classify the Phase 1A readback failure and calibrate a trustworthy mechanism against known answers.",
+ "report": {
+  "backend": "webgpu",
+  "mechanisms": {
+   "direct": {
+    "available": false,
+    "knownZero": null,
+    "knownPin": null,
+    "knownFall": null,
+    "error": "Failed to execute 'mapAsync' on 'GPUBuffer': A valid external Instance reference no longer exists."
+   },
+   "donor": {
+    "available": false,
+    "knownZero": null,
+    "knownPin": null,
+    "knownFall": null,
+    "error": "Cannot read properties of undefined (reading 'size')"
+   },
+   "computeOnly": {
+    "available": true,
+    "knownZero": 0,
+    "knownPin": 0,
+    "knownFall": 0.000559389591217041,
+    "error": null,
+    "movedCount": 142,
+    "total": 144,
+    "pinnedCount": 2
+   }
+  },
+  "errors": [],
+  "vertexCount": 144,
+  "springCount": 506
+ },
+ "trustworthy": [
+  "computeOnly"
+ ],
+ "results": [
+  {
+   "name": "el invitado corre sobre WebGPU real",
+   "ok": true,
+   "detail": "webgpu"
+  },
+  {
+   "name": "direct: disponible tras renderizar",
+   "ok": false,
+   "detail": "Failed to execute 'mapAsync' on 'GPUBuffer': A valid external Instance reference no longer exists."
+  },
+  {
+   "name": "donor: disponible tras renderizar",
+   "ok": false,
+   "detail": "Cannot read properties of undefined (reading 'size')"
+  },
+  {
+   "name": "computeOnly: disponible tras renderizar",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "computeOnly: CERO CONOCIDO — dos lecturas sin simular son idénticas",
+   "ok": true,
+   "detail": "deriva 0"
+  },
+  {
+   "name": "computeOnly: CAÍDA CONOCIDA — la gravedad mueve hacia abajo",
+   "ok": true,
+   "detail": "caída máx 5.59e-4"
+  },
+  {
+   "name": "computeOnly: FIJADO CONOCIDO — un vértice fijado no se mueve",
+   "ok": true,
+   "detail": "movimiento 0"
+  },
+  {
+   "name": "existe al menos un mecanismo de lectura calibrado",
+   "ok": true,
+   "detail": "computeOnly"
+  }
+ ],
+ "errors": []
+}

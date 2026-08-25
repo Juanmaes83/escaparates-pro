@@ -1,0 +1,17 @@
+  ok   ENGINE-PURITY              engine/ no importa Three.js ni toca el DOM  — 23 archivos revisados
+  ok   PROTECTED-PATHS            Las rutas protegidas siguen presentes
+  ·· reanudación desde «tour»: se omiten las secciones ya verificadas en la corrida previa
+  ok   TOUR-ONE-START             El recorrido tiene exactamente un inicio canónico  — abre en el beat 0 (step.01-entrada)
+  ok   TOUR-ONE-END               El recorrido tiene exactamente un final canónico  — cierra en el beat 32 de 32
+  ok   TOUR-ORDER-UNIQUE          Ningún número de parada está duplicado  — 10 pasos
+  ok   TOUR-ORDER-CONTIGUOUS      La numeración va de 01 a N sin huecos  — 1,2,3,4,5,6,7,8,9,10
+  ok   TOUR-IDS-UNIQUE            Cada parada tiene una identidad técnica única  — 10 identidades
+  ok   TOUR-NO-ORPHANS            Todo beat pertenece exactamente a una parada canónica  — 33 beats asignados
+  ok   TOUR-NEXT-PREV-CONSISTENT  Siguiente y anterior son mutuamente consistentes  — 10 enlaces
+  ok   TOUR-NO-UNEXPECTED-CYCLES  El recorrido no se cierra sobre sí mismo  — inicio.previous=—, fin.next=—
+  ok   TOUR-ALL-REACHABLE         Todas las paradas se alcanzan siguiendo «siguiente» desde el inicio  — 10/10 alcanzables desde el inicio
+  ok   TOUR-G-USES-CANONICAL-SEQUENCE El recorrido automático atraviesa exactamente la secuencia canónica  — esperado 1→2→3→4→5→6→7→8→9→10 · observado 1→2→3→4→5→6→7→8→9→10
+  ok   TOUR-MANUAL-NEXT-USES-CANONICAL-SEQUENCE SIGUIENTE recorre la misma secuencia canónica, de principio a fin  — observado 1→2→3→4→5→6→7→8→9→10
+  ok   TOUR-MANUAL-PREV-USES-CANONICAL-SEQUENCE ANTERIOR retrocede por la secuencia canónica, sin saltarse ninguna parada  — esperado 10→9→8→7 · observado 10→9→8→7
+[IW QA] runner failed: page.evaluate: Target page, context or browser has been closed
+    at main (/home/user/escaparates-pro/labs/immersive-worlds/qa/run-qa.mjs:560:34)

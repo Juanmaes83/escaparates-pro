@@ -1,0 +1,67 @@
+{
+ "generatedAt": "2026-08-14T17:21:21.481Z",
+ "passed": 12,
+ "total": 12,
+ "results": [
+  {
+   "name": "la primera vista de Institución muestra lo esencial",
+   "ok": true,
+   "detail": "2 campos visibles"
+  },
+  {
+   "name": "la apertura lleva el nombre de su familia",
+   "ok": true,
+   "detail": "Personalizar más · Institución"
+  },
+  {
+   "name": "ninguna apertura se llama Avanzado / Más / Ajustes",
+   "ok": true,
+   "detail": "Personalizar más · Institución"
+  },
+  {
+   "name": "abrir la sección revela los campos profundos",
+   "ok": true,
+   "detail": "2 → 4"
+  },
+  {
+   "name": "plegar no cambia la validación — oculto ≠ ignorado",
+   "ok": true,
+   "detail": "cerrado 28/28 · abierto 28/28"
+  },
+  {
+   "name": "el campo se pliega de la vista",
+   "ok": true,
+   "detail": "en el DOM: false"
+  },
+  {
+   "name": "plegar no descarta lo escrito",
+   "ok": true,
+   "detail": "\"Colección reunida entre 1958 y 1994.\""
+  },
+  {
+   "name": "la sección cerrada declara que tiene contenido",
+   "ok": true,
+   "detail": "2 con contenido"
+  },
+  {
+   "name": "al reabrir, el texto sigue ahí",
+   "ok": true,
+   "detail": "Colección reunida entre 1958 y 1994."
+  },
+  {
+   "name": "la obra muestra identidad y medios, no la ficha entera",
+   "ok": true,
+   "detail": "2 campos · 2 ranuras"
+  },
+  {
+   "name": "la apertura de la obra se llama por su familia",
+   "ok": true,
+   "detail": "Personalizar más · Obra"
+  },
+  {
+   "name": "sin errores de consola",
+   "ok": true,
+   "detail": "ninguno"
+  }
+ ]
+}

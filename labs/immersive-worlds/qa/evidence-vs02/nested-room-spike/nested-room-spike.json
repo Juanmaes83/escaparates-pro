@@ -1,0 +1,147 @@
+{
+ "generatedAt": "2026-08-15T19:55:08.729Z",
+ "note": "ARCHITECTURE SPIKE. The guest is a WebGL2 test double, not Breeze. No Breeze capability is claimed.",
+ "webgpu": {
+  "available": true
+ },
+ "activateMs": 823,
+ "disposeMs": 625,
+ "entered": {
+  "presentation": "GUEST",
+  "guestId": "room.spike",
+  "guestCanvases": 1,
+  "museumCanvasHidden": true,
+  "loopRunning": true,
+  "activations": 1,
+  "disposals": 0,
+  "frames": 0,
+  "loops": 1
+ },
+ "left": {
+  "presentation": "MUSEUM",
+  "guestId": null,
+  "guestCanvases": 0,
+  "museumCanvasHidden": false,
+  "loopRunning": false,
+  "activations": 1,
+  "disposals": 1,
+  "frames": 17,
+  "loops": 1
+ },
+ "after": {
+  "presentation": "MUSEUM",
+  "guestId": null,
+  "guestCanvases": 0,
+  "museumCanvasHidden": false,
+  "loopRunning": false,
+  "activations": 4,
+  "disposals": 4,
+  "frames": 20,
+  "loops": 4,
+  "double": {
+   "prepared": 1,
+   "activated": 1,
+   "suspended": 0,
+   "disposed": 1,
+   "poses": 1,
+   "frames": 1,
+   "contextLost": true,
+   "totals": {
+    "prepared": 4,
+    "disposed": 4
+   }
+  },
+  "totals": {
+   "prepared": 4,
+   "disposed": 4
+  }
+ },
+ "results": [
+  {
+   "name": "el invitado toma la presentación",
+   "ok": true,
+   "detail": "823 ms"
+  },
+  {
+   "name": "el lienzo del Museo queda oculto, no destruido",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "exactamente un lienzo invitado",
+   "ok": true,
+   "detail": "1"
+  },
+  {
+   "name": "el frame del invitado no es negro",
+   "ok": true,
+   "detail": "YAVG 44.3326"
+  },
+  {
+   "name": "el HUD sigue recibiendo el puntero",
+   "ok": true,
+   "detail": "BUTTON"
+  },
+  {
+   "name": "el Museo empuja pose y el invitado la recibe",
+   "ok": true,
+   "detail": "2 poses"
+  },
+  {
+   "name": "la pose llega a los píxeles del invitado",
+   "ok": true,
+   "detail": "YAVG 44.3326 → 193"
+  },
+  {
+   "name": "la presentación vuelve al Museo",
+   "ok": true,
+   "detail": "625 ms"
+  },
+  {
+   "name": "no queda ningún lienzo invitado",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "el bucle del invitado está parado",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "name": "el Museo vuelve a pintar",
+   "ok": true,
+   "detail": "YAVG 174.051 → 174.529"
+  },
+  {
+   "name": "entradas y salidas equilibradas",
+   "ok": true,
+   "detail": "4/4"
+  },
+  {
+   "name": "un solo bucle por activación",
+   "ok": true,
+   "detail": "4 bucles"
+  },
+  {
+   "name": "sin lienzos invitados acumulados",
+   "ok": true,
+   "detail": "0"
+  },
+  {
+   "name": "cada doble liberó su contexto",
+   "ok": true,
+   "detail": "4/4"
+  },
+  {
+   "name": "sin errores de runtime",
+   "ok": true,
+   "detail": "ninguno"
+  },
+  {
+   "name": "el Museo sigue operativo tras el ciclo",
+   "ok": true,
+   "detail": "space.lobby · EXPLORE"
+  }
+ ],
+ "errors": []
+}
