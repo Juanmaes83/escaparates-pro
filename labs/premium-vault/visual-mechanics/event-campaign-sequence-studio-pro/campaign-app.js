@@ -1,9 +1,9 @@
 (function(){
   var state = EventCampaignStore.load();
   var motion = null;
-  var activeTab = 'brand';
+  var activeTab = 'sequence';
   var tabs = [
-    ['brand','Marca'], ['sequence','Secuencia'], ['event','Evento'], ['moments','Momentos'], ['motion','Motion'], ['project','Proyecto']
+    ['sequence','Secuencia'], ['brand','Marca'], ['event','Evento'], ['moments','Momentos'], ['motion','Motion'], ['project','Proyecto']
   ];
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]; }); }
   function set(path, value){
