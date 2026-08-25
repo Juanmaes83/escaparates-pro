@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+// Isolated QA run: prove native Breeze controls receive real browser input inside Museum.
 const URL = process.env.BREEZE_MUSEUM_URL ||
   'https://escaparates-cfegbk7jv-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json';
 
@@ -41,8 +42,6 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForTimeout(5_000);
 
-  // The test entry is expected to open directly into the Breeze authoring room.
-  // If Museum lifecycle needs a beat, wait for the specialised nested guest.
   const { iframe, frame } = await getBreezeFrame(page);
 
   await page.screenshot({ path: artifact('01-museum-breeze-loaded.png'), fullPage: true });
@@ -81,7 +80,6 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   expect(controlsBefore.selects.length, 'Breeze must expose Experience select').toBeGreaterThan(0);
   expect(controlsBefore.ranges.length, 'Breeze must expose grading/scene range controls').toBeGreaterThan(0);
 
-  // Gate 1 — Experience: use real focus + keyboard input, not DOM mutation.
   const experience = frame.locator('select').first();
   await expect(experience).toBeVisible();
   const beforeExperience = await experience.inputValue();
@@ -93,8 +91,6 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   console.log('BREEZE_EXPERIENCE', { beforeExperience, afterExperience });
   expect(afterExperience, 'Experience must change after native keyboard interaction').not.toBe(beforeExperience);
 
-  // Gate 2 — Grading/slider: choose the last visible range as a robust grading candidate.
-  // Move it through native keyboard input and prove the live control state changes.
   const ranges = frame.locator('input[type="range"]:visible');
   const rangeCount = await ranges.count();
   expect(rangeCount).toBeGreaterThan(0);
@@ -108,7 +104,6 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   console.log('BREEZE_GRADING', { beforeGrade, afterGrade, rangeCount });
   expect(afterGrade, 'A native Breeze slider must change value').not.toBe(beforeGrade);
 
-  // Gate 3 — Upload: real browser file chooser event must be emitted by Breeze.
   const uploadButtons = frame.getByRole('button', { name: /SUBIR\s+imagen\s*\/\s*vídeo/i });
   const uploadCount = await uploadButtons.count();
   console.log('BREEZE_UPLOAD_BUTTONS', uploadCount);
