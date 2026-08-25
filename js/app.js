@@ -31,6 +31,14 @@
         });
     }
 
+    function loadPremiumExperiencesVault() {
+        loadScriptOnce('js/premium-experiences-vault.js', 'data-premium-experiences-vault', function() {
+            try { if (EP.PremiumExperiencesVault) EP.PremiumExperiencesVault.init(); }
+            catch (e) { console.error('PremiumExperiencesVault.init failed:', e); }
+            loadScriptOnce('js/premium-experiences-vault-rescue-additions.js', 'data-premium-experiences-vault-rescue-additions');
+        });
+    }
+
     function boot() {
         try { EP.Core.init(); } catch(e) { console.error('Core.init failed:', e); }
         try { EP.Timeline.init(); } catch(e) { console.error('Timeline.init failed:', e); }
@@ -53,6 +61,7 @@
         try { if (EP.SectorBlueprintsUI) EP.SectorBlueprintsUI.init(); } catch(e) { console.error('SectorBlueprintsUI.init failed:', e); }
         try { if (EP.SourceLabsUI) EP.SourceLabsUI.init(); } catch(e) { console.error('SourceLabsUI.init failed:', e); }
         try { if (EP.PlatformInfo) EP.PlatformInfo.init(); } catch(e) { console.error('PlatformInfo.init failed:', e); }
+        loadPremiumExperiencesVault();
         loadProjectCloudProduct();
 
         EP.Media.onChange(function() {

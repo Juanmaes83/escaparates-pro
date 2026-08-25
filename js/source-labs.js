@@ -1,6 +1,24 @@
 EP.SourceLabs = (function() {
     var labs = [
         {
+            id: 'breeze-museum-authoring-studio', icon: 'BZ', name: 'Breeze Museum Authoring Studio', family: '3D / Immersive Worlds',
+            description: 'Studio inmersivo con authoring activo para el mundo museo, preservado como capacidad estratégica de Escaparates Pro.',
+            path: 'labs/source-experiences/breeze-museum-authoring-studio/',
+            note: 'Conexión estable hacia labs/immersive-worlds/breeze-integration-studio.html con authoring=1 y museum-v1.world.json. No sustituye Infinite Worlds ni otras experiencias inmersivas.'
+        },
+        {
+            id: 'eloria-luxury-fragrance-journey', icon: 'EL', name: 'ELORIA Signature — Scroll Bottle Journey', family: 'Beauty / Product Journey',
+            description: 'Referencia canónica del frasco protagonista que cambia posición, escala y presencia mientras atraviesa la narrativa por scroll.',
+            path: 'labs/source-experiences/eloria-luxury-fragrance-journey/',
+            note: 'Fuente canónica: Juanmaes83/ELORIA-New-Luxury-Fragrance. En Escaparates Pro la implementación editable vive además como Luxury Beauty Product PRO / preset ELORIA Signature.'
+        },
+        {
+            id: 'rubik-sota-immersive-brand-landing', icon: 'RS', name: 'Rubik SOTA — Immersive Brand Landing', family: 'Brand / Scroll Journey',
+            description: 'Landing inmersiva donde el objeto o brazo robótico acompaña el scroll y migra entre distintas posiciones y secciones.',
+            path: 'labs/source-experiences/rubik-sota-immersive-brand-landing/',
+            note: 'Fuente visual pública: Juanmaes83/immersive-brand-landing-rubik-sota. Engine técnico asociado: Juanmaes83/immersive-brand-landing-engine-rubik-sota (privado, no expuesto por la UI).'
+        },
+        {
             id: 'glitchify-image-pro', icon: 'GI', name: 'Glitchify Image PRO', family: 'Image Engine',
             description: 'Motor fuente completo: color shift, wave, displacement, palettes, pixel sort y data corruption.',
             path: 'labs/source-experiences/glitchify-image-pro/',
