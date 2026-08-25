@@ -7,12 +7,87 @@ class ScrollPhysics {
     this.noiseOffset = Math.random() * 1000;
     this.lastScrollY = window.scrollY;
 
-    // Physical-scroll landmarks. The user should feel movement almost immediately.
-    // Full armor motion now completes in the first half of the sticky hero,
-    // leaving a long clean final lock for samurai2.
+    // Physical-scroll landmarks. Motion begins almost immediately,
+    // assembles quickly, then leaves a long clean final lock for samurai2.
     this.ANIMATION_END_RAW = 0.48;
     this.FINAL_LOCK_RAW = 0.50;
     this.init();
+  }
+
+  getScale() {
+    return window.innerWidth <= 768 ? 0.78 : 1;
+  }
+
+  applyCloseGeometry(part) {
+    const s = this.getScale();
+
+    // Close-orbit geometry: pieces must start inside the visual field,
+    // not outside the viewport. Values are intentionally px-based so they
+    // do not explode on wide screens.
+    const geometry = {
+      'part-helmet': {
+        offsetX: 0,
+        offsetY: -160,
+        rotation: -10,
+        targetX: 0,
+        targetY: -45,
+        scale: 0.82,
+        startScroll: 0.02,
+        endScroll: 0.32
+      },
+      'part-body': {
+        offsetX: 0,
+        offsetY: 170,
+        rotation: 0,
+        targetX: 0,
+        targetY: 155,
+        scale: 1.05,
+        startScroll: 0.025,
+        endScroll: 0.34
+      },
+      'part-left-arm': {
+        offsetX: 210,
+        offsetY: 60,
+        rotation: 12,
+        targetX: 75,
+        targetY: 140,
+        scale: 0.82,
+        startScroll: 0.035,
+        endScroll: 0.38
+      },
+      'part-right-arm': {
+        offsetX: -210,
+        offsetY: 70,
+        rotation: -12,
+        targetX: -55,
+        targetY: 165,
+        scale: 0.82,
+        startScroll: 0.035,
+        endScroll: 0.38
+      },
+      'part-shoulders': {
+        offsetX: 0,
+        offsetY: -120,
+        rotation: -8,
+        targetX: 0,
+        targetY: 45,
+        scale: 0.92,
+        startScroll: 0.025,
+        endScroll: 0.35
+      }
+    };
+
+    const g = geometry[part.id];
+    if (!g) return;
+
+    part.offsetX = g.offsetX * s;
+    part.offsetY = g.offsetY * s;
+    part.rotation = g.rotation;
+    part.targetX = g.targetX * s;
+    part.targetY = g.targetY * s;
+    part.scale = g.scale;
+    part.startScroll = g.startScroll;
+    part.endScroll = g.endScroll;
   }
 
   init() {
@@ -24,70 +99,16 @@ class ScrollPhysics {
         mass: 0.72,
         damping: 0.92,
         offsetX: 0,
-        offsetY: -window.innerHeight * 0.55,
-        rotation: -15,
+        offsetY: 0,
+        rotation: 0,
         targetX: 0,
         targetY: 0,
         scale: 1,
         startScroll: 0.02,
-        endScroll: 0.42
+        endScroll: 0.38
       };
 
-      if (el.id === 'part-helmet') {
-        part.offsetX = 0;
-        part.offsetY = -window.innerHeight * 0.58;
-        part.rotation = -12;
-        part.targetX = 0;
-        part.targetY = -80;
-        part.scale = 0.85;
-        part.startScroll = 0.02;
-        part.endScroll = 0.36;
-      }
-
-      if (el.id === 'part-body') {
-        part.offsetX = 0;
-        part.offsetY = window.innerHeight * 0.62;
-        part.rotation = 0;
-        part.targetX = 0;
-        part.targetY = 330;
-        part.scale = 1.25;
-        part.startScroll = 0.03;
-        part.endScroll = 0.38;
-      }
-
-      if (el.id === 'part-left-arm') {
-        part.offsetX = window.innerWidth * 0.78;
-        part.offsetY = window.innerHeight * 0.16;
-        part.rotation = 14;
-        part.targetX = 150;
-        part.targetY = 280;
-        part.scale = 0.85;
-        part.startScroll = 0.04;
-        part.endScroll = 0.42;
-      }
-
-      if (el.id === 'part-right-arm') {
-        part.offsetX = -window.innerWidth * 0.78;
-        part.offsetY = window.innerHeight * 0.16;
-        part.rotation = -14;
-        part.targetX = -100;
-        part.targetY = 360;
-        part.scale = 0.85;
-        part.startScroll = 0.04;
-        part.endScroll = 0.42;
-      }
-
-      if (el.id === 'part-shoulders') {
-        part.offsetX = 0;
-        part.offsetY = -window.innerHeight * 0.52;
-        part.rotation = -10;
-        part.targetX = 0;
-        part.targetY = 80;
-        part.scale = 0.95;
-        part.startScroll = 0.025;
-        part.endScroll = 0.39;
-      }
-
+      this.applyCloseGeometry(part);
       this.parts.push(part);
     });
 
@@ -110,19 +131,7 @@ class ScrollPhysics {
   }
 
   recalculateResponsiveOffsets() {
-    this.parts.forEach((part) => {
-      if (part.id === 'part-left-arm') {
-        part.offsetX = window.innerWidth * 0.78;
-        part.offsetY = window.innerHeight * 0.16;
-      }
-      if (part.id === 'part-right-arm') {
-        part.offsetX = -window.innerWidth * 0.78;
-        part.offsetY = window.innerHeight * 0.16;
-      }
-      if (part.id === 'part-helmet') part.offsetY = -window.innerHeight * 0.58;
-      if (part.id === 'part-shoulders') part.offsetY = -window.innerHeight * 0.52;
-      if (part.id === 'part-body') part.offsetY = window.innerHeight * 0.62;
-    });
+    this.parts.forEach((part) => this.applyCloseGeometry(part));
   }
 
   update() {
@@ -130,8 +139,9 @@ class ScrollPhysics {
     const raw = this.scrollProgress;
     const isFinalHold = raw >= this.FINAL_LOCK_RAW;
 
-    // Tight scroll coupling: the pieces must react to the user's scroll, not lag behind it.
-    const lerp = isFinalHold ? 0.65 : 0.38;
+    // Tight scroll coupling: the pieces must react to the user's scroll,
+    // but without overshooting or feeling detached.
+    const lerp = isFinalHold ? 0.65 : 0.44;
     this.lerpedProgress += (target - this.lerpedProgress) * lerp;
     if (isFinalHold) this.lerpedProgress = 1;
 
@@ -158,7 +168,6 @@ class ScrollPhysics {
       overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 90}px))`;
     }
 
-    // Earlier reveal: the armor assembly should be complete well before the final lock.
     const transStart = 0.68;
     const transEnd = 0.86;
     const transP = this.clamp((p - transStart) / (transEnd - transStart), 0, 1);
@@ -174,20 +183,20 @@ class ScrollPhysics {
 
     this.parts.forEach((part) => {
       const relative = this.clamp((p - part.startScroll) / (part.endScroll - part.startScroll), 0, 1);
-      const snapRelative = this.clamp((p - 0.42) / 0.16, 0, 1);
+      const snapRelative = this.clamp((p - 0.40) / 0.16, 0, 1);
       const attraction = this.magneticPull(relative, p);
       const snap = this.cubicBezier(snapRelative);
-      const force = this.clamp(attraction * 0.90 + snap * 0.22, 0, 1);
+      const force = this.clamp(attraction * 0.88 + snap * 0.24, 0, 1);
 
       const floatPhase = this.clamp(p / 0.08, 0, 1);
-      const floatNoise = p < 0.08 ? Math.sin(this.noiseOffset + performance.now() * 0.0015 + part.targetY * 0.01) * 12 * (1 - floatPhase) : 0;
+      const floatNoise = p < 0.08 ? Math.sin(this.noiseOffset + performance.now() * 0.0015 + part.targetY * 0.01) * 8 * (1 - floatPhase) : 0;
 
       let currentX = part.offsetX * (1 - force) + part.targetX * force;
       let currentY = part.offsetY * (1 - force) + part.targetY * force + floatNoise;
       let currentRot = part.rotation * (1 - force);
-      let currentOpacity = p < 0.005 ? 0 : this.clamp((p - 0.005) / 0.055, 0, 1);
+      const currentOpacity = p < 0.005 ? 0 : this.clamp((p - 0.005) / 0.045, 0, 1);
 
-      if (p >= 0.42) {
+      if (p >= 0.40) {
         currentX = currentX * (1 - snap) + part.targetX * snap;
         currentY = currentY * (1 - snap) + part.targetY * snap;
         currentRot = currentRot * (1 - snap);
@@ -218,7 +227,7 @@ class ScrollPhysics {
   magneticPull(t, globalProgress) {
     const eased = this.cubicBezier(t);
     const gravity = this.clamp((globalProgress - 0.04) / 0.34, 0, 1);
-    return this.clamp(eased * (0.50 + gravity * 0.70), 0, 1);
+    return this.clamp(eased * (0.52 + gravity * 0.68), 0, 1);
   }
 
   cubicBezier(t) {
