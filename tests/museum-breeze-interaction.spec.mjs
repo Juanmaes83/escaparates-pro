@@ -115,6 +115,26 @@ test('Breeze saved state survives entry through the canonical full route', async
   await backgroundSection.getByRole('button', { name: 'START' }).click();
   await expect.poll(async () => frame.evaluate(() => Boolean(window.__BREEZE_STUDIO_PRO__?.app?.appliedBackgroundFile)), { timeout: 20_000 }).toBe(true);
 
+  // Bind SAVE to the exact current Breeze window. adapter.request() includes the
+  // production waitReady() check (readyWindow === iframe.contentWindow), so the
+  // harness cannot race the child READY event or accidentally save a stale guest.
+  const preSave = await page.evaluate(async () => {
+    const adapter = window.__IW_BREEZE_PERSISTENCE_ADAPTER;
+    if (!adapter) throw new Error('Breeze persistence adapter not installed');
+    const response = await adapter.request('GET_STATE');
+    return {
+      experience: response.state?.experience,
+      backgroundApplied: response.state?.background?.applied,
+      backgroundName: response.state?.background?.file?.name || response.state?.background?.meta?.name || null
+    };
+  });
+  console.log('BREEZE_PRESAVE_READY', JSON.stringify(preSave));
+  expect(preSave).toEqual({
+    experience: 'autumn',
+    backgroundApplied: true,
+    backgroundName: 'museum-breeze-proof.png'
+  });
+
   await page.evaluate(async (entityId) => {
     const studio = window.__IW_STUDIO;
     if (!studio) throw new Error('Museum Studio not mounted');
@@ -175,9 +195,6 @@ test('Breeze saved state survives entry through the canonical full route', async
     window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.breezeTourStepId);
   expect(reachedBreezeLead).toBe(true);
 
-  // seekToTourStep lands on the first beat of a canonical step. Seeking the next
-  // step forces every remaining beat of the Breeze threshold step to settle,
-  // including the actual portal action, before the assertion below.
   const crossedIntoBreeze = await page.evaluate(async (tourStepId) =>
     window.__IW.runtime.experience.seekToTourStep(tourStepId), routePlan.postBreezeTourStepId);
   expect(crossedIntoBreeze).toBe(true);
