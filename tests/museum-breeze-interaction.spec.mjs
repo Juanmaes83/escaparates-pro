@@ -24,6 +24,8 @@ async function getBreezeFrame(page) {
 async function logControls(frame) {
   return frame.evaluate(() => ({
     title: document.title,
+    bodyText: document.body?.innerText?.slice(0, 2500) || '',
+    navigatorGpu: Boolean(navigator.gpu),
     selects: [...document.querySelectorAll('select')].map((el) => ({
       value: el.value,
       options: [...el.options].map((o) => o.textContent?.trim())
@@ -33,14 +35,18 @@ async function logControls(frame) {
       value: el.value, min: el.min, max: el.max, step: el.step,
       label: el.getAttribute('aria-label') || el.name || el.id || null
     })),
-    fileInputs: document.querySelectorAll('input[type="file"]').length
+    fileInputs: document.querySelectorAll('input[type="file"]').length,
+    canvases: document.querySelectorAll('canvas').length,
+    scripts: [...document.scripts].map((s) => s.src).filter(Boolean)
   }));
 }
 
 test('Museum Breeze native controls own input and react', async ({ page }) => {
   test.setTimeout(90_000);
   const consoleErrors = [];
+  const allConsole = [];
   page.on('console', (msg) => {
+    allConsole.push(`${msg.type()}: ${msg.text()}`);
     if (msg.type() === 'error') consoleErrors.push(msg.text());
   });
   page.on('pageerror', (err) => consoleErrors.push(`pageerror: ${err.message}`));
@@ -49,11 +55,10 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   await page.waitForTimeout(5_000);
   await enterBreezeRoom(page);
 
-  const { iframe, frame } = await getBreezeFrame(page);
-
-  await page.screenshot({ path: artifact('01-museum-breeze-loaded.png'), fullPage: true });
+  const { frame } = await getBreezeFrame(page);
   await frame.waitForLoadState('domcontentloaded');
-  await frame.waitForTimeout(2_000);
+  await frame.waitForTimeout(7_000);
+  await page.screenshot({ path: artifact('01-museum-breeze-loaded.png'), fullPage: true });
 
   const diagnostics = await page.evaluate(() => {
     const guest = window.__IW?.nestedRoomHost?.guest || window.__IW_BREEZE_PHASE1?.runtime?.nestedRoomHost?.guest || null;
@@ -76,14 +81,17 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
     };
   });
 
+  const controlsBefore = await logControls(frame);
   console.log('BREEZE_HIT_TEST', JSON.stringify(diagnostics));
+  console.log('BREEZE_RUNTIME_BEFORE_ASSERT', JSON.stringify(controlsBefore));
+  console.log('BREEZE_CONSOLE_BEFORE_ASSERT', JSON.stringify(allConsole));
+  console.log('BREEZE_ERRORS_BEFORE_ASSERT', JSON.stringify(consoleErrors));
+
   expect(diagnostics.inputOwner).toBe('guest');
   expect(diagnostics.studioBodyPointerEvents).toBe('none');
   expect(diagnostics.iframePointerEvents).toBe('auto');
   expect(diagnostics.hitIsIframe, `Expected iframe to win hit-test, got ${JSON.stringify(diagnostics)}`).toBe(true);
-
-  const controlsBefore = await logControls(frame);
-  console.log('BREEZE_CONTROLS_BEFORE', JSON.stringify(controlsBefore));
+  expect(controlsBefore.navigatorGpu, 'Breeze V4.1 requires navigator.gpu in the guest').toBe(true);
   expect(controlsBefore.selects.length, 'Breeze must expose Experience select').toBeGreaterThan(0);
   expect(controlsBefore.ranges.length, 'Breeze must expose grading/scene range controls').toBeGreaterThan(0);
 
@@ -118,7 +126,6 @@ test('Museum Breeze native controls own input and react', async ({ page }) => {
   const chooserPromise = page.waitForEvent('filechooser', { timeout: 10_000 });
   await uploadButtons.first().click();
   const chooser = await chooserPromise;
-  expect(chooser.isMultiple()).toBeDefined();
   console.log('BREEZE_FILECHOOSER', { emitted: true, multiple: chooser.isMultiple() });
 
   await page.screenshot({ path: artifact('02-museum-breeze-after-controls.png'), fullPage: true });
