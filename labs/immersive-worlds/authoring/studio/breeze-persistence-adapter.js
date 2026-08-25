@@ -216,14 +216,18 @@ window.addEventListener('message', (event) => {
   if (msg.type === 'SAVE_REQUEST') {
     const frame = iframe();
     if (!frame?.contentWindow || event.source !== frame.contentWindow) return;
+    const targetWindow = frame.contentWindow;
     (async () => {
       try {
         const studio = window.__IW_STUDIO;
         if (!studio) throw new Error('Museum Studio no está disponible.');
         studio.selectedId = ENTITY_ID;
         await saveCurrentBreeze(studio);
-        studio.render?.();
-        frame.contentWindow.postMessage({
+        // Acknowledge directly to the same live guest. Do not force a Studio
+        // render here: the in-panel save is a local Breeze action and a global
+        // shell refresh can replace/reset the child UI after the snapshot is
+        // already safely stored.
+        targetWindow.postMessage({
           bridge: BRIDGE,
           type: 'SAVE_RESULT',
           ok: true,
@@ -231,7 +235,7 @@ window.addEventListener('message', (event) => {
         }, '*');
       } catch (error) {
         console.error('[Museum Breeze persistence] in-panel save failed', error);
-        frame.contentWindow.postMessage({
+        targetWindow.postMessage({
           bridge: BRIDGE,
           type: 'SAVE_RESULT',
           ok: false,
