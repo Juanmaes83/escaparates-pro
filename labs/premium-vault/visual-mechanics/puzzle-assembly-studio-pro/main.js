@@ -2,9 +2,11 @@ class ScrollPhysics {
   constructor() {
     this.parts = [];
     this.scrollProgress = 0;
+    this.animProgress = 0;
     this.lerpedProgress = 0;
     this.noiseOffset = Math.random() * 1000;
     this.lastScrollY = window.scrollY;
+    this.ANIMATION_END_RAW = 0.62;
     this.init();
   }
 
@@ -99,6 +101,7 @@ class ScrollPhysics {
     const max = Math.max(1, hero.offsetHeight - window.innerHeight);
     const rect = hero.getBoundingClientRect();
     this.scrollProgress = this.clamp(-rect.top / max, 0, 1);
+    this.animProgress = this.clamp(this.scrollProgress / this.ANIMATION_END_RAW, 0, 1);
   }
 
   recalculateResponsiveOffsets() {
@@ -111,21 +114,32 @@ class ScrollPhysics {
   }
 
   update() {
-    this.lerpedProgress += (this.scrollProgress - this.lerpedProgress) * 0.10;
-    this.animateScene();
+    const target = this.animProgress;
+    const raw = this.scrollProgress;
+    const isFinalHold = raw >= this.ANIMATION_END_RAW;
+
+    // Faster tracking in the final phase so the reveal cannot arrive late
+    // while the sticky hero is already leaving the viewport.
+    const lerp = isFinalHold ? 0.32 : 0.16;
+    this.lerpedProgress += (target - this.lerpedProgress) * lerp;
+    if (isFinalHold) this.lerpedProgress = Math.max(this.lerpedProgress, 0.985);
+
+    this.animateScene(raw, isFinalHold);
     this.handleSectionAnimations();
     this.handleNavbar();
     requestAnimationFrame(() => this.update());
   }
 
-  animateScene() {
-    const p = this.lerpedProgress;
+  animateScene(rawProgress, isFinalHold) {
+    const p = this.clamp(this.lerpedProgress, 0, 1);
     const s1 = document.getElementById('samurai1');
     const s2 = document.getElementById('samurai2');
     const overlay = document.getElementById('hero-overlay');
     const meter = document.getElementById('scroll-meter-bar');
+    const frame = document.querySelector('.sticky-frame');
 
-    if (meter) meter.style.width = `${p * 100}%`;
+    if (frame) frame.classList.toggle('is-final-hold', isFinalHold);
+    if (meter) meter.style.width = `${rawProgress * 100}%`;
 
     const titleP = this.clamp(p / 0.25, 0, 1);
     if (overlay) {
@@ -133,15 +147,20 @@ class ScrollPhysics {
       overlay.style.transform = `translate(-50%, calc(-50% + ${titleP * 180}px))`;
     }
 
+    // Prompt-faithful internal timeline:
+    // 85%–100% of the visual animation crossfades to samurai2.
+    // The full visual animation is completed by 62% of physical scroll,
+    // leaving the remaining scroll as a real final hold.
     const transStart = 0.85;
     const transEnd = 1.0;
     const transP = this.clamp((p - transStart) / (transEnd - transStart), 0, 1);
-    const revealP = this.cubicBezier(transP);
+    const revealP = isFinalHold ? 1 : this.cubicBezier(transP);
 
     if (s1 && s2) {
       s1.style.opacity = String(1 - revealP);
       s2.style.opacity = String(revealP);
       const finalScale = 1 + 0.05 * revealP;
+      s1.style.transform = 'translate(-50%, -50%) scale(1)';
       s2.style.transform = `translate(-50%, -50%) scale(${finalScale})`;
     }
 
@@ -166,7 +185,7 @@ class ScrollPhysics {
         currentRot = currentRot * (1 - snap);
       }
 
-      const finalOpacity = currentOpacity * (1 - revealP);
+      const finalOpacity = isFinalHold ? 0 : currentOpacity * (1 - revealP);
       part.el.style.opacity = String(finalOpacity);
       part.el.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) rotate(${currentRot}deg) scale(${part.scale})`;
     });
