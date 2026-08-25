@@ -9,8 +9,6 @@ test.use({
 const URL = process.env.BREEZE_MUSEUM_URL ||
   'https://escaparates-pro-git-chatgpt-mu-5bfce9-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json';
 
-const ENTITY_ID = 'entity.installation.viento-sobre-marmol';
-
 async function getBreezeFrame(page) {
   const iframe = page.locator('iframe[data-nested-room-studio="room.breeze"]');
   await expect(iframe).toBeVisible({ timeout: 35_000 });
@@ -19,6 +17,7 @@ async function getBreezeFrame(page) {
   expect(frame).toBeTruthy();
   await frame.waitForLoadState('domcontentloaded');
   await expect(frame.locator('#bsScene')).toBeVisible({ timeout: 20_000 });
+  await expect(frame.locator('#bsMuseumSave')).toBeVisible({ timeout: 20_000 });
   return { iframe, frame };
 }
 
@@ -79,10 +78,11 @@ async function assertRestoredBreeze(page) {
     backgroundApplied: true,
     backgroundName: 'museum-breeze-proof.png'
   });
+  await expect(frame.locator('#bsMuseumSave')).toHaveText('GUARDADO ✓');
   return { iframe, frame, restored };
 }
 
-test('Breeze saved state survives entry through the canonical full route', async ({ page }) => {
+test('Breeze in-panel Museum save survives entry through the canonical full route', async ({ page }) => {
   test.setTimeout(300_000);
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForTimeout(2_000);
@@ -115,9 +115,6 @@ test('Breeze saved state survives entry through the canonical full route', async
   await backgroundSection.getByRole('button', { name: 'START' }).click();
   await expect.poll(async () => frame.evaluate(() => Boolean(window.__BREEZE_STUDIO_PRO__?.app?.appliedBackgroundFile)), { timeout: 20_000 }).toBe(true);
 
-  // Bind SAVE to the exact current Breeze window. adapter.request() includes the
-  // production waitReady() check (readyWindow === iframe.contentWindow), so the
-  // harness cannot race the child READY event or accidentally save a stale guest.
   const preSave = await page.evaluate(async () => {
     const adapter = window.__IW_BREEZE_PERSISTENCE_ADAPTER;
     if (!adapter) throw new Error('Breeze persistence adapter not installed');
@@ -135,14 +132,13 @@ test('Breeze saved state survives entry through the canonical full route', async
     backgroundName: 'museum-breeze-proof.png'
   });
 
-  await page.evaluate(async (entityId) => {
-    const studio = window.__IW_STUDIO;
-    if (!studio) throw new Error('Museum Studio not mounted');
-    studio.selectedId = entityId;
-    studio.render();
-    await studio._validationSavePiece();
-  }, ENTITY_ID);
+  // Human path: use the same visible control the author clicks inside Breeze.
+  const saveButton = frame.locator('#bsMuseumSave');
+  await expect(saveButton).toHaveText(/GUARDAR EN MUSEUM|GUARDADO/);
+  await saveButton.click();
   await persistenceStatus(page, 'SAVED');
+  await expect(saveButton).toHaveText('GUARDADO ✓', { timeout: 20_000 });
+  await expect(frame.locator('#bsMuseumSaveStatus')).toContainText('Puedes salir de la sala');
 
   const saved = await page.evaluate(() => ({
     status: window.__IW_BREEZE_PERSISTENCE?.status,
