@@ -11,6 +11,17 @@
   <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+  <!-- Character Phase 3's exact r185 GLTFLoader imports the bare `three`
+       specifier. Point it at Museum's already-pinned local 0.185.1 module so
+       the gate cannot create a second Three runtime/ABI. No existing Museum
+       module uses this bare specifier, so the baseline path is unchanged. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.min.js"
+      }
+    }
+  </script>
 </head>
 <body>
   <main id="iw-stage">
@@ -37,11 +48,32 @@
       requestAnimationFrame(() => window.__IW_STUDIO?.render?.());
     });
 
-    boot().then(async () => {
+    boot().then(async (runtime) => {
       installVisitorPhase1();
       installMuseumPhase2();
       installMuseumPhase2LayoutFix();
       installMuseumPhase2Hardening();
+
+      // Character / Avatar 2027 — PHASE 3 HUMAN GATE ONLY.
+      // The default Museum remains untouched. `?character=1` is the explicit,
+      // reversible opt-in used for Juanma + ChatGPT visual validation.
+      // This gate is presence-only: no Character input, locomotion, camera
+      // authority, portals or specialized-room integration are activated here.
+      if (new URLSearchParams(location.search).get('character') === '1') {
+        try {
+          const { mountMuseumCharacterPhase3 } = await import('./character/museum-character-phase3.js');
+          await mountMuseumCharacterPhase3({ runtime, sceneKit: runtime.sceneKit });
+        } catch (characterError) {
+          console.error('[Character Phase 3] Gate failed:', characterError);
+          document.documentElement.dataset.characterPhase3 = 'error';
+          document.documentElement.dataset.characterPhase3Error = String(characterError?.message || characterError);
+          const warning = document.createElement('div');
+          warning.id = 'character-phase3-error';
+          warning.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;max-width:min(520px,calc(100vw - 28px));background:rgba(55,10,10,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 11px/1.45 system-ui,sans-serif';
+          warning.textContent = `PHASE 3 CHARACTER ERROR · ${String(characterError?.message || characterError)}`;
+          document.body.appendChild(warning);
+        }
+      }
 
       // — Wet Paint como capacidad nativa del Museo (Sala 4 — Exposición Itinerante) —
       // El donante (wet-paint-flow @ 0b9ba9a) funciona como motor OCULTO; sus controles
@@ -51,10 +83,10 @@
       try {
         const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
         const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
-        const runtime = window.__IW?.runtime;
-        if (runtime) {
+        const activeRuntime = window.__IW?.runtime;
+        if (activeRuntime) {
           await new Promise((resolve) => requestAnimationFrame(resolve));
-          const result = installWetPaint(runtime);
+          const result = installWetPaint(activeRuntime);
           installWetPaintStudioControls();
           if (result) {
             console.log('[Wet Paint] Motor + controles nativos de Studio instalados (Sala 4)');
