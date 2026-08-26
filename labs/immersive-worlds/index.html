@@ -54,23 +54,28 @@
       installMuseumPhase2LayoutFix();
       installMuseumPhase2Hardening();
 
-      // Character / Avatar 2027 — PHASE 3 HUMAN GATE ONLY.
-      // The default Museum remains untouched. `?character=1` is the explicit,
-      // reversible opt-in used for Juanma + ChatGPT visual validation.
-      // This gate is presence-only: no Character input, locomotion, camera
-      // authority, portals or specialized-room integration are activated here.
-      if (new URLSearchParams(location.search).get('character') === '1') {
+      // Character / Avatar 2027 — bounded opt-ins.
+      // `?character=1` keeps the validated Phase 3 presence gate.
+      // `?character=1&mobility=1` advances to Phase 4A: one controllable body,
+      // Museum input routing, Museum navigation/collision and one CameraAuthority.
+      const characterParams = new URLSearchParams(location.search);
+      if (characterParams.get('character') === '1') {
         try {
-          const { mountMuseumCharacterPhase3 } = await import('./character/museum-character-phase3.js');
-          await mountMuseumCharacterPhase3({ runtime, sceneKit: runtime.sceneKit });
+          if (characterParams.get('mobility') === '1') {
+            const { mountMuseumCharacterPhase4A } = await import('./character/museum-character-phase4a.js');
+            await mountMuseumCharacterPhase4A({ runtime, sceneKit: runtime.sceneKit, input: window.__IW?.input });
+          } else {
+            const { mountMuseumCharacterPhase3 } = await import('./character/museum-character-phase3.js');
+            await mountMuseumCharacterPhase3({ runtime, sceneKit: runtime.sceneKit });
+          }
         } catch (characterError) {
-          console.error('[Character Phase 3] Gate failed:', characterError);
-          document.documentElement.dataset.characterPhase3 = 'error';
-          document.documentElement.dataset.characterPhase3Error = String(characterError?.message || characterError);
+          console.error('[Character 2027] Gate failed:', characterError);
+          document.documentElement.dataset.characterGate = 'error';
+          document.documentElement.dataset.characterGateError = String(characterError?.message || characterError);
           const warning = document.createElement('div');
-          warning.id = 'character-phase3-error';
-          warning.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;max-width:min(520px,calc(100vw - 28px));background:rgba(55,10,10,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 11px/1.45 system-ui,sans-serif';
-          warning.textContent = `PHASE 3 CHARACTER ERROR · ${String(characterError?.message || characterError)}`;
+          warning.id = 'character-gate-error';
+          warning.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;max-width:min(560px,calc(100vw - 28px));background:rgba(55,10,10,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 11px/1.45 system-ui,sans-serif';
+          warning.textContent = `CHARACTER GATE ERROR · ${String(characterError?.message || characterError)}`;
           document.body.appendChild(warning);
         }
       }
