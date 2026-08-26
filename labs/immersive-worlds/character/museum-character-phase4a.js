@@ -129,9 +129,10 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   root.rotation.y = Array.isArray(anchor.normal) ? Math.atan2(anchor.normal[0], anchor.normal[2]) : 0;
   sceneKit.scene.add(root);
 
-  const volume = sceneKit.navigationVolume(SPACE_ID);
+  let activeCharacterSpaceId = SPACE_ID;
+  let volume = sceneKit.navigationVolume(activeCharacterSpaceId);
   if (!volume?.bounds) throw new Error('Gallery A has no navigationVolume bounds');
-  const groundY = volume.bounds.min[1];
+  let groundY = volume.bounds.min[1];
   root.position.y = groundY;
   root.updateMatrixWorld(true);
 
@@ -164,8 +165,34 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     return true;
   }
 
+  function rebindSpace(spaceId, spawn = null) {
+    const nextVolume = sceneKit.navigationVolume(spaceId);
+    if (!nextVolume?.bounds) throw new Error(`Character navigationVolume missing for ${spaceId}`);
+    activeCharacterSpaceId = spaceId;
+    volume = nextVolume;
+    groundY = nextVolume.bounds.min[1];
+    runtime.explore.setNavigationVolume(nextVolume);
+    cameraController.setNavigationVolume(nextVolume);
+    if (spawn?.position) {
+      root.position.set(spawn.position[0], groundY, spawn.position[2]);
+      if (Array.isArray(spawn.normal)) root.rotation.y = Math.atan2(spawn.normal[0], spawn.normal[2]);
+    } else {
+      root.position.y = groundY;
+    }
+    jumping = false;
+    jumpElapsed = 0;
+    stopElapsed = 0;
+    previousMoving = false;
+    previousTurn = 0;
+    setInput({});
+    root.updateMatrixWorld(true);
+    runtime.proximity.rebuild(spaceId);
+    runtime.proximity.update(1, [root.position.x, groundY + runtime.explore.eyeHeight, root.position.z]);
+    return { spaceId, groundY, volume: nextVolume };
+  }
+
   function updateLocomotion(dt) {
-    if (disposed || runtime.state.activeSpaceId !== SPACE_ID) return;
+    if (disposed || runtime.state.activeSpaceId !== activeCharacterSpaceId) return;
     const frameDt = Math.max(0, Math.min(Number(dt) || 0, 0.05));
     const turn = movement.turn;
     const forward = movement.forward;
@@ -218,10 +245,6 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     if (to === CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE) input.setEnabled(true);
   });
 
-  // Character Explore is a separate visitor mode. The legacy Runtime correctly
-  // returns FOCUS to legacy EXPLORE, but while this graft is active the visitor
-  // entered Focus from THIRD_PERSON_EXPLORE. Override only this session-level
-  // release path; guided/tour behaviour continues through the original Runtime.
   const previousReleaseFocus = runtime.releaseFocus;
   runtime.releaseFocus = function releaseCharacterFocus() {
     if (runtime.state.mode === 'GUIDED') return previousReleaseFocus.call(runtime);
@@ -246,11 +269,22 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   input.setEnabled(true);
 
   const api = {
-    ready: true, root, visual: loaded.visual, normalization: loaded.normalization, motion, collision, circulation, setInput, jump,
+    ready: true,
+    root,
+    visual: loaded.visual,
+    normalization: loaded.normalization,
+    motion,
+    collision,
+    circulation,
+    cameraController,
+    setInput,
+    jump,
+    rebindSpace,
     report() {
       return {
         phase: 'PHASE4A_THIRD_PERSON_FOCUS_CAMERA_RECOVERY', ready: true,
-        spaceId: runtime.state.activeSpaceId, position: root.position.toArray(), yaw: root.rotation.y,
+        spaceId: runtime.state.activeSpaceId, characterSpaceId: activeCharacterSpaceId,
+        position: root.position.toArray(), yaw: root.rotation.y,
         canonicalForward: '+Z', visualForwardYawOffset: VISUAL_FORWARD_YAW_OFFSET,
         grounded: Math.abs(root.position.y - groundY) < 0.002 || jumping, jumping,
         input: { ...movement }, motion: motion.report(), collision: { ...collision }, circulation,
@@ -260,7 +294,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         camera: runtime.camera.report(), cameraFollow: cameraController.report(),
         focusReturnPolicy: 'Character Focus returns to THIRD_PERSON_EXPLORE; guided mode delegates to Runtime legacy policy',
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
-        frameSeam: 'existing runtime.onFrame; body before render; camera follows at <=1 frame latency',
+        frameSeam: 'one Character locomotion loop; active room context is rebound without recreating motion/camera',
         humanVisualApproval: 'PENDING_FINAL_4A'
       };
     },
