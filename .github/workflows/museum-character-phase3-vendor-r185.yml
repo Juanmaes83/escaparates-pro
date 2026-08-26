@@ -1,0 +1,117 @@
+name: Museum Character Phase 3 — vendor exact Three r185 addons
+
+on:
+  push:
+    branches:
+      - chatgpt/museum-character-2027-integration-v1
+    paths:
+      - .github/workflows/museum-character-phase3-vendor-r185.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: museum-character-phase3-vendor-r185
+  cancel-in-progress: false
+
+jobs:
+  transport-exact-blobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Transport source blobs byte-for-byte and commit only after SHA equality
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEST_REPO: Juanmaes83/escaparates-pro
+          SOURCE_REPO: mrdoob/three.js
+          TARGET_BRANCH: chatgpt/museum-character-2027-integration-v1
+        run: |
+          node <<'NODE'
+          const token = process.env.GH_TOKEN;
+          const destRepo = process.env.DEST_REPO;
+          const sourceRepo = process.env.SOURCE_REPO;
+          const branch = process.env.TARGET_BRANCH;
+
+          const stones = [
+            {
+              path: 'labs/immersive-worlds/vendor/three/addons/loaders/GLTFLoader.js',
+              sha: '91629ef9f7a39b11180acb7459701eccc6cd3aa0'
+            },
+            {
+              path: 'labs/immersive-worlds/vendor/three/addons/utils/BufferGeometryUtils.js',
+              sha: '4e1221c238634f36110688a6b309d1686f1834b4'
+            },
+            {
+              path: 'labs/immersive-worlds/vendor/three/addons/utils/SkeletonUtils.js',
+              sha: '836c2e2bf2be3c5c5fd6b65ed260f84b3d589258'
+            }
+          ];
+
+          async function api(url, options = {}, authenticated = true) {
+            const headers = {
+              Accept: 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+              ...(options.headers || {})
+            };
+            if (authenticated) headers.Authorization = `Bearer ${token}`;
+            const response = await fetch(url, { ...options, headers });
+            const text = await response.text();
+            let body = null;
+            try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+            if (!response.ok) {
+              throw new Error(`${options.method || 'GET'} ${url} -> ${response.status}: ${typeof body === 'string' ? body : JSON.stringify(body)}`);
+            }
+            return body;
+          }
+
+          // Never copy by hand. Fetch the exact Git blob object from source, then recreate it in destination.
+          const transported = [];
+          for (const stone of stones) {
+            const source = await api(`https://api.github.com/repos/${sourceRepo}/git/blobs/${stone.sha}`, {}, false);
+            if (source.sha !== stone.sha || source.encoding !== 'base64') {
+              throw new Error(`SOURCE PROVENANCE FAIL ${stone.path}: expected ${stone.sha}, got ${source.sha}/${source.encoding}`);
+            }
+
+            const destination = await api(`https://api.github.com/repos/${destRepo}/git/blobs`, {
+              method: 'POST',
+              body: JSON.stringify({ content: source.content, encoding: 'base64' }),
+              headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (destination.sha !== stone.sha) {
+              throw new Error(`STOP — SHA MISMATCH ${stone.path}: source=${stone.sha} destination=${destination.sha}`);
+            }
+
+            console.log(`SHA PASS ${stone.path}: ${destination.sha}`);
+            transported.push({ path: stone.path, sha: destination.sha, mode: '100644', type: 'blob' });
+          }
+
+          // Resolve the branch only after every blob has independently passed SHA equality.
+          const ref = await api(`https://api.github.com/repos/${destRepo}/git/ref/heads/${branch}`);
+          const parentSha = ref.object.sha;
+          const parent = await api(`https://api.github.com/repos/${destRepo}/git/commits/${parentSha}`);
+
+          const tree = await api(`https://api.github.com/repos/${destRepo}/git/trees`, {
+            method: 'POST',
+            body: JSON.stringify({ base_tree: parent.tree.sha, tree: transported }),
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          const commit = await api(`https://api.github.com/repos/${destRepo}/git/commits`, {
+            method: 'POST',
+            body: JSON.stringify({
+              message: 'vendor(museum): pin exact Three r185 GLTF addon stones',
+              tree: tree.sha,
+              parents: [parentSha]
+            }),
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          await api(`https://api.github.com/repos/${destRepo}/git/refs/heads/${branch}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ sha: commit.sha, force: false }),
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          console.log(`TRANSPORT PASS commit=${commit.sha}`);
+          NODE
