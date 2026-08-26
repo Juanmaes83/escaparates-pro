@@ -8,27 +8,35 @@
  *
  * Camera-comfort behaviour is recovered from the frozen
  * PropertyRoomCharacterFreeMobility donor, adapted to Museum-side contracts.
+ *
+ * Phase 4A final polish adds a strict camera-distance envelope so the Character
+ * cannot become visually tiny or fill/leave the frame, and expires stale safe
+ * camera poses after meaningful Character translation/rotation.
  */
 
-const DEFAULT_DISTANCE = 3.65;
-const DEFAULT_HEIGHT = 2.15;
+const DEFAULT_DISTANCE = 3.25;
+const DEFAULT_HEIGHT = 2.05;
 const DEFAULT_TARGET_HEIGHT = 1.02;
 const DEFAULT_FOV = 52;
 const CAMERA_MARGIN = 0.28;
 const CAMERA_CLEARANCE = 0.24;
-const CAMERA_MIN_COMFORT_DISTANCE = 2.65;
-const CAMERA_POSITION_DEAD_ZONE = 0.18;
-const CAMERA_TARGET_DEAD_ZONE = 0.08;
-const CAMERA_LERP_RATE = 7.2;
+const CAMERA_MIN_DISTANCE = 2.75;
+const CAMERA_MAX_DISTANCE = 3.72;
+const CAMERA_TARGET_DISTANCE = 3.25;
+const CAMERA_POSITION_DEAD_ZONE = 0.12;
+const CAMERA_TARGET_DEAD_ZONE = 0.06;
+const CAMERA_LERP_RATE = 8.0;
 const MIN_BEHIND_PROJECTION = 0.35;
+const LAST_SAFE_MAX_CHARACTER_TRAVEL = 1.15;
+const LAST_SAFE_MAX_YAW_DELTA = Math.PI / 3;
 
-const DISTANCES = Object.freeze([4.2, 3.65, 3.15, 2.75]);
-const LATERALS = Object.freeze([0, 1.05, -1.05, 1.65, -1.65, 2.1, -2.1]);
-const HEIGHTS = Object.freeze([2.15, 2.4, 1.95]);
+const DISTANCES = Object.freeze([3.25, 3.5, 3.0, 2.82, 3.65]);
+const LATERALS = Object.freeze([0, 0.72, -0.72, 1.05, -1.05, 1.35, -1.35]);
+const HEIGHTS = Object.freeze([2.05, 2.22, 1.92]);
 
 export class ThirdPersonExploreController {
   constructor({ distance = DEFAULT_DISTANCE, height = DEFAULT_HEIGHT, targetHeight = DEFAULT_TARGET_HEIGHT, fov = DEFAULT_FOV } = {}) {
-    this.distance = distance;
+    this.distance = clamp(distance, CAMERA_MIN_DISTANCE, CAMERA_MAX_DISTANCE);
     this.height = height;
     this.targetHeight = targetHeight;
     this.fov = fov;
@@ -37,12 +45,17 @@ export class ThirdPersonExploreController {
     this._position = null;
     this._target = null;
     this._lastSafe = null;
+    this._lastSafeCharacter = null;
+    this._lastSafeYaw = null;
     this._diag = {
       slot: 'INIT',
       distance: 0,
       occlusionFallbacks: 0,
       comfortHolds: 0,
-      behindGuardSnaps: 0
+      behindGuardSnaps: 0,
+      distanceGuardPullIns: 0,
+      distanceGuardPushOuts: 0,
+      staleSafeInvalidations: 0
     };
   }
 
@@ -52,7 +65,7 @@ export class ThirdPersonExploreController {
 
   setNavigationVolume(volume) {
     this._volume = volume || null;
-    this._lastSafe = null;
+    this._invalidateLastSafe();
   }
 
   onGain(pose) {
@@ -74,7 +87,9 @@ export class ThirdPersonExploreController {
     const forward = [Math.sin(yaw), 0, Math.cos(yaw)];
     const right = [forward[2], 0, -forward[0]];
     const desiredTarget = [human[0], human[1] + this.targetHeight, human[2]];
-    const chosen = this._chooseCameraPosition(human, desiredTarget, forward, right);
+
+    this._expireStaleLastSafe(human, yaw);
+    const chosen = this._chooseCameraPosition(human, desiredTarget, forward, right, yaw);
 
     if (!this._position) this._position = [...chosen];
     if (!this._target) this._target = [...desiredTarget];
@@ -89,14 +104,18 @@ export class ThirdPersonExploreController {
       lerp3InPlace(this._target, desiredTarget, Math.min(1, alpha * 1.15));
     }
 
-    // A straight interpolation between two valid rear positions can cut across
-    // the body's front during a fast 180-degree turn. Never allow that transient:
-    // if the smoothed pose reaches the front hemisphere, snap to the selected
-    // safe rear candidate instead of showing the Character's face while walking.
+    // Never interpolate through the Character's front hemisphere during a fast
+    // direction change. This prevents the walking avatar from suddenly facing
+    // the viewer because the camera crossed in front of the body.
     if (!isBehind(this._position, desiredTarget, forward, MIN_BEHIND_PROJECTION)) {
       this._position = [...chosen];
       this._diag.behindGuardSnaps += 1;
     }
+
+    // Final visual-size guard. Candidate search already respects the envelope,
+    // but smoothing/holds can transiently move outside it. Pull in if the avatar
+    // becomes too small; push out if it becomes too large or risks clipping.
+    this._enforceDistanceEnvelope(this._position, desiredTarget, forward, right);
 
     this._diag.distance = distance3(this._position, desiredTarget);
     commit({ position: [...this._position], target: [...this._target], fov: this.fov });
@@ -107,12 +126,15 @@ export class ThirdPersonExploreController {
       ...this._diag,
       position: this._position ? [...this._position] : null,
       target: this._target ? [...this._target] : null,
-      minComfortDistance: CAMERA_MIN_COMFORT_DISTANCE
+      targetDistance: CAMERA_TARGET_DISTANCE,
+      minDistance: CAMERA_MIN_DISTANCE,
+      maxDistance: CAMERA_MAX_DISTANCE
     };
   }
 
-  _chooseCameraPosition(human, cameraTarget, forward, right) {
-    const distances = uniqueFirst(this.distance, DISTANCES);
+  _chooseCameraPosition(human, cameraTarget, forward, right, yaw) {
+    const distances = uniqueFirst(this.distance, DISTANCES)
+      .map((d) => clamp(d, CAMERA_MIN_DISTANCE, CAMERA_MAX_DISTANCE));
     const heights = uniqueFirst(this.height, HEIGHTS);
 
     for (const distance of distances) {
@@ -125,7 +147,7 @@ export class ThirdPersonExploreController {
           ];
           this._clampToRoom(candidate);
           if (!this._candidateComfortable(candidate, cameraTarget, forward)) continue;
-          this._lastSafe = [...candidate];
+          this._rememberLastSafe(candidate, human, yaw);
           this._diag.slot = `D${distance.toFixed(2)} L${lateral.toFixed(2)} H${height.toFixed(2)}`;
           return candidate;
         }
@@ -139,29 +161,27 @@ export class ThirdPersonExploreController {
       return [...this._lastSafe];
     }
 
-    // Emergency high shoulder. It remains behind the body and is still tested
-    // against Museum bounds/blockers before use.
+    // Emergency high shoulder, still constrained by the same min/max envelope.
     const emergency = [
-      human[0] - forward[0] * 2.8 + right[0] * 1.25,
-      human[1] + 2.55,
-      human[2] - forward[2] * 2.8 + right[2] * 1.25
+      human[0] - forward[0] * 2.9 + right[0] * 0.9,
+      human[1] + 2.35,
+      human[2] - forward[2] * 2.9 + right[2] * 0.9
     ];
     this._clampToRoom(emergency);
     if (this._candidateComfortable(emergency, cameraTarget, forward)) {
-      this._lastSafe = [...emergency];
+      this._rememberLastSafe(emergency, human, yaw);
       this._diag.slot = 'EMERGENCY_HIGH_SHOULDER';
       return emergency;
     }
 
-    // Last resort: never jump through the body. Keep the previous camera pose if
-    // available; otherwise use a clamped rear point.
+    // Last resort: construct a fresh rear pose around the current Character;
+    // never keep an arbitrarily distant previous pose.
     this._diag.comfortHolds += 1;
-    this._diag.slot = 'HOLD_PREVIOUS';
-    if (this._position) return [...this._position];
+    this._diag.slot = 'FRESH_REAR_FALLBACK';
     const fallback = [
-      human[0] - forward[0] * this.distance,
+      human[0] - forward[0] * CAMERA_TARGET_DISTANCE,
       human[1] + this.height,
-      human[2] - forward[2] * this.distance
+      human[2] - forward[2] * CAMERA_TARGET_DISTANCE
     ];
     this._clampToRoom(fallback);
     return fallback;
@@ -170,9 +190,59 @@ export class ThirdPersonExploreController {
   _candidateComfortable(candidate, target, forward) {
     if (!this._insideBounds(candidate)) return false;
     if (!isBehind(candidate, target, forward, MIN_BEHIND_PROJECTION)) return false;
-    if (distance3(candidate, target) < CAMERA_MIN_COMFORT_DISTANCE) return false;
+    const distance = distance3(candidate, target);
+    if (distance < CAMERA_MIN_DISTANCE || distance > CAMERA_MAX_DISTANCE) return false;
     if (this._pointInsideAnyBlocker(candidate, CAMERA_CLEARANCE)) return false;
     return this._segmentClear(target, candidate);
+  }
+
+  _enforceDistanceEnvelope(point, target, forward, right) {
+    const distance = distance3(point, target);
+    if (distance >= CAMERA_MIN_DISTANCE && distance <= CAMERA_MAX_DISTANCE) return;
+
+    const desiredDistance = distance > CAMERA_MAX_DISTANCE ? CAMERA_TARGET_DISTANCE : CAMERA_MIN_DISTANCE + 0.15;
+    if (distance > CAMERA_MAX_DISTANCE) this._diag.distanceGuardPullIns += 1;
+    else this._diag.distanceGuardPushOuts += 1;
+
+    const lateralProjection = (point[0] - target[0]) * right[0] + (point[2] - target[2]) * right[2];
+    const lateral = clamp(lateralProjection, -0.85, 0.85);
+    const height = clamp(point[1] - target[1] + this.targetHeight, 1.9, 2.25);
+    const corrected = [
+      target[0] - forward[0] * desiredDistance + right[0] * lateral,
+      target[1] - this.targetHeight + height,
+      target[2] - forward[2] * desiredDistance + right[2] * lateral
+    ];
+    this._clampToRoom(corrected);
+
+    // Only adopt the correction if it remains a valid rear/clear pose. Otherwise
+    // use the current frame's selected safe candidate on the next update.
+    if (this._candidateComfortable(corrected, target, forward)) {
+      point[0] = corrected[0];
+      point[1] = corrected[1];
+      point[2] = corrected[2];
+    }
+  }
+
+  _expireStaleLastSafe(human, yaw) {
+    if (!this._lastSafe || !this._lastSafeCharacter || this._lastSafeYaw == null) return;
+    const travel = horizontalDistance(this._lastSafeCharacter, human);
+    const yawDelta = angleDelta(this._lastSafeYaw, yaw);
+    if (travel > LAST_SAFE_MAX_CHARACTER_TRAVEL || yawDelta > LAST_SAFE_MAX_YAW_DELTA) {
+      this._invalidateLastSafe();
+      this._diag.staleSafeInvalidations += 1;
+    }
+  }
+
+  _rememberLastSafe(candidate, human, yaw) {
+    this._lastSafe = [...candidate];
+    this._lastSafeCharacter = [...human];
+    this._lastSafeYaw = yaw;
+  }
+
+  _invalidateLastSafe() {
+    this._lastSafe = null;
+    this._lastSafeCharacter = null;
+    this._lastSafeYaw = null;
   }
 
   _segmentClear(from, to) {
@@ -240,6 +310,14 @@ function lerp3InPlace(current, target, alpha) {
 
 function distance3(a, b) {
   return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+}
+
+function horizontalDistance(a, b) {
+  return Math.hypot(a[0] - b[0], a[2] - b[2]);
+}
+
+function angleDelta(a, b) {
+  return Math.abs(Math.atan2(Math.sin(b - a), Math.cos(b - a)));
 }
 
 function clamp(value, min, max) {
