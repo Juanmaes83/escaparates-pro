@@ -103,11 +103,11 @@ function installBadge(api) {
   document.getElementById('character-phase3-gate')?.remove();
   const el = document.createElement('div');
   el.id = 'character-phase4a-gate';
-  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:460px';
+  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:500px';
   const refresh = () => {
     const r = api.report();
     const follow = r.cameraFollow || {};
-    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · FINAL HUMAN GATE</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · Shift rápido · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · collision ${r.collision.corrections} · camera ${r.camera.owner} · violations ${r.camera.violations}</div><div style="font-weight:500;opacity:.58">cam ${follow.slot || '—'} · dist ${Number(follow.distance || 0).toFixed(2)} · hard ${follow.hardEnvelopeRecoveries || 0}</div><div style="font-weight:500;opacity:.52">hotspot ${r.proximity?.nearest || '—'} · passage ${r.circulation?.applied ? 'OPEN' : 'UNCHANGED'}</div>`;
+    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · FOCUS/CAMERA RECOVERY GATE</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · E obra · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · camera ${r.camera.owner} · violations ${r.camera.violations}</div><div style="font-weight:500;opacity:.58">${follow.shotMode || 'NORMAL'} · dist ${Number(follow.distance || 0).toFixed(2)} · FOV ${Number(follow.fov || 0).toFixed(1)} · reacq ${follow.focusReacquisitions || 0}</div><div style="font-weight:500;opacity:.52">hard ${follow.hardEnvelopeRecoveries || 0} · optical ${follow.opticalRecoveries || 0} · hotspot ${r.proximity?.nearest || '—'}</div>`;
   };
   refresh();
   document.body.appendChild(el);
@@ -210,11 +210,38 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
 
   const previousOnFrame = runtime.onFrame;
   runtime.onFrame = (pose, dt) => { updateLocomotion(dt); previousOnFrame?.(pose, dt); };
+
   const sink = { setInput, jump, inputFrame() {} };
   input.setMovementSink(sink);
+
   const offCameraInputBridge = runtime.bus.on(EVENTS.CAMERA_AUTHORITY_CHANGED, ({ to }) => {
     if (to === CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE) input.setEnabled(true);
   });
+
+  // Character Explore is a separate visitor mode. The legacy Runtime correctly
+  // returns FOCUS to legacy EXPLORE, but while this graft is active the visitor
+  // entered Focus from THIRD_PERSON_EXPLORE. Override only this session-level
+  // release path; guided/tour behaviour continues through the original Runtime.
+  const previousReleaseFocus = runtime.releaseFocus;
+  runtime.releaseFocus = function releaseCharacterFocus() {
+    if (runtime.state.mode === 'GUIDED') return previousReleaseFocus.call(runtime);
+    if (!runtime.state.focusedEntityId) return false;
+
+    const entityId = runtime.state.focusedEntityId;
+    sceneKit.setEntityFocused(entityId, false);
+    runtime.state.setFocus(null);
+    runtime._exploreReturnPose = null;
+    setInput({});
+
+    runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, {
+      reason: 'focus:release:character-third-person',
+      durationMs: 0,
+      restore: 'ADOPT_INCOMING'
+    });
+    input.setEnabled(true);
+    return true;
+  };
+
   runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, { reason: 'Character 2027 Phase 4A free mobility', durationMs: 0, restore: 'ADOPT_INCOMING' });
   input.setEnabled(true);
 
@@ -222,7 +249,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     ready: true, root, visual: loaded.visual, normalization: loaded.normalization, motion, collision, circulation, setInput, jump,
     report() {
       return {
-        phase: 'PHASE4A_THIRD_PERSON_FREE_MOBILITY_FINAL', ready: true,
+        phase: 'PHASE4A_THIRD_PERSON_FOCUS_CAMERA_RECOVERY', ready: true,
         spaceId: runtime.state.activeSpaceId, position: root.position.toArray(), yaw: root.rotation.y,
         canonicalForward: '+Z', visualForwardYawOffset: VISUAL_FORWARD_YAW_OFFSET,
         grounded: Math.abs(root.position.y - groundY) < 0.002 || jumping, jumping,
@@ -231,6 +258,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         entry: { mode: 'canonical-portal', portalId: ENTRY_PORTAL_ID, activeSpaceId: runtime.state.activeSpaceId },
         navigationAuthority: 'Museum ExploreController.resolveNavigationPosition + Museum navigationVolume',
         camera: runtime.camera.report(), cameraFollow: cameraController.report(),
+        focusReturnPolicy: 'Character Focus returns to THIRD_PERSON_EXPLORE; guided mode delegates to Runtime legacy policy',
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
         frameSeam: 'existing runtime.onFrame; body before render; camera follows at <=1 frame latency',
         humanVisualApproval: 'PENDING_FINAL_4A'
@@ -238,15 +266,24 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     },
     dispose() {
       if (disposed) return;
-      disposed = true; setInput({}); runtime.onFrame = previousOnFrame; offCameraInputBridge();
-      input.setMovementSink(null); motion.dispose(); sceneKit.scene.remove(root);
+      disposed = true;
+      setInput({});
+      runtime.onFrame = previousOnFrame;
+      runtime.releaseFocus = previousReleaseFocus;
+      offCameraInputBridge();
+      input.setMovementSink(null);
+      motion.dispose();
+      sceneKit.scene.remove(root);
       runtime.camera.request(CAMERA_AUTHORITY.EXPLORE, { reason: 'Phase 4A dispose', durationMs: 0, restore: 'ADOPT_INCOMING' });
-      badge.remove(); delete window.__IW_CHARACTER_PHASE4A; document.documentElement.dataset.characterPhase4a = 'disposed';
+      badge.remove();
+      delete window.__IW_CHARACTER_PHASE4A;
+      document.documentElement.dataset.characterPhase4a = 'disposed';
     }
   };
+
   const badge = installBadge(api);
   window.__IW_CHARACTER_PHASE4A = api;
   document.documentElement.dataset.characterPhase4a = 'ready';
-  console.info('[Character Phase 4A] FINAL READY FOR HUMAN VALIDATION', api.report());
+  console.info('[Character Phase 4A] FOCUS/CAMERA RECOVERY READY FOR HUMAN VALIDATION', api.report());
   return api;
 }
