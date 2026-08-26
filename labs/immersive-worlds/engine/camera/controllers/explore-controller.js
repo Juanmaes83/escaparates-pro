@@ -20,46 +20,27 @@ import { clamp } from '../framing.js';
 const HALF_PI = Math.PI / 2;
 
 export class ExploreController {
-  /**
-   * @param {{
-   *   eyeHeight?: number,
-   *   walkSpeed?: number,
-   *   runMultiplier?: number,
-   *   lookSpeed?: number,
-   *   radius?: number,
-   *   fov?: number
-   * }} [options]
-   */
   constructor(options = {}) {
     this.eyeHeight = options.eyeHeight ?? 1.62;
-    this.walkSpeed = options.walkSpeed ?? 2.4;      // m/s — museum pace, not a shooter
+    this.walkSpeed = options.walkSpeed ?? 2.4;
     this.runMultiplier = options.runMultiplier ?? 1.9;
     this.lookSpeed = options.lookSpeed ?? 0.0022;
     this.radius = options.radius ?? 0.35;
     this.fov = options.fov ?? 55;
-
     this.position = [0, this.eyeHeight, 0];
     this.yaw = 0;
     this.pitch = 0;
-
-    /** @type {{forward:number,right:number,lookX:number,lookY:number,run:boolean}} */
     this.input = { forward: 0, right: 0, lookX: 0, lookY: 0, run: false };
-
-    /** @type {{min:[number,number,number], max:[number,number,number]}|null} */
     this.bounds = null;
-    /** @type {{min:[number,number,number], max:[number,number,number]}[]} */
     this.blockers = [];
-
     this._smoothed = [0, 0];
   }
 
-  /** Called by the app when the active Space changes. */
   setNavigationVolume({ bounds, blockers = [] }) {
     this.bounds = bounds;
     this.blockers = blockers;
   }
 
-  /** Place the visitor at a semantic spawn anchor. */
   placeAt(position, facing) {
     this.position = [position[0], (this.bounds?.min?.[1] ?? 0) + this.eyeHeight, position[2]];
     if (facing) this.yaw = Math.atan2(facing[0], facing[2]);
@@ -67,15 +48,9 @@ export class ExploreController {
   }
 
   onGain(pose, info) {
-    // PRESERVE_OWN is how "return from Focus" stays deterministic: the visitor
-    // is put back exactly where they were standing, not near where they were.
     if (info?.restore === 'PRESERVE_OWN') return;
     this.position = [...pose.position];
-    const dir = [
-      pose.target[0] - pose.position[0],
-      pose.target[1] - pose.position[1],
-      pose.target[2] - pose.position[2]
-    ];
+    const dir = [pose.target[0] - pose.position[0], pose.target[1] - pose.position[1], pose.target[2] - pose.position[2]];
     const horizontal = Math.hypot(dir[0], dir[2]) || 1e-6;
     this.yaw = Math.atan2(dir[0], dir[2]);
     this.pitch = clamp(Math.atan2(dir[1], horizontal), -HALF_PI + 0.05, HALF_PI - 0.05);
@@ -83,18 +58,14 @@ export class ExploreController {
 
   update(dt, commit) {
     const input = this.input;
-
     this.yaw -= input.lookX * this.lookSpeed;
     this.pitch = clamp(this.pitch - input.lookY * this.lookSpeed, -1.2, 1.2);
     input.lookX = 0;
     input.lookY = 0;
-
-    // Smooth the walk so a keypress does not snap the camera to full speed.
     const speed = this.walkSpeed * (input.run ? this.runMultiplier : 1);
     const k = 1 - Math.exp(-dt * 12);
     this._smoothed[0] += (input.forward * speed - this._smoothed[0]) * k;
     this._smoothed[1] += (input.right * speed - this._smoothed[1]) * k;
-
     const sin = Math.sin(this.yaw);
     const cos = Math.cos(this.yaw);
     const next = [
@@ -102,9 +73,7 @@ export class ExploreController {
       this.position[1],
       this.position[2] + (this._smoothed[0] * cos - this._smoothed[1] * sin) * dt
     ];
-
-    this.position = this._resolveCollision(next);
-
+    this.position = this.resolveNavigationPosition(next);
     commit({
       position: [...this.position],
       target: [
@@ -114,6 +83,14 @@ export class ExploreController {
       ],
       fov: this.fov
     });
+  }
+
+  /**
+   * Canonical Museum navigation resolver. Character 2027 reuses this exact
+   * authority rather than constructing a second ExploreController/collision truth.
+   */
+  resolveNavigationPosition(next) {
+    return this._resolveCollision(next);
   }
 
   _resolveCollision(next) {
@@ -128,7 +105,6 @@ export class ExploreController {
         out[0] > box.min[0] - this.radius && out[0] < box.max[0] + this.radius &&
         out[2] > box.min[2] - this.radius && out[2] < box.max[2] + this.radius
       ) {
-        // Push out along the shallowest axis of penetration.
         const dxMin = Math.abs(out[0] - (box.min[0] - this.radius));
         const dxMax = Math.abs(box.max[0] + this.radius - out[0]);
         const dzMin = Math.abs(out[2] - (box.min[2] - this.radius));
@@ -143,7 +119,6 @@ export class ExploreController {
     return out;
   }
 
-  /** Deterministic QA states set the visitor pose directly. */
   setPose({ position, yaw, pitch }) {
     if (position) this.position = [...position];
     if (typeof yaw === 'number') this.yaw = yaw;
