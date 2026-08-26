@@ -21,9 +21,7 @@ async function sha256Hex(bytes) {
 }
 
 function normalizeAvatarToHeight(visual, targetHeight) {
-  visual.traverse((node) => {
-    if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; }
-  });
+  visual.traverse((node) => { if (node.isMesh) { node.castShadow = true; node.receiveShadow = true; } });
   visual.updateMatrixWorld(true);
   const sourceBox = new THREE.Box3().setFromObject(visual);
   const sourceSize = sourceBox.getSize(new THREE.Vector3());
@@ -102,7 +100,6 @@ function installBadge(api) {
 export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?.sceneKit, input = window.__IW?.input } = {}) {
   if (!runtime || !sceneKit?.scene || !input) throw new Error('Phase 4A requires existing Museum runtime, SceneKit and InputSystem');
   if (typeof runtime.explore?.resolveNavigationPosition !== 'function') throw new Error('Phase 4A requires Museum canonical navigation resolver');
-  if (typeof runtime.addPreCameraUpdater !== 'function') throw new Error('Phase 4A requires Museum pre-camera update seam');
   if (window.__IW_CHARACTER_PHASE4A?.ready) return window.__IW_CHARACTER_PHASE4A;
   if (runtime.state.activeSpaceId !== SPACE_ID) throw new Error(`Phase 4A starts only in ${SPACE_ID}`);
 
@@ -111,13 +108,13 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   const anchor = resolveStart(runtime);
   root.position.set(anchor.position[0], anchor.position[1], anchor.position[2]);
   root.rotation.y = Array.isArray(anchor.normal) ? Math.atan2(anchor.normal[0], anchor.normal[2]) : 0;
-  root.updateMatrixWorld(true);
   sceneKit.scene.add(root);
 
   const volume = sceneKit.navigationVolume(SPACE_ID);
   if (!volume?.bounds) throw new Error('Gallery A has no navigationVolume bounds');
   const groundY = volume.bounds.min[1];
   root.position.y = groundY;
+  root.updateMatrixWorld(true);
 
   const motion = createCharacterMotionV2(root);
   const cameraController = new ThirdPersonExploreController();
@@ -206,10 +203,18 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     previousTurn = turn;
   }
 
-  const removeUpdater = runtime.addPreCameraUpdater(updateLocomotion);
+  const previousOnFrame = runtime.onFrame;
+  runtime.onFrame = (pose, dt) => {
+    updateLocomotion(dt);
+    previousOnFrame?.(pose, dt);
+  };
+
   const sink = { setInput, jump, inputFrame() {} };
   input.setMovementSink(sink);
   runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, { reason: 'Character 2027 Phase 4A free mobility', durationMs: 0, restore: 'ADOPT_INCOMING' });
+  // The existing shell predates THIRD_PERSON_EXPLORE and disables movement for
+  // every non-EXPLORE owner. Re-enable the SAME InputSystem; no listeners are added.
+  input.setEnabled(true);
 
   const api = {
     ready: true,
@@ -233,6 +238,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         navigationAuthority: 'Museum ExploreController.resolveNavigationPosition + Museum navigationVolume',
         camera: runtime.camera.report(),
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
+        frameSeam: 'existing runtime.onFrame; body before render; camera follows at <=1 frame latency',
         humanVisualApproval: 'PENDING'
       };
     },
@@ -240,7 +246,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
       if (disposed) return;
       disposed = true;
       setInput({});
-      removeUpdater();
+      runtime.onFrame = previousOnFrame;
       input.setMovementSink(null);
       motion.dispose();
       sceneKit.scene.remove(root);
