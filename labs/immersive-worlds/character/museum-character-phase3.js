@@ -1,4 +1,6 @@
 import { THREE } from '../render/render-host.js';
+import { GLTFLoader } from '../vendor/three/addons/loaders/GLTFLoader.js';
+import { createMotionFoundationV2Idle } from './motion-foundation-v2-idle.js';
 
 const PHASE3_SPACE_ID = 'space.gallery-a';
 const PHASE3_ANCHOR_CANDIDATES = [
@@ -8,7 +10,13 @@ const PHASE3_ANCHOR_CANDIDATES = [
 ];
 const TARGET_HEIGHT_M = 1.66;
 const EXPECTED_THREE_REVISION = '185';
-const GLTF_LOADER_URL = 'https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/loaders/GLTFLoader.js';
+
+const GLTF_LOADER_PROVENANCE = Object.freeze({
+  threeTag: 'r185',
+  threeCommit: '2431a09f46f34c560bc8e44b33be0e567723d5b9',
+  sourceBlobSha: '91629ef9f7a39b11180acb7459701eccc6cd3aa0',
+  localPath: './vendor/three/addons/loaders/GLTFLoader.js'
+});
 
 export const PHASE3_APPROVED_AVATAR = Object.freeze({
   assetId: 'character-primary-v1',
@@ -27,25 +35,6 @@ const REQUIRED_HUMANOID_BONES = Object.freeze([
   'leftUpperLeg', 'leftLowerLeg', 'leftFoot',
   'rightUpperLeg', 'rightLowerLeg', 'rightFoot'
 ]);
-
-// Exact IDLE_V2 pose family recovered from the frozen CharacterStudio donor.
-// Phase 3 intentionally keeps every other action dormant.
-const IDLE_NEUTRAL = Object.freeze({
-  leftUpperArm: [0, 0, 1.18],
-  rightUpperArm: [0, 0, -1.18],
-  leftLowerArm: [0.08, 0, -0.18],
-  rightLowerArm: [0.08, 0, 0.18],
-  chest: [0.01, 0, 0],
-  head: [0, 0, 0],
-  hips: [0, 0, 0]
-});
-
-const IDLE_FRAMES = Object.freeze([
-  { t: 0, bones: { ...IDLE_NEUTRAL, chest: [0.01, 0, 0], head: [0, 0, 0], hips: [0, 0, 0] } },
-  { t: 0.5, bones: { ...IDLE_NEUTRAL, chest: [0.025, -0.018, 0], head: [-0.015, 0.025, 0], hips: [0, 0.015, 0] } },
-  { t: 1, bones: { ...IDLE_NEUTRAL, chest: [0.01, 0, 0], head: [0, 0, 0], hips: [0, 0, 0] } }
-]);
-const IDLE_DURATION_S = 2.8;
 
 async function sha256Hex(bytes) {
   const digest = await crypto.subtle.digest('SHA-256', bytes);
@@ -67,20 +56,13 @@ function disposeObject(root) {
 
 function inspectHumanoid(root) {
   const boneNames = new Set();
-  const bonesByName = new Map();
   let skinnedMeshCount = 0;
 
   root.traverse((node) => {
-    if (node.isBone) {
-      boneNames.add(node.name);
-      if (!bonesByName.has(node.name)) bonesByName.set(node.name, node);
-    }
+    if (node.isBone) boneNames.add(node.name);
     if (node.isSkinnedMesh) {
       skinnedMeshCount += 1;
-      node.skeleton?.bones?.forEach((bone) => {
-        boneNames.add(bone.name);
-        if (!bonesByName.has(bone.name)) bonesByName.set(bone.name, bone);
-      });
+      node.skeleton?.bones?.forEach((bone) => boneNames.add(bone.name));
     }
   });
 
@@ -89,8 +71,7 @@ function inspectHumanoid(root) {
     pass: skinnedMeshCount > 0 && missing.length === 0,
     boneCount: boneNames.size,
     skinnedMeshCount,
-    missing,
-    bonesByName
+    missing
   };
 }
 
@@ -141,65 +122,16 @@ function yawFromNormal(normal) {
   return Math.atan2(normal[0], normal[2]);
 }
 
-function lerp(a, b, t) {
-  return a + (b - a) * t;
-}
-
-function sampleIdleFrame(cycle) {
-  const first = cycle <= 0.5 ? IDLE_FRAMES[0] : IDLE_FRAMES[1];
-  const second = cycle <= 0.5 ? IDLE_FRAMES[1] : IDLE_FRAMES[2];
-  const span = Math.max(0.0001, second.t - first.t);
-  const alpha = (cycle - first.t) / span;
-  const result = {};
-  const names = new Set([...Object.keys(first.bones), ...Object.keys(second.bones)]);
-  for (const name of names) {
-    const a = first.bones[name] || [0, 0, 0];
-    const b = second.bones[name] || a;
-    result[name] = [lerp(a[0], b[0], alpha), lerp(a[1], b[1], alpha), lerp(a[2], b[2], alpha)];
-  }
-  return result;
-}
-
-function createIdleDriver(rig) {
-  const base = new Map();
-  const euler = new THREE.Euler(0, 0, 0, 'XYZ');
-  const offset = new THREE.Quaternion();
-  let elapsed = 0;
-
-  for (const name of Object.keys(IDLE_NEUTRAL)) {
-    const bone = rig.bonesByName.get(name);
-    if (bone) base.set(name, bone.quaternion.clone());
-  }
-
-  function update(dt) {
-    elapsed = (elapsed + Math.max(0, Math.min(dt || 0, 0.05))) % IDLE_DURATION_S;
-    const pose = sampleIdleFrame(elapsed / IDLE_DURATION_S);
-    for (const [name, xyz] of Object.entries(pose)) {
-      const bone = rig.bonesByName.get(name);
-      const rest = base.get(name);
-      if (!bone || !rest) continue;
-      euler.set(xyz[0], xyz[1], xyz[2], 'XYZ');
-      offset.setFromEuler(euler);
-      bone.quaternion.copy(rest).multiply(offset);
-    }
-  }
-
-  function dispose() {
-    for (const [name, rest] of base) rig.bonesByName.get(name)?.quaternion.copy(rest);
-  }
-
-  return { state: 'IDLE_V2', duration: IDLE_DURATION_S, update, dispose };
-}
-
 async function loadApprovedAvatar() {
   if (String(THREE.REVISION) !== EXPECTED_THREE_REVISION) {
     throw new Error(`Character 2027 requires Museum THREE r${EXPECTED_THREE_REVISION}, got r${THREE.REVISION}`);
   }
 
-  const [{ GLTFLoader }, response] = await Promise.all([
-    import(GLTF_LOADER_URL),
-    fetch(PHASE3_APPROVED_AVATAR.url, { method: 'GET', mode: 'cors', cache: 'no-store' })
-  ]);
+  const response = await fetch(PHASE3_APPROVED_AVATAR.url, {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-store'
+  });
   if (!response.ok) throw new Error(`Approved Character fetch failed: HTTP ${response.status}`);
 
   const bytes = await response.arrayBuffer();
@@ -217,6 +149,7 @@ async function loadApprovedAvatar() {
 
   const visual = gltf.scene;
   if (!visual?.isObject3D) throw new Error('GLTFLoader did not return a Museum-compatible Object3D');
+
   const normalization = normalizeAvatarToHeight(visual, TARGET_HEIGHT_M);
   const rig = inspectHumanoid(visual);
   if (!rig.pass) throw new Error(`Character humanoid rig failed: ${rig.missing.join(', ')}`);
@@ -226,15 +159,15 @@ async function loadApprovedAvatar() {
   root.add(visual);
   root.updateMatrixWorld(true);
 
-  // ABI guard: everything attached to the Museum scene must expose the same
-  // Matrix4 extension used by the pinned r185 renderer.
   const abiOffenders = [];
   root.traverse((node) => {
     if (node.matrixWorld && typeof node.matrixWorld.determinantAffine !== 'function') {
       abiOffenders.push(node.name || node.type || '(unnamed)');
     }
   });
-  if (abiOffenders.length) throw new Error(`Mixed Three ABI rejected: ${abiOffenders.slice(0, 8).join(', ')}`);
+  if (abiOffenders.length) {
+    throw new Error(`Mixed Three ABI rejected: ${abiOffenders.slice(0, 8).join(', ')}`);
+  }
 
   return {
     root,
@@ -254,15 +187,15 @@ function installGateBadge(report) {
   document.getElementById('character-phase3-gate')?.remove();
   const el = document.createElement('div');
   el.id = 'character-phase3-gate';
-  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.82);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:310px';
-  el.innerHTML = `<div style="letter-spacing:.12em">PHASE 3 · CHARACTER 2027</div><div style="font-weight:500;opacity:.82">IDLE_V2 · ${report.normalization.finalHeight.toFixed(3)} m · rig ${report.rig.boneCount} bones · SHA OK</div>`;
+  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.82);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:360px';
+  el.innerHTML = `<div style="letter-spacing:.12em">PHASE 3 · HUMAN GATE</div><div style="font-weight:500;opacity:.82">Character 2027 · REAL IDLE_V2 · ${report.normalization.finalHeight.toFixed(3)} m · rig ${report.rig.boneCount} bones · SHA OK</div><div style="font-weight:500;opacity:.62">Visual approval: PENDING</div>`;
   document.body.appendChild(el);
   return el;
 }
 
 /**
- * Phase 3 gate only: presence / rig / scale / grounding / IDLE_V2 in Gallery A.
- * No locomotion, no Character input, no camera authority change and no portal work.
+ * Phase 3 only: Gallery A Character presence / rig / scale / grounding / proven IDLE_V2.
+ * No locomotion. No Character input. No camera authority change. No portal work.
  */
 export async function mountMuseumCharacterPhase3({ runtime, sceneKit = runtime?.sceneKit } = {}) {
   if (!runtime || !sceneKit?.scene) throw new Error('Phase 3 requires the existing Museum runtime and SceneKit');
@@ -277,7 +210,7 @@ export async function mountMuseumCharacterPhase3({ runtime, sceneKit = runtime?.
   root.updateMatrixWorld(true);
   sceneKit.scene.add(root);
 
-  const idle = createIdleDriver(loaded.rig);
+  const idle = createMotionFoundationV2Idle(root);
   const previousOnFrame = runtime.onFrame;
   let updateError = null;
   let disposed = false;
@@ -303,7 +236,13 @@ export async function mountMuseumCharacterPhase3({ runtime, sceneKit = runtime?.
     state: 'IDLE_V2',
     threeRevision: String(THREE.REVISION),
     expectedThreeRevision: EXPECTED_THREE_REVISION,
-    loader: { source: GLTF_LOADER_URL, pinnedVersion: '0.185.1' },
+    loader: {
+      source: 'LOCAL_EXACT_R185',
+      ...GLTF_LOADER_PROVENANCE,
+      bufferGeometryUtilsBlobSha: '4e1221c238634f36110688a6b309d1686f1834b4',
+      skeletonUtilsBlobSha: '836c2e2bf2be3c5c5fd6b65ed260f84b3d589258'
+    },
+    motion: idle.report(),
     provenance: loaded.provenance,
     rig: {
       pass: loaded.rig.pass,
@@ -331,7 +270,12 @@ export async function mountMuseumCharacterPhase3({ runtime, sceneKit = runtime?.
   const api = {
     ready: true,
     root,
-    report: () => ({ ...report, visible: root.visible, updateError }),
+    report: () => ({
+      ...report,
+      motion: idle.report(),
+      visible: root.visible,
+      updateError
+    }),
     dispose() {
       if (disposed) return;
       disposed = true;
@@ -347,6 +291,6 @@ export async function mountMuseumCharacterPhase3({ runtime, sceneKit = runtime?.
 
   window.__IW_CHARACTER_PHASE3 = api;
   document.documentElement.dataset.characterPhase3 = 'ready';
-  console.info('[Character Phase 3] READY', api.report());
+  console.info('[Character Phase 3] READY FOR HUMAN VALIDATION', api.report());
   return api;
 }
