@@ -30,10 +30,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install test dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
@@ -118,7 +117,6 @@ jobs:
             assert(!state.report?.updateError, `Character frame update error: ${state.report?.updateError}`);
             assert((state.camera?.violations || []).length === 0, `CameraAuthority violations: ${JSON.stringify(state.camera?.violations)}`);
 
-            // Baseline control: same Gallery A state, without the opt-in flag.
             const baseline = await context.newPage();
             await baseline.goto(process.env.BASELINE_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
             await baseline.waitForFunction(() => document.documentElement.dataset.iwReady === 'true', null, { timeout: 90000 });
