@@ -175,7 +175,7 @@ jobs:
             await browser.close();
           })().catch((error) => {
             console.error(error.stack || error);
-            process.exitCode = 1;
+            process.exit(1);
           });
           NODE
 
