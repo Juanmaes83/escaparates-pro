@@ -9,11 +9,12 @@
  * Camera-comfort behaviour is recovered from the frozen
  * PropertyRoomCharacterFreeMobility donor, adapted to Museum-side contracts.
  *
- * Phase 4A final polish keeps ordinary follow motion deliberately calm and only
- * performs an aggressive correction after a short, persistent distance-envelope
- * violation. That removes the visible micro-jitter introduced by correcting the
- * camera every frame while still guaranteeing recovery when the Character gets
- * genuinely too near or too far.
+ * Phase 4A final recovery fixes four things that were visible in human review:
+ * - Focus return must reacquire the Character instead of inheriting a Focus pose;
+ * - near/far limits are enforced as persistent framing constraints;
+ * - stale safe poses are never allowed to pin the camera at the wrong distance;
+ * - when geometry prevents the ideal physical distance, FOV changes plane rather
+ *   than allowing the Character to become tiny or fill/leave the frame.
  */
 
 const DEFAULT_DISTANCE = 3.25;
@@ -25,13 +26,20 @@ const CAMERA_CLEARANCE = 0.24;
 const CAMERA_MIN_DISTANCE = 2.75;
 const CAMERA_MAX_DISTANCE = 3.72;
 const CAMERA_TARGET_DISTANCE = 3.25;
+const CAMERA_HARD_NEAR = 2.55;
+const CAMERA_SOFT_NEAR = 2.85;
+const CAMERA_SOFT_FAR = 3.55;
+const CAMERA_HARD_FAR = 3.85;
 const CAMERA_POSITION_DEAD_ZONE = 0.18;
 const CAMERA_TARGET_DEAD_ZONE = 0.08;
 const CAMERA_LERP_RATE = 5.4;
+const FOV_LERP_RATE = 7.5;
 const MIN_BEHIND_PROJECTION = 0.35;
 const LAST_SAFE_MAX_CHARACTER_TRAVEL = 1.15;
 const LAST_SAFE_MAX_YAW_DELTA = Math.PI / 3;
-const DISTANCE_GUARD_FRAMES = 5;
+const DISTANCE_GUARD_FRAMES = 4;
+const FOV_CLOSE_RECOVERY = 58;
+const FOV_FAR_RECOVERY = 48;
 
 const DISTANCES = Object.freeze([3.25, 3.5, 3.0, 2.82, 3.65]);
 const LATERALS = Object.freeze([0, 0.72, -0.72, 1.05, -1.05, 1.35, -1.35]);
@@ -43,6 +51,7 @@ export class ThirdPersonExploreController {
     this.height = height;
     this.targetHeight = targetHeight;
     this.fov = fov;
+    this._currentFov = fov;
     this._provider = null;
     this._volume = null;
     this._position = null;
@@ -52,6 +61,8 @@ export class ThirdPersonExploreController {
     this._lastSafeYaw = null;
     this._farViolationFrames = 0;
     this._nearViolationFrames = 0;
+    this._reacquirePending = false;
+    this._shotMode = 'NORMAL';
     this._diag = {
       slot: 'INIT',
       distance: 0,
@@ -61,7 +72,10 @@ export class ThirdPersonExploreController {
       distanceGuardPullIns: 0,
       distanceGuardPushOuts: 0,
       staleSafeInvalidations: 0,
-      hardEnvelopeRecoveries: 0
+      hardEnvelopeRecoveries: 0,
+      focusReacquisitions: 0,
+      opticalRecoveries: 0,
+      shotMode: 'NORMAL'
     };
   }
 
@@ -71,10 +85,25 @@ export class ThirdPersonExploreController {
 
   setNavigationVolume(volume) {
     this._volume = volume || null;
-    this._invalidateLastSafe();
+    this._resetRecoveryState();
   }
 
-  onGain(pose) {
+  /**
+   * CameraAuthority passes the incoming pose on gain. A Focus pose is not a
+   * meaningful third-person pose, so a focus-release explicitly discards it and
+   * reacquires a fresh rear candidate around the current Character.
+   */
+  onGain(pose, info = {}) {
+    const returningFromFocus = String(info.reason || '').startsWith('focus:release:character');
+    if (returningFromFocus) {
+      this._position = null;
+      this._target = null;
+      this._resetRecoveryState();
+      this._reacquirePending = true;
+      this._diag.focusReacquisitions += 1;
+      this._setShotMode('REACQUIRE');
+      return;
+    }
     this._position = pose?.position ? [...pose.position] : null;
     this._target = pose?.target ? [...pose.target] : null;
   }
@@ -97,7 +126,11 @@ export class ThirdPersonExploreController {
     this._expireStaleLastSafe(human, yaw);
     const chosen = this._chooseCameraPosition(human, desiredTarget, forward, right, yaw);
 
-    if (!this._position) this._position = [...chosen];
+    if (this._reacquirePending || !this._position) {
+      this._position = [...chosen];
+      this._target = [...desiredTarget];
+      this._reacquirePending = false;
+    }
     if (!this._target) this._target = [...desiredTarget];
 
     const frameDt = Math.max(0.001, Number(dt) || 0.001);
@@ -115,10 +148,16 @@ export class ThirdPersonExploreController {
       this._diag.behindGuardSnaps += 1;
     }
 
-    this._enforceDistanceEnvelope(this._position, desiredTarget, forward, right);
+    this._enforceDistanceEnvelope(this._position, desiredTarget, forward, right, human, yaw);
 
-    this._diag.distance = distance3(this._position, desiredTarget);
-    commit({ position: [...this._position], target: [...this._target], fov: this.fov });
+    const frameDistance = distance3(this._position, desiredTarget);
+    const desiredFov = this._desiredFovForDistance(frameDistance);
+    const fovAlpha = 1 - Math.exp(-frameDt * FOV_LERP_RATE);
+    this._currentFov += (desiredFov - this._currentFov) * fovAlpha;
+
+    this._diag.distance = frameDistance;
+    this._diag.shotMode = this._shotMode;
+    commit({ position: [...this._position], target: [...this._target], fov: this._currentFov });
   }
 
   report() {
@@ -126,9 +165,12 @@ export class ThirdPersonExploreController {
       ...this._diag,
       position: this._position ? [...this._position] : null,
       target: this._target ? [...this._target] : null,
+      fov: this._currentFov,
       targetDistance: CAMERA_TARGET_DISTANCE,
       minDistance: CAMERA_MIN_DISTANCE,
       maxDistance: CAMERA_MAX_DISTANCE,
+      hardNear: CAMERA_HARD_NEAR,
+      hardFar: CAMERA_HARD_FAR,
       farViolationFrames: this._farViolationFrames,
       nearViolationFrames: this._nearViolationFrames
     };
@@ -142,11 +184,7 @@ export class ThirdPersonExploreController {
     for (const distance of distances) {
       for (const lateral of LATERALS) {
         for (const height of heights) {
-          const candidate = [
-            human[0] - forward[0] * distance + right[0] * lateral,
-            human[1] + height,
-            human[2] - forward[2] * distance + right[2] * lateral
-          ];
+          const candidate = this._candidateFrom(human, forward, right, distance, lateral, height);
           this._clampToRoom(candidate);
           if (!this._candidateComfortable(candidate, cameraTarget, forward)) continue;
           this._rememberLastSafe(candidate, human, yaw);
@@ -163,11 +201,7 @@ export class ThirdPersonExploreController {
       return [...this._lastSafe];
     }
 
-    const emergency = [
-      human[0] - forward[0] * 2.9 + right[0] * 0.9,
-      human[1] + 2.35,
-      human[2] - forward[2] * 2.9 + right[2] * 0.9
-    ];
+    const emergency = this._candidateFrom(human, forward, right, 2.9, 0.9, 2.35);
     this._clampToRoom(emergency);
     if (this._candidateComfortable(emergency, cameraTarget, forward)) {
       this._rememberLastSafe(emergency, human, yaw);
@@ -177,13 +211,17 @@ export class ThirdPersonExploreController {
 
     this._diag.comfortHolds += 1;
     this._diag.slot = 'FRESH_REAR_FALLBACK';
-    const fallback = [
-      human[0] - forward[0] * CAMERA_TARGET_DISTANCE,
-      human[1] + this.height,
-      human[2] - forward[2] * CAMERA_TARGET_DISTANCE
-    ];
+    const fallback = this._candidateFrom(human, forward, right, CAMERA_TARGET_DISTANCE, 0, this.height);
     this._clampToRoom(fallback);
     return fallback;
+  }
+
+  _candidateFrom(human, forward, right, distance, lateral, height) {
+    return [
+      human[0] - forward[0] * distance + right[0] * lateral,
+      human[1] + height,
+      human[2] - forward[2] * distance + right[2] * lateral
+    ];
   }
 
   _candidateComfortable(candidate, target, forward) {
@@ -195,45 +233,92 @@ export class ThirdPersonExploreController {
     return this._segmentClear(target, candidate);
   }
 
-  _enforceDistanceEnvelope(point, target, forward, right) {
+  _enforceDistanceEnvelope(point, target, forward, right, human, yaw) {
     const distance = distance3(point, target);
-    const tooFar = distance > CAMERA_MAX_DISTANCE;
-    const tooNear = distance < CAMERA_MIN_DISTANCE;
+    const tooFar = distance > CAMERA_SOFT_FAR;
+    const tooNear = distance < CAMERA_SOFT_NEAR;
+    const hardFar = distance > CAMERA_HARD_FAR;
+    const hardNear = distance < CAMERA_HARD_NEAR;
 
     this._farViolationFrames = tooFar ? this._farViolationFrames + 1 : 0;
     this._nearViolationFrames = tooNear ? this._nearViolationFrames + 1 : 0;
-    if (!tooFar && !tooNear) return;
 
-    // Ordinary transient deviations are left to the smooth follow. Only a
-    // persistent violation gets a hard recovery, which removes the micro-jitter
-    // seen in the previous human gate without allowing a stale far camera to
-    // remain indefinitely.
-    const persistent = this._farViolationFrames >= DISTANCE_GUARD_FRAMES
+    if (!tooFar && !tooNear) {
+      this._setShotMode('NORMAL');
+      return;
+    }
+
+    const persistent = hardFar || hardNear
+      || this._farViolationFrames >= DISTANCE_GUARD_FRAMES
       || this._nearViolationFrames >= DISTANCE_GUARD_FRAMES;
     if (!persistent) return;
 
     this._invalidateLastSafe();
     this._diag.hardEnvelopeRecoveries += 1;
-    const desiredDistance = tooFar ? CAMERA_TARGET_DISTANCE : CAMERA_MIN_DISTANCE + 0.18;
-    if (tooFar) this._diag.distanceGuardPullIns += 1;
-    else this._diag.distanceGuardPushOuts += 1;
 
-    const lateralProjection = (point[0] - target[0]) * right[0] + (point[2] - target[2]) * right[2];
-    const lateral = clamp(lateralProjection, -0.72, 0.72);
-    const corrected = [
-      target[0] - forward[0] * desiredDistance + right[0] * lateral,
-      target[1] + 1.03,
-      target[2] - forward[2] * desiredDistance + right[2] * lateral
-    ];
-    this._clampToRoom(corrected);
-
-    if (this._candidateComfortable(corrected, target, forward)) {
-      point[0] = corrected[0];
-      point[1] = corrected[1];
-      point[2] = corrected[2];
+    const recovered = this._findEnvelopeRecovery(target, human, forward, right, yaw, tooFar);
+    if (recovered) {
+      point[0] = recovered[0];
+      point[1] = recovered[1];
+      point[2] = recovered[2];
       this._farViolationFrames = 0;
       this._nearViolationFrames = 0;
+      if (tooFar) {
+        this._diag.distanceGuardPullIns += 1;
+        this._setShotMode('FAR_RECOVERY');
+      } else {
+        this._diag.distanceGuardPushOuts += 1;
+        this._setShotMode('CLOSE_RECOVERY');
+      }
+      return;
     }
+
+    // Geometry can make the ideal physical distance impossible. In that case we
+    // keep the last clear rear pose but change optical plane so Character scale
+    // remains readable instead of silently violating the product rule.
+    this._diag.opticalRecoveries += 1;
+    this._setShotMode(tooFar ? 'FAR_OPTICAL' : 'CLOSE_OPTICAL');
+  }
+
+  _findEnvelopeRecovery(target, human, forward, right, yaw, tooFar) {
+    const distances = tooFar
+      ? [3.15, 3.0, 2.85, 3.35]
+      : [3.45, 3.6, 3.25, 3.05];
+    const laterals = [0, 0.55, -0.55, 0.9, -0.9, 1.2, -1.2];
+    const heights = [2.05, 2.2, 1.92, 2.35];
+
+    for (const distance of distances) {
+      for (const lateral of laterals) {
+        for (const height of heights) {
+          const candidate = this._candidateFrom(human, forward, right, distance, lateral, height);
+          this._clampToRoom(candidate);
+          if (!this._candidateComfortable(candidate, target, forward)) continue;
+          this._rememberLastSafe(candidate, human, yaw);
+          this._diag.slot = `RECOVER D${distance.toFixed(2)} L${lateral.toFixed(2)} H${height.toFixed(2)}`;
+          return candidate;
+        }
+      }
+    }
+    return null;
+  }
+
+  _desiredFovForDistance(distance) {
+    if (this._shotMode === 'FAR_OPTICAL' || distance > CAMERA_HARD_FAR) return FOV_FAR_RECOVERY;
+    if (this._shotMode === 'CLOSE_OPTICAL' || distance < CAMERA_HARD_NEAR) return FOV_CLOSE_RECOVERY;
+    if (this._shotMode === 'FAR_RECOVERY') return 50;
+    if (this._shotMode === 'CLOSE_RECOVERY') return 55;
+    return DEFAULT_FOV;
+  }
+
+  _setShotMode(mode) {
+    this._shotMode = mode;
+    this._diag.shotMode = mode;
+  }
+
+  _resetRecoveryState() {
+    this._invalidateLastSafe();
+    this._farViolationFrames = 0;
+    this._nearViolationFrames = 0;
   }
 
   _expireStaleLastSafe(human, yaw) {
