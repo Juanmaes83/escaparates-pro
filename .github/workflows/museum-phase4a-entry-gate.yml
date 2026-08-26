@@ -1,0 +1,31 @@
+name: Museum Phase4A entry gate
+on:
+  push:
+    branches: [chatgpt/museum-character-2027-integration-v1]
+    paths: ['.github/workflows/museum-phase4a-entry-gate.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/museum-character-2027-integration-v1
+          fetch-depth: 0
+      - name: Wire mobility opt-in without touching baseline
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('labs/immersive-worlds/index.html')
+          s=p.read_text()
+          start=s.index('      // Character / Avatar 2027 — PHASE 3 HUMAN GATE ONLY.')
+          end=s.index('      // — Wet Paint como capacidad nativa del Museo', start)
+          new='''      // Character / Avatar 2027 — bounded opt-ins.\n      // `?character=1` keeps the validated Phase 3 presence gate.\n      // `?character=1&mobility=1` advances to Phase 4A: one controllable body,\n      // Museum input routing, Museum navigation/collision and one CameraAuthority.\n      const characterParams = new URLSearchParams(location.search);\n      if (characterParams.get('character') === '1') {\n        try {\n          if (characterParams.get('mobility') === '1') {\n            const { mountMuseumCharacterPhase4A } = await import('./character/museum-character-phase4a.js');\n            await mountMuseumCharacterPhase4A({ runtime, sceneKit: runtime.sceneKit, input: window.__IW?.input });\n          } else {\n            const { mountMuseumCharacterPhase3 } = await import('./character/museum-character-phase3.js');\n            await mountMuseumCharacterPhase3({ runtime, sceneKit: runtime.sceneKit });\n          }\n        } catch (characterError) {\n          console.error('[Character 2027] Gate failed:', characterError);\n          document.documentElement.dataset.characterGate = 'error';\n          document.documentElement.dataset.characterGateError = String(characterError?.message || characterError);\n          const warning = document.createElement('div');\n          warning.id = 'character-gate-error';\n          warning.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;max-width:min(560px,calc(100vw - 28px));background:rgba(55,10,10,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 11px/1.45 system-ui,sans-serif';\n          warning.textContent = `CHARACTER GATE ERROR · ${String(characterError?.message || characterError)}`;\n          document.body.appendChild(warning);\n        }\n      }\n\n'''
+          p.write_text(s[:start]+new+s[end:])
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/immersive-worlds/index.html
+          git commit -m 'feat(museum): expose Phase4A mobility behind explicit opt-in'
+          git push
