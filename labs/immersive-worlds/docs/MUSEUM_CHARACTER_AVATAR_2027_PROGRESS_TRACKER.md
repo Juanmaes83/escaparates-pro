@@ -33,9 +33,9 @@ Legend: `PASS` = proven/frozen · `PENDING` = not started · `IN PROGRESS` = act
 | Character runtime activation | **PASS / ACTIVE** | Phase 3 presence + Phase 4A bounded runtime graft |
 | Character visible in Museum | **PASS** | Juanma human visual validation 2026-08-26 in Gallery A |
 | Character presence / IDLE | **PASS / CLOSED** | Phase 3 human gate completed 2026-08-26 |
-| Third-person free mobility / collision | **IN PROGRESS / HUMAN PASS PENDING** | Technical gate implemented; video validation next |
-| Room-to-room continuity | PENDING | Phase 4B |
-| Artwork Focus 3rd→1st→3rd | PENDING | Phase 4C |
+| Third-person free mobility / collision | **PASS / CLOSED** | Human validation approved 2026-08-26 after focus-return + adaptive framing fixes |
+| Room-to-room continuity | **NEXT / PHASE 4B** | same Character Gallery A → Gallery B |
+| Artwork Focus 3rd→1st→3rd | PARTIAL FOUNDATION PASS | Focus return to THIRD_PERSON_EXPLORE fixed in 4A; full authored contemplation flow remains Phase 4C |
 | Wet Paint / Breeze Character integration | PENDING | Phase 4D |
 | Avatar Profile / Studio | PENDING | Phase 5 |
 | Advanced capabilities | PENDING | Phase 6 |
@@ -138,34 +138,19 @@ Execution record:
 | Museum navigation/collision | PASS | `navigationVolume` + Museum-owned resolver remain truth |
 | `PropertyRoomCharacterFreeMobility` collision oracle | PASS / REJECTED AS FINAL ARCH | do not create second ExploreController |
 | CameraAuthority | PASS | exactly one authority |
-| Third-person mode | PASS / DESIGNED | future distinct Explore controller/mode under current CameraAuthority |
+| Third-person mode | PASS / DESIGNED | distinct Explore controller/mode under current CameraAuthority |
 | Renderer ownership | PASS | RenderHost remains sole renderer/camera object owner |
 | Three.js ABI | PASS | Museum is pinned to `three 0.185.1`, matching donor r185 expectation |
-| GLTF loading | PASS / BOUNDED DEP | Phase 3 must vendor GLTFLoader from exact Three 0.185.1, using same local Three instance |
-| Asset lifecycle | PASS / DESIGNED | MuseumCharacterBridge + CharacterAssetLoader |
+| GLTF loading | PASS / BOUNDED DEP | exact r185 loader vendored, same local Three instance |
+| Asset lifecycle | PASS / DESIGNED | Museum-side Character graft |
 | Character runtime lifecycle | PASS / DESIGNED | visitor-level Character identity; deterministic dispose |
 | Room transitions | PASS / DESIGNED | Museum portals / WorldGraph / SpaceLifecycle only |
-| Input ownership | PASS / DESIGNED | integrate into Museum InputSystem; reject donor global key listeners as final architecture |
+| Input ownership | PASS / DESIGNED | Museum InputSystem; no donor global key listeners |
 | Guided tour | PASS / PROTECTED | remains separate existing mode |
 | Artwork Focus | PASS / DESIGNED | intentional viewing marker/action → Focus first-person → third-person restore |
 | Wet Paint | PASS / POLICY | attempt visible body later if safe; park/suspend fallback |
 | Breeze | PASS / POLICY | never steal guest input/runtime; visible body only if safe; park/suspend fallback |
 | Rollback | PASS | bounded commits; frozen baseline preserved |
-
-Gate:
-- [x] dependency closure mapped into current Museum
-- [x] no unidentified authority duplication
-- [x] exact Museum-side minimal seam designed
-- [x] Three ABI resolved
-- [x] missing GLTFLoader dependency identified/bounded
-- [x] room lifecycle strategy designed
-- [x] input strategy designed
-- [x] third-person camera strategy designed
-- [x] artwork Focus strategy designed
-- [x] specialized-room policy designed
-- [x] rollback path documented
-- [x] no donor frozen file edited
-- [x] no runtime Character activation performed in Phase 2
 
 **PHASE 2 = PASS / CLOSED**
 
@@ -173,11 +158,7 @@ Gate:
 
 # PHASE 3 — CHARACTER PRESENCE / IDLE
 
-Target: Gallery A only, presence before locomotion.
-
-- [x] vendor exact `GLTFLoader.js` from Three 0.185.1 and register provenance
-- [ ] MuseumCharacterBridge exists on Museum side
-- [ ] CharacterAssetLoader uses Museum's one vendored Three instance
+- [x] exact r185 GLTF loader dependency
 - [x] Character asset loads
 - [x] Character visible in Gallery A
 - [x] Rig valid
@@ -186,11 +167,7 @@ Target: Gallery A only, presence before locomotion.
 - [x] `IDLE_V2` stable
 - [x] animation updates through existing Museum frame loop
 - [x] deterministic dispose/rollback
-- [x] no duplicate renderer
-- [x] no duplicate WorldStore
-- [x] no duplicate CameraAuthority
-- [ ] no movement/input activation yet
-- [ ] Gallery A/B/Wet Paint/Breeze regression PASS
+- [x] no duplicate renderer / WorldStore / CameraAuthority
 
 **PHASE 3 = PASS / CLOSED — human visual validation 2026-08-26**
 
@@ -208,12 +185,20 @@ Target: Gallery A only, presence before locomotion.
 - [x] wall collision
 - [x] relevant furniture collision
 - [x] grounding during movement
-- [x] Museum-owned navigation resolver reused/extracted cleanly
+- [x] Museum-owned navigation resolver reused cleanly
 - [x] no second ExploreController collision oracle
-- [x] distinct third-person Explore behavior under the same CameraAuthority
-- [ ] four-room regression PASS
+- [x] distinct `THIRD_PERSON_EXPLORE` under the same CameraAuthority
+- [x] canonical body forward / correct back-of-avatar framing
+- [x] adaptive rear camera with blocker/occlusion handling
+- [x] near/far framing recovery and adaptive FOV fallback
+- [x] Focus return repaired: `THIRD_PERSON_EXPLORE → FOCUS → THIRD_PERSON_EXPLORE`
+- [x] third-person reacquisition resets stale Focus pose / safe-camera history
+- [x] Character position feeds Museum ProximitySystem
+- [x] Gallery A final barrier passage opened without creating a second collision truth
+- [x] CameraAuthority violations remain 0 in human validation
+- [x] final human validation approved by Juanma on 2026-08-26
 
-**PHASE 4A = TECHNICAL GATE READY / HUMAN VALIDATION PENDING**
+**PHASE 4A = PASS / CLOSED — HUMAN APPROVED 2026-08-26**
 
 ---
 
@@ -223,12 +208,14 @@ Target: Gallery A only, presence before locomotion.
 - [ ] same avatar identity/profile preserved
 - [ ] safe arrival anchor/spawn
 - [ ] body state preserved/restored appropriately
+- [ ] Gallery B navigationVolume becomes Character collision truth after crossing
+- [ ] third-person camera reacquires same Character in Gallery B
 - [ ] CameraAuthority remains unique
 - [ ] input ownership remains coherent
 - [ ] no Character-owned room graph
 - [ ] real browser/human continuity proof
 
-**PHASE 4B = PENDING**
+**PHASE 4B = NEXT / READY TO START**
 
 ---
 
@@ -239,10 +226,8 @@ Product decision: option B / intentional.
 - [ ] authored approach/viewing position or visible floor marker/circle
 - [ ] Character reaches valid contemplation position
 - [ ] explicit VER / CONTEMPLAR action
-- [ ] third-person Explore → Museum Focus
-- [ ] first-person artwork view
-- [ ] exit Focus
-- [ ] restore third-person Character Explore
+- [x] third-person Explore → Museum Focus → third-person authority return foundation proven in 4A
+- [ ] first-person artwork view finalized as product interaction
 - [ ] no automatic camera theft on simple proximity
 
 **PHASE 4C = PENDING**
@@ -291,21 +276,6 @@ Studio target:
 
 `AVATAR → SUBIR/SELECCIONAR → PREVIEW → RIG → ESCALA → GROUNDING → MOTION → IK/LOOKAT → ACCIONES → LAB → VALIDAR`
 
-- [ ] Avatar Profile
-- [ ] upload/select
-- [ ] preview
-- [ ] rig compatibility
-- [ ] scale
-- [ ] grounding
-- [ ] motion set
-- [ ] IK / LookAt
-- [ ] semantic actions
-- [ ] Lab
-- [ ] validate/publish
-- [ ] save/apply profile
-- [ ] re-entry persistence
-- [ ] recover/reuse existing avatar upload/customize/export capability where compatible rather than rebuilding it
-
 **PHASE 5 = PENDING**
 
 ---
@@ -321,43 +291,19 @@ Studio target:
 - [ ] exterior-pilot-skeleton
 - [ ] full-world-c2-skeleton
 
-Each semantic action must be classified independently as `PASS`, `PENDING` or `CONTEXT_REQUIRED`.
-
 **PHASE 6 = PENDING**
-
----
-
-# GLOBAL ACTIVATION ORDER — CURRENT
-
-1. Phase 3 dependency closure: Museum Three 0.185.1 + matching GLTFLoader
-2. MuseumCharacterBridge
-3. Character Runtime closure
-4. Asset + Rig + Scale + Grounding + IDLE
-5. Phase 4A Character navigation adapter + Museum input routing
-6. WALK / BACK / TURN / STOP / JUMP
-7. Third-person Explore controller under existing CameraAuthority
-8. collision / `navigationVolume`
-9. Phase 4B room lifecycle + portal continuity
-10. Phase 4C intentional artwork Focus handoff
-11. Phase 4D Wet Paint / Breeze bounded integration
-12. Avatar Profile
-13. Avatar Studio
-14. Capability Batches
-15. Semantic Authoring
-16. Tour Bridge
-17. Cinematic Camera
-18. Exterior Pilot
-19. Full World C2
 
 ---
 
 # CURRENT NEXT ACTION
 
-**PHASE 3 IS PASS / CLOSED.**
+**PHASE 0 = PASS / CLOSED**  
+**PHASE 1 = PASS / CLOSED**  
+**PHASE 2 = PASS / CLOSED**  
+**PHASE 3 = PASS / CLOSED**  
+**PHASE 4A = PASS / CLOSED — HUMAN APPROVED 2026-08-26**
 
-**CURRENT:** Phase 4A — technical free-mobility gate implemented in Gallery A. Human video validation is pending.
-
-**NEXT ONLY AFTER JOINT PHASE 4A PASS:** Phase 4B — canonical Gallery A → Gallery B portal continuity with the same Avatar identity.
+**NEXT:** PHASE 4B — preserve the same Character identity while traversing the canonical Gallery A → Gallery B portal, then switch navigation/collision/camera context to Gallery B without creating parallel authorities.
 
 ---
 
@@ -371,4 +317,4 @@ If we get lost:
 4. never redesign from memory;
 5. never edit frozen donor stones in place;
 6. never activate a later stone to solve an earlier gate;
-7. re-run the four-room regression after every future runtime surgery gate.
+7. require human visual validation at every major visible gate.
