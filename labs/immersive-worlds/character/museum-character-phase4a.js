@@ -1,11 +1,14 @@
 import { THREE } from '../render/render-host.js';
 import { GLTFLoader } from '../vendor/three/addons/loaders/GLTFLoader.js';
 import { CAMERA_AUTHORITY } from '../engine/schema/types.js';
+import { EVENTS } from '../engine/core/event-bus.js';
 import { ThirdPersonExploreController } from '../engine/camera/controllers/third-person-explore-controller.js';
 import { createCharacterMotionV2 } from './character-motion-v2.js';
 import { PHASE3_APPROVED_AVATAR } from './museum-character-phase3.js';
 
+const LOBBY_SPACE_ID = 'space.lobby';
 const SPACE_ID = 'space.gallery-a';
+const ENTRY_PORTAL_ID = 'portal.lobby-gallery-a';
 const TARGET_HEIGHT = 1.66;
 const EXPECTED_THREE_REVISION = '185';
 const FORWARD_SPEED = 1.05;
@@ -81,6 +84,18 @@ function resolveStart(runtime) {
   throw new Error('Phase 4A could not resolve Gallery A start anchor');
 }
 
+async function ensureGalleryA(runtime) {
+  if (runtime.state.activeSpaceId === SPACE_ID) return;
+  if (runtime.state.activeSpaceId !== LOBBY_SPACE_ID) {
+    throw new Error(`Phase 4A expected ${LOBBY_SPACE_ID} or ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
+  }
+  if (!runtime.store.has(ENTRY_PORTAL_ID)) throw new Error(`Phase 4A missing canonical entry portal ${ENTRY_PORTAL_ID}`);
+  await runtime.traversePortal(ENTRY_PORTAL_ID, { source: 'CHARACTER_PHASE4A_GATE' });
+  if (runtime.state.activeSpaceId !== SPACE_ID) {
+    throw new Error(`Phase 4A canonical entry failed: expected ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
+  }
+}
+
 function installBadge(api) {
   document.getElementById('character-phase4a-gate')?.remove();
   document.getElementById('character-phase3-gate')?.remove();
@@ -101,7 +116,8 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   if (!runtime || !sceneKit?.scene || !input) throw new Error('Phase 4A requires existing Museum runtime, SceneKit and InputSystem');
   if (typeof runtime.explore?.resolveNavigationPosition !== 'function') throw new Error('Phase 4A requires Museum canonical navigation resolver');
   if (window.__IW_CHARACTER_PHASE4A?.ready) return window.__IW_CHARACTER_PHASE4A;
-  if (runtime.state.activeSpaceId !== SPACE_ID) throw new Error(`Phase 4A starts only in ${SPACE_ID}`);
+
+  await ensureGalleryA(runtime);
 
   const loaded = await loadCharacter();
   const root = loaded.root;
@@ -211,6 +227,11 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
 
   const sink = { setInput, jump, inputFrame() {} };
   input.setMovementSink(sink);
+
+  const offCameraInputBridge = runtime.bus.on(EVENTS.CAMERA_AUTHORITY_CHANGED, ({ to }) => {
+    if (to === CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE) input.setEnabled(true);
+  });
+
   runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, { reason: 'Character 2027 Phase 4A free mobility', durationMs: 0, restore: 'ADOPT_INCOMING' });
   input.setEnabled(true);
 
@@ -233,6 +254,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         input: { ...movement },
         motion: motion.report(),
         collision: { ...collision },
+        entry: { mode: 'canonical-portal', portalId: ENTRY_PORTAL_ID, activeSpaceId: runtime.state.activeSpaceId },
         navigationAuthority: 'Museum ExploreController.resolveNavigationPosition + Museum navigationVolume',
         camera: runtime.camera.report(),
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
@@ -245,6 +267,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
       disposed = true;
       setInput({});
       runtime.onFrame = previousOnFrame;
+      offCameraInputBridge();
       input.setMovementSink(null);
       motion.dispose();
       sceneKit.scene.remove(root);
