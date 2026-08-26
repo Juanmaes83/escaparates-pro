@@ -16,7 +16,7 @@ concurrency:
 jobs:
   phase3-browser-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     env:
       PREVIEW_BASE: https://escaparates-pro-git-chatgpt-mu-2b6fef-juanma-espinosas-projects.vercel.app
       PHASE3_URL: https://escaparates-pro-git-chatgpt-mu-2b6fef-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/index.html?state=museum%3Agallery-a-overview&character=1
@@ -41,13 +41,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in $(seq 1 60); do
-            body="$(curl -fsSL --max-time 20 "$PHASE3_URL" || true)"
+          for attempt in $(seq 1 48); do
+            body="$(curl -fsSL --max-time 15 "$PHASE3_URL" || true)"
             if printf '%s' "$body" | grep -q 'museum-character-phase3.js'; then
               echo "Matching Character Phase 3 preview is live."
               exit 0
             fi
-            echo "Preview not updated yet ($attempt/60)."
+            echo "Preview not updated yet ($attempt/48)."
             sleep 5
           done
           echo "Timed out waiting for the Character Phase 3 Vercel preview." >&2
@@ -65,37 +65,62 @@ jobs:
             const context = await browser.newContext({ viewport: { width: 1440, height: 960 }, deviceScaleFactor: 1 });
             const page = await context.newPage();
             const consoleErrors = [];
+            const requestFailures = [];
+            const badResponses = [];
+
             page.on('console', (message) => {
               if (message.type() === 'error') consoleErrors.push(message.text());
             });
             page.on('pageerror', (error) => consoleErrors.push(`PAGEERROR: ${error.message}`));
+            page.on('requestfailed', (request) => requestFailures.push({
+              url: request.url(),
+              failure: request.failure()?.errorText || 'unknown'
+            }));
+            page.on('response', (response) => {
+              if (response.status() >= 400) badResponses.push({ status: response.status(), url: response.url() });
+            });
 
-            await page.goto(process.env.PHASE3_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
-            await page.waitForFunction(() => {
-              const value = document.documentElement.dataset.characterPhase3;
-              return value === 'ready' || value === 'error';
-            }, null, { timeout: 120000 });
+            await page.goto(process.env.PHASE3_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+            let gateWaitError = null;
+            try {
+              await page.waitForFunction(() => {
+                const value = document.documentElement.dataset.characterPhase3;
+                return value === 'ready' || value === 'error';
+              }, null, { timeout: 45000 });
+            } catch (error) {
+              gateWaitError = error.message;
+            }
 
             const state = await page.evaluate(() => ({
-              gate: document.documentElement.dataset.characterPhase3,
+              gate: document.documentElement.dataset.characterPhase3 || null,
               gateError: document.documentElement.dataset.characterPhase3Error || null,
-              iwReady: document.documentElement.dataset.iwReady,
+              iwReady: document.documentElement.dataset.iwReady || null,
+              iwError: document.documentElement.dataset.iwError || null,
               report: window.__IW_CHARACTER_PHASE3?.report?.() || null,
               camera: window.__IW?.runtime?.camera?.report?.() || null,
               activeSpaceId: window.__IW?.runtime?.state?.activeSpaceId || null,
               characterRoots: window.__IW?.runtime?.sceneKit?.scene?.children
-                ?.filter?.((child) => child.name === 'CHARACTER_2027_PHASE3_ROOT').length || 0
+                ?.filter?.((child) => child.name === 'CHARACTER_2027_PHASE3_ROOT').length || 0,
+              gateBadge: document.getElementById('character-phase3-gate')?.textContent || null,
+              gateErrorBadge: document.getElementById('character-phase3-error')?.textContent || null,
+              resources: performance.getEntriesByType('resource')
+                .filter((entry) => /Avatar_1\.glb|GLTFLoader|jsdelivr|r2\.dev/i.test(entry.name))
+                .map((entry) => ({ name: entry.name, duration: entry.duration, transferSize: entry.transferSize }))
             }));
 
-            fs.writeFileSync('phase3-report.json', JSON.stringify({ state, consoleErrors }, null, 2));
+            const diagnostic = { state, gateWaitError, consoleErrors, requestFailures, badResponses };
+            fs.writeFileSync('phase3-report.json', JSON.stringify(diagnostic, null, 2));
             await page.screenshot({ path: 'phase3-gallery-a-character.png', fullPage: true });
+            console.log('PHASE3_DIAGNOSTIC=' + JSON.stringify(diagnostic));
 
             function assert(condition, message) {
               if (!condition) throw new Error(message);
             }
 
-            assert(state.iwReady === 'true', `Museum runtime not ready: ${state.iwReady}`);
-            assert(state.gate === 'ready', `Character gate failed: ${state.gateError || state.gate}`);
+            assert(!gateWaitError, `Character gate did not settle: ${gateWaitError}`);
+            assert(state.iwReady === 'true', `Museum runtime not ready: ${state.iwReady}; iwError=${state.iwError}`);
+            assert(state.gate === 'ready', `Character gate failed: ${state.gateError || state.gate}; badge=${state.gateErrorBadge}`);
             assert(state.report?.ready === true, 'Character Phase 3 report is not ready');
             assert(state.activeSpaceId === 'space.gallery-a', `Wrong active space: ${state.activeSpaceId}`);
             assert(state.characterRoots === 1, `Expected exactly one Character root, got ${state.characterRoots}`);
@@ -118,9 +143,18 @@ jobs:
             assert((state.camera?.violations || []).length === 0, `CameraAuthority violations: ${JSON.stringify(state.camera?.violations)}`);
 
             const baseline = await context.newPage();
-            await baseline.goto(process.env.BASELINE_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
-            await baseline.waitForFunction(() => document.documentElement.dataset.iwReady === 'true', null, { timeout: 90000 });
+            const baselineErrors = [];
+            baseline.on('pageerror', (error) => baselineErrors.push(error.message));
+            await baseline.goto(process.env.BASELINE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+            let baselineWaitError = null;
+            try {
+              await baseline.waitForFunction(() => document.documentElement.dataset.iwReady === 'true', null, { timeout: 30000 });
+            } catch (error) {
+              baselineWaitError = error.message;
+            }
             const baselineState = await baseline.evaluate(() => ({
+              iwReady: document.documentElement.dataset.iwReady || null,
+              iwError: document.documentElement.dataset.iwError || null,
               hasPhase3Api: Boolean(window.__IW_CHARACTER_PHASE3),
               hasBadge: Boolean(document.getElementById('character-phase3-gate')),
               characterRoots: window.__IW?.runtime?.sceneKit?.scene?.children
@@ -128,12 +162,16 @@ jobs:
               activeSpaceId: window.__IW?.runtime?.state?.activeSpaceId || null
             }));
             await baseline.screenshot({ path: 'phase3-gallery-a-baseline.png', fullPage: true });
+            console.log('PHASE3_BASELINE=' + JSON.stringify({ baselineState, baselineWaitError, baselineErrors }));
+
+            assert(!baselineWaitError, `Baseline did not settle: ${baselineWaitError}`);
+            assert(baselineState.iwReady === 'true', `Baseline Museum not ready: ${baselineState.iwReady}; ${baselineState.iwError}`);
             assert(baselineState.activeSpaceId === 'space.gallery-a', `Baseline wrong room: ${baselineState.activeSpaceId}`);
             assert(baselineState.hasPhase3Api === false, 'Character API leaked into default Museum baseline');
             assert(baselineState.hasBadge === false, 'Character QA badge leaked into default Museum baseline');
             assert(baselineState.characterRoots === 0, 'Character root leaked into default Museum baseline');
 
-            console.log(JSON.stringify({ pass: true, state, baselineState, consoleErrors }, null, 2));
+            console.log(JSON.stringify({ pass: true, state, baselineState }, null, 2));
             await browser.close();
           })().catch((error) => {
             console.error(error.stack || error);
