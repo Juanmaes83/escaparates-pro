@@ -1,0 +1,130 @@
+# CHARACTER / AVATAR 2027 — DONOR FREEZE MANIFEST
+
+**Status:** PHASE 1 PASS / FROZEN / NOT ACTIVE  
+**Museum surgery branch:** `chatgpt/museum-character-2027-integration-v1`  
+**Museum protected baseline:** `4fbca5997beaf058543ee65d682f0adae89252e2`  
+**Rule:** everything under this donor freeze is immutable provenance material. Do not edit donor stones in place. Future Museum surgery must use Museum-side adapters/wrappers/copies.
+
+## Frozen source authorities
+
+- **VECINIA PRIMARY integration donor:** `Juanmaes83/VECINIA-WORLDS`
+  - branch: `feat/sculpture-navigation-character-v1`
+  - commit: `45e454febe2deb3b88bf5e5b527c4a5f86fe8eb1`
+- **CharacterStudio PRIMARY Character donor:** `Juanmaes83/CharacterStudio`
+  - branch family: `agent/character-2027-terrain-semantic-01`
+  - frozen commit: `f5a93a48ed0e3904fce58f08f7fbe08b5411b289`
+
+## Integrity method
+
+Every frozen source file is represented in `escaparates-pro` by the **same Git blob SHA** as its source repository. A mismatching transport is rejected and never referenced by the branch. This caught and prevented transport errors during Phase 1.
+
+**Frozen total: 28 files = 10 VECINIA + 18 CharacterStudio.**
+
+No file below is imported by the Museum product runtime at Phase 1.
+
+---
+
+# A. VECINIA-WORLDS — 10/10 COMPLETE
+
+Destination root:
+
+`labs/immersive-worlds/donors-frozen/character-2027/vecinia-worlds/visual/src/character2027/runtime/`
+
+| # | Source file | Git blob SHA | Role | State |
+|---:|---|---|---|---|
+| 1 | `ExteriorCharacterPilot.js` | `8b5c10ec527a6b1f798fe5a1dc836ff429d43fdf` | SUPPORT / exterior | FROZEN_NOT_ACTIVE |
+| 2 | `MuseumCharacterRuntimeAdapter.js` | `9d538ff40a9325f706ba18720bc603a409a2a674` | PRIMARY_RUNTIME / critical Museum seam | FROZEN_NOT_ACTIVE |
+| 3 | `PropertyRoomCharacterCapabilityBatches.js` | `5699ce87ef0286b9fb6581193da5b214428614d3` | SUPPORT / advanced actions | FROZEN_NOT_ACTIVE |
+| 4 | `PropertyRoomCharacterCinematicCamera.js` | `217e29413c6c3dd8c30978ba30b5e4364e0fe02b` | SUPPORT / advanced camera | FROZEN_NOT_ACTIVE |
+| 5 | `PropertyRoomCharacterFreeMobility.js` | `dc8126ad02b6c3170dabe871b1fec1ffe9f723d6` | PRIMARY_RUNTIME / free room locomotion | FROZEN_NOT_ACTIVE |
+| 6 | `PropertyRoomCharacterTourBridge.js` | `27e851d28fba4e5f00d099946bf47665e0e18919` | SUPPORT / tour | FROZEN_NOT_ACTIVE |
+| 7 | `PropertyRoomSemanticAuthoring.js` | `aa7fc37ed294f3b40db335d285000af5d0ecdc6c` | SUPPORT / semantic authoring | FROZEN_NOT_ACTIVE |
+| 8 | `PropertyRoomSemanticAuthoringBridge.js` | `450eac71ab6af7a81b90c411fa3e21589a11631e` | SUPPORT / semantic bridge | FROZEN_NOT_ACTIVE |
+| 9 | `exterior-pilot-skeleton.js` | `b168632976f9b7e9b61c7de4c537bae084b26218` | SUPPORT / exterior skeleton | FROZEN_NOT_ACTIVE |
+| 10 | `full-world-c2-skeleton.js` | `49d69f7993e60c629ca946263e539741c0656e6c` | SUPPORT / full-world skeleton | FROZEN_NOT_ACTIVE |
+
+**VECINIA integrity:** 10/10 source blob SHA == destination blob SHA.
+
+---
+
+# B. CHARACTERSTUDIO — 18/18 COMPLETE
+
+Destination root:
+
+`labs/immersive-worlds/donors-frozen/character-2027/characterstudio/`
+
+## B1. Core runtime + dependency closure — 15/15
+
+| # | Source path | Git blob SHA | Role | State |
+|---:|---|---|---|---|
+| 1 | `src/character2027/api/CharacterActionAPI.js` | `1107f6015dd16274105d16a71e950729b678f667` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 2 | `src/character2027/animation/MotionController.js` | `35a9182bd8cf378df6389fdc27f9fbd02a9b662b` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 3 | `src/character2027/animation/MotionFoundationV2.js` | `3ffa2617b107c1bdf885befce8bfcd4e0bda067c` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 4 | `src/character2027/animation/MotionFoundationV2Extra.js` | `f59c9e54fc4e4347f8a145e8e2b3e2a7bb57d848` | SUPPORT_RUNTIME | FROZEN_NOT_ACTIVE |
+| 5 | `src/character2027/animation/SocialMotionFoundationV3.js` | `2490cc4e36e1464d237000caca457d5b73dd79ec` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 6 | `src/character2027/animation/Retargeter.js` | `a32c471eb67f4d3dd33b694e5317532b0ec753ef` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 7 | `src/character2027/rig/BoneMap.js` | `0c74181afaaa64e34e3b8c03cfb042fb7fb27e12` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 8 | `src/character2027/interaction/LookAtController.js` | `c5cb4f75694f31a04dadf7236cafece91e77acba` | PRIMARY_RUNTIME | FROZEN_NOT_ACTIVE |
+| 9 | `src/character2027/interaction/TerrainSemanticBenchmarks.js` | `bbc07c169a3755aa3f55c48a1a8ce88a13ac7751` | DEPENDENCY_CLOSURE | FROZEN_NOT_ACTIVE |
+| 10 | `src/character2027/ik/ContactIKController.js` | `c4b0c14288f30d7d8178bc1dadc11a7f3c7d76ce` | PRIMARY_RUNTIME / IK | FROZEN_NOT_ACTIVE |
+| 11 | `src/character2027/ik/DonorTwoBoneIK.js` | `ea0e507a072d949bab8018b4ad27e7cc31392d26` | SUPPORT_RUNTIME / IK solver | FROZEN_NOT_ACTIVE |
+| 12 | `src/character2027/ik/HumanoidIKController.js` | `c4e103dc3f2dddf341f2654d15e3e8909d676856` | PRIMARY_RUNTIME / IK | FROZEN_NOT_ACTIVE |
+| 13 | `src/character2027/ik/LadderIKExtension.js` | `242fb865fcd61fe573c85c1de8467778ea1a9c97` | SUPPORT_RUNTIME / IK | FROZEN_NOT_ACTIVE |
+| 14 | `src/character2027/ik/TerrainSemanticIK.js` | `870d24744baae178acf0751d28d7e9b7d70d3560` | SUPPORT_RUNTIME / IK | FROZEN_NOT_ACTIVE |
+| 15 | `src/library/VRMRigMapMixamo.js` | `a7d731ef2de6ffca6f9f0720938240327675fbb0` | DEPENDENCY_CLOSURE | FROZEN_NOT_ACTIVE |
+
+### Why 15 instead of the original nominal list
+
+The approved shorthand said “IK”, but the final CharacterStudio stone at `f5a93a48...` is a five-file IK family. Phase 1 therefore freezes all five files rather than selecting one. During dependency audit we also found two required imports that cannot be amputated from the frozen closure:
+
+- `TerrainSemanticBenchmarks.js` is imported by `MotionFoundationV2Extra.js`, `LadderIKExtension.js` and `TerrainSemanticIK.js`.
+- `VRMRigMapMixamo.js` is imported by `BoneMap.js`.
+
+These two files are dependency closure, not scope expansion.
+
+## B2. Avatar/Studio knowledge donors — 3/3
+
+| # | Source path | Git blob SHA | Role | State |
+|---:|---|---|---|---|
+| 16 | `src/pages/Create.jsx` | `e70cf09eddd8c9c3df5c7d5c27fada75ed1b5979` | KNOWLEDGE_DONOR / avatar creation | FROZEN_NOT_ACTIVE |
+| 17 | `src/pages/Appearance.jsx` | `d1ec659da9f5702ca4a83483f3850675c30df949` | KNOWLEDGE_DONOR / appearance customization | FROZEN_NOT_ACTIVE |
+| 18 | `src/pages/MotionLab.jsx` | `8e1fff64f882cfd2eff6837e19e93b4dbad70515` | KNOWLEDGE_DONOR / lab and validation | FROZEN_NOT_ACTIVE |
+
+**CharacterStudio integrity:** 18/18 source blob SHA == destination blob SHA.
+
+---
+
+# C. WHAT IS NOT ACTIVE YET
+
+Phase 1 is transport and provenance only. At this checkpoint:
+
+- Character 2027 is **not instantiated** in Museum.
+- No avatar is **visible** in Gallery A/B/Wet Paint/Breeze.
+- No donor file is imported by Museum runtime.
+- No new renderer exists.
+- No new WorldStore exists.
+- No new CameraAuthority exists.
+- No locomotion/IK/tour/semantic module is activated.
+- `master` is untouched.
+
+This is intentional. Runtime surgery starts only after Phase 2 anatomy/compatibility is approved.
+
+---
+
+# D. PHASE 1 GATE
+
+- [x] VECINIA 10/10 physically frozen
+- [x] CharacterStudio 18/18 physically frozen
+- [x] complete CharacterStudio IK family frozen
+- [x] runtime dependency closure frozen
+- [x] Create / Appearance / MotionLab knowledge donors frozen
+- [x] source repositories recorded
+- [x] source commits recorded
+- [x] source paths preserved under donor-specific roots
+- [x] source blob SHA == destination blob SHA for every stone
+- [x] no donor stone edited in place
+- [x] donor folders remain unreferenced by product runtime
+
+**PHASE 1 — BRING THE STONES WHOLE = PASS / CLOSED**
+
+**NEXT ONLY AFTER APPROVAL:** Phase 2 anatomy / compatibility. No runtime surgery yet.
