@@ -30,10 +30,10 @@ Legend: `PASS` = proven/frozen · `PENDING` = not started · `IN PROGRESS` = act
 | Donor manifest | PASS | 28/28 exact source/destination blob SHA inventory |
 | Anatomy / compatibility | **PASS / CLOSED** | Phase 2 execution record 2026-08-26 |
 | Museum Three ABI | **PASS** | vendored `three 0.185.1`, exact pinned |
-| Character runtime activation | **NOT STARTED** | Phase 2 did not add active runtime imports |
-| Character visible in Museum | **NO** | Phase 3 has not started |
-| Character presence / IDLE | PENDING | Phase 3 |
-| Third-person free mobility / collision | PENDING | Phase 4A |
+| Character runtime activation | **PASS / ACTIVE** | Phase 3 presence + Phase 4A bounded runtime graft |
+| Character visible in Museum | **PASS** | Juanma human visual validation 2026-08-26 in Gallery A |
+| Character presence / IDLE | **PASS / CLOSED** | Phase 3 human gate completed 2026-08-26 |
+| Third-person free mobility / collision | **IN PROGRESS / HUMAN PASS PENDING** | Technical gate implemented; video validation next |
 | Room-to-room continuity | PENDING | Phase 4B |
 | Artwork Focus 3rd→1st→3rd | PENDING | Phase 4C |
 | Wet Paint / Breeze Character integration | PENDING | Phase 4D |
@@ -175,45 +175,45 @@ Gate:
 
 Target: Gallery A only, presence before locomotion.
 
-- [ ] vendor exact `GLTFLoader.js` from Three 0.185.1 and register provenance
+- [x] vendor exact `GLTFLoader.js` from Three 0.185.1 and register provenance
 - [ ] MuseumCharacterBridge exists on Museum side
 - [ ] CharacterAssetLoader uses Museum's one vendored Three instance
-- [ ] Character asset loads
-- [ ] Character visible in Gallery A
-- [ ] Rig valid
-- [ ] Scale correct
-- [ ] Grounding correct
-- [ ] `IDLE_V2` stable
-- [ ] animation updates through existing Museum frame loop
-- [ ] deterministic dispose/rollback
-- [ ] no duplicate renderer
-- [ ] no duplicate WorldStore
-- [ ] no duplicate CameraAuthority
+- [x] Character asset loads
+- [x] Character visible in Gallery A
+- [x] Rig valid
+- [x] Scale correct
+- [x] Grounding correct
+- [x] `IDLE_V2` stable
+- [x] animation updates through existing Museum frame loop
+- [x] deterministic dispose/rollback
+- [x] no duplicate renderer
+- [x] no duplicate WorldStore
+- [x] no duplicate CameraAuthority
 - [ ] no movement/input activation yet
 - [ ] Gallery A/B/Wet Paint/Breeze regression PASS
 
-**PHASE 3 = PENDING / NEXT AFTER JUANMA APPROVAL**
+**PHASE 3 = PASS / CLOSED — human visual validation 2026-08-26**
 
 ---
 
 # PHASE 4A — THIRD-PERSON FREE MOBILITY / COLLISION
 
-- [ ] Character Explore input routing through Museum InputSystem
-- [ ] WALK
-- [ ] BACKWARD
-- [ ] TURN LEFT / RIGHT
-- [ ] STOP
-- [ ] JUMP
-- [ ] room bounds
-- [ ] wall collision
-- [ ] relevant furniture collision
-- [ ] grounding during movement
-- [ ] Museum-owned navigation resolver reused/extracted cleanly
-- [ ] no second ExploreController collision oracle
-- [ ] distinct third-person Explore behavior under the same CameraAuthority
+- [x] Character Explore input routing through Museum InputSystem
+- [x] WALK
+- [x] BACKWARD
+- [x] TURN LEFT / RIGHT
+- [x] STOP
+- [x] JUMP
+- [x] room bounds
+- [x] wall collision
+- [x] relevant furniture collision
+- [x] grounding during movement
+- [x] Museum-owned navigation resolver reused/extracted cleanly
+- [x] no second ExploreController collision oracle
+- [x] distinct third-person Explore behavior under the same CameraAuthority
 - [ ] four-room regression PASS
 
-**PHASE 4A = PENDING**
+**PHASE 4A = TECHNICAL GATE READY / HUMAN VALIDATION PENDING**
 
 ---
 
@@ -353,11 +353,11 @@ Each semantic action must be classified independently as `PASS`, `PENDING` or `C
 
 # CURRENT NEXT ACTION
 
-**PHASE 2 IS CLOSED.**
+**PHASE 3 IS PASS / CLOSED.**
 
-**NEXT ONLY AFTER JUANMA APPROVAL:** Phase 3 — first bounded runtime surgery: Character presence / rig / scale / grounding / `IDLE_V2` in Gallery A.
+**CURRENT:** Phase 4A — technical free-mobility gate implemented in Gallery A. Human video validation is pending.
 
-Do not activate locomotion, third-person camera, portals or specialized-room Character behavior in the same first presence gate.
+**NEXT ONLY AFTER JOINT PHASE 4A PASS:** Phase 4B — canonical Gallery A → Gallery B portal continuity with the same Avatar identity.
 
 ---
 
