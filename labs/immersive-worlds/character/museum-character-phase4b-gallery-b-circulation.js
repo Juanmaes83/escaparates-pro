@@ -39,7 +39,7 @@ function trimmedLine(line) {
       max: [x + BLOCKER_PAD, 1.2, Math.max(from[2], to[2]) + BLOCKER_PAD]
     };
   }
-  return { ...line, from, to, blocker, trim };
+  return { original: line, from, to, blocker, wall: line.wall, trim };
 }
 
 function disposeGeometryOnly(object) {
@@ -47,13 +47,9 @@ function disposeGeometryOnly(object) {
 }
 
 /**
- * Phase 4B human-gate circulation correction.
- *
- * Gallery B is physically smaller than Gallery A. Its procedural primary-wall
- * rope is valid museum furniture but the authored span plus Character radius
- * leaves too little circulation at the ends. Rebuild the same rope shorter and
- * replace the exact corresponding blocker, so visual geometry and collision
- * remain one fact instead of creating an invisible passage.
+ * Gallery B is smaller than Gallery A. Shorten the procedural primary-wall rope
+ * at both ends and replace its exact collision blocker by the same amount. This
+ * creates a real Character passage without an invisible collision mismatch.
  */
 export function applyGalleryBCharacterPassage(sceneKit, store) {
   const handle = sceneKit?._spaces?.get?.(GALLERY_B);
@@ -82,8 +78,7 @@ export function applyGalleryBCharacterPassage(sceneKit, store) {
       ropeMaterial: handle.materials.rope
     }));
 
-    const originalLine = original.find((candidate) => candidate.wall === line.wall && sameBlocker(candidate.blocker, candidate.blocker));
-    const index = handle.blockers.findIndex((blocker) => original.some((candidate) => sameBlocker(blocker, candidate.blocker)));
+    const index = handle.blockers.findIndex((blocker) => sameBlocker(blocker, line.original.blocker));
     if (index >= 0) {
       handle.blockers[index] = line.blocker;
       blockerReplacements += 1;
@@ -91,11 +86,11 @@ export function applyGalleryBCharacterPassage(sceneKit, store) {
   }
 
   return {
-    applied: true,
+    applied: blockerReplacements === replacements.length,
     room: GALLERY_B,
     lines: replacements.length,
     blockerReplacements,
     trimPerEnd: replacements.map((line) => line.trim),
-    rule: 'visual rope and its canonical blocker shortened together'
+    rule: 'visual rope and canonical blocker shortened together'
   };
 }
