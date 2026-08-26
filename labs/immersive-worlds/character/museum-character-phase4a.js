@@ -11,6 +11,7 @@ const SPACE_ID = 'space.gallery-a';
 const ENTRY_PORTAL_ID = 'portal.lobby-gallery-a';
 const TARGET_HEIGHT = 1.66;
 const EXPECTED_THREE_REVISION = '185';
+const VISUAL_FORWARD_YAW_OFFSET = Math.PI;
 const FORWARD_SPEED = 1.05;
 const BACKWARD_SPEED = 0.78;
 const RUN_MULTIPLIER = 1.35;
@@ -64,7 +65,16 @@ async function loadCharacter() {
   }
   const gltf = await new Promise((resolve, reject) => new GLTFLoader().parse(bytes, new URL('.', PHASE3_APPROVED_AVATAR.url).href, resolve, reject));
   const visual = gltf.scene;
+
+  // Museum Character body convention: root +Z is forward. The approved GLB's
+  // visual faces the opposite local axis, so rotate only the visual child. The
+  // body root remains the sole locomotion/collision/camera facing authority.
+  visual.rotation.y = VISUAL_FORWARD_YAW_OFFSET;
+  visual.updateMatrixWorld(true);
+
   const normalization = normalizeAvatarToHeight(visual, TARGET_HEIGHT);
+  normalization.visualForwardYawOffset = VISUAL_FORWARD_YAW_OFFSET;
+  normalization.canonicalBodyForward = '+Z';
   const rig = inspectHumanoid(visual);
   if (!rig.pass) throw new Error(`Character rig failed: ${rig.missing.join(', ')}`);
   const root = new THREE.Group();
@@ -101,10 +111,11 @@ function installBadge(api) {
   document.getElementById('character-phase3-gate')?.remove();
   const el = document.createElement('div');
   el.id = 'character-phase4a-gate';
-  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:390px';
+  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:430px';
   const refresh = () => {
     const r = api.report();
-    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · THIRD-PERSON FREE MOBILITY</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · Shift rápido · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · collision corrections ${r.collision.corrections} · camera ${r.camera.owner} · violations ${r.camera.violations}</div>`;
+    const follow = r.cameraFollow || {};
+    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · THIRD-PERSON FREE MOBILITY</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · Shift rápido · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · collision ${r.collision.corrections} · camera ${r.camera.owner} · violations ${r.camera.violations}</div><div style="font-weight:500;opacity:.58">cam ${follow.slot || '—'} · occlusion ${follow.occlusionFallbacks || 0} · rear-guard ${follow.behindGuardSnaps || 0}</div>`;
   };
   refresh();
   document.body.appendChild(el);
@@ -238,6 +249,8 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   const api = {
     ready: true,
     root,
+    visual: loaded.visual,
+    normalization: loaded.normalization,
     motion,
     collision,
     setInput,
@@ -249,6 +262,8 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         spaceId: runtime.state.activeSpaceId,
         position: root.position.toArray(),
         yaw: root.rotation.y,
+        canonicalForward: '+Z',
+        visualForwardYawOffset: VISUAL_FORWARD_YAW_OFFSET,
         grounded: Math.abs(root.position.y - groundY) < 0.002 || jumping,
         jumping,
         input: { ...movement },
@@ -257,6 +272,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
         entry: { mode: 'canonical-portal', portalId: ENTRY_PORTAL_ID, activeSpaceId: runtime.state.activeSpaceId },
         navigationAuthority: 'Museum ExploreController.resolveNavigationPosition + Museum navigationVolume',
         camera: runtime.camera.report(),
+        cameraFollow: cameraController.report(),
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
         frameSeam: 'existing runtime.onFrame; body before render; camera follows at <=1 frame latency',
         humanVisualApproval: 'PENDING'
