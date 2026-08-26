@@ -56,12 +56,16 @@
 
       // Character / Avatar 2027 — bounded opt-ins.
       // `?character=1` keeps the validated Phase 3 presence gate.
-      // `?character=1&mobility=1` advances to Phase 4A: one controllable body,
-      // Museum input routing, Museum navigation/collision and one CameraAuthority.
+      // `?character=1&mobility=1` keeps validated Phase 4A free mobility.
+      // `?character=1&mobility=1&continuity=1` advances only to Phase 4B:
+      // same Character root across canonical Gallery A ↔ Gallery B portals.
       const characterParams = new URLSearchParams(location.search);
       if (characterParams.get('character') === '1') {
         try {
-          if (characterParams.get('mobility') === '1') {
+          if (characterParams.get('mobility') === '1' && characterParams.get('continuity') === '1') {
+            const { mountMuseumCharacterPhase4B } = await import('./character/museum-character-phase4b.js');
+            await mountMuseumCharacterPhase4B({ runtime, sceneKit: runtime.sceneKit, input: window.__IW?.input });
+          } else if (characterParams.get('mobility') === '1') {
             const { mountMuseumCharacterPhase4A } = await import('./character/museum-character-phase4a.js');
             await mountMuseumCharacterPhase4A({ runtime, sceneKit: runtime.sceneKit, input: window.__IW?.input });
           } else {
