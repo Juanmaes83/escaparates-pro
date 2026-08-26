@@ -1,5 +1,6 @@
 import { CAMERA_AUTHORITY } from '../engine/schema/types.js';
 import { mountMuseumCharacterPhase4A } from './museum-character-phase4a.js';
+import { applyGalleryBCharacterPassage } from './museum-character-phase4b-gallery-b-circulation.js';
 
 const GALLERY_A = 'space.gallery-a';
 const GALLERY_B = 'space.gallery-b';
@@ -12,11 +13,11 @@ function installBadge(api) {
   document.getElementById('character-phase4b-gate')?.remove();
   const el = document.createElement('div');
   el.id = 'character-phase4b-gate';
-  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.86);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:520px';
+  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.86);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:540px';
   const refresh = () => {
     const r = api.report();
     const follow = r.cameraFollow || {};
-    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4B · SAME CHARACTER ROOM CONTINUITY</div><div style="font-weight:500;opacity:.88">Gallery A ↔ Gallery B · E portal · mismo avatar</div><div style="font-weight:500;opacity:.68">space ${r.spaceId} · crossings ${r.continuity.crossings} · same-root ${r.continuity.sameRoot ? 'YES' : 'NO'}</div><div style="font-weight:500;opacity:.58">camera ${r.camera.owner} · violations ${r.camera.violations} · dist ${Number(follow.distance || 0).toFixed(2)} · ${follow.shotMode || 'NORMAL'}</div><div style="font-weight:500;opacity:.52">one-motion ${r.continuity.singleMotionLoop ? 'YES' : 'NO'} · last ${r.continuity.lastPortal || '—'} · hotspot ${r.proximity?.nearest || '—'}</div>`;
+    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4B · FINAL HUMAN GATE</div><div style="font-weight:500;opacity:.88">Gallery A ↔ Gallery B · mismo avatar · mismo motion/camera</div><div style="font-weight:500;opacity:.68">space ${r.spaceId} · crossings ${r.continuity.crossings} · same-root ${r.continuity.sameRoot ? 'YES' : 'NO'} · one-motion ${r.continuity.singleMotionLoop ? 'YES' : 'NO'}</div><div style="font-weight:500;opacity:.58">camera ${r.camera.owner} · violations ${r.camera.violations} · dist ${Number(follow.distance || 0).toFixed(2)} · ${follow.shotMode || 'NORMAL'}</div><div style="font-weight:500;opacity:.52">Gallery B passage ${r.circulation?.applied ? 'OPEN' : 'CHECK'} · last ${r.continuity.lastPortal || '—'} · hotspot ${r.proximity?.nearest || '—'}</div>`;
   };
   refresh();
   document.body.appendChild(el);
@@ -31,6 +32,15 @@ export async function mountMuseumCharacterPhase4B({ runtime, sceneKit = runtime?
   const phase4a = await mountMuseumCharacterPhase4A({ runtime, sceneKit, input });
   if (typeof phase4a.rebindSpace !== 'function' || !phase4a.cameraController) {
     throw new Error('Phase 4B requires room-bindable Phase 4A Character session');
+  }
+
+  // Gallery B is normally prefetched from A, but Phase 4B requires its physical
+  // barrier geometry now so the Character passage can be corrected before the
+  // human enters. This warms only; Museum remains the activation authority.
+  await runtime.spaces.prepare(GALLERY_B);
+  const circulation = applyGalleryBCharacterPassage(sceneKit, runtime.store);
+  if (!circulation.applied) {
+    console.warn('[Character Phase 4B] Gallery B passage correction incomplete', circulation);
   }
 
   const root = phase4a.root;
@@ -91,8 +101,8 @@ export async function mountMuseumCharacterPhase4B({ runtime, sceneKit = runtime?
       throw new Error(`Phase 4B ${continuityError}`);
     }
 
-    // This is the whole 4B seam: same root, same MotionV2, same locomotion loop,
-    // same ThirdPersonExploreController. Only room context changes.
+    // Same root, same MotionV2, same locomotion loop and same camera controller.
+    // Only room-bound navigation/ground/proximity state changes.
     phase4a.rebindSpace(destination, spawn);
     currentSpaceId = destination;
     input.setMovementSink({ setInput: phase4a.setInput, jump: phase4a.jump, inputFrame() {} });
@@ -109,10 +119,11 @@ export async function mountMuseumCharacterPhase4B({ runtime, sceneKit = runtime?
     ready: true,
     root,
     phase4a,
+    circulation,
     report() {
       const base = phase4a.report();
       return {
-        phase: 'PHASE4B_ROOM_TO_ROOM_CONTINUITY',
+        phase: 'PHASE4B_ROOM_TO_ROOM_CONTINUITY_FINAL',
         ready: true,
         spaceId: runtime.state.activeSpaceId,
         rootIdentity,
@@ -120,6 +131,7 @@ export async function mountMuseumCharacterPhase4B({ runtime, sceneKit = runtime?
         proximity: runtime.proximity.report(),
         camera: runtime.camera.report(),
         cameraFollow: phase4a.cameraController.report(),
+        circulation,
         continuity: {
           crossings,
           lastPortal,
@@ -159,6 +171,6 @@ export async function mountMuseumCharacterPhase4B({ runtime, sceneKit = runtime?
   const badge = installBadge(api);
   window.__IW_CHARACTER_PHASE4B = api;
   document.documentElement.dataset.characterPhase4b = 'ready';
-  console.info('[Character Phase 4B] SINGLE-SESSION ROOM CONTINUITY READY FOR HUMAN VALIDATION', api.report());
+  console.info('[Character Phase 4B] FINAL TWO-FIX GATE READY FOR HUMAN VALIDATION', api.report());
   return api;
 }
