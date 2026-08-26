@@ -4,6 +4,7 @@ import { CAMERA_AUTHORITY } from '../engine/schema/types.js';
 import { EVENTS } from '../engine/core/event-bus.js';
 import { ThirdPersonExploreController } from '../engine/camera/controllers/third-person-explore-controller.js';
 import { createCharacterMotionV2 } from './character-motion-v2.js';
+import { applyPhase4AFinalPolish } from './museum-character-phase4a-final-polish.js';
 import { PHASE3_APPROVED_AVATAR } from './museum-character-phase3.js';
 
 const LOBBY_SPACE_ID = 'space.lobby';
@@ -65,13 +66,8 @@ async function loadCharacter() {
   }
   const gltf = await new Promise((resolve, reject) => new GLTFLoader().parse(bytes, new URL('.', PHASE3_APPROVED_AVATAR.url).href, resolve, reject));
   const visual = gltf.scene;
-
-  // Museum Character body convention: root +Z is forward. The approved GLB's
-  // visual faces the opposite local axis, so rotate only the visual child. The
-  // body root remains the sole locomotion/collision/camera facing authority.
   visual.rotation.y = VISUAL_FORWARD_YAW_OFFSET;
   visual.updateMatrixWorld(true);
-
   const normalization = normalizeAvatarToHeight(visual, TARGET_HEIGHT);
   normalization.visualForwardYawOffset = VISUAL_FORWARD_YAW_OFFSET;
   normalization.canonicalBodyForward = '+Z';
@@ -96,14 +92,10 @@ function resolveStart(runtime) {
 
 async function ensureGalleryA(runtime) {
   if (runtime.state.activeSpaceId === SPACE_ID) return;
-  if (runtime.state.activeSpaceId !== LOBBY_SPACE_ID) {
-    throw new Error(`Phase 4A expected ${LOBBY_SPACE_ID} or ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
-  }
+  if (runtime.state.activeSpaceId !== LOBBY_SPACE_ID) throw new Error(`Phase 4A expected ${LOBBY_SPACE_ID} or ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
   if (!runtime.store.has(ENTRY_PORTAL_ID)) throw new Error(`Phase 4A missing canonical entry portal ${ENTRY_PORTAL_ID}`);
   await runtime.traversePortal(ENTRY_PORTAL_ID, { source: 'CHARACTER_PHASE4A_GATE' });
-  if (runtime.state.activeSpaceId !== SPACE_ID) {
-    throw new Error(`Phase 4A canonical entry failed: expected ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
-  }
+  if (runtime.state.activeSpaceId !== SPACE_ID) throw new Error(`Phase 4A canonical entry failed: expected ${SPACE_ID}, got ${runtime.state.activeSpaceId}`);
 }
 
 function installBadge(api) {
@@ -111,11 +103,11 @@ function installBadge(api) {
   document.getElementById('character-phase3-gate')?.remove();
   const el = document.createElement('div');
   el.id = 'character-phase4a-gate';
-  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:430px';
+  el.style.cssText = 'position:fixed;left:14px;top:14px;z-index:20000;padding:10px 12px;background:rgba(9,12,14,.84);border:1px solid rgba(255,255,255,.24);color:#f1eee8;font:600 11px/1.45 system-ui,sans-serif;pointer-events:none;max-width:460px';
   const refresh = () => {
     const r = api.report();
     const follow = r.cameraFollow || {};
-    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · THIRD-PERSON FREE MOBILITY</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · Shift rápido · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · collision ${r.collision.corrections} · camera ${r.camera.owner} · violations ${r.camera.violations}</div><div style="font-weight:500;opacity:.58">cam ${follow.slot || '—'} · occlusion ${follow.occlusionFallbacks || 0} · rear-guard ${follow.behindGuardSnaps || 0}</div>`;
+    el.innerHTML = `<div style="letter-spacing:.12em">PHASE 4A · FINAL HUMAN GATE</div><div style="font-weight:500;opacity:.88">W/S caminar · A/D girar · Shift rápido · Space saltar</div><div style="font-weight:500;opacity:.68">${r.motion.state} · collision ${r.collision.corrections} · camera ${r.camera.owner} · violations ${r.camera.violations}</div><div style="font-weight:500;opacity:.58">cam ${follow.slot || '—'} · dist ${Number(follow.distance || 0).toFixed(2)} · hard ${follow.hardEnvelopeRecoveries || 0}</div><div style="font-weight:500;opacity:.52">hotspot ${r.proximity?.nearest || '—'} · passage ${r.circulation?.applied ? 'OPEN' : 'UNCHANGED'}</div>`;
   };
   refresh();
   document.body.appendChild(el);
@@ -129,7 +121,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   if (window.__IW_CHARACTER_PHASE4A?.ready) return window.__IW_CHARACTER_PHASE4A;
 
   await ensureGalleryA(runtime);
-
+  const circulation = applyPhase4AFinalPolish(sceneKit);
   const loaded = await loadCharacter();
   const root = loaded.root;
   const anchor = resolveStart(runtime);
@@ -177,9 +169,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
     const frameDt = Math.max(0, Math.min(Number(dt) || 0, 0.05));
     const turn = movement.turn;
     const forward = movement.forward;
-
     if (turn) root.rotation.y -= turn * TURN_SPEED * frameDt;
-
     if (forward !== 0) {
       const speed = (forward > 0 ? FORWARD_SPEED : BACKWARD_SPEED) * (movement.run ? RUN_MULTIPLIER : 1);
       const direction = forward > 0 ? 1 : -1;
@@ -200,103 +190,63 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
       if (motion.state !== state || previousTurn !== turn) motion.play(state, 0.08);
       stopElapsed = 0;
     } else if (!jumping) {
-      if (previousMoving || previousTurn !== 0) {
-        motion.play('STOP_V2', 0.1);
-        stopElapsed = 0.7;
-      } else if (stopElapsed > 0) {
-        stopElapsed -= frameDt;
-        if (stopElapsed <= 0) motion.play('IDLE_V2', 0.15);
-      } else if (motion.state !== 'IDLE_V2') {
-        motion.play('IDLE_V2', 0.15);
-      }
+      if (previousMoving || previousTurn !== 0) { motion.play('STOP_V2', 0.1); stopElapsed = 0.7; }
+      else if (stopElapsed > 0) { stopElapsed -= frameDt; if (stopElapsed <= 0) motion.play('IDLE_V2', 0.15); }
+      else if (motion.state !== 'IDLE_V2') motion.play('IDLE_V2', 0.15);
     }
-
     if (jumping) {
       jumpElapsed += frameDt;
       const t = Math.min(1, jumpElapsed / JUMP_DURATION);
       root.position.y = groundY + JUMP_HEIGHT * 4 * t * (1 - t);
-      if (t >= 1) {
-        jumping = false;
-        root.position.y = groundY;
-        motion.play(forward !== 0 ? 'WALK_V2' : 'IDLE_V2', 0.12);
-      }
-    } else {
-      root.position.y = groundY;
-    }
+      if (t >= 1) { jumping = false; root.position.y = groundY; motion.play(forward !== 0 ? 'WALK_V2' : 'IDLE_V2', 0.12); }
+    } else root.position.y = groundY;
 
     motion.update(frameDt);
     root.updateMatrixWorld(true);
+    runtime.proximity.update(frameDt, [root.position.x, groundY + runtime.explore.eyeHeight, root.position.z]);
     previousMoving = forward !== 0;
     previousTurn = turn;
   }
 
   const previousOnFrame = runtime.onFrame;
-  runtime.onFrame = (pose, dt) => {
-    updateLocomotion(dt);
-    previousOnFrame?.(pose, dt);
-  };
-
+  runtime.onFrame = (pose, dt) => { updateLocomotion(dt); previousOnFrame?.(pose, dt); };
   const sink = { setInput, jump, inputFrame() {} };
   input.setMovementSink(sink);
-
   const offCameraInputBridge = runtime.bus.on(EVENTS.CAMERA_AUTHORITY_CHANGED, ({ to }) => {
     if (to === CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE) input.setEnabled(true);
   });
-
   runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, { reason: 'Character 2027 Phase 4A free mobility', durationMs: 0, restore: 'ADOPT_INCOMING' });
   input.setEnabled(true);
 
   const api = {
-    ready: true,
-    root,
-    visual: loaded.visual,
-    normalization: loaded.normalization,
-    motion,
-    collision,
-    setInput,
-    jump,
+    ready: true, root, visual: loaded.visual, normalization: loaded.normalization, motion, collision, circulation, setInput, jump,
     report() {
       return {
-        phase: 'PHASE4A_THIRD_PERSON_FREE_MOBILITY',
-        ready: true,
-        spaceId: runtime.state.activeSpaceId,
-        position: root.position.toArray(),
-        yaw: root.rotation.y,
-        canonicalForward: '+Z',
-        visualForwardYawOffset: VISUAL_FORWARD_YAW_OFFSET,
-        grounded: Math.abs(root.position.y - groundY) < 0.002 || jumping,
-        jumping,
-        input: { ...movement },
-        motion: motion.report(),
-        collision: { ...collision },
+        phase: 'PHASE4A_THIRD_PERSON_FREE_MOBILITY_FINAL', ready: true,
+        spaceId: runtime.state.activeSpaceId, position: root.position.toArray(), yaw: root.rotation.y,
+        canonicalForward: '+Z', visualForwardYawOffset: VISUAL_FORWARD_YAW_OFFSET,
+        grounded: Math.abs(root.position.y - groundY) < 0.002 || jumping, jumping,
+        input: { ...movement }, motion: motion.report(), collision: { ...collision }, circulation,
+        proximity: runtime.proximity.report(),
         entry: { mode: 'canonical-portal', portalId: ENTRY_PORTAL_ID, activeSpaceId: runtime.state.activeSpaceId },
         navigationAuthority: 'Museum ExploreController.resolveNavigationPosition + Museum navigationVolume',
-        camera: runtime.camera.report(),
-        cameraFollow: cameraController.report(),
+        camera: runtime.camera.report(), cameraFollow: cameraController.report(),
         authorities: { rendererDuplicated: false, worldStoreDuplicated: false, cameraAuthorityDuplicated: false, exploreControllerDuplicated: false, inputListenersDuplicated: false },
         frameSeam: 'existing runtime.onFrame; body before render; camera follows at <=1 frame latency',
-        humanVisualApproval: 'PENDING'
+        humanVisualApproval: 'PENDING_FINAL_4A'
       };
     },
     dispose() {
       if (disposed) return;
-      disposed = true;
-      setInput({});
-      runtime.onFrame = previousOnFrame;
-      offCameraInputBridge();
-      input.setMovementSink(null);
-      motion.dispose();
-      sceneKit.scene.remove(root);
+      disposed = true; setInput({}); runtime.onFrame = previousOnFrame; offCameraInputBridge();
+      input.setMovementSink(null); motion.dispose(); sceneKit.scene.remove(root);
       runtime.camera.request(CAMERA_AUTHORITY.EXPLORE, { reason: 'Phase 4A dispose', durationMs: 0, restore: 'ADOPT_INCOMING' });
-      badge.remove();
-      delete window.__IW_CHARACTER_PHASE4A;
-      document.documentElement.dataset.characterPhase4a = 'disposed';
+      badge.remove(); delete window.__IW_CHARACTER_PHASE4A; document.documentElement.dataset.characterPhase4a = 'disposed';
     }
   };
-
   const badge = installBadge(api);
   window.__IW_CHARACTER_PHASE4A = api;
   document.documentElement.dataset.characterPhase4a = 'ready';
-  console.info('[Character Phase 4A] READY FOR HUMAN VALIDATION', api.report());
+  console.info('[Character Phase 4A] FINAL READY FOR HUMAN VALIDATION', api.report());
   return api;
 }
