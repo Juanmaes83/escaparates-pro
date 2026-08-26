@@ -1,0 +1,42 @@
+name: Museum Phase4A runtime seam
+on:
+  push:
+    branches: [chatgpt/museum-character-2027-integration-v1]
+    paths: ['.github/workflows/museum-phase4a-runtime-seam.yml']
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/museum-character-2027-integration-v1
+          fetch-depth: 0
+      - name: Patch Runtime and visitor camera input gating
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('labs/immersive-worlds/engine/core/runtime.js')
+          s=p.read_text()
+          old="    this.onFrame = null;\n"
+          new="    this.onFrame = null;\n    // Ordered pre-camera update ports. Character locomotion uses this so the body\n    // moves before the authoritative third-person camera samples it; no second RAF.\n    this._preCameraUpdaters = new Set();\n"
+          assert old in s
+          s=s.replace(old,new,1)
+          old2="  /** @param {number} dt seconds */\n  step(dt) {\n    this.experience.update(dt);\n    const pose = this.camera.update(dt);"
+          new2="  /** Register a bounded subsystem update before CameraAuthority resolves the frame. */\n  addPreCameraUpdater(updater) {\n    if (typeof updater !== 'function') throw new Error('[IW] pre-camera updater must be a function');\n    this._preCameraUpdaters.add(updater);\n    return () => this._preCameraUpdaters.delete(updater);\n  }\n\n  /** @param {number} dt seconds */\n  step(dt) {\n    this.experience.update(dt);\n    for (const updater of this._preCameraUpdaters) updater(dt);\n    const pose = this.camera.update(dt);"
+          assert old2 in s
+          p.write_text(s.replace(old2,new2,1))
+
+          p=Path('labs/immersive-worlds/app/experience-app.js')
+          s=p.read_text()
+          old="    input.setEnabled(to === CAMERA_AUTHORITY.EXPLORE);\n    if (to !== CAMERA_AUTHORITY.EXPLORE && document.pointerLockElement) document.exitPointerLock();"
+          new="    const visitorExplore = to === CAMERA_AUTHORITY.EXPLORE || to === CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE;\n    input.setEnabled(visitorExplore);\n    if (!visitorExplore && document.pointerLockElement) document.exitPointerLock();"
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add labs/immersive-worlds/engine/core/runtime.js labs/immersive-worlds/app/experience-app.js
+          git commit -m 'feat(museum): add Character pre-camera update seam and third-person input gate'
+          git push
