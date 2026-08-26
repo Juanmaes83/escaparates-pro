@@ -9,9 +9,11 @@
  * Camera-comfort behaviour is recovered from the frozen
  * PropertyRoomCharacterFreeMobility donor, adapted to Museum-side contracts.
  *
- * Phase 4A final polish adds a strict camera-distance envelope so the Character
- * cannot become visually tiny or fill/leave the frame, and expires stale safe
- * camera poses after meaningful Character translation/rotation.
+ * Phase 4A final polish keeps ordinary follow motion deliberately calm and only
+ * performs an aggressive correction after a short, persistent distance-envelope
+ * violation. That removes the visible micro-jitter introduced by correcting the
+ * camera every frame while still guaranteeing recovery when the Character gets
+ * genuinely too near or too far.
  */
 
 const DEFAULT_DISTANCE = 3.25;
@@ -23,12 +25,13 @@ const CAMERA_CLEARANCE = 0.24;
 const CAMERA_MIN_DISTANCE = 2.75;
 const CAMERA_MAX_DISTANCE = 3.72;
 const CAMERA_TARGET_DISTANCE = 3.25;
-const CAMERA_POSITION_DEAD_ZONE = 0.12;
-const CAMERA_TARGET_DEAD_ZONE = 0.06;
-const CAMERA_LERP_RATE = 8.0;
+const CAMERA_POSITION_DEAD_ZONE = 0.18;
+const CAMERA_TARGET_DEAD_ZONE = 0.08;
+const CAMERA_LERP_RATE = 5.4;
 const MIN_BEHIND_PROJECTION = 0.35;
 const LAST_SAFE_MAX_CHARACTER_TRAVEL = 1.15;
 const LAST_SAFE_MAX_YAW_DELTA = Math.PI / 3;
+const DISTANCE_GUARD_FRAMES = 5;
 
 const DISTANCES = Object.freeze([3.25, 3.5, 3.0, 2.82, 3.65]);
 const LATERALS = Object.freeze([0, 0.72, -0.72, 1.05, -1.05, 1.35, -1.35]);
@@ -47,6 +50,8 @@ export class ThirdPersonExploreController {
     this._lastSafe = null;
     this._lastSafeCharacter = null;
     this._lastSafeYaw = null;
+    this._farViolationFrames = 0;
+    this._nearViolationFrames = 0;
     this._diag = {
       slot: 'INIT',
       distance: 0,
@@ -55,7 +60,8 @@ export class ThirdPersonExploreController {
       behindGuardSnaps: 0,
       distanceGuardPullIns: 0,
       distanceGuardPushOuts: 0,
-      staleSafeInvalidations: 0
+      staleSafeInvalidations: 0,
+      hardEnvelopeRecoveries: 0
     };
   }
 
@@ -101,20 +107,14 @@ export class ThirdPersonExploreController {
       lerp3InPlace(this._position, chosen, alpha);
     }
     if (distance3(this._target, desiredTarget) > CAMERA_TARGET_DEAD_ZONE) {
-      lerp3InPlace(this._target, desiredTarget, Math.min(1, alpha * 1.15));
+      lerp3InPlace(this._target, desiredTarget, Math.min(1, alpha * 1.08));
     }
 
-    // Never interpolate through the Character's front hemisphere during a fast
-    // direction change. This prevents the walking avatar from suddenly facing
-    // the viewer because the camera crossed in front of the body.
     if (!isBehind(this._position, desiredTarget, forward, MIN_BEHIND_PROJECTION)) {
       this._position = [...chosen];
       this._diag.behindGuardSnaps += 1;
     }
 
-    // Final visual-size guard. Candidate search already respects the envelope,
-    // but smoothing/holds can transiently move outside it. Pull in if the avatar
-    // becomes too small; push out if it becomes too large or risks clipping.
     this._enforceDistanceEnvelope(this._position, desiredTarget, forward, right);
 
     this._diag.distance = distance3(this._position, desiredTarget);
@@ -128,7 +128,9 @@ export class ThirdPersonExploreController {
       target: this._target ? [...this._target] : null,
       targetDistance: CAMERA_TARGET_DISTANCE,
       minDistance: CAMERA_MIN_DISTANCE,
-      maxDistance: CAMERA_MAX_DISTANCE
+      maxDistance: CAMERA_MAX_DISTANCE,
+      farViolationFrames: this._farViolationFrames,
+      nearViolationFrames: this._nearViolationFrames
     };
   }
 
@@ -161,7 +163,6 @@ export class ThirdPersonExploreController {
       return [...this._lastSafe];
     }
 
-    // Emergency high shoulder, still constrained by the same min/max envelope.
     const emergency = [
       human[0] - forward[0] * 2.9 + right[0] * 0.9,
       human[1] + 2.35,
@@ -174,8 +175,6 @@ export class ThirdPersonExploreController {
       return emergency;
     }
 
-    // Last resort: construct a fresh rear pose around the current Character;
-    // never keep an arbitrarily distant previous pose.
     this._diag.comfortHolds += 1;
     this._diag.slot = 'FRESH_REAR_FALLBACK';
     const fallback = [
@@ -198,28 +197,42 @@ export class ThirdPersonExploreController {
 
   _enforceDistanceEnvelope(point, target, forward, right) {
     const distance = distance3(point, target);
-    if (distance >= CAMERA_MIN_DISTANCE && distance <= CAMERA_MAX_DISTANCE) return;
+    const tooFar = distance > CAMERA_MAX_DISTANCE;
+    const tooNear = distance < CAMERA_MIN_DISTANCE;
 
-    const desiredDistance = distance > CAMERA_MAX_DISTANCE ? CAMERA_TARGET_DISTANCE : CAMERA_MIN_DISTANCE + 0.15;
-    if (distance > CAMERA_MAX_DISTANCE) this._diag.distanceGuardPullIns += 1;
+    this._farViolationFrames = tooFar ? this._farViolationFrames + 1 : 0;
+    this._nearViolationFrames = tooNear ? this._nearViolationFrames + 1 : 0;
+    if (!tooFar && !tooNear) return;
+
+    // Ordinary transient deviations are left to the smooth follow. Only a
+    // persistent violation gets a hard recovery, which removes the micro-jitter
+    // seen in the previous human gate without allowing a stale far camera to
+    // remain indefinitely.
+    const persistent = this._farViolationFrames >= DISTANCE_GUARD_FRAMES
+      || this._nearViolationFrames >= DISTANCE_GUARD_FRAMES;
+    if (!persistent) return;
+
+    this._invalidateLastSafe();
+    this._diag.hardEnvelopeRecoveries += 1;
+    const desiredDistance = tooFar ? CAMERA_TARGET_DISTANCE : CAMERA_MIN_DISTANCE + 0.18;
+    if (tooFar) this._diag.distanceGuardPullIns += 1;
     else this._diag.distanceGuardPushOuts += 1;
 
     const lateralProjection = (point[0] - target[0]) * right[0] + (point[2] - target[2]) * right[2];
-    const lateral = clamp(lateralProjection, -0.85, 0.85);
-    const height = clamp(point[1] - target[1] + this.targetHeight, 1.9, 2.25);
+    const lateral = clamp(lateralProjection, -0.72, 0.72);
     const corrected = [
       target[0] - forward[0] * desiredDistance + right[0] * lateral,
-      target[1] - this.targetHeight + height,
+      target[1] + 1.03,
       target[2] - forward[2] * desiredDistance + right[2] * lateral
     ];
     this._clampToRoom(corrected);
 
-    // Only adopt the correction if it remains a valid rear/clear pose. Otherwise
-    // use the current frame's selected safe candidate on the next update.
     if (this._candidateComfortable(corrected, target, forward)) {
       point[0] = corrected[0];
       point[1] = corrected[1];
       point[2] = corrected[2];
+      this._farViolationFrames = 0;
+      this._nearViolationFrames = 0;
     }
   }
 
