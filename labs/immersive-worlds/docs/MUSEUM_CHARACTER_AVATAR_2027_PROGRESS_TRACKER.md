@@ -4,7 +4,8 @@
 **Branch:** `chatgpt/museum-character-2027-integration-v1`  
 **Protected Museum baseline:** `4fbca5997beaf058543ee65d682f0adae89252e2`  
 **Companion roadmap:** `MUSEUM_CHARACTER_AVATAR_2027_SURGERY_ROADMAP.md`  
-**Frozen donor manifest:** `labs/immersive-worlds/donors-frozen/character-2027/MANIFEST`
+**Frozen donor manifest:** `labs/immersive-worlds/donors-frozen/character-2027/MANIFEST`  
+**Phase 2 execution record:** `MUSEUM_CHARACTER_AVATAR_2027_PHASE2_ANATOMY_COMPATIBILITY_EXECUTION_2026-08-26.md`
 
 This is the living comparison between **what is already done** and **what is still missing**.
 
@@ -27,11 +28,15 @@ Legend: `PASS` = proven/frozen · `PENDING` = not started · `IN PROGRESS` = act
 | CharacterStudio dependency closure | PASS | `TerrainSemanticBenchmarks.js` + `VRMRigMapMixamo.js` frozen |
 | Avatar Studio knowledge donors | PASS | `Create.jsx` + `Appearance.jsx` + `MotionLab.jsx` frozen |
 | Donor manifest | PASS | 28/28 exact source/destination blob SHA inventory |
-| Character runtime activation | **NOT STARTED** | donor freeze only; no Museum runtime imports |
+| Anatomy / compatibility | **PASS / CLOSED** | Phase 2 execution record 2026-08-26 |
+| Museum Three ABI | **PASS** | vendored `three 0.185.1`, exact pinned |
+| Character runtime activation | **NOT STARTED** | Phase 2 did not add active runtime imports |
 | Character visible in Museum | **NO** | Phase 3 has not started |
-| Anatomy/compatibility | PENDING | Phase 2 |
 | Character presence / IDLE | PENDING | Phase 3 |
-| Free mobility / collision | PENDING | Phase 4 |
+| Third-person free mobility / collision | PENDING | Phase 4A |
+| Room-to-room continuity | PENDING | Phase 4B |
+| Artwork Focus 3rd→1st→3rd | PENDING | Phase 4C |
+| Wet Paint / Breeze Character integration | PENDING | Phase 4D |
 | Avatar Profile / Studio | PENDING | Phase 5 |
 | Advanced capabilities | PENDING | Phase 6 |
 
@@ -61,10 +66,10 @@ Legend: `PASS` = proven/frozen · `PENDING` = not started · `IN PROGRESS` = act
 | Stone | Import | Activation |
 |---|---|---|
 | `ExteriorCharacterPilot.js` | PASS | NOT ACTIVE / late |
-| `MuseumCharacterRuntimeAdapter.js` | PASS | NOT ACTIVE / first surgery candidate |
+| `MuseumCharacterRuntimeAdapter.js` | PASS | NOT ACTIVE / design donor for first surgery |
 | `PropertyRoomCharacterCapabilityBatches.js` | PASS | NOT ACTIVE / advanced |
 | `PropertyRoomCharacterCinematicCamera.js` | PASS | NOT ACTIVE / advanced |
-| `PropertyRoomCharacterFreeMobility.js` | PASS | NOT ACTIVE / second surgery candidate |
+| `PropertyRoomCharacterFreeMobility.js` | PASS | NOT ACTIVE / behavior donor, not literal production mount |
 | `PropertyRoomCharacterTourBridge.js` | PASS | NOT ACTIVE / advanced |
 | `PropertyRoomSemanticAuthoring.js` | PASS | NOT ACTIVE / advanced |
 | `PropertyRoomSemanticAuthoringBridge.js` | PASS | NOT ACTIVE / advanced |
@@ -119,48 +124,81 @@ Legend: `PASS` = proven/frozen · `PENDING` = not started · `IN PROGRESS` = act
 
 # PHASE 2 — ANATOMY / COMPATIBILITY
 
-| Authority / seam | Status | Required decision |
+Execution record:
+
+`labs/immersive-worlds/docs/MUSEUM_CHARACTER_AVATAR_2027_PHASE2_ANATOMY_COMPATIBILITY_EXECUTION_2026-08-26.md`
+
+| Authority / seam | Status | Closed decision |
 |---|---|---|
-| Character body/action ownership | PENDING | map frozen Character runtime |
-| Museum WorldStore | PENDING | must remain unique |
-| Museum SceneKit | PENDING | must remain host authority |
-| Museum ExploreController | PENDING | must remain navigation/collision authority |
-| `navigationVolume` | PENDING | reuse existing Museum truth |
-| CameraAuthority | PENDING | exactly one authority |
-| Renderer ownership | PENDING | no accidental second renderer |
-| Asset lifecycle | PENDING | load / enter / leave / dispose |
-| Room lifecycle | PENDING | safe room transitions |
-| Input ownership | PENDING | no conflict with Museum/Wet Paint/Breeze |
+| Character body/action ownership | PASS | Character owns body/root, rig, animation, CharacterActionAPI, LookAt/IK |
+| Museum WorldStore | PASS | remains unique |
+| Museum WorldGraph | PASS | remains unique room/portal graph |
+| Museum SpaceLifecycle | PASS | remains unique room lifecycle |
+| Museum SceneKit | PASS | remains host/presentation authority |
+| Museum navigation/collision | PASS | `navigationVolume` + Museum-owned resolver remain truth |
+| `PropertyRoomCharacterFreeMobility` collision oracle | PASS / REJECTED AS FINAL ARCH | do not create second ExploreController |
+| CameraAuthority | PASS | exactly one authority |
+| Third-person mode | PASS / DESIGNED | future distinct Explore controller/mode under current CameraAuthority |
+| Renderer ownership | PASS | RenderHost remains sole renderer/camera object owner |
+| Three.js ABI | PASS | Museum is pinned to `three 0.185.1`, matching donor r185 expectation |
+| GLTF loading | PASS / BOUNDED DEP | Phase 3 must vendor GLTFLoader from exact Three 0.185.1, using same local Three instance |
+| Asset lifecycle | PASS / DESIGNED | MuseumCharacterBridge + CharacterAssetLoader |
+| Character runtime lifecycle | PASS / DESIGNED | visitor-level Character identity; deterministic dispose |
+| Room transitions | PASS / DESIGNED | Museum portals / WorldGraph / SpaceLifecycle only |
+| Input ownership | PASS / DESIGNED | integrate into Museum InputSystem; reject donor global key listeners as final architecture |
+| Guided tour | PASS / PROTECTED | remains separate existing mode |
+| Artwork Focus | PASS / DESIGNED | intentional viewing marker/action → Focus first-person → third-person restore |
+| Wet Paint | PASS / POLICY | attempt visible body later if safe; park/suspend fallback |
+| Breeze | PASS / POLICY | never steal guest input/runtime; visible body only if safe; park/suspend fallback |
+| Rollback | PASS | bounded commits; frozen baseline preserved |
 
 Gate:
-- [ ] dependency closure mapped into current Museum
-- [ ] no authority duplication
-- [ ] minimal seam designed
-- [ ] rollback path documented
+- [x] dependency closure mapped into current Museum
+- [x] no unidentified authority duplication
+- [x] exact Museum-side minimal seam designed
+- [x] Three ABI resolved
+- [x] missing GLTFLoader dependency identified/bounded
+- [x] room lifecycle strategy designed
+- [x] input strategy designed
+- [x] third-person camera strategy designed
+- [x] artwork Focus strategy designed
+- [x] specialized-room policy designed
+- [x] rollback path documented
+- [x] no donor frozen file edited
+- [x] no runtime Character activation performed in Phase 2
 
-**PHASE 2 = PENDING**
+**PHASE 2 = PASS / CLOSED**
 
 ---
 
 # PHASE 3 — CHARACTER PRESENCE / IDLE
 
+Target: Gallery A only, presence before locomotion.
+
+- [ ] vendor exact `GLTFLoader.js` from Three 0.185.1 and register provenance
+- [ ] MuseumCharacterBridge exists on Museum side
+- [ ] CharacterAssetLoader uses Museum's one vendored Three instance
 - [ ] Character asset loads
-- [ ] Character visible in target Museum room
+- [ ] Character visible in Gallery A
 - [ ] Rig valid
 - [ ] Scale correct
 - [ ] Grounding correct
-- [ ] IDLE stable
+- [ ] `IDLE_V2` stable
+- [ ] animation updates through existing Museum frame loop
+- [ ] deterministic dispose/rollback
 - [ ] no duplicate renderer
 - [ ] no duplicate WorldStore
 - [ ] no duplicate CameraAuthority
+- [ ] no movement/input activation yet
 - [ ] Gallery A/B/Wet Paint/Breeze regression PASS
 
-**PHASE 3 = PENDING**
+**PHASE 3 = PENDING / NEXT AFTER JUANMA APPROVAL**
 
 ---
 
-# PHASE 4 — FREE MOBILITY / COLLISION
+# PHASE 4A — THIRD-PERSON FREE MOBILITY / COLLISION
 
+- [ ] Character Explore input routing through Museum InputSystem
 - [ ] WALK
 - [ ] BACKWARD
 - [ ] TURN LEFT / RIGHT
@@ -170,11 +208,64 @@ Gate:
 - [ ] wall collision
 - [ ] relevant furniture collision
 - [ ] grounding during movement
-- [ ] Museum ExploreController remains collision/navigation authority
-- [ ] Museum CameraAuthority remains unique
+- [ ] Museum-owned navigation resolver reused/extracted cleanly
+- [ ] no second ExploreController collision oracle
+- [ ] distinct third-person Explore behavior under the same CameraAuthority
 - [ ] four-room regression PASS
 
-**PHASE 4 = PENDING**
+**PHASE 4A = PENDING**
+
+---
+
+# PHASE 4B — ROOM-TO-ROOM CHARACTER CONTINUITY
+
+- [ ] Gallery A → Gallery B through canonical Museum portal
+- [ ] same avatar identity/profile preserved
+- [ ] safe arrival anchor/spawn
+- [ ] body state preserved/restored appropriately
+- [ ] CameraAuthority remains unique
+- [ ] input ownership remains coherent
+- [ ] no Character-owned room graph
+- [ ] real browser/human continuity proof
+
+**PHASE 4B = PENDING**
+
+---
+
+# PHASE 4C — INTENTIONAL ARTWORK FOCUS
+
+Product decision: option B / intentional.
+
+- [ ] authored approach/viewing position or visible floor marker/circle
+- [ ] Character reaches valid contemplation position
+- [ ] explicit VER / CONTEMPLAR action
+- [ ] third-person Explore → Museum Focus
+- [ ] first-person artwork view
+- [ ] exit Focus
+- [ ] restore third-person Character Explore
+- [ ] no automatic camera theft on simple proximity
+
+**PHASE 4C = PENDING**
+
+---
+
+# PHASE 4D — SPECIALIZED ROOMS
+
+## Wet Paint
+- [ ] inspect exact guest/lifecycle seam
+- [ ] attempt same visible Character if low-risk
+- [ ] park/suspend fallback preserves identity
+- [ ] no Wet Paint regression
+
+## Breeze
+- [ ] inspect exact guest/input/runtime seam
+- [ ] do not steal controls
+- [ ] do not destabilize specialized runtime/WebGPU path
+- [ ] visible Character only if safe and bounded
+- [ ] park/suspend fallback preserves identity
+- [ ] no Breeze regression
+
+**PHASE 4D = PENDING**
 
 ---
 
@@ -213,6 +304,7 @@ Studio target:
 - [ ] validate/publish
 - [ ] save/apply profile
 - [ ] re-entry persistence
+- [ ] recover/reuse existing avatar upload/customize/export capability where compatible rather than rebuilding it
 
 **PHASE 5 = PENDING**
 
@@ -235,30 +327,37 @@ Each semantic action must be classified independently as `PASS`, `PENDING` or `C
 
 ---
 
-# GLOBAL ACTIVATION ORDER
+# GLOBAL ACTIVATION ORDER — CURRENT
 
-1. `MuseumCharacterRuntimeAdapter`
-2. Character Runtime
-3. Asset + Rig + Grounding + IDLE
-4. `PropertyRoomCharacterFreeMobility`
-5. WALK / BACK / TURN / STOP / JUMP
-6. Collision / `navigationVolume`
-7. Avatar Profile
-8. Avatar Studio
-9. Capability Batches
-10. Semantic Authoring
-11. Tour Bridge
-12. Cinematic Camera
-13. Exterior Pilot
-14. Full World C2
+1. Phase 3 dependency closure: Museum Three 0.185.1 + matching GLTFLoader
+2. MuseumCharacterBridge
+3. Character Runtime closure
+4. Asset + Rig + Scale + Grounding + IDLE
+5. Phase 4A Character navigation adapter + Museum input routing
+6. WALK / BACK / TURN / STOP / JUMP
+7. Third-person Explore controller under existing CameraAuthority
+8. collision / `navigationVolume`
+9. Phase 4B room lifecycle + portal continuity
+10. Phase 4C intentional artwork Focus handoff
+11. Phase 4D Wet Paint / Breeze bounded integration
+12. Avatar Profile
+13. Avatar Studio
+14. Capability Batches
+15. Semantic Authoring
+16. Tour Bridge
+17. Cinematic Camera
+18. Exterior Pilot
+19. Full World C2
 
 ---
 
 # CURRENT NEXT ACTION
 
-**NEXT ONLY AFTER JUANMA APPROVAL:** Phase 2 — anatomy / compatibility audit of the frozen stones against the current Museum authorities.
+**PHASE 2 IS CLOSED.**
 
-Do **not** add a runtime import and do **not** make the avatar visible before Phase 2 is understood and the minimal surgical seam is approved.
+**NEXT ONLY AFTER JUANMA APPROVAL:** Phase 3 — first bounded runtime surgery: Character presence / rig / scale / grounding / `IDLE_V2` in Gallery A.
+
+Do not activate locomotion, third-person camera, portals or specialized-room Character behavior in the same first presence gate.
 
 ---
 
@@ -267,7 +366,7 @@ Do **not** add a runtime import and do **not** make the avatar visible before Ph
 If we get lost:
 
 1. find the last `PASS / CLOSED` phase;
-2. compare the branch with this tracker and the donor manifest;
+2. compare the branch with this tracker, Phase 2 execution record and donor manifest;
 3. resume at the first `PENDING` gate;
 4. never redesign from memory;
 5. never edit frozen donor stones in place;
