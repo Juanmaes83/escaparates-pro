@@ -169,7 +169,7 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
       if (!jumping && motion.state !== 'WALK_V2') motion.play('WALK_V2', 0.12);
       stopElapsed = 0;
     } else if (!jumping && turn !== 0) {
-      const state = turn < 0 ? 'TURN_RIGHT_V2' : 'TURN_LEFT_V2';
+      const state = turn > 0 ? 'TURN_RIGHT_V2' : 'TURN_LEFT_V2';
       if (motion.state !== state || previousTurn !== turn) motion.play(state, 0.08);
       stopElapsed = 0;
     } else if (!jumping) {
@@ -212,8 +212,6 @@ export async function mountMuseumCharacterPhase4A({ runtime, sceneKit = runtime?
   const sink = { setInput, jump, inputFrame() {} };
   input.setMovementSink(sink);
   runtime.camera.request(CAMERA_AUTHORITY.THIRD_PERSON_EXPLORE, { reason: 'Character 2027 Phase 4A free mobility', durationMs: 0, restore: 'ADOPT_INCOMING' });
-  // The existing shell predates THIRD_PERSON_EXPLORE and disables movement for
-  // every non-EXPLORE owner. Re-enable the SAME InputSystem; no listeners are added.
   input.setEnabled(true);
 
   const api = {
