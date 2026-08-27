@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="./authoring/studio/visitor-phase1.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
+  <link rel="stylesheet" href="./authoring/studio/avatar-phase5.css">
   <!-- Character Phase 3's exact r185 GLTFLoader imports the bare `three`
        specifier. Point it at Museum's already-pinned local 0.185.1 module so
        the gate cannot create a second Three runtime/ABI. No existing Museum
@@ -42,6 +43,9 @@
     import { installMuseumPhase2 } from './authoring/studio/museum-phase2.js';
     import { installMuseumPhase2LayoutFix } from './authoring/studio/museum-phase2-layout-fix.js';
     import { installMuseumPhase2Hardening } from './authoring/studio/museum-phase2-hardening.js';
+    import { installMuseumAvatarStudioPhase5 } from './authoring/studio/avatar-phase5.js';
+    import { installMuseumAvatarVisibilityContinuity } from './authoring/studio/avatar-phase5-visibility-continuity.js';
+    import { installMuseumAvatarMotionPhase5 } from './authoring/studio/avatar-phase5-motion.js';
 
     document.addEventListener('change', (event) => {
       if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
@@ -53,12 +57,14 @@
       installMuseumPhase2();
       installMuseumPhase2LayoutFix();
       installMuseumPhase2Hardening();
+      installMuseumAvatarStudioPhase5();
+      await installMuseumAvatarVisibilityContinuity();
+      installMuseumAvatarMotionPhase5();
 
       // Character / Avatar 2027 — bounded opt-ins.
       // `?character=1` keeps the validated Phase 3 presence gate.
       // `?character=1&mobility=1` keeps validated Phase 4A free mobility.
-      // `?character=1&mobility=1&continuity=1` advances only to Phase 4B:
-      // same Character root across canonical Gallery A ↔ Gallery B portals.
+      // `?character=1&mobility=1&continuity=1` keeps validated room continuity.
       const characterParams = new URLSearchParams(location.search);
       if (characterParams.get('character') === '1') {
         try {
@@ -85,10 +91,7 @@
       }
 
       // — Wet Paint como capacidad nativa del Museo (Sala 4 — Exposición Itinerante) —
-      // El donante (wet-paint-flow @ 0b9ba9a) funciona como motor OCULTO; sus controles
-      // se presentan de forma nativa dentro del editor de Studio de las obras de la Sala 4
-      // (acordeón, español, piel Museum). Sin overlay, sin salir del panel. Las galerías
-      // clásicas (A/B) no muestran Wet Paint: el panel se limita a las obras itinerantes.
+      // El donante funciona como motor oculto; sus controles se presentan dentro de Studio.
       try {
         const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
         const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
@@ -97,11 +100,8 @@
           await new Promise((resolve) => requestAnimationFrame(resolve));
           const result = installWetPaint(activeRuntime);
           installWetPaintStudioControls();
-          if (result) {
-            console.log('[Wet Paint] Motor + controles nativos de Studio instalados (Sala 4)');
-          } else {
-            console.warn('[Wet Paint] Motor diferido — runtime no listo');
-          }
+          if (result) console.log('[Wet Paint] Motor + controles nativos de Studio instalados (Sala 4)');
+          else console.warn('[Wet Paint] Motor diferido — runtime no listo');
         }
       } catch (bridgeError) {
         console.error('[Wet Paint] Instalación fallida (no crítica):', bridgeError);

@@ -55,6 +55,11 @@ function findBone(root, name) {
   return found;
 }
 
+function resolveBone(root, name, boneMap = null) {
+  const explicit = boneMap?.get?.(name) || boneMap?.[name];
+  return explicit?.isBone ? explicit : findBone(root, name);
+}
+
 function resetRigToBindPose(root) {
   const seen = new Set();
   root.traverse?.((node) => {
@@ -65,12 +70,12 @@ function resetRigToBindPose(root) {
   root.updateMatrixWorld?.(true);
 }
 
-function clipFromDefinition(root, name, definition) {
+function clipFromDefinition(root, name, definition, boneMap = null) {
   const tracks = [];
   const boneNames = new Set();
   definition.frames.forEach((frame) => Object.keys(frame.bones || {}).forEach((bone) => boneNames.add(bone)));
   for (const boneName of boneNames) {
-    const bone = findBone(root, boneName);
+    const bone = resolveBone(root, boneName, boneMap);
     if (!bone) continue;
     const rest = bone.quaternion.clone();
     const times = [];
@@ -82,21 +87,26 @@ function clipFromDefinition(root, name, definition) {
       times.push(frame.t * definition.duration);
       values.push(value.x, value.y, value.z, value.w);
     }
-    tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.name}.quaternion`, times, values));
+    // When an explicit canonical bone map is supplied, bind by UUID instead of
+    // a potentially duplicated bone name. PropertyBinding resolves UUIDs and
+    // therefore targets the exact Bone used by the visible canonical skeleton.
+    const bindingNode = boneMap ? bone.uuid : bone.name;
+    tracks.push(new THREE.QuaternionKeyframeTrack(`${bindingNode}.quaternion`, times, values));
   }
   if (!tracks.length) throw new Error(`Character motion ${name} produced zero tracks`);
   return new THREE.AnimationClip(`Character2027_V2_${name}`, definition.duration, tracks);
 }
 
-export function createCharacterMotionV2(root) {
+export function createCharacterMotionV2(root, options = {}) {
   if (!root?.isObject3D) throw new Error('Character motion requires an Object3D root');
+  const boneMap = options?.boneMap || null;
   resetRigToBindPose(root);
   const mixer = new THREE.AnimationMixer(root);
   const actions = new Map();
   const clips = new Map();
 
   for (const [name, definition] of Object.entries(DEFINITIONS)) {
-    const clip = clipFromDefinition(root, name, definition);
+    const clip = clipFromDefinition(root, name, definition, boneMap);
     const action = mixer.clipAction(clip);
     action.enabled = true;
     action.clampWhenFinished = !definition.loop;
@@ -125,7 +135,14 @@ export function createCharacterMotionV2(root) {
     update(dt) { mixer.update(Math.max(0, Math.min(Number(dt) || 0, 0.05))); },
     get state() { return current; },
     duration(name) { return clips.get(name)?.duration || 0; },
-    report() { return { state: current, provenance: MOTION_V2_PROVENANCE, actions: [...actions.keys()] }; },
+    report() {
+      return {
+        state: current,
+        provenance: MOTION_V2_PROVENANCE,
+        actions: [...actions.keys()],
+        bindingMode: boneMap ? 'CANONICAL_UUID' : 'NAME'
+      };
+    },
     dispose() {
       mixer.stopAllAction();
       for (const clip of clips.values()) mixer.uncacheClip(clip);
