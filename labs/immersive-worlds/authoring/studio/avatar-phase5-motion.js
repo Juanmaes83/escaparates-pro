@@ -24,15 +24,21 @@ function sameSkeletonLayout(a, b) {
   return true;
 }
 
-function unifyCompatibleSkeletons(root) {
+function prepareCanonicalSkeleton(root) {
   const meshes = [];
   root?.traverse?.((node) => {
     if (node.isSkinnedMesh && node.skeleton) meshes.push(node);
   });
-  if (meshes.length < 2) {
-    return { skinnedMeshes: meshes.length, unifiedMeshes: 0, canonicalBoneCount: meshes[0]?.skeleton?.bones?.length || 0 };
+  const canonical = meshes[0]?.skeleton || null;
+  if (!canonical) {
+    return {
+      meshes,
+      canonical: null,
+      boneMap: new Map(),
+      diagnostics: { skinnedMeshes: 0, unifiedMeshes: 0, canonicalBoneCount: 0, canonicalMappedBones: 0 }
+    };
   }
-  const canonical = meshes[0].skeleton;
+
   let unifiedMeshes = 0;
   for (let i = 1; i < meshes.length; i += 1) {
     const mesh = meshes[i];
@@ -40,54 +46,105 @@ function unifyCompatibleSkeletons(root) {
     mesh.skeleton = canonical;
     unifiedMeshes += 1;
   }
+
   canonical.pose();
   canonical.update();
   root.updateMatrixWorld?.(true);
-  return { skinnedMeshes: meshes.length, unifiedMeshes, canonicalBoneCount: canonical.bones.length };
+
+  const boneMap = new Map();
+  canonical.bones.forEach((bone) => {
+    if (bone?.isBone && bone.name && !boneMap.has(bone.name)) boneMap.set(bone.name, bone);
+  });
+
+  return {
+    meshes,
+    canonical,
+    boneMap,
+    diagnostics: {
+      skinnedMeshes: meshes.length,
+      unifiedMeshes,
+      canonicalBoneCount: canonical.bones.length,
+      canonicalMappedBones: boneMap.size
+    }
+  };
 }
 
-function findBone(root, name) {
-  const direct = root?.getObjectByName?.(name);
-  if (direct?.isBone) return direct;
-  let found = null;
-  root?.traverse?.((node) => { if (!found && node.isBone && node.name === name) found = node; });
-  return found;
-}
-
-function snapshotPose(root) {
+function snapshotPose(boneMap) {
   const pose = new Map();
   for (const name of SAMPLE_BONES) {
-    const bone = findBone(root, name);
-    if (bone) pose.set(name, bone.quaternion.clone());
+    const bone = boneMap?.get?.(name);
+    if (bone?.isBone) pose.set(name, bone.quaternion.clone());
   }
   return pose;
 }
 
-function comparePose(before, root) {
+function comparePose(before, boneMap) {
   const changed = [];
   for (const [name, initial] of before.entries()) {
-    const bone = findBone(root, name);
-    if (!bone) continue;
+    const bone = boneMap?.get?.(name);
+    if (!bone?.isBone) continue;
     const angle = initial.angleTo(bone.quaternion);
     if (angle > 0.002) changed.push({ name, angle });
   }
   return changed;
 }
 
+function snapshotMeshBounds(meshes) {
+  const samples = [];
+  for (const mesh of meshes || []) {
+    if (!mesh?.isSkinnedMesh || typeof mesh.computeBoundingBox !== 'function') continue;
+    try {
+      mesh.computeBoundingBox();
+      const box = mesh.boundingBox;
+      if (!box || box.isEmpty?.()) continue;
+      samples.push({
+        mesh,
+        min: box.min.clone(),
+        max: box.max.clone()
+      });
+    } catch { /* one incompatible mesh must not invalidate the whole rig proof */ }
+  }
+  return samples;
+}
+
+function compareMeshBounds(before) {
+  let changedMeshes = 0;
+  let maxDelta = 0;
+  for (const sample of before || []) {
+    try {
+      sample.mesh.computeBoundingBox();
+      const box = sample.mesh.boundingBox;
+      if (!box) continue;
+      const delta = Math.max(
+        sample.min.distanceTo(box.min),
+        sample.max.distanceTo(box.max)
+      );
+      maxDelta = Math.max(maxDelta, delta);
+      if (delta > 0.0005) changedMeshes += 1;
+    } catch { /* diagnostic only */ }
+  }
+  return { sampledMeshes: before?.length || 0, changedMeshes, maxDelta: Number(maxDelta.toFixed(6)) };
+}
+
 function provePoseMotion(state, root) {
-  const before = snapshotPose(root);
+  const before = snapshotPose(state.canonicalBoneMap);
+  const meshBefore = snapshotMeshBounds(state.canonicalMeshes);
   state.motion.play('WALK_V2', 0);
   state.motion.update(0.22);
+  state.canonicalSkeleton?.update?.();
   root.updateMatrixWorld?.(true);
-  const changed = comparePose(before, root);
+  const changed = comparePose(before, state.canonicalBoneMap);
+  const meshDelta = compareMeshBounds(meshBefore);
   state.motion.play('IDLE_V2', 0);
   state.motion.update(0.001);
+  state.canonicalSkeleton?.update?.();
   root.updateMatrixWorld?.(true);
   return {
     sampledBones: before.size,
     changedBones: changed.length,
     changed: changed.map(({ name, angle }) => ({ name, radians: Number(angle.toFixed(5)) })),
-    pass: before.size >= 4 && changed.length >= 2
+    meshDelta,
+    pass: before.size >= 4 && changed.length >= 2 && (meshDelta.sampledMeshes === 0 || meshDelta.changedMeshes >= 1)
   };
 }
 
@@ -101,6 +158,7 @@ function motionHTML(controller) {
   ).join('');
   const sk = m?.skeleton || {};
   const proof = m?.poseProof || {};
+  const meshProof = proof.meshDelta || {};
   return `<section class="st-group st-avatar-motion-panel">
     <h3>Motion · Foundation V2</h3>
     <p class="st-note">Prueba el movimiento sobre este mismo avatar y este mismo preview. WALK no desplaza el avatar por la sala: aquí validamos biomecánica, no navegación.</p>
@@ -113,11 +171,13 @@ function motionHTML(controller) {
       <span>Skinned mesh <b>${Number(sk.skinnedMeshes || 0)}</b></span>
       <span>Skeletons unificados <b>${Number(sk.unifiedMeshes || 0)}</b></span>
       <span>Canonical bones <b>${Number(sk.canonicalBoneCount || 0)}</b></span>
+      <span>Binding <b>${m?.bindingMode || '—'}</b></span>
       <span>Pose delta <b>${proof.pass ? `PASS · ${proof.changedBones}/${proof.sampledBones}` : proof.sampledBones ? `REVIEW · ${proof.changedBones}/${proof.sampledBones}` : '—'}</b></span>
+      <span>Mesh delta <b>${meshProof.sampledMeshes ? `${meshProof.changedMeshes}/${meshProof.sampledMeshes}` : '—'}</b></span>
     </div>
     <div class="st-avatar-motion-actions">${buttons}</div>
     ${m?.error ? `<p class="st-msg is-bad">${esc(m.error)}</p>` : ''}
-    <p class="st-note">Fuente: CharacterStudio MotionFoundationV2 · ${esc(MOTION_V2_PROVENANCE.sourceCommit.slice(0, 8))}… · preparación de skeleton recuperada del MotionLab probado · sin renderer, Scene, CameraAuthority ni frame loop adicionales.</p>
+    <p class="st-note">Fuente: CharacterStudio MotionFoundationV2 · ${esc(MOTION_V2_PROVENANCE.sourceCommit.slice(0, 8))}… · binding por UUID al skeleton canónico visible · sin renderer, Scene, CameraAuthority ni frame loop adicionales.</p>
   </section>`;
 }
 
@@ -156,6 +216,7 @@ function installFrameBridge(controller) {
     if (state?.motion && current?.previewRoot) {
       const frameDt = Math.max(0, Math.min(Number(dt) || 0, 0.05));
       state.motion.update(frameDt);
+      state.canonicalSkeleton?.update?.();
       applyPreviewRootMotion(current, state, frameDt);
       if (state.remaining > 0) {
         state.remaining -= frameDt;
@@ -181,6 +242,10 @@ function disposeMotion(controller) {
     state.visualAction = null;
     state.compatibility = 'PENDING';
     state.skeleton = null;
+    state.canonicalSkeleton = null;
+    state.canonicalBoneMap = null;
+    state.canonicalMeshes = null;
+    state.bindingMode = null;
     state.poseProof = null;
   }
 }
@@ -190,14 +255,21 @@ function bindMotionToPreview(controller) {
   if (!controller.previewRoot) return false;
   const state = controller.__avatarMotionV2;
   try {
-    state.skeleton = unifyCompatibleSkeletons(controller.previewRoot);
-    state.motion = createCharacterMotionV2(controller.previewRoot);
+    const prepared = prepareCanonicalSkeleton(controller.previewRoot);
+    if (!prepared.canonical || prepared.boneMap.size === 0) throw new Error('Avatar Motion V2 no encontró un skeleton canónico utilizable.');
+    state.skeleton = prepared.diagnostics;
+    state.canonicalSkeleton = prepared.canonical;
+    state.canonicalBoneMap = prepared.boneMap;
+    state.canonicalMeshes = prepared.meshes;
+    state.motion = createCharacterMotionV2(controller.previewRoot, { boneMap: prepared.boneMap });
+    state.bindingMode = state.motion.report?.().bindingMode || 'CANONICAL_UUID';
     state.error = null;
     state.remaining = 0;
     state.poseProof = provePoseMotion(state, controller.previewRoot);
     state.compatibility = state.poseProof.pass ? 'PASS' : 'REVIEW';
     if (!state.poseProof.pass) {
-      state.error = `Motion V2 no produjo pose visible suficiente: ${state.poseProof.changedBones}/${state.poseProof.sampledBones} bones de muestra cambiaron.`;
+      const md = state.poseProof.meshDelta || {};
+      state.error = `Motion V2 no deformó el skeleton visible de forma suficiente: bones ${state.poseProof.changedBones}/${state.poseProof.sampledBones}, meshes ${md.changedMeshes || 0}/${md.sampledMeshes || 0}.`;
     }
     if (controller.profile?.motionSet) controller.profile.motionSet.foundation = 'V2';
     installFrameBridge(controller);
@@ -231,6 +303,10 @@ function installControllerMotion(controller) {
     visualAction: null,
     compatibility: 'PENDING',
     skeleton: null,
+    canonicalSkeleton: null,
+    canonicalBoneMap: null,
+    canonicalMeshes: null,
+    bindingMode: null,
     poseProof: null,
     error: null
   };
@@ -295,6 +371,7 @@ function installControllerMotion(controller) {
     state: controller.__avatarMotionV2?.motion?.state || null,
     compatibility: controller.__avatarMotionV2?.compatibility || 'PENDING',
     skeleton: controller.__avatarMotionV2?.skeleton || null,
+    bindingMode: controller.__avatarMotionV2?.bindingMode || null,
     poseProof: controller.__avatarMotionV2?.poseProof || null,
     actions: controller.__avatarMotionV2?.motion?.report?.().actions || [],
     provenance: MOTION_V2_PROVENANCE,
