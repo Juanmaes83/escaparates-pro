@@ -49,9 +49,9 @@
       installMuseumAvatarMotionPhase5();
 
       // Character / Avatar 2027 — bounded opt-ins.
-      // Phase 6 Gate A is intentionally layered over the already-proven free
-      // Character foundation. It does not create another renderer, WorldStore,
-      // navigation authority, camera authority or Character root.
+      // Phase 6 layers only over the already-proven free Character foundation.
+      // No branch here creates another renderer, WorldStore, navigation authority,
+      // camera authority, route authority or Character root.
       const characterParams = new URLSearchParams(location.search);
       if (characterParams.get('character') === '1') {
         try {
@@ -70,6 +70,17 @@
             if (characterParams.get('mobility') !== '1') throw new Error('Phase 6 Gate A requires ?character=1&mobility=1');
             const { installMuseumCharacterPhase6GateA } = await import('./character/museum-character-phase6-gatea.js');
             installMuseumCharacterPhase6GateA(runtime);
+          }
+
+          // Roadmap order: Capability Batches → Semantic Authoring/Bridge → Tour Bridge.
+          // `tour=1` activates only PropertyRoomCharacterTourBridge-equivalent behavior.
+          // Cinematic Camera, Exterior and Full World remain intentionally inactive.
+          if (characterParams.get('tour') === '1') {
+            if (characterParams.get('mobility') !== '1' || characterParams.get('continuity') !== '1' || characterParams.get('gatea') !== '1') {
+              throw new Error('Phase 6 Tour Bridge requires ?character=1&mobility=1&continuity=1&gatea=1');
+            }
+            const { installMuseumCharacterTourBridge } = await import('./character/museum-character-tour-bridge.js');
+            await installMuseumCharacterTourBridge(runtime);
           }
         } catch (characterError) {
           console.error('[Character 2027] Gate failed:', characterError);
