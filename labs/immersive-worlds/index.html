@@ -81,14 +81,28 @@
             await installMuseumCharacterTourBridge(runtime);
           }
 
-          // Next roadmap stone: COMPLETE Character Cinematic Camera. This is a
-          // runtime behaviour layer only; it adds no Studio/product controls.
+          // Complete Character Cinematic Camera — runtime behaviour only.
           if (characterParams.get('cinematic') === '1') {
             if (characterParams.get('mobility') !== '1' || characterParams.get('continuity') !== '1' || characterParams.get('gatea') !== '1') {
               throw new Error('Phase 6 Cinematic Camera requires ?character=1&mobility=1&continuity=1&gatea=1');
             }
             const { installMuseumCharacterCinematicCamera } = await import('./character/museum-character-cinematic-camera.js');
             installMuseumCharacterCinematicCamera(runtime);
+          }
+
+          // Final Phase 6 roadmap seam: Exterior Pilot + Exterior Skeleton + Full World C2.
+          // This is intentionally a context replacement, not an in-scene graft: the
+          // Museum document is destroyed before the proven VECINIA receiver boots.
+          if (characterParams.get('fullworld') === '1') {
+            if (characterParams.get('mobility') !== '1' || characterParams.get('continuity') !== '1') {
+              throw new Error('Phase 6 Full World requires ?character=1&mobility=1&continuity=1');
+            }
+            const { installMuseumCharacterFullWorldHandoff } = await import('./character/museum-character-full-world-handoff.js');
+            const fullWorld = installMuseumCharacterFullWorldHandoff(runtime);
+            if (characterParams.get('handoff') === '1') {
+              // Same-tab navigation guarantees only one live world authority at a time.
+              requestAnimationFrame(() => fullWorld.enter());
+            }
           }
         } catch (characterError) {
           console.error('[Character 2027] Gate failed:', characterError);
