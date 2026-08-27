@@ -73,14 +73,22 @@
           }
 
           // Roadmap order: Capability Batches → Semantic Authoring/Bridge → Tour Bridge.
-          // `tour=1` activates only PropertyRoomCharacterTourBridge-equivalent behavior.
-          // Cinematic Camera, Exterior and Full World remain intentionally inactive.
           if (characterParams.get('tour') === '1') {
             if (characterParams.get('mobility') !== '1' || characterParams.get('continuity') !== '1' || characterParams.get('gatea') !== '1') {
               throw new Error('Phase 6 Tour Bridge requires ?character=1&mobility=1&continuity=1&gatea=1');
             }
             const { installMuseumCharacterTourBridge } = await import('./character/museum-character-tour-bridge.js');
             await installMuseumCharacterTourBridge(runtime);
+          }
+
+          // Next roadmap stone: COMPLETE Character Cinematic Camera. This is a
+          // runtime behaviour layer only; it adds no Studio/product controls.
+          if (characterParams.get('cinematic') === '1') {
+            if (characterParams.get('mobility') !== '1' || characterParams.get('continuity') !== '1' || characterParams.get('gatea') !== '1') {
+              throw new Error('Phase 6 Cinematic Camera requires ?character=1&mobility=1&continuity=1&gatea=1');
+            }
+            const { installMuseumCharacterCinematicCamera } = await import('./character/museum-character-cinematic-camera.js');
+            installMuseumCharacterCinematicCamera(runtime);
           }
         } catch (characterError) {
           console.error('[Character 2027] Gate failed:', characterError);
