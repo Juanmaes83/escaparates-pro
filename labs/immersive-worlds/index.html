@@ -12,16 +12,8 @@
   <link rel="stylesheet" href="./authoring/studio/museum-phase2.css">
   <link rel="stylesheet" href="./authoring/studio/museum-phase2-hardening.css">
   <link rel="stylesheet" href="./authoring/studio/avatar-phase5.css">
-  <!-- Character Phase 3's exact r185 GLTFLoader imports the bare `three`
-       specifier. Point it at Museum's already-pinned local 0.185.1 module so
-       the gate cannot create a second Three runtime/ABI. No existing Museum
-       module uses this bare specifier, so the baseline path is unchanged. -->
   <script type="importmap">
-    {
-      "imports": {
-        "three": "./vendor/three/three.module.min.js"
-      }
-    }
+    { "imports": { "three": "./vendor/three/three.module.min.js" } }
   </script>
 </head>
 <body>
@@ -30,12 +22,7 @@
   </main>
   <div id="iw-ui"></div>
 
-  <noscript>
-    <p style="padding:2rem;font-family:Georgia,serif">
-      Este prototipo necesita JavaScript y WebGL. El contenido de la colección está descrito en
-      <code>worlds/museum-v1.world.json</code>.
-    </p>
-  </noscript>
+  <noscript><p style="padding:2rem;font-family:Georgia,serif">Este prototipo necesita JavaScript y WebGL. El contenido está descrito en <code>worlds/museum-v1.world.json</code>.</p></noscript>
 
   <script type="module">
     import { boot } from './app/experience-app.js';
@@ -62,9 +49,9 @@
       installMuseumAvatarMotionPhase5();
 
       // Character / Avatar 2027 — bounded opt-ins.
-      // `?character=1` keeps the validated Phase 3 presence gate.
-      // `?character=1&mobility=1` keeps validated Phase 4A free mobility.
-      // `?character=1&mobility=1&continuity=1` keeps validated room continuity.
+      // Phase 6 Gate A is intentionally layered over the already-proven free
+      // Character foundation. It does not create another renderer, WorldStore,
+      // navigation authority, camera authority or Character root.
       const characterParams = new URLSearchParams(location.search);
       if (characterParams.get('character') === '1') {
         try {
@@ -78,6 +65,12 @@
             const { mountMuseumCharacterPhase3 } = await import('./character/museum-character-phase3.js');
             await mountMuseumCharacterPhase3({ runtime, sceneKit: runtime.sceneKit });
           }
+
+          if (characterParams.get('gatea') === '1') {
+            if (characterParams.get('mobility') !== '1') throw new Error('Phase 6 Gate A requires ?character=1&mobility=1');
+            const { installMuseumCharacterPhase6GateA } = await import('./character/museum-character-phase6-gatea.js');
+            installMuseumCharacterPhase6GateA(runtime);
+          }
         } catch (characterError) {
           console.error('[Character 2027] Gate failed:', characterError);
           document.documentElement.dataset.characterGate = 'error';
@@ -90,8 +83,6 @@
         }
       }
 
-      // — Wet Paint como capacidad nativa del Museo (Sala 4 — Exposición Itinerante) —
-      // El donante funciona como motor oculto; sus controles se presentan dentro de Studio.
       try {
         const { installWetPaint } = await import('./experiences/wet-paint-adapter.js');
         const { installWetPaintStudioControls } = await import('./authoring/studio/wet-paint-studio-controls.js');
@@ -110,18 +101,7 @@
       console.error('[IW] boot failed', error);
       document.documentElement.dataset.iwError = String(error?.message || error);
       const ui = document.getElementById('iw-ui');
-      ui.innerHTML = `
-        <div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908">
-          <div style="max-width:34rem">
-            <p style="font:400 .7rem/1 'Helvetica Neue',sans-serif;letter-spacing:.4em;text-transform:uppercase;color:#a49d92">Fundación Arenas</p>
-            <h1 style="font:400 1.4rem/1.3 Georgia,serif;margin:1.4rem 0">No se pudo iniciar la sala</h1>
-            <p style="font:400 .86rem/1.7 'Helvetica Neue',sans-serif;color:#cfc9be">
-              Este prototipo requiere WebGL2. Todo el contenido de la exposición está disponible como texto en
-              <code>worlds/museum-v1.world.json</code>.
-            </p>
-            <pre style="margin-top:1.4rem;padding:1rem;border:1px solid rgba(240,236,228,.16);font-size:.74rem;color:#a49d92;white-space:pre-wrap">${String(error?.message || error)}</pre>
-          </div>
-        </div>`;
+      ui.innerHTML = `<div style="position:absolute;inset:0;display:grid;place-items:center;padding:2rem;background:#0a0908"><div style="max-width:34rem"><p style="font:400 .7rem/1 'Helvetica Neue',sans-serif;letter-spacing:.4em;text-transform:uppercase;color:#a49d92">Fundación Arenas</p><h1 style="font:400 1.4rem/1.3 Georgia,serif;margin:1.4rem 0">No se pudo iniciar la sala</h1><p style="font:400 .86rem/1.7 'Helvetica Neue',sans-serif;color:#cfc9be">Este prototipo requiere WebGL2. Todo el contenido está disponible como texto en <code>worlds/museum-v1.world.json</code>.</p><pre style="margin-top:1.4rem;padding:1rem;border:1px solid rgba(240,236,228,.16);font-size:.74rem;color:#a49d92;white-space:pre-wrap">${String(error?.message || error)}</pre></div></div>`;
     });
   </script>
 </body>
