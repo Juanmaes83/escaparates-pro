@@ -45,6 +45,7 @@
     import { installMuseumPhase2Hardening } from './authoring/studio/museum-phase2-hardening.js';
     import { installMuseumAvatarStudioPhase5 } from './authoring/studio/avatar-phase5.js';
     import { installMuseumAvatarVisibilityContinuity } from './authoring/studio/avatar-phase5-visibility-continuity.js';
+    import { installMuseumAvatarMotionPhase5 } from './authoring/studio/avatar-phase5-motion.js';
 
     document.addEventListener('change', (event) => {
       if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;
@@ -58,6 +59,7 @@
       installMuseumPhase2Hardening();
       installMuseumAvatarStudioPhase5();
       await installMuseumAvatarVisibilityContinuity();
+      installMuseumAvatarMotionPhase5();
 
       // Character / Avatar 2027 — bounded opt-ins.
       // `?character=1` keeps the validated Phase 3 presence gate.
