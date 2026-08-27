@@ -87,14 +87,11 @@ function clipFromDefinition(root, name, definition, boneMap = null) {
       times.push(frame.t * definition.duration);
       values.push(value.x, value.y, value.z, value.w);
     }
-    // When an explicit canonical bone map is supplied, bind by UUID instead of
-    // a potentially duplicated bone name. PropertyBinding resolves UUIDs and
-    // therefore targets the exact Bone used by the visible canonical skeleton.
     const bindingNode = boneMap ? bone.uuid : bone.name;
     tracks.push(new THREE.QuaternionKeyframeTrack(`${bindingNode}.quaternion`, times, values));
   }
   if (!tracks.length) throw new Error(`Character motion ${name} produced zero tracks`);
-  return new THREE.AnimationClip(`Character2027_V2_${name}`, definition.duration, tracks);
+  return new THREE.AnimationClip(`Character2027_${name}`, definition.duration, tracks);
 }
 
 export function createCharacterMotionV2(root, options = {}) {
@@ -104,25 +101,41 @@ export function createCharacterMotionV2(root, options = {}) {
   const mixer = new THREE.AnimationMixer(root);
   const actions = new Map();
   const clips = new Map();
+  const metadata = new Map();
+  let current = null;
 
-  for (const [name, definition] of Object.entries(DEFINITIONS)) {
+  function registerDefinition(name, definition, registration = {}) {
+    if (!name || !definition?.frames?.length) throw new Error('registerDefinition requires name + frames');
     const clip = clipFromDefinition(root, name, definition, boneMap);
+    const loop = registration.loop ?? definition.loop ?? false;
     const action = mixer.clipAction(clip);
     action.enabled = true;
-    action.clampWhenFinished = !definition.loop;
-    action.setLoop(definition.loop ? THREE.LoopRepeat : THREE.LoopOnce, definition.loop ? Infinity : 1);
+    action.clampWhenFinished = !loop;
+    action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, loop ? Infinity : 1);
     clips.set(name, clip);
     actions.set(name, action);
+    metadata.set(name, {
+      loop,
+      recoverTo: registration.recoverTo || null,
+      fadeSeconds: Number.isFinite(registration.fadeSeconds) ? registration.fadeSeconds : .12,
+      source: registration.source || 'MOTION_V2'
+    });
+    return clip;
   }
 
-  let current = null;
-  function play(name, fade = 0.12) {
+  for (const [name, definition] of Object.entries(DEFINITIONS)) {
+    registerDefinition(name, definition, { loop:Boolean(definition.loop), source:'MOTION_V2' });
+  }
+
+  function play(name, fade = null) {
     const next = actions.get(name);
     if (!next) throw new Error(`Unknown Character motion ${name}`);
     if (current === name && next.isRunning()) return next;
     const previous = current ? actions.get(current) : null;
+    const meta = metadata.get(name) || {};
+    const fadeSeconds = fade == null ? (meta.fadeSeconds ?? .12) : fade;
     next.reset().setEffectiveTimeScale(1).setEffectiveWeight(1).play();
-    if (previous && previous !== next) previous.crossFadeTo(next, fade, false);
+    if (previous && previous !== next) previous.crossFadeTo(next, fadeSeconds, false);
     current = name;
     return next;
   }
@@ -132,9 +145,14 @@ export function createCharacterMotionV2(root, options = {}) {
   return {
     mixer,
     play,
+    playAction: play,
+    registerDefinition,
+    has(name) { return actions.has(name); },
     update(dt) { mixer.update(Math.max(0, Math.min(Number(dt) || 0, 0.05))); },
     get state() { return current; },
+    get currentState() { return current; },
     duration(name) { return clips.get(name)?.duration || 0; },
+    metadata(name) { return metadata.get(name) || null; },
     report() {
       return {
         state: current,
@@ -147,6 +165,7 @@ export function createCharacterMotionV2(root, options = {}) {
       mixer.stopAllAction();
       for (const clip of clips.values()) mixer.uncacheClip(clip);
       mixer.uncacheRoot(root);
+      actions.clear(); clips.clear(); metadata.clear();
     }
   };
 }
