@@ -317,7 +317,22 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
       content.projection = { ...(content.projection || {}), ...authored.projection };
       if (content.media) content.media = { ...content.media, loop: authored.projection.loop };
     }
-    content.presentation = { ...(content.presentation || {}), ...authored.presentation };
+
+    // Schema 3 keeps physical presentation choices in the Studio project truth.
+    // They MUST NOT be copied verbatim into the semantic World: keys such as
+    // `material`, `finish`, `glass` and `frame` are presentation implementation
+    // and INV-6 correctly rejects them. Preserve the stored config, while only
+    // projecting the already-supported semantic mounting intent to Scene Kit.
+    if (authored.presentation?.mount) {
+      entity.representation = {
+        ...(entity.representation || {}),
+        hints: {
+          ...(entity.representation?.hints || {}),
+          mount: authored.presentation.mount
+        }
+      };
+    }
+
     entity.content = content;
     const { width, height, depth } = authored.sizeCm;
     if (width > 0 && height > 0) entity.size = depth > 0 ? [width/100,height/100,depth/100] : [width/100,height/100];
