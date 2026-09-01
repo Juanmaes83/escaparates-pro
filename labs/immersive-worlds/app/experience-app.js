@@ -387,12 +387,28 @@ async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
         || ((world.spaces || []).some((s) => s.id === nodeId) ? nodeId : null);
       if (!spaceId) return;
       if (spaceId !== runtime.state.activeSpaceId) {
-        const portal = (world.portals || []).find(
-          (p) => p.fromSpaceId === runtime.state.activeSpaceId && p.toSpaceId === spaceId
-        );
-        // Only a doorway the world actually has. The studio does not invent
-        // teleports, and a room two doors away simply is not revealed in one step.
-        if (portal) { try { await runtime.traversePortal(portal.id, { source: 'STUDIO' }); } catch { /* */ } }
+        // Resolve the shortest directed sequence of real WorldGraph portals.
+        // The previous one-hop lookup left Breeze and Wet Paint showing Gallery A
+        // whenever the selected room was more than one doorway away. This remains
+        // a real traversal: no teleport, no second graph and no invented portal.
+        const portals = world.portals || [];
+        const queue = [{ spaceId: runtime.state.activeSpaceId, path: [] }];
+        const visited = new Set([runtime.state.activeSpaceId]);
+        let path = null;
+        while (queue.length && !path) {
+          const current = queue.shift();
+          for (const portal of portals.filter((item) => item.fromSpaceId === current.spaceId)) {
+            if (visited.has(portal.toSpaceId)) continue;
+            const nextPath = [...current.path, portal];
+            if (portal.toSpaceId === spaceId) { path = nextPath; break; }
+            visited.add(portal.toSpaceId);
+            queue.push({ spaceId: portal.toSpaceId, path: nextPath });
+          }
+        }
+        for (const portal of path || []) {
+          try { await runtime.traversePortal(portal.id, { source: 'STUDIO' }); }
+          catch { break; }
+        }
       }
 
       // Walking to the right room was never the whole promise. An author editing
