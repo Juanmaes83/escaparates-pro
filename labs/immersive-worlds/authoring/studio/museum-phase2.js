@@ -76,6 +76,24 @@ function check(label,path,checked=false) {
   return `<label class="p1-check"><input type="checkbox" data-p2-check="${esc(path)}" ${checked?'checked':''}><span>${esc(label)}</span></label>`;
 }
 function setPath(root, path, value) {
+  // Entity ids are canonical dotted ids (`entity.artwork.foo`). Treating every
+  // dot as a path separator writes presentation data under a bogus
+  // `entities.entity.artwork...` tree, so the real entity remains unchanged and
+  // ConfigStore correctly persists empty presentation fields. The base Studio
+  // writer already resolves dotted entity ids from the known suffix; Schema 3
+  // presentation fields need the same rule.
+  const entityPrefix = 'entities.';
+  const presentationMarker = '.presentation.';
+  if (path.startsWith(entityPrefix)) {
+    const markerAt = path.indexOf(presentationMarker, entityPrefix.length);
+    if (markerAt >= 0) {
+      const entityId = path.slice(entityPrefix.length, markerAt);
+      const field = path.slice(markerAt + presentationMarker.length);
+      const entity = (root.entities ||= {})[entityId] ||= {};
+      (entity.presentation ||= {})[field] = value;
+      return;
+    }
+  }
   const parts = path.split('.'); let node = root;
   for (let i=0;i<parts.length-1;i++) { const k = /^\d+$/.test(parts[i]) ? Number(parts[i]) : parts[i]; node[k] ||= /^\d+$/.test(parts[i+1]) ? [] : {}; node = node[k]; }
   const last = /^\d+$/.test(parts.at(-1)) ? Number(parts.at(-1)) : parts.at(-1); node[last] = value;
