@@ -1,0 +1,30 @@
+name: Museum Schema3 Boot Recovery Gate
+
+on:
+  push:
+    branches:
+      - repair/museum-control-recovery-v1
+  workflow_dispatch:
+
+jobs:
+  schema3-persisted-config-boot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run persisted Schema 3 boot regression
+        run: node labs/immersive-worlds/qa/tools/studio-schema3-boot-regression.mjs
