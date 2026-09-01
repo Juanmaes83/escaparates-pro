@@ -7,7 +7,7 @@ test.use({
 });
 
 const URL = process.env.BREEZE_MUSEUM_URL ||
-  'https://escaparates-pro-git-chatgpt-mu-5bfce9-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json';
+  'http://127.0.0.1:4173/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json';
 
 async function getBreezeFrame(page) {
   const iframe = page.locator('iframe[data-nested-room-studio="room.breeze"]');

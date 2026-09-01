@@ -41,9 +41,7 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Run Breeze save and panel browser gates
-        env:
-          BREEZE_MUSEUM_URL: https://escaparates-pro-git-chatgpt-mu-5bfce9-juanma-espinosas-projects.vercel.app/labs/immersive-worlds/breeze-integration-studio.html?authoring=1&world=.%2Fworlds%2Fmuseum-v1.world.json
-        run: npx playwright test tests/museum-breeze-interaction.spec.mjs tests/museum-breeze-panel-toggle.spec.mjs --browser=chromium --reporter=line --workers=1
+        run: npx playwright test --config=tests/museum-breeze-playwright.config.mjs --browser=chromium --reporter=line --workers=1
 
       - name: Upload Breeze browser diagnostics
         if: always()
