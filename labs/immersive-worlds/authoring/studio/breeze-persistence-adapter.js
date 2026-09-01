@@ -66,8 +66,42 @@ function cleanState(state) {
 function syncConfig(studio, state) {
   if (!studio?.config || !state) return;
   studio.config.entities ||= {};
-  studio.config.entities[ENTITY_ID] ||= {};
-  studio.config.entities[ENTITY_ID].breeze = cleanState(state);
+  const current = studio.config.entities[ENTITY_ID] || {};
+  const entity = (studio.world?.entities || []).find((item) => item.id === ENTITY_ID) || {};
+  // This installation may be the first field ever authored for the entity.
+  // Seed the canonical semantic facts already present in the World so saving a
+  // Breeze-only snapshot cannot blank the required focus/accessibility contract.
+  studio.config.entities[ENTITY_ID] = {
+    title: current.title ?? null,
+    creator: current.creator ?? null,
+    year: current.year ?? null,
+    medium: current.medium ?? null,
+    description: current.description ?? null,
+    image: current.image ?? null,
+    video: current.video ?? null,
+    projection: current.projection ?? null,
+    artistId: current.artistId || '',
+    documentIds: current.documentIds || [],
+    sizeCm: current.sizeCm || {
+      width: Number(entity.size?.[0] || 0) * 100,
+      height: Number(entity.size?.[1] || 0) * 100,
+      depth: Number(entity.size?.[2] || 0) * 100
+    },
+    accessibility: {
+      label: current.accessibility?.label || entity.accessibility?.label || '',
+      description: current.accessibility?.description || entity.accessibility?.description || '',
+      transcript: current.accessibility?.transcript || entity.accessibility?.transcript || ''
+    },
+    presentation: current.presentation || {},
+    breeze: cleanState(state)
+  };
+}
+
+function hydrateSavedState(studio) {
+  if (savedState) return savedState;
+  const persisted = studio?.config?.entities?.[ENTITY_ID]?.breeze;
+  if (persisted) savedState = cleanState(persisted);
+  return savedState;
 }
 
 function hashString(value) {
@@ -204,6 +238,7 @@ window.addEventListener('message', (event) => {
     const frame = iframe();
     if (!frame?.contentWindow || event.source !== frame.contentWindow) return;
     readyWindow = event.source;
+    hydrateSavedState(window.__IW_STUDIO);
     window.__IW_BREEZE_PERSISTENCE = {
       status: savedState ? 'READY_TO_RESTORE' : 'READY_UNSAVED',
       state: msg.state || null,

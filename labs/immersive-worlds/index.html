@@ -33,6 +33,9 @@
     import { installMuseumAvatarStudioPhase5 } from './authoring/studio/avatar-phase5.js';
     import { installMuseumAvatarVisibilityContinuity } from './authoring/studio/avatar-phase5-visibility-continuity.js';
     import { installMuseumAvatarMotionPhase5 } from './authoring/studio/avatar-phase5-motion.js';
+    // Proven Breeze V4.1 persistence seam. The room remains a specialized
+    // nested runtime; this only connects its existing panel to Museum Studio.
+    import './authoring/studio/breeze-persistence-adapter.js';
 
     document.addEventListener('change', (event) => {
       if (!event.target?.matches?.('[data-p1-dim], [data-p1-entity-a11y]')) return;

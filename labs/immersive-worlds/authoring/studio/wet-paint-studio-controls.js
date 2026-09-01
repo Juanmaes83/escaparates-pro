@@ -13,6 +13,7 @@
 
 import { StudioShell } from './studio-shell.js';
 import { WetPaintStore } from '../../experiences/wet-paint-store.js';
+import { MEDIA_SLOT } from '../experience-config.js';
 const ACC = [
     { id: 'fuente', title: 'Fuente y biblioteca', open: true },
     { id: 'visual', title: 'Visualización', open: false },
@@ -84,12 +85,18 @@ function group(studio, sec, body) {
     </section>`;
 }
 
-function fuenteBody() {
+function fuenteBody(studio) {
     const scenes = eng()?.scenes?.() || [];
     const cards = scenes.map((s) => `<button type="button" class="wp-card" data-wp-scene="${esc(s.id)}" title="${esc(s.title)}">
         <img src="${esc(s.thumb)}" alt="" loading="lazy"><span>${esc(s.title)}</span></button>`).join('');
-    return `<p class="st-note">Sube una imagen o elige una obra de la colección. Se aplica a 01 y su Wet Paint aparece en 02.</p>
+    const museumItems = (studio?.catalogue?.byCategory?.IMAGES || [])
+        .filter((item) => item.state === 'READY' && item.url)
+        .map((item) => `<button type="button" class="wp-card" data-wp-museum-source="${esc(item.reference)}" title="Usar ${esc(item.name)} en Wet Paint">
+          <img src="${esc(item.thumb || item.url)}" alt="" loading="lazy"><span>${esc(item.name)}</span></button>`).join('');
+    return `<p class="st-note">Sube una imagen o reutiliza una imagen ya guardada en este proyecto Museum.</p>
       <label class="wp-drop" data-wp-uploadlabel>＋ Subir imagen o modelo GLB<input type="file" accept="image/*,.glb" data-wp-upload hidden></label>
+      <span class="st-l" style="display:block;margin-top:12px">Biblioteca Museum · ${(studio?.catalogue?.byCategory?.IMAGES || []).length} imágenes</span>
+      <div class="wp-lib">${museumItems || '<p class="st-note">Todavía no hay imágenes reutilizables.</p>'}</div>
       <span class="st-l" style="display:block;margin-top:12px">Colección Van Gogh · ${scenes.length} obras</span>
       <div class="wp-lib">${cards}</div>`;
 }
@@ -173,7 +180,7 @@ function wetPaintEditor(studio, node) {
         ? '<p class="st-note">Proceso: <b>1</b> Fuente · <b>2</b> Efecto · <b>3</b> Reproducir transición · <b>4</b> Guardar y aplicar.</p>'
         : '<p class="st-note" style="color:var(--st-warn,#d8b45e)"><b>Paso 1:</b> sube una imagen o elige una obra en “Fuente y biblioteca”. El cuadro animará la imagen → efecto automáticamente.</p>';
     const secBody = {
-        fuente: fuenteBody(),
+        fuente: fuenteBody(studio),
         visual: visualBody(params),
         pincelada: pinceladaBody(params),
         crecimiento: crecimientoBody(direction),
@@ -210,6 +217,23 @@ function bindWetPaint(studio, scope) {
     if (!e) return;
 
     root.querySelectorAll('[data-wp-scene]').forEach((el) => el.addEventListener('click', () => e.syncFromLibrary(el.dataset.wpScene)));
+    root.querySelectorAll('[data-wp-museum-source]').forEach((el) => el.addEventListener('click', async () => {
+        const reference = el.dataset.wpMuseumSource;
+        const item = studio.catalogue.items.find((candidate) => candidate.reference === reference);
+        if (!item?.url) return;
+        const status = root.querySelector('[data-wp-status]');
+        if (status) status.textContent = 'Preparando imagen guardada…';
+        try {
+            studio._reuse(reference, MEDIA_SLOT.ARTWORK_IMAGE);
+            const blob = await (await fetch(item.url)).blob();
+            const file = new File([blob], item.name || 'museum-source.jpg', { type: blob.type || 'image/jpeg' });
+            await e.processFromEditor(file);
+            studio.render();
+        } catch (error) {
+            console.error('[WetPaint] Museum Library source failed', error);
+            if (status) status.textContent = 'No se pudo usar la imagen guardada';
+        }
+    }));
     root.querySelectorAll('[data-wp-upload]').forEach((el) => el.addEventListener('change', () => { const f = el.files?.[0]; if (f) e.processFromEditor(f); }));
     root.querySelectorAll('[data-wp-mode]').forEach((el) => el.addEventListener('click', () => { e.setViewMode(el.dataset.wpMode); root.querySelectorAll('[data-wp-mode]').forEach((b) => b.setAttribute('aria-pressed', b === el)); }));
     root.querySelectorAll('[data-wp-layer]').forEach((el) => el.addEventListener('click', () => { const on = el.getAttribute('aria-pressed') !== 'true'; el.setAttribute('aria-pressed', on); e.setBrushLayer(Number(el.dataset.wpLayer), on); }));
@@ -250,7 +274,8 @@ export function installWetPaintStudioControls() {
     patched = true;
     const originalEntity = StudioShell.prototype._entityEditor;
     StudioShell.prototype._entityEditor = function (node) {
-        return originalEntity.call(this, node) + wetPaintEditor(this, node);
+        const controls = wetPaintEditor(this, node);
+        return controls ? controls + originalEntity.call(this, node) : originalEntity.call(this, node);
     };
     const originalBind = StudioShell.prototype._bind;
     StudioShell.prototype._bind = function (scope = this.root) {

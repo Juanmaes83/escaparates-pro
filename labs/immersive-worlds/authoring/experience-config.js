@@ -173,6 +173,41 @@ function normalisePresentation(p) {
   };
 }
 
+// Breeze Studio PRO already exposes this bounded semantic snapshot through its
+// Museum state seam. Keep it in authoring config (never in the semantic World),
+// so ConfigStore does not discard the existing integration on save/reload.
+function normaliseBreeze(b) {
+  if (!b) return null;
+  const meta = (m) => m ? {
+    name: text(m.name, 240), type: text(m.type, 120), size: num(m.size), lastModified: num(m.lastModified)
+  } : null;
+  return {
+    version: 1,
+    experience: text(b.experience || 'cloth', 80),
+    autoRotate: bool(b.autoRotate),
+    runSimulation: b.runSimulation !== false,
+    wireframe: bool(b.wireframe),
+    background: {
+      meta: meta(b.background?.meta), applied: bool(b.background?.applied),
+      scale: num(b.background?.scale, 1), x: num(b.background?.x), y: num(b.background?.y)
+    },
+    cloth: {
+      meta: meta(b.cloth?.meta), applied: bool(b.cloth?.applied),
+      scale: num(b.cloth?.scale, 1), x: num(b.cloth?.x), y: num(b.cloth?.y),
+      opacity: num(b.cloth?.opacity, 1), brightness: num(b.cloth?.brightness, 1),
+      contrast: num(b.cloth?.contrast, 1), saturation: num(b.cloth?.saturation, 1)
+    },
+    object: {
+      template: text(b.object?.template || 'venus', 120),
+      uploadedMeta: meta(b.object?.uploadedMeta),
+      spec: b.object?.spec ? {
+        kind: text(b.object.spec.kind, 80), id: text(b.object.spec.id, 160), name: text(b.object.spec.name, 240)
+      } : null
+    },
+    physics: { stiffness: num(b.physics?.stiffness, .25), friction: num(b.physics?.friction, .25) }
+  };
+}
+
 function normaliseEntity(e) {
   return {
     title: e?.title ?? null, creator: e?.creator ?? null, year: e?.year ?? null, medium: e?.medium ?? null,
@@ -183,7 +218,8 @@ function normaliseEntity(e) {
     accessibility: {
       label: text(e?.accessibility?.label, 240), description: text(e?.accessibility?.description, 1000), transcript: text(e?.accessibility?.transcript, 3000)
     },
-    presentation: normalisePresentation(e?.presentation)
+    presentation: normalisePresentation(e?.presentation),
+    ...(e?.breeze ? { breeze: normaliseBreeze(e.breeze) } : {})
   };
 }
 
@@ -317,7 +353,22 @@ export function applyConfigToWorld(world, config, resolveMedia = () => null) {
       content.projection = { ...(content.projection || {}), ...authored.projection };
       if (content.media) content.media = { ...content.media, loop: authored.projection.loop };
     }
-    content.presentation = { ...(content.presentation || {}), ...authored.presentation };
+
+    // Schema 3 keeps physical presentation choices in the Studio project truth.
+    // They MUST NOT be copied verbatim into the semantic World: keys such as
+    // `material`, `finish`, `glass` and `frame` are presentation implementation
+    // and INV-6 correctly rejects them. Preserve the stored config, while only
+    // projecting the already-supported semantic mounting intent to Scene Kit.
+    if (authored.presentation?.mount) {
+      entity.representation = {
+        ...(entity.representation || {}),
+        hints: {
+          ...(entity.representation?.hints || {}),
+          mount: authored.presentation.mount
+        }
+      };
+    }
+
     entity.content = content;
     const { width, height, depth } = authored.sizeCm;
     if (width > 0 && height > 0) entity.size = depth > 0 ? [width/100,height/100,depth/100] : [width/100,height/100];
