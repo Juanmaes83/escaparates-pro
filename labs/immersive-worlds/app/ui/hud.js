@@ -55,6 +55,11 @@ export class ExperienceHUD {
           <p class="iw-veil__mark">${escapeHtml(institution)}</p>
           <p class="iw-veil__title" data-el="veilTitle">Preparando la sala…</p>
           <div class="iw-veil__bar"><i data-el="veilBar"></i></div>
+          <fieldset class="iw-presence" data-el="presence" hidden>
+            <legend>Cómo quieres recorrer el museo</legend>
+            <button type="button" class="iw-presence__option" data-presence="pov">POV · primera persona</button>
+            <button type="button" class="iw-presence__option" data-presence="avatar">Con mi avatar</button>
+          </fieldset>
           <button class="iw-btn iw-btn--primary" data-el="enter" hidden>Entrar en ${escapeHtml(startSpace.title.toLowerCase())}</button>
           <p class="iw-veil__note">Contenido y obras ficticios, generados en tiempo de ejecución.</p>
         </div>
@@ -243,6 +248,26 @@ export class ExperienceHUD {
   /** @param {() => void} onEnter */
   showEnter(onEnter) {
     this.el.veilTitle.textContent = 'La sala está preparada';
+    const params = new URLSearchParams(location.search);
+    const authoring = params.get('authoring') === '1';
+    const avatarMode = params.get('character') === '1' && params.get('mobility') === '1';
+    if (this.el.presence && !authoring) {
+      this.el.presence.hidden = false;
+      this.el.presence.querySelectorAll('[data-presence]').forEach((button) => {
+        const selected = button.dataset.presence === (avatarMode ? 'avatar' : 'pov');
+        button.classList.toggle('is-selected', selected);
+        button.setAttribute('aria-pressed', String(selected));
+        button.addEventListener('click', () => {
+          if (selected) return;
+          const url = new URL(location.href);
+          const characterFlags = ['character', 'mobility', 'continuity', 'gatea'];
+          if (button.dataset.presence === 'avatar') characterFlags.forEach((key) => url.searchParams.set(key, '1'));
+          else characterFlags.forEach((key) => url.searchParams.delete(key));
+          location.assign(url.href);
+        }, { once:true });
+      });
+      this.el.enter.textContent = avatarMode ? 'Entrar con mi avatar' : 'Entrar en POV';
+    }
     this.el.enter.hidden = false;
     this.el.enter.focus();
     this.el.enter.addEventListener('click', () => {
