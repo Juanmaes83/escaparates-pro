@@ -626,6 +626,138 @@ export function buildPremiumVesselInstallation({
   };
 }
 
+/**
+ * A real GLB exhibit on the P02 cylindrical pedestal family. The caller hands
+ * in a parsed model; asset lookup and loading stay outside the visual builder.
+ * If loading failed, a deliberately simple authored silhouette keeps the room,
+ * collision and interaction available without pretending to be the source.
+ */
+export function buildGlbSculptureInstallation({
+  model = null,
+  height = 0.92,
+  plinthHeight = 1.0,
+  labelTexture: plaqueTexture,
+  lightColor = 0xffe3b7
+}) {
+  const group = new THREE.Group();
+  group.name = 'glb-sculpture-installation';
+
+  const mineral = new THREE.MeshStandardMaterial({ color: 0xcac2b5, roughness: 0.7, metalness: 0 });
+  const mineralTop = new THREE.MeshStandardMaterial({ color: 0xe8e1d6, roughness: 0.52, metalness: 0 });
+  const graphite = new THREE.MeshStandardMaterial({ color: 0x24221f, roughness: 0.44, metalness: 0.32 });
+
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.39, 0.42, 0.065, 64), graphite);
+  foot.position.y = 0.0325;
+  foot.receiveShadow = true;
+  group.add(foot);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.38, plinthHeight - 0.09, 64), mineral);
+  body.position.y = 0.065 + (plinthHeight - 0.09) / 2;
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.415, 0.385, 0.055, 64), mineralTop);
+  cap.position.y = plinthHeight - 0.0275;
+  cap.castShadow = true;
+  cap.receiveShadow = true;
+  group.add(cap);
+
+  const sculpture = model || buildBustFallback();
+  sculpture.name = model ? 'marble-bust-01-glb' : 'marble-bust-01-fallback';
+  normalizeFloorModel(sculpture, height, plinthHeight);
+  group.add(sculpture);
+
+  const responsiveMaterials = [];
+  sculpture.traverse((node) => {
+    if (!node.isMesh) return;
+    node.castShadow = true;
+    node.receiveShadow = true;
+    const materials = Array.isArray(node.material) ? node.material : [node.material];
+    for (const material of materials) {
+      if (!material) continue;
+      if (material.emissive) {
+        material.emissive.set(0x2b1b10);
+        material.emissiveIntensity = 0;
+        responsiveMaterials.push(material);
+      }
+    }
+  });
+
+  const plaqueBacking = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.205, 0.018), graphite);
+  plaqueBacking.position.set(0, plinthHeight - 0.24, 0.392);
+  group.add(plaqueBacking);
+  const plaque = buildLabel({ texture: plaqueTexture, width: 0.46 });
+  plaque.position.set(0, plinthHeight - 0.24, 0.404);
+  group.add(plaque);
+
+  const signalMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xa98551,
+    emissive: 0x65401b,
+    emissiveIntensity: 0.06,
+    roughness: 0.3,
+    metalness: 0.74,
+    transparent: true,
+    opacity: 0.13
+  });
+  const signal = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.012, 0.012), signalMaterial);
+  signal.position.set(0, 0.12, 0.386);
+  group.add(signal);
+
+  const keyLight = new THREE.SpotLight(lightColor, 2.9, 6.5, 0.31, 0.82, 1.55);
+  keyLight.position.set(-1.1, 2.85, 1.25);
+  keyLight.target.position.set(0, plinthHeight + height * 0.52, 0);
+  group.add(keyLight, keyLight.target);
+  const fillLight = new THREE.PointLight(0xb58a62, 0.14, 2.2, 1.8);
+  fillLight.position.set(0.7, plinthHeight + height * 0.62, 0.35);
+  group.add(fillLight);
+
+  return {
+    group,
+    presentation: {
+      materials: responsiveMaterials,
+      signalMaterial,
+      keyLight,
+      fillLight,
+      baseKeyIntensity: 2.9,
+      baseFillIntensity: 0.14,
+      nearTarget: 0,
+      near: 0,
+      focusTarget: 0,
+      focus: 0,
+      assetStatus: model ? 'GLB' : 'FALLBACK'
+    }
+  };
+}
+
+function normalizeFloorModel(model, targetHeight, floorY) {
+  model.updateMatrixWorld(true);
+  const initial = new THREE.Box3().setFromObject(model);
+  const sourceHeight = Math.max(initial.max.y - initial.min.y, 0.001);
+  model.scale.multiplyScalar(targetHeight / sourceHeight);
+  model.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(model);
+  const center = box.getCenter(new THREE.Vector3());
+  model.position.x -= center.x;
+  model.position.z -= center.z;
+  model.position.y += floorY - box.min.y;
+}
+
+function buildBustFallback() {
+  const group = new THREE.Group();
+  const material = new THREE.MeshStandardMaterial({ color: 0xbdb6aa, roughness: 0.82, metalness: 0 });
+  const torso = new THREE.Mesh(new THREE.SphereGeometry(0.28, 28, 18), material);
+  torso.scale.set(1.25, 0.72, 0.7);
+  torso.position.y = 0.22;
+  group.add(torso);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 0.17, 24), material);
+  neck.position.y = 0.48;
+  group.add(neck);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 28, 20), material);
+  head.scale.set(0.82, 1.12, 0.88);
+  head.position.y = 0.65;
+  group.add(head);
+  return group;
+}
+
 /** Wall label, mounted at the standard 8 cm to the right of a work. */
 export function buildLabel({ texture, width = 0.22 }) {
   const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.92, metalness: 0 });

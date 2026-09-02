@@ -81,7 +81,8 @@
         "entity.artwork.campo-de-ceniza",
         "entity.artwork.division-tercera",
         "entity.artwork.estudio-de-figura",
-        "entity.sculpture.vasija-de-arenas"
+        "entity.sculpture.vasija-de-arenas",
+        "entity.sculpture.marble-bust-study"
       ],
       "anchorRefs": [
         "anchor.gallery-a.arrive-from-lobby",
@@ -92,6 +93,7 @@
         "anchor.gallery-a.wall-3",
         "anchor.gallery-a.wall-4",
         "anchor.gallery-a.plinth",
+        "anchor.gallery-a.plinth-bust",
         "anchor.gallery-a.door-lobby",
         "anchor.gallery-a.door-gallery-b",
         "anchor.gallery-a.door-archive",
@@ -113,6 +115,7 @@
         "hotspot.art.division-tercera",
         "hotspot.art.estudio-de-figura",
         "hotspot.art.vasija-de-arenas",
+        "hotspot.art.marble-bust-study",
         "hotspot.gallery-a.to-lobby",
         "hotspot.gallery-a.to-gallery-b",
         "hotspot.gallery-a.to-archive"
@@ -536,6 +539,21 @@
       "kind": "PLINTH",
       "position": [
         4.3,
+        0,
+        -7
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "anchor.gallery-a.plinth-bust",
+      "spaceId": "space.gallery-a",
+      "kind": "PLINTH",
+      "position": [
+        -4.3,
         0,
         -7
       ],
@@ -1546,6 +1564,42 @@
       }
     },
     {
+      "id": "entity.sculpture.marble-bust-study",
+      "kind": "SCULPTURE",
+      "subtype": "bust",
+      "spaceId": "space.gallery-a",
+      "anchorId": "anchor.gallery-a.plinth-bust",
+      "size": [
+        0.7,
+        0.92,
+        0.62
+      ],
+      "content": {
+        "title": "Marble Bust 01 — estudio de material",
+        "creator": "Rico Cilliers",
+        "year": "2021",
+        "medium": "Fotogrametría y material PBR, edición web 1K",
+        "description": "Obra invitada utilizada como estudio verificable de escala, silueta, superficie y luz. Fuente Poly Haven; licencia CC0 1.0."
+      },
+      "representation": {
+        "profile": "plinth-glb-marble-bust-v1",
+        "hints": {
+          "plinthHeight": 1
+        }
+      },
+      "interaction": {
+        "focusable": true,
+        "focusDistance": 2.2,
+        "hotspotRefs": [
+          "hotspot.art.marble-bust-study"
+        ]
+      },
+      "accessibility": {
+        "label": "Marble Bust 01, estudio de material de Rico Cilliers",
+        "description": "Busto de mármol digitalizado de noventa y dos centímetros en esta presentación, sobre peana cilíndrica. Obra invitada CC0 de Poly Haven."
+      }
+    },
+    {
       "id": "entity.artwork.noche-de-invierno",
       "kind": "ARTWORK",
       "subtype": "photograph",
@@ -2138,6 +2192,23 @@
         "target": "entity.sculpture.vasija-de-arenas"
       },
       "accessibilityLabel": "Observar de cerca Vasija de arenas"
+    },
+    {
+      "id": "hotspot.art.marble-bust-study",
+      "spaceId": "space.gallery-a",
+      "entityId": "entity.sculpture.marble-bust-study",
+      "type": "INFO",
+      "interactionVolume": {
+        "shape": "SPHERE",
+        "radius": 2.5
+      },
+      "triggerDistance": 2.5,
+      "visualPolicy": "NEAR",
+      "action": {
+        "type": "FOCUS_ENTITY",
+        "target": "entity.sculpture.marble-bust-study"
+      },
+      "accessibilityLabel": "Observar de cerca Marble Bust 01, estudio de material"
     },
     {
       "id": "hotspot.gallery-a.to-lobby",
