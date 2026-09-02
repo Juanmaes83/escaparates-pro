@@ -54,6 +54,7 @@ Si falla la carga, la peana, el collider, la placa, la luz, la proximidad y la i
 - Entidad, ancla y hotspot: `worlds/museum-v1.world.json`
 - Estado determinista: `qa/deterministic-states.js`
 - Selector de QA e informe público: `app/experience-app.js`
+- Resolución de `three` para shells alternativos: `breeze-integration-studio.html` y `wet-paint-studio.html`
 
 No se modifican Breeze, WePaint, Avatar, navegación POV/Avatar ni sus controles.
 
@@ -65,6 +66,7 @@ No se modifican Breeze, WePaint, Avatar, navegación POV/Avatar ni sus controles
 - Auditoría Playwright local en el estado determinista: GLB local `READY`, entidad `GLB`, foco correcto y World válido.
 - La primera captura detectó el busto de espaldas; se eliminó la rotación incorrecta y una segunda captura confirmó la vista frontal.
 - Prueba explícita `glbStone=fallback`: entidad `FALLBACK`, peana, placa, foco e inspección conservados.
+- El primer CI de Breeze reveló que sus shells alternativos no tenían el `importmap` de `three` del shell principal. La importación de `GLTFLoader` fallaba antes de crear `window.__IW`; ambos shells comparten ahora el mismo mapa local. El gate de Breeze vuelve a arrancar en 1,6 s y sin errores de consola en la reproducción local.
 - Suite completa `labs/immersive-worlds/qa/run-qa.mjs`: pendiente de cierre en el momento de redactar este registro.
 
 ## Veredicto pendiente
