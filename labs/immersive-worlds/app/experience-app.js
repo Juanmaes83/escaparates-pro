@@ -74,8 +74,10 @@ export async function boot() {
   // keep its collection next to its world definition.
   const mediaLoader = new MediaLoader({ bus: null, baseUrl: new URL(WORLD_URL, location.href).href });
   const visualStone = params.get('visualStone') === 'baseline' ? 'baseline' : 'premium';
-  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader, visualStone });
+  const glbStone = params.get('glbStone') === 'fallback' ? 'fallback' : 'glb';
+  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader, visualStone, glbStone });
   document.documentElement.dataset.museumVisualStone = visualStone;
+  document.documentElement.dataset.museumGlbStone = glbStone;
 
   const runtime = new Runtime({
     world: authoredWorld,
@@ -450,7 +452,7 @@ async function mountStudio({ world, activeConfig, vault, boot, runtime }) {
  * invariants actually held during the run.
  */
 function installProbe(context) {
-  const { runtime, renderHost, hud, audio, input, mediaLoader, tier, seed, reducedMotion } = context;
+  const { runtime, renderHost, sceneKit, hud, audio, input, mediaLoader, tier, seed, reducedMotion } = context;
 
   window.__IW = {
     ready: false,
@@ -467,7 +469,7 @@ function installProbe(context) {
     input,
 
     /** Full runtime report — the object the QA suite writes into its evidence. */
-    report: () => ({ ...runtime.report(), media: mediaLoader.report() }),
+    report: () => ({ ...runtime.report(), media: mediaLoader.report(), models: sceneKit.modelAssetReport?.() || {} }),
 
     /** Apply a named deterministic state at runtime. */
     async applyState(name) {

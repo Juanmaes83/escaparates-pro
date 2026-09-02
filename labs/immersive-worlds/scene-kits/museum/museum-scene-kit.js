@@ -28,10 +28,11 @@ import {
 } from './textures.js';
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
-  buildLabel, buildPitchedRoof, buildPlinth, buildProjection, buildRoomShell,
+  buildGlbSculptureInstallation, buildLabel, buildPitchedRoof, buildPlinth, buildProjection, buildRoomShell,
   buildPremiumVesselInstallation, buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
 import { GUIDE_DESIGNS, buildGuideFigure, buildVisitorFigure, guideMaterials } from './guide.js';
+import { MARBLE_BUST_PROFILE, MuseumModelAssets } from './model-assets.js';
 
 /**
  * Metres per second. An unhurried gallery pace — a guide walking a visitor to
@@ -52,14 +53,17 @@ export class MuseumSceneKit extends SceneKit {
    * @param {{
    *   renderHost:import('../../render/render-host.js').RenderHost,
    *   mediaLoader?:import('../../render/media-loader.js').MediaLoader,
-   *   visualStone?:string
+   *   visualStone?:string,
+   *   glbStone?:string
    * }} deps
    */
-  constructor({ renderHost, mediaLoader = null, visualStone = 'premium' }) {
+  constructor({ renderHost, mediaLoader = null, visualStone = 'premium', glbStone = 'glb' }) {
     super('museum');
     this.renderHost = renderHost;
     this.mediaLoader = mediaLoader;
     this.visualStone = visualStone;
+    this.glbStone = glbStone;
+    this.modelAssets = new MuseumModelAssets();
     /** @type {Map<string, string>} entityId -> media src currently held */
     this._mediaRefs = new Map();
 
@@ -297,9 +301,18 @@ export class MuseumSceneKit extends SceneKit {
     // an entity is built once with its real content rather than built with a
     // placeholder and patched afterwards.
     const media = await this._preloadMedia(space, ctx);
+    const models = new Map();
+    for (const entity of ctx.store.entitiesOf(space.id)) {
+      const presentationProfile = entity.representation?.profile;
+      if (presentationProfile !== MARBLE_BUST_PROFILE) continue;
+      models.set(
+        presentationProfile,
+        this.glbStone === 'fallback' ? null : await this.modelAssets.instantiate(presentationProfile)
+      );
+    }
 
     for (const entity of ctx.store.entitiesOf(space.id)) {
-      const built = this._buildEntity(entity, { space, profile, materials, rng, ctx, media });
+      const built = this._buildEntity(entity, { space, profile, materials, rng, ctx, media, models });
       if (!built) continue;
       group.add(built.object);
       entities.set(entity.id, built.object);
@@ -580,7 +593,7 @@ export class MuseumSceneKit extends SceneKit {
 
   /* == entities ============================================================= */
 
-  _buildEntity(entity, { space, profile, materials, rng, ctx, media }) {
+  _buildEntity(entity, { space, profile, materials, rng, ctx, media, models }) {
     const anchor = this._anchorPoses.get(entity.anchorId);
     if (!anchor) return null;
     const hints = entity.representation?.hints || {};
@@ -620,6 +633,22 @@ export class MuseumSceneKit extends SceneKit {
 
       case ENTITY_KIND.SCULPTURE:
       case ENTITY_KIND.OBJECT_3D: {
+        if (entity.representation?.profile === MARBLE_BUST_PROFILE) {
+          const installation = buildGlbSculptureInstallation({
+            model: models?.get(MARBLE_BUST_PROFILE) || null,
+            height: entity.size[1],
+            plinthHeight: hints.plinthHeight ?? 1,
+            labelTexture: labelTexture(entity.content, { dark, width: 640 }),
+            lightColor: profile.spot.color
+          });
+          this._orient(installation.group, anchor, { flat: true });
+          return {
+            object: installation.group,
+            presentation: installation.presentation,
+            lit: false,
+            blocker: boxAround([anchor.position[0], anchor.position[2]], entity.size[0] + 0.55, entity.size[2] + 0.55)
+          };
+        }
         if (entity.representation?.profile === 'plinth-vessel-premium-v1' && this.visualStone !== 'baseline') {
           const premium = buildPremiumVesselInstallation({
             height: entity.size[1],
@@ -2009,10 +2038,19 @@ export class MuseumSceneKit extends SceneKit {
       const attention = Math.max(p.near * 0.62, p.focus);
       p.signalMaterial.opacity = 0.16 + attention * 0.72;
       p.signalMaterial.emissiveIntensity = 0.08 + attention * 0.54;
-      p.ceramic.emissiveIntensity = attention * 0.08;
-      p.keyLight.intensity = 2.7 + p.near * 0.35 + p.focus * 0.55;
-      p.fillLight.intensity = 0.16 + attention * 0.16;
+      const responsiveMaterials = p.materials || (p.ceramic ? [p.ceramic] : []);
+      for (const material of responsiveMaterials) material.emissiveIntensity = attention * 0.08;
+      p.keyLight.intensity = (p.baseKeyIntensity ?? 2.7) + p.near * 0.35 + p.focus * 0.55;
+      p.fillLight.intensity = (p.baseFillIntensity ?? 0.16) + attention * 0.16;
     }
+  }
+
+  modelAssetReport() {
+    const entities = {};
+    for (const [entityId, record] of this._entityIndex) {
+      if (record.presentation?.assetStatus) entities[entityId] = record.presentation.assetStatus;
+    }
+    return { mode: this.glbStone, assets: this.modelAssets.report(), entities };
   }
 
   /**

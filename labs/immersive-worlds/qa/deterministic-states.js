@@ -67,6 +67,18 @@ export const DETERMINISTIC_STATES = {
     }
   },
 
+  'museum:marble-bust-detail': {
+    description: 'Obra invitada Marble Bust 01: GLB local, pedestal P02 y encuadre de inspección.',
+    async apply(runtime) {
+      await runtime.traversePortal('portal.lobby-gallery-a', { source: 'QA' });
+      runtime.explore.setPose({ position: [-4.3, 1.62, -5.75], yaw: Math.PI, pitch: -0.09 });
+      runtime.actions.dispatch(
+        { type: 'FOCUS_ENTITY', target: 'entity.sculpture.marble-bust-study' },
+        { source: 'QA' }
+      );
+    }
+  },
+
   'museum:gallery-a-oblique': {
     description: 'Galería A en diagonal: ritmo lateral, escultura y banco en un mismo encuadre.',
     async apply(runtime) {
