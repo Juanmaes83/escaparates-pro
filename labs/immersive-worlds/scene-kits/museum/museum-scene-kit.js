@@ -29,7 +29,7 @@ import {
 import {
   WALL_THICKNESS, buildBarrierLine, buildBench, buildCornice, buildCove, buildFramedWork,
   buildLabel, buildPitchedRoof, buildPlinth, buildProjection, buildRoomShell,
-  buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
+  buildPremiumVesselInstallation, buildSkylightDaylight, buildThreshold, buildVessel, disposeObject
 } from './builders.js';
 import { GUIDE_DESIGNS, buildGuideFigure, buildVisitorFigure, guideMaterials } from './guide.js';
 
@@ -51,13 +51,15 @@ export class MuseumSceneKit extends SceneKit {
   /**
    * @param {{
    *   renderHost:import('../../render/render-host.js').RenderHost,
-   *   mediaLoader?:import('../../render/media-loader.js').MediaLoader
+   *   mediaLoader?:import('../../render/media-loader.js').MediaLoader,
+   *   visualStone?:string
    * }} deps
    */
-  constructor({ renderHost, mediaLoader = null }) {
+  constructor({ renderHost, mediaLoader = null, visualStone = 'premium' }) {
     super('museum');
     this.renderHost = renderHost;
     this.mediaLoader = mediaLoader;
+    this.visualStone = visualStone;
     /** @type {Map<string, string>} entityId -> media src currently held */
     this._mediaRefs = new Map();
 
@@ -301,7 +303,13 @@ export class MuseumSceneKit extends SceneKit {
       if (!built) continue;
       group.add(built.object);
       entities.set(entity.id, built.object);
-      this._entityIndex.set(entity.id, { size: entity.size, object: built.object, anchorId: entity.anchorId });
+      this._entityIndex.set(entity.id, {
+        size: entity.size,
+        object: built.object,
+        anchorId: entity.anchorId,
+        presentation: built.presentation || null,
+        hotspotIds: entity.interaction?.hotspotRefs || []
+      });
       if (built.blocker) blockers.push(built.blocker);
 
       if (built.lit) {
@@ -612,6 +620,21 @@ export class MuseumSceneKit extends SceneKit {
 
       case ENTITY_KIND.SCULPTURE:
       case ENTITY_KIND.OBJECT_3D: {
+        if (entity.representation?.profile === 'plinth-vessel-premium-v1' && this.visualStone !== 'baseline') {
+          const premium = buildPremiumVesselInstallation({
+            height: entity.size[1],
+            plinthHeight: hints.plinthHeight ?? 1.04,
+            labelTexture: labelTexture(entity.content, { dark, width: 640 }),
+            lightColor: profile.spot.color
+          });
+          this._orient(premium.group, anchor, { flat: true });
+          return {
+            object: premium.group,
+            presentation: premium.presentation,
+            lit: false,
+            blocker: boxAround([anchor.position[0], anchor.position[2]], entity.size[0] + 0.55, entity.size[2] + 0.55)
+          };
+        }
         const group = new THREE.Group();
         const plinthHeight = hints.plinthHeight ?? 1.02;
         group.add(buildPlinth({ size: [entity.size[0] + 0.35, plinthHeight, entity.size[2] + 0.35], material: materials.plinth }));
@@ -1307,6 +1330,10 @@ export class MuseumSceneKit extends SceneKit {
       mark.material.opacity = near ? 0.5 : state === HOTSPOT_STATE.VISITED ? resting * 0.6 : resting;
       mark.scale.setScalar(near ? 1.04 : 1);
     }
+    for (const record of this._entityIndex.values()) {
+      if (!record.presentation || !record.hotspotIds.includes(hotspotId)) continue;
+      record.presentation.nearTarget = state === HOTSPOT_STATE.NEAR || state === HOTSPOT_STATE.ACTIVE ? 1 : 0;
+    }
   }
 
   /**
@@ -1325,6 +1352,9 @@ export class MuseumSceneKit extends SceneKit {
 
   setEntityFocused(entityId, focused) {
     this._focusedEntityId = focused ? entityId : null;
+    for (const [id, record] of this._entityIndex) {
+      if (record.presentation) record.presentation.focusTarget = focused && id === entityId ? 1 : 0;
+    }
   }
 
   /* == guide ================================================================ */
@@ -1966,6 +1996,23 @@ export class MuseumSceneKit extends SceneKit {
     for (const item of this._animated) item.update(elapsed);
     this._updateGuide(dt);
     this._updateVisitor(dt);
+    this._updatePremiumInstallations(dt);
+  }
+
+  _updatePremiumInstallations(dt) {
+    const approach = (current, target, speed) => current + (target - current) * (1 - Math.exp(-speed * dt));
+    for (const record of this._entityIndex.values()) {
+      const p = record.presentation;
+      if (!p) continue;
+      p.near = approach(p.near, p.nearTarget, 5.5);
+      p.focus = approach(p.focus, p.focusTarget, 7.5);
+      const attention = Math.max(p.near * 0.62, p.focus);
+      p.signalMaterial.opacity = 0.16 + attention * 0.72;
+      p.signalMaterial.emissiveIntensity = 0.08 + attention * 0.54;
+      p.ceramic.emissiveIntensity = attention * 0.08;
+      p.keyLight.intensity = 2.7 + p.near * 0.35 + p.focus * 0.55;
+      p.fillLight.intensity = 0.16 + attention * 0.16;
+    }
   }
 
   /**

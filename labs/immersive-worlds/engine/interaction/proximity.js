@@ -80,10 +80,13 @@ export class ProximitySystem {
 
       // VISITED and ACTIVE are sticky: proximity must not erase what the visitor did.
       if (current !== HOTSPOT_STATE.ACTIVE && current !== HOTSPOT_STATE.VISITED) {
-        this.state.setHotspotState(
-          candidate.hotspot.id,
-          inside ? HOTSPOT_STATE.NEAR : HOTSPOT_STATE.AVAILABLE
-        );
+        const next = inside ? HOTSPOT_STATE.NEAR : HOTSPOT_STATE.AVAILABLE;
+        if (next !== current) {
+          this.state.setHotspotState(candidate.hotspot.id, next);
+          // Presentation observes semantic state; it never calculates distance.
+          // This is the SceneKit seam declared by the base contract.
+          this.sceneKit.setHotspotState(candidate.hotspot.id, next);
+        }
       }
       if (inside && distance < nearestDistance) {
         nearest = candidate.hotspot;
