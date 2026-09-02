@@ -1528,7 +1528,7 @@
         "description": "Pieza torneada en una sola sesión. El perfil se estrecha dos veces, un gesto que Miralles llamaba «la respiración»."
       },
       "representation": {
-        "profile": "plinth-vessel",
+        "profile": "plinth-vessel-premium-v1",
         "hints": {
           "plinthHeight": 1.02
         }

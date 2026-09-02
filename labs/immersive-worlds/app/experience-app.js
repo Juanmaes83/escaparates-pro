@@ -73,7 +73,9 @@ export async function boot() {
   // Media paths in a world file are relative to that file, so an institution can
   // keep its collection next to its world definition.
   const mediaLoader = new MediaLoader({ bus: null, baseUrl: new URL(WORLD_URL, location.href).href });
-  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader });
+  const visualStone = params.get('visualStone') === 'baseline' ? 'baseline' : 'premium';
+  const sceneKit = new MuseumSceneKit({ renderHost, mediaLoader, visualStone });
+  document.documentElement.dataset.museumVisualStone = visualStone;
 
   const runtime = new Runtime({
     world: authoredWorld,

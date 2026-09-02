@@ -502,6 +502,130 @@ export function buildVessel({ height = 0.86, material }) {
   return mesh;
 }
 
+/**
+ * A complete, authored presentation for one collection object.  This is the
+ * visual-stone version of the ordinary plinth vessel: the semantic entity and
+ * its interaction stay unchanged; only the Museum kit gives it a more resolved
+ * physical presence.
+ */
+export function buildPremiumVesselInstallation({
+  height = 0.88,
+  plinthHeight = 1.04,
+  labelTexture: plaqueTexture,
+  lightColor = 0xffe3b7
+}) {
+  const group = new THREE.Group();
+  group.name = 'premium-vessel-installation';
+
+  const mineral = new THREE.MeshStandardMaterial({ color: 0xd8d0c2, roughness: 0.76, metalness: 0 });
+  const mineralTop = new THREE.MeshStandardMaterial({ color: 0xeee8de, roughness: 0.58, metalness: 0 });
+  const graphite = new THREE.MeshStandardMaterial({ color: 0x25231f, roughness: 0.48, metalness: 0.24 });
+  const bronze = new THREE.MeshPhysicalMaterial({
+    color: 0x8d6d3f, roughness: 0.34, metalness: 0.72, clearcoat: 0.18, clearcoatRoughness: 0.42
+  });
+  const ceramic = new THREE.MeshPhysicalMaterial({
+    color: 0x755744,
+    roughness: 0.42,
+    metalness: 0,
+    clearcoat: 0.26,
+    clearcoatRoughness: 0.64,
+    emissive: 0x2a1308,
+    emissiveIntensity: 0
+  });
+
+  const plinthWidth = 0.94;
+  const plinthDepth = 0.88;
+  const shadowGap = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.055, 0.76), graphite);
+  shadowGap.position.y = 0.028;
+  group.add(shadowGap);
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(plinthWidth, plinthHeight - 0.08, plinthDepth), mineral);
+  body.position.y = 0.055 + (plinthHeight - 0.08) / 2;
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.055, 0.94), mineralTop);
+  cap.position.y = plinthHeight - 0.0275;
+  cap.castShadow = true;
+  cap.receiveShadow = true;
+  group.add(cap);
+
+  const vessel = buildVessel({ height, material: ceramic });
+  vessel.name = 'vasija-de-arenas';
+  vessel.position.y = plinthHeight;
+  group.add(vessel);
+
+  // The dark inner lip makes the vessel read as a hollow ceramic object rather
+  // than a lathed pawn. Two restrained bronze rings pick up the grazing light.
+  const rimRadius = 0.145 * height;
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(rimRadius, 0.012, 12, 72), bronze);
+  rim.rotation.x = Math.PI / 2;
+  rim.position.y = plinthHeight + height + 0.004;
+  rim.castShadow = true;
+  group.add(rim);
+  const mouth = new THREE.Mesh(new THREE.CircleGeometry(rimRadius - 0.012, 72), graphite);
+  mouth.rotation.x = -Math.PI / 2;
+  mouth.position.y = plinthHeight + height + 0.003;
+  group.add(mouth);
+  for (const [t, radius] of [[0.34, 0.26], [0.7, 0.26]]) {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(radius * height, 0.006, 8, 72),
+      bronze
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = plinthHeight + t * height;
+    group.add(ring);
+  }
+
+  // A real object label: metal carrier plus a printed conservation-safe face.
+  const plaqueBacking = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.205, 0.018), graphite);
+  plaqueBacking.position.set(0, plinthHeight - 0.24, plinthDepth / 2 + 0.012);
+  group.add(plaqueBacking);
+  const plaque = buildLabel({ texture: plaqueTexture, width: 0.44 });
+  plaque.position.set(0, plinthHeight - 0.24, plinthDepth / 2 + 0.023);
+  group.add(plaque);
+
+  // The proximity signal belongs to the furniture, not to a floating HUD: a
+  // fine inlaid line wakes as the visitor approaches and settles in inspection.
+  const signalMaterial = new THREE.MeshPhysicalMaterial({
+    color: 0xb58b50,
+    emissive: 0x6a3f16,
+    emissiveIntensity: 0.08,
+    roughness: 0.32,
+    metalness: 0.7,
+    transparent: true,
+    opacity: 0.16
+  });
+  const signal = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.012, 0.012), signalMaterial);
+  signal.position.set(0, 0.105, plinthDepth / 2 + 0.009);
+  group.add(signal);
+
+  // Local exhibition lighting. It is deliberately shadowless: grounding comes
+  // from the room/contact pass and this keeps the mobile shadow budget intact.
+  const keyLight = new THREE.SpotLight(lightColor, 2.7, 6.5, 0.34, 0.78, 1.55);
+  keyLight.position.set(1.15, 2.75, 1.35);
+  keyLight.target.position.set(0, plinthHeight + height * 0.5, 0);
+  group.add(keyLight, keyLight.target);
+  const fillLight = new THREE.PointLight(0xb98052, 0.16, 2.4, 1.7);
+  fillLight.position.set(-0.72, plinthHeight + 0.72, 0.42);
+  group.add(fillLight);
+
+  return {
+    group,
+    presentation: {
+      ceramic,
+      signalMaterial,
+      keyLight,
+      fillLight,
+      nearTarget: 0,
+      near: 0,
+      focusTarget: 0,
+      focus: 0
+    }
+  };
+}
+
 /** Wall label, mounted at the standard 8 cm to the right of a work. */
 export function buildLabel({ texture, width = 0.22 }) {
   const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.92, metalness: 0 });
