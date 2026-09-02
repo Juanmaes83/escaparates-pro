@@ -626,9 +626,10 @@ async function main() {
         abcd.map((s) => `${String(s.order).padStart(2, '0')}:${s.roles}`).join(' · '));
 
       const contemplation = grammar.filter((b) => b.intent === 'CONTEMPLATION' && b.visitor);
+      const contemplationStops = new Set(contemplation.map((b) => b.tourStepId));
       check('GRAMMAR-C-VISITOR-NOT-GUIDE',
         'En la contemplación humana hay una figura visitante y la guía ya no media',
-        contemplation.length === humanStops.length && contemplation.every((b) => b.visitor && !b.guide),
+        contemplationStops.size === humanStops.length && contemplation.every((b) => b.visitor && !b.guide),
         contemplation.map((b) => `${b.beatId.split('.').pop()} visitante=${b.visitor} guía=${b.guide}`).join(' · '));
 
       const artworkD = artworkStops.map(([, beats]) => beats[beats.length - 1]);

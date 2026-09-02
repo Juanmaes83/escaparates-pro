@@ -67,6 +67,7 @@ No se modifican Breeze, WePaint, Avatar, navegación POV/Avatar ni sus controles
 - La primera captura detectó el busto de espaldas; se eliminó la rotación incorrecta y una segunda captura confirmó la vista frontal.
 - Prueba explícita `glbStone=fallback`: entidad `FALLBACK`, peana, placa, foco e inspección conservados.
 - El primer CI de Breeze reveló que sus shells alternativos no tenían el `importmap` de `three` del shell principal. La importación de `GLTFLoader` fallaba antes de crear `window.__IW`; ambos shells comparten ahora el mismo mapa local. El gate de Breeze vuelve a arrancar en 1,6 s y sin errores de consola en la reproducción local.
+- La suite integral detectó además una aserción antigua que equiparaba número de beats de contemplación con número de paradas. La exposición itinerante ya puede tener más de una contemplación dentro de una parada; el gate cuenta ahora paradas únicas y sigue exigiendo visitante presente y guía ausente en todos sus beats C.
 - Suite completa `labs/immersive-worlds/qa/run-qa.mjs`: pendiente de cierre en el momento de redactar este registro.
 
 ## Veredicto pendiente
